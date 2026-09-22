@@ -19,7 +19,7 @@
         "lat": 30.3413,
         "lng": -95.0858,
         "source": "persisted-home",
-        "selectedAt": 1790100417551,
+        "selectedAt": 1790102970754,
         "expiresAt": null,
         "health": "FRESH",
         "routeWatchId": null,
@@ -114,7 +114,7 @@
         "lat": 29.91154,
         "lng": -95.0632549,
         "source": "canonical-destination",
-        "selectedAt": 1790100426008,
+        "selectedAt": 1790102982597,
         "expiresAt": null,
         "health": "FRESH",
         "routeWatchId": null,
@@ -199,7 +199,7 @@
       },
       "marker": [
         {
-          "url": "http://127.0.0.1:63110/assets/markers/approved/navigation/trip-destination.png",
+          "url": "http://127.0.0.1:55775/assets/markers/approved/navigation/trip-destination.png",
           "loaded": true
         }
       ]
@@ -221,7 +221,7 @@
         "lat": 30.0473202,
         "lng": -94.8873913,
         "source": "canonical-destination",
-        "selectedAt": 1790100429005,
+        "selectedAt": 1790102995599,
         "expiresAt": null,
         "health": "FRESH",
         "routeWatchId": null,
@@ -304,7 +304,7 @@
       },
       "marker": [
         {
-          "url": "http://127.0.0.1:63110/assets/markers/approved/navigation/trip-destination.png",
+          "url": "http://127.0.0.1:55775/assets/markers/approved/navigation/trip-destination.png",
           "loaded": true
         }
       ]
@@ -328,7 +328,7 @@
         "lat": 30.3413,
         "lng": -95.0858,
         "source": "persisted-home",
-        "selectedAt": 1790100434503,
+        "selectedAt": 1790103002794,
         "expiresAt": null,
         "health": "FRESH",
         "routeWatchId": null,
@@ -413,7 +413,7 @@
         "type": "AROUND_ME",
         "contextType": "AROUND_ME",
         "generation": 5,
-        "placeId": "foreground-location:1790100443960",
+        "placeId": "foreground-location:1790103012138",
         "placeName": "Around Me",
         "countyId": "harris-tx",
         "countyName": "Harris County",
@@ -423,12 +423,12 @@
         "lat": 29.91154,
         "lng": -95.06325,
         "source": "foreground-location",
-        "selectedAt": 1790100448255,
-        "expiresAt": 1790100563960,
+        "selectedAt": 1790103016753,
+        "expiresAt": 1790103132138,
         "health": "FRESH",
         "routeWatchId": null,
         "area": {
-          "key": "foreground-location:1790100443960",
+          "key": "foreground-location:1790103012138",
           "label": "Around Me",
           "storageValue": "Around Me",
           "lat": 29.91154,
@@ -473,10 +473,10 @@
         "rule": "awareness owns the idle mobile panel; legacy destination command is visible only with selected destination, active route preview, active Route Watch, or an explicit destination panel, and destination ownership is hidden while a Leaflet popup is open"
       },
       "weather": {
-        "awarenessKey": "foreground-location:1790100443960",
+        "awarenessKey": "foreground-location:1790103012138",
         "identityClass": "DIRECT_COORDINATE",
         "countyId": "harris-tx",
-        "stableIdentity": "foreground-location:1790100443960",
+        "stableIdentity": "foreground-location:1790103012138",
         "lat": 29.91154,
         "lng": -95.06325,
         "placeGeoid": null
@@ -505,7 +505,7 @@
       },
       "marker": [
         {
-          "url": "http://127.0.0.1:63110/assets/markers/approved/navigation/current-location.png",
+          "url": "http://127.0.0.1:55775/assets/markers/approved/navigation/current-location.png",
           "loaded": true
         }
       ]
@@ -517,7 +517,7 @@
         "type": "AROUND_ME",
         "contextType": "AROUND_ME",
         "generation": 10,
-        "placeId": "foreground-location:1790100514512",
+        "placeId": "foreground-location:1790103080271",
         "placeName": "Around Me",
         "countyId": "harris-tx",
         "countyName": "Harris County",
@@ -527,12 +527,12 @@
         "lat": 29.91154,
         "lng": -95.06325,
         "source": "foreground-location",
-        "selectedAt": 1790100514633,
-        "expiresAt": 1790100634512,
+        "selectedAt": 1790103080637,
+        "expiresAt": 1790103200271,
         "health": "FRESH",
         "routeWatchId": null,
         "area": {
-          "key": "foreground-location:1790100514512",
+          "key": "foreground-location:1790103080271",
           "label": "Around Me",
           "storageValue": "Around Me",
           "lat": 29.91154,
@@ -577,10 +577,10 @@
         "rule": "awareness owns the idle mobile panel; legacy destination command is visible only with selected destination, active route preview, active Route Watch, or an explicit destination panel, and destination ownership is hidden while a Leaflet popup is open"
       },
       "weather": {
-        "awarenessKey": "foreground-location:1790100514512",
+        "awarenessKey": "foreground-location:1790103080271",
         "identityClass": "DIRECT_COORDINATE",
         "countyId": "harris-tx",
-        "stableIdentity": "foreground-location:1790100514512",
+        "stableIdentity": "foreground-location:1790103080271",
         "lat": 29.91154,
         "lng": -95.06325,
         "placeGeoid": null
@@ -590,8 +590,8 @@
       "roads": "Around Me",
       "location": "Around Me",
       "mapCenter": {
-        "lat": 30.2040798048372,
-        "lng": -95.08141683183479
+        "lat": 30.208456445529585,
+        "lng": -95.08168788210178
       },
       "kbyg": "Around Me, TX",
       "crossingHome": false,
@@ -609,7 +609,7 @@
       },
       "marker": [
         {
-          "url": "http://127.0.0.1:63110/assets/markers/approved/navigation/current-location.png",
+          "url": "http://127.0.0.1:55775/assets/markers/approved/navigation/current-location.png",
           "loaded": true
         }
       ]
@@ -621,7 +621,7 @@
         "type": "AROUND_ME",
         "contextType": "AROUND_ME",
         "generation": 12,
-        "placeId": "foreground-location:1790100535328",
+        "placeId": "foreground-location:1790103101200",
         "placeName": "Around Me",
         "countyId": "harris-tx",
         "countyName": "Harris County",
@@ -631,12 +631,12 @@
         "lat": 29.91154,
         "lng": -95.06325,
         "source": "foreground-location",
-        "selectedAt": 1790100541142,
-        "expiresAt": 1790100655328,
+        "selectedAt": 1790103107261,
+        "expiresAt": 1790103221200,
         "health": "FRESH",
         "routeWatchId": null,
         "area": {
-          "key": "foreground-location:1790100535328",
+          "key": "foreground-location:1790103101200",
           "label": "Around Me",
           "storageValue": "Around Me",
           "lat": 29.91154,
@@ -681,10 +681,10 @@
         "rule": "awareness owns the idle mobile panel; legacy destination command is visible only with selected destination, active route preview, active Route Watch, or an explicit destination panel, and destination ownership is hidden while a Leaflet popup is open"
       },
       "weather": {
-        "awarenessKey": "foreground-location:1790100535328",
+        "awarenessKey": "foreground-location:1790103101200",
         "identityClass": "DIRECT_COORDINATE",
         "countyId": "harris-tx",
-        "stableIdentity": "foreground-location:1790100535328",
+        "stableIdentity": "foreground-location:1790103101200",
         "lat": 29.91154,
         "lng": -95.06325,
         "placeGeoid": null
@@ -694,8 +694,8 @@
       "roads": "Around Me",
       "location": "Around Me",
       "mapCenter": {
-        "lat": 29.91154,
-        "lng": -95.06325
+        "lat": 29.911495738488924,
+        "lng": -95.06332397460939
       },
       "kbyg": "Around Me, TX",
       "crossingHome": false,
@@ -713,7 +713,7 @@
       },
       "marker": [
         {
-          "url": "http://127.0.0.1:63110/assets/markers/approved/navigation/current-location.png",
+          "url": "http://127.0.0.1:55775/assets/markers/approved/navigation/current-location.png",
           "loaded": true
         }
       ]
@@ -725,7 +725,7 @@
         "type": "AROUND_ME",
         "contextType": "AROUND_ME",
         "generation": 17,
-        "placeId": "foreground-location:1790100602909",
+        "placeId": "foreground-location:1790103169852",
         "placeName": "Around Me",
         "countyId": "harris-tx",
         "countyName": "Harris County",
@@ -735,12 +735,12 @@
         "lat": 29.91154,
         "lng": -95.06325,
         "source": "foreground-location",
-        "selectedAt": 1790100603029,
-        "expiresAt": 1790100722909,
+        "selectedAt": 1790103170224,
+        "expiresAt": 1790103289852,
         "health": "FRESH",
         "routeWatchId": null,
         "area": {
-          "key": "foreground-location:1790100602909",
+          "key": "foreground-location:1790103169852",
           "label": "Around Me",
           "storageValue": "Around Me",
           "lat": 29.91154,
@@ -785,10 +785,10 @@
         "rule": "awareness owns the idle mobile panel; legacy destination command is visible only with selected destination, active route preview, active Route Watch, or an explicit destination panel, and destination ownership is hidden while a Leaflet popup is open"
       },
       "weather": {
-        "awarenessKey": "foreground-location:1790100602909",
+        "awarenessKey": "foreground-location:1790103169852",
         "identityClass": "DIRECT_COORDINATE",
         "countyId": "harris-tx",
-        "stableIdentity": "foreground-location:1790100602909",
+        "stableIdentity": "foreground-location:1790103169852",
         "lat": 29.91154,
         "lng": -95.06325,
         "placeGeoid": null
@@ -798,8 +798,8 @@
       "roads": "Around Me",
       "location": "Around Me",
       "mapCenter": {
-        "lat": 30.20517093258997,
-        "lng": -95.08148440547247
+        "lat": 30.209555659509334,
+        "lng": -95.08175595955032
       },
       "kbyg": "Around Me, TX",
       "crossingHome": false,
@@ -817,7 +817,7 @@
       },
       "marker": [
         {
-          "url": "http://127.0.0.1:63110/assets/markers/approved/navigation/current-location.png",
+          "url": "http://127.0.0.1:55775/assets/markers/approved/navigation/current-location.png",
           "loaded": true
         }
       ]
@@ -829,7 +829,7 @@
         "type": "AROUND_ME",
         "contextType": "AROUND_ME",
         "generation": 19,
-        "placeId": "foreground-location:1790100623023",
+        "placeId": "foreground-location:1790103189980",
         "placeName": "Around Me",
         "countyId": "harris-tx",
         "countyName": "Harris County",
@@ -839,12 +839,12 @@
         "lat": 29.91154,
         "lng": -95.06325,
         "source": "foreground-location",
-        "selectedAt": 1790100627865,
-        "expiresAt": 1790100743023,
+        "selectedAt": 1790103195011,
+        "expiresAt": 1790103309980,
         "health": "FRESH",
         "routeWatchId": null,
         "area": {
-          "key": "foreground-location:1790100623023",
+          "key": "foreground-location:1790103189980",
           "label": "Around Me",
           "storageValue": "Around Me",
           "lat": 29.91154,
@@ -889,10 +889,10 @@
         "rule": "awareness owns the idle mobile panel; legacy destination command is visible only with selected destination, active route preview, active Route Watch, or an explicit destination panel, and destination ownership is hidden while a Leaflet popup is open"
       },
       "weather": {
-        "awarenessKey": "foreground-location:1790100623023",
+        "awarenessKey": "foreground-location:1790103189980",
         "identityClass": "DIRECT_COORDINATE",
         "countyId": "harris-tx",
-        "stableIdentity": "foreground-location:1790100623023",
+        "stableIdentity": "foreground-location:1790103189980",
         "lat": 29.91154,
         "lng": -95.06325,
         "placeGeoid": null
@@ -921,7 +921,7 @@
       },
       "marker": [
         {
-          "url": "http://127.0.0.1:63110/assets/markers/approved/navigation/current-location.png",
+          "url": "http://127.0.0.1:55775/assets/markers/approved/navigation/current-location.png",
           "loaded": true
         }
       ]
@@ -933,7 +933,7 @@
         "type": "AROUND_ME",
         "contextType": "AROUND_ME",
         "generation": 24,
-        "placeId": "foreground-location:1790100692379",
+        "placeId": "foreground-location:1790103257834",
         "placeName": "Around Me",
         "countyId": "harris-tx",
         "countyName": "Harris County",
@@ -943,12 +943,12 @@
         "lat": 29.91154,
         "lng": -95.06325,
         "source": "foreground-location",
-        "selectedAt": 1790100692510,
-        "expiresAt": 1790100812379,
+        "selectedAt": 1790103258202,
+        "expiresAt": 1790103377834,
         "health": "FRESH",
         "routeWatchId": null,
         "area": {
-          "key": "foreground-location:1790100692379",
+          "key": "foreground-location:1790103257834",
           "label": "Around Me",
           "storageValue": "Around Me",
           "lat": 29.91154,
@@ -993,10 +993,10 @@
         "rule": "awareness owns the idle mobile panel; legacy destination command is visible only with selected destination, active route preview, active Route Watch, or an explicit destination panel, and destination ownership is hidden while a Leaflet popup is open"
       },
       "weather": {
-        "awarenessKey": "foreground-location:1790100692379",
+        "awarenessKey": "foreground-location:1790103257834",
         "identityClass": "DIRECT_COORDINATE",
         "countyId": "harris-tx",
-        "stableIdentity": "foreground-location:1790100692379",
+        "stableIdentity": "foreground-location:1790103257834",
         "lat": 29.91154,
         "lng": -95.06325,
         "placeGeoid": null
@@ -1006,8 +1006,8 @@
       "roads": "Around Me",
       "location": "Around Me",
       "mapCenter": {
-        "lat": 30.21953953944608,
-        "lng": -95.08237432446
+        "lat": 30.217306752328977,
+        "lng": -95.08223602836654
       },
       "kbyg": "Around Me, TX",
       "crossingHome": false,
@@ -1025,7 +1025,7 @@
       },
       "marker": [
         {
-          "url": "http://127.0.0.1:63110/assets/markers/approved/navigation/current-location.png",
+          "url": "http://127.0.0.1:55775/assets/markers/approved/navigation/current-location.png",
           "loaded": true
         }
       ]
@@ -1037,7 +1037,7 @@
         "type": "AROUND_ME",
         "contextType": "AROUND_ME",
         "generation": 26,
-        "placeId": "foreground-location:1790100711884",
+        "placeId": "foreground-location:1790103278214",
         "placeName": "Around Me",
         "countyId": "harris-tx",
         "countyName": "Harris County",
@@ -1047,12 +1047,12 @@
         "lat": 29.91154,
         "lng": -95.06325,
         "source": "foreground-location",
-        "selectedAt": 1790100720160,
-        "expiresAt": 1790100831884,
+        "selectedAt": 1790103285378,
+        "expiresAt": 1790103398214,
         "health": "FRESH",
         "routeWatchId": null,
         "area": {
-          "key": "foreground-location:1790100711884",
+          "key": "foreground-location:1790103278214",
           "label": "Around Me",
           "storageValue": "Around Me",
           "lat": 29.91154,
@@ -1097,10 +1097,10 @@
         "rule": "awareness owns the idle mobile panel; legacy destination command is visible only with selected destination, active route preview, active Route Watch, or an explicit destination panel, and destination ownership is hidden while a Leaflet popup is open"
       },
       "weather": {
-        "awarenessKey": "foreground-location:1790100711884",
+        "awarenessKey": "foreground-location:1790103278214",
         "identityClass": "DIRECT_COORDINATE",
         "countyId": "harris-tx",
-        "stableIdentity": "foreground-location:1790100711884",
+        "stableIdentity": "foreground-location:1790103278214",
         "lat": 29.91154,
         "lng": -95.06325,
         "placeGeoid": null
@@ -1129,7 +1129,7 @@
       },
       "marker": [
         {
-          "url": "http://127.0.0.1:63110/assets/markers/approved/navigation/current-location.png",
+          "url": "http://127.0.0.1:55775/assets/markers/approved/navigation/current-location.png",
           "loaded": true
         }
       ]
@@ -1141,7 +1141,7 @@
         "type": "AROUND_ME",
         "contextType": "AROUND_ME",
         "generation": 31,
-        "placeId": "foreground-location:1790100792093",
+        "placeId": "foreground-location:1790103354855",
         "placeName": "Around Me",
         "countyId": "harris-tx",
         "countyName": "Harris County",
@@ -1151,12 +1151,12 @@
         "lat": 29.91154,
         "lng": -95.06325,
         "source": "foreground-location",
-        "selectedAt": 1790100792216,
-        "expiresAt": 1790100912093,
+        "selectedAt": 1790103355209,
+        "expiresAt": 1790103474855,
         "health": "FRESH",
         "routeWatchId": null,
         "area": {
-          "key": "foreground-location:1790100792093",
+          "key": "foreground-location:1790103354855",
           "label": "Around Me",
           "storageValue": "Around Me",
           "lat": 29.91154,
@@ -1201,10 +1201,10 @@
         "rule": "awareness owns the idle mobile panel; legacy destination command is visible only with selected destination, active route preview, active Route Watch, or an explicit destination panel, and destination ownership is hidden while a Leaflet popup is open"
       },
       "weather": {
-        "awarenessKey": "foreground-location:1790100792093",
+        "awarenessKey": "foreground-location:1790103354855",
         "identityClass": "DIRECT_COORDINATE",
         "countyId": "harris-tx",
-        "stableIdentity": "foreground-location:1790100792093",
+        "stableIdentity": "foreground-location:1790103354855",
         "lat": 29.91154,
         "lng": -95.06325,
         "placeGeoid": null
@@ -1214,8 +1214,8 @@
       "roads": "Around Me",
       "location": "Around Me",
       "mapCenter": {
-        "lat": 30.226286396909227,
-        "lng": -95.08279223560584
+        "lat": 30.21397272860262,
+        "lng": -95.08202952887181
       },
       "kbyg": "Around Me, TX",
       "crossingHome": false,
@@ -1233,7 +1233,7 @@
       },
       "marker": [
         {
-          "url": "http://127.0.0.1:63110/assets/markers/approved/navigation/current-location.png",
+          "url": "http://127.0.0.1:55775/assets/markers/approved/navigation/current-location.png",
           "loaded": true
         }
       ]
@@ -1257,7 +1257,7 @@
         "lat": 30.3413,
         "lng": -95.0858,
         "source": "persisted-home",
-        "selectedAt": 1790100804493,
+        "selectedAt": 1790103367657,
         "expiresAt": null,
         "health": "FRESH",
         "routeWatchId": null,
@@ -1335,7 +1335,7 @@
       },
       "marker": [
         {
-          "url": "http://127.0.0.1:63110/assets/markers/approved/navigation/current-location.png",
+          "url": "http://127.0.0.1:55775/assets/markers/approved/navigation/current-location.png",
           "loaded": true
         }
       ]
@@ -1347,7 +1347,7 @@
         "type": "AROUND_ME",
         "contextType": "AROUND_ME",
         "generation": 33,
-        "placeId": "foreground-location:1790100820128",
+        "placeId": "foreground-location:1790103383410",
         "placeName": "Around Me",
         "countyId": "harris-tx",
         "countyName": "Harris County",
@@ -1357,12 +1357,12 @@
         "lat": 29.91154,
         "lng": -95.06325,
         "source": "foreground-location",
-        "selectedAt": 1790100820173,
-        "expiresAt": 1790100940128,
+        "selectedAt": 1790103383682,
+        "expiresAt": 1790103503410,
         "health": "STALE",
         "routeWatchId": null,
         "area": {
-          "key": "foreground-location:1790100820128",
+          "key": "foreground-location:1790103383410",
           "label": "Around Me",
           "storageValue": "Around Me",
           "lat": 29.91154,
@@ -1412,8 +1412,8 @@
       "roads": "Around Me",
       "location": "Around Me",
       "mapCenter": {
-        "lat": 30.153092458950777,
-        "lng": -95.07826001567955
+        "lat": 30.13749611332001,
+        "lng": -95.0772947139853
       },
       "crossingHome": false,
       "crossingCrosby": false,
@@ -1449,7 +1449,7 @@
         "lat": 30.3413,
         "lng": -95.0858,
         "source": "persisted-home",
-        "selectedAt": 1790100846804,
+        "selectedAt": 1790103410762,
         "expiresAt": null,
         "health": "FRESH",
         "routeWatchId": null,
@@ -1527,15 +1527,15 @@
       },
       "marker": [
         {
-          "url": "http://127.0.0.1:63110/assets/markers/approved/navigation/current-location.png",
+          "url": "http://127.0.0.1:55775/assets/markers/approved/navigation/current-location.png",
           "loaded": true
         },
         {
-          "url": "http://127.0.0.1:63110/assets/markers/approved/navigation/trip-start.png",
+          "url": "http://127.0.0.1:55775/assets/markers/approved/navigation/trip-start.png",
           "loaded": true
         },
         {
-          "url": "http://127.0.0.1:63110/assets/markers/approved/navigation/trip-destination.png",
+          "url": "http://127.0.0.1:55775/assets/markers/approved/navigation/trip-destination.png",
           "loaded": true
         }
       ]
@@ -1549,6 +1549,173 @@
     440
   ],
   "homeUnchanged": true,
+  "searchActionProof": [
+    {
+      "width": 390,
+      "text": "Around Me",
+      "name": "Around Me",
+      "rect": {
+        "x": 16,
+        "y": 311.859375,
+        "width": 358,
+        "height": 44,
+        "bottom": 355.859375
+      },
+      "viewportHeight": 844,
+      "nearby": true,
+      "searchFields": 1
+    },
+    {
+      "width": 390,
+      "text": "Around Me",
+      "name": "Around Me",
+      "rect": {
+        "x": 16,
+        "y": 311.859375,
+        "width": 358,
+        "height": 44,
+        "bottom": 355.859375
+      },
+      "viewportHeight": 844,
+      "nearby": true,
+      "searchFields": 1
+    },
+    {
+      "width": 320,
+      "text": "Around Me",
+      "name": "Around Me",
+      "rect": {
+        "x": 16,
+        "y": 334.046875,
+        "width": 288,
+        "height": 44,
+        "bottom": 378.046875
+      },
+      "viewportHeight": 844,
+      "nearby": true,
+      "searchFields": 1
+    },
+    {
+      "width": 320,
+      "text": "Around Me",
+      "name": "Around Me",
+      "rect": {
+        "x": 16,
+        "y": 334.046875,
+        "width": 288,
+        "height": 44,
+        "bottom": 378.046875
+      },
+      "viewportHeight": 844,
+      "nearby": true,
+      "searchFields": 1
+    },
+    {
+      "width": 360,
+      "text": "Around Me",
+      "name": "Around Me",
+      "rect": {
+        "x": 16,
+        "y": 311.859375,
+        "width": 328,
+        "height": 44,
+        "bottom": 355.859375
+      },
+      "viewportHeight": 844,
+      "nearby": true,
+      "searchFields": 1
+    },
+    {
+      "width": 360,
+      "text": "Around Me",
+      "name": "Around Me",
+      "rect": {
+        "x": 16,
+        "y": 311.859375,
+        "width": 328,
+        "height": 44,
+        "bottom": 355.859375
+      },
+      "viewportHeight": 844,
+      "nearby": true,
+      "searchFields": 1
+    },
+    {
+      "width": 440,
+      "text": "Around Me",
+      "name": "Around Me",
+      "rect": {
+        "x": 16,
+        "y": 311.859375,
+        "width": 408,
+        "height": 44,
+        "bottom": 355.859375
+      },
+      "viewportHeight": 844,
+      "nearby": true,
+      "searchFields": 1
+    },
+    {
+      "width": 440,
+      "text": "Around Me",
+      "name": "Around Me",
+      "rect": {
+        "x": 16,
+        "y": 311.859375,
+        "width": 408,
+        "height": 44,
+        "bottom": 355.859375
+      },
+      "viewportHeight": 844,
+      "nearby": true,
+      "searchFields": 1
+    },
+    {
+      "width": 390,
+      "text": "Around Me",
+      "name": "Around Me",
+      "rect": {
+        "x": 16,
+        "y": 311.859375,
+        "width": 358,
+        "height": 44,
+        "bottom": 355.859375
+      },
+      "viewportHeight": 844,
+      "nearby": true,
+      "searchFields": 1
+    },
+    {
+      "width": 390,
+      "text": "Around Me",
+      "name": "Around Me",
+      "rect": {
+        "x": 16,
+        "y": 311.859375,
+        "width": 358,
+        "height": 44,
+        "bottom": 355.859375
+      },
+      "viewportHeight": 844,
+      "nearby": true,
+      "searchFields": 1
+    },
+    {
+      "width": 390,
+      "text": "Around Me",
+      "name": "Around Me",
+      "rect": {
+        "x": 16,
+        "y": 311.859375,
+        "width": 358,
+        "height": 44,
+        "bottom": 355.859375
+      },
+      "viewportHeight": 844,
+      "nearby": true,
+      "searchFields": 1
+    }
+  ],
   "filterProof": [
     {
       "width": 390,
@@ -1570,10 +1737,10 @@
         "lng": -95.06325,
         "explicitCountyId": null,
         "presentationAuthority": "GOVERNED_SELECTION",
-        "governedAwarenessKey": "foreground-location:1790100443960"
+        "governedAwarenessKey": "foreground-location:1790103012138"
       },
       "areaTarget": {
-        "key": "foreground-location:1790100443960",
+        "key": "foreground-location:1790103012138",
         "label": "Around Me",
         "storageValue": "Around Me",
         "lat": 29.91154,
@@ -2075,8 +2242,8 @@
       "place": "Around Me",
       "type": "AROUND_ME",
       "center": {
-        "lat": 29.91154,
-        "lng": -95.06325
+        "lat": 29.911495738488924,
+        "lng": -95.06332397460939
       },
       "zoom": 13,
       "home": "Cleveland",
@@ -2088,10 +2255,10 @@
         "lng": -95.06325,
         "explicitCountyId": null,
         "presentationAuthority": "GOVERNED_SELECTION",
-        "governedAwarenessKey": "foreground-location:1790100535328"
+        "governedAwarenessKey": "foreground-location:1790103101200"
       },
       "areaTarget": {
-        "key": "foreground-location:1790100535328",
+        "key": "foreground-location:1790103101200",
         "label": "Around Me",
         "storageValue": "Around Me",
         "lat": 29.91154,
@@ -2602,10 +2769,10 @@
         "lng": -95.06325,
         "explicitCountyId": null,
         "presentationAuthority": "GOVERNED_SELECTION",
-        "governedAwarenessKey": "foreground-location:1790100623023"
+        "governedAwarenessKey": "foreground-location:1790103189980"
       },
       "areaTarget": {
-        "key": "foreground-location:1790100623023",
+        "key": "foreground-location:1790103189980",
         "label": "Around Me",
         "storageValue": "Around Me",
         "lat": 29.91154,
@@ -3079,9 +3246,13 @@
         {
           "lat": 30.3435288998671,
           "lng": -95.0880949999782
+        },
+        {
+          "lat": 30.3450066996375,
+          "lng": -95.0872351999619
         }
       ],
-      "layerCount": 11,
+      "layerCount": 12,
       "attached": true
     },
     {
@@ -3104,10 +3275,10 @@
         "lng": -95.06325,
         "explicitCountyId": null,
         "presentationAuthority": "GOVERNED_SELECTION",
-        "governedAwarenessKey": "foreground-location:1790100711884"
+        "governedAwarenessKey": "foreground-location:1790103278214"
       },
       "areaTarget": {
-        "key": "foreground-location:1790100711884",
+        "key": "foreground-location:1790103278214",
         "label": "Around Me",
         "storageValue": "Around Me",
         "lat": 29.91154,
@@ -3577,25 +3748,9 @@
         {
           "lat": 30.3050847999075,
           "lng": -95.1104878997502
-        },
-        {
-          "lat": 30.3233873998267,
-          "lng": -95.0998289002206
-        },
-        {
-          "lat": 30.3380252997383,
-          "lng": -95.0913025999902
-        },
-        {
-          "lat": 30.3383840003665,
-          "lng": -95.1107550003252
-        },
-        {
-          "lat": 30.3398897997295,
-          "lng": -95.0902161002305
         }
       ],
-      "layerCount": 12,
+      "layerCount": 8,
       "attached": true
     }
   ],

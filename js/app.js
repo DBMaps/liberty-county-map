@@ -46765,6 +46765,13 @@ window.gridlyDestinationSearchLayoutAudit = function gridlyDestinationSearchLayo
   });
 };
 
+function requestGridlyUserLocationFromSearch() {
+  if (gridlyIsRouteWatchAwarenessActive()) return requestGridlyUserLocationFromControl("search-around-me");
+  if (gridlyGetAwarenessContextStore().foregroundPending) return false;
+  closeGridlyDestinationSearchSurface({ source: "around-me-search" });
+  return requestGridlyUserLocationFromControl("search-around-me");
+}
+
 function initGridlySearchUI() {
   const shell = document.getElementById("gridlySearchShell");
   const input = document.getElementById("gridlyAddressSearchInput");
@@ -46795,6 +46802,12 @@ function initGridlySearchUI() {
     shell.dataset.searchUi = "dormant";
   }
   updateGridlySearchClearVisibility(input?.value || "");
+
+  const aroundMeBtn = document.getElementById("gridlySearchAroundMeBtn");
+  if (aroundMeBtn && !aroundMeBtn.dataset.gridlyAroundMeBound) {
+    aroundMeBtn.addEventListener("click", requestGridlyUserLocationFromSearch);
+    aroundMeBtn.dataset.gridlyAroundMeBound = "true";
+  }
 
   if (clearBtn && !clearBtn.dataset.gridlySearchClearBound) {
     clearBtn.addEventListener("click", () => {
@@ -54715,8 +54728,9 @@ function requestGridlyUserLocationFromControl(source = "portrait_v2_location_con
   const generation = store.generation;
   store.foregroundPending = true;
   recordGridlyGeolocationRequest(source);
-  const control = document.querySelector("[data-v2-control='use-location']");
+  const control = document.querySelector(source === "search-around-me" ? "#gridlySearchAroundMeBtn" : "[data-v2-control='use-location']");
   control?.setAttribute("aria-busy", "true");
+  setConfirmation("Finding your location…", "info");
   let settled = false;
   let watchdog;
   const finish = (position, error) => {

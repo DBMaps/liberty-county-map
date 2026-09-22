@@ -52,7 +52,7 @@ Use local Gridly at http://127.0.0.1:5500 and Ctrl+F5; no native build is needed
 1. Confirm Home Area and county in Settings.
 2. Search Crosby, close Search, then search Dayton. Verify Location Context and map follow each selection.
 3. Return Home and confirm the original Home/county.
-4. Tap Around Me and allow foreground location. Verify the approved circular marker, Around Me context and Return Home.
+4. Open Search, tap Around Me, and allow foreground location. Verify the approved circular marker, Around Me context and Return Home.
 5. Move between Search and Around Me; confirm Home remains unchanged.
 6. Deny location or test an unavailable fix: prior context must remain with readable feedback.
 7. Leave Around Me active for over two minutes; verify stale copy, then explicitly refresh.
@@ -82,3 +82,18 @@ The broader pass also includes the existing Area viewport, awareness coverage an
 The first full UI-search browser pass completed all portrait filter sequences but its final Route Watch check could not obtain a layer from the live routing dependency. The harness now supplies a deterministic OSRM-shaped local response for route lifecycle assertions. This tests geometry publication, endpoint identity, activation guards and stop restoration; it does not certify routing-service availability or route accuracy. Production routing code is unchanged.
 
 Targeted repair certification: 106 focused / 82 broader tests passed, zero failures. Final browser run completed 15 snapshots and 36 filter checks at 320/360/390/440, with zero uncaught page exceptions. Dayton Area rendered four crossings at every width; its camera remained near 30.0473202, -94.8873913. Crosby Area remained near 29.91154, -95.0632549. Return Home Area restored Cleveland near 30.3414794, -95.0900115. Home storage stayed byte-identical. Route geometry, approved endpoint assets and stop restoration passed with the local routing fixture. All 31 approved PNGs match the repair starting HEAD. No production/backend/native changes or unrelated warning repairs.
+
+## Targeted Search Around Me discovery repair
+Starting repair HEAD: 7eeadc23394fb9dbcf6f8c455482e8ac1179eb5a.
+
+The existing portrait rail had an icon-only use-location control with an Around Me accessible name, but Search had no visible location action. Other Use My Location controls belong to onboarding/report surfaces. The existing protected foreground transaction was already implemented; the missing seam was consumer Search invocation.
+
+Search now exposes a native button labeled Around Me immediately below the input/action row, before saved Home/Work results and Nearby Places. It reuses secondary-btn destination-chip styling and has a 44px hit target. A button-scoped 44px minimum height fixes the existing chip style dropping to 40px at 440px width. No marker, provider or taxonomy changes were needed. The native button supplies visible accessible naming and keyboard/touch semantics; initialization guards against duplicate binding.
+
+requestGridlyUserLocationFromSearch delegates to requestGridlyUserLocationFromControl with source search-around-me. Active Route Watch is checked before closing Search because closing a pending destination surface can clear a route preview. Duplicate pending acquisition also returns before closing. Otherwise Search closes and the existing confirmation surface displays Finding your location…; the existing foreground provider, activation, failure feedback, freshness and callback generation guards remain authoritative. aria-busy is applied to the invoking Search button and cleared on settlement.
+
+Denial, timeout and unavailable fixes retain the prior context. Expiry after 120 seconds marks Around Me stale without tracking; an explicit new Search action reacquires. Home storage and Cleveland / Liberty Settings remain unchanged. Return Home, Dayton/Crosby Search, temporary Area ownership and Route Watch geometry/endpoints/stop restoration are regression gates.
+
+The local browser harness invokes the visible Search button at 320/360/390/440 rather than calling the activation function directly. It checks role/name, visibility, enabled state, viewport bounds, 44px height, one Search field, Nearby Places presence, actual AROUND_ME activation and the loaded approved Current Location PNG. Reduced-height viewport checks approximate keyboard occlusion; physical device keyboard acceptance remains an owner check. The Route Watch guard is separately invoked through the same Search handler with a deterministic local routing fixture. External backend requests are blocked.
+
+Search UI repair certification: 113 focused / 82 broader tests passed, zero failures. Final browser verification passed 15 lifecycle snapshots, 36 filter checks and 11 visible Search button invocations across 320/360/390/440. Every measured button met the 44px target. Home bytes and Cleveland Settings, current-location artwork, denial retention, stale/reacquire behavior, Route Watch geometry/endpoints/stop and Area parity passed. Zero uncaught page exceptions. All 31 approved PNGs match starting HEAD byte for byte. Console warnings are not exhaustively captured; unrelated pre-existing Alerts focus and long-frame warnings remain outside scope. Exact evidence and file inventory are in reports/lp24448-certification.json.

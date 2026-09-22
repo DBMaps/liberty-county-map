@@ -29829,3 +29829,8 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
 #map .leaflet-marker-icon:is(.gridly-production-marker-icon, .gridly-official-roadway-marker-icon),
 #map .leaflet-marker-icon:is(.gridly-production-marker-icon, .gridly-official-roadway-marker-icon) :is(.gridly-hazard-marker, .gridly-crossing-marker).has-production-marker .gridly-production-marker-img,
 #map .leaflet-marker-icon:is(.gridly-production-marker-icon, .gridly-official-roadway-marker-icon):is(.gridly-alert-focused-marker, [data-gridly-selected="true"]) :is(.gridly-hazard-marker, .gridly-crossing-marker).has-production-marker .gridly-production-marker-img { filter: none !important; }
+
+/* Search foreground location action keeps a consistent touch target. */
+#gridlySearchAroundMeBtn {
+  min-height: 44px;
+}
