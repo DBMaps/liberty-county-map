@@ -84559,7 +84559,7 @@ function getGridlyCrossingPopupTitle(incident = {}) {
   const popupState = resolveGridlyCrossingPopupState(incident);
   const typeText = String(incident?.report_type || incident?.reportType || incident?.type || incident?.eventType || incident?.title || "").toLowerCase();
   if (popupState === "recently_cleared") return "Crossing Clear";
-  if (popupState === "no_report") return "Report a Crossing Issue";
+  if (popupState === "no_report") return "Crossing Location";
   if (/\b(?:heavy|delay|delayed|rail_delay|train)\b/.test(typeText)) return "Train Blocking Crossing";
   return "Crossing Blocked";
 }
@@ -84609,7 +84609,7 @@ function buildGridlyCrossingPopupConsumerModel(incident = {}, options = {}) {
   let stepStart = gridlyNowMs();
   const popupState = resolveGridlyCrossingPopupState(incident);
   const canonicalPresentation = gridlyBuildCanonicalLiveIncidentPresentation(incident);
-  const title = canonicalPresentation.title || getGridlyCrossingPopupTitle(incident);
+  const title = popupState === "no_report" ? getGridlyCrossingPopupTitle(incident) : (canonicalPresentation.title || getGridlyCrossingPopupTitle(incident));
   gridlyAddPopupAuditDuration(auditRow, "narrativeDurationMs", stepStart);
   stepStart = gridlyNowMs();
   const lp023ConsumerLocation = typeof gridlyLp023ResolveConsumerLocation === "function" ? gridlyLp023ResolveConsumerLocation(incident, { adapterType: "crossing" }) : null;
