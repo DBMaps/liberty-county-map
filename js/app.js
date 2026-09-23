@@ -3478,6 +3478,17 @@ function gridlyProjectAlertIncidentLocation(record = {}) {
   const establishedValue = String(establishedConsumer?.value?.displayLocation || establishedConsumer?.value?.primaryLocation || establishedConsumer?.value?.roadway || "").trim();
   const hasEstablishedAuthority = Boolean(canonicalEntry || establishedConsumer);
   const hasStructuredAuthority = Boolean(structuredRoad || structuredCross || structuredResolved);
+  // Match the popup's incident-specific road context before using the shared
+  // lookup, which can represent the selected area's road instead of this point.
+  if (record?.reportKind === "hazard" && !hasEstablishedAuthority && !hasStructuredAuthority
+    && typeof gridlyLp023ResolveConsumerLocation === "function") {
+    const incidentLocation = gridlyLp023ResolveConsumerLocation({ ...record }, { adapterType: "community" });
+    if (incidentLocation?._lp023?.roadContextAvailable && incidentLocation.displayLocation) {
+      return gridlyProjectAlertIncidentLocation({ ...record,
+        consumerLocation: incidentLocation,
+        canonicalRoadContext: incidentLocation.canonicalRoadContext || incidentLocation._lp023 });
+    }
+  }
   if (hasStructuredAuthority) authorityCandidates.push(Object.freeze({ authority: "structuredIncidentLocation", owner: "flattenedRecord", value: structuredResolved || [structuredRoad, structuredCross].filter(Boolean).join(" and ") }));
 
   // The shared lookup is enrichment only. In particular, do not invoke its
@@ -120658,9 +120669,11 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       const governedFallbackLocation = canonical.locationLabel || pickFirstNonEmptyText([alert?.locationName, alert?.location, alert?.subtitle]) || title;
       const clue = gridlyLP236LocationClue(alert, roadway);
       const communityLocation = source.sourceClass === "community_report" && typeof gridlyResolveCommunityTravelerLocation === "function" ? gridlyResolveCommunityTravelerLocation(alert) : null;
+      const incidentLocation = source.sourceClass === "community_report" && alert?.selectedLocationAuthority === "canonicalRoadContext"
+        ? String(alert?.consumerLocation?.displayLocation || "").trim() : "";
       const weatherLocation = source.sourceClass === "weather" ? `${pickFirstNonEmptyText([alert?.locationLabel, alert?.locality, governedFallbackLocation]) || "Selected"} area` : "";
-      const primaryLocation = weatherLocation || (insideRoadwayGroup ? (clue ? `near ${clue}` : "") : (communityLocation?.value || roadway || governedFallbackLocation));
-      const secondaryLocation = !insideRoadwayGroup && roadway && clue ? `near ${clue}` : "";
+      const primaryLocation = weatherLocation || (insideRoadwayGroup ? (clue ? `near ${clue}` : "") : (incidentLocation || communityLocation?.value || roadway || governedFallbackLocation));
+      const secondaryLocation = !incidentLocation && !insideRoadwayGroup && roadway && clue ? `near ${clue}` : "";
       const condition = projectedTypeLabel || gridlyLP236ConciseCondition(alert, source.sourceClass);
       const conditionIsGroupLabel = source.sourceClass === "weather" && condition.toLocaleLowerCase() === String(groupLabel).toLocaleLowerCase();
       const summarySentence = gridlyLP236SummarySentence(alert, condition);
