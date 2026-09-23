@@ -30054,3 +30054,10 @@ body[data-layout-mode="portrait"] #gridlySearchShell .gridly-search-result-item[
 body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet[data-active-sheet="report"] .gridly-v2-report-ctas .gridly-v2-sheet-copy {
   color: var(--gridly-text-secondary); font-size: .9rem; line-height: 1.45;
 }
+
+/* LP244.48G1: existing KBYG state contains only portrait map utilities. */
+@media (orientation: portrait) {
+  body[data-layout-mode="portrait"] #gridlyPortraitV2[data-gridly-brief-state="expanded"] .gridly-v2-control-rail {
+    display: none !important;
+  }
+}
