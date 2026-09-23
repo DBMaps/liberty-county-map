@@ -29500,6 +29500,7 @@ function isGridlyCrossingPopupInteractionActive() {
 }
 
 function getGridlyCrossingPopupContainmentBounds(mapRef = map) {
+  if (document.body?.dataset?.layoutMode === "portrait" && window.GridlyMapVisibility) return window.GridlyMapVisibility.bounds(mapRef);
   const mapEl = typeof mapRef?.getContainer === "function" ? mapRef.getContainer() : document.getElementById("map");
   const mapRect = mapEl?.getBoundingClientRect?.();
   if (!mapRect) return null;
@@ -53310,6 +53311,8 @@ function initMap() {
     satelliteLabelsLayer.gridlyLabelDiagnostic = labelDiagnostic;
     satelliteLayer.addLayer(satelliteLabelsLayer);
   }
+
+  window.GridlyMapVisibility?.install(map, [standardLayer, satelliteImageryLayer]);
 
   const baseLayers = {
     Standard: standardLayer,

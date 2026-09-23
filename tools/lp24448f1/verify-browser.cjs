@@ -94,7 +94,7 @@ let browser;
       ids: unifiedIncidentLayer.getLayers().map(marker => marker.options.incidentId), location: document.getElementById('mobileAwarenessPanelIssues').textContent,
       pulse: gridlyCommunityPulseAuditState.activeAwareness.activeAwarenessCount, kbyg: gridlyGetGovernedConsumerProjection().surfaces.kbygCommunity.length,
       alerts: getGridlyAlertsSurfaceActiveCommunityReportRows().length,
-      rows: [...document.querySelectorAll('#gridlyPortraitV2Sheet [data-gridly-lp236-condition-id]')].map(row => ({ id: row.dataset.gridlyLp236ConditionId, location: row.dataset.gridlyAlertLocation, time: row.querySelector('.gridly-lp236-condition-time')?.textContent })),
+      rows: document.getElementById('gridlyPortraitV2Sheet').hidden ? [] : [...document.querySelectorAll('#gridlyPortraitV2Sheet [data-gridly-lp236-condition-id]')].map(row => ({ id: row.dataset.gridlyLp236ConditionId, location: row.dataset.gridlyAlertLocation, time: row.querySelector('.gridly-lp236-condition-time')?.textContent })),
       snapshotAges: getAlertsSurfaceSnapshot().alerts.map(row => ({ id: row.id, type: row.type, submittedAt: row.submittedAt, label: row.minutesText,
         popup: formatGridlyHazardPopupFreshnessLine(row) })), undefinedm: document.body.innerText.includes('undefinedm') }));
     for (const key of ['hazards', 'markers', 'pulse', 'kbyg', 'alerts']) assert.equal(state[key], 3, key);

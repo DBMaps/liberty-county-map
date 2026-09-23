@@ -29834,3 +29834,110 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
 #gridlySearchAroundMeBtn {
   min-height: 44px;
 }
+/* LP244.48F2 — pair only audited surface colors with the existing theme owner.
+   Geometry, density, typography and marker presentation remain unchanged. */
+body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet[data-active-sheet="alerts"] .gridly-lp236-condition-item {
+  background: var(--gridly-nested) !important;
+  color: var(--gridly-text-primary) !important;
+  border-color: var(--gridly-border-neutral) !important;
+}
+body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet[data-active-sheet="alerts"] .gridly-lp236-header {
+  background: var(--gridly-nested) !important;
+  color: var(--gridly-text-primary) !important;
+  border-color: var(--gridly-border-neutral) !important;
+}
+body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet[data-active-sheet="alerts"] .gridly-lp236-alerts :is(.gridly-lp236-source, .gridly-lp236-group, .gridly-lp236-source-status) {
+  background: var(--gridly-elevated);
+  color: var(--gridly-text-primary);
+  border-color: var(--gridly-border-neutral);
+}
+body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet[data-active-sheet="alerts"] .gridly-lp236-alerts :is(strong, .gridly-lp236-condition-title) {
+  color: var(--gridly-text-primary) !important;
+  opacity: 1;
+}
+body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet[data-active-sheet="alerts"] .gridly-lp236-alerts :is(small, .gridly-lp236-condition-location, .gridly-lp236-condition-summary, .gridly-lp236-condition-time) {
+  color: var(--gridly-text-secondary) !important;
+  opacity: 1;
+}
+body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet[data-active-sheet="alerts"] .gridly-lp236-show-me {
+  background: var(--gridly-input-bg);
+  color: var(--gridly-text-primary);
+  border-color: var(--gridly-border-neutral);
+}
+#gridlyPortraitV2 #gridlyBriefInteractionPanel .gridly-travel-brief-lines p {
+  color: var(--gridly-text-primary) !important;
+}
+#gridlyPortraitV2Sheet[data-active-sheet="history"] .gridly-historical-intelligence-empty {
+  background: var(--gridly-nested) !important;
+  color: var(--gridly-text-primary) !important;
+  border-color: var(--gridly-border-neutral) !important;
+}
+#gridlyPortraitV2Sheet[data-active-sheet="history"] .gridly-historical-intelligence-empty strong {
+  color: var(--gridly-text-primary) !important;
+}
+#gridlyPortraitV2Sheet[data-active-sheet="history"] :is(.gridly-historical-intelligence-empty p, .gridly-historical-intelligence-subject) {
+  color: var(--gridly-text-secondary) !important;
+}
+body[data-layout-mode="portrait"] #gridlySearchShell :is(.gridly-search-close-btn, .gridly-search-clear-btn, #gridlySearchAroundMeBtn, #gridlyDestinationChangeBtn) {
+  background: var(--gridly-input-bg) !important;
+  color: var(--gridly-text-primary) !important;
+  border-color: var(--gridly-border-neutral) !important;
+}
+body[data-layout-mode="portrait"] #gridlyMobileRouteQuickPanel,
+body[data-layout-mode="portrait"] #gridlyMobileRouteQuickPanel .route-quick-head {
+  background: var(--gridly-elevated) !important;
+  color: var(--gridly-text-primary) !important;
+  border-color: var(--gridly-border-neutral) !important;
+}
+body[data-layout-mode="portrait"] #gridlyMobileRouteQuickPanel :is(label, .route-quick-field, #mobileRouteQuickMeta) {
+  color: var(--gridly-text-secondary) !important;
+}
+body[data-layout-mode="portrait"] #gridlyMobileRouteQuickPanel :is(select, button) {
+  background: var(--gridly-input-bg) !important;
+  color: var(--gridly-text-primary) !important;
+  border-color: var(--gridly-border-neutral) !important;
+}
+body[data-layout-mode="portrait"] #gridlyMobileRouteQuickPanel [data-action="start-route-watch-quick"] {
+  background: var(--gridly-accent) !important;
+  color: var(--gridly-accent-foreground) !important;
+}
+body[data-layout-mode="portrait"] #routeSetupModal .route-setup-modal-card,
+body[data-layout-mode="portrait"] #routeSetupModal :is(.route-setup-group, .manage-places-group, #managePlacesSourceGroup, #managePlacesAddressGroup, #managePlacesSavedGroup) {
+  background: var(--gridly-elevated) !important;
+  color: var(--gridly-text-primary) !important;
+  border-color: var(--gridly-border-neutral) !important;
+}
+body[data-layout-mode="portrait"] #routeSetupModal :is(h2, h3, strong, label) {
+  color: var(--gridly-text-primary) !important;
+}
+body[data-layout-mode="portrait"] #routeSetupModal :is(p, small, .eyebrow, .route-setup-hint, .route-setup-subtitle) {
+  color: var(--gridly-text-secondary) !important;
+}
+body[data-layout-mode="portrait"] #routeSetupModal :is(button, input, select) {
+  background: var(--gridly-input-bg) !important;
+  color: var(--gridly-text-primary) !important;
+  border-color: var(--gridly-border-neutral) !important;
+}
+body[data-layout-mode="portrait"] :is(#gridlySearchShell, #gridlyMobileRouteQuickPanel, #gridlyPortraitV2Sheet, #gridlyBriefInteractionPanel, #routeSetupModal) :is(button, summary, input, select, a):focus-visible {
+  outline: 3px solid var(--gridly-accent) !important;
+  outline-offset: -3px;
+}
+#gridlyMapBackgroundStatus {
+  position: absolute;
+  z-index: 650;
+  box-sizing: border-box;
+  padding: 5px 9px;
+  border: 1px solid var(--gridly-border-neutral);
+  border-radius: 8px;
+  background: var(--gridly-elevated);
+  color: var(--gridly-text-secondary);
+  font-size: 12px;
+  line-height: 1.35;
+  pointer-events: none;
+}
+body[data-layout-mode="portrait"] #map .leaflet-popup[style*="--gridly-popup-content-width"] .leaflet-popup-content {
+  min-width: 0 !important;
+  max-width: var(--gridly-popup-content-width) !important;
+  max-height: var(--gridly-popup-content-height) !important;
+  overflow: auto;
+}
