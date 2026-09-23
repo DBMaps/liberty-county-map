@@ -75,7 +75,7 @@ let browser;
     await page.locator('#gridlySettingsDockButton').click();
     await page.getByText('Travel', { exact: true }).click();
     const management = await page.locator('#gridlyPortraitV2Sheet').innerText();
-    assert.match(management, /HOME/); assert.match(management, /WORK/);
+    assert.match(management, /\bHome\b/i); assert.match(management, /\bWork\b/i);
     evidence.profiles.push({ name, ...state, search: true, management: true });
     await context.close();
   }
@@ -139,7 +139,7 @@ let browser;
   evidence.manualClosePreserved = true;
   await community.locator(':scope > summary').click();
   const firstGroup = community.locator('.gridly-lp236-group').first();
-  if (!await firstGroup.evaluate(e => e.open)) await firstGroup.locator(':scope > summary').click();
+  if (await firstGroup.evaluate(e => e.matches('details') && !e.open)) await firstGroup.locator(':scope > summary').click();
   await firstGroup.locator('[data-gridly-show-on-map]').first().click();
   await page.waitForFunction(() => window.__gridlyLp019AlertFocusDebug?.mapMovementDispatched === true);
   evidence.showMe = await page.evaluate(() => ({ focused: window.__gridlyLp019AlertFocusDebug.mapMovementDispatched, sheet: document.getElementById('gridlyPortraitV2Sheet').dataset.sheetState }));

@@ -634,3 +634,26 @@ test('LP236.16 audit certifies rendered-action resolver parity and bounded looku
   assert.match(handler, /recordLookupSucceeded: Boolean\(record\)/);
   assert.doesNotMatch(handler, /fetch\(|geocode|Dallas/);
 });
+
+
+test('LP244.48G singleton community cards retain identity without a second disclosure', () => {
+  const rows = [{id:'flood-g',sourceClass:'community_report',type:'flooding',category:'Flooding',latitude:30.04,longitude:-94.88}];
+  const rendered = sandbox.renderLP236({activeConditionAuthorityAvailable:true},rows);
+  assert.match(rendered,/gridly-lp24448g-single-condition/);
+  assert.doesNotMatch(rendered,/<details class="gridly-lp236-group"/);
+  assert.equal((rendered.match(/data-gridly-lp236-condition-id=/g)||[]).length,1);
+  assert.match(rendered,/data-gridly-disclosure-key="community_report"/);
+  assert.match(rendered,/Show me/);
+  const grouped = sandbox.renderLP236({activeConditionAuthorityAvailable:true},[...rows,{...rows[0],id:'flood-g-2'}]);
+  assert.match(grouped,/<details class="gridly-lp236-group"/);
+  assert.equal((grouped.match(/data-gridly-lp236-condition-id=/g)||[]).length,2);
+});
+
+test('LP244.48G active-source ordering leaves model authority and unavailable evidence intact', () => {
+  const rows=[{id:'community-g',sourceClass:'community_report',type:'debris',category:'Debris',latitude:30.04,longitude:-94.88}];
+  const model=build(rows), rendered=sandbox.renderLP236({activeConditionAuthorityAvailable:true},rows);
+  assert.equal(model.total,1);
+  assert.equal(model.sections[0].sourceClass,'official_roadway');
+  assert.ok(rendered.indexOf('data-gridly-lp236-source="community_report"') < rendered.indexOf('data-gridly-lp236-source="official_roadway"'));
+  assert.match(rendered,/data-gridly-lp236-source="weather"/);
+});

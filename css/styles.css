@@ -29941,3 +29941,116 @@ body[data-layout-mode="portrait"] #map .leaflet-popup[style*="--gridly-popup-con
   max-height: var(--gridly-popup-content-height) !important;
   overflow: auto;
 }
+
+/* LP244.48G — portrait presentation polish; existing hit boxes and owners remain. */
+body[data-layout-mode="portrait"] #map .leaflet-marker-icon.gridly-crossing-production-marker-icon .gridly-crossing-marker.has-production-marker[data-marker-category="crossing_infrastructure"] .gridly-production-marker-img {
+  opacity: .58 !important;
+  transform: scale(.78) !important;
+  filter: saturate(.6) !important;
+}
+body[data-layout-mode="portrait"] #map .leaflet-marker-icon.gridly-crossing-production-marker-icon:focus-visible {
+  outline: 3px solid var(--gridly-accent) !important;
+  outline-offset: 2px;
+}
+body[data-layout-mode="portrait"] #map .leaflet-marker-icon.gridly-crossing-production-marker-icon:is(:focus-visible, [data-gridly-selected="true"]) .gridly-crossing-marker[data-marker-category="crossing_infrastructure"] .gridly-production-marker-img {
+  opacity: .9 !important;
+}
+body[data-layout-mode="portrait"] #map .gridly-production-marker-icon .gridly-hazard-marker.has-production-marker .gridly-production-marker-img {
+  filter: contrast(1.12) saturate(1.06) !important;
+}
+body[data-layout-mode="portrait"] #map .gridly-navigation-marker-img[src$="/current-location.png"] {
+  filter: drop-shadow(0 0 2px #fff) drop-shadow(0 0 3px #075d9b);
+}
+body[data-layout-mode="portrait"] #gridlySearchShell .gridly-search-result-item[data-saved-place-role] {
+  display: grid; grid-template-columns: minmax(0, 1fr); gap: 2px;
+  min-height: 56px; padding: 10px 12px !important;
+  border-radius: 0 !important; box-shadow: none !important;
+  border-bottom: 1px solid var(--gridly-border-neutral);
+}
+body[data-layout-mode="portrait"] #gridlySearchShell .gridly-search-result-item[data-saved-place-role] .gridly-search-result-type {
+  grid-row: 1; font-size: .8rem; font-weight: 650; color: var(--gridly-text-secondary);
+}
+body[data-layout-mode="portrait"] #gridlySearchShell .gridly-search-result-item[data-saved-place-role] .gridly-search-result-title {
+  font-size: 1rem; line-height: 1.3; font-weight: 700; overflow-wrap: anywhere;
+}
+body[data-layout-mode="portrait"] #gridlySearchShell .gridly-search-section-title {
+  color: var(--gridly-text-secondary); text-transform: none; letter-spacing: 0; font-size: .875rem; font-weight: 650;
+}
+body[data-layout-mode="portrait"] #gridlySearchShell .gridly-search-results-list { gap: 0; }
+body[data-layout-mode="portrait"] #gridlyBriefInteractionPanel .gridly-travel-brief-header,
+body[data-layout-mode="portrait"] #gridlyBriefInteractionPanel [data-gridly-travel-brief-section="driver-decision"] > h4,
+body[data-layout-mode="portrait"] #gridlyBriefInteractionPanel [data-gridly-travel-brief-section="community"] > :is(h4, .gridly-travel-brief-source) {
+  display: none !important;
+}
+body[data-layout-mode="portrait"] #gridlyBriefInteractionPanel .gridly-travel-brief-list { margin-top: 0; }
+body[data-layout-mode="portrait"] #gridlyBriefInteractionPanel .gridly-travel-brief-item {
+  grid-template-columns: minmax(0, 1fr); grid-template-areas: "title" "source" "lines";
+  padding: 8px 10px; row-gap: 3px;
+}
+body[data-layout-mode="portrait"] #gridlyBriefInteractionPanel [data-gridly-decision-role="interpretation"] {
+  font-size: 1rem !important; line-height: 1.35 !important; font-weight: 700 !important;
+}
+body[data-layout-mode="portrait"] #gridlyBriefInteractionPanel .gridly-travel-brief-item h4 {
+  text-transform: none; letter-spacing: 0; font-size: .875rem;
+}
+body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet[data-active-sheet="alerts"] .gridly-lp236-groups {
+  padding: 0 8px 8px; gap: 8px;
+}
+body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet[data-active-sheet="alerts"] .gridly-lp236-condition-item {
+  padding: 10px !important; border-radius: 12px !important; box-shadow: none !important; gap: 8px !important;
+}
+body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet[data-active-sheet="alerts"] :is(.gridly-lp236-source > summary > span, .gridly-lp236-source-status strong) {
+  text-transform: none; letter-spacing: 0; font-size: 1rem; font-weight: 700;
+}
+body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet[data-active-sheet="alerts"] .gridly-lp236-source-status {
+  padding: 8px 10px; border-radius: 10px;
+}
+body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet[data-active-sheet="alerts"] .gridly-lp236-source-status small {
+  font-size: .8rem; line-height: 1.35;
+}
+body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet[data-active-sheet="alerts"] .gridly-lp236-show-me {
+  background: var(--gridly-accent) !important; color: var(--gridly-accent-foreground) !important;
+  font-size: .875rem; min-height: 44px; box-shadow: none;
+}
+body[data-layout-mode="portrait"] :is(#gridlyPortraitV2SheetClose, #gridlySearchCloseBtn, #closeRouteSetupModalBtn, #gridlyMobileRouteQuickPanel .gridly-surface-close, #gridlyMobileHazardPanel .gridly-surface-close) {
+  width: 44px !important; height: 44px !important; min-width: 44px; min-height: 44px;
+  display: grid; place-items: center; padding: 0 !important; border-radius: 12px !important;
+  background: var(--gridly-input-bg) !important; color: var(--gridly-text-primary) !important;
+  border: 1px solid var(--gridly-border-neutral) !important; box-shadow: none !important;
+  font-size: 1.375rem; line-height: 1; font-weight: 600;
+}
+body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet .gridly-ugc-link {
+  display: inline; padding: 2px; min-height: 0; border: 0; border-radius: 3px;
+  font: inherit; font-weight: 650; color: var(--gridly-accent); background: transparent;
+  text-decoration: underline; text-underline-offset: 3px; cursor: pointer;
+}
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments button {
+  min-height: 40px; padding-block: 7px;
+}
+body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet[data-active-sheet="settings"] :is(.settings-place-label, .settings-section-title),
+body[data-layout-mode="portrait"] #routeSetupModal .manage-place-status-label {
+  text-transform: none; letter-spacing: 0; font-size: .875rem;
+}
+body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet[data-active-sheet="settings"] .settings-place-card {
+  padding: 12px; gap: 6px; box-shadow: none;
+}
+body[data-layout-mode="portrait"] #gridlyMobileRouteQuickPanel :is(.route-quick-head, .route-quick-field) {
+  letter-spacing: 0; text-transform: none;
+}
+
+body[data-layout-mode="portrait"] #gridlyBriefInteractionPanel[data-gridly-brief-expanded="true"] {
+  max-height: min(250px, 36vh) !important; overflow-y: auto !important; padding: 10px 12px !important;
+}
+body[data-layout-mode="portrait"] #gridlyBriefInteractionPanel :is([data-gridly-travel-brief-section="drivetexas"], [data-gridly-travel-brief-section="weather"]) > .gridly-travel-brief-source { display: none; }
+body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments { padding-block: 3px !important; }
+body[data-layout-mode="portrait"] #map .leaflet-marker-icon.gridly-crossing-production-marker-icon .gridly-crossing-marker[data-marker-category="crossing_infrastructure"][data-gridly-selected="true"] .gridly-production-marker-img { opacity: .9 !important; }
+
+/* One scroll owner for the compact brief; retain access to all evidence. */
+body[data-layout-mode="portrait"] #gridlyBriefInteractionPanel .gridly-brief-flow { max-height: none !important; overflow: visible !important; }
+
+body[data-layout-mode="portrait"] #gridlySearchShell .gridly-search-result-item[data-saved-place-role] .gridly-search-result-title {
+  display: block; -webkit-line-clamp: unset; max-height: none; overflow: visible; white-space: normal;
+}
+body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet[data-active-sheet="report"] .gridly-v2-report-ctas .gridly-v2-sheet-copy {
+  color: var(--gridly-text-secondary); font-size: .9rem; line-height: 1.45;
+}

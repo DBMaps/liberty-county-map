@@ -39299,7 +39299,7 @@ function ensureTacticalDockSheet() {
   sheet.id = "gridlyTacticalDockSheet";
   sheet.className = "gridly-tactical-dock-sheet";
   sheet.hidden = true;
-  sheet.innerHTML = `<div class="gridly-tactical-dock-sheet-head"><strong id="gridlyTacticalDockSheetTitle"></strong><button type="button" id="gridlyTacticalDockSheetClose" aria-label="Close tactical panel">X</button></div><div id="gridlyTacticalDockSheetBody" class="gridly-tactical-dock-sheet-body"></div>`;
+  sheet.innerHTML = `<div class="gridly-tactical-dock-sheet-head"><strong id="gridlyTacticalDockSheetTitle"></strong><button type="button" id="gridlyTacticalDockSheetClose" aria-label="Close tactical panel">×</button></div><div id="gridlyTacticalDockSheetBody" class="gridly-tactical-dock-sheet-body"></div>`;
   document.body.appendChild(sheet);
   sheet.querySelector("#gridlyTacticalDockSheetClose")?.addEventListener("click", () => closeTacticalDockSheet());
   return sheet;
@@ -41271,6 +41271,8 @@ function renderGridlySearchResults(results = [], options = {}) {
     itemBtn.dataset.lp101Case = lp101CaseName;
 
     const display = buildGridlySearchDisplayLines(result);
+    const savedRole = result?.provider === "saved_place" || result?.raw?.savedPlace ? String(result.savedPlaceType || result.raw?.savedPlaceType || "favorite") : "";
+    if (savedRole) itemBtn.dataset.savedPlaceRole = savedRole;
     const locationContext = buildGridlyLocationContext(result);
     const label = document.createElement("span");
     label.className = "gridly-search-result-title";
@@ -41293,7 +41295,7 @@ function renderGridlySearchResults(results = [], options = {}) {
       lng: Number.isFinite(result?.lng) ? Number(result.lng.toFixed(6)) : null,
       selectable: Boolean(Number.isFinite(result?.lat) && Number.isFinite(result?.lng))
     });
-    if (secondaryLine) {
+    if (secondaryLine && !savedRole) {
       const meta = document.createElement("span");
       meta.className = "gridly-search-result-meta";
       meta.textContent = secondaryLine;
@@ -41302,7 +41304,7 @@ function renderGridlySearchResults(results = [], options = {}) {
     const classification = classifyGridlyLp097Result(result, activeQuery ? buildGridlyLp097AddressModel(activeQuery) : null);
     const typeLabel = document.createElement("span");
     typeLabel.className = "gridly-search-result-type";
-    typeLabel.textContent = classification.consumerType;
+    typeLabel.textContent = savedRole ? ({home: "Home", work: "Work", favorite: "Favorite"}[savedRole] || "Favorite") : classification.consumerType;
     itemBtn.appendChild(typeLabel);
 
     itemBtn.addEventListener("click", () => {
@@ -55132,7 +55134,7 @@ function renderUserLocationDot() {
     interactive: false,
     keyboard: false,
     bubblingMouseEvents: false,
-    zIndexOffset: 8,
+    zIndexOffset: 80,
     icon: getGridlyNavigationMarkerIcon("current_location")
   });
   userMarker.options.gridlyLayerType = "user_location_layer";
@@ -72487,12 +72489,12 @@ function gridlyBuildHistoricalIntelligenceSheetHtmlWithBuilderMemo(options = {})
     const subjectResolution = gridlyLp0552ResolveConsumerSubjectLabel({ ...(visiblePattern.pattern || {}), lp0545Context: visiblePattern.lp0545Context }, options);
     const subjectLabel = subjectResolution.label;
     const awarenessSnapshot = gridlyLp0552CurrentAwarenessIdentitySnapshot(options);
-    return `<div class="gridly-historical-intelligence-sheet" data-gridly-historical-intelligence-sheet="true" data-lp0543-insufficient-history="true" data-gridly-history-primary-takeaway="true" data-gridly-history-context-subject="${sanitizeText(subjectLabel)}" data-gridly-history-render-awareness-identity="${sanitizeText(awarenessSnapshot.identity)}" data-gridly-history-render-awareness-subject="${sanitizeText(awarenessSnapshot.subjectLabel)}" data-gridly-history-subject-label-source="${sanitizeText(subjectResolution.source)}" data-gridly-history-subject-fallback-used="${subjectResolution.fallbackUsed ? "true" : "false"}" data-gridly-history-subject-fallback-reason="${sanitizeText(subjectResolution.fallbackReason || "none")}" data-gridly-history-present-moment-relationship="insufficient_history" data-gridly-history-present-moment-comparison-reason="insufficient_history"><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subtitle">Local knowledge from cleared community reports for what to know before you go.</p><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subject" data-gridly-history-consumer-subject="true">${sanitizeText(subjectLabel)}</p><div class="gridly-historical-intelligence-empty"><strong data-gridly-history-context-heading="true">Most useful historical takeaway</strong><p data-gridly-history-primary-takeaway-line="true">Not enough historical community reports are available to identify a meaningful local pattern yet.</p><p class="gridly-historical-intelligence-context-note" data-gridly-history-disclaimer="true">Historical context only. Current conditions may differ.</p></div></div>`;
+    return `<div class="gridly-historical-intelligence-sheet" data-gridly-historical-intelligence-sheet="true" data-lp0543-insufficient-history="true" data-gridly-history-primary-takeaway="true" data-gridly-history-context-subject="${sanitizeText(subjectLabel)}" data-gridly-history-render-awareness-identity="${sanitizeText(awarenessSnapshot.identity)}" data-gridly-history-render-awareness-subject="${sanitizeText(awarenessSnapshot.subjectLabel)}" data-gridly-history-subject-label-source="${sanitizeText(subjectResolution.source)}" data-gridly-history-subject-fallback-used="${subjectResolution.fallbackUsed ? "true" : "false"}" data-gridly-history-subject-fallback-reason="${sanitizeText(subjectResolution.fallbackReason || "none")}" data-gridly-history-present-moment-relationship="insufficient_history" data-gridly-history-present-moment-comparison-reason="insufficient_history"><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subtitle">Local knowledge from cleared community reports for what to know before you go.</p><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subject" data-gridly-history-consumer-subject="true">${sanitizeText(subjectLabel)}</p><div class="gridly-historical-intelligence-empty"><strong data-gridly-history-context-heading="true">Not enough local history yet</strong><p data-gridly-history-primary-takeaway-line="true">Not enough historical community reports are available to identify a meaningful local pattern yet.</p><p class="gridly-historical-intelligence-context-note" data-gridly-history-disclaimer="true">Historical context only. Current conditions may differ.</p></div></div>`;
   }
   const state = buildGridlyIntelligencePreviewCardModel(options);
   const rankedFindings = Array.isArray(state.dedupedRankedFindings) ? state.dedupedRankedFindings : (Array.isArray(state.rankedFindings) ? state.rankedFindings : []);
   if (!rankedFindings.length) {
-    return `<div class="gridly-historical-intelligence-sheet" data-gridly-historical-intelligence-sheet="true" data-gridly-history-primary-takeaway="true"><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subtitle">Local knowledge from cleared community reports for what to know before you go.</p><div class="gridly-historical-intelligence-empty"><strong data-gridly-history-context-heading="true">Most useful historical takeaway</strong><p data-gridly-history-primary-takeaway-line="true">Not enough historical community reports are available to identify a meaningful local pattern yet.</p><p class="gridly-historical-intelligence-context-note" data-gridly-history-disclaimer="true">Historical context only. Current conditions may differ.</p></div></div>`;
+    return `<div class="gridly-historical-intelligence-sheet" data-gridly-historical-intelligence-sheet="true" data-gridly-history-primary-takeaway="true"><p class="gridly-v2-sheet-copy gridly-historical-intelligence-subtitle">Local knowledge from cleared community reports for what to know before you go.</p><div class="gridly-historical-intelligence-empty"><strong data-gridly-history-context-heading="true">Not enough local history yet</strong><p data-gridly-history-primary-takeaway-line="true">Not enough historical community reports are available to identify a meaningful local pattern yet.</p><p class="gridly-historical-intelligence-context-note" data-gridly-history-disclaimer="true">Historical context only. Current conditions may differ.</p></div></div>`;
   }
   const primaryFinding = rankedFindings[0] || {};
   const primarySubject = sanitizeText(gridlyHistoricalIntelligenceRowLocationTitle(primaryFinding) || primaryFinding.locationLabel || 'Selected area');
@@ -87042,7 +87044,7 @@ counter.textContent = "Road conditions appear calm";
   panel.innerHTML = `
     <div class="hazard-panel-header">
       <strong>What are you seeing?</strong>
-      <button type="button" class="gridly-surface-close gridly-v2-close-btn" data-action="close-hazard-panel" aria-label="Close road hazard panel">X</button>
+      <button type="button" class="gridly-surface-close gridly-v2-close-btn" data-action="close-hazard-panel" aria-label="Close road hazard panel">×</button>
     </div>
     <p>Choose the closest match. You can place it next.</p>
     <div class="hazard-choice-grid">
@@ -87182,8 +87184,8 @@ function injectMobileQuickActionOverlays() {
   panel.className = "gridly-mobile-route-quick-panel";
   panel.innerHTML = `
     <div class="route-quick-head">
-      <strong>Route Quick Panel</strong>
-      <button type="button" class="gridly-surface-close gridly-v2-close-btn" data-action="close-route-quick" aria-label="Close route quick panel">X</button>
+      <strong>Route Watch</strong>
+      <button type="button" class="gridly-surface-close gridly-v2-close-btn" data-action="close-route-quick" aria-label="Close route quick panel">×</button>
     </div>
     <label class="route-quick-field">Start
       <select id="mobileRouteQuickStart"></select>
@@ -120730,7 +120732,9 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         const roadwayOpen = gridlyLP236AlertsState.disclosure.initialized && gridlyLP236AlertsState.disclosure.roadwayGroupKeys.has(roadwayKey);
         return `<details class="gridly-lp236-roadway-group" data-gridly-disclosure-key="${sanitizeText(roadwayKey)}" data-gridly-lp236-roadway="${sanitizeText(roadwayGroup.roadway)}"${roadwayOpen ? " open" : ""}><summary aria-label="${sanitizeText(roadwayGroup.roadway)}, ${roadwayGroup.rows.length} conditions"><span>${sanitizeText(roadwayGroup.roadway)}</span><strong>${roadwayGroup.rows.length} conditions</strong></summary><div class="gridly-lp236-roadway-rows">${roadwayGroup.rows.map((row) => renderRow(row, source, true)).join("")}</div></details>`;
       }).join("");
-      const directHtml = group.directRows.map((row) => renderRow(row, source, false, group.label)).join("");
+      const singleCommunity = source.sourceClass === "community_report" && group.rows.length === 1 && group.roadwayGroups.length === 0;
+      const directHtml = group.directRows.map((row) => renderRow(row, source, false, singleCommunity ? "" : group.label)).join("");
+      if (singleCommunity) return `<div class="gridly-lp236-group gridly-lp24448g-single-condition" data-gridly-lp236-group="${sanitizeText(group.conditionType)}">${directHtml}</div>`;
       return `<details class="gridly-lp236-group" data-gridly-disclosure-key="${sanitizeText(typeKey)}" data-gridly-lp236-group="${sanitizeText(group.conditionType)}"${open ? " open" : ""}><summary aria-label="${sanitizeText(group.label)}, ${group.rows.length} active condition${group.rows.length === 1 ? "" : "s"}"><span${source.sourceClass === "weather" ? " data-gridly-weather-group-label=\"true\"" : ""}>${sanitizeText(group.label)}</span><strong aria-label="${group.rows.length} active condition${group.rows.length === 1 ? "" : "s"}">${group.rows.length}</strong></summary><div class="gridly-lp236-rows">${roadwayHtml}${directHtml}</div></details>`;
     };
     const renderOfficialRoadways = (source) => {
@@ -120746,7 +120750,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       const timing = pickFirstNonEmptyText([alert?.timeframe, alert?.expires, alert?.endsAt, alert?.updatedAt]);
       return `<aside class="gridly-lp236-critical" role="status"><strong>⚠ ${sanitizeText(title)}</strong>${timing ? `<span>${sanitizeText(timing)}</span>` : ""}<span>High-priority weather information</span></aside>`;
     }).join("");
-    const sectionsHtml = model.sections.map((source) => {
+    const sectionsHtml = [...model.sections].sort((a, b) => Number(b.activeConditionCount > 0) - Number(a.activeConditionCount > 0)).map((source) => {
       const sourceKey = source.sourceClass;
       if (source.authorityState !== "ACTIVE" && !gridlyLP236RetainCommunityRowsDuringLoading(source)) {
         const quiet = source.authorityState === "QUIET";
