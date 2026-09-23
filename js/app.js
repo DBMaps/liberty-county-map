@@ -56479,6 +56479,11 @@ function refreshReportHazardViews(source = "unspecified", options = {}) {
     // cached quiet/coverage model to become the final visible writer.
     timeRefreshChild("refreshGridlyCommunityPulseSharedModel", () => refreshGridlyCommunityPulseSharedModel({ reason: source, topAwarenessMicrolineReadOnly: true }));
     timeRefreshChild("refreshPortraitV2LocalizedIntelligence", () => refreshPortraitV2LocalizedIntelligence());
+    // The compact Location Context card has its own DOM writer. Keep it in the
+    // same active-report refresh as the governed count model.
+    if (typeof syncMobileDestinationCommandCard === "function") {
+      timeRefreshChild("syncMobileDestinationCommandCard", () => syncMobileDestinationCommandCard());
+    }
     if (options.skipIncidentRender !== true) {
       gridlyRefreshAuditState.renderCounts.renderUnifiedIncidents += 1;
       timeRefreshChild("renderUnifiedIncidents", () => renderUnifiedIncidents());
@@ -62807,7 +62812,13 @@ function resolveGridlyCommunityPresenceSources(options = {}) {
       if (!normalized) { addSkipped("normalize_failed"); return; }
       if (!getGridlyIncidentCoordinate(normalized)) { addSkipped("missing_coordinates"); return; }
       if (!isGridlyCommunityPresenceActiveCandidate(normalized)) { addSkipped("inactive_or_cleared"); return; }
-      const key = getGridlyCommunityIncidentId(normalized);
+      // Unified road incidents, raw hazard reports, and their rendered DOM
+      // markers describe the same tight type/location condition.
+      const roadSource = source.name === "rendered_marker_dom" ? null : (normalized.raw?.raw || normalized.raw);
+      const groupedRoadId = String(normalized.id || "").startsWith("road-") ? String(normalized.id) : "";
+      const key = groupedRoadId || (roadSource?.reportKind === "hazard"
+        ? `road-${getHazardClusterKey(roadSource)}`
+        : getGridlyCommunityIncidentId(normalized));
       if (seen.has(key)) { addSkipped("duplicate"); return; }
       seen.add(key);
       candidateSourceCounts[source.name] += 1;
@@ -77843,7 +77854,10 @@ function renderUnifiedIncidents(reason = "auto") {
   const primaryKeys = new Set(primaryIncidents.map((incident) => String(incident?.reportId || incident?.report_id || incident?.id || "")));
   const genericHazardsMissingFromPrimary = activeFallbackHazards.filter((hazard) => {
     const id = String(hazard?.reportId || hazard?.report_id || hazard?.id || "");
-    return !id || !primaryKeys.has(id);
+    // A grouped road incident owns each active report in its tight type/location
+    // cluster. Its incident ID differs from the raw report ID.
+    const groupedId = `road-${getHazardClusterKey(hazard)}`;
+    return !id || (!primaryKeys.has(id) && !primaryKeys.has(groupedId));
   });
   const incidents = [...primaryIncidents, ...genericHazardsMissingFromPrimary];
   const reportIdentity = (record) => String(record?.reportId || record?.report_id || record?.id || "");

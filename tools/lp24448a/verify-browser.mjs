@@ -74,6 +74,12 @@ const state = () => page.evaluate(() => ({
   activeReports: activeReports.filter((item) => item.gridlyLocalTestOnly).map((item) => item.id),
   canonicalHazards: gridlyGetCanonicalActiveCommunityState().activeRoadHazardRecords.filter((item) => item.gridlyLocalTestOnly).map((item) => item.id),
   markerCount: unifiedIncidentLayer?.getLayers?.().length || 0,
+  markerIds: unifiedIncidentLayer?.getLayers?.().map((layer) => layer?.options?.incidentId).filter(Boolean) || [],
+  alertsActiveCount: getGridlyAlertsSurfaceActiveCommunityReportRows().length,
+  kbygCommunityCount: gridlyGetGovernedConsumerProjection()?.surfaces?.kbygCommunity?.length || 0,
+  communityPulseActiveCount: gridlyCommunityPulseAuditState?.activeAwareness?.activeAwarenessCount || 0,
+  communityPulseSelectedCount: gridlyCommunityPulseAuditState?.selectedCommunityCount || 0,
+  locationIssueLine: document.getElementById('mobileAwarenessPanelIssues')?.textContent || '',
   markerAssets: unifiedIncidentLayer?.getLayers?.().map((layer) => String(layer?.options?.icon?.options?.iconUrl || layer?.options?.icon?.options?.html || '').match(/assets\/markers\/approved\/[^"'\s]+\.png/)?.[0]).filter(Boolean) || [],
   alerts: document.getElementById('alertsList')?.innerText || '',
   kbyg: gridlyBriefInteractionBuildModel()?.location || ''
@@ -108,6 +114,12 @@ try {
   assert.ok(snapshot.canonicalHazards.includes(first.id));
   assert.ok(snapshot.incidentIds.some((id) => id.startsWith('road-')));
   assert.ok(snapshot.markerCount > 0);
+  assert.equal(snapshot.markerCount, 1, 'One road condition must own one map marker');
+  assert.equal(snapshot.alertsActiveCount, 1);
+  assert.equal(snapshot.kbygCommunityCount, 1);
+  assert.equal(snapshot.communityPulseActiveCount, 1);
+  assert.equal(snapshot.communityPulseSelectedCount, 1);
+  assert.match(snapshot.locationIssueLine, /1 roadway issue nearby/);
   assert.ok(snapshot.markerAssets.some((asset) => String(asset).includes('08-flooding-high-water.png')));
   assert.ok(!snapshot.alerts.includes(first.id), 'Synthetic report ID leaked into consumer Alerts');
   const popup = await page.evaluate((id) => {
@@ -125,6 +137,13 @@ try {
   });
   snapshot = await state();
   assert.equal(snapshot.activeHazards.length, 3);
+  assert.equal(snapshot.markerCount, 3, 'Three distinct road conditions must own three map markers');
+  assert.equal(new Set(snapshot.markerIds).size, 3, 'Each map marker needs a distinct incident owner');
+  assert.equal(snapshot.alertsActiveCount, 3);
+  assert.equal(snapshot.kbygCommunityCount, 3);
+  assert.equal(snapshot.communityPulseActiveCount, 3);
+  assert.equal(snapshot.communityPulseSelectedCount, 3);
+  assert.match(snapshot.locationIssueLine, /3 roadway issues nearby/);
   assert.ok(!snapshot.alerts.includes('gridly-test-lp24448a-'));
   const historicalIsolation = await page.evaluate(() => ({
     sourcesContainFixture: JSON.stringify(gridlyHistoricalProjectionCurrentSources()).includes('gridly-test-lp24448a-'),
@@ -156,6 +175,11 @@ try {
   const cleared = await actOnPopup(first.id, 'cleared');
   assert.equal(cleared.state, 'cleared');
   assert.ok(!(await state()).activeHazards.includes(first.id));
+  assert.equal((await state()).markerCount, 2, 'Clearing one condition must remove exactly one marker');
+  assert.equal((await state()).alertsActiveCount, 2);
+  assert.equal((await state()).communityPulseActiveCount, 2);
+  assert.equal((await state()).communityPulseSelectedCount, 2);
+  assert.match((await state()).locationIssueLine, /2 roadway issues nearby/);
   evidence.scenarios.push({ name: 'Confirm and clear', confirmed, cleared, snapshot: await state() });
 
   await page.waitForFunction(() => crossings.length > 0);
@@ -205,6 +229,26 @@ try {
   assert.equal(snapshot.activeHazards.length, 0);
   assert.equal(snapshot.activeReports.length, 0);
   evidence.scenarios.push({ name: 'Clear all', beforeClear, clearAll, after: snapshot });
+  const productionShaped = await page.evaluate(() => {
+    const center = map.getCenter();
+    const id = 'lp24448b-production-shaped-' + Date.now();
+    const [record] = normalizeReports([{ id, report_type: 'debris', crossing_id: `hazard-${id}`,
+      lat: center.lat, lng: center.lng, county_id: gridlyGetActiveCountyId(), created_at: new Date().toISOString(),
+      expires_at: new Date(Date.now() + 4 * 60 * 60000).toISOString(), severity: 'moderate',
+      detail: 'Shared report: debris in road.', source: 'user' }]);
+    activeHazards.push(record);
+    refreshReportHazardViews('lp24448b-production-shaped');
+    const during = { id, markerCount: unifiedIncidentLayer.getLayers().length,
+      markerIds: unifiedIncidentLayer.getLayers().map((layer) => layer.options.incidentId),
+      groupedCount: getLiveHazardIncidents().filter((item) => item.reports.some((report) => report.id === id)).length };
+    activeHazards = activeHazards.filter((item) => item.id !== id);
+    refreshReportHazardViews('lp24448b-production-shaped-clear');
+    return { ...during, afterClearMarkerCount: unifiedIncidentLayer.getLayers().length };
+  });
+  assert.equal(productionShaped.groupedCount, 1);
+  assert.equal(productionShaped.markerCount, 1);
+  assert.equal(productionShaped.afterClearMarkerCount, 0);
+  evidence.scenarios.push({ name: 'Production-shaped normalized report parity', productionShaped });
   assert.deepEqual(await homeBytes(), originalHome);
   await choose('Crosby');
   await page.waitForFunction(() => gridlyGetCurrentAwarenessContext().placeName === 'Crosby' && gridlyCrossingInventoryCountyId === 'harris-tx');
