@@ -453,7 +453,7 @@ test('LP236.9 stable disclosure keys survive ordinary rerenders', () => {
     { id: 'b', sourceClass: 'official_roadway', category: 'Lane Closure', roadName: 'I-30' },
     { id: 'c', sourceClass: 'official_roadway', category: 'Road Closure', roadName: 'US 75' }
   ];
-  const nodes = (keys) => keys.map(gridlyDisclosureKey => ({ dataset: { gridlyDisclosureKey } }));
+  const nodes = (keys) => keys.map(gridlyDisclosureKey => ({ open: true, dataset: { gridlyDisclosureKey } }));
   const root = { matches: () => true, querySelectorAll: selector => selector.includes('source') ? nodes(['official_roadway']) : selector.includes('roadway-group') ? nodes(['official_roadway:lane_closures:i-30']) : nodes(['official_roadway:lane_closures', 'official_roadway:road_closures']) };
   assert.equal(sandbox.captureLP236(root), true);
   sandbox.document.querySelector = () => null;

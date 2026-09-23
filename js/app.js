@@ -4768,7 +4768,7 @@ function gridlyTravelBriefUnifiedEvidence({ story, records, driveTexasRecords, w
 
 function gridlyTravelBriefConfidenceLine(story = {}) {
   const confidence = gridlyTravelBriefCleanLine(story?.confidence || "");
-  if (/several recent signals/i.test(confidence)) return "Strong supporting evidence.";
+  if (/several recent signals/i.test(confidence)) return "Multiple recent signals.";
   if (/some recent evidence/i.test(confidence)) return "Multiple recent signals.";
   if (/early signs/i.test(confidence)) return "Developing conditions.";
   return "Quiet conditions.";
@@ -31169,8 +31169,8 @@ function isPortraitV2ConfirmationMirrorActive() {
   return Boolean(portraitV2ConfirmationMirrorState.activeUntil && Date.now() < portraitV2ConfirmationMirrorState.activeUntil);
 }
 
-function shouldMirrorReportConfirmationToPortraitV2(message, type) {
-  if (!message || type !== "success") return false;
+function shouldMirrorReportConfirmationToPortraitV2(message, type, options = {}) {
+  if (!message || (type !== "success" && options.source !== "around-me")) return false;
   if (typeof isPortraitMode === "function" ? !isPortraitMode() : document.body?.dataset?.layoutMode !== "portrait") return false;
   const statusSurface = document.querySelector("#gridlyPortraitV2 .gridly-v2-status-pill");
   if (!isGridlyElementVisiblyReadable(statusSurface)) return false;
@@ -31186,7 +31186,7 @@ function setGridlyPortraitV2AcknowledgementTextIfChanged(element, value) {
 }
 
 function mirrorReportConfirmationToPortraitV2(message, type = "success", options = {}) {
-  if (!shouldMirrorReportConfirmationToPortraitV2(message, type)) return false;
+  if (!shouldMirrorReportConfirmationToPortraitV2(message, type, options)) return false;
   const acknowledgementSurface = document.getElementById(portraitV2ConfirmationMirrorState.surfaceId);
   if (!acknowledgementSurface) return false;
 
@@ -48792,6 +48792,7 @@ function gridlyExpireForegroundAwarenessContext(expected, now = Date.now()) {
   store.temporary = Object.freeze({ ...expected, health: "STALE", area: Object.freeze({ ...expected.area, unavailable: true }) });
   if (!gridlyIsRouteWatchAwarenessActive() && typeof userMarker !== "undefined" && userMarker) { map?.removeLayer(userMarker); userMarker = null; }
   gridlyRefreshUnifiedAwarenessContext("foreground-location-expired");
+  setConfirmation("Around Me location has expired. Try Around Me again or Return Home.", "info", { source: "around-me" });
   return true;
 }
 function gridlyActivateForegroundAwarenessContext(position) {
@@ -54744,7 +54745,7 @@ function refreshGridlyUserLocationAwarenessContext(source = "user_location_contr
 }
 
 function requestGridlyUserLocationFromControl(source = "portrait_v2_location_control") {
-  if (gridlyIsRouteWatchAwarenessActive()) { setConfirmation("Stop Route Watch before checking Around Me.", "info"); return false; }
+  if (gridlyIsRouteWatchAwarenessActive()) { setConfirmation("Stop Route Watch before checking Around Me.", "info", { source: "around-me" }); return false; }
   const store = gridlyGetAwarenessContextStore();
   if (store.foregroundPending) return false;
   const generation = store.generation;
@@ -54752,7 +54753,7 @@ function requestGridlyUserLocationFromControl(source = "portrait_v2_location_con
   recordGridlyGeolocationRequest(source);
   const control = document.querySelector(source === "search-around-me" ? "#gridlySearchAroundMeBtn" : "[data-v2-control='use-location']");
   control?.setAttribute("aria-busy", "true");
-  setConfirmation("Finding your location…", "info");
+  setConfirmation("Finding your location…", "info", { source: "around-me", durationMs: 12000 });
   let settled = false;
   let watchdog;
   const finish = (position, error) => {
@@ -54764,11 +54765,11 @@ function requestGridlyUserLocationFromControl(source = "portrait_v2_location_con
     // A newer explicit selection, Return Home, or active trip owns the UI.
     if (store.generation !== generation || gridlyIsRouteWatchAwarenessActive()) return;
     const context = !error && gridlyActivateForegroundAwarenessContext(position);
-    if (context) { gridlyCachedGeolocationPermissionStatus = "granted"; setConfirmation("Around Me uses this location for up to two minutes. Your Home is unchanged.", "info"); return; }
+    if (context) { gridlyCachedGeolocationPermissionStatus = "granted"; setConfirmation("Around Me uses this location for up to two minutes. Your Home is unchanged.", "info", { source: "around-me" }); return; }
     if (store.temporary?.type === "AROUND_ME") gridlyExpireForegroundAwarenessContext(store.temporary);
     const denied = Number(error?.code) === 1 || String(error?.code || "").toLowerCase() === "permission_denied";
     const message = denied ? "Location permission was denied. Your area is unchanged." : Number(error?.code) === 3 ? "Location timed out. Your area is unchanged. Try Around Me again." : "A fresh location is unavailable. Your area is unchanged. Try Around Me again.";
-    setConfirmation(message, "info");
+    setConfirmation(message, "info", { source: "around-me" });
   };
   watchdog = window.setTimeout(() => finish(null, { code: 3 }), 11000);
   try { requestGridlyForegroundPosition(position => finish(position), error => finish(null, error), { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }); }
@@ -84262,18 +84263,19 @@ function getGridlyHazardPopupMinutesAgo(incident = {}) {
     ?? freshnessSource?.latestReport?.ageMinutes
     ?? freshnessSource?.latestReport?.minutesAgo
   );
-  if (Number.isFinite(numericAge)) return Math.max(0, Math.round(numericAge));
   const timestampCandidates = [
     freshnessSource?.updated_at, freshnessSource?.updatedAt, freshnessSource?.lastUpdatedAt, freshnessSource?.last_activity_at, freshnessSource?.lastActivityAt,
     freshnessSource?.timestamp, freshnessSource?.reportedAt, freshnessSource?.lastSeenAt, freshnessSource?.last_report_at, freshnessSource?.lastReportAt, freshnessSource?.latest_report_at, freshnessSource?.latestReportAt,
     freshnessSource?.latestReport?.updated_at, freshnessSource?.latestReport?.updatedAt, freshnessSource?.latestReport?.submittedAt, freshnessSource?.latestReport?.created_at, freshnessSource?.latestReport?.createdAt,
-    freshnessSource?.created_at, freshnessSource?.createdAt
+    freshnessSource?.submittedAt, freshnessSource?.created_at, freshnessSource?.createdAt
   ];
   const newestMs = timestampCandidates
     .map((value) => new Date(value || 0).getTime())
     .filter((value) => Number.isFinite(value) && value > 0)
     .sort((a, b) => b - a)[0];
   if (newestMs) return Math.max(0, Math.round((Date.now() - newestMs) / 60000));
+  // Event timestamps keep cached normalized records aging between refreshes.
+  if (Number.isFinite(numericAge)) return Math.max(0, Math.round(numericAge));
   const displayAge = [freshnessSource?.minutesText, freshnessSource?.timeAgo, freshnessSource?.updatedText]
     .map(parseGridlyFreshnessMinutesText)
     .find((value) => Number.isFinite(value));
@@ -116615,7 +116617,7 @@ function setConfirmation(message, type = "success", options = {}) {
     lastReportError: type === "error" ? message || "" : ""
   });
   if (popupReportingLifecycleActive && reportingState.submissionInProgress && type === "success") return;
-  mirrorReportConfirmationToPortraitV2(message, type, { durationMs, persist });
+  mirrorReportConfirmationToPortraitV2(message, type, { ...options, durationMs, persist });
   if (!els.reportConfirmation) return;
 
   if (reportConfirmationDismissTimer) clearTimeout(reportConfirmationDismissTimer);
@@ -119867,7 +119869,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
           localizedSummary: coerceDisplayText(item?.localizedSummary),
           subtitle: pickFirstNonEmptyText([incident?.subtitle, incident?.detail, item?.localizedSummary]),
           severity: severityKey,
-          minutesText: item?.minutesText || "now",
+          minutesText: formatGridlyHazardPopupFreshnessLine(incident),
           type: incident?.report_type || incident?.type || item?.type || "hazard",
           category: incident?.category || incident?.report_type || incident?.type || item?.type || "hazard",
           subtype: incident?.subtype || incident?.hazardSubtype || raw?.subtype || raw?.hazardSubtype,
@@ -119934,7 +119936,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
           ]),
           subtitle: stateLabel,
           severity: String(item?.severity || "moderate").toLowerCase(),
-          minutesText: "now",
+          minutesText: formatGridlyHazardPopupFreshnessLine(item),
           type: rawType,
           category: item?.category || item?.report_type || rawType,
           subtype: item?.subtype || item?.hazardSubtype || raw?.subtype || raw?.hazardSubtype,
@@ -120300,10 +120302,31 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const alertsRoot = root?.matches?.("[data-gridly-lp236-alerts]") ? root : root?.querySelector?.("[data-gridly-lp236-alerts]");
     if (!alertsRoot) return false;
     const state = gridlyLP236AlertsState.disclosure;
-    state.sourceKeys = new Set(Array.from(alertsRoot.querySelectorAll?.("details.gridly-lp236-source[open]") || [], (node) => node.dataset.gridlyDisclosureKey).filter(Boolean));
-    state.conditionTypeKeys = new Set(Array.from(alertsRoot.querySelectorAll?.("details.gridly-lp236-group[open]") || [], (node) => node.dataset.gridlyDisclosureKey).filter(Boolean));
-    state.roadwayGroupKeys = new Set(Array.from(alertsRoot.querySelectorAll?.("details.gridly-lp236-roadway-group[open]") || [], (node) => node.dataset.gridlyDisclosureKey).filter(Boolean));
+    // A transient source-status row has no disclosure. Absence is not a user
+    // choice to collapse that source; only mounted keys can update their state.
+    let captured = false;
+    for (const [selector, property] of [["details.gridly-lp236-source", "sourceKeys"], ["details.gridly-lp236-group", "conditionTypeKeys"], ["details.gridly-lp236-roadway-group", "roadwayGroupKeys"]]) {
+      const keys = state[property] || (state[property] = new Set());
+      for (const node of alertsRoot.querySelectorAll?.(selector) || []) {
+        const key = node.dataset.gridlyDisclosureKey;
+        if (!key) continue;
+        node.open ? keys.add(key) : keys.delete(key);
+        captured = true;
+      }
+    }
+    if (!captured) return false;
     state.initialized = true;
+    return true;
+  }
+
+  function gridlyLP236RestoreDisclosureState(root = document) {
+    const alertsRoot = root?.matches?.("[data-gridly-lp236-alerts]") ? root : root?.querySelector?.("[data-gridly-lp236-alerts]");
+    const state = gridlyLP236AlertsState.disclosure;
+    if (!alertsRoot || !state.initialized) return false;
+    for (const disclosure of alertsRoot.querySelectorAll("details[data-gridly-disclosure-key]")) {
+      const keys = disclosure.matches(".gridly-lp236-source") ? state.sourceKeys : (disclosure.matches(".gridly-lp236-group") ? state.conditionTypeKeys : state.roadwayGroupKeys);
+      disclosure.open = keys.has(disclosure.dataset.gridlyDisclosureKey);
+    }
     return true;
   }
 
@@ -120311,6 +120334,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const alertsRoot = root?.matches?.("[data-gridly-lp236-alerts]") ? root : root?.querySelector?.("[data-gridly-lp236-alerts]");
     if (!alertsRoot || alertsRoot.dataset.gridlyLp236DisclosureBound === "true") return false;
     alertsRoot.addEventListener("toggle", (event) => {
+      if (alertsRoot.isConnected === false) return;
       const disclosure = event.target;
       const key = disclosure?.dataset?.gridlyDisclosureKey;
       if (!key) return;
@@ -120325,6 +120349,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   }
   window.gridlyLP236CaptureDisclosureState = gridlyLP236CaptureDisclosureState;
   window.gridlyLP236BindDisclosureState = gridlyLP236BindDisclosureState;
+  window.gridlyLP236RestoreDisclosureState = gridlyLP236RestoreDisclosureState;
 
   function gridlyLP236BuildModel(alerts, snapshot) {
     const definitions = [
@@ -120682,7 +120707,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       // the governed summary text and its authority remain unchanged.
       const presentedSummarySentence = summarySentence.replace(/^(?:[-–—•]\s+)+/, "");
       const governedTiming = pickFirstNonEmptyText([alert?.freshnessLabel, alert?.timingLabel, alert?.updatedLabel, alert?.minutesText, alert?.updatedAt]);
-      const timing = source.sourceClass === "weather" ? gridlyWeatherTravelerTiming(alert) : (governedTiming || (alert?.startTime ? `Starts ${alert.startTime}` : (alert?.endTime ? `Until ${alert.endTime}` : "")));
+      const timing = source.sourceClass === "weather" ? gridlyWeatherTravelerTiming(alert) : (source.sourceClass === "community_report" ? canonical.freshnessLabel : "") || (governedTiming || (alert?.startTime ? `Starts ${alert.startTime}` : (alert?.endTime ? `Until ${alert.endTime}` : "")));
       const weatherSource = source.sourceClass === "weather" ? gridlyLP236SafeProviderText(alert?.senderName || alert?.office || alert?.provider) : "";
       const weatherDetails = source.sourceClass === "weather" ? gridlyWeatherDetailParts(alert) : [];
       const crossingTarget = gridlyLp0952ResolveCrossingAlertTarget(alert, null);
@@ -120891,6 +120916,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   const v1372AlertsActionDebug = { manageAlertsActionHandled:false, alertPreferencesActionHandled:false, lastAlertsActionFailureReason:"" };
   const v1415RouteReadinessDebug = { lastRefreshAt: 0, lastRefreshSource: "", stateRefreshDetected: false };
   let activeSheet = "";
+  let alertsRefreshScroll = null;
   let gridlyLayersLastActivationOpener = null;
 
   function syncGridlyLayersAccessibilityState(sheetName = "") {
@@ -121117,12 +121143,20 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       recordGridlySettingsPerformanceNote("settingsOpenPerformanceNotes", "Repeated Settings open request ignored because the Settings sheet is already active.");
       return true;
     }
+    // The build may be cached or finish after the user toggles a disclosure.
+    // Capture at the final writer boundary and restore by stable identity.
+    const refreshingAlerts = sheetName === "alerts" && sheet.dataset?.activeSheet === "alerts" && !sheet.hidden;
+    if (!refreshingAlerts) alertsRefreshScroll = null;
+    else if (body.querySelector("details[data-gridly-disclosure-key]")) alertsRefreshScroll = { sheet: sheet.scrollTop, body: body.scrollTop };
+    const alertsScroll = alertsRefreshScroll;
+    if (refreshingAlerts) window.gridlyLP236CaptureDisclosureState?.(body);
     const templateHtml = typeof template.html === "function" ? template.html() : template.html;
 
     activeSheet = sheetName;
     document.getElementById("gridlyPortraitV2SheetClose")?.setAttribute("aria-label", `Close ${sheetName.charAt(0).toUpperCase()}${sheetName.slice(1)}`);
     if (sheetName === "alerts") gridlyAlertsOpenAuditMeasureMicro("insertionSubphases", "innerHTML or equivalent assignment", () => { title.textContent = template.title || ""; body.innerHTML = templateHtml || ""; });
     else { title.textContent = template.title || ""; body.innerHTML = templateHtml || ""; }
+    if (sheetName === "alerts") window.gridlyLP236RestoreDisclosureState?.(body);
     if (sheetName === "alerts") gridlyAlertsOpenAuditMeasureMicro("insertionSubphases", "final visible official card DOM sanitation", () => gridlyLp0462SanitizeVisibleOfficialAlertsSheetDom(body));
     if (sheetName === "alerts") gridlyAlertsOpenAuditMeasureMicro("insertionSubphases", "event-listener wiring", () => gridlyBindPwaInstallUx(body));
     else gridlyBindPwaInstallUx(body);
@@ -121177,7 +121211,8 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       });
       gridlySetAlertsModalFocusOwnership(sheet, true);
       const alertsClose = document.getElementById("gridlyPortraitV2SheetClose");
-      alertsClose?.focus?.();
+      if (!refreshingAlerts) alertsClose?.focus?.();
+      if (alertsScroll) { sheet.scrollTop = alertsScroll.sheet; body.scrollTop = alertsScroll.body; }
     }
 
     const bindStartedAt = sheetName === "settings" ? getGridlySettingsPerfNow() : 0;

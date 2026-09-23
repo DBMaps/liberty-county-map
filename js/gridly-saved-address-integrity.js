@@ -189,6 +189,8 @@
   }
 
   function needsLegacyRevalidation(place = {}) {
+    // Empty Home/Work slots are explicitly null, not omitted arguments.
+    if (!place || typeof place !== "object" || Array.isArray(place)) return false;
     const latitude = Number(place.lat ?? place.coordinates?.lat);
     const longitude = Number(place.lng ?? place.coordinates?.lng);
     const verified = place.resolutionStatus === "success" && place.validationStatus === "passed";
