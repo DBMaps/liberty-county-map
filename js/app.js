@@ -19703,15 +19703,26 @@ function buildHistoricalProjection(sources = {}, options = {}) {
   };
 }
 
+function gridlyHistoricalProjectionSourceIsLocalTest(record = {}) {
+  if (record?.gridlyLocalTestOnly === true || record?.latestReport?.gridlyLocalTestOnly === true) return true;
+  const ids = [record?.id, record?.reportId, record?.report_id, record?.raw?.id, record?.latestReport?.id];
+  return ids.some((id) => String(id || "").startsWith("gridly-test-lp24448a-"))
+    || (Array.isArray(record?.reports) && record.reports.some(gridlyHistoricalProjectionSourceIsLocalTest));
+}
+
 function gridlyHistoricalProjectionCurrentSources() {
-  const liveHazardIncidents = typeof getLiveHazardIncidents === "function" ? getLiveHazardIncidents() : [];
-  return { activeHazards, activeReports, recentlyClearedRoadHazards, liveHazardIncidents };
+  const withoutLocalTest = (rows) => (Array.isArray(rows) ? rows : []).filter((row) => !gridlyHistoricalProjectionSourceIsLocalTest(row));
+  return {
+    activeHazards: withoutLocalTest(activeHazards),
+    activeReports: withoutLocalTest(activeReports),
+    recentlyClearedRoadHazards: withoutLocalTest(recentlyClearedRoadHazards),
+    liveHazardIncidents: withoutLocalTest(typeof getLiveHazardIncidents === "function" ? getLiveHazardIncidents() : [])
+  };
 }
 
 function gridlyGenerateHistoricalProjection(source = "manual") {
   gridlyHistoricalProjectionLastGenerationStatus = "generating";
-  const liveHazardIncidents = typeof getLiveHazardIncidents === "function" ? getLiveHazardIncidents() : [];
-  gridlyHistoricalProjection = buildHistoricalProjection({ activeHazards, activeReports, recentlyClearedRoadHazards, liveHazardIncidents }, { source });
+  gridlyHistoricalProjection = buildHistoricalProjection(gridlyHistoricalProjectionCurrentSources(), { source });
   gridlyHistoricalProjectionLastGeneratedAt = gridlyHistoricalProjection.generatedAt;
   gridlyHistoricalProjectionLastGenerationStatus = "generated";
   return gridlyHistoricalProjection;
@@ -56448,6 +56459,7 @@ function shouldShowCrossingInLaunchMode(crossing) {
   return false;
 }
 function refreshReportHazardViews(source = "unspecified", options = {}) {
+  if (typeof window.gridlyApplyLocalTestReports === "function") window.gridlyApplyLocalTestReports();
   const endRefreshHazardTrace = timeGridlyReflowTrace("refreshReportHazardViews", source);
   gridlyRefreshAuditState.totalRefreshCount += 1;
   gridlyRefreshAuditState.refreshSourceCounts[source] = (gridlyRefreshAuditState.refreshSourceCounts[source] || 0) + 1;
@@ -60518,6 +60530,7 @@ async function loadSharedReports(reason = "manual") {
     gridlyReportSubmissionOwnershipState.lastRefreshResetDetected = localAcceptedHazardsRestored > 0 || localAcceptedCrossingsRestored > 0;
     gridlyMaybeGenerateHistoricalProjection(`loadSharedReports:${reason}`);
     gridlyCaptureHistoryFromReports(visibleNormalized, { source: `loadSharedReports:${reason}` });
+    if (typeof window.gridlyApplyLocalTestReports === "function") window.gridlyApplyLocalTestReports();
     recordGridlyActiveLocationLifecycleEvent("loadSharedReports:activeCollectionsUpdated", {
       reason,
       rawRowCount: rawRows.length,
@@ -60751,7 +60764,7 @@ function normalizeReports(rows) {
     };
   });
   if (typeof gridlyLp034CaptureNormalizedReportObservation === "function") {
-    normalizedRows.forEach((normalized) => gridlyLp034CaptureNormalizedReportObservation(normalized));
+    normalizedRows.filter((normalized) => !String(normalized.id || "").startsWith("gridly-test-lp24448a-")).forEach((normalized) => gridlyLp034CaptureNormalizedReportObservation(normalized));
   }
   return normalizedRows;
 
@@ -86883,6 +86896,8 @@ async function handleUnifiedIncidentAction(button) {
     }
     return;
   }
+
+  if (typeof window.gridlyHandleLocalTestReportAction === "function" && window.gridlyHandleLocalTestReportAction({ action, category, crossingId, incident, communityLifecycleTarget })) return;
 
   if (action === "confirm") {
     console.debug("Unified confirm action", { category, reportType, crossingId, incidentId });
@@ -115832,7 +115847,8 @@ function renderAlerts() {
     const submittedAtMs = new Date(report?.submittedAt || report?.created_at || report?.createdAt || 0).getTime();
     const ageMinutes = Number.isFinite(submittedAtMs) && submittedAtMs > 0 ? Math.max(0, Math.floor((Date.now() - submittedAtMs) / 60000)) : null;
     const timing = Number.isFinite(ageMinutes) ? `${ageMinutes}m` : "live";
-    sections.push(`<article class="alert-item intelligence-row community-hazard" data-gridly-alert-report-id="${sanitizeText(reportId)}" data-gridly-alert-state="active"><div class="alert-row-main"><span class="alert-severity-chip">${sanitizeText(severity)}</span><strong>${sanitizeText(condition)}</strong><span class="alert-row-time">${sanitizeText(timing)}</span></div><p class="alert-row-subline">${sanitizeText(label)} · Active community report · Report ${sanitizeText(reportId)}</p></article>`);
+    const reportReference = report?.gridlyLocalTestOnly ? "" : ` · Report ${sanitizeText(reportId)}`;
+    sections.push(`<article class="alert-item intelligence-row community-hazard" data-gridly-alert-report-id="${sanitizeText(reportId)}" data-gridly-alert-state="active"><div class="alert-row-main"><span class="alert-severity-chip">${sanitizeText(severity)}</span><strong>${sanitizeText(condition)}</strong><span class="alert-row-time">${sanitizeText(timing)}</span></div><p class="alert-row-subline">${sanitizeText(label)} · Active community report${reportReference}</p></article>`);
   });
   officialSituationAlertsForLegacy.forEach((alert) => {
     const source = sanitizeText(alert.sourceLabel || alert.source || "Official");
@@ -130345,3 +130361,153 @@ function gridlyLP2418PortraitOwnershipAudit() {
 }
 window.gridlyLP2418PortraitOwnershipAudit = gridlyLP2418PortraitOwnershipAudit;
 if (typeof exposeGridlyAuditHelper === "function") exposeGridlyAuditHelper("gridlyLP2418PortraitOwnershipAudit", gridlyLP2418PortraitOwnershipAudit);
+
+// LP244.48A browser acceptance harness. Page memory only; never a report writer.
+(function () {
+  "use strict";
+
+  const fixtures = new Map();
+  let sequence = 0;
+  const presets = Object.freeze({
+    "flooded-roadway": { label: "Flooded Roadway", type: "flooding" },
+    "road-blocked": { label: "Road Blocked", type: "road_closed" },
+    "debris-in-road": { label: "Debris in Road", type: "debris" },
+    "downed-power-line": { label: "Downed Power Line", type: "other_hazard", subtype: "downed_power_line" },
+    "disabled-vehicle": { label: "Disabled Vehicle", type: "disabled_vehicle" },
+    "livestock-on-road": { label: "Livestock on Road", type: "other_hazard", subtype: "livestock_on_road" },
+    "other-hazard": { label: "Other Hazard", type: "other_hazard", subtype: "other" },
+    "train-blocking-crossing": { label: "Train Blocking Crossing", type: "blocked", crossing: true },
+    "reported-crossing-delay": { label: "Reported Crossing Delay", type: "heavy", crossing: true }
+  });
+
+  function allowed() {
+    if (typeof window === "undefined" || !window.location) return false;
+    const { protocol, hostname } = window.location;
+    if (protocol !== "http:" || !["localhost", "127.0.0.1"].includes(String(hostname).toLowerCase())) return false;
+    try {
+      const capacitor = window.Capacitor;
+      if (capacitor?.isNativePlatform?.() === true) return false;
+      if (["android", "ios"].includes(String(capacitor?.getPlatform?.() || "").toLowerCase())) return false;
+    } catch (_error) { return false; }
+    return true;
+  }
+
+  function requireLocal() {
+    if (!allowed()) throw new Error("Local test reports require a non-native HTTP loopback browser.");
+  }
+
+  function list() {
+    requireLocal();
+    return [...fixtures.values()].map(({ id, preset, state, countyId, lat, lng, ageMinutes, rows, crossingId }) =>
+      Object.freeze({ id, preset, state, countyId, lat, lng, ageMinutes, reportCount: rows.length, crossingId: crossingId || null }));
+  }
+
+  function gridlyApplyLocalTestReports() {
+    if (!allowed()) return;
+    if (fixtures.size === 0 && !activeHazards.some((row) => row?.gridlyLocalTestOnly === true) && !activeReports.some((row) => row?.gridlyLocalTestOnly === true)) return;
+    activeHazards = (Array.isArray(activeHazards) ? activeHazards : []).filter((row) => row?.gridlyLocalTestOnly !== true);
+    activeReports = (Array.isArray(activeReports) ? activeReports : []).filter((row) => row?.gridlyLocalTestOnly !== true);
+    const countyId = gridlyGetActiveCountyId();
+    const rows = [...fixtures.values()]
+      .filter((fixture) => fixture.state !== "cleared" && fixture.countyId === countyId)
+      .flatMap((fixture) => fixture.rows);
+    const normalized = normalizeReports(rows).map((row) => ({ ...row, gridlyLocalTestOnly: true }));
+    activeHazards.push(...normalized.filter((row) => row.reportKind === "hazard"));
+    activeReports.push(...normalized.filter((row) => row.reportKind === "crossing"));
+    gridlyLp0534cInvalidateCurrentStateModels("local-test-reports");
+  }
+
+  function publish() {
+    gridlyApplyLocalTestReports();
+    refreshReportHazardViews("local-test-reports");
+  }
+
+  function add(presetName, options = {}) {
+    requireLocal();
+    const key = String(presetName || "").toLowerCase();
+    const preset = presets[key];
+    if (!preset) throw new RangeError("Unknown preset. Run gridlyLocalTestReports.presets().");
+    if (!options || typeof options !== "object" || Array.isArray(options)) throw new TypeError("Options must be an object.");
+    const center = typeof map?.getCenter === "function" ? map.getCenter() : null;
+    const lat = Number(options.lat ?? center?.lat), lng = Number(options.lng ?? center?.lng);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng) || Math.abs(lat) > 90 || Math.abs(lng) > 180) throw new RangeError("Provide valid lat/lng or open a map first.");
+    const ageMinutes = options.ageMinutes === undefined ? 0 : Number(options.ageMinutes);
+    if (!Number.isFinite(ageMinutes) || ageMinutes < 0 || ageMinutes > 180) throw new RangeError("ageMinutes must be between 0 and 180.");
+    let crossing = null;
+    if (preset.crossing) {
+      crossing = options.crossingId
+        ? crossings.find((item) => String(item.id) === String(options.crossingId) && isGridlyReportableCrossing(item))
+        : findNearestCrossings(lat, lng, 1).find(isGridlyReportableCrossing);
+      if (!crossing) throw new Error("No governed crossing is loaded for this placement.");
+      if (!options.crossingId && getDistanceMiles(lat, lng, crossing.lat, crossing.lng) > 5) throw new Error("Nearest governed crossing is more than 5 miles away. Supply crossingId or move the map closer.");
+      if (activeReports.some((row) => row.gridlyLocalTestOnly !== true && String(row.crossingId) === String(crossing.id) && getIncidentLifecycleState(row) === "active")) throw new Error("This crossing already has a live report. Choose another crossing.");
+      if ([...fixtures.values()].some((fixture) => fixture.state !== "cleared" && String(fixture.crossingId) === String(crossing.id))) throw new Error("This crossing already has a local test report. Clear it first.");
+    }
+    const placedLat = Number(crossing?.lat ?? lat), placedLng = Number(crossing?.lng ?? lng);
+    const countyId = gridlyResolveCountyIdForCoordinate(placedLat, placedLng).countyId;
+    if (!countyId || countyId !== gridlyGetActiveCountyId()) throw new Error("Placement must be inside the currently loaded governed county.");
+    const id = `gridly-test-lp24448a-${Date.now()}-${++sequence}`;
+    const createdAt = new Date(Date.now() - ageMinutes * 60000).toISOString();
+    const copy = preset.crossing ? getReportCopy(preset.type) : HAZARD_TYPES[preset.type];
+    const detail = preset.subtype
+      ? appendGridlyStructuredMetadata(copy.detail, { category: preset.type, subtype: preset.subtype })
+      : copy.detail;
+    const row = {
+      id, report_type: preset.type, crossing_id: crossing ? String(crossing.id) : `hazard-${id}`,
+      crossing_name: crossing?.name || preset.label, railroad: crossing?.railroad || "Road hazard",
+      lat: placedLat, lng: placedLng, county_id: countyId, created_at: createdAt,
+      expires_at: new Date(Date.now() + 4 * 60 * 60000).toISOString(),
+      severity: copy.severity, detail, source: "user", confidence: "shared live report", device_id: null
+    };
+    fixtures.set(id, { id, preset: key, state: "active", countyId, lat: placedLat, lng: placedLng,
+      ageMinutes, crossingId: crossing?.id || null, rows: [row] });
+    publish();
+    return list().find((item) => item.id === id);
+  }
+
+  function confirm(id) {
+    requireLocal();
+    const fixture = fixtures.get(String(id));
+    if (!fixture || fixture.state === "cleared") throw new Error("Active local test report not found.");
+    const first = fixture.rows[0];
+    fixture.rows.push({ ...first, id: `${fixture.id}-confirmation-${fixture.rows.length}`, created_at: new Date().toISOString() });
+    fixture.state = "confirmed active";
+    publish();
+    return list().find((item) => item.id === fixture.id);
+  }
+
+  function clearOne(id) {
+    requireLocal();
+    const fixture = fixtures.get(String(id));
+    if (!fixture) throw new Error("Local test report not found.");
+    fixture.state = "cleared";
+    publish();
+    return list().find((item) => item.id === fixture.id);
+  }
+
+  function gridlyHandleLocalTestReportAction({ action, category, crossingId, incident, communityLifecycleTarget }) {
+    if (!allowed() || !["confirm", "cleared"].includes(action)) return false;
+    const reportId = category === "rail"
+      ? activeReports.filter((row) => row.gridlyLocalTestOnly === true && String(row.crossingId) === String(crossingId))
+        .sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt))[0]?.id
+      : communityLifecycleTarget?.persistedReportId || incident?.raw?.id || incident?.reportId;
+    const fixture = [...fixtures.values()].find((item) => item.state !== "cleared" && item.rows.some((row) => String(row.id) === String(reportId)));
+    if (!fixture) return false;
+    if (action === "confirm") confirm(fixture.id);
+    else clearOne(fixture.id);
+    setConfirmation(action === "confirm" ? "Condition confirmed in this local test." : "Condition cleared in this local test.", "success");
+    return true;
+  }
+
+  // The two functions are called only at the narrow app.js read/dispatcher seams.
+  window.gridlyApplyLocalTestReports = gridlyApplyLocalTestReports;
+  window.gridlyHandleLocalTestReportAction = gridlyHandleLocalTestReportAction;
+  if (allowed()) window.gridlyLocalTestReports = Object.freeze({
+    presets: () => { requireLocal(); return Object.fromEntries(Object.entries(presets).map(([key, value]) => [key, value.label])); },
+    status: () => { requireLocal(); return Object.freeze({ available: true, persistence: "page memory only", placementDefault: "current map center", count: fixtures.size, activeCount: list().filter((item) => item.state !== "cleared").length }); },
+    list, add,
+    addAtMapCenter: (presetName, options = {}) => { requireLocal(); const center = map?.getCenter?.(); if (!center) throw new Error("Open a map first."); return add(presetName, { ...options, lat: center.lat, lng: center.lng }); },
+    confirm, clearOne,
+    clear: () => { requireLocal(); const removed = fixtures.size; fixtures.clear(); publish(); return { removed, remaining: 0 }; }
+  });
+})();
