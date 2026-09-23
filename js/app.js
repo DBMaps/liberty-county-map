@@ -120397,12 +120397,18 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const authorityState = snapshot?.activeConditionAuthorityAvailable === true
       ? (total > 0 ? "AVAILABLE_NONEMPTY" : "AVAILABLE_EMPTY")
       : "UNAVAILABLE";
-    const currentTotal = sections.filter((section) => section.authorityState === "ACTIVE").reduce((sum, section) => sum + section.activeConditionCount, 0);
+    const currentTotal = sections.filter((section) => section.authorityState === "ACTIVE" || gridlyLP236RetainCommunityRowsDuringLoading(section)).reduce((sum, section) => sum + section.activeConditionCount, 0);
     const coverageComplete = sections.every((section) => section.authorityState === "ACTIVE" || section.authorityState === "QUIET");
     const headerLabel = coverageComplete ? (currentTotal + " active condition" + (currentTotal === 1 ? "" : "s"))
       : currentTotal > 0 ? (currentTotal + " current condition" + (currentTotal === 1 ? "" : "s") + " · Coverage incomplete")
         : sections.some((section) => section.authorityState === "LOADING") ? "Checking conditions · Coverage incomplete" : "Coverage incomplete";
     return { snapshot, alerts, total, currentTotal, coverageComplete, headerLabel, sections, firstSource, critical, authorityState };
+  }
+
+  // A pending backend read does not erase already governed active community rows.
+  // Keep the read health as LOADING and preserve the incomplete-coverage warning.
+  function gridlyLP236RetainCommunityRowsDuringLoading(section) {
+    return section?.sourceClass === "community_report" && section?.authorityState === "LOADING" && section?.activeConditionCount > 0;
   }
 
   function gridlyLP236AlertsInformationArchitectureAudit() {
@@ -120701,7 +120707,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     }).join("");
     const sectionsHtml = model.sections.map((source) => {
       const sourceKey = source.sourceClass;
-      if (source.authorityState !== "ACTIVE") {
+      if (source.authorityState !== "ACTIVE" && !gridlyLP236RetainCommunityRowsDuringLoading(source)) {
         const quiet = source.authorityState === "QUIET";
         const family = source.sourceClass === "community_report" ? "community reports" : source.sourceClass === "weather" ? "weather alerts" : "official roadway conditions";
         const quietStatus = source.sourceClass === "community_report" ? "No active community reports" : source.sourceClass === "weather" ? "No active weather alerts" : "No active official roadway conditions";
@@ -120713,7 +120719,8 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       }
       const open = gridlyLP236AlertsState.disclosure.initialized ? gridlyLP236AlertsState.disclosure.sourceKeys.has(sourceKey) : model.total === 1 || source.sourceClass === model.firstSource;
       const groupsHtml = source.sourceClass === "official_roadway" ? renderOfficialRoadways(source) : source.groups.map((group, groupIndex) => renderGroup(group, source, groupIndex)).join("");
-      return `<details class="gridly-lp236-source" data-gridly-disclosure-key="${sanitizeText(sourceKey)}" data-gridly-lp236-source="${source.sourceClass}" data-gridly-lp236-count="${source.activeConditionCount}" data-gridly-lp236-authority-state="ACTIVE"${open ? " open" : ""}><summary aria-label="${sanitizeText(source.label)}, ${source.activeConditionCount} active condition${source.activeConditionCount === 1 ? "" : "s"}"><span><strong>${sanitizeText(source.label)}</strong><small>${sanitizeText(source.provenance)}</small></span><b aria-label="${source.activeConditionCount} active condition${source.activeConditionCount === 1 ? "" : "s"}">${source.activeConditionCount}</b></summary><div class="gridly-lp236-groups">${groupsHtml}</div></details>`;
+      const sourceStatus = gridlyLP236RetainCommunityRowsDuringLoading(source) ? `${source.provenance} · Checking live community reports` : source.provenance;
+      return `<details class="gridly-lp236-source" data-gridly-disclosure-key="${sanitizeText(sourceKey)}" data-gridly-lp236-source="${source.sourceClass}" data-gridly-lp236-count="${source.activeConditionCount}" data-gridly-lp236-authority-state="${sanitizeText(source.authorityState)}"${open ? " open" : ""}><summary aria-label="${sanitizeText(source.label)}, ${source.activeConditionCount} active condition${source.activeConditionCount === 1 ? "" : "s"}"><span><strong>${sanitizeText(source.label)}</strong><small>${sanitizeText(sourceStatus)}</small></span><b aria-label="${source.activeConditionCount} active condition${source.activeConditionCount === 1 ? "" : "s"}">${source.activeConditionCount}</b></summary><div class="gridly-lp236-groups">${groupsHtml}</div></details>`;
     }).join("");
     return `<div class="gridly-alerts-active gridly-lp236-alerts" data-gridly-lp236-alerts="true"><header class="gridly-lp236-header"><strong aria-label="${sanitizeText(model.headerLabel)}">${sanitizeText(model.headerLabel)}</strong></header>${criticalHtml}<div class="gridly-lp236-sections">${sectionsHtml}</div></div>`;
   }
