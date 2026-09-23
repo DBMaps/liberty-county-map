@@ -30061,3 +30061,18 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet[data-active-sheet="repo
     display: none !important;
   }
 }
+
+/* LP244.48G2: end the expanded background shield just below the real filters.
+   Stack: 68px status + 42px handle + three 14px gaps + 48px filters,
+   plus G's unchanged brief cap and 4px of intentional map separation. */
+@media (max-width: 760px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"] #gridlyPortraitV2[data-gridly-brief-state="expanded"] {
+    --gridly-v2-top-shield-height: calc(var(--gridly-v2-awareness-card-top) + 200px + min(250px, 36vh) + 4px);
+  }
+  body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV2[data-gridly-brief-state="expanded"]::before {
+    box-shadow: none;
+  }
+  body[data-layout-mode="portrait"] #gridlyPortraitV2[data-gridly-brief-state="expanded"] .gridly-v2-brief-stack > .gridly-v2-segments {
+    margin-block-end: 4px !important;
+  }
+}
