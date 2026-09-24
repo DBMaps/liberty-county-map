@@ -1,0 +1,7443 @@
+{
+  "total": 1859,
+  "conditional": 1859,
+  "fail": 0,
+  "records": [
+    {
+      "placeGeoid": "4800100",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4800160",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4801000",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4801060",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4801084",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4801108",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4801240",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4801324",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4801390",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4801396",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4801420",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4801500",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4801514",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4801576",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4801594",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4801600",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4801612",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4801636",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4801648",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4801696",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4801744",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4801816",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4801852",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4801858",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4801924",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4802032",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4802044",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4802104",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4802188",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4802194",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4802212",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4802260",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4802272",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4802284",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4802286",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4802290",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4803000",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4803008",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4803072",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4803084",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4803096",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4803126",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4803144",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4803192",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4803216",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4803264",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4803288",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4803300",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4803336",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4803340",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4803342",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4803360",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4803372",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4803432",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4803540",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4803564",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4803588",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4803600",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4803696",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4803708",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4803768",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4804000",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4804156",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4804174",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4804176",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4804300",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4804408",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4804462",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4804504",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4804516",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4804600",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4804672",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4805000",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4805036",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4805072",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4805084",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4805168",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4805180",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4805264",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4805288",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4805336",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4805372",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4805384",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4805456",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4805468",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4805520",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4805528",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4805552",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4805576",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4805612",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4805648",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4805690",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4805696",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4805708",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4805720",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4805732",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4805750",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4805768",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4805864",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4805924",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4805984",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4806060",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4806104",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4806128",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4806140",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4806200",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4806242",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4806244",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4806272",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4807000",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4807036",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4807042",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4807108",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4807132",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4807144",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4807156",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4807192",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4807300",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4807396",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4807408",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4807420",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4807432",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4807486",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4807492",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4807516",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4807528",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4807540",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4807552",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4807636",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4807642",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4807708",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4807852",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4807864",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4808104",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4808128",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4808164",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4808212",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4808224",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4808236",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4808240",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4808260",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4808392",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4808398",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4808404",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4808410",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4808488",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4808536",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4808596",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4808644",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4808668",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4808752",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4808788",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4808800",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4808812",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4808830",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4808860",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4808872",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4808908",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4808932",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4809004",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4809160",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4809172",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4809232",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4809250",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4809310",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4809328",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4809388",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4809448",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4809556",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4809598",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4809628",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4809640",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4809656",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4809748",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4809796",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4809868",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4809916",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4810072",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4810084",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4810090",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4810132",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4810144",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4810156",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4810192",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4810197",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4810216",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4810252",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4810264",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4810276",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4810336",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4810384",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4810528",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4810636",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4810648",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4810660",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4810708",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4810720",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4810756",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4810768",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4810780",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4810828",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4810852",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4810876",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4810897",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4810912",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4810960",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4810984",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4810990",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4811020",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4811080",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4811102",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4811116",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4811128",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4811155",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4811212",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4811224",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4811236",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4811300",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4811368",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4811380",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4811428",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4811440",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4811464",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4811536",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4811572",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4811626",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4811644",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4811656",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4811692",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4811716",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4811725",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4811836",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4811940",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4811968",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4811992",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4812010",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4812040",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4812045",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4812112",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4812226",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4812334",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4812388",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4812412",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4812472",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4812496",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4812502",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4812508",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4812532",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4812562",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4812580",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4812600",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4812736",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4812892",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4812895",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4812904",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4812916",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4812982",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4812988",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4813024",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4813075",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4813108",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4813128",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4813150",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4813198",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4813276",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4813312",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4813324",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4813432",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4813492",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4813552",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4813570",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4813672",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4813684",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4813732",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4813828",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4813900",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4813972",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4814038",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4814224",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4814236",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4814260",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4814266",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4814290",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4814404",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4814584",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4814620",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4814668",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4814680",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4814692",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4814704",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4814716",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4814740",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4814776",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4814860",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4814872",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4814880",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4814881",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4814882",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4814920",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4814927",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4814929",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4814986",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4815004",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4815028",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4815112",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4815160",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4815172",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4815196",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4815232",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4815328",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4815364",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4815436",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4815472",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4815544",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4815628",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4815652",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4815676",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4815700",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4815796",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4815820",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4815892",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4815916",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4815976",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4815988",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4816036",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4816048",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4816110",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4816120",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4816168",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4816192",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4816204",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4816216",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4816228",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4816240",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4816252",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4816300",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4816432",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4816468",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4816540",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4816552",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4816564",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4816612",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4816624",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4816636",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4816696",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4817000",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4817021",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4817036",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4817060",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4817200",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4817208",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4817216",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4817312",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4817336",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4817372",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4817408",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4817426",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4817429",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4817504",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4817516",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4817540",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4817564",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4817612",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4817648",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4817744",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4817756",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4817768",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4817811",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4817816",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4817852",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4817917",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4817948",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4817960",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4818020",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4818092",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4818104",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4818128",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4818134",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4818152",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4818224",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4818260",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4818464",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4818476",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4818524",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4819000",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4819084",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4819108",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4819120",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4819288",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4819420",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4819432",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4819435",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4819456",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4819492",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4819528",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4819570",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4819624",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4819632",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4819648",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4819672",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4819708",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4819714",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4819732",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4819792",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4819808",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4819900",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4819924",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4819972",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4819984",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4820020",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4820092",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4820128",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4820140",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4820152",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4820212",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4820248",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4820308",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4820332",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4820344",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4820428",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4820452",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4820464",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4820540",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4820680",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4820716",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4820734",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4820848",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4820884",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4820926",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4820932",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4821028",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4821031",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4821112",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4821412",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4821424",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4821436",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4821484",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4821556",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4821628",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4821844",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4821892",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4821904",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4821928",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4821958",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4821988",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4822000",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4822132",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4822168",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4822192",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4822276",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4822516",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4822528",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4822552",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4822588",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4822593",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4822612",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4822660",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4822708",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4822720",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4822744",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4822768",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4822810",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4822840",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4822853",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4822858",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4822864",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4822892",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4822898",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4822905",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4822920",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4822960",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4822984",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4823044",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4823062",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4823080",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4823140",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4823164",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4823176",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4823254",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4823272",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4823278",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4823356",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4823398",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4824000",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4824013",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4824015",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4824018",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4824036",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4824055",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4824158",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4824168",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4824216",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4824223",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4824228",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4824240",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4824252",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4824348",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4824552",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4824636",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4824738",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4824768",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4824816",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4824828",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4824840",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4824864",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4824894",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4824912",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4825032",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4825038",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4825068",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4825104",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4825168",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4825224",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4825338",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4825344",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4825348",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4825352",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4825356",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4825368",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4825392",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4825397",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4825404",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4825452",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4825488",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4825512",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4825548",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4825572",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4825644",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4825744",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4825752",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4825795",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4826004",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4826028",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4826130",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4826136",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4826160",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4826220",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4826232",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4826268",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4826280",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4826328",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4826516",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4826544",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4826604",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4826640",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4826664",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4826666",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4826680",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4826688",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4826724",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4826808",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4827000",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4827102",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4827124",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4827144",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4827288",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4827300",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4827348",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4827420",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4827432",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4827540",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4827648",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4827660",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4827684",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4827696",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4827744",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4827748",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4827768",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4827804",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4827876",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4827888",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4827972",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4827984",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4827996",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4828008",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4828068",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4828080",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4828128",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4828152",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4828176",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4828200",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4828248",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4828320",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4829000",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4829012",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4829036",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4829060",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4829096",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4829108",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4829114",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4829168",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4829216",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4829336",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4829348",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4829384",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4829408",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4829432",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4829564",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4829612",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4829660",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4829732",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4829840",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4829876",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4829912",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4829972",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4830044",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4830056",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4830080",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4830092",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4830116",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4830188",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4830224",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4830272",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4830296",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4830308",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4830380",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4830392",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4830416",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4830440",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4830464",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4830476",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4830512",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4830548",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4830560",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4830584",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4830608",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4830629",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4830632",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4830644",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4830752",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4830890",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4830920",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4831064",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4831100",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4831280",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4831292",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4831328",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4831340",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4831412",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4831442",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4831484",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4831592",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4831616",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4831628",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4831640",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4831646",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4831715",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4831820",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4831868",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4831880",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4831904",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4831928",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4831952",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4831964",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4832012",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4832156",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4832240",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4832246",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4832300",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4832312",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4832372",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4832456",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4832552",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4832576",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4832612",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4832696",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4832720",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4832792",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4832810",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4832816",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4832840",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4832906",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4832910",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4832972",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4832978",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4832984",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4833008",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4833020",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4833044",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4833068",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4833092",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4833146",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4833188",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4833200",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4833212",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4833284",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4833320",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4833356",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4833428",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4833476",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4833548",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4833560",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4833578",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4833608",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4833794",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4833824",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4833836",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4833848",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4833968",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4834018",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4834088",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4834105",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4834130",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4834133",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4834136",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4834148",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4834220",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4834478",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4834502",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4834508",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4834532",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4834586",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4834628",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4834671",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4834673",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4834676",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4834700",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4834736",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4834832",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4834856",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4834862",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4834865",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4835000",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4835072",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4835084",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4835180",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4835204",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4835228",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4835253",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4835254",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4835300",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4835324",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4835348",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4835420",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4835480",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4835492",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4835528",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4835576",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4835612",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4835624",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4835636",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4835684",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4835732",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4835754",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4835816",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4835828",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4835915",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4835918",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4835954",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4835966",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4835984",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4835996",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4836008",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4836020",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4836032",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4836068",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4836092",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4836104",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4836128",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4836140",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4837000",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4837072",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4837084",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4837112",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4837156",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4837168",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4837216",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4837252",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4837390",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4837396",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4837420",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4837468",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4837528",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4837612",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4837648",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4837665",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4837684",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4837780",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4837924",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4837984",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4838020",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4838068",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4838080",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4838116",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4838168",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4838248",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4838332",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4838452",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4838476",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4838488",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4838518",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4838548",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4838632",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4838776",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4838788",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4838800",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4838848",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4838860",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4838872",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4838884",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4838896",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4838992",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4839004",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4839040",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4839124",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4839148",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4839292",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4839304",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4839352",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4839448",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4839460",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4839520",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4839664",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4839680",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4839700",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4839784",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4839844",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4839868",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4839904",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4839916",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4839928",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4839940",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4839952",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4839988",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4839994",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4840000",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4840018",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4840036",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4840100",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4840104",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4840108",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4840168",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4840180",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4840186",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4840188",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4840204",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4840210",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4840258",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4840262",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4840264",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4840276",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4840288",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4840300",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4840312",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4840320",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4840336",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4840342",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4840384",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4840450",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4840456",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4840462",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4840468",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4840472",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4840475",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4840516",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4840522",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4840576",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4840588",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4840624",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4840674",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4840676",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4840696",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4840714",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4840738",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4840744",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4840756",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4840804",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4840888",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4840966",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4840984",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4841050",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4841056",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4841086",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4841092",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4841116",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4841164",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4841170",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4841176",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4841180",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4841188",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4841212",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4841404",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4841416",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4841420",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4841422",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4841424",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4841440",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4841449",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4841452",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4841458",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4841464",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4841473",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4841475",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4841503",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4841542",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4841548",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4841565",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4841566",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4841569",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4841579",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4841580",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4841582",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4841583",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4841644",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4841660",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4841704",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4841728",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4841764",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4841782",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4841788",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4841800",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4841848",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4841872",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4841980",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4842004",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4842016",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4842028",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4842148",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4842244",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4842256",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4842340",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4842352",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4842388",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4842400",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4842448",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4842508",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4842532",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4842568",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4842616",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4842664",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4842820",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4842844",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4842868",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4842874",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4842880",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4842916",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4842940",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4842952",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4843000",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4843012",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4843024",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4843066",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4843096",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4843120",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4843132",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4843144",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4843150",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4843216",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4843240",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4843252",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4843354",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4843432",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4843458",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4843460",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4843462",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4843463",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4843465",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4843474",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4843516",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4843636",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4843684",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4843822",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4843888",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4843948",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4843960",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4843972",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4843996",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4844020",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4844032",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4844038",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4844044",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4844062",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4844072",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4844075",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4844076",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4844077",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4844079",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4844104",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4844110",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4844116",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4844120",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4844123",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4844128",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4844142",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4844145",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4844146",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4844162",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4844167",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4844168",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4844170",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4844176",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4844212",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4844260",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4844284",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4844308",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4844344",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4845000",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4845012",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4845048",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4845072",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4845096",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4845120",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4845228",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4845276",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4845288",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4845324",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4845384",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4845432",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4845444",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4845564",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4845576",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4845672",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4845744",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4845750",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4845780",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4845804",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4845816",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4845948",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4845996",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4846056",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4846080",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4846224",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4846260",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4846308",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4846440",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4846452",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4846492",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4846494",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4846500",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4846572",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4846584",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4846620",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4846668",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4846692",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4846716",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4846740",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4846752",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4846776",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4846824",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4846848",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4846854",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4846968",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4847004",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4847016",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4847040",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4847088",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4847100",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4847172",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4847268",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4847316",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4847330",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4847337",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4847406",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4847460",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4847496",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4847568",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4847616",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4847628",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4847676",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4847700",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4847760",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4847796",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4847820",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4847832",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4847892",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4847898",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4847916",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4847988",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4848048",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4848072",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4848096",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4848180",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4848272",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4848280",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4848315",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4848318",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4848320",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4848324",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4848336",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4848372",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4848396",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4848408",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4848478",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4848564",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4848648",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4848684",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4848720",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4848750",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4848756",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4848768",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4848772",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4848804",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4848852",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4848858",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4848936",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4849032",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4849068",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4849080",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4849128",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4849200",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4849224",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4849272",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4849300",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4849314",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4849320",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4849356",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4849359",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4849380",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4849392",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4849411",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4849440",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4849464",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4849512",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4849560",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4849572",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4849600",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4849692",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4849728",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4849800",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4849860",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4849932",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4849968",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4849992",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4850040",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4850058",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4850076",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4850092",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4850100",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4850200",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4850220",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4850232",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4850256",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4850268",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4850316",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4850322",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4850352",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4850376",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4850400",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4850448",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4850472",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4850496",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4850544",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4850580",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4850628",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4850742",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4850760",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4850772",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4850796",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4850808",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4850820",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4850868",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4850876",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4850916",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4850920",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4850924",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4851012",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4851036",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4851168",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4851336",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4851372",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4851384",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4851396",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4851444",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4851492",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4851552",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4851588",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4851648",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4851654",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4851708",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4851720",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4851756",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4851792",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4851828",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4851840",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4851852",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4851900",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4851984",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4852068",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4852212",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4852302",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4852356",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4852404",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4852668",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4852902",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4852992",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4853004",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4853115",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4853130",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4853154",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4853160",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4853190",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4853212",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4853217",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4853232",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4853304",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4853376",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4853388",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4853436",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4853520",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4853556",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4853616",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4853824",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4853934",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4853946",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4853964",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4853970",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4853988",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4854000",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4854012",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4854024",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4854048",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4854075",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4854132",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4854168",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4854186",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4854192",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4854216",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4854432",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4854444",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4854509",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4854528",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4854552",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4854558",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4854600",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4854624",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4854636",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4854666",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4854684",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4854708",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4854726",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4854744",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4854748",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4854780",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4854798",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4854804",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4854810",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4854846",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4854868",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4854872",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4854876",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4854912",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4854960",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4855008",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4855020",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4855056",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4855080",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4855152",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4856000",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4856108",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4856156",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4856252",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4856276",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4856348",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4856384",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4856432",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4856462",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4856468",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4856482",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4856485",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4856498",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4856640",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4856644",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4856660",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4856672",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4856696",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4856804",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4856864",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4856912",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4856996",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4857044",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4857056",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4857116",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4857128",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4857176",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4857200",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4857476",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4857494",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4857524",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4857566",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4857596",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4857608",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4857615",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4857644",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4857752",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4857800",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4857908",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4857932",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4857968",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4857980",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4858016",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4858040",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4858088",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4858232",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4858280",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4858400",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4858436",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4858448",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4858502",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4858532",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4858556",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4858568",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4858586",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4858664",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4858808",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4858820",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4858850",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4858892",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4858904",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4858916",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4858928",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4858940",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4858952",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4859012",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4859065",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4859084",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4859096",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4859108",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4859132",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4859156",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4859168",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4859192",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4859210",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4859216",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4859336",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4859384",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4859396",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4859420",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4859528",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4859540",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4859576",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4859612",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4859636",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4859642",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4859696",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4859748",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4859794",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4859798",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4859984",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4859996",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4860020",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4860026",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4860044",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4860080",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4860092",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4860098",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4860140",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4860164",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4860176",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4860188",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4860278",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4860290",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4860356",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4860380",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4860408",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4860422",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4860458",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4860478",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4860480",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4860482",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4860518",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4860529",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4860534",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4860539",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4860544",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4860554",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4860608",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4860632",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4860668",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4860672",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4860686",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4860752",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4860836",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4860932",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4861040",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4861076",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4861124",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4861172",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4861196",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4861280",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4861340",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4861352",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4861436",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4861454",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4861466",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4861508",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4861532",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4861568",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4861592",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4861604",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4861616",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4861700",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4861724",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4861736",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4861766",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4861784",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4861796",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4861820",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4861844",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4861880",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4861892",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4861904",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4862108",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4862132",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4862138",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4862168",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4862180",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4862240",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4862252",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4862318",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4862384",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4862408",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4862468",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4862486",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4862504",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4862528",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4862564",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4862588",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4862600",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4862612",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4862624",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4862636",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4862672",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4862732",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4862804",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4862816",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4862828",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4862834",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4862870",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4862924",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4863008",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4863020",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4863044",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4863140",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4863164",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4863176",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4863188",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4863200",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4863272",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4863284",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4863332",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4863350",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4863380",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4863404",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4863464",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4863476",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4863500",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4863524",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4863560",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4863572",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4863584",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4863668",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4863752",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4863782",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4863788",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4863848",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4864004",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4864064",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4864088",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4864112",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4864172",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4864184",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4864220",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4864244",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4864268",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4864307",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4864316",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4864322",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4864442",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4864448",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4864460",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4864472",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4865000",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4865024",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4865036",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4865048",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4865049",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4865050",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4865066",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4865084",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4865168",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4865180",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4865210",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4865240",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4865342",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4865344",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4865345",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4865360",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4865372",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4865378",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4865384",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4865408",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4865432",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4865516",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4865532",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4865552",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4865564",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4865600",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4865612",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4865620",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4865636",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4865648",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4865660",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4865672",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4865678",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4865690",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4865708",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4865726",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4865744",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4865756",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4865762",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4865768",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4865774",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4865777",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4865780",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4865792",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4865864",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4865876",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4866000",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4866008",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4866089",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4866128",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4866188",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4866248",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4866284",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4866332",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4866368",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4866392",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4866416",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4866428",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4866440",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4866464",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4866512",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4866536",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4866644",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4866686",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4866704",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4866764",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4866806",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4866848",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4866884",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4866908",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4866968",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4867010",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4867082",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4867100",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4867136",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4867160",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4867268",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4867340",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4867364",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4867376",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4867400",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4867424",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4867472",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4867496",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4867554",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4867640",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4867664",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4867688",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4867763",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4867772",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4867775",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4867778",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4867832",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4867904",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4867964",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4868036",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4868120",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4868132",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4868180",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4868300",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4868456",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4868504",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4868576",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4868624",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4868636",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4868678",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4868708",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4868720",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4868756",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4868762",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4868828",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4868846",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4868966",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4868978",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4869020",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4869032",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4869072",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4869104",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4869120",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4869140",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4869194",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4869272",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4869326",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4869353",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4869380",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4869432",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4869476",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4869548",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4869560",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4869596",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4869608",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4869708",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4869764",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4869800",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4869830",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4869848",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4869908",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4869932",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4869980",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4870040",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4870052",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4870076",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4870154",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4870208",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4870232",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4870340",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4870376",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4870406",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4870460",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4870520",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4870544",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4870580",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4870604",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4870688",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4870772",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4870808",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4870868",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4870904",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4870940",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4871060",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4871156",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4871180",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4871228",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4871236",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4871264",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4871274",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4871289",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4871324",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4871356",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4871384",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4871492",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4871540",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4871636",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4871684",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4871696",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4871708",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4871732",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4871756",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4871820",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4871824",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4871924",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4871948",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4871960",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4871966",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4872020",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4872080",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4872176",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4872188",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4872248",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4872284",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4872296",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4872368",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4872392",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4872464",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4872476",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4872530",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4872578",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4872581",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4872656",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4872740",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4872758",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4872776",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4872788",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4872800",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4872824",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4872872",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4872896",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4872902",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4872948",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4872950",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4872952",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4872954",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4872989",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4872992",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4873030",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4873057",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4873076",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4873112",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4873124",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4873148",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4873196",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4873224",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4873268",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4873316",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4873328",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4873352",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4873376",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4873424",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4873493",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4873496",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4873526",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4873562",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4873580",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4873592",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4873652",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4873664",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4873710",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4873724",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4873748",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4873856",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4873868",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4873904",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4873928",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4873964",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4874048",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4874132",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4874144",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4874168",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4874216",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4874228",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4874240",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4874312",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4874372",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4874408",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4874492",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4874576",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4874588",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4874594",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4874648",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4874660",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4874667",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4874668",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4874670",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4874732",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4874756",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4874895",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4874912",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4874924",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4874984",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4875032",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4875068",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4875188",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4875236",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4875308",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4875428",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4875432",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4875476",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4875554",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4875614",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4875617",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4875626",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4875668",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4875752",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4875764",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4876000",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4876012",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4876024",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4876048",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4876096",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4876228",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4876240",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4876348",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4876564",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4876576",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4876612",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4876636",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4876672",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4876816",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4876864",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4876924",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4876948",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4877020",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4877044",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4877056",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4877080",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4877152",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4877164",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4877176",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4877196",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4877272",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4877332",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4877336",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4877380",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4877416",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4877422",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4877490",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4877620",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4877632",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4877662",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4877680",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4877728",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4877740",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4877746",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4877752",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4877788",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4877866",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4877896",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4877956",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4878016",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4878040",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4878076",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4878136",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4878208",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4878316",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4878328",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4878388",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4878436",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4878532",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4878544",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4878628",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4878640",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4878664",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4879000",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4879036",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4879180",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4879192",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4879204",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4879408",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4879456",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4879492",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4879564",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4879576",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4879612",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4879624",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4879672",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4879684",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4879696",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4879720",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4879756",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4879768",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4879792",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4879816",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4879828",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4879876",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4879919",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4879948",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4879972",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4880044",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4880058",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4880144",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4880176",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4880188",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4880212",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4880224",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4880296",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4880350",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4880356",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4880428",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4880440",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4880560",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4880584",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4880686",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4880716",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4880722",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4880724",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4880728",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4880740",
+      "pass": true
+    },
+    {
+      "placeGeoid": "4880836",
+      "pass": true
+    }
+  ]
+}

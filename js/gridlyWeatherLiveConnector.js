@@ -125,10 +125,21 @@
       if (typeof normalizer !== "function") throw new Error("Weather provider normalizer unavailable");
       const records=currentRecords(normalizer(payload).map(clone).filter(Boolean));
       const entry={ requestIdentity, point, endpoint:url, attempted:true, succeeded:true, valid:true, fetchedAt:iso(), records, error:null, ...attempt };
-      cache.delete(requestIdentity); cache.set(requestIdentity,entry); while(cache.size>CACHE_MAX) cache.delete(cache.keys().next().value);
+      // Cache publication follows the same current-generation authority as UI
+      // publication, including when an earlier A request finishes after A-B-A.
+      if (requestGeneration === generation && identity(resolvePoint()) === requestIdentity) {
+        cache.delete(requestIdentity); cache.set(requestIdentity,entry);
+        while(cache.size>CACHE_MAX) cache.delete(cache.keys().next().value);
+      }
       publish(entry,requestGeneration); return freeze({ connected:true, normalizedRecordCount:records.length, requestIdentity });
     } catch(error) {
       const entry={ requestIdentity, point, endpoint:url, attempted:true, succeeded:false, valid:false, fetchedAt:iso(), records:[], error:error?.message||String(error), ...attempt };
+      // A failed check supersedes this identity's earlier healthy cache entry.
+      // Otherwise refreshAwarenessView can immediately restore obsolete success.
+      if (requestGeneration === generation && identity(resolvePoint()) === requestIdentity) {
+        cache.delete(requestIdentity); cache.set(requestIdentity,entry);
+        while(cache.size>CACHE_MAX) cache.delete(cache.keys().next().value);
+      }
       publish(entry,requestGeneration); return freeze({ connected:false, normalizedRecordCount:0, error:entry.error, requestIdentity });
     }
   }
@@ -157,7 +168,7 @@
     if (fetchInFlight?.identity === next) return fetchInFlight.promise;
     generation+=1;
     invalidateCurrentAuthority(next, point);
-    if (cached && Date.now()-Date.parse(cached.fetchedAt)<=REFRESH_INTERVAL_MS) { publish(cached,generation); return Promise.resolve(freeze({connected:true,cached:true,normalizedRecordCount:cached.records.length})); }
+    if (cached && Date.now()-Date.parse(cached.fetchedAt)<=REFRESH_INTERVAL_MS) { publish(cached,generation); return Promise.resolve(freeze({connected:cached.succeeded===true&&cached.valid===true,cached:true,normalizedRecordCount:cached.records.length})); }
     return fetchNow();
   }
   function startPolling() { state.automaticPolling=true; const tick=async()=>{await fetchNow(); if(state.automaticPolling) refreshTimer=globalScope.setTimeout(tick,REFRESH_INTERVAL_MS);}; tick(); return runtimeAudit(); }

@@ -1,0 +1,731 @@
+{
+  "count": 10,
+  "closed": 10,
+  "records": [
+    {
+      "originalFailureId": "LP24449-ledger-02031",
+      "county": "mills-tx",
+      "place": "4830056",
+      "community": "Goldthwaite",
+      "kind": "synthetic_road",
+      "originalFixture": {
+        "id": "gridly-test-lp24448a-1790222847474-1",
+        "preset": "flooded-roadway",
+        "state": "active",
+        "countyId": "mills-tx",
+        "lat": 31.4508098,
+        "lng": -98.570017,
+        "ageMinutes": 0,
+        "reportCount": 1,
+        "crossingId": null
+      },
+      "originalStaleValue": 1,
+      "originalTiming": "Original clear then settlement/snapshot; elapsed writer ordering was not instrumented in the historical artifact.",
+      "originalSequence": "Home -> Search -> nearby/town/county/active-delays/all/county -> crossing viewport -> fixture -> Alerts -> clear -> snapshot -> Return Home/county transition.",
+      "classification": "SAME_ROOT_CAUSE",
+      "classificationEvidence": "The original fixture type/context reproduces a candidate retained in the same published-summary collection under deliberate production provider-refresh ordering. Historical count-only evidence does not independently establish that original ordering.",
+      "baselineTriggeredCount": 1,
+      "baselineCandidate": {
+        "object": "object-206",
+        "recordObject": "object-14",
+        "rawObject": "object-251",
+        "id": "gridly-test-lp24448a-1790290475917-1",
+        "source": "user",
+        "type": "flooding",
+        "state": "TX",
+        "local": true,
+        "lat": 31.4508098,
+        "lng": -98.570017,
+        "county": "mills-tx",
+        "place": "4830056",
+        "evidenceId": "active_hazard:hazard-gridly-test-lp24448a-1790290475917-1",
+        "expired": false
+      },
+      "baselineExactCounts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "currentExactCounts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "currentTriggeredCounts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "candidateAbsent": true,
+      "refreshCounts": [
+        0,
+        0
+      ],
+      "exactPass": true,
+      "triggeredPass": true,
+      "status": "CLOSED",
+      "evidence": [
+        ".artifacts/lp24449/supplements/mills-tx.json",
+        ".artifacts/lp24449b1/current-pulse.json",
+        ".artifacts/lp24449b1/baseline-pulse.json",
+        "reports/lp24449b1/original-ten-provenance.json"
+      ]
+    },
+    {
+      "originalFailureId": "LP24449-ledger-02032",
+      "county": "mills-tx",
+      "place": "4830056",
+      "community": "Goldthwaite",
+      "kind": "synthetic_delay",
+      "originalFixture": {
+        "id": "gridly-test-lp24448a-1790222851007-2",
+        "preset": "reported-crossing-delay",
+        "state": "active",
+        "countyId": "mills-tx",
+        "lat": 31.5632389999064,
+        "lng": -98.6796967001915,
+        "ageMinutes": 0,
+        "reportCount": 1,
+        "crossingId": "FRA-024637K"
+      },
+      "originalStaleValue": 1,
+      "originalTiming": "Original clear then settlement/snapshot; elapsed writer ordering was not instrumented in the historical artifact.",
+      "originalSequence": "Home -> Search -> nearby/town/county/active-delays/all/county -> crossing viewport -> fixture -> Alerts -> clear -> snapshot -> Return Home/county transition.",
+      "classification": "NO_LONGER_REPRODUCIBLE",
+      "classificationEvidence": "Exact original and deliberately overlapped publication replay did not reproduce retained candidate on the dirty starting source; the historical stale assertion is preserved, without claiming a proven historical cause.",
+      "baselineTriggeredCount": 0,
+      "baselineCandidate": {
+        "object": null,
+        "recordObject": "object-240",
+        "rawObject": "object-241"
+      },
+      "baselineExactCounts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "currentExactCounts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "currentTriggeredCounts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "candidateAbsent": true,
+      "refreshCounts": [
+        0,
+        0
+      ],
+      "exactPass": true,
+      "triggeredPass": true,
+      "status": "CLOSED",
+      "evidence": [
+        ".artifacts/lp24449/supplements/mills-tx.json",
+        ".artifacts/lp24449b1/current-pulse.json",
+        ".artifacts/lp24449b1/baseline-pulse.json",
+        "reports/lp24449b1/original-ten-provenance.json"
+      ]
+    },
+    {
+      "originalFailureId": "LP24449-ledger-02033",
+      "county": "mitchell-tx",
+      "place": "4816120",
+      "community": "Colorado City",
+      "kind": "synthetic_road",
+      "originalFixture": {
+        "id": "gridly-test-lp24448a-1790222895820-1",
+        "preset": "flooded-roadway",
+        "state": "active",
+        "countyId": "mitchell-tx",
+        "lat": 32.3930337,
+        "lng": -100.86351,
+        "ageMinutes": 0,
+        "reportCount": 1,
+        "crossingId": null
+      },
+      "originalStaleValue": 1,
+      "originalTiming": "Original clear then settlement/snapshot; elapsed writer ordering was not instrumented in the historical artifact.",
+      "originalSequence": "Home -> Search -> nearby/town/county/active-delays/all/county -> crossing viewport -> fixture -> Alerts -> clear -> snapshot -> Return Home/county transition.",
+      "classification": "SAME_ROOT_CAUSE",
+      "classificationEvidence": "The original fixture type/context reproduces a candidate retained in the same published-summary collection under deliberate production provider-refresh ordering. Historical count-only evidence does not independently establish that original ordering.",
+      "baselineTriggeredCount": 1,
+      "baselineCandidate": {
+        "object": "object-202",
+        "recordObject": "object-14",
+        "rawObject": "object-247",
+        "id": "gridly-test-lp24448a-1790290489788-1",
+        "source": "user",
+        "type": "flooding",
+        "state": "TX",
+        "local": true,
+        "lat": 32.3930337,
+        "lng": -100.86351,
+        "county": "mitchell-tx",
+        "place": "4816120",
+        "evidenceId": "active_hazard:hazard-gridly-test-lp24448a-1790290489788-1",
+        "expired": false
+      },
+      "baselineExactCounts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "currentExactCounts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "currentTriggeredCounts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "candidateAbsent": true,
+      "refreshCounts": [
+        0,
+        0
+      ],
+      "exactPass": true,
+      "triggeredPass": true,
+      "status": "CLOSED",
+      "evidence": [
+        ".artifacts/lp24449/supplements/mitchell-tx.json",
+        ".artifacts/lp24449b1/current-pulse.json",
+        ".artifacts/lp24449b1/baseline-pulse.json",
+        "reports/lp24449b1/original-ten-provenance.json"
+      ]
+    },
+    {
+      "originalFailureId": "LP24449-ledger-02034",
+      "county": "mitchell-tx",
+      "place": "4816120",
+      "community": "Colorado City",
+      "kind": "synthetic_delay",
+      "originalFixture": {
+        "id": "gridly-test-lp24448a-1790222898867-2",
+        "preset": "reported-crossing-delay",
+        "state": "active",
+        "countyId": "mitchell-tx",
+        "lat": 32.3363126003048,
+        "lng": -101.124068200285,
+        "ageMinutes": 0,
+        "reportCount": 1,
+        "crossingId": "FRA-796156X"
+      },
+      "originalStaleValue": 1,
+      "originalTiming": "Original clear then settlement/snapshot; elapsed writer ordering was not instrumented in the historical artifact.",
+      "originalSequence": "Home -> Search -> nearby/town/county/active-delays/all/county -> crossing viewport -> fixture -> Alerts -> clear -> snapshot -> Return Home/county transition.",
+      "classification": "NO_LONGER_REPRODUCIBLE",
+      "classificationEvidence": "Exact original and deliberately overlapped publication replay did not reproduce retained candidate on the dirty starting source; the historical stale assertion is preserved, without claiming a proven historical cause.",
+      "baselineTriggeredCount": 0,
+      "baselineCandidate": {
+        "object": null,
+        "recordObject": "object-236",
+        "rawObject": "object-237"
+      },
+      "baselineExactCounts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "currentExactCounts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "currentTriggeredCounts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "candidateAbsent": true,
+      "refreshCounts": [
+        0,
+        0
+      ],
+      "exactPass": true,
+      "triggeredPass": true,
+      "status": "CLOSED",
+      "evidence": [
+        ".artifacts/lp24449/supplements/mitchell-tx.json",
+        ".artifacts/lp24449b1/current-pulse.json",
+        ".artifacts/lp24449b1/baseline-pulse.json",
+        "reports/lp24449b1/original-ten-provenance.json"
+      ]
+    },
+    {
+      "originalFailureId": "LP24449-ledger-02035",
+      "county": "montgomery-tx",
+      "place": "4818260",
+      "community": "Cut and Shoot",
+      "kind": "synthetic_road",
+      "originalFixture": {
+        "id": "gridly-test-lp24448a-1790226255720-1",
+        "preset": "flooded-roadway",
+        "state": "active",
+        "countyId": "montgomery-tx",
+        "lat": 30.3332654,
+        "lng": -95.357994,
+        "ageMinutes": 0,
+        "reportCount": 1,
+        "crossingId": null
+      },
+      "originalStaleValue": 1,
+      "originalTiming": "Original clear then settlement/snapshot; elapsed writer ordering was not instrumented in the historical artifact.",
+      "originalSequence": "Home -> Search -> nearby/town/county/active-delays/all/county -> crossing viewport -> fixture -> Alerts -> clear -> snapshot -> Return Home/county transition.",
+      "classification": "SAME_ROOT_CAUSE",
+      "classificationEvidence": "The original fixture type/context reproduces a candidate retained in the same published-summary collection under deliberate production provider-refresh ordering. Historical count-only evidence does not independently establish that original ordering.",
+      "baselineTriggeredCount": 1,
+      "baselineCandidate": {
+        "object": "object-202",
+        "recordObject": "object-14",
+        "rawObject": "object-247",
+        "id": "gridly-test-lp24448a-1790290503334-1",
+        "source": "user",
+        "type": "flooding",
+        "state": "TX",
+        "local": true,
+        "lat": 30.3332654,
+        "lng": -95.357994,
+        "county": "montgomery-tx",
+        "place": "4818260",
+        "evidenceId": "active_hazard:hazard-gridly-test-lp24448a-1790290503334-1",
+        "expired": false
+      },
+      "baselineExactCounts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "currentExactCounts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "currentTriggeredCounts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "candidateAbsent": true,
+      "refreshCounts": [
+        0,
+        0
+      ],
+      "exactPass": true,
+      "triggeredPass": true,
+      "status": "CLOSED",
+      "evidence": [
+        ".artifacts/lp24449/supplements/montgomery-tx.json",
+        ".artifacts/lp24449b1/current-pulse.json",
+        ".artifacts/lp24449b1/baseline-pulse.json",
+        "reports/lp24449b1/original-ten-provenance.json"
+      ]
+    },
+    {
+      "originalFailureId": "LP24449-ledger-02036",
+      "county": "montgomery-tx",
+      "place": "4818260",
+      "community": "Cut and Shoot",
+      "kind": "synthetic_delay",
+      "originalFixture": {
+        "id": "gridly-test-lp24448a-1790226305410-2",
+        "preset": "reported-crossing-delay",
+        "state": "active",
+        "countyId": "montgomery-tx",
+        "lat": 30.3179850003446,
+        "lng": -95.6289090000333,
+        "ageMinutes": 0,
+        "reportCount": 1,
+        "crossingId": "FRA-024330Y"
+      },
+      "originalStaleValue": 1,
+      "originalTiming": "Original clear then settlement/snapshot; elapsed writer ordering was not instrumented in the historical artifact.",
+      "originalSequence": "Home -> Search -> nearby/town/county/active-delays/all/county -> crossing viewport -> fixture -> Alerts -> clear -> snapshot -> Return Home/county transition.",
+      "classification": "NO_LONGER_REPRODUCIBLE",
+      "classificationEvidence": "Exact original and deliberately overlapped publication replay did not reproduce retained candidate on the dirty starting source; the historical stale assertion is preserved, without claiming a proven historical cause.",
+      "baselineTriggeredCount": 0,
+      "baselineCandidate": {
+        "object": null,
+        "recordObject": "object-236",
+        "rawObject": "object-237"
+      },
+      "baselineExactCounts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "currentExactCounts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "currentTriggeredCounts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "candidateAbsent": true,
+      "refreshCounts": [
+        0,
+        0
+      ],
+      "exactPass": true,
+      "triggeredPass": true,
+      "status": "CLOSED",
+      "evidence": [
+        ".artifacts/lp24449/supplements/montgomery-tx.json",
+        ".artifacts/lp24449b1/current-pulse.json",
+        ".artifacts/lp24449b1/baseline-pulse.json",
+        "reports/lp24449b1/original-ten-provenance.json"
+      ]
+    },
+    {
+      "originalFailureId": "LP24449-ledger-02037",
+      "county": "presidio-tx",
+      "place": "4846620",
+      "community": "Marfa",
+      "kind": "synthetic_road",
+      "originalFixture": {
+        "id": "gridly-test-lp24448a-1790225513099-1",
+        "preset": "flooded-roadway",
+        "state": "active",
+        "countyId": "presidio-tx",
+        "lat": 30.3117621,
+        "lng": -104.023146,
+        "ageMinutes": 0,
+        "reportCount": 1,
+        "crossingId": null
+      },
+      "originalStaleValue": 1,
+      "originalTiming": "Original clear then settlement/snapshot; elapsed writer ordering was not instrumented in the historical artifact.",
+      "originalSequence": "Home -> Search -> nearby/town/county/active-delays/all/county -> crossing viewport -> fixture -> Alerts -> clear -> snapshot -> Return Home/county transition.",
+      "classification": "SAME_ROOT_CAUSE",
+      "classificationEvidence": "The original fixture type/context reproduces a candidate retained in the same published-summary collection under deliberate production provider-refresh ordering. Historical count-only evidence does not independently establish that original ordering.",
+      "baselineTriggeredCount": 1,
+      "baselineCandidate": {
+        "object": "object-198",
+        "recordObject": "object-14",
+        "rawObject": "object-243",
+        "id": "gridly-test-lp24448a-1790290520430-1",
+        "source": "user",
+        "type": "flooding",
+        "state": "TX",
+        "local": true,
+        "lat": 30.3117621,
+        "lng": -104.023146,
+        "county": "presidio-tx",
+        "place": "4846620",
+        "evidenceId": "active_hazard:hazard-gridly-test-lp24448a-1790290520430-1",
+        "expired": false
+      },
+      "baselineExactCounts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "currentExactCounts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "currentTriggeredCounts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "candidateAbsent": true,
+      "refreshCounts": [
+        0,
+        0
+      ],
+      "exactPass": true,
+      "triggeredPass": true,
+      "status": "CLOSED",
+      "evidence": [
+        ".artifacts/lp24449/supplements/presidio-tx.json",
+        ".artifacts/lp24449b1/current-pulse.json",
+        ".artifacts/lp24449b1/baseline-pulse.json",
+        "reports/lp24449b1/original-ten-provenance.json"
+      ]
+    },
+    {
+      "originalFailureId": "LP24449-ledger-02038",
+      "county": "presidio-tx",
+      "place": "4846620",
+      "community": "Marfa",
+      "kind": "synthetic_delay",
+      "originalFixture": {
+        "id": "gridly-test-lp24448a-1790225516077-2",
+        "preset": "reported-crossing-delay",
+        "state": "active",
+        "countyId": "presidio-tx",
+        "lat": 30.2158851001084,
+        "lng": -103.919523500003,
+        "ageMinutes": 0,
+        "reportCount": 1,
+        "crossingId": "FRA-019028Y"
+      },
+      "originalStaleValue": 1,
+      "originalTiming": "Original clear then settlement/snapshot; elapsed writer ordering was not instrumented in the historical artifact.",
+      "originalSequence": "Home -> Search -> nearby/town/county/active-delays/all/county -> crossing viewport -> fixture -> Alerts -> clear -> snapshot -> Return Home/county transition.",
+      "classification": "NO_LONGER_REPRODUCIBLE",
+      "classificationEvidence": "Exact original and deliberately overlapped publication replay did not reproduce retained candidate on the dirty starting source; the historical stale assertion is preserved, without claiming a proven historical cause.",
+      "baselineTriggeredCount": 0,
+      "baselineCandidate": {
+        "object": null,
+        "recordObject": "object-237",
+        "rawObject": "object-238"
+      },
+      "baselineExactCounts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "currentExactCounts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "currentTriggeredCounts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "candidateAbsent": true,
+      "refreshCounts": [
+        0,
+        0
+      ],
+      "exactPass": true,
+      "triggeredPass": true,
+      "status": "CLOSED",
+      "evidence": [
+        ".artifacts/lp24449/supplements/presidio-tx.json",
+        ".artifacts/lp24449b1/current-pulse.json",
+        ".artifacts/lp24449b1/baseline-pulse.json",
+        "reports/lp24449b1/original-ten-provenance.json"
+      ]
+    },
+    {
+      "originalFailureId": "LP24449-ledger-02039",
+      "county": "wharton-tx",
+      "place": "4809232",
+      "community": "Boling",
+      "kind": "synthetic_road",
+      "originalFixture": {
+        "id": "gridly-test-lp24448a-1790227785434-1",
+        "preset": "flooded-roadway",
+        "state": "active",
+        "countyId": "wharton-tx",
+        "lat": 29.2624925,
+        "lng": -95.9397985,
+        "ageMinutes": 0,
+        "reportCount": 1,
+        "crossingId": null
+      },
+      "originalStaleValue": 1,
+      "originalTiming": "Original clear then settlement/snapshot; elapsed writer ordering was not instrumented in the historical artifact.",
+      "originalSequence": "Home -> Search -> nearby/town/county/active-delays/all/county -> crossing viewport -> fixture -> Alerts -> clear -> snapshot -> Return Home/county transition.",
+      "classification": "SAME_ROOT_CAUSE",
+      "classificationEvidence": "The original fixture type/context reproduces a candidate retained in the same published-summary collection under deliberate production provider-refresh ordering. Historical count-only evidence does not independently establish that original ordering.",
+      "baselineTriggeredCount": 1,
+      "baselineCandidate": {
+        "object": "object-196",
+        "recordObject": "object-14",
+        "rawObject": "object-241",
+        "id": "gridly-test-lp24448a-1790290533874-1",
+        "source": "user",
+        "type": "flooding",
+        "state": "TX",
+        "local": true,
+        "lat": 29.2624925,
+        "lng": -95.9397985,
+        "county": "wharton-tx",
+        "place": "4809232",
+        "evidenceId": "active_hazard:hazard-gridly-test-lp24448a-1790290533874-1",
+        "expired": false
+      },
+      "baselineExactCounts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "currentExactCounts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "currentTriggeredCounts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "candidateAbsent": true,
+      "refreshCounts": [
+        0,
+        0
+      ],
+      "exactPass": true,
+      "triggeredPass": true,
+      "status": "CLOSED",
+      "evidence": [
+        ".artifacts/lp24449/supplements/wharton-tx.json",
+        ".artifacts/lp24449b1/current-pulse.json",
+        ".artifacts/lp24449b1/baseline-pulse.json",
+        "reports/lp24449b1/original-ten-provenance.json"
+      ]
+    },
+    {
+      "originalFailureId": "LP24449-ledger-02040",
+      "county": "wharton-tx",
+      "place": "4809232",
+      "community": "Boling",
+      "kind": "synthetic_delay",
+      "originalFixture": {
+        "id": "gridly-test-lp24448a-1790227787431-2",
+        "preset": "reported-crossing-delay",
+        "state": "active",
+        "countyId": "wharton-tx",
+        "lat": 29.3945229998234,
+        "lng": -96.0806240001799,
+        "ageMinutes": 0,
+        "reportCount": 1,
+        "crossingId": "FRA-743353P"
+      },
+      "originalStaleValue": 1,
+      "originalTiming": "Original clear then settlement/snapshot; elapsed writer ordering was not instrumented in the historical artifact.",
+      "originalSequence": "Home -> Search -> nearby/town/county/active-delays/all/county -> crossing viewport -> fixture -> Alerts -> clear -> snapshot -> Return Home/county transition.",
+      "classification": "NO_LONGER_REPRODUCIBLE",
+      "classificationEvidence": "Exact original and deliberately overlapped publication replay did not reproduce retained candidate on the dirty starting source; the historical stale assertion is preserved, without claiming a proven historical cause.",
+      "baselineTriggeredCount": 0,
+      "baselineCandidate": {
+        "object": null,
+        "recordObject": "object-230",
+        "rawObject": "object-231"
+      },
+      "baselineExactCounts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "currentExactCounts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "currentTriggeredCounts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "candidateAbsent": true,
+      "refreshCounts": [
+        0,
+        0
+      ],
+      "exactPass": true,
+      "triggeredPass": true,
+      "status": "CLOSED",
+      "evidence": [
+        ".artifacts/lp24449/supplements/wharton-tx.json",
+        ".artifacts/lp24449b1/current-pulse.json",
+        ".artifacts/lp24449b1/baseline-pulse.json",
+        "reports/lp24449b1/original-ten-provenance.json"
+      ]
+    }
+  ]
+}

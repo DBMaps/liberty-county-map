@@ -1,0 +1,1623 @@
+{
+  "states": [
+    {
+      "label": "neutral",
+      "kind": "neutral",
+      "count": 0,
+      "raw": {
+        "published": 0,
+        "location": "No active issues currently shown"
+      },
+      "snapshot": {
+        "context": {
+          "probeVersion": 3,
+          "type": "HOME",
+          "place": "4819432",
+          "name": "Dayton",
+          "county": "liberty-tx",
+          "lat": 30.0473202,
+          "lng": -94.8873913,
+          "generation": 1,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "commandVisibility": {
+          "visible": true,
+          "owner": "awareness",
+          "hasSelectedDestination": false,
+          "pendingDestinationConfirmation": false,
+          "temporaryAwarenessMode": false,
+          "selectedLabel": "",
+          "routePreviewActive": false,
+          "routePreviewStatus": "idle",
+          "routeIsMonitoring": false,
+          "explicitDestinationPanelOpen": false,
+          "popupInteractionActive": false,
+          "awarenessPanelMode": true,
+          "routeOrDestinationOwnership": false,
+          "rule": "awareness owns the idle mobile panel; legacy destination command is visible only with selected destination, active route preview, active Route Watch, or an explicit destination panel, and destination ownership is hidden while a Leaflet popup is open"
+        },
+        "activeCounty": "liberty-tx",
+        "areaKey": "place-4819432",
+        "weatherPoint": {
+          "awarenessKey": "place-4819432",
+          "identityClass": "CANONICAL_PLACE",
+          "countyId": "liberty-tx",
+          "stableIdentity": "4819432",
+          "lat": 30.0473202,
+          "lng": -94.8873913,
+          "placeGeoid": "4819432"
+        },
+        "weather": {
+          "point": {
+            "awarenessKey": "place-4819432",
+            "identityClass": "CANONICAL_PLACE",
+            "countyId": "liberty-tx",
+            "stableIdentity": "4819432",
+            "lat": 30.0473202,
+            "lng": -94.8873913,
+            "placeGeoid": "4819432"
+          },
+          "identity": "4819432|place-4819432|30.0473202,-94.8873913",
+          "endpoint": "https://api.weather.gov/alerts/active?point=30.0473202,-94.8873913",
+          "pointsEndpoint": "https://api.weather.gov/points/30.0473202,-94.8873913",
+          "activated": true,
+          "attempted": true,
+          "health": "UNAVAILABLE",
+          "error": "Failed to fetch"
+        },
+        "drive": {
+          "connected": false,
+          "networkingAvailable": true,
+          "automaticPolling": true,
+          "providerActivated": true,
+          "renderingPerformed": false,
+          "normalizedRecordCount": 0,
+          "refreshIntervalMs": 180000,
+          "apiKeyConfigured": false,
+          "configurationSource": "none",
+          "initialFetchAttempted": true,
+          "requestInFlight": false,
+          "lastFetchSucceeded": false,
+          "lastSuccessfulAt": null,
+          "retainedRecordCount": 0,
+          "lastError": "DriveTexas connector API key is not configured"
+        },
+        "driveArea": {
+          "activeCounty": "liberty-tx",
+          "activeCommunity": "Dayton",
+          "activeAwarenessMode": "area",
+          "retainedCompleteSourceRecordCount": 0,
+          "currentAwarenessAreaRecordCount": 0,
+          "retainedSourceTimestamp": null,
+          "derivedAreaViewTimestamp": "2026-09-24T23:20:35.620Z",
+          "lastSuccessfulFetchTimestamp": null,
+          "lastFetchError": "DriveTexas connector API key is not configured",
+          "lastFilterReason": "drivetexas-current-view-read",
+          "lastFilteredCounty": "liberty-tx",
+          "lastFilteredCommunity": "Dayton",
+          "lastFilterCoordinates": {
+            "lat": 30.0473202,
+            "lng": -94.8873913
+          },
+          "lastFilterRadius": 7,
+          "lastFilterCanonicalKey": "place-4819432",
+          "lastFilterFocusAuthority": "LP201_CERTIFIED_STATEWIDE_PLACE_PRESENTATION_V1",
+          "geographicEvaluationState": "AVAILABLE",
+          "lastAreaViewGeneration": 2,
+          "lastFetchGeneration": 0,
+          "lastInstalledFetchGeneration": 0,
+          "staleAreaViewCompletionIgnoredCount": 0,
+          "staleFetchCompletionIgnoredCount": 0,
+          "completeSourceDatasetPreservedAcrossAreaChange": true,
+          "currentAwarenessViewIdentity": "place-4819432",
+          "currentAwarenessViewCounty": "liberty-tx",
+          "selectedAreaIdentity": "place-4819432",
+          "selectedAreaCounty": "liberty-tx",
+          "currentAwarenessViewMatchesSelectedArea": true,
+          "selectedRecordIds": [],
+          "selectedRecordCounties": [],
+          "selectedRecordCommunities": [],
+          "selectedRecordCoordinates": [],
+          "selectedRoutes": [],
+          "selectedCategories": [],
+          "selectedRawSourceText": [],
+          "refetchRequired": false,
+          "retainedDataReused": false,
+          "sourcePresentationOwnershipSeparationActive": true
+        },
+        "rows": {
+          "locationContext": [],
+          "communityPulse": [],
+          "alerts": [],
+          "kbygCommunity": [],
+          "kbygOfficialRoadways": [],
+          "map": [],
+          "popup": [],
+          "history": []
+        },
+        "summary": {
+          "name": "Dayton"
+        },
+        "location": {
+          "label": "LOCATION CONTEXT • DAYTON",
+          "issues": "No active issues currently shown"
+        },
+        "pulse": {
+          "count": 0,
+          "text": "Local awareness\nSome sources are still being checked.\nCOMMUNITY PULSE"
+        },
+        "kbyg": {
+          "name": "Dayton, TX",
+          "text": "\n        \n          \n            Good Evening\n            Dayton, TX\n          \n          \n        \n        \n          \n            TRAVEL BRIEF\n            Some sources are still being checked.\n          \n          Before You GoSome sources are still being checked.No active concerns are reported in the available local intelligence.Some sources are still being checked.Checked just nowCommunityCommunity reports from nearby driversNo community travel conditions reported.Official RoadwaysOfficial Source · DriveTexasOfficial roadway updates temporarily unavailable.WeatherWeather contextWeather information temporarily unavailable.Why Gridly says thisConfidenceSome sources are still being checked.FreshnessChecked just now.\n        \n      "
+        },
+        "alerts": {
+          "ids": [],
+          "area": "lp0457-official-prose-v1|default-awareness|default-county|default-filter",
+          "authority": {
+            "official_roadway": {
+              "state": "UNAVAILABLE",
+              "checked": false,
+              "available": false,
+              "reason": "SOURCE_FAILED_NO_RETAINED_DATA",
+              "owner": "[\"place-4819432\",\"liberty-tx\",0]"
+            },
+            "community_report": {
+              "state": "LOADING",
+              "checked": false,
+              "available": false,
+              "reason": "loading",
+              "owner": "[\"place-4819432\",\"liberty-tx\",0]"
+            },
+            "weather": {
+              "state": "UNAVAILABLE",
+              "checked": false,
+              "available": false,
+              "reason": "Failed to fetch",
+              "owner": "[\"place-4819432\",\"liberty-tx\",0]",
+              "runtimeAuthority": {
+                "configured": true,
+                "enabled": true,
+                "requestInFlight": false,
+                "requestAttempted": true,
+                "requestSucceeded": false,
+                "lastAttemptAt": "2026-09-24T23:20:35.950Z",
+                "lastSuccessAt": null,
+                "lastFailureAt": "2026-09-24T23:20:35.980Z",
+                "error": "Failed to fetch",
+                "healthy": false,
+                "freshEnoughForAuthority": false,
+                "freshness": "UNKNOWN",
+                "canonicalGeographyResolved": true,
+                "geographyAgreementPass": true,
+                "geographyEvaluation": "GOVERNED_AGREEMENT_PROVEN",
+                "currentApplicableCount": 0
+              }
+            }
+          },
+          "dom": [],
+          "text": "No Active Alerts\n×\nChecking conditions · Coverage incomplete\nOfficial Roadways\nOfficial roadway information unavailable; check again later\n—\nCommunity Reports\nChecking community reports\n—\nWeather\nWeather information unavailable; check again later\n—"
+        },
+        "crossing": {
+          "owner": "liberty-tx",
+          "loaded": 115,
+          "public": 108,
+          "eligible": [
+            "FRA-762763P",
+            "FRA-762765D",
+            "FRA-762789S",
+            "FRA-762852G",
+            "FRA-762853N",
+            "FRA-762855C",
+            "FRA-762856J",
+            "FRA-762796C",
+            "FRA-762790L",
+            "FRA-762762H",
+            "FRA-762764W",
+            "FRA-762766K",
+            "FRA-762767S",
+            "FRA-762768Y",
+            "FRA-762769F",
+            "FRA-762770A",
+            "FRA-762772N",
+            "FRA-762782U",
+            "FRA-762785P",
+            "FRA-763062E",
+            "FRA-762771G",
+            "FRA-762786W",
+            "FRA-450659H",
+            "FRA-450661J",
+            "FRA-450637H",
+            "FRA-450660C",
+            "FRA-762778E"
+          ],
+          "markers": [
+            "FRA-762785P",
+            "FRA-762786W",
+            "FRA-762790L",
+            "FRA-762789S"
+          ],
+          "trace": {
+            "mode": "production",
+            "sourcePath": "Crossing-Packages/liberty/Production/liberty-production-crossings.geojson",
+            "providerFeatureCount": 115,
+            "providerInventoryCount": 115,
+            "adapterTrace": {
+              "sourcePath": "Crossing-Packages/liberty/Production/liberty-production-crossings.geojson",
+              "exactFetchUrl": "Crossing-Packages/liberty/Production/liberty-production-crossings.geojson",
+              "rawFetchedFeatureCount": 115,
+              "declaredCrossingCount": 115,
+              "adapterInputCount": 115,
+              "firstRawInputId": "024381J",
+              "lastRawInputId": "024410S",
+              "firstRawInputCountyName": "LIBERTY",
+              "lastRawInputCountyName": "LIBERTY",
+              "loadedAt": "2026-09-24T23:20:37.765Z",
+              "adapterOutputCount": 115,
+              "firstAdapterOutputId": "FRA-024381J",
+              "lastAdapterOutputId": "FRA-024410S",
+              "firstAdapterOutputCountyName": "LIBERTY County",
+              "lastAdapterOutputCountyName": "LIBERTY County"
+            },
+            "loadedAt": "2026-09-24T23:20:37.765Z"
+          }
+        },
+        "hazards": [],
+        "hazardMarkers": [],
+        "undefinedm": false
+      },
+      "kbyg": "Some sources are still being checked.\n\nNo active concerns are reported in the available local intelligence.\n\nSome sources are still being checked.\n\nChecked just now\n\nNo community travel conditions reported.\n\nOfficial Roadways\n\nOfficial roadway updates temporarily unavailable.\n\nWeather\n\nWeather information temporarily unavailable.\n\nWhy Gridly says this",
+      "marker": {
+        "connected": true,
+        "html": "<div class=\"leaflet-marker-icon gridly-production-marker-icon gridly-crossing-production-marker-icon gridly-crossing-infrastructure-marker-icon gridly-marker-rail-clear gridly-visual-owner-infrastructure gridly-visual-state-infrastructure gridly-visual-priority-7 gridly-impact-passive leaflet-zoom-animated leaflet-interactive pulse-nearest\" style=\"margin-left: -32px; margin-top: -62.72px; width: 64px; height: 64px; transform: translate3d(193px, 407px, 0px); z-index: 407;\" aria-describedby=\"leaflet-tooltip-107\"><div class=\"gridly-marker-wrap gridly-crossing-marker-wrap  gridly-marker-rail-clear gridly-visual-owner-infrastructure gridly-visual-state-infrastructure gridly-visual-priority-7 gridly-impact-passive\" style=\"--gridly-production-marker-anchor-x:32px; --gridly-production-marker-anchor-y:62.72px;\" data-visual-style=\"rail_clear\" data-gridly-map-owner=\"infrastructure\" data-gridly-visual-priority=\"7\" data-gridly-visual-state=\"infrastructure\" data-gridly-route-relevant=\"false\" data-gridly-selected=\"false\" data-gridly-impact-level=\"passive\" data-visual-owner=\"infrastructure\" data-crossing-id=\"FRA-762785P\" data-infrastructure-opacity=\"0.82\" data-crossing-marker-visual-scale=\"1\" data-crossing-marker-street-zoom-size-applied=\"false\" data-gridly-marker-owner=\"crossing_inventory\">\n        <div class=\"gridly-crossing-marker has-production-marker state-normal    \" data-gridly-map-owner=\"infrastructure\" data-gridly-visual-priority=\"7\" data-gridly-visual-state=\"infrastructure\" data-gridly-route-relevant=\"false\" data-gridly-selected=\"false\" data-gridly-impact-level=\"passive\" data-visual-owner=\"infrastructure\" data-category=\"crossing_infrastructure\" data-marker-category=\"crossing_infrastructure\" data-marker-asset=\"assets/markers/approved/25-crossing-location.png\" data-state=\"infrastructure\" data-gridly-marker-owner=\"crossing_inventory\" aria-label=\"Crossing infrastructure\">\n          <img class=\"gridly-production-marker-img\" src=\"assets/markers/approved/25-crossing-location.png\" alt=\"\" aria-hidden=\"true\" data-marker-asset=\"25-crossing-location.png\" onload=\"window.gridlyMarkProductionMarkerAssetLoad &amp;&amp; window.gridlyMarkProductionMarkerAssetLoad(this.dataset.markerAsset, 'loaded')\" onerror=\"window.gridlyMarkProductionMarkerAssetLoad &amp;&amp; window.gridlyMarkProductionMarkerAssetLoad(this.dataset.markerAsset, 'failed')\">\n        </div>\n        \n      </div></div>",
+        "status": "inventory",
+        "icon": "assets/markers/approved/25-crossing-location.png"
+      },
+      "checks": {
+        "rawCount": true,
+        "projection": true,
+        "published": true,
+        "noDelayBlockLanguage": true,
+        "clearRows": true
+      },
+      "pass": true
+    },
+    {
+      "label": "blocked",
+      "kind": "blocked",
+      "count": 1,
+      "raw": {
+        "published": 1,
+        "location": "1 roadway issue nearby"
+      },
+      "snapshot": {
+        "context": {
+          "probeVersion": 3,
+          "type": "HOME",
+          "place": "4819432",
+          "name": "Dayton",
+          "county": "liberty-tx",
+          "lat": 30.0473202,
+          "lng": -94.8873913,
+          "generation": 1,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "commandVisibility": {
+          "visible": true,
+          "owner": "awareness",
+          "hasSelectedDestination": false,
+          "pendingDestinationConfirmation": false,
+          "temporaryAwarenessMode": false,
+          "selectedLabel": "",
+          "routePreviewActive": false,
+          "routePreviewStatus": "idle",
+          "routeIsMonitoring": false,
+          "explicitDestinationPanelOpen": false,
+          "popupInteractionActive": false,
+          "awarenessPanelMode": true,
+          "routeOrDestinationOwnership": false,
+          "rule": "awareness owns the idle mobile panel; legacy destination command is visible only with selected destination, active route preview, active Route Watch, or an explicit destination panel, and destination ownership is hidden while a Leaflet popup is open"
+        },
+        "activeCounty": "liberty-tx",
+        "areaKey": "place-4819432",
+        "weatherPoint": {
+          "awarenessKey": "place-4819432",
+          "identityClass": "CANONICAL_PLACE",
+          "countyId": "liberty-tx",
+          "stableIdentity": "4819432",
+          "lat": 30.0473202,
+          "lng": -94.8873913,
+          "placeGeoid": "4819432"
+        },
+        "weather": {
+          "point": {
+            "awarenessKey": "place-4819432",
+            "identityClass": "CANONICAL_PLACE",
+            "countyId": "liberty-tx",
+            "stableIdentity": "4819432",
+            "lat": 30.0473202,
+            "lng": -94.8873913,
+            "placeGeoid": "4819432"
+          },
+          "identity": "4819432|place-4819432|30.0473202,-94.8873913",
+          "endpoint": "https://api.weather.gov/alerts/active?point=30.0473202,-94.8873913",
+          "pointsEndpoint": "https://api.weather.gov/points/30.0473202,-94.8873913",
+          "activated": true,
+          "attempted": true,
+          "health": "UNAVAILABLE",
+          "error": "Failed to fetch"
+        },
+        "drive": {
+          "connected": false,
+          "networkingAvailable": true,
+          "automaticPolling": true,
+          "providerActivated": true,
+          "renderingPerformed": false,
+          "normalizedRecordCount": 0,
+          "refreshIntervalMs": 180000,
+          "apiKeyConfigured": false,
+          "configurationSource": "none",
+          "initialFetchAttempted": true,
+          "requestInFlight": false,
+          "lastFetchSucceeded": false,
+          "lastSuccessfulAt": null,
+          "retainedRecordCount": 0,
+          "lastError": "DriveTexas connector API key is not configured"
+        },
+        "driveArea": {
+          "activeCounty": "liberty-tx",
+          "activeCommunity": "Dayton",
+          "activeAwarenessMode": "area",
+          "retainedCompleteSourceRecordCount": 0,
+          "currentAwarenessAreaRecordCount": 0,
+          "retainedSourceTimestamp": null,
+          "derivedAreaViewTimestamp": "2026-09-24T23:20:35.620Z",
+          "lastSuccessfulFetchTimestamp": null,
+          "lastFetchError": "DriveTexas connector API key is not configured",
+          "lastFilterReason": "drivetexas-current-view-read",
+          "lastFilteredCounty": "liberty-tx",
+          "lastFilteredCommunity": "Dayton",
+          "lastFilterCoordinates": {
+            "lat": 30.0473202,
+            "lng": -94.8873913
+          },
+          "lastFilterRadius": 7,
+          "lastFilterCanonicalKey": "place-4819432",
+          "lastFilterFocusAuthority": "LP201_CERTIFIED_STATEWIDE_PLACE_PRESENTATION_V1",
+          "geographicEvaluationState": "AVAILABLE",
+          "lastAreaViewGeneration": 2,
+          "lastFetchGeneration": 0,
+          "lastInstalledFetchGeneration": 0,
+          "staleAreaViewCompletionIgnoredCount": 0,
+          "staleFetchCompletionIgnoredCount": 0,
+          "completeSourceDatasetPreservedAcrossAreaChange": true,
+          "currentAwarenessViewIdentity": "place-4819432",
+          "currentAwarenessViewCounty": "liberty-tx",
+          "selectedAreaIdentity": "place-4819432",
+          "selectedAreaCounty": "liberty-tx",
+          "currentAwarenessViewMatchesSelectedArea": true,
+          "selectedRecordIds": [],
+          "selectedRecordCounties": [],
+          "selectedRecordCommunities": [],
+          "selectedRecordCoordinates": [],
+          "selectedRoutes": [],
+          "selectedCategories": [],
+          "selectedRawSourceText": [],
+          "refetchRequired": false,
+          "retainedDataReused": false,
+          "sourcePresentationOwnershipSeparationActive": true
+        },
+        "rows": {
+          "locationContext": [
+            {
+              "id": "community_report:gridly-test-lp24448a-1790292042793-1",
+              "type": "blocked_crossing",
+              "county": "liberty-tx"
+            }
+          ],
+          "communityPulse": [
+            {
+              "id": "community_report:gridly-test-lp24448a-1790292042793-1",
+              "type": "blocked_crossing",
+              "county": "liberty-tx"
+            }
+          ],
+          "alerts": [
+            {
+              "id": "community_report:gridly-test-lp24448a-1790292042793-1",
+              "type": "blocked_crossing",
+              "county": "liberty-tx"
+            }
+          ],
+          "kbygCommunity": [
+            {
+              "id": "community_report:gridly-test-lp24448a-1790292042793-1",
+              "type": "blocked_crossing",
+              "county": "liberty-tx"
+            }
+          ],
+          "kbygOfficialRoadways": [],
+          "map": [
+            {
+              "id": "community_report:gridly-test-lp24448a-1790292042793-1",
+              "type": "blocked_crossing",
+              "county": "liberty-tx"
+            }
+          ],
+          "popup": [
+            {
+              "id": "community_report:gridly-test-lp24448a-1790292042793-1",
+              "type": "blocked_crossing",
+              "county": "liberty-tx"
+            }
+          ],
+          "history": []
+        },
+        "summary": {
+          "name": "Dayton"
+        },
+        "location": {
+          "label": "LOCATION CONTEXT • DAYTON",
+          "issues": "1 roadway issue nearby"
+        },
+        "pulse": {
+          "count": 1,
+          "text": "Train blocking crossing.\nAllow extra travel time.\nCOMMUNITY PULSE"
+        },
+        "kbyg": {
+          "name": "Dayton, TX",
+          "text": "\n        \n          \n            Good Evening\n            Dayton, TX\n          \n          \n        \n        \n          \n            TRAVEL BRIEF\n            Early signs point to this.\n          \n          Before You GoAllow extra travel time.Community reports indicate a blocked crossing.Developing conditions.Updated just nowCommunityCommunity reports from nearby driversA community report is active in Dayton.Official RoadwaysOfficial Source · DriveTexasOfficial roadway updates temporarily unavailable.WeatherWeather contextWeather information temporarily unavailable.Why Gridly says thisRail / CrossingCrossing reports support this.ConfidenceDeveloping conditions.FreshnessUpdated just now.\n        \n      "
+        },
+        "alerts": {
+          "ids": [
+            "community_report:gridly-test-lp24448a-1790292042793-1"
+          ],
+          "area": "lp0457-official-prose-v1|default-awareness|default-county|default-filter",
+          "authority": {
+            "official_roadway": {
+              "state": "UNAVAILABLE",
+              "checked": false,
+              "available": false,
+              "reason": "SOURCE_FAILED_NO_RETAINED_DATA",
+              "owner": "[\"place-4819432\",\"liberty-tx\",0]"
+            },
+            "community_report": {
+              "state": "LOADING",
+              "checked": false,
+              "available": false,
+              "reason": "loading",
+              "owner": "[\"place-4819432\",\"liberty-tx\",0]"
+            },
+            "weather": {
+              "state": "UNAVAILABLE",
+              "checked": false,
+              "available": false,
+              "reason": "Failed to fetch",
+              "owner": "[\"place-4819432\",\"liberty-tx\",0]",
+              "runtimeAuthority": {
+                "configured": true,
+                "enabled": true,
+                "requestInFlight": false,
+                "requestAttempted": true,
+                "requestSucceeded": false,
+                "lastAttemptAt": "2026-09-24T23:20:35.950Z",
+                "lastSuccessAt": null,
+                "lastFailureAt": "2026-09-24T23:20:35.980Z",
+                "error": "Failed to fetch",
+                "healthy": false,
+                "freshEnoughForAuthority": false,
+                "freshness": "UNKNOWN",
+                "canonicalGeographyResolved": true,
+                "geographyAgreementPass": true,
+                "geographyEvaluation": "GOVERNED_AGREEMENT_PROVEN",
+                "currentApplicableCount": 0
+              }
+            }
+          },
+          "dom": [
+            {
+              "id": "community_report:gridly-test-lp24448a-1790292042793-1",
+              "text": "Winfree Street\nBlocked Crossing\nShared report: a train is blocking a crossing and may affect travel.\nUpdated just now\nShow me"
+            }
+          ],
+          "text": "Alerts\n×\n1 current condition · Coverage incomplete\nCommunity Reports\nCommunity-submitted conditions · Checking live community reports\n1\nWinfree Street\nBlocked Crossing\nShared report: a train is blocking a crossing and may affect travel.\nUpdated just now\nShow me\nOfficial Roadways\nOfficial roadway information unavailable; check again later\n—\nWeather\nWeather information unavailable; check again later\n—"
+        },
+        "crossing": {
+          "owner": "liberty-tx",
+          "loaded": 115,
+          "public": 108,
+          "eligible": [
+            "FRA-762763P",
+            "FRA-762765D",
+            "FRA-762789S",
+            "FRA-762852G",
+            "FRA-762853N",
+            "FRA-762855C",
+            "FRA-762856J",
+            "FRA-762796C",
+            "FRA-762790L",
+            "FRA-762762H",
+            "FRA-762764W",
+            "FRA-762766K",
+            "FRA-762767S",
+            "FRA-762768Y",
+            "FRA-762769F",
+            "FRA-762770A",
+            "FRA-762772N",
+            "FRA-762782U",
+            "FRA-762785P",
+            "FRA-763062E",
+            "FRA-762771G",
+            "FRA-762786W",
+            "FRA-450659H",
+            "FRA-450661J",
+            "FRA-450637H",
+            "FRA-450660C",
+            "FRA-762778E"
+          ],
+          "markers": [
+            "FRA-762786W",
+            "FRA-762790L",
+            "FRA-762789S",
+            "FRA-762785P"
+          ],
+          "trace": {
+            "mode": "production",
+            "sourcePath": "Crossing-Packages/liberty/Production/liberty-production-crossings.geojson",
+            "providerFeatureCount": 115,
+            "providerInventoryCount": 115,
+            "adapterTrace": {
+              "sourcePath": "Crossing-Packages/liberty/Production/liberty-production-crossings.geojson",
+              "exactFetchUrl": "Crossing-Packages/liberty/Production/liberty-production-crossings.geojson",
+              "rawFetchedFeatureCount": 115,
+              "declaredCrossingCount": 115,
+              "adapterInputCount": 115,
+              "firstRawInputId": "024381J",
+              "lastRawInputId": "024410S",
+              "firstRawInputCountyName": "LIBERTY",
+              "lastRawInputCountyName": "LIBERTY",
+              "loadedAt": "2026-09-24T23:20:37.765Z",
+              "adapterOutputCount": 115,
+              "firstAdapterOutputId": "FRA-024381J",
+              "lastAdapterOutputId": "FRA-024410S",
+              "firstAdapterOutputCountyName": "LIBERTY County",
+              "lastAdapterOutputCountyName": "LIBERTY County"
+            },
+            "loadedAt": "2026-09-24T23:20:37.765Z"
+          }
+        },
+        "hazards": [],
+        "hazardMarkers": [],
+        "undefinedm": false
+      },
+      "kbyg": "Allow extra travel time.\n\nCommunity reports indicate a blocked crossing.\n\nDeveloping conditions.\n\nUpdated just now\n\nA community report is active in Dayton.\n\nOfficial Roadways\n\nOfficial roadway updates temporarily unavailable.\n\nWeather\n\nWeather information temporarily unavailable.\n\nWhy Gridly says this",
+      "marker": {
+        "connected": true,
+        "html": "<div class=\"leaflet-marker-icon gridly-production-marker-icon gridly-crossing-production-marker-icon gridly-crossing-active-delay-marker-icon gridly-marker-rail-blocked gridly-visual-owner-blocked_crossing gridly-visual-state-blocked gridly-visual-priority-3 gridly-impact-high leaflet-zoom-animated leaflet-interactive\" style=\"margin-left: -32px; margin-top: -62.72px; width: 64px; height: 64px; transform: translate3d(193px, 407px, 0px); z-index: 407;\"><div class=\"gridly-marker-wrap gridly-crossing-marker-wrap  gridly-marker-rail-blocked gridly-visual-owner-blocked_crossing gridly-visual-state-blocked gridly-visual-priority-3 gridly-impact-high\" style=\"--gridly-production-marker-anchor-x:32px; --gridly-production-marker-anchor-y:62.72px;\" data-visual-style=\"rail_blocked\" data-gridly-map-owner=\"blocked_crossing\" data-gridly-visual-priority=\"3\" data-gridly-visual-state=\"blocked\" data-gridly-route-relevant=\"false\" data-gridly-selected=\"false\" data-gridly-impact-level=\"high\" data-visual-owner=\"blocked_crossing\" data-crossing-id=\"FRA-762785P\" data-infrastructure-opacity=\"0.82\" data-crossing-marker-visual-scale=\"1\" data-crossing-marker-street-zoom-size-applied=\"false\" data-gridly-marker-owner=\"crossing_inventory\">\n        <div class=\"gridly-crossing-marker has-production-marker state-blocked alert   \" data-gridly-map-owner=\"blocked_crossing\" data-gridly-visual-priority=\"3\" data-gridly-visual-state=\"blocked\" data-gridly-route-relevant=\"false\" data-gridly-selected=\"false\" data-gridly-impact-level=\"high\" data-visual-owner=\"blocked_crossing\" data-category=\"rail_issue\" data-marker-category=\"rail_issue\" data-marker-asset=\"assets/markers/approved/24-blocked-crossing.png\" data-state=\"blocked\" data-gridly-marker-owner=\"crossing_inventory\" aria-label=\"Blocked Crossing\">\n          <img class=\"gridly-production-marker-img\" src=\"assets/markers/approved/24-blocked-crossing.png\" alt=\"\" aria-hidden=\"true\" data-marker-asset=\"24-blocked-crossing.png\" onload=\"window.gridlyMarkProductionMarkerAssetLoad &amp;&amp; window.gridlyMarkProductionMarkerAssetLoad(this.dataset.markerAsset, 'loaded')\" onerror=\"window.gridlyMarkProductionMarkerAssetLoad &amp;&amp; window.gridlyMarkProductionMarkerAssetLoad(this.dataset.markerAsset, 'failed')\">\n        </div>\n        \n      </div></div>",
+        "status": "active",
+        "icon": "assets/markers/approved/24-blocked-crossing.png"
+      },
+      "checks": {
+        "rawCount": true,
+        "projection": true,
+        "published": true,
+        "noDelayBlockLanguage": true,
+        "clearRows": true
+      },
+      "pass": true
+    },
+    {
+      "label": "blocked-cleared",
+      "kind": "clear",
+      "count": 0,
+      "raw": {
+        "published": 0,
+        "location": "No active issues currently shown"
+      },
+      "snapshot": {
+        "context": {
+          "probeVersion": 3,
+          "type": "HOME",
+          "place": "4819432",
+          "name": "Dayton",
+          "county": "liberty-tx",
+          "lat": 30.0473202,
+          "lng": -94.8873913,
+          "generation": 1,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "commandVisibility": {
+          "visible": true,
+          "owner": "awareness",
+          "hasSelectedDestination": false,
+          "pendingDestinationConfirmation": false,
+          "temporaryAwarenessMode": false,
+          "selectedLabel": "",
+          "routePreviewActive": false,
+          "routePreviewStatus": "idle",
+          "routeIsMonitoring": false,
+          "explicitDestinationPanelOpen": false,
+          "popupInteractionActive": true,
+          "awarenessPanelMode": true,
+          "routeOrDestinationOwnership": false,
+          "rule": "awareness owns the idle mobile panel; legacy destination command is visible only with selected destination, active route preview, active Route Watch, or an explicit destination panel, and destination ownership is hidden while a Leaflet popup is open"
+        },
+        "activeCounty": "liberty-tx",
+        "areaKey": "place-4819432",
+        "weatherPoint": {
+          "awarenessKey": "place-4819432",
+          "identityClass": "CANONICAL_PLACE",
+          "countyId": "liberty-tx",
+          "stableIdentity": "4819432",
+          "lat": 30.0473202,
+          "lng": -94.8873913,
+          "placeGeoid": "4819432"
+        },
+        "weather": {
+          "point": {
+            "awarenessKey": "place-4819432",
+            "identityClass": "CANONICAL_PLACE",
+            "countyId": "liberty-tx",
+            "stableIdentity": "4819432",
+            "lat": 30.0473202,
+            "lng": -94.8873913,
+            "placeGeoid": "4819432"
+          },
+          "identity": "4819432|place-4819432|30.0473202,-94.8873913",
+          "endpoint": "https://api.weather.gov/alerts/active?point=30.0473202,-94.8873913",
+          "pointsEndpoint": "https://api.weather.gov/points/30.0473202,-94.8873913",
+          "activated": true,
+          "attempted": true,
+          "health": "UNAVAILABLE",
+          "error": "Failed to fetch"
+        },
+        "drive": {
+          "connected": false,
+          "networkingAvailable": true,
+          "automaticPolling": true,
+          "providerActivated": true,
+          "renderingPerformed": false,
+          "normalizedRecordCount": 0,
+          "refreshIntervalMs": 180000,
+          "apiKeyConfigured": false,
+          "configurationSource": "none",
+          "initialFetchAttempted": true,
+          "requestInFlight": false,
+          "lastFetchSucceeded": false,
+          "lastSuccessfulAt": null,
+          "retainedRecordCount": 0,
+          "lastError": "DriveTexas connector API key is not configured"
+        },
+        "driveArea": {
+          "activeCounty": "liberty-tx",
+          "activeCommunity": "Dayton",
+          "activeAwarenessMode": "area",
+          "retainedCompleteSourceRecordCount": 0,
+          "currentAwarenessAreaRecordCount": 0,
+          "retainedSourceTimestamp": null,
+          "derivedAreaViewTimestamp": "2026-09-24T23:20:35.620Z",
+          "lastSuccessfulFetchTimestamp": null,
+          "lastFetchError": "DriveTexas connector API key is not configured",
+          "lastFilterReason": "drivetexas-current-view-read",
+          "lastFilteredCounty": "liberty-tx",
+          "lastFilteredCommunity": "Dayton",
+          "lastFilterCoordinates": {
+            "lat": 30.0473202,
+            "lng": -94.8873913
+          },
+          "lastFilterRadius": 7,
+          "lastFilterCanonicalKey": "place-4819432",
+          "lastFilterFocusAuthority": "LP201_CERTIFIED_STATEWIDE_PLACE_PRESENTATION_V1",
+          "geographicEvaluationState": "AVAILABLE",
+          "lastAreaViewGeneration": 2,
+          "lastFetchGeneration": 0,
+          "lastInstalledFetchGeneration": 0,
+          "staleAreaViewCompletionIgnoredCount": 0,
+          "staleFetchCompletionIgnoredCount": 0,
+          "completeSourceDatasetPreservedAcrossAreaChange": true,
+          "currentAwarenessViewIdentity": "place-4819432",
+          "currentAwarenessViewCounty": "liberty-tx",
+          "selectedAreaIdentity": "place-4819432",
+          "selectedAreaCounty": "liberty-tx",
+          "currentAwarenessViewMatchesSelectedArea": true,
+          "selectedRecordIds": [],
+          "selectedRecordCounties": [],
+          "selectedRecordCommunities": [],
+          "selectedRecordCoordinates": [],
+          "selectedRoutes": [],
+          "selectedCategories": [],
+          "selectedRawSourceText": [],
+          "refetchRequired": false,
+          "retainedDataReused": false,
+          "sourcePresentationOwnershipSeparationActive": true
+        },
+        "rows": {
+          "locationContext": [],
+          "communityPulse": [],
+          "alerts": [],
+          "kbygCommunity": [],
+          "kbygOfficialRoadways": [],
+          "map": [],
+          "popup": [],
+          "history": []
+        },
+        "summary": {
+          "name": "Dayton"
+        },
+        "location": {
+          "label": "LOCATION CONTEXT • DAYTON",
+          "issues": "No active issues currently shown"
+        },
+        "pulse": {
+          "count": 0,
+          "text": "Local awareness\nSome sources are still being checked.\nCOMMUNITY PULSE"
+        },
+        "kbyg": {
+          "name": "Dayton, TX",
+          "text": "\n        \n          \n            Good Evening\n            Dayton, TX\n          \n          \n        \n        \n          \n            TRAVEL BRIEF\n            Some sources are still being checked.\n          \n          Before You GoSome sources are still being checked.No active concerns are reported in the available local intelligence.Some sources are still being checked.Checked just nowCommunityCommunity reports from nearby driversNo community travel conditions reported.Official RoadwaysOfficial Source · DriveTexasOfficial roadway updates temporarily unavailable.WeatherWeather contextWeather information temporarily unavailable.Why Gridly says thisConfidenceSome sources are still being checked.FreshnessChecked just now.\n        \n      "
+        },
+        "alerts": {
+          "ids": [],
+          "area": "lp0457-official-prose-v1|default-awareness|default-county|default-filter",
+          "authority": {
+            "official_roadway": {
+              "state": "UNAVAILABLE",
+              "checked": false,
+              "available": false,
+              "reason": "SOURCE_FAILED_NO_RETAINED_DATA",
+              "owner": "[\"place-4819432\",\"liberty-tx\",0]"
+            },
+            "community_report": {
+              "state": "UNAVAILABLE",
+              "checked": false,
+              "available": false,
+              "reason": "failed",
+              "owner": "[\"place-4819432\",\"liberty-tx\",0]"
+            },
+            "weather": {
+              "state": "UNAVAILABLE",
+              "checked": false,
+              "available": false,
+              "reason": "Failed to fetch",
+              "owner": "[\"place-4819432\",\"liberty-tx\",0]",
+              "runtimeAuthority": {
+                "configured": true,
+                "enabled": true,
+                "requestInFlight": false,
+                "requestAttempted": true,
+                "requestSucceeded": false,
+                "lastAttemptAt": "2026-09-24T23:20:35.950Z",
+                "lastSuccessAt": null,
+                "lastFailureAt": "2026-09-24T23:20:35.980Z",
+                "error": "Failed to fetch",
+                "healthy": false,
+                "freshEnoughForAuthority": false,
+                "freshness": "UNKNOWN",
+                "canonicalGeographyResolved": true,
+                "geographyAgreementPass": true,
+                "geographyEvaluation": "GOVERNED_AGREEMENT_PROVEN",
+                "currentApplicableCount": 0
+              }
+            }
+          },
+          "dom": [],
+          "text": "No Active Alerts\n×\nCoverage incomplete\nOfficial Roadways\nOfficial roadway information unavailable; check again later\n—\nCommunity Reports\nCommunity report information unavailable; check again later\n—\nWeather\nWeather information unavailable; check again later\n—"
+        },
+        "crossing": {
+          "owner": "liberty-tx",
+          "loaded": 115,
+          "public": 108,
+          "eligible": [
+            "FRA-762763P",
+            "FRA-762765D",
+            "FRA-762789S",
+            "FRA-762852G",
+            "FRA-762853N",
+            "FRA-762855C",
+            "FRA-762856J",
+            "FRA-762796C",
+            "FRA-762790L",
+            "FRA-762762H",
+            "FRA-762764W",
+            "FRA-762766K",
+            "FRA-762767S",
+            "FRA-762768Y",
+            "FRA-762769F",
+            "FRA-762770A",
+            "FRA-762772N",
+            "FRA-762782U",
+            "FRA-762785P",
+            "FRA-763062E",
+            "FRA-762771G",
+            "FRA-762786W",
+            "FRA-450659H",
+            "FRA-450661J",
+            "FRA-450637H",
+            "FRA-450660C",
+            "FRA-762778E"
+          ],
+          "markers": [
+            "FRA-762786W",
+            "FRA-762790L",
+            "FRA-762789S",
+            "FRA-762785P"
+          ],
+          "trace": {
+            "mode": "production",
+            "sourcePath": "Crossing-Packages/liberty/Production/liberty-production-crossings.geojson",
+            "providerFeatureCount": 115,
+            "providerInventoryCount": 115,
+            "adapterTrace": {
+              "sourcePath": "Crossing-Packages/liberty/Production/liberty-production-crossings.geojson",
+              "exactFetchUrl": "Crossing-Packages/liberty/Production/liberty-production-crossings.geojson",
+              "rawFetchedFeatureCount": 115,
+              "declaredCrossingCount": 115,
+              "adapterInputCount": 115,
+              "firstRawInputId": "024381J",
+              "lastRawInputId": "024410S",
+              "firstRawInputCountyName": "LIBERTY",
+              "lastRawInputCountyName": "LIBERTY",
+              "loadedAt": "2026-09-24T23:20:37.765Z",
+              "adapterOutputCount": 115,
+              "firstAdapterOutputId": "FRA-024381J",
+              "lastAdapterOutputId": "FRA-024410S",
+              "firstAdapterOutputCountyName": "LIBERTY County",
+              "lastAdapterOutputCountyName": "LIBERTY County"
+            },
+            "loadedAt": "2026-09-24T23:20:37.765Z"
+          }
+        },
+        "hazards": [],
+        "hazardMarkers": [],
+        "undefinedm": false
+      },
+      "kbyg": "Some sources are still being checked.\n\nNo active concerns are reported in the available local intelligence.\n\nSome sources are still being checked.\n\nChecked just now\n\nNo community travel conditions reported.\n\nOfficial Roadways\n\nOfficial roadway updates temporarily unavailable.\n\nWeather\n\nWeather information temporarily unavailable.\n\nWhy Gridly says this",
+      "marker": {
+        "connected": true,
+        "html": "<div class=\"leaflet-marker-icon gridly-production-marker-icon gridly-crossing-production-marker-icon gridly-crossing-infrastructure-marker-icon gridly-marker-rail-clear gridly-visual-owner-infrastructure gridly-visual-state-infrastructure gridly-visual-priority-7 gridly-impact-passive leaflet-zoom-animated leaflet-interactive\" style=\"margin-left: -32px; margin-top: -62.72px; width: 64px; height: 64px; transform: translate3d(193px, 407px, 0px); z-index: 407;\"><div class=\"gridly-marker-wrap gridly-crossing-marker-wrap  gridly-marker-rail-clear gridly-visual-owner-infrastructure gridly-visual-state-infrastructure gridly-visual-priority-7 gridly-impact-passive\" style=\"--gridly-production-marker-anchor-x:32px; --gridly-production-marker-anchor-y:62.72px;\" data-visual-style=\"rail_clear\" data-gridly-map-owner=\"infrastructure\" data-gridly-visual-priority=\"7\" data-gridly-visual-state=\"infrastructure\" data-gridly-route-relevant=\"false\" data-gridly-selected=\"false\" data-gridly-impact-level=\"passive\" data-visual-owner=\"infrastructure\" data-crossing-id=\"FRA-762785P\" data-infrastructure-opacity=\"0.82\" data-crossing-marker-visual-scale=\"1\" data-crossing-marker-street-zoom-size-applied=\"false\" data-gridly-marker-owner=\"crossing_inventory\">\n        <div class=\"gridly-crossing-marker has-production-marker state-normal    \" data-gridly-map-owner=\"infrastructure\" data-gridly-visual-priority=\"7\" data-gridly-visual-state=\"infrastructure\" data-gridly-route-relevant=\"false\" data-gridly-selected=\"false\" data-gridly-impact-level=\"passive\" data-visual-owner=\"infrastructure\" data-category=\"crossing_infrastructure\" data-marker-category=\"crossing_infrastructure\" data-marker-asset=\"assets/markers/approved/25-crossing-location.png\" data-state=\"infrastructure\" data-gridly-marker-owner=\"crossing_inventory\" aria-label=\"Crossing infrastructure\">\n          <img class=\"gridly-production-marker-img\" src=\"assets/markers/approved/25-crossing-location.png\" alt=\"\" aria-hidden=\"true\" data-marker-asset=\"25-crossing-location.png\" onload=\"window.gridlyMarkProductionMarkerAssetLoad &amp;&amp; window.gridlyMarkProductionMarkerAssetLoad(this.dataset.markerAsset, 'loaded')\" onerror=\"window.gridlyMarkProductionMarkerAssetLoad &amp;&amp; window.gridlyMarkProductionMarkerAssetLoad(this.dataset.markerAsset, 'failed')\">\n        </div>\n        \n      </div></div>",
+        "status": "inventory",
+        "icon": "assets/markers/approved/25-crossing-location.png"
+      },
+      "checks": {
+        "rawCount": true,
+        "projection": true,
+        "published": true,
+        "noDelayBlockLanguage": true,
+        "clearRows": true
+      },
+      "pass": true
+    },
+    {
+      "label": "delay-after-clear",
+      "kind": "delay",
+      "count": 1,
+      "raw": {
+        "published": 1,
+        "location": "1 roadway issue nearby"
+      },
+      "snapshot": {
+        "context": {
+          "probeVersion": 3,
+          "type": "HOME",
+          "place": "4819432",
+          "name": "Dayton",
+          "county": "liberty-tx",
+          "lat": 30.0473202,
+          "lng": -94.8873913,
+          "generation": 1,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "commandVisibility": {
+          "visible": true,
+          "owner": "awareness",
+          "hasSelectedDestination": false,
+          "pendingDestinationConfirmation": false,
+          "temporaryAwarenessMode": false,
+          "selectedLabel": "",
+          "routePreviewActive": false,
+          "routePreviewStatus": "idle",
+          "routeIsMonitoring": false,
+          "explicitDestinationPanelOpen": false,
+          "popupInteractionActive": false,
+          "awarenessPanelMode": true,
+          "routeOrDestinationOwnership": false,
+          "rule": "awareness owns the idle mobile panel; legacy destination command is visible only with selected destination, active route preview, active Route Watch, or an explicit destination panel, and destination ownership is hidden while a Leaflet popup is open"
+        },
+        "activeCounty": "liberty-tx",
+        "areaKey": "place-4819432",
+        "weatherPoint": {
+          "awarenessKey": "place-4819432",
+          "identityClass": "CANONICAL_PLACE",
+          "countyId": "liberty-tx",
+          "stableIdentity": "4819432",
+          "lat": 30.0473202,
+          "lng": -94.8873913,
+          "placeGeoid": "4819432"
+        },
+        "weather": {
+          "point": {
+            "awarenessKey": "place-4819432",
+            "identityClass": "CANONICAL_PLACE",
+            "countyId": "liberty-tx",
+            "stableIdentity": "4819432",
+            "lat": 30.0473202,
+            "lng": -94.8873913,
+            "placeGeoid": "4819432"
+          },
+          "identity": "4819432|place-4819432|30.0473202,-94.8873913",
+          "endpoint": "https://api.weather.gov/alerts/active?point=30.0473202,-94.8873913",
+          "pointsEndpoint": "https://api.weather.gov/points/30.0473202,-94.8873913",
+          "activated": true,
+          "attempted": true,
+          "health": "UNAVAILABLE",
+          "error": "Failed to fetch"
+        },
+        "drive": {
+          "connected": false,
+          "networkingAvailable": true,
+          "automaticPolling": true,
+          "providerActivated": true,
+          "renderingPerformed": false,
+          "normalizedRecordCount": 0,
+          "refreshIntervalMs": 180000,
+          "apiKeyConfigured": false,
+          "configurationSource": "none",
+          "initialFetchAttempted": true,
+          "requestInFlight": false,
+          "lastFetchSucceeded": false,
+          "lastSuccessfulAt": null,
+          "retainedRecordCount": 0,
+          "lastError": "DriveTexas connector API key is not configured"
+        },
+        "driveArea": {
+          "activeCounty": "liberty-tx",
+          "activeCommunity": "Dayton",
+          "activeAwarenessMode": "area",
+          "retainedCompleteSourceRecordCount": 0,
+          "currentAwarenessAreaRecordCount": 0,
+          "retainedSourceTimestamp": null,
+          "derivedAreaViewTimestamp": "2026-09-24T23:20:35.620Z",
+          "lastSuccessfulFetchTimestamp": null,
+          "lastFetchError": "DriveTexas connector API key is not configured",
+          "lastFilterReason": "drivetexas-current-view-read",
+          "lastFilteredCounty": "liberty-tx",
+          "lastFilteredCommunity": "Dayton",
+          "lastFilterCoordinates": {
+            "lat": 30.0473202,
+            "lng": -94.8873913
+          },
+          "lastFilterRadius": 7,
+          "lastFilterCanonicalKey": "place-4819432",
+          "lastFilterFocusAuthority": "LP201_CERTIFIED_STATEWIDE_PLACE_PRESENTATION_V1",
+          "geographicEvaluationState": "AVAILABLE",
+          "lastAreaViewGeneration": 2,
+          "lastFetchGeneration": 0,
+          "lastInstalledFetchGeneration": 0,
+          "staleAreaViewCompletionIgnoredCount": 0,
+          "staleFetchCompletionIgnoredCount": 0,
+          "completeSourceDatasetPreservedAcrossAreaChange": true,
+          "currentAwarenessViewIdentity": "place-4819432",
+          "currentAwarenessViewCounty": "liberty-tx",
+          "selectedAreaIdentity": "place-4819432",
+          "selectedAreaCounty": "liberty-tx",
+          "currentAwarenessViewMatchesSelectedArea": true,
+          "selectedRecordIds": [],
+          "selectedRecordCounties": [],
+          "selectedRecordCommunities": [],
+          "selectedRecordCoordinates": [],
+          "selectedRoutes": [],
+          "selectedCategories": [],
+          "selectedRawSourceText": [],
+          "refetchRequired": false,
+          "retainedDataReused": false,
+          "sourcePresentationOwnershipSeparationActive": true
+        },
+        "rows": {
+          "locationContext": [
+            {
+              "id": "community_report:gridly-test-lp24448a-1790292048678-2",
+              "type": "crossing_delay",
+              "county": "liberty-tx"
+            }
+          ],
+          "communityPulse": [
+            {
+              "id": "community_report:gridly-test-lp24448a-1790292048678-2",
+              "type": "crossing_delay",
+              "county": "liberty-tx"
+            }
+          ],
+          "alerts": [
+            {
+              "id": "community_report:gridly-test-lp24448a-1790292048678-2",
+              "type": "crossing_delay",
+              "county": "liberty-tx"
+            }
+          ],
+          "kbygCommunity": [
+            {
+              "id": "community_report:gridly-test-lp24448a-1790292048678-2",
+              "type": "crossing_delay",
+              "county": "liberty-tx"
+            }
+          ],
+          "kbygOfficialRoadways": [],
+          "map": [
+            {
+              "id": "community_report:gridly-test-lp24448a-1790292048678-2",
+              "type": "crossing_delay",
+              "county": "liberty-tx"
+            }
+          ],
+          "popup": [
+            {
+              "id": "community_report:gridly-test-lp24448a-1790292048678-2",
+              "type": "crossing_delay",
+              "county": "liberty-tx"
+            }
+          ],
+          "history": []
+        },
+        "summary": {
+          "name": "Dayton"
+        },
+        "location": {
+          "label": "LOCATION CONTEXT • DAYTON",
+          "issues": "1 roadway issue nearby"
+        },
+        "pulse": {
+          "count": 1,
+          "text": "Crossing delays reported.\nAllow extra travel time.\nCOMMUNITY PULSE"
+        },
+        "kbyg": {
+          "name": "Dayton, TX",
+          "text": "\n        \n          \n            Good Evening\n            Dayton, TX\n          \n          \n        \n        \n          \n            TRAVEL BRIEF\n            Early signs point to this.\n          \n          Before You GoAllow extra travel time.Community reports indicate a crossing delay.Developing conditions.Updated just nowCommunityCommunity reports from nearby driversA community report is active in Dayton.Official RoadwaysOfficial Source · DriveTexasOfficial roadway updates temporarily unavailable.WeatherWeather contextWeather information temporarily unavailable.Why Gridly says thisRail / CrossingCrossing reports support this.ConfidenceDeveloping conditions.FreshnessUpdated just now.\n        \n      "
+        },
+        "alerts": {
+          "ids": [
+            "community_report:gridly-test-lp24448a-1790292048678-2"
+          ],
+          "area": "lp0457-official-prose-v1|default-awareness|default-county|default-filter",
+          "authority": {
+            "official_roadway": {
+              "state": "UNAVAILABLE",
+              "checked": false,
+              "available": false,
+              "reason": "SOURCE_FAILED_NO_RETAINED_DATA",
+              "owner": "[\"place-4819432\",\"liberty-tx\",0]"
+            },
+            "community_report": {
+              "state": "LOADING",
+              "checked": false,
+              "available": false,
+              "reason": "loading",
+              "owner": "[\"place-4819432\",\"liberty-tx\",0]"
+            },
+            "weather": {
+              "state": "UNAVAILABLE",
+              "checked": false,
+              "available": false,
+              "reason": "Failed to fetch",
+              "owner": "[\"place-4819432\",\"liberty-tx\",0]",
+              "runtimeAuthority": {
+                "configured": true,
+                "enabled": true,
+                "requestInFlight": false,
+                "requestAttempted": true,
+                "requestSucceeded": false,
+                "lastAttemptAt": "2026-09-24T23:20:35.950Z",
+                "lastSuccessAt": null,
+                "lastFailureAt": "2026-09-24T23:20:35.980Z",
+                "error": "Failed to fetch",
+                "healthy": false,
+                "freshEnoughForAuthority": false,
+                "freshness": "UNKNOWN",
+                "canonicalGeographyResolved": true,
+                "geographyAgreementPass": true,
+                "geographyEvaluation": "GOVERNED_AGREEMENT_PROVEN",
+                "currentApplicableCount": 0
+              }
+            }
+          },
+          "dom": [
+            {
+              "id": "community_report:gridly-test-lp24448a-1790292048678-2",
+              "text": "Winfree Street\nReported Crossing Delay\nCommunity report: traffic is moving slowly near this crossing.\nUpdated just now\nShow me"
+            }
+          ],
+          "text": "Alerts\n×\n1 current condition · Coverage incomplete\nCommunity Reports\nCommunity-submitted conditions · Checking live community reports\n1\nWinfree Street\nReported Crossing Delay\nCommunity report: traffic is moving slowly near this crossing.\nUpdated just now\nShow me\nOfficial Roadways\nOfficial roadway information unavailable; check again later\n—\nWeather\nWeather information unavailable; check again later\n—"
+        },
+        "crossing": {
+          "owner": "liberty-tx",
+          "loaded": 115,
+          "public": 108,
+          "eligible": [
+            "FRA-762763P",
+            "FRA-762765D",
+            "FRA-762789S",
+            "FRA-762852G",
+            "FRA-762853N",
+            "FRA-762855C",
+            "FRA-762856J",
+            "FRA-762796C",
+            "FRA-762790L",
+            "FRA-762762H",
+            "FRA-762764W",
+            "FRA-762766K",
+            "FRA-762767S",
+            "FRA-762768Y",
+            "FRA-762769F",
+            "FRA-762770A",
+            "FRA-762772N",
+            "FRA-762782U",
+            "FRA-762785P",
+            "FRA-763062E",
+            "FRA-762771G",
+            "FRA-762786W",
+            "FRA-450659H",
+            "FRA-450661J",
+            "FRA-450637H",
+            "FRA-450660C",
+            "FRA-762778E"
+          ],
+          "markers": [
+            "FRA-762786W",
+            "FRA-762790L",
+            "FRA-762789S",
+            "FRA-762785P"
+          ],
+          "trace": {
+            "mode": "production",
+            "sourcePath": "Crossing-Packages/liberty/Production/liberty-production-crossings.geojson",
+            "providerFeatureCount": 115,
+            "providerInventoryCount": 115,
+            "adapterTrace": {
+              "sourcePath": "Crossing-Packages/liberty/Production/liberty-production-crossings.geojson",
+              "exactFetchUrl": "Crossing-Packages/liberty/Production/liberty-production-crossings.geojson",
+              "rawFetchedFeatureCount": 115,
+              "declaredCrossingCount": 115,
+              "adapterInputCount": 115,
+              "firstRawInputId": "024381J",
+              "lastRawInputId": "024410S",
+              "firstRawInputCountyName": "LIBERTY",
+              "lastRawInputCountyName": "LIBERTY",
+              "loadedAt": "2026-09-24T23:20:37.765Z",
+              "adapterOutputCount": 115,
+              "firstAdapterOutputId": "FRA-024381J",
+              "lastAdapterOutputId": "FRA-024410S",
+              "firstAdapterOutputCountyName": "LIBERTY County",
+              "lastAdapterOutputCountyName": "LIBERTY County"
+            },
+            "loadedAt": "2026-09-24T23:20:37.765Z"
+          }
+        },
+        "hazards": [],
+        "hazardMarkers": [],
+        "undefinedm": false
+      },
+      "kbyg": "Allow extra travel time.\n\nCommunity reports indicate a crossing delay.\n\nDeveloping conditions.\n\nUpdated just now\n\nA community report is active in Dayton.\n\nOfficial Roadways\n\nOfficial roadway updates temporarily unavailable.\n\nWeather\n\nWeather information temporarily unavailable.\n\nWhy Gridly says this",
+      "marker": {
+        "connected": true,
+        "html": "<div class=\"leaflet-marker-icon gridly-production-marker-icon gridly-crossing-production-marker-icon gridly-crossing-active-delay-marker-icon gridly-marker-rail-clear gridly-visual-owner-infrastructure gridly-visual-state-active gridly-visual-priority-7 gridly-impact-passive leaflet-zoom-animated leaflet-interactive\" style=\"margin-left: -32px; margin-top: -62.72px; width: 64px; height: 64px; transform: translate3d(193px, 407px, 0px); z-index: 407;\"><div class=\"gridly-marker-wrap gridly-crossing-marker-wrap  gridly-marker-rail-clear gridly-visual-owner-infrastructure gridly-visual-state-active gridly-visual-priority-7 gridly-impact-passive\" style=\"--gridly-production-marker-anchor-x:32px; --gridly-production-marker-anchor-y:62.72px;\" data-visual-style=\"rail_clear\" data-gridly-map-owner=\"infrastructure\" data-gridly-visual-priority=\"7\" data-gridly-visual-state=\"active\" data-gridly-route-relevant=\"false\" data-gridly-selected=\"false\" data-gridly-impact-level=\"passive\" data-visual-owner=\"infrastructure\" data-crossing-id=\"FRA-762785P\" data-infrastructure-opacity=\"0.82\" data-crossing-marker-visual-scale=\"1\" data-crossing-marker-street-zoom-size-applied=\"false\" data-gridly-marker-owner=\"crossing_inventory\">\n        <div class=\"gridly-crossing-marker has-production-marker state-delay alert   \" data-gridly-map-owner=\"infrastructure\" data-gridly-visual-priority=\"7\" data-gridly-visual-state=\"active\" data-gridly-route-relevant=\"false\" data-gridly-selected=\"false\" data-gridly-impact-level=\"passive\" data-visual-owner=\"infrastructure\" data-category=\"rail_blockage_delay\" data-marker-category=\"rail_blockage_delay\" data-marker-asset=\"assets/markers/approved/23-reported-crossing-delay.png\" data-state=\"active\" data-gridly-marker-owner=\"crossing_inventory\" aria-label=\"Reported Crossing Delay\">\n          <img class=\"gridly-production-marker-img\" src=\"assets/markers/approved/23-reported-crossing-delay.png\" alt=\"\" aria-hidden=\"true\" data-marker-asset=\"23-reported-crossing-delay.png\" onload=\"window.gridlyMarkProductionMarkerAssetLoad &amp;&amp; window.gridlyMarkProductionMarkerAssetLoad(this.dataset.markerAsset, 'loaded')\" onerror=\"window.gridlyMarkProductionMarkerAssetLoad &amp;&amp; window.gridlyMarkProductionMarkerAssetLoad(this.dataset.markerAsset, 'failed')\">\n        </div>\n        \n      </div></div>",
+        "status": "active",
+        "icon": "assets/markers/approved/23-reported-crossing-delay.png"
+      },
+      "checks": {
+        "rawCount": true,
+        "projection": true,
+        "published": true,
+        "noDelayBlockLanguage": true,
+        "clearRows": true
+      },
+      "pass": true
+    },
+    {
+      "label": "delay-cleared",
+      "kind": "clear",
+      "count": 0,
+      "raw": {
+        "published": 0,
+        "location": "No active issues currently shown"
+      },
+      "snapshot": {
+        "context": {
+          "probeVersion": 3,
+          "type": "HOME",
+          "place": "4819432",
+          "name": "Dayton",
+          "county": "liberty-tx",
+          "lat": 30.0473202,
+          "lng": -94.8873913,
+          "generation": 1,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "commandVisibility": {
+          "visible": true,
+          "owner": "awareness",
+          "hasSelectedDestination": false,
+          "pendingDestinationConfirmation": false,
+          "temporaryAwarenessMode": false,
+          "selectedLabel": "",
+          "routePreviewActive": false,
+          "routePreviewStatus": "idle",
+          "routeIsMonitoring": false,
+          "explicitDestinationPanelOpen": false,
+          "popupInteractionActive": false,
+          "awarenessPanelMode": true,
+          "routeOrDestinationOwnership": false,
+          "rule": "awareness owns the idle mobile panel; legacy destination command is visible only with selected destination, active route preview, active Route Watch, or an explicit destination panel, and destination ownership is hidden while a Leaflet popup is open"
+        },
+        "activeCounty": "liberty-tx",
+        "areaKey": "place-4819432",
+        "weatherPoint": {
+          "awarenessKey": "place-4819432",
+          "identityClass": "CANONICAL_PLACE",
+          "countyId": "liberty-tx",
+          "stableIdentity": "4819432",
+          "lat": 30.0473202,
+          "lng": -94.8873913,
+          "placeGeoid": "4819432"
+        },
+        "weather": {
+          "point": {
+            "awarenessKey": "place-4819432",
+            "identityClass": "CANONICAL_PLACE",
+            "countyId": "liberty-tx",
+            "stableIdentity": "4819432",
+            "lat": 30.0473202,
+            "lng": -94.8873913,
+            "placeGeoid": "4819432"
+          },
+          "identity": "4819432|place-4819432|30.0473202,-94.8873913",
+          "endpoint": "https://api.weather.gov/alerts/active?point=30.0473202,-94.8873913",
+          "pointsEndpoint": "https://api.weather.gov/points/30.0473202,-94.8873913",
+          "activated": true,
+          "attempted": true,
+          "health": "UNAVAILABLE",
+          "error": "Failed to fetch"
+        },
+        "drive": {
+          "connected": false,
+          "networkingAvailable": true,
+          "automaticPolling": true,
+          "providerActivated": true,
+          "renderingPerformed": false,
+          "normalizedRecordCount": 0,
+          "refreshIntervalMs": 180000,
+          "apiKeyConfigured": false,
+          "configurationSource": "none",
+          "initialFetchAttempted": true,
+          "requestInFlight": false,
+          "lastFetchSucceeded": false,
+          "lastSuccessfulAt": null,
+          "retainedRecordCount": 0,
+          "lastError": "DriveTexas connector API key is not configured"
+        },
+        "driveArea": {
+          "activeCounty": "liberty-tx",
+          "activeCommunity": "Dayton",
+          "activeAwarenessMode": "area",
+          "retainedCompleteSourceRecordCount": 0,
+          "currentAwarenessAreaRecordCount": 0,
+          "retainedSourceTimestamp": null,
+          "derivedAreaViewTimestamp": "2026-09-24T23:20:35.620Z",
+          "lastSuccessfulFetchTimestamp": null,
+          "lastFetchError": "DriveTexas connector API key is not configured",
+          "lastFilterReason": "drivetexas-current-view-read",
+          "lastFilteredCounty": "liberty-tx",
+          "lastFilteredCommunity": "Dayton",
+          "lastFilterCoordinates": {
+            "lat": 30.0473202,
+            "lng": -94.8873913
+          },
+          "lastFilterRadius": 7,
+          "lastFilterCanonicalKey": "place-4819432",
+          "lastFilterFocusAuthority": "LP201_CERTIFIED_STATEWIDE_PLACE_PRESENTATION_V1",
+          "geographicEvaluationState": "AVAILABLE",
+          "lastAreaViewGeneration": 2,
+          "lastFetchGeneration": 0,
+          "lastInstalledFetchGeneration": 0,
+          "staleAreaViewCompletionIgnoredCount": 0,
+          "staleFetchCompletionIgnoredCount": 0,
+          "completeSourceDatasetPreservedAcrossAreaChange": true,
+          "currentAwarenessViewIdentity": "place-4819432",
+          "currentAwarenessViewCounty": "liberty-tx",
+          "selectedAreaIdentity": "place-4819432",
+          "selectedAreaCounty": "liberty-tx",
+          "currentAwarenessViewMatchesSelectedArea": true,
+          "selectedRecordIds": [],
+          "selectedRecordCounties": [],
+          "selectedRecordCommunities": [],
+          "selectedRecordCoordinates": [],
+          "selectedRoutes": [],
+          "selectedCategories": [],
+          "selectedRawSourceText": [],
+          "refetchRequired": false,
+          "retainedDataReused": false,
+          "sourcePresentationOwnershipSeparationActive": true
+        },
+        "rows": {
+          "locationContext": [],
+          "communityPulse": [],
+          "alerts": [],
+          "kbygCommunity": [],
+          "kbygOfficialRoadways": [],
+          "map": [],
+          "popup": [],
+          "history": []
+        },
+        "summary": {
+          "name": "Dayton"
+        },
+        "location": {
+          "label": "LOCATION CONTEXT • DAYTON",
+          "issues": "No active issues currently shown"
+        },
+        "pulse": {
+          "count": 0,
+          "text": "Local awareness\nSome sources are still being checked.\nCOMMUNITY PULSE"
+        },
+        "kbyg": {
+          "name": "Dayton, TX",
+          "text": "\n        \n          \n            Good Evening\n            Dayton, TX\n          \n          \n        \n        \n          \n            TRAVEL BRIEF\n            Some sources are still being checked.\n          \n          Before You GoSome sources are still being checked.No active concerns are reported in the available local intelligence.Some sources are still being checked.Checked just nowCommunityCommunity reports from nearby driversNo community travel conditions reported.Official RoadwaysOfficial Source · DriveTexasOfficial roadway updates temporarily unavailable.WeatherWeather contextWeather information temporarily unavailable.Why Gridly says thisConfidenceSome sources are still being checked.FreshnessChecked just now.\n        \n      "
+        },
+        "alerts": {
+          "ids": [],
+          "area": "lp0457-official-prose-v1|default-awareness|default-county|default-filter",
+          "authority": {
+            "official_roadway": {
+              "state": "UNAVAILABLE",
+              "checked": false,
+              "available": false,
+              "reason": "SOURCE_FAILED_NO_RETAINED_DATA",
+              "owner": "[\"place-4819432\",\"liberty-tx\",0]"
+            },
+            "community_report": {
+              "state": "LOADING",
+              "checked": false,
+              "available": false,
+              "reason": "loading",
+              "owner": "[\"place-4819432\",\"liberty-tx\",0]"
+            },
+            "weather": {
+              "state": "UNAVAILABLE",
+              "checked": false,
+              "available": false,
+              "reason": "Failed to fetch",
+              "owner": "[\"place-4819432\",\"liberty-tx\",0]",
+              "runtimeAuthority": {
+                "configured": true,
+                "enabled": true,
+                "requestInFlight": false,
+                "requestAttempted": true,
+                "requestSucceeded": false,
+                "lastAttemptAt": "2026-09-24T23:20:35.950Z",
+                "lastSuccessAt": null,
+                "lastFailureAt": "2026-09-24T23:20:35.980Z",
+                "error": "Failed to fetch",
+                "healthy": false,
+                "freshEnoughForAuthority": false,
+                "freshness": "UNKNOWN",
+                "canonicalGeographyResolved": true,
+                "geographyAgreementPass": true,
+                "geographyEvaluation": "GOVERNED_AGREEMENT_PROVEN",
+                "currentApplicableCount": 0
+              }
+            }
+          },
+          "dom": [],
+          "text": "No Active Alerts\n×\nChecking conditions · Coverage incomplete\nOfficial Roadways\nOfficial roadway information unavailable; check again later\n—\nCommunity Reports\nChecking community reports\n—\nWeather\nWeather information unavailable; check again later\n—"
+        },
+        "crossing": {
+          "owner": "liberty-tx",
+          "loaded": 115,
+          "public": 108,
+          "eligible": [
+            "FRA-762763P",
+            "FRA-762765D",
+            "FRA-762789S",
+            "FRA-762852G",
+            "FRA-762853N",
+            "FRA-762855C",
+            "FRA-762856J",
+            "FRA-762796C",
+            "FRA-762790L",
+            "FRA-762762H",
+            "FRA-762764W",
+            "FRA-762766K",
+            "FRA-762767S",
+            "FRA-762768Y",
+            "FRA-762769F",
+            "FRA-762770A",
+            "FRA-762772N",
+            "FRA-762782U",
+            "FRA-762785P",
+            "FRA-763062E",
+            "FRA-762771G",
+            "FRA-762786W",
+            "FRA-450659H",
+            "FRA-450661J",
+            "FRA-450637H",
+            "FRA-450660C",
+            "FRA-762778E"
+          ],
+          "markers": [
+            "FRA-762786W",
+            "FRA-762790L",
+            "FRA-762789S",
+            "FRA-762785P"
+          ],
+          "trace": {
+            "mode": "production",
+            "sourcePath": "Crossing-Packages/liberty/Production/liberty-production-crossings.geojson",
+            "providerFeatureCount": 115,
+            "providerInventoryCount": 115,
+            "adapterTrace": {
+              "sourcePath": "Crossing-Packages/liberty/Production/liberty-production-crossings.geojson",
+              "exactFetchUrl": "Crossing-Packages/liberty/Production/liberty-production-crossings.geojson",
+              "rawFetchedFeatureCount": 115,
+              "declaredCrossingCount": 115,
+              "adapterInputCount": 115,
+              "firstRawInputId": "024381J",
+              "lastRawInputId": "024410S",
+              "firstRawInputCountyName": "LIBERTY",
+              "lastRawInputCountyName": "LIBERTY",
+              "loadedAt": "2026-09-24T23:20:37.765Z",
+              "adapterOutputCount": 115,
+              "firstAdapterOutputId": "FRA-024381J",
+              "lastAdapterOutputId": "FRA-024410S",
+              "firstAdapterOutputCountyName": "LIBERTY County",
+              "lastAdapterOutputCountyName": "LIBERTY County"
+            },
+            "loadedAt": "2026-09-24T23:20:37.765Z"
+          }
+        },
+        "hazards": [],
+        "hazardMarkers": [],
+        "undefinedm": false
+      },
+      "kbyg": "Some sources are still being checked.\n\nNo active concerns are reported in the available local intelligence.\n\nSome sources are still being checked.\n\nChecked just now\n\nNo community travel conditions reported.\n\nOfficial Roadways\n\nOfficial roadway updates temporarily unavailable.\n\nWeather\n\nWeather information temporarily unavailable.\n\nWhy Gridly says this",
+      "marker": {
+        "connected": true,
+        "html": "<div class=\"leaflet-marker-icon gridly-production-marker-icon gridly-crossing-production-marker-icon gridly-crossing-infrastructure-marker-icon gridly-marker-rail-clear gridly-visual-owner-infrastructure gridly-visual-state-infrastructure gridly-visual-priority-7 gridly-impact-passive leaflet-zoom-animated leaflet-interactive\" style=\"margin-left: -32px; margin-top: -62.72px; width: 64px; height: 64px; transform: translate3d(193px, 407px, 0px); z-index: 407;\"><div class=\"gridly-marker-wrap gridly-crossing-marker-wrap  gridly-marker-rail-clear gridly-visual-owner-infrastructure gridly-visual-state-infrastructure gridly-visual-priority-7 gridly-impact-passive\" style=\"--gridly-production-marker-anchor-x:32px; --gridly-production-marker-anchor-y:62.72px;\" data-visual-style=\"rail_clear\" data-gridly-map-owner=\"infrastructure\" data-gridly-visual-priority=\"7\" data-gridly-visual-state=\"infrastructure\" data-gridly-route-relevant=\"false\" data-gridly-selected=\"false\" data-gridly-impact-level=\"passive\" data-visual-owner=\"infrastructure\" data-crossing-id=\"FRA-762785P\" data-infrastructure-opacity=\"0.82\" data-crossing-marker-visual-scale=\"1\" data-crossing-marker-street-zoom-size-applied=\"false\" data-gridly-marker-owner=\"crossing_inventory\">\n        <div class=\"gridly-crossing-marker has-production-marker state-normal    \" data-gridly-map-owner=\"infrastructure\" data-gridly-visual-priority=\"7\" data-gridly-visual-state=\"infrastructure\" data-gridly-route-relevant=\"false\" data-gridly-selected=\"false\" data-gridly-impact-level=\"passive\" data-visual-owner=\"infrastructure\" data-category=\"crossing_infrastructure\" data-marker-category=\"crossing_infrastructure\" data-marker-asset=\"assets/markers/approved/25-crossing-location.png\" data-state=\"infrastructure\" data-gridly-marker-owner=\"crossing_inventory\" aria-label=\"Crossing infrastructure\">\n          <img class=\"gridly-production-marker-img\" src=\"assets/markers/approved/25-crossing-location.png\" alt=\"\" aria-hidden=\"true\" data-marker-asset=\"25-crossing-location.png\" onload=\"window.gridlyMarkProductionMarkerAssetLoad &amp;&amp; window.gridlyMarkProductionMarkerAssetLoad(this.dataset.markerAsset, 'loaded')\" onerror=\"window.gridlyMarkProductionMarkerAssetLoad &amp;&amp; window.gridlyMarkProductionMarkerAssetLoad(this.dataset.markerAsset, 'failed')\">\n        </div>\n        \n      </div></div>",
+        "status": "inventory",
+        "icon": "assets/markers/approved/25-crossing-location.png"
+      },
+      "checks": {
+        "rawCount": true,
+        "projection": true,
+        "published": true,
+        "noDelayBlockLanguage": true,
+        "clearRows": true
+      },
+      "pass": true
+    }
+  ],
+  "scope": "Existing local report fixtures and real crossing popup Mark Cleared handler. No production writes.",
+  "network": {
+    "errors": [],
+    "warnings": [
+      "Service Worker registration blocked by Playwright"
+    ],
+    "blockedWrites": [
+      {
+        "method": "POST",
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+      }
+    ],
+    "providerRequests": [
+      {
+        "url": "https://api.weather.gov/points/30.0473202,-94.8873913",
+        "method": "GET",
+        "result": "BLOCKED_LOCAL_UNAVAILABLE_SCENARIO"
+      },
+      {
+        "url": "https://api.weather.gov/points/30.0473202,-94.8873913",
+        "method": "GET",
+        "result": "BLOCKED_LOCAL_UNAVAILABLE_SCENARIO"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&expires_at=gt.2026-09-24T23%3A20%3A36.824Z&order=created_at.desc%2Cid.desc&limit=300",
+        "method": "GET",
+        "result": "BLOCKED_LOCAL_UNAVAILABLE_SCENARIO"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&report_type=eq.hazard_cleared&created_at=gte.2026-09-24T20%3A20%3A36.824Z&order=created_at.desc%2Cid.desc&limit=100",
+        "method": "GET",
+        "result": "BLOCKED_LOCAL_UNAVAILABLE_SCENARIO"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&expires_at=gt.2026-09-24T23%3A20%3A36.824Z&order=created_at.desc%2Cid.desc&limit=300",
+        "method": "GET",
+        "result": "BLOCKED_LOCAL_UNAVAILABLE_SCENARIO"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&report_type=eq.hazard_cleared&created_at=gte.2026-09-24T20%3A20%3A36.824Z&order=created_at.desc%2Cid.desc&limit=100",
+        "method": "GET",
+        "result": "BLOCKED_LOCAL_UNAVAILABLE_SCENARIO"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&expires_at=gt.2026-09-24T23%3A20%3A36.824Z&order=created_at.desc%2Cid.desc&limit=300",
+        "method": "GET",
+        "result": "BLOCKED_LOCAL_UNAVAILABLE_SCENARIO"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&report_type=eq.hazard_cleared&created_at=gte.2026-09-24T20%3A20%3A36.824Z&order=created_at.desc%2Cid.desc&limit=100",
+        "method": "GET",
+        "result": "BLOCKED_LOCAL_UNAVAILABLE_SCENARIO"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&expires_at=gt.2026-09-24T23%3A20%3A36.824Z&order=created_at.desc%2Cid.desc&limit=300",
+        "method": "GET",
+        "result": "BLOCKED_LOCAL_UNAVAILABLE_SCENARIO"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&report_type=eq.hazard_cleared&created_at=gte.2026-09-24T20%3A20%3A36.824Z&order=created_at.desc%2Cid.desc&limit=100",
+        "method": "GET",
+        "result": "BLOCKED_LOCAL_UNAVAILABLE_SCENARIO"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&expires_at=gt.2026-09-24T23%3A20%3A48.150Z&order=created_at.desc%2Cid.desc&limit=300",
+        "method": "GET",
+        "result": "BLOCKED_LOCAL_UNAVAILABLE_SCENARIO"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&report_type=eq.hazard_cleared&created_at=gte.2026-09-24T20%3A20%3A48.150Z&order=created_at.desc%2Cid.desc&limit=100",
+        "method": "GET",
+        "result": "BLOCKED_LOCAL_UNAVAILABLE_SCENARIO"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&expires_at=gt.2026-09-24T23%3A20%3A48.150Z&order=created_at.desc%2Cid.desc&limit=300",
+        "method": "GET",
+        "result": "BLOCKED_LOCAL_UNAVAILABLE_SCENARIO"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&report_type=eq.hazard_cleared&created_at=gte.2026-09-24T20%3A20%3A48.150Z&order=created_at.desc%2Cid.desc&limit=100",
+        "method": "GET",
+        "result": "BLOCKED_LOCAL_UNAVAILABLE_SCENARIO"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&expires_at=gt.2026-09-24T23%3A20%3A48.150Z&order=created_at.desc%2Cid.desc&limit=300",
+        "method": "GET",
+        "result": "BLOCKED_LOCAL_UNAVAILABLE_SCENARIO"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&report_type=eq.hazard_cleared&created_at=gte.2026-09-24T20%3A20%3A48.150Z&order=created_at.desc%2Cid.desc&limit=100",
+        "method": "GET",
+        "result": "BLOCKED_LOCAL_UNAVAILABLE_SCENARIO"
+      }
+    ],
+    "localRequests": [
+      "/data/runtime/canonical-crossing-memberships-v1.json",
+      "/data/runtime/canonical-crossing-records-v1.json",
+      "/data/generated/gridly-statewide-place-presentation-v1.json",
+      "/Crossing-Packages/liberty/package-manifest.json",
+      "/Crossing-Packages/production-crossing-manifest.json",
+      "/Crossing-Packages/liberty/package-manifest.json",
+      "/Crossing-Packages/liberty/Production/liberty-production-crossings.geojson",
+      "/Crossing-Packages/production-crossing-manifest.json",
+      "/Crossing-Packages/liberty/Production/liberty-production-crossings.geojson"
+    ]
+  },
+  "clearActions": [
+    {
+      "before": "Blocked Crossing\nWINFREE STREET\nExpect a delay and use caution.\nCommunity reports\nAwaiting additional reports\nUpdated just now\nConfirm Active\nMark Cleared\n×",
+      "method": "real rendered Mark Cleared button"
+    },
+    {
+      "before": "Reported Crossing Delay\nWINFREE STREET\nExpect a delay and use caution.\nCommunity reports\nAwaiting additional reports\nUpdated just now\nConfirm Active\nMark Cleared\n×",
+      "method": "real rendered Mark Cleared button"
+    }
+  ],
+  "passed": true,
+  "markerPolicyPassed": true
+}

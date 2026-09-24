@@ -1,0 +1,6 @@
+import fs from 'node:fs';import crypto from 'node:crypto';
+const hash=crypto.createHash('sha256').update(fs.readFileSync('js/app.js')).digest('hex'),read=file=>fs.existsSync(file)?JSON.parse(fs.readFileSync(file)):null;
+const lines=name=>{const file=`.artifacts/lp24449b1/${name}.jsonl`;if(!fs.existsSync(file))return [];return fs.readFileSync(file,'utf8').split('\n').filter(Boolean).flatMap(line=>{try{return [JSON.parse(line)];}catch{return [];}});};
+const homes=[...new Map(['home-progress-0','home-progress-1'].flatMap(lines).filter(r=>r.sourceHash===hash).map(r=>[`${r.county_id}|${r.place_geoid}`,r])).values()];
+const search=lines('search-progress').filter(r=>r.sourceHash===hash),active=read('reports/lp24449b1/active-clear-statewide.json');
+console.log(JSON.stringify({at:new Date().toISOString(),sourceHash:hash,active:active&&{count:active.count,passed:active.passed},home:{target:793,completed:homes.length,passed:homes.filter(r=>r.pass).length,remaining:793-homes.length,failures:homes.filter(r=>!r.pass).map(r=>({county:r.county_id,place:r.place_geoid,checks:r.checks,error:r.error}))},search:{target:2058,completed:search.length,passed:search.filter(r=>r.pass).length},queues:[0,1].map(n=>lines(`queue-${n}`).slice(-2))},null,2));

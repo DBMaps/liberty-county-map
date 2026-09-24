@@ -1,0 +1,572 @@
+{
+  "sourceHash": "f57fac7440ad6ad9bf230e1f41cffeefb7f22405c0a58b696e48bba3ce0ed0cd",
+  "scenario": "Exact LP244.49A frozen three-hazard and disclosure-state acceptance; controlled local NWS/report responses",
+  "interactionMethod": "Rendered control click events with explicit state settlement; no product event-handler replacement",
+  "states": [
+    {
+      "label": "initial",
+      "context": {
+        "probeVersion": 3,
+        "type": "HOME",
+        "place": "4819432",
+        "name": "Dayton",
+        "county": "liberty-tx",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "generation": 1,
+        "health": "FRESH",
+        "expiresAt": null,
+        "startupProviderFocus": null
+      },
+      "markers": [
+        "road-flooding-30.0473--94.8874",
+        "road-debris-30.0505--94.8890",
+        "road-other_hazard-30.0435--94.8815"
+      ],
+      "surfaces": {
+        "locationContext": [
+          {
+            "id": "active_hazard:hazard-gridly-test-lp24448a-1790292062358-1",
+            "type": "flooded_road"
+          },
+          {
+            "id": "active_hazard:hazard-gridly-test-lp24448a-1790292065983-2",
+            "type": "debris"
+          },
+          {
+            "id": "active_hazard:hazard-gridly-test-lp24448a-1790292070566-3",
+            "type": "downed_power_line"
+          }
+        ],
+        "communityPulse": [
+          {
+            "id": "active_hazard:hazard-gridly-test-lp24448a-1790292062358-1",
+            "type": "flooded_road"
+          },
+          {
+            "id": "active_hazard:hazard-gridly-test-lp24448a-1790292065983-2",
+            "type": "debris"
+          },
+          {
+            "id": "active_hazard:hazard-gridly-test-lp24448a-1790292070566-3",
+            "type": "downed_power_line"
+          }
+        ],
+        "kbygCommunity": [
+          {
+            "id": "active_hazard:hazard-gridly-test-lp24448a-1790292062358-1",
+            "type": "flooded_road"
+          },
+          {
+            "id": "active_hazard:hazard-gridly-test-lp24448a-1790292065983-2",
+            "type": "debris"
+          },
+          {
+            "id": "active_hazard:hazard-gridly-test-lp24448a-1790292070566-3",
+            "type": "downed_power_line"
+          }
+        ],
+        "alerts": [
+          {
+            "id": "active_hazard:hazard-gridly-test-lp24448a-1790292062358-1",
+            "type": "flooded_road"
+          },
+          {
+            "id": "active_hazard:hazard-gridly-test-lp24448a-1790292065983-2",
+            "type": "debris"
+          },
+          {
+            "id": "active_hazard:hazard-gridly-test-lp24448a-1790292070566-3",
+            "type": "downed_power_line"
+          }
+        ]
+      },
+      "pulse": 3,
+      "location": "3 roadway issues nearby",
+      "model": [
+        {
+          "id": "active_hazard:hazard-gridly-test-lp24448a-1790292062358-1",
+          "type": "flooding"
+        },
+        {
+          "id": "active_hazard:hazard-gridly-test-lp24448a-1790292065983-2",
+          "type": "debris"
+        },
+        {
+          "id": "active_hazard:hazard-gridly-test-lp24448a-1790292070566-3",
+          "type": "other_hazard"
+        }
+      ],
+      "dom": [
+        {
+          "id": "active_hazard:hazard-gridly-test-lp24448a-1790292065983-2",
+          "location": "Winfree Street and Flowers Street",
+          "text": "Winfree Street and Flowers Street\nDebris in Road\nShared report: debris in the road may affect travel.\nUpdated 6 minutes ago\nShow me"
+        },
+        {
+          "id": "active_hazard:hazard-gridly-test-lp24448a-1790292062358-1",
+          "location": "Cook Street and Church Street",
+          "text": "Cook Street and Church Street\nFlooding reported\nShared report: flooding may affect travel.\nUpdated just now\nShow me"
+        },
+        {
+          "id": "active_hazard:hazard-gridly-test-lp24448a-1790292070566-3",
+          "location": "Hope Street and Nancy Street",
+          "text": "Hope Street and Nancy Street\nDowned Power Line\nShared report: road hazard may affect travel.\nUpdated 12 minutes ago\nShow me"
+        }
+      ],
+      "disclosure": true,
+      "undefinedm": false
+    },
+    {
+      "label": "open-refresh",
+      "context": {
+        "probeVersion": 3,
+        "type": "HOME",
+        "place": "4819432",
+        "name": "Dayton",
+        "county": "liberty-tx",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "generation": 1,
+        "health": "FRESH",
+        "expiresAt": null,
+        "startupProviderFocus": null
+      },
+      "markers": [
+        "road-flooding-30.0473--94.8874",
+        "road-debris-30.0505--94.8890",
+        "road-other_hazard-30.0435--94.8815"
+      ],
+      "surfaces": {
+        "locationContext": [
+          {
+            "id": "active_hazard:hazard-gridly-test-lp24448a-1790292062358-1",
+            "type": "flooded_road"
+          },
+          {
+            "id": "active_hazard:hazard-gridly-test-lp24448a-1790292065983-2",
+            "type": "debris"
+          },
+          {
+            "id": "active_hazard:hazard-gridly-test-lp24448a-1790292070566-3",
+            "type": "downed_power_line"
+          }
+        ],
+        "communityPulse": [
+          {
+            "id": "active_hazard:hazard-gridly-test-lp24448a-1790292062358-1",
+            "type": "flooded_road"
+          },
+          {
+            "id": "active_hazard:hazard-gridly-test-lp24448a-1790292065983-2",
+            "type": "debris"
+          },
+          {
+            "id": "active_hazard:hazard-gridly-test-lp24448a-1790292070566-3",
+            "type": "downed_power_line"
+          }
+        ],
+        "kbygCommunity": [
+          {
+            "id": "active_hazard:hazard-gridly-test-lp24448a-1790292062358-1",
+            "type": "flooded_road"
+          },
+          {
+            "id": "active_hazard:hazard-gridly-test-lp24448a-1790292065983-2",
+            "type": "debris"
+          },
+          {
+            "id": "active_hazard:hazard-gridly-test-lp24448a-1790292070566-3",
+            "type": "downed_power_line"
+          }
+        ],
+        "alerts": [
+          {
+            "id": "active_hazard:hazard-gridly-test-lp24448a-1790292062358-1",
+            "type": "flooded_road"
+          },
+          {
+            "id": "active_hazard:hazard-gridly-test-lp24448a-1790292065983-2",
+            "type": "debris"
+          },
+          {
+            "id": "active_hazard:hazard-gridly-test-lp24448a-1790292070566-3",
+            "type": "downed_power_line"
+          }
+        ]
+      },
+      "pulse": 3,
+      "location": "3 roadway issues nearby",
+      "model": [
+        {
+          "id": "active_hazard:hazard-gridly-test-lp24448a-1790292062358-1",
+          "type": "flooding"
+        },
+        {
+          "id": "active_hazard:hazard-gridly-test-lp24448a-1790292065983-2",
+          "type": "debris"
+        },
+        {
+          "id": "active_hazard:hazard-gridly-test-lp24448a-1790292070566-3",
+          "type": "other_hazard"
+        }
+      ],
+      "dom": [
+        {
+          "id": "active_hazard:hazard-gridly-test-lp24448a-1790292065983-2",
+          "location": "Winfree Street and Flowers Street",
+          "text": "Winfree Street and Flowers Street\nDebris in Road\nShared report: debris in the road may affect travel.\nUpdated 6 minutes ago\nShow me"
+        },
+        {
+          "id": "active_hazard:hazard-gridly-test-lp24448a-1790292062358-1",
+          "location": "Cook Street and Church Street",
+          "text": "Cook Street and Church Street\nFlooding reported\nShared report: flooding may affect travel.\nUpdated just now\nShow me"
+        },
+        {
+          "id": "active_hazard:hazard-gridly-test-lp24448a-1790292070566-3",
+          "location": "Hope Street and Nancy Street",
+          "text": "Hope Street and Nancy Street\nDowned Power Line\nShared report: road hazard may affect travel.\nUpdated 13 minutes ago\nShow me"
+        }
+      ],
+      "disclosure": true,
+      "undefinedm": false
+    },
+    {
+      "label": "reopened",
+      "context": {
+        "probeVersion": 3,
+        "type": "HOME",
+        "place": "4819432",
+        "name": "Dayton",
+        "county": "liberty-tx",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "generation": 1,
+        "health": "FRESH",
+        "expiresAt": null,
+        "startupProviderFocus": null
+      },
+      "markers": [
+        "road-flooding-30.0473--94.8874",
+        "road-debris-30.0505--94.8890",
+        "road-other_hazard-30.0435--94.8815"
+      ],
+      "surfaces": {
+        "locationContext": [
+          {
+            "id": "active_hazard:hazard-gridly-test-lp24448a-1790292062358-1",
+            "type": "flooded_road"
+          },
+          {
+            "id": "active_hazard:hazard-gridly-test-lp24448a-1790292065983-2",
+            "type": "debris"
+          },
+          {
+            "id": "active_hazard:hazard-gridly-test-lp24448a-1790292070566-3",
+            "type": "downed_power_line"
+          }
+        ],
+        "communityPulse": [
+          {
+            "id": "active_hazard:hazard-gridly-test-lp24448a-1790292062358-1",
+            "type": "flooded_road"
+          },
+          {
+            "id": "active_hazard:hazard-gridly-test-lp24448a-1790292065983-2",
+            "type": "debris"
+          },
+          {
+            "id": "active_hazard:hazard-gridly-test-lp24448a-1790292070566-3",
+            "type": "downed_power_line"
+          }
+        ],
+        "kbygCommunity": [
+          {
+            "id": "active_hazard:hazard-gridly-test-lp24448a-1790292062358-1",
+            "type": "flooded_road"
+          },
+          {
+            "id": "active_hazard:hazard-gridly-test-lp24448a-1790292065983-2",
+            "type": "debris"
+          },
+          {
+            "id": "active_hazard:hazard-gridly-test-lp24448a-1790292070566-3",
+            "type": "downed_power_line"
+          }
+        ],
+        "alerts": [
+          {
+            "id": "active_hazard:hazard-gridly-test-lp24448a-1790292062358-1",
+            "type": "flooded_road"
+          },
+          {
+            "id": "active_hazard:hazard-gridly-test-lp24448a-1790292065983-2",
+            "type": "debris"
+          },
+          {
+            "id": "active_hazard:hazard-gridly-test-lp24448a-1790292070566-3",
+            "type": "downed_power_line"
+          }
+        ]
+      },
+      "pulse": 3,
+      "location": "3 roadway issues nearby",
+      "model": [
+        {
+          "id": "active_hazard:hazard-gridly-test-lp24448a-1790292062358-1",
+          "type": "flooding"
+        },
+        {
+          "id": "active_hazard:hazard-gridly-test-lp24448a-1790292065983-2",
+          "type": "debris"
+        },
+        {
+          "id": "active_hazard:hazard-gridly-test-lp24448a-1790292070566-3",
+          "type": "other_hazard"
+        }
+      ],
+      "dom": [
+        {
+          "id": "active_hazard:hazard-gridly-test-lp24448a-1790292065983-2",
+          "location": "Winfree Street and Flowers Street",
+          "text": "Winfree Street and Flowers Street\nDebris in Road\nShared report: debris in the road may affect travel.\nUpdated 7 minutes ago\nShow me"
+        },
+        {
+          "id": "active_hazard:hazard-gridly-test-lp24448a-1790292062358-1",
+          "location": "Cook Street and Church Street",
+          "text": "Cook Street and Church Street\nFlooding reported\nShared report: flooding may affect travel.\nUpdated 2 minutes ago\nShow me"
+        },
+        {
+          "id": "active_hazard:hazard-gridly-test-lp24448a-1790292070566-3",
+          "location": "Hope Street and Nancy Street",
+          "text": "Hope Street and Nancy Street\nDowned Power Line\nShared report: road hazard may affect travel.\nUpdated 14 minutes ago\nShow me"
+        }
+      ],
+      "disclosure": true,
+      "undefinedm": false
+    }
+  ],
+  "network": {
+    "errors": [],
+    "warnings": [
+      "Service Worker registration blocked by Playwright"
+    ],
+    "blockedWrites": [
+      {
+        "method": "POST",
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+      }
+    ],
+    "providerRequests": [
+      {
+        "url": "https://api.weather.gov/points/30.0473202,-94.8873913",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/gridpoints/TEST/1,1/forecast",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/alerts/active?point=30.0473202,-94.8873913",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&expires_at=gt.2026-09-24T23%3A21%3A00.618Z&order=created_at.desc%2Cid.desc&limit=300",
+        "method": "GET",
+        "result": "CONTROLLED_EMPTY_REPORT_FIXTURE"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&report_type=eq.hazard_cleared&created_at=gte.2026-09-24T20%3A21%3A00.618Z&order=created_at.desc%2Cid.desc&limit=100",
+        "method": "GET",
+        "result": "CONTROLLED_EMPTY_REPORT_FIXTURE"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&expires_at=gt.2026-09-24T23%3A21%3A19.025Z&order=created_at.desc%2Cid.desc&limit=300",
+        "method": "GET",
+        "result": "CONTROLLED_EMPTY_REPORT_FIXTURE"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&report_type=eq.hazard_cleared&created_at=gte.2026-09-24T20%3A21%3A19.025Z&order=created_at.desc%2Cid.desc&limit=100",
+        "method": "GET",
+        "result": "CONTROLLED_EMPTY_REPORT_FIXTURE"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&expires_at=gt.2026-09-24T23%3A21%3A24.698Z&order=created_at.desc%2Cid.desc&limit=300",
+        "method": "GET",
+        "result": "CONTROLLED_EMPTY_REPORT_FIXTURE"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&report_type=eq.hazard_cleared&created_at=gte.2026-09-24T20%3A21%3A24.698Z&order=created_at.desc%2Cid.desc&limit=100",
+        "method": "GET",
+        "result": "CONTROLLED_EMPTY_REPORT_FIXTURE"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&expires_at=gt.2026-09-24T23%3A21%3A31.264Z&order=created_at.desc%2Cid.desc&limit=300",
+        "method": "GET",
+        "result": "CONTROLLED_EMPTY_REPORT_FIXTURE"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&report_type=eq.hazard_cleared&created_at=gte.2026-09-24T20%3A21%3A31.264Z&order=created_at.desc%2Cid.desc&limit=100",
+        "method": "GET",
+        "result": "CONTROLLED_EMPTY_REPORT_FIXTURE"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&expires_at=gt.2026-09-24T23%3A21%3A37.765Z&order=created_at.desc%2Cid.desc&limit=300",
+        "method": "GET",
+        "result": "CONTROLLED_EMPTY_REPORT_FIXTURE"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&report_type=eq.hazard_cleared&created_at=gte.2026-09-24T20%3A21%3A37.765Z&order=created_at.desc%2Cid.desc&limit=100",
+        "method": "GET",
+        "result": "CONTROLLED_EMPTY_REPORT_FIXTURE"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&expires_at=gt.2026-09-24T23%3A21%3A45.418Z&order=created_at.desc%2Cid.desc&limit=300",
+        "method": "GET",
+        "result": "CONTROLLED_EMPTY_REPORT_FIXTURE"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&report_type=eq.hazard_cleared&created_at=gte.2026-09-24T20%3A21%3A45.418Z&order=created_at.desc%2Cid.desc&limit=100",
+        "method": "GET",
+        "result": "CONTROLLED_EMPTY_REPORT_FIXTURE"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&expires_at=gt.2026-09-24T23%3A21%3A52.486Z&order=created_at.desc%2Cid.desc&limit=300",
+        "method": "GET",
+        "result": "CONTROLLED_EMPTY_REPORT_FIXTURE"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&report_type=eq.hazard_cleared&created_at=gte.2026-09-24T20%3A21%3A52.486Z&order=created_at.desc%2Cid.desc&limit=100",
+        "method": "GET",
+        "result": "CONTROLLED_EMPTY_REPORT_FIXTURE"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&expires_at=gt.2026-09-24T23%3A21%3A59.379Z&order=created_at.desc%2Cid.desc&limit=300",
+        "method": "GET",
+        "result": "CONTROLLED_EMPTY_REPORT_FIXTURE"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&report_type=eq.hazard_cleared&created_at=gte.2026-09-24T20%3A21%3A59.379Z&order=created_at.desc%2Cid.desc&limit=100",
+        "method": "GET",
+        "result": "CONTROLLED_EMPTY_REPORT_FIXTURE"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&expires_at=gt.2026-09-24T23%3A22%3A06.348Z&order=created_at.desc%2Cid.desc&limit=300",
+        "method": "GET",
+        "result": "CONTROLLED_EMPTY_REPORT_FIXTURE"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&report_type=eq.hazard_cleared&created_at=gte.2026-09-24T20%3A22%3A06.348Z&order=created_at.desc%2Cid.desc&limit=100",
+        "method": "GET",
+        "result": "CONTROLLED_EMPTY_REPORT_FIXTURE"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&expires_at=gt.2026-09-24T23%3A22%3A13.432Z&order=created_at.desc%2Cid.desc&limit=300",
+        "method": "GET",
+        "result": "CONTROLLED_EMPTY_REPORT_FIXTURE"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&report_type=eq.hazard_cleared&created_at=gte.2026-09-24T20%3A22%3A13.432Z&order=created_at.desc%2Cid.desc&limit=100",
+        "method": "GET",
+        "result": "CONTROLLED_EMPTY_REPORT_FIXTURE"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&expires_at=gt.2026-09-24T23%3A22%3A20.541Z&order=created_at.desc%2Cid.desc&limit=300",
+        "method": "GET",
+        "result": "CONTROLLED_EMPTY_REPORT_FIXTURE"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&report_type=eq.hazard_cleared&created_at=gte.2026-09-24T20%3A22%3A20.541Z&order=created_at.desc%2Cid.desc&limit=100",
+        "method": "GET",
+        "result": "CONTROLLED_EMPTY_REPORT_FIXTURE"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&expires_at=gt.2026-09-24T23%3A22%3A28.095Z&order=created_at.desc%2Cid.desc&limit=300",
+        "method": "GET",
+        "result": "CONTROLLED_EMPTY_REPORT_FIXTURE"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&report_type=eq.hazard_cleared&created_at=gte.2026-09-24T20%3A22%3A28.095Z&order=created_at.desc%2Cid.desc&limit=100",
+        "method": "GET",
+        "result": "CONTROLLED_EMPTY_REPORT_FIXTURE"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&expires_at=gt.2026-09-24T23%3A22%3A36.443Z&order=created_at.desc%2Cid.desc&limit=300",
+        "method": "GET",
+        "result": "CONTROLLED_EMPTY_REPORT_FIXTURE"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&report_type=eq.hazard_cleared&created_at=gte.2026-09-24T20%3A22%3A36.443Z&order=created_at.desc%2Cid.desc&limit=100",
+        "method": "GET",
+        "result": "CONTROLLED_EMPTY_REPORT_FIXTURE"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&expires_at=gt.2026-09-24T23%3A22%3A44.259Z&order=created_at.desc%2Cid.desc&limit=300",
+        "method": "GET",
+        "result": "CONTROLLED_EMPTY_REPORT_FIXTURE"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&report_type=eq.hazard_cleared&created_at=gte.2026-09-24T20%3A22%3A44.259Z&order=created_at.desc%2Cid.desc&limit=100",
+        "method": "GET",
+        "result": "CONTROLLED_EMPTY_REPORT_FIXTURE"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&expires_at=gt.2026-09-24T23%3A22%3A51.677Z&order=created_at.desc%2Cid.desc&limit=300",
+        "method": "GET",
+        "result": "CONTROLLED_EMPTY_REPORT_FIXTURE"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&report_type=eq.hazard_cleared&created_at=gte.2026-09-24T20%3A22%3A51.677Z&order=created_at.desc%2Cid.desc&limit=100",
+        "method": "GET",
+        "result": "CONTROLLED_EMPTY_REPORT_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/points/30.0473202,-94.8873913",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&expires_at=gt.2026-09-24T23%3A22%3A59.135Z&order=created_at.desc%2Cid.desc&limit=300",
+        "method": "GET",
+        "result": "CONTROLLED_EMPTY_REPORT_FIXTURE"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&report_type=eq.hazard_cleared&created_at=gte.2026-09-24T20%3A22%3A59.135Z&order=created_at.desc%2Cid.desc&limit=100",
+        "method": "GET",
+        "result": "CONTROLLED_EMPTY_REPORT_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/gridpoints/TEST/1,1/forecast",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      }
+    ],
+    "localRequests": [
+      "/data/runtime/canonical-crossing-memberships-v1.json",
+      "/data/runtime/canonical-crossing-records-v1.json",
+      "/data/generated/gridly-statewide-place-presentation-v1.json",
+      "/Crossing-Packages/liberty/package-manifest.json",
+      "/Crossing-Packages/production-crossing-manifest.json",
+      "/Crossing-Packages/liberty/Production/liberty-production-crossings.geojson",
+      "/Crossing-Packages/liberty/package-manifest.json",
+      "/Crossing-Packages/production-crossing-manifest.json",
+      "/Crossing-Packages/liberty/Production/liberty-production-crossings.geojson"
+    ]
+  },
+  "collapseClick": {
+    "before": true,
+    "after": false,
+    "connected": true,
+    "current": false
+  },
+  "reopenClick": {
+    "before": false,
+    "after": true,
+    "connected": true,
+    "current": true
+  },
+  "passed": true
+}

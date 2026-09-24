@@ -1,0 +1,80 @@
+{
+  "scope": "Compare observed 320 px large-text control clipping with exact starting source; no presentation repair.",
+  "runs": [
+    {
+      "baseline": true,
+      "sourceHash": "e157d88855529f7a6af3a16905cceb6b05f89f6006b2295bdb0bea2f074dd291",
+      "controls": [
+        {
+          "label": "Standard",
+          "width": 66,
+          "height": 38,
+          "textWidth": 65.125,
+          "font": "780 15.088px / 17.3512px Inter, system-ui, sans-serif",
+          "overflow": "visible",
+          "scrollWidth": 72,
+          "clientWidth": 64
+        },
+        {
+          "label": "Large",
+          "width": 66,
+          "height": 38,
+          "textWidth": 40.015625,
+          "font": "780 15.088px / 17.3512px Inter, system-ui, sans-serif",
+          "overflow": "visible",
+          "scrollWidth": 64,
+          "clientWidth": 64
+        },
+        {
+          "label": "Compact",
+          "width": 66,
+          "height": 38,
+          "textWidth": 63.9375,
+          "font": "780 15.088px / 17.3512px Inter, system-ui, sans-serif",
+          "overflow": "visible",
+          "scrollWidth": 71,
+          "clientWidth": 64
+        }
+      ],
+      "screenshot": "C:\\GitHub\\liberty-county-map\\.artifacts\\lp24449b/text-size-baseline-320-large.png"
+    },
+    {
+      "baseline": false,
+      "sourceHash": "857dc05e8f12786ace4ccded59e7ed582e3438da3f76d65f2fb4d579af6ceb91",
+      "controls": [
+        {
+          "label": "Standard",
+          "width": 66,
+          "height": 38,
+          "textWidth": 65.125,
+          "font": "780 15.088px / 17.3512px Inter, system-ui, sans-serif",
+          "overflow": "visible",
+          "scrollWidth": 72,
+          "clientWidth": 64
+        },
+        {
+          "label": "Large",
+          "width": 66,
+          "height": 38,
+          "textWidth": 40.015625,
+          "font": "780 15.088px / 17.3512px Inter, system-ui, sans-serif",
+          "overflow": "visible",
+          "scrollWidth": 64,
+          "clientWidth": 64
+        },
+        {
+          "label": "Compact",
+          "width": 66,
+          "height": 38,
+          "textWidth": 63.9375,
+          "font": "780 15.088px / 17.3512px Inter, system-ui, sans-serif",
+          "overflow": "visible",
+          "scrollWidth": 71,
+          "clientWidth": 64
+        }
+      ],
+      "screenshot": "C:\\GitHub\\liberty-county-map\\.artifacts\\lp24449b/text-size-repaired-320-large.png"
+    }
+  ],
+  "sameControlMetrics": true
+}

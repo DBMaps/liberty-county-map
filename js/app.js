@@ -3741,7 +3741,7 @@ function gridlyStoryConfidence(records = [], evidence = {}) {
   if (evidenceCount >= 3 || records.length >= 3) return "Several recent signals support this.";
   if (evidenceCount >= 2 || records.length >= 2) return "Some recent evidence supports this.";
   if (records.length === 1 || evidence.weather || evidence.transportation || evidence.rail) return "Early signs point to this.";
-  return "No active concerns are showing right now.";
+  return gridlyGetLocalSourceCoverage().complete ? "No active concerns are showing right now." : gridlyGetLocalSourceCoverage().message;
 }
 
 function gridlyStoryConditionIdentity(record = {}, index = 0, scope = "community") {
@@ -3837,6 +3837,12 @@ function buildGridlyAwarenessStory(input = {}) {
     situation = "Community is quiet.";
     recommendation = completeness.canStateTravelNormal ? "Travel normally today." : "No active local issues reported.";
     template = "no_active_concerns";
+  }
+  const sourceCoverage = gridlyGetLocalSourceCoverage();
+  if (cardinality.authoritativeConditionCount === 0 && !sourceCoverage.complete) {
+    situation = "Local awareness";
+    recommendation = sourceCoverage.message;
+    template = "awareness_loading";
   }
   const confidence = gridlyStoryConfidence(records, evidence);
   return Object.freeze({
@@ -4795,7 +4801,7 @@ function gridlyTravelBriefConfidenceLine(story = {}) {
   if (/several recent signals/i.test(confidence)) return "Multiple recent signals.";
   if (/some recent evidence/i.test(confidence)) return "Multiple recent signals.";
   if (/early signs/i.test(confidence)) return "Developing conditions.";
-  return "Quiet conditions.";
+  return gridlyGetLocalSourceCoverage().complete ? "Quiet conditions." : gridlyGetLocalSourceCoverage().message;
 }
 
 function gridlyBuildTravelBriefDecisionSection({ story, records, driveTexasRecords }) {
@@ -9007,9 +9013,15 @@ function gridlyGetPersistedAwarenessCountyId() {
 function gridlyResolveCountyModeActiveContext() {
   const presentation = gridlyActiveGeographicPresentation;
   const persistedAwarenessCountyId = gridlyGetPersistedAwarenessCountyId();
+  const acceptedContext = gridlyGetCurrentAwarenessContext();
   let resolvedCountyId = null;
   let countyResolutionSource = null;
-  if (presentation?.semanticLevel === "COUNTYWIDE" && presentation.explicitCountyId) {
+  // County is a view of the accepted context, including an explicit PLACE
+  // membership. A multi-county PLACE centroid cannot replace that ownership.
+  if (acceptedContext?.countyId && GRIDLY_COUNTY_REGISTRY[acceptedContext.countyId]) {
+    resolvedCountyId = gridlyNormalizeCountyId(acceptedContext.countyId);
+    countyResolutionSource = "accepted-awareness-context";
+  } else if (presentation?.semanticLevel === "COUNTYWIDE" && presentation.explicitCountyId) {
     resolvedCountyId = gridlyNormalizeCountyId(presentation.explicitCountyId);
     countyResolutionSource = "active-countywide-identity";
   } else {
@@ -42923,7 +42935,7 @@ if (typeof window !== "undefined") window.gridlyCrossingWatchCountAudit = () => 
 function buildGridlyLocationContextMetricLines({ activeIssueCount = 0, reportCount = 0, crossingsWatchedCount = 0, crossingInventoryAvailable = true } = {}) {
   const active = Math.max(0, Number(activeIssueCount) || 0);
   return Object.freeze({
-    activeIssuesLine: active === 0 ? "No active issues nearby" : `${active} roadway issue${active === 1 ? "" : "s"} nearby`,
+    activeIssuesLine: active === 0 ? (gridlyGetLocalSourceCoverage().complete ? "No active issues nearby" : "No active issues currently shown") : `${active} roadway issue${active === 1 ? "" : "s"} nearby`,
     secondaryMetricsLine: ""
   });
 }
@@ -43048,6 +43060,9 @@ function getGridlyCurrentSelectedAwarenessAreaIdentity() {
 }
 
 function isGridlyCachedAwarenessSummaryForCurrentArea(summary = {}) {
+  // Same place does not mean the same active community conditions. A provider
+  // publication captured before clear must not reintroduce its former rows.
+  if (summary.canonicalCommunityRevision && summary.canonicalCommunityRevision !== gridlyGetCanonicalActiveCommunityState().revision) return false;
   const cachedIdentity = getGridlyAwarenessSummaryAreaIdentity(summary);
   const currentIdentity = getGridlyCurrentSelectedAwarenessAreaIdentity();
   if (!cachedIdentity || !currentIdentity) return true;
@@ -54087,6 +54102,7 @@ function buildGridlyCommunityAwarenessIntelligenceSummary(options = {}) {
   if (missingCoordinateRecords.activeHazards || missingCoordinateRecords.activeReports) warnings.push("Some active records did not include coordinates or crossing inventory links, so they were not assigned to the selected awareness area.");
 
   return {
+    canonicalCommunityRevision: typeof gridlyGetCanonicalActiveCommunityState === "function" ? gridlyGetCanonicalActiveCommunityState({ selectedArea }).revision : null,
     selectedAwarenessArea: getGridlyAwarenessAreaDebugOption(selectedArea),
     awarenessAreaName,
     crossingsInArea,
@@ -54931,7 +54947,7 @@ function updateNearestContext() {
     const crossingDistance = Number.isFinite(nearestCrossing.distance) ? nearestCrossing.distance.toFixed(1) : "nearby";
     const issueText = nearestIssue
       ? `${nearestIssue.incident.title} · ${nearestIssue.distance.toFixed(1)} mi`
-      : "No active issues nearby";
+      : (gridlyGetLocalSourceCoverage().complete ? "No active issues nearby" : "No active issues currently shown");
     const anchorLabel = awarenessAnchor.source === "home_town" ? `${awarenessAnchor.label} anchor` : "Nearest";
     els.geoFilterStatus.textContent = `${anchorLabel} crossing: ${nearestCrossing.name} (${crossingDistance} mi) · Nearest issue: ${issueText}`;
   }
@@ -66235,7 +66251,9 @@ function publishGridlyCommunityPulseAuditState(patch = {}, publication = {}) {
   // The in-transaction authority wins over both a reconstructed presentation
   // model and the official publisher's lagging readback. Area invalidation
   // clears this local authority before a new area's first publication.
-  const proposedSummary = gridlyLastAuthoritativeCommunityAwarenessSummary || normalizedPatch.communityAwarenessSummary || publisherAuthoritativeSummary;
+  const summaryCandidates = [gridlyLastAuthoritativeCommunityAwarenessSummary, normalizedPatch.communityAwarenessSummary, publisherAuthoritativeSummary];
+  const proposedSummary = summaryCandidates.find((summary) => summary && (!summary.canonicalCommunityRevision || summary.canonicalCommunityRevision === gridlyGetCanonicalActiveCommunityState().revision))
+    || (normalizedPatch.communityAwarenessSummary ? buildGridlyCommunityAwarenessIntelligenceSummary() : null);
   const governedRows = typeof gridlyGetGovernedActiveAwarenessRows === "function" ? gridlyGetGovernedActiveAwarenessRows() : [];
   const authoritativeSummary = proposedSummary && window.gridlyGovernedActiveConditionParity?.convergeAuthoritativeSummary?.(proposedSummary, governedRows) || proposedSummary;
   // Pulse presentation models are routinely reconstructed (and may contain a
@@ -66266,6 +66284,9 @@ if (typeof window !== "undefined") window.gridlyCommunityPulseAuditState = gridl
 // input is the governed snapshot already enriched by the official publisher.
 function gridlyPublishAuthoritativeCommunityAwarenessSummary(summary, publication = {}) {
   if (!summary || typeof summary !== "object") return null;
+  if (summary.canonicalCommunityRevision && summary.canonicalCommunityRevision !== gridlyGetCanonicalActiveCommunityState().revision) {
+    summary = buildGridlyCommunityAwarenessIntelligenceSummary();
+  }
   // LP244.5 live correction: this is the last production writer before Pulse,
   // portrait, and Brief consumers. Provider refresh can hand it an older
   // healthy-empty summary, so converge the currently governed selected-area
@@ -66616,6 +66637,21 @@ const GRIDLY_AWARENESS_SOURCE_STATE = Object.freeze({
 
 let gridlyReportReadPresentationState = Object.freeze({ state: "not_started", countyId: null, completedAt: null });
 
+// Shared presentation gate: existing source authority owns availability; zero
+// visible conditions alone cannot establish complete coverage. No fetch or write.
+function gridlyGetLocalSourceCoverage() {
+  const authority = gridlyReadAlertsFamilyAuthority();
+  const weather = window.gridlyWeatherConnectorRuntimeAudit?.();
+  const crossings = getGridlyAwarenessCoverageState();
+  const complete = Object.values(authority).every((family) => family.available === true)
+    && weather?.forecastRequestSucceeded === true
+    && crossings.crossingAvailable === true;
+  const loading = Object.values(authority).some((family) => family.state === "LOADING")
+    || crossings.semanticCoverageState === "LOADING";
+  return Object.freeze({ complete, loading, authority,
+    message: loading ? "Some sources are still being checked." : "Some sources are currently unavailable." });
+}
+
 function gridlyGetAwarenessEvidenceCompleteness(input = {}) {
   const reportReadState = String(input.reportReadState || gridlyCurrentReportReadState());
   const communityReportCount = Math.max(0, Number(input.communityReportCount ?? ((typeof activeReports !== "undefined" ? activeReports.length : 0) + (typeof activeHazards !== "undefined" ? activeHazards.length : 0))) || 0);
@@ -66662,12 +66698,14 @@ function getGridlyHomeCommunityPulseCopy({ quiet = true, activeCount = 0, activi
   const level = String(activityLevel || "quiet").toLowerCase();
   const awarenessCoverage = coverage || getGridlyAwarenessCoverageState();
   const awarenessCompleteness = completeness || gridlyGetAwarenessEvidenceCompleteness({ communityReportCount: count, coverage: awarenessCoverage });
+  const sourceCoverage = gridlyGetLocalSourceCoverage();
+  if (count === 0 && !sourceCoverage.complete) return { headline: "Local awareness", subline: sourceCoverage.message, state: sourceCoverage.loading ? "loading" : "coverage_limited" };
   // Active evidence always outranks incomplete coverage. Coverage only guards a
   // zero-evidence conclusion; absence of one source is not evidence of quiet.
-  if ((quiet || count <= 0 || level === "quiet") && ["temporarily_unavailable", "unavailable"].includes(awarenessCoverage.state)) {
+  if (count <= 0 && ["temporarily_unavailable", "unavailable"].includes(awarenessCoverage.state)) {
     return { headline: awarenessCoverage.primary, subline: awarenessCoverage.secondary, state: "coverage_limited" };
   }
-  if (quiet || count <= 0 || level === "quiet") {
+  if (count <= 0) {
     if (!awarenessCompleteness.canStateCommunityQuiet) return { headline: "Local awareness", subline: "Monitoring nearby conditions", state: "loading" };
     return { headline: "Community is quiet.", subline: awarenessCompleteness.canStateTravelNormal ? "Travel normally today." : "No active local issues reported.", state: "quiet" };
   }
@@ -67314,7 +67352,13 @@ function buildGridlyCommunityPulseDecisionPresentation(model = {}) {
   let interpretation = "Stay aware while traveling.";
   let reason = "No active concerns are reported in the available local intelligence.";
   let confidence = "Quiet conditions";
-  if (officialRoadwayUncertain) {
+  const sourceCoverage = gridlyGetLocalSourceCoverage();
+  if (combinedCount <= 0 && !sourceCoverage.complete) {
+    state = "coverage_limited";
+    communityStatus = "Local awareness";
+    reason = "No active issues currently shown.";
+    confidence = sourceCoverage.message.replace(/\.$/, "");
+  } else if (officialRoadwayUncertain) {
     state = "coverage_limited";
     communityStatus = "Official roadway status is being confirmed.";
     interpretation = "Check conditions before leaving.";
@@ -67337,6 +67381,7 @@ function buildGridlyCommunityPulseDecisionPresentation(model = {}) {
     reason = coverage.secondary;
     confidence = "Community reports remain available";
   }
+  if (combinedCount > 0 && !sourceCoverage.complete) reason = `${reason} ${sourceCoverage.message}`;
   const freshness = gridlyCommunityPulseDecisionFreshnessLine(model);
   return Object.freeze({
     pattern: "LP062 Community Pulse Decision Pattern",

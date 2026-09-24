@@ -1,0 +1,35 @@
+{
+  "total": 2,
+  "counties": 2,
+  "multi": 1,
+  "rows": [
+    {
+      "county_id": "hamilton-tx",
+      "county_fips": "48193",
+      "county_name": "Hamilton County",
+      "operational_county_id": "hamilton-tx",
+      "place_geoid": "4833548",
+      "community_name": "Hico",
+      "canonical_place_name": "Hico",
+      "membership_index": 2,
+      "membership_count": 2,
+      "is_multi_county": true,
+      "presentation_lat": 31.9814482,
+      "presentation_lng": -98.0308515
+    },
+    {
+      "county_id": "harris-tx",
+      "county_fips": "48201",
+      "county_name": "Harris County",
+      "operational_county_id": "harris-tx",
+      "place_geoid": "4801696",
+      "community_name": "Aldine",
+      "canonical_place_name": "Aldine",
+      "membership_index": 1,
+      "membership_count": 1,
+      "is_multi_county": false,
+      "presentation_lat": 29.9320498,
+      "presentation_lng": -95.3790508
+    }
+  ]
+}

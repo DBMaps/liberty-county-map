@@ -1,0 +1,9 @@
+{
+  "files": [
+    "tests/lp24449b1-pulse-community-revision.test.cjs",
+    "tests/lp214-fredericksburg-alerts-publication-presentation-convergence.test.mjs",
+    "tests/lp24449b-source-truth-and-filter.test.cjs"
+  ],
+  "exitCode": 0,
+  "log": "✔ Fredericksburg published HEALTHY_WITH_DATA alert survives an empty canonical projection (7.3318ms)\n✔ published Alerts sheet exposes the ranked heading as rendered DOM evidence (1.2311ms)\n✔ published-awareness markup helper exposes the ranked heading and active card to audited DOM selectors (5.3386ms)\n✔ read-only Alerts audit distinguishes closed lazy state from an open render failure (3.1608ms)\n✔ previous UTSA / Northwest context cannot own Fredericksburg distance metadata (7.6232ms)\n✔ repair remains statewide and does not alter protected subsystem contracts (3.5685ms)\n✔ healthy empty and governed empty crossings permit quiet; every unavailable family blocks it without hiding active count (15.783ms)\n✔ County filter retains accepted Home, Search, Around Me and Route Watch ownership over centroid and persisted Home (3.0191ms)\n✔ weather failed recheck cannot be resurrected by cached success; recovery restores current authority (21.6856ms)\n✔ late obsolete weather success cannot replace a newer same-place failure after A-B-A transitions (9.7731ms)\n✔ same-area summary becomes ineligible when current community revision clears or removes one condition (15.018ms)\n✔ unversioned official-only published summaries retain legacy compatibility (13.3784ms)\n✔ Pulse publication chooses current zero summary over same-area stale authority and publisher readback (6.9931ms)\n✔ late stale-only publication rebuilds from current authority rather than retaining old candidate (9.1718ms)\nℹ tests 14\nℹ suites 0\nℹ pass 14\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 445.2922\n\n"
+}

@@ -1,0 +1,14 @@
+{
+  "decision": "APPROVE",
+  "sourceHash": "f57fac7440ad6ad9bf230e1f41cffeefb7f22405c0a58b696e48bba3ce0ed0cd",
+  "blockers": [],
+  "originalFailures": 369,
+  "fixed": 369,
+  "residualFamiliesEvaluatedByParentReport": {
+    "PROVIDER_HEALTH_FALSE": 1997,
+    "CROSSING_ELIGIBLE_PACKAGE_MISSING": 12,
+    "PULSE_PUBLISHED_COUNT_STALE_AFTER_CLEAR": 10,
+    "FILTER_COUNTY_WRONG_SCOPE": 1
+  },
+  "generatedAt": "2026-09-24T23:50:23.483Z"
+}

@@ -1,0 +1,3554 @@
+{
+  "scope": "Static ownership and actual adapter normalization; browser discoverability is a separate pending gate.",
+  "authorityPolicy": {
+    "schemaVersion": "gridly.wave3a1b.authority-policy.v1",
+    "status": "CERTIFIED",
+    "sourceProvenanceAuthority": {
+      "fields": [
+        "STCYFIPS",
+        "CountyCode",
+        "COUNTYNAME"
+      ],
+      "rule": "retain exactly; never overwrite"
+    },
+    "gridlyGeographicAuthority": {
+      "source": "certified 2025 TIGER/Line county polygon containment",
+      "fields": [
+        "gridlyCountyId",
+        "gridlyCountyFips"
+      ],
+      "rule": "use containing Texas county for package ownership and county-scoped consumer loading"
+    },
+    "reviewRule": {
+      "thresholdMeters": 25,
+      "purpose": "classification only",
+      "reassignmentRule": "never use distance alone; require polygon containment",
+      "failClosed": "outside-Texas or genuinely conflicting cases remain unassigned"
+    },
+    "consumerImpact": {
+      "affectedSurfaces": [
+        "Area",
+        "County",
+        "Nearby",
+        "All",
+        "crossing markers",
+        "crossing reports",
+        "Alerts",
+        "Route Watch",
+        "county package loading"
+      ],
+      "sourceCountyDefects": [
+        "county-scoped package may omit a marker physically inside the selected county",
+        "wrong county may load a geographically remote crossing",
+        "county filters, reports, alerts, and Route Watch can disagree with marker location"
+      ],
+      "geographicAuthorityBenefit": "Package ownership and county-scoped discovery agree with the coordinate used to render and calculate proximity; All remains identity-complete subject to explicit blocked-border handling."
+    },
+    "identityProtection": {
+      "unchanged": [
+        "FRA CROSSING",
+        "gridlyId = FRA-{CROSSING}",
+        "report linkage",
+        "historical report linkage"
+      ],
+      "onlyMutableAssociation": "county package ownership"
+    },
+    "compatibility": "Compatible by additive reconciliation index; current LP115 filter is not compatible until repaired.",
+    "manufacturePackages": false,
+    "activateCrossings": false
+  },
+  "packageEdits": false,
+  "assertions": [
+    {
+      "originalFailureId": "LP24449-ledger-02377",
+      "county": "aransas-tx",
+      "place_geoid": "4803600",
+      "identities": [
+        "746307Y",
+        "746308F"
+      ],
+      "classification": "RECLASSIFIED",
+      "reason": "CERTIFIER_ASSUMPTION_ERROR_SOURCE_FIPS_IS_NOT_PACKAGE_AUTHORITY"
+    },
+    {
+      "originalFailureId": "LP24449-ledger-02378",
+      "county": "atascosa-tx",
+      "place_geoid": "4845288",
+      "identities": [
+        "427943S"
+      ],
+      "classification": "RECLASSIFIED",
+      "reason": "CERTIFIER_ASSUMPTION_ERROR_SOURCE_FIPS_IS_NOT_PACKAGE_AUTHORITY"
+    },
+    {
+      "originalFailureId": "LP24449-ledger-02379",
+      "county": "bell-tx",
+      "place_geoid": "4805732",
+      "identities": [
+        "416230D"
+      ],
+      "classification": "RECLASSIFIED",
+      "reason": "CERTIFIER_ASSUMPTION_ERROR_SOURCE_FIPS_IS_NOT_PACKAGE_AUTHORITY"
+    },
+    {
+      "originalFailureId": "LP24449-ledger-02380",
+      "county": "collin-tx",
+      "place_geoid": "4819000",
+      "identities": [
+        "788907S"
+      ],
+      "classification": "RECLASSIFIED",
+      "reason": "CERTIFIER_ASSUMPTION_ERROR_SOURCE_FIPS_IS_NOT_PACKAGE_AUTHORITY"
+    },
+    {
+      "originalFailureId": "LP24449-ledger-02381",
+      "county": "collin-tx",
+      "place_geoid": "4863668",
+      "identities": [
+        "415195N"
+      ],
+      "classification": "RECLASSIFIED",
+      "reason": "CERTIFIER_ASSUMPTION_ERROR_SOURCE_FIPS_IS_NOT_PACKAGE_AUTHORITY"
+    },
+    {
+      "originalFailureId": "LP24449-ledger-02382",
+      "county": "dallas-tx",
+      "place_geoid": "4830464",
+      "identities": [
+        "848970B"
+      ],
+      "classification": "RECLASSIFIED",
+      "reason": "CERTIFIER_ASSUMPTION_ERROR_SOURCE_FIPS_IS_NOT_PACKAGE_AUTHORITY"
+    },
+    {
+      "originalFailureId": "LP24449-ledger-02383",
+      "county": "dewitt-tx",
+      "place_geoid": "4880560",
+      "identities": [
+        "764992R"
+      ],
+      "classification": "RECLASSIFIED",
+      "reason": "CERTIFIER_ASSUMPTION_ERROR_SOURCE_FIPS_IS_NOT_PACKAGE_AUTHORITY"
+    },
+    {
+      "originalFailureId": "LP24449-ledger-02384",
+      "county": "guadalupe-tx",
+      "place_geoid": "4866128",
+      "identities": [
+        "415596N"
+      ],
+      "classification": "RECLASSIFIED",
+      "reason": "CERTIFIER_ASSUMPTION_ERROR_SOURCE_FIPS_IS_NOT_PACKAGE_AUTHORITY"
+    },
+    {
+      "originalFailureId": "LP24449-ledger-02385",
+      "county": "madison-tx",
+      "place_geoid": "4851840",
+      "identities": [
+        "597155S"
+      ],
+      "classification": "RECLASSIFIED",
+      "reason": "CERTIFIER_ASSUMPTION_ERROR_SOURCE_FIPS_IS_NOT_PACKAGE_AUTHORITY"
+    },
+    {
+      "originalFailureId": "LP24449-ledger-02386",
+      "county": "travis-tx",
+      "place_geoid": "4805000",
+      "identities": [
+        "765665J",
+        "925947T"
+      ],
+      "classification": "RECLASSIFIED",
+      "reason": "CERTIFIER_ASSUMPTION_ERROR_SOURCE_FIPS_IS_NOT_PACKAGE_AUTHORITY"
+    },
+    {
+      "originalFailureId": "LP24449-ledger-02387",
+      "county": "wise-tx",
+      "place_geoid": "4827000",
+      "identities": [
+        "274638F"
+      ],
+      "classification": "RECLASSIFIED",
+      "reason": "CERTIFIER_ASSUMPTION_ERROR_SOURCE_FIPS_IS_NOT_PACKAGE_AUTHORITY"
+    },
+    {
+      "originalFailureId": "LP24449-ledger-02388",
+      "county": "wise-tx",
+      "place_geoid": "4856462",
+      "identities": [
+        "598303M"
+      ],
+      "classification": "RECLASSIFIED",
+      "reason": "CERTIFIER_ASSUMPTION_ERROR_SOURCE_FIPS_IS_NOT_PACKAGE_AUTHORITY"
+    }
+  ],
+  "identities": [
+    {
+      "originalFailureId": "LP24449-ledger-02377",
+      "crossingId": "746307Y",
+      "runtimeId": "FRA-746307Y",
+      "canonicalMembershipCounty": "aransas-tx",
+      "operationalCounty": "aransas-tx",
+      "sourceCountyFips": "48007",
+      "rawProperties": {
+        "OBJECTID": 216371,
+        "CROSSING": "746307Y",
+        "EFFDATE": 1774569600000,
+        "REASON": "14",
+        "StateCode": "48",
+        "CountyCode": "48007",
+        "STCYFIPS": "48007",
+        "CITYCD": "480070240",
+        "RAILROAD": "UP",
+        "RRDIV": "HOUSTON",
+        "RRSUBDIV": "Kosmos Ind Ld",
+        "HIGHWAY": "LS0000",
+        "STREET": "East WILSON AVENUE",
+        "TTSTN": "688863",
+        "MILEPOST": "0026.300",
+        "TYPEXING": "Public",
+        "POSXING": "At Grade",
+        "PRVCAT": "14",
+        "INIT": "2",
+        "LATITUDE": 27.9023436,
+        "LONGITUD": -97.1431079,
+        "LLSOURCE": "1",
+        "WHISTBAN": "0",
+        "RRCONT": "4025443721",
+        "POLCONT": "8008488715",
+        "INV_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=I&txtcrossingnum=746307Y",
+        "ACC_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=A&txtcrossingnum=746307Y",
+        "TTSTNNAM": "",
+        "XPURPOSE": "1",
+        "OPERATINGR": "UP",
+        "OPERATIN_1": "Primary",
+        "DAYTHRU": 0,
+        "NGHTTHRU": 0,
+        "MAINTRK": 0,
+        "SIDINGTRK": 0,
+        "YARDTRK": 0,
+        "TRANSITTRK": 0,
+        "INDUSTRYTR": 1,
+        "OTHRTRK": 0,
+        "WDCODE": "All other Gates",
+        "REVISIONDA": "1975/01/01 00:00:00",
+        "LASTUPDATE": "3/27/2026",
+        "AADT": "564",
+        "AADTYEAR": "2024",
+        "STATENAME": "TEXAS",
+        "STATEAB": "TX",
+        "COUNTYNAME": "ARANSAS",
+        "CITYNAME": "ARANSAS PASS",
+        "LATDD": 27.9023436,
+        "LONGDD": -97.1431079,
+        "gridlyProductionCertified": true,
+        "gridlyClassification": "PUBLIC_ROADWAY",
+        "gridlyDisplayName": "East WILSON AVENUE",
+        "gridlyId": "FRA-746307Y"
+      },
+      "coordinates": [
+        -97.1431078999638,
+        27.90234360019
+      ],
+      "packages": [
+        {
+          "county": "san-patricio-tx",
+          "fips": "48409",
+          "path": "Crossing-Packages/san-patricio/Production/san-patricio-production-crossings.geojson"
+        }
+      ],
+      "geographicAuthority": {
+        "crossingId": "746307Y",
+        "fraSourceCountyFips": "48007",
+        "fraSourceCountyName": "ARANSAS",
+        "gridlyCountyId": "san-patricio",
+        "gridlyCountyFips": "48409",
+        "resolution": "CLEAR_GEOGRAPHIC_REASSIGNMENT",
+        "evidence": {
+          "authority": "certified 2025 TIGER polygon containment",
+          "exceptionType": "CROSS_COUNTY_MISMATCH",
+          "distanceToSourceCountyBoundaryMeters": 700.333
+        }
+      },
+      "geometryEvidence": {
+        "crossingId": "746307Y",
+        "exceptionType": "CROSS_COUNTY_MISMATCH",
+        "sourceCountyFips": "48007",
+        "sourceCountyName": "Aransas County",
+        "coordinateResolvedCountyFips": "48409",
+        "coordinateResolvedCountyName": "San Patricio County",
+        "latitude": 27.90234360019,
+        "longitude": -97.1431078999638,
+        "railroad": "UP",
+        "streetHighway": "East WILSON AVENUE",
+        "sourceLastUpdate": "3/27/2026",
+        "distanceToSourceCountyBoundaryMeters": 700.333,
+        "distanceToResolvedCountyBoundaryMeters": 481.855,
+        "distanceBucket": "500_M_TO_1_KM",
+        "rawFraCountyStateFields": {
+          "CountyCode": "48007",
+          "COUNTYNAME": "ARANSAS",
+          "STATEAB": "TX",
+          "StateCode": "48",
+          "STATENAME": "TEXAS",
+          "STCYFIPS": "48007"
+        },
+        "processedEvidence": {
+          "geometryCoordinates": [
+            -97.1431078999638,
+            27.90234360019
+          ],
+          "latitudeFields": {
+            "LATITUDE": 27.9023436,
+            "LATDD": 27.9023436
+          },
+          "longitudeFields": {
+            "LONGITUD": -97.1431079,
+            "LONGDD": -97.1431079
+          }
+        },
+        "rawOwnerComparison": {
+          "status": "OWNER_SOURCE_NOT_REPOSITORY_AVAILABLE",
+          "rawRecord": null,
+          "coordinatesChanged": null,
+          "countyIdentityChanged": null,
+          "stateIdentityChanged": null,
+          "crossingIdChanged": null
+        },
+        "classification": "CLEAR_GEOGRAPHIC_REASSIGNMENT",
+        "reviewThresholdMeters": 25,
+        "assignmentEvidence": "2025 TIGER polygon containment; distance is classification only"
+      },
+      "canonicalPlaces": [
+        {
+          "place_geoid": "4803600",
+          "sourceMemberships": [
+            [
+              "746307Y",
+              "48007",
+              "ARANSAS"
+            ]
+          ]
+        }
+      ],
+      "classification": {
+        "id": "746307Y",
+        "reportability": {
+          "reportable": true,
+          "reasons": [],
+          "eligibility": "reportable_at_grade",
+          "normalizedCrossingId": "746307Y"
+        },
+        "public": true,
+        "source": "statewide FRA source",
+        "record": {
+          "id": "FRA-746307Y",
+          "name": "East WILSON AVENUE",
+          "lat": 27.90234360019,
+          "lng": -97.1431078999638,
+          "props": {
+            "OBJECTID": 216371,
+            "CROSSING": "746307Y",
+            "EFFDATE": 1774569600000,
+            "REASON": "14",
+            "StateCode": "48",
+            "CountyCode": "48007",
+            "STCYFIPS": "48007",
+            "CITYCD": "480070240",
+            "RAILROAD": "UP",
+            "RRDIV": "HOUSTON",
+            "RRSUBDIV": "Kosmos Ind Ld",
+            "HIGHWAY": "LS0000",
+            "STREET": "East WILSON AVENUE",
+            "TTSTN": "688863",
+            "MILEPOST": "0026.300",
+            "TYPEXING": "Public",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "INIT": "2",
+            "LATITUDE": 27.9023436,
+            "LONGITUD": -97.1431079,
+            "LLSOURCE": "1",
+            "WHISTBAN": "0",
+            "RRCONT": "4025443721",
+            "POLCONT": "8008488715",
+            "INV_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=I&txtcrossingnum=746307Y",
+            "ACC_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=A&txtcrossingnum=746307Y",
+            "TTSTNNAM": "",
+            "XPURPOSE": "1",
+            "OPERATINGR": "UP",
+            "OPERATIN_1": "Primary",
+            "DAYTHRU": 0,
+            "NGHTTHRU": 0,
+            "MAINTRK": 0,
+            "SIDINGTRK": 0,
+            "YARDTRK": 0,
+            "TRANSITTRK": 0,
+            "INDUSTRYTR": 1,
+            "OTHRTRK": 0,
+            "WDCODE": "All other Gates",
+            "REVISIONDA": "1975/01/01 00:00:00",
+            "LASTUPDATE": "3/27/2026",
+            "AADT": "564",
+            "AADTYEAR": "2024",
+            "STATENAME": "TEXAS",
+            "STATEAB": "TX",
+            "COUNTYNAME": "ARANSAS",
+            "CITYNAME": "ARANSAS PASS",
+            "LATDD": 27.9023436,
+            "LONGDD": -97.1431079
+          }
+        }
+      },
+      "reason": "Original certifier treated preserved FRA/source-county membership as package ownership. Certified geographic ownership assigns the crossing to its containing county; package and normalized stable ID agree.",
+      "checks": {
+        "uniquePackage": true,
+        "geographicOwnerMatches": true,
+        "sourceProvenancePreserved": true,
+        "normalizedIdPreserved": true,
+        "directCertifiedPolygonContainment": true
+      },
+      "directGeometryProof": {
+        "source": "assets/location-resolution/gridly-authoritative-county-geometry-v1.json",
+        "containingCounties": [
+          "san-patricio-tx"
+        ],
+        "packageOwner": "san-patricio-tx",
+        "pass": true
+      },
+      "runtimeOwnerBrowserProof": {
+        "county": "san-patricio-tx",
+        "place": "4803600",
+        "id": "FRA-746307Y",
+        "loaded": true
+      }
+    },
+    {
+      "originalFailureId": "LP24449-ledger-02377",
+      "crossingId": "746308F",
+      "runtimeId": "FRA-746308F",
+      "canonicalMembershipCounty": "aransas-tx",
+      "operationalCounty": "aransas-tx",
+      "sourceCountyFips": "48007",
+      "rawProperties": {
+        "OBJECTID": 216368,
+        "CROSSING": "746308F",
+        "EFFDATE": 1774569600000,
+        "REASON": "14",
+        "StateCode": "48",
+        "CountyCode": "48007",
+        "STCYFIPS": "48007",
+        "CITYCD": "480070240",
+        "RAILROAD": "UP",
+        "RRDIV": "HOUSTON",
+        "RRSUBDIV": "Kosmos Ind Ld",
+        "HIGHWAY": "LS0000",
+        "STREET": "EAST WHEELER AVENUE",
+        "TTSTN": "688863",
+        "MILEPOST": "0026.490",
+        "TYPEXING": "Public",
+        "POSXING": "At Grade",
+        "PRVCAT": "14",
+        "INIT": "2",
+        "LATITUDE": 27.9048123,
+        "LONGITUD": -97.1415924,
+        "LLSOURCE": "1",
+        "WHISTBAN": "0",
+        "RRCONT": "4025443721",
+        "POLCONT": "8008488715",
+        "INV_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=I&txtcrossingnum=746308F",
+        "ACC_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=A&txtcrossingnum=746308F",
+        "TTSTNNAM": "",
+        "XPURPOSE": "1",
+        "OPERATINGR": "UP",
+        "OPERATIN_1": "Primary",
+        "DAYTHRU": 0,
+        "NGHTTHRU": 0,
+        "MAINTRK": 0,
+        "SIDINGTRK": 0,
+        "YARDTRK": 0,
+        "TRANSITTRK": 0,
+        "INDUSTRYTR": 1,
+        "OTHRTRK": 1,
+        "WDCODE": "Crossbucks",
+        "REVISIONDA": "1975/01/01 00:00:00",
+        "LASTUPDATE": "3/27/2026",
+        "AADT": "135",
+        "AADTYEAR": "2019",
+        "STATENAME": "TEXAS",
+        "STATEAB": "TX",
+        "COUNTYNAME": "ARANSAS",
+        "CITYNAME": "ARANSAS PASS",
+        "LATDD": 27.9048123,
+        "LONGDD": -97.1415924,
+        "gridlyProductionCertified": true,
+        "gridlyClassification": "PUBLIC_ROADWAY",
+        "gridlyDisplayName": "EAST WHEELER AVENUE",
+        "gridlyId": "FRA-746308F"
+      },
+      "coordinates": [
+        -97.1415923998587,
+        27.9048122996048
+      ],
+      "packages": [
+        {
+          "county": "san-patricio-tx",
+          "fips": "48409",
+          "path": "Crossing-Packages/san-patricio/Production/san-patricio-production-crossings.geojson"
+        }
+      ],
+      "geographicAuthority": {
+        "crossingId": "746308F",
+        "fraSourceCountyFips": "48007",
+        "fraSourceCountyName": "ARANSAS",
+        "gridlyCountyId": "san-patricio",
+        "gridlyCountyFips": "48409",
+        "resolution": "CLEAR_GEOGRAPHIC_REASSIGNMENT",
+        "evidence": {
+          "authority": "certified 2025 TIGER polygon containment",
+          "exceptionType": "CROSS_COUNTY_MISMATCH",
+          "distanceToSourceCountyBoundaryMeters": 416.553
+        }
+      },
+      "geometryEvidence": {
+        "crossingId": "746308F",
+        "exceptionType": "CROSS_COUNTY_MISMATCH",
+        "sourceCountyFips": "48007",
+        "sourceCountyName": "Aransas County",
+        "coordinateResolvedCountyFips": "48409",
+        "coordinateResolvedCountyName": "San Patricio County",
+        "latitude": 27.9048122996048,
+        "longitude": -97.1415923998587,
+        "railroad": "UP",
+        "streetHighway": "EAST WHEELER AVENUE",
+        "sourceLastUpdate": "3/27/2026",
+        "distanceToSourceCountyBoundaryMeters": 416.553,
+        "distanceToResolvedCountyBoundaryMeters": 416.553,
+        "distanceBucket": "100_TO_500_M",
+        "rawFraCountyStateFields": {
+          "CountyCode": "48007",
+          "COUNTYNAME": "ARANSAS",
+          "STATEAB": "TX",
+          "StateCode": "48",
+          "STATENAME": "TEXAS",
+          "STCYFIPS": "48007"
+        },
+        "processedEvidence": {
+          "geometryCoordinates": [
+            -97.1415923998587,
+            27.9048122996048
+          ],
+          "latitudeFields": {
+            "LATITUDE": 27.9048123,
+            "LATDD": 27.9048123
+          },
+          "longitudeFields": {
+            "LONGITUD": -97.1415924,
+            "LONGDD": -97.1415924
+          }
+        },
+        "rawOwnerComparison": {
+          "status": "OWNER_SOURCE_NOT_REPOSITORY_AVAILABLE",
+          "rawRecord": null,
+          "coordinatesChanged": null,
+          "countyIdentityChanged": null,
+          "stateIdentityChanged": null,
+          "crossingIdChanged": null
+        },
+        "classification": "CLEAR_GEOGRAPHIC_REASSIGNMENT",
+        "reviewThresholdMeters": 25,
+        "assignmentEvidence": "2025 TIGER polygon containment; distance is classification only"
+      },
+      "canonicalPlaces": [
+        {
+          "place_geoid": "4803600",
+          "sourceMemberships": [
+            [
+              "746308F",
+              "48007",
+              "ARANSAS"
+            ]
+          ]
+        }
+      ],
+      "classification": {
+        "id": "746308F",
+        "reportability": {
+          "reportable": true,
+          "reasons": [],
+          "eligibility": "reportable_at_grade",
+          "normalizedCrossingId": "746308F"
+        },
+        "public": true,
+        "source": "statewide FRA source",
+        "record": {
+          "id": "FRA-746308F",
+          "name": "EAST WHEELER AVENUE",
+          "lat": 27.9048122996048,
+          "lng": -97.1415923998587,
+          "props": {
+            "OBJECTID": 216368,
+            "CROSSING": "746308F",
+            "EFFDATE": 1774569600000,
+            "REASON": "14",
+            "StateCode": "48",
+            "CountyCode": "48007",
+            "STCYFIPS": "48007",
+            "CITYCD": "480070240",
+            "RAILROAD": "UP",
+            "RRDIV": "HOUSTON",
+            "RRSUBDIV": "Kosmos Ind Ld",
+            "HIGHWAY": "LS0000",
+            "STREET": "EAST WHEELER AVENUE",
+            "TTSTN": "688863",
+            "MILEPOST": "0026.490",
+            "TYPEXING": "Public",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "INIT": "2",
+            "LATITUDE": 27.9048123,
+            "LONGITUD": -97.1415924,
+            "LLSOURCE": "1",
+            "WHISTBAN": "0",
+            "RRCONT": "4025443721",
+            "POLCONT": "8008488715",
+            "INV_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=I&txtcrossingnum=746308F",
+            "ACC_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=A&txtcrossingnum=746308F",
+            "TTSTNNAM": "",
+            "XPURPOSE": "1",
+            "OPERATINGR": "UP",
+            "OPERATIN_1": "Primary",
+            "DAYTHRU": 0,
+            "NGHTTHRU": 0,
+            "MAINTRK": 0,
+            "SIDINGTRK": 0,
+            "YARDTRK": 0,
+            "TRANSITTRK": 0,
+            "INDUSTRYTR": 1,
+            "OTHRTRK": 1,
+            "WDCODE": "Crossbucks",
+            "REVISIONDA": "1975/01/01 00:00:00",
+            "LASTUPDATE": "3/27/2026",
+            "AADT": "135",
+            "AADTYEAR": "2019",
+            "STATENAME": "TEXAS",
+            "STATEAB": "TX",
+            "COUNTYNAME": "ARANSAS",
+            "CITYNAME": "ARANSAS PASS",
+            "LATDD": 27.9048123,
+            "LONGDD": -97.1415924
+          }
+        }
+      },
+      "reason": "Original certifier treated preserved FRA/source-county membership as package ownership. Certified geographic ownership assigns the crossing to its containing county; package and normalized stable ID agree.",
+      "checks": {
+        "uniquePackage": true,
+        "geographicOwnerMatches": true,
+        "sourceProvenancePreserved": true,
+        "normalizedIdPreserved": true,
+        "directCertifiedPolygonContainment": true
+      },
+      "directGeometryProof": {
+        "source": "assets/location-resolution/gridly-authoritative-county-geometry-v1.json",
+        "containingCounties": [
+          "san-patricio-tx"
+        ],
+        "packageOwner": "san-patricio-tx",
+        "pass": true
+      },
+      "runtimeOwnerBrowserProof": {
+        "county": "san-patricio-tx",
+        "place": "4803600",
+        "id": "FRA-746308F",
+        "loaded": true
+      }
+    },
+    {
+      "originalFailureId": "LP24449-ledger-02378",
+      "crossingId": "427943S",
+      "runtimeId": "FRA-427943S",
+      "canonicalMembershipCounty": "atascosa-tx",
+      "operationalCounty": "atascosa-tx",
+      "sourceCountyFips": "48013",
+      "rawProperties": {
+        "OBJECTID": 212337,
+        "CROSSING": "427943S",
+        "EFFDATE": 1770681600000,
+        "REASON": "14",
+        "StateCode": "48",
+        "CountyCode": "48013",
+        "STCYFIPS": "48013",
+        "CITYCD": "480134181",
+        "RAILROAD": "UP",
+        "RRDIV": "SOUTH TEXAS",
+        "RRSUBDIV": "LAREDO SUB",
+        "HIGHWAY": "LS0000",
+        "STREET": "Diaz Street",
+        "TTSTN": "692674",
+        "MILEPOST": "0282.880",
+        "TYPEXING": "Public",
+        "POSXING": "At Grade",
+        "PRVCAT": "14",
+        "INIT": "2",
+        "LATITUDE": 29.226654,
+        "LONGITUD": -98.8105866,
+        "LLSOURCE": "1",
+        "WHISTBAN": "0",
+        "RRCONT": "4025443721",
+        "POLCONT": "8008488715",
+        "INV_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=I&txtcrossingnum=427943S",
+        "ACC_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=A&txtcrossingnum=427943S",
+        "TTSTNNAM": "",
+        "XPURPOSE": "1",
+        "OPERATINGR": "UP",
+        "OPERATIN_1": "Primary",
+        "DAYTHRU": 10,
+        "NGHTTHRU": 10,
+        "MAINTRK": 1,
+        "SIDINGTRK": 0,
+        "YARDTRK": 0,
+        "TRANSITTRK": 0,
+        "INDUSTRYTR": 0,
+        "OTHRTRK": 0,
+        "WDCODE": "All other Gates",
+        "REVISIONDA": "1975/01/01 00:00:00",
+        "LASTUPDATE": "2/10/2026",
+        "AADT": "378",
+        "AADTYEAR": "2020",
+        "STATENAME": "TEXAS",
+        "STATEAB": "TX",
+        "COUNTYNAME": "ATASCOSA",
+        "CITYNAME": "LYTLE",
+        "LATDD": 29.226654,
+        "LONGDD": -98.8105866,
+        "gridlyProductionCertified": true,
+        "gridlyClassification": "PUBLIC_ROADWAY",
+        "gridlyDisplayName": "Diaz Street",
+        "gridlyId": "FRA-427943S"
+      },
+      "coordinates": [
+        -98.81058660003,
+        29.2266539998427
+      ],
+      "packages": [
+        {
+          "county": "medina-tx",
+          "fips": "48325",
+          "path": "Crossing-Packages/medina/Production/medina-production-crossings.geojson"
+        }
+      ],
+      "geographicAuthority": {
+        "crossingId": "427943S",
+        "fraSourceCountyFips": "48013",
+        "fraSourceCountyName": "ATASCOSA",
+        "gridlyCountyId": "medina",
+        "gridlyCountyFips": "48325",
+        "resolution": "CLEAR_GEOGRAPHIC_REASSIGNMENT",
+        "evidence": {
+          "authority": "certified 2025 TIGER polygon containment",
+          "exceptionType": "CROSS_COUNTY_MISMATCH",
+          "distanceToSourceCountyBoundaryMeters": 571.622
+        }
+      },
+      "geometryEvidence": {
+        "crossingId": "427943S",
+        "exceptionType": "CROSS_COUNTY_MISMATCH",
+        "sourceCountyFips": "48013",
+        "sourceCountyName": "Atascosa County",
+        "coordinateResolvedCountyFips": "48325",
+        "coordinateResolvedCountyName": "Medina County",
+        "latitude": 29.2266539998427,
+        "longitude": -98.81058660003,
+        "railroad": "UP",
+        "streetHighway": "Diaz Street",
+        "sourceLastUpdate": "2/10/2026",
+        "distanceToSourceCountyBoundaryMeters": 571.622,
+        "distanceToResolvedCountyBoundaryMeters": 571.622,
+        "distanceBucket": "500_M_TO_1_KM",
+        "rawFraCountyStateFields": {
+          "CountyCode": "48013",
+          "COUNTYNAME": "ATASCOSA",
+          "STATEAB": "TX",
+          "StateCode": "48",
+          "STATENAME": "TEXAS",
+          "STCYFIPS": "48013"
+        },
+        "processedEvidence": {
+          "geometryCoordinates": [
+            -98.81058660003,
+            29.2266539998427
+          ],
+          "latitudeFields": {
+            "LATITUDE": 29.226654,
+            "LATDD": 29.226654
+          },
+          "longitudeFields": {
+            "LONGITUD": -98.8105866,
+            "LONGDD": -98.8105866
+          }
+        },
+        "rawOwnerComparison": {
+          "status": "OWNER_SOURCE_NOT_REPOSITORY_AVAILABLE",
+          "rawRecord": null,
+          "coordinatesChanged": null,
+          "countyIdentityChanged": null,
+          "stateIdentityChanged": null,
+          "crossingIdChanged": null
+        },
+        "classification": "CLEAR_GEOGRAPHIC_REASSIGNMENT",
+        "reviewThresholdMeters": 25,
+        "assignmentEvidence": "2025 TIGER polygon containment; distance is classification only"
+      },
+      "canonicalPlaces": [
+        {
+          "place_geoid": "4845288",
+          "sourceMemberships": [
+            [
+              "427943S",
+              "48013",
+              "ATASCOSA"
+            ]
+          ]
+        }
+      ],
+      "classification": {
+        "id": "427943S",
+        "reportability": {
+          "reportable": true,
+          "reasons": [],
+          "eligibility": "reportable_at_grade",
+          "normalizedCrossingId": "427943S"
+        },
+        "public": true,
+        "source": "statewide FRA source",
+        "record": {
+          "id": "FRA-427943S",
+          "name": "Diaz Street",
+          "lat": 29.2266539998427,
+          "lng": -98.81058660003,
+          "props": {
+            "OBJECTID": 212337,
+            "CROSSING": "427943S",
+            "EFFDATE": 1770681600000,
+            "REASON": "14",
+            "StateCode": "48",
+            "CountyCode": "48013",
+            "STCYFIPS": "48013",
+            "CITYCD": "480134181",
+            "RAILROAD": "UP",
+            "RRDIV": "SOUTH TEXAS",
+            "RRSUBDIV": "LAREDO SUB",
+            "HIGHWAY": "LS0000",
+            "STREET": "Diaz Street",
+            "TTSTN": "692674",
+            "MILEPOST": "0282.880",
+            "TYPEXING": "Public",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "INIT": "2",
+            "LATITUDE": 29.226654,
+            "LONGITUD": -98.8105866,
+            "LLSOURCE": "1",
+            "WHISTBAN": "0",
+            "RRCONT": "4025443721",
+            "POLCONT": "8008488715",
+            "INV_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=I&txtcrossingnum=427943S",
+            "ACC_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=A&txtcrossingnum=427943S",
+            "TTSTNNAM": "",
+            "XPURPOSE": "1",
+            "OPERATINGR": "UP",
+            "OPERATIN_1": "Primary",
+            "DAYTHRU": 10,
+            "NGHTTHRU": 10,
+            "MAINTRK": 1,
+            "SIDINGTRK": 0,
+            "YARDTRK": 0,
+            "TRANSITTRK": 0,
+            "INDUSTRYTR": 0,
+            "OTHRTRK": 0,
+            "WDCODE": "All other Gates",
+            "REVISIONDA": "1975/01/01 00:00:00",
+            "LASTUPDATE": "2/10/2026",
+            "AADT": "378",
+            "AADTYEAR": "2020",
+            "STATENAME": "TEXAS",
+            "STATEAB": "TX",
+            "COUNTYNAME": "ATASCOSA",
+            "CITYNAME": "LYTLE",
+            "LATDD": 29.226654,
+            "LONGDD": -98.8105866
+          }
+        }
+      },
+      "reason": "Original certifier treated preserved FRA/source-county membership as package ownership. Certified geographic ownership assigns the crossing to its containing county; package and normalized stable ID agree.",
+      "checks": {
+        "uniquePackage": true,
+        "geographicOwnerMatches": true,
+        "sourceProvenancePreserved": true,
+        "normalizedIdPreserved": true,
+        "directCertifiedPolygonContainment": true
+      },
+      "directGeometryProof": {
+        "source": "assets/location-resolution/gridly-authoritative-county-geometry-v1.json",
+        "containingCounties": [
+          "medina-tx"
+        ],
+        "packageOwner": "medina-tx",
+        "pass": true
+      },
+      "runtimeOwnerBrowserProof": {
+        "county": "medina-tx",
+        "place": "4813312",
+        "id": "FRA-427943S",
+        "loaded": true
+      }
+    },
+    {
+      "originalFailureId": "LP24449-ledger-02379",
+      "crossingId": "416230D",
+      "runtimeId": "FRA-416230D",
+      "canonicalMembershipCounty": "bell-tx",
+      "operationalCounty": "bell-tx",
+      "sourceCountyFips": "48027",
+      "rawProperties": {
+        "OBJECTID": 212620,
+        "CROSSING": "416230D",
+        "EFFDATE": 1758844800000,
+        "REASON": "14",
+        "StateCode": "48",
+        "CountyCode": "48027",
+        "STCYFIPS": "48027",
+        "CITYCD": "480270450",
+        "RAILROAD": "UP",
+        "RRDIV": "TEXOMA",
+        "RRSUBDIV": "WACO SUB",
+        "HIGHWAY": "FM0487",
+        "STREET": "FM0487 / CLARK STREET",
+        "TTSTN": "683297",
+        "MILEPOST": "0902.680",
+        "TYPEXING": "Public",
+        "POSXING": "At Grade",
+        "PRVCAT": "14",
+        "INIT": "2",
+        "LATITUDE": 30.7955289,
+        "LONGITUD": -97.4285102,
+        "LLSOURCE": "1",
+        "WHISTBAN": "0",
+        "RRCONT": "4025443721",
+        "POLCONT": "8008488715",
+        "INV_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=I&txtcrossingnum=416230D",
+        "ACC_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=A&txtcrossingnum=416230D",
+        "TTSTNNAM": "",
+        "XPURPOSE": "1",
+        "OPERATINGR": "UP",
+        "OPERATIN_1": "Primary",
+        "DAYTHRU": 4,
+        "NGHTTHRU": 3,
+        "MAINTRK": 1,
+        "SIDINGTRK": 0,
+        "YARDTRK": 0,
+        "TRANSITTRK": 0,
+        "INDUSTRYTR": 0,
+        "OTHRTRK": 1,
+        "WDCODE": "All other Gates",
+        "REVISIONDA": "1975/01/01 00:00:00",
+        "LASTUPDATE": "9/26/2025",
+        "AADT": "1861",
+        "AADTYEAR": "2020",
+        "STATENAME": "TEXAS",
+        "STATEAB": "TX",
+        "COUNTYNAME": "BELL",
+        "CITYNAME": "BARTLETT",
+        "LATDD": 30.7955289,
+        "LONGDD": -97.4285102,
+        "gridlyProductionCertified": true,
+        "gridlyClassification": "PUBLIC_ROADWAY",
+        "gridlyDisplayName": "FM0487 / CLARK STREET",
+        "gridlyId": "FRA-416230D"
+      },
+      "coordinates": [
+        -97.4285101998989,
+        30.7955289003672
+      ],
+      "packages": [
+        {
+          "county": "williamson-tx",
+          "fips": "48491",
+          "path": "Crossing-Packages/williamson/Production/williamson-production-crossings.geojson"
+        }
+      ],
+      "geographicAuthority": {
+        "crossingId": "416230D",
+        "fraSourceCountyFips": "48027",
+        "fraSourceCountyName": "BELL",
+        "gridlyCountyId": "williamson",
+        "gridlyCountyFips": "48491",
+        "resolution": "BORDER_TOLERANCE_REVIEW",
+        "evidence": {
+          "authority": "certified 2025 TIGER polygon containment",
+          "exceptionType": "CROSS_COUNTY_MISMATCH",
+          "distanceToSourceCountyBoundaryMeters": 0.255
+        }
+      },
+      "geometryEvidence": {
+        "crossingId": "416230D",
+        "exceptionType": "CROSS_COUNTY_MISMATCH",
+        "sourceCountyFips": "48027",
+        "sourceCountyName": "Bell County",
+        "coordinateResolvedCountyFips": "48491",
+        "coordinateResolvedCountyName": "Williamson County",
+        "latitude": 30.7955289003672,
+        "longitude": -97.4285101998989,
+        "railroad": "UP",
+        "streetHighway": "FM0487 / CLARK STREET",
+        "sourceLastUpdate": "9/26/2025",
+        "distanceToSourceCountyBoundaryMeters": 0.255,
+        "distanceToResolvedCountyBoundaryMeters": 0.255,
+        "distanceBucket": "LE_25_M",
+        "rawFraCountyStateFields": {
+          "CountyCode": "48027",
+          "COUNTYNAME": "BELL",
+          "STATEAB": "TX",
+          "StateCode": "48",
+          "STATENAME": "TEXAS",
+          "STCYFIPS": "48027"
+        },
+        "processedEvidence": {
+          "geometryCoordinates": [
+            -97.4285101998989,
+            30.7955289003672
+          ],
+          "latitudeFields": {
+            "LATITUDE": 30.7955289,
+            "LATDD": 30.7955289
+          },
+          "longitudeFields": {
+            "LONGITUD": -97.4285102,
+            "LONGDD": -97.4285102
+          }
+        },
+        "rawOwnerComparison": {
+          "status": "OWNER_SOURCE_NOT_REPOSITORY_AVAILABLE",
+          "rawRecord": null,
+          "coordinatesChanged": null,
+          "countyIdentityChanged": null,
+          "stateIdentityChanged": null,
+          "crossingIdChanged": null
+        },
+        "classification": "BORDER_TOLERANCE_REVIEW",
+        "reviewThresholdMeters": 25,
+        "assignmentEvidence": "2025 TIGER polygon containment; distance is classification only"
+      },
+      "canonicalPlaces": [
+        {
+          "place_geoid": "4805732",
+          "sourceMemberships": [
+            [
+              "416230D",
+              "48027",
+              "BELL"
+            ]
+          ]
+        }
+      ],
+      "classification": {
+        "id": "416230D",
+        "reportability": {
+          "reportable": true,
+          "reasons": [],
+          "eligibility": "reportable_at_grade",
+          "normalizedCrossingId": "416230D"
+        },
+        "public": true,
+        "source": "statewide FRA source",
+        "record": {
+          "id": "FRA-416230D",
+          "name": "FM0487 / CLARK STREET",
+          "lat": 30.7955289003672,
+          "lng": -97.4285101998989,
+          "props": {
+            "OBJECTID": 212620,
+            "CROSSING": "416230D",
+            "EFFDATE": 1758844800000,
+            "REASON": "14",
+            "StateCode": "48",
+            "CountyCode": "48027",
+            "STCYFIPS": "48027",
+            "CITYCD": "480270450",
+            "RAILROAD": "UP",
+            "RRDIV": "TEXOMA",
+            "RRSUBDIV": "WACO SUB",
+            "HIGHWAY": "FM0487",
+            "STREET": "FM0487 / CLARK STREET",
+            "TTSTN": "683297",
+            "MILEPOST": "0902.680",
+            "TYPEXING": "Public",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "INIT": "2",
+            "LATITUDE": 30.7955289,
+            "LONGITUD": -97.4285102,
+            "LLSOURCE": "1",
+            "WHISTBAN": "0",
+            "RRCONT": "4025443721",
+            "POLCONT": "8008488715",
+            "INV_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=I&txtcrossingnum=416230D",
+            "ACC_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=A&txtcrossingnum=416230D",
+            "TTSTNNAM": "",
+            "XPURPOSE": "1",
+            "OPERATINGR": "UP",
+            "OPERATIN_1": "Primary",
+            "DAYTHRU": 4,
+            "NGHTTHRU": 3,
+            "MAINTRK": 1,
+            "SIDINGTRK": 0,
+            "YARDTRK": 0,
+            "TRANSITTRK": 0,
+            "INDUSTRYTR": 0,
+            "OTHRTRK": 1,
+            "WDCODE": "All other Gates",
+            "REVISIONDA": "1975/01/01 00:00:00",
+            "LASTUPDATE": "9/26/2025",
+            "AADT": "1861",
+            "AADTYEAR": "2020",
+            "STATENAME": "TEXAS",
+            "STATEAB": "TX",
+            "COUNTYNAME": "BELL",
+            "CITYNAME": "BARTLETT",
+            "LATDD": 30.7955289,
+            "LONGDD": -97.4285102
+          }
+        }
+      },
+      "reason": "Original certifier treated preserved FRA/source-county membership as package ownership. Certified geographic ownership assigns the crossing to its containing county; package and normalized stable ID agree.",
+      "checks": {
+        "uniquePackage": true,
+        "geographicOwnerMatches": true,
+        "sourceProvenancePreserved": true,
+        "normalizedIdPreserved": true,
+        "directCertifiedPolygonContainment": true
+      },
+      "directGeometryProof": {
+        "source": "assets/location-resolution/gridly-authoritative-county-geometry-v1.json",
+        "containingCounties": [
+          "williamson-tx"
+        ],
+        "packageOwner": "williamson-tx",
+        "pass": true
+      },
+      "runtimeOwnerBrowserProof": {
+        "county": "williamson-tx",
+        "place": "4805000",
+        "id": "FRA-416230D",
+        "loaded": true
+      }
+    },
+    {
+      "originalFailureId": "LP24449-ledger-02380",
+      "crossingId": "788907S",
+      "runtimeId": "FRA-788907S",
+      "canonicalMembershipCounty": "collin-tx",
+      "operationalCounty": "collin-tx",
+      "sourceCountyFips": "48085",
+      "rawProperties": {
+        "OBJECTID": 206261,
+        "CROSSING": "788907S",
+        "EFFDATE": 1754438400000,
+        "REASON": "21",
+        "StateCode": "48",
+        "CountyCode": "48085",
+        "STCYFIPS": "48085",
+        "CITYCD": "480851730",
+        "RAILROAD": "DART",
+        "RRDIV": "central",
+        "RRSUBDIV": "CARROLLTON IND",
+        "HIGHWAY": "ST 0000",
+        "STREET": "HILLCREST ROAD",
+        "TTSTN": "667223",
+        "MILEPOST": "0595.06",
+        "TYPEXING": "Public",
+        "POSXING": "At Grade",
+        "PRVCAT": "21",
+        "INIT": "1",
+        "LATITUDE": 32.9865844,
+        "LONGITUD": -96.7839368,
+        "LLSOURCE": "2",
+        "WHISTBAN": "0",
+        "RRCONT": "8008003490",
+        "POLCONT": "8008003490",
+        "INV_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=I&txtcrossingnum=788907S",
+        "ACC_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=A&txtcrossingnum=788907S",
+        "TTSTNNAM": "ADDISON",
+        "XPURPOSE": "1",
+        "OPERATINGR": "DART",
+        "OPERATIN_1": "Primary",
+        "DAYTHRU": 0,
+        "NGHTTHRU": 0,
+        "MAINTRK": 1,
+        "SIDINGTRK": 0,
+        "YARDTRK": 0,
+        "TRANSITTRK": 0,
+        "INDUSTRYTR": 0,
+        "OTHRTRK": 0,
+        "WDCODE": "All other Gates",
+        "REVISIONDA": "1975/01/01 00:00:00",
+        "LASTUPDATE": "8/6/2025",
+        "AADT": "017656",
+        "AADTYEAR": "2001",
+        "STATENAME": "TEXAS",
+        "STATEAB": "TX",
+        "COUNTYNAME": "COLLIN",
+        "CITYNAME": "DALLAS",
+        "LATDD": 32.9865844,
+        "LONGDD": -96.7839368,
+        "gridlyProductionCertified": true,
+        "gridlyClassification": "PUBLIC_ROADWAY",
+        "gridlyDisplayName": "HILLCREST ROAD",
+        "gridlyId": "FRA-788907S"
+      },
+      "coordinates": [
+        -96.7839367996014,
+        32.9865843997861
+      ],
+      "packages": [
+        {
+          "county": "dallas-tx",
+          "fips": "48113",
+          "path": "Crossing-Packages/dallas/Production/dallas-production-crossings.geojson"
+        }
+      ],
+      "geographicAuthority": {
+        "crossingId": "788907S",
+        "fraSourceCountyFips": "48085",
+        "fraSourceCountyName": "COLLIN",
+        "gridlyCountyId": "dallas",
+        "gridlyCountyFips": "48113",
+        "resolution": "BORDER_TOLERANCE_REVIEW",
+        "evidence": {
+          "authority": "certified 2025 TIGER polygon containment",
+          "exceptionType": "CROSS_COUNTY_MISMATCH",
+          "distanceToSourceCountyBoundaryMeters": 8.202
+        }
+      },
+      "geometryEvidence": {
+        "crossingId": "788907S",
+        "exceptionType": "CROSS_COUNTY_MISMATCH",
+        "sourceCountyFips": "48085",
+        "sourceCountyName": "Collin County",
+        "coordinateResolvedCountyFips": "48113",
+        "coordinateResolvedCountyName": "Dallas County",
+        "latitude": 32.9865843997861,
+        "longitude": -96.7839367996014,
+        "railroad": "DART",
+        "streetHighway": "HILLCREST ROAD",
+        "sourceLastUpdate": "8/6/2025",
+        "distanceToSourceCountyBoundaryMeters": 8.202,
+        "distanceToResolvedCountyBoundaryMeters": 8.202,
+        "distanceBucket": "LE_25_M",
+        "rawFraCountyStateFields": {
+          "CountyCode": "48085",
+          "COUNTYNAME": "COLLIN",
+          "STATEAB": "TX",
+          "StateCode": "48",
+          "STATENAME": "TEXAS",
+          "STCYFIPS": "48085"
+        },
+        "processedEvidence": {
+          "geometryCoordinates": [
+            -96.7839367996014,
+            32.9865843997861
+          ],
+          "latitudeFields": {
+            "LATITUDE": 32.9865844,
+            "LATDD": 32.9865844
+          },
+          "longitudeFields": {
+            "LONGITUD": -96.7839368,
+            "LONGDD": -96.7839368
+          }
+        },
+        "rawOwnerComparison": {
+          "status": "OWNER_SOURCE_NOT_REPOSITORY_AVAILABLE",
+          "rawRecord": null,
+          "coordinatesChanged": null,
+          "countyIdentityChanged": null,
+          "stateIdentityChanged": null,
+          "crossingIdChanged": null
+        },
+        "classification": "BORDER_TOLERANCE_REVIEW",
+        "reviewThresholdMeters": 25,
+        "assignmentEvidence": "2025 TIGER polygon containment; distance is classification only"
+      },
+      "canonicalPlaces": [
+        {
+          "place_geoid": "4819000",
+          "sourceMemberships": [
+            [
+              "788907S",
+              "48085",
+              "COLLIN"
+            ]
+          ]
+        }
+      ],
+      "classification": {
+        "id": "788907S",
+        "reportability": {
+          "reportable": true,
+          "reasons": [],
+          "eligibility": "reportable_at_grade",
+          "normalizedCrossingId": "788907S"
+        },
+        "public": true,
+        "source": "statewide FRA source",
+        "record": {
+          "id": "FRA-788907S",
+          "name": "HILLCREST ROAD",
+          "lat": 32.9865843997861,
+          "lng": -96.7839367996014,
+          "props": {
+            "OBJECTID": 206261,
+            "CROSSING": "788907S",
+            "EFFDATE": 1754438400000,
+            "REASON": "21",
+            "StateCode": "48",
+            "CountyCode": "48085",
+            "STCYFIPS": "48085",
+            "CITYCD": "480851730",
+            "RAILROAD": "DART",
+            "RRDIV": "central",
+            "RRSUBDIV": "CARROLLTON IND",
+            "HIGHWAY": "ST 0000",
+            "STREET": "HILLCREST ROAD",
+            "TTSTN": "667223",
+            "MILEPOST": "0595.06",
+            "TYPEXING": "Public",
+            "POSXING": "At Grade",
+            "PRVCAT": "21",
+            "INIT": "1",
+            "LATITUDE": 32.9865844,
+            "LONGITUD": -96.7839368,
+            "LLSOURCE": "2",
+            "WHISTBAN": "0",
+            "RRCONT": "8008003490",
+            "POLCONT": "8008003490",
+            "INV_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=I&txtcrossingnum=788907S",
+            "ACC_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=A&txtcrossingnum=788907S",
+            "TTSTNNAM": "ADDISON",
+            "XPURPOSE": "1",
+            "OPERATINGR": "DART",
+            "OPERATIN_1": "Primary",
+            "DAYTHRU": 0,
+            "NGHTTHRU": 0,
+            "MAINTRK": 1,
+            "SIDINGTRK": 0,
+            "YARDTRK": 0,
+            "TRANSITTRK": 0,
+            "INDUSTRYTR": 0,
+            "OTHRTRK": 0,
+            "WDCODE": "All other Gates",
+            "REVISIONDA": "1975/01/01 00:00:00",
+            "LASTUPDATE": "8/6/2025",
+            "AADT": "017656",
+            "AADTYEAR": "2001",
+            "STATENAME": "TEXAS",
+            "STATEAB": "TX",
+            "COUNTYNAME": "COLLIN",
+            "CITYNAME": "DALLAS",
+            "LATDD": 32.9865844,
+            "LONGDD": -96.7839368
+          }
+        }
+      },
+      "reason": "Original certifier treated preserved FRA/source-county membership as package ownership. Certified geographic ownership assigns the crossing to its containing county; package and normalized stable ID agree.",
+      "checks": {
+        "uniquePackage": true,
+        "geographicOwnerMatches": true,
+        "sourceProvenancePreserved": true,
+        "normalizedIdPreserved": true,
+        "directCertifiedPolygonContainment": true
+      },
+      "directGeometryProof": {
+        "source": "assets/location-resolution/gridly-authoritative-county-geometry-v1.json",
+        "containingCounties": [
+          "dallas-tx"
+        ],
+        "packageOwner": "dallas-tx",
+        "pass": true
+      },
+      "runtimeOwnerBrowserProof": {
+        "county": "dallas-tx",
+        "place": "4801240",
+        "id": "FRA-788907S",
+        "loaded": true
+      }
+    },
+    {
+      "originalFailureId": "LP24449-ledger-02381",
+      "crossingId": "415195N",
+      "runtimeId": "FRA-415195N",
+      "canonicalMembershipCounty": "collin-tx",
+      "operationalCounty": "collin-tx",
+      "sourceCountyFips": "48085",
+      "rawProperties": {
+        "OBJECTID": 211366,
+        "CROSSING": "415195N",
+        "EFFDATE": 1764547200000,
+        "REASON": "14",
+        "StateCode": "48",
+        "CountyCode": "48085",
+        "STCYFIPS": "48085",
+        "CITYCD": "480856010",
+        "RAILROAD": "DGNO",
+        "RRDIV": "american region",
+        "RRSUBDIV": "DALLAS",
+        "HIGHWAY": "LS0000",
+        "STREET": "EAST COUNTY LINE ROAD",
+        "TTSTN": "667110",
+        "MILEPOST": "0729.47",
+        "TYPEXING": "Public",
+        "POSXING": "At Grade",
+        "PRVCAT": "14",
+        "INIT": "2",
+        "LATITUDE": 32.9816588,
+        "LONGITUD": -96.3189244,
+        "LLSOURCE": "2",
+        "WHISTBAN": "0",
+        "RRCONT": "8008003490",
+        "POLCONT": "8008003490",
+        "INV_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=I&txtcrossingnum=415195N",
+        "ACC_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=A&txtcrossingnum=415195N",
+        "TTSTNNAM": "ROYSE CITY",
+        "XPURPOSE": "1",
+        "OPERATINGR": "DGNO",
+        "OPERATIN_1": "Primary",
+        "DAYTHRU": 1,
+        "NGHTTHRU": 3,
+        "MAINTRK": 1,
+        "SIDINGTRK": 0,
+        "YARDTRK": 0,
+        "TRANSITTRK": 0,
+        "INDUSTRYTR": 0,
+        "OTHRTRK": 0,
+        "WDCODE": "Crossbucks",
+        "REVISIONDA": "1992/01/01 00:00:00",
+        "LASTUPDATE": "12/1/2025",
+        "AADT": "84",
+        "AADTYEAR": "2019",
+        "STATENAME": "TEXAS",
+        "STATEAB": "TX",
+        "COUNTYNAME": "COLLIN",
+        "CITYNAME": "ROYSE CITY",
+        "LATDD": 32.9816588,
+        "LONGDD": -96.3189244,
+        "gridlyProductionCertified": true,
+        "gridlyClassification": "PUBLIC_ROADWAY",
+        "gridlyDisplayName": "EAST COUNTY LINE ROAD",
+        "gridlyId": "FRA-415195N"
+      },
+      "coordinates": [
+        -96.3189244003251,
+        32.9816587997927
+      ],
+      "packages": [
+        {
+          "county": "rockwall-tx",
+          "fips": "48397",
+          "path": "Crossing-Packages/rockwall/Production/rockwall-production-crossings.geojson"
+        }
+      ],
+      "geographicAuthority": {
+        "crossingId": "415195N",
+        "fraSourceCountyFips": "48085",
+        "fraSourceCountyName": "COLLIN",
+        "gridlyCountyId": "rockwall",
+        "gridlyCountyFips": "48397",
+        "resolution": "BORDER_TOLERANCE_REVIEW",
+        "evidence": {
+          "authority": "certified 2025 TIGER polygon containment",
+          "exceptionType": "CROSS_COUNTY_MISMATCH",
+          "distanceToSourceCountyBoundaryMeters": 1.649
+        }
+      },
+      "geometryEvidence": {
+        "crossingId": "415195N",
+        "exceptionType": "CROSS_COUNTY_MISMATCH",
+        "sourceCountyFips": "48085",
+        "sourceCountyName": "Collin County",
+        "coordinateResolvedCountyFips": "48397",
+        "coordinateResolvedCountyName": "Rockwall County",
+        "latitude": 32.9816587997927,
+        "longitude": -96.3189244003251,
+        "railroad": "DGNO",
+        "streetHighway": "EAST COUNTY LINE ROAD",
+        "sourceLastUpdate": "12/1/2025",
+        "distanceToSourceCountyBoundaryMeters": 1.649,
+        "distanceToResolvedCountyBoundaryMeters": 1.649,
+        "distanceBucket": "LE_25_M",
+        "rawFraCountyStateFields": {
+          "CountyCode": "48085",
+          "COUNTYNAME": "COLLIN",
+          "STATEAB": "TX",
+          "StateCode": "48",
+          "STATENAME": "TEXAS",
+          "STCYFIPS": "48085"
+        },
+        "processedEvidence": {
+          "geometryCoordinates": [
+            -96.3189244003251,
+            32.9816587997927
+          ],
+          "latitudeFields": {
+            "LATITUDE": 32.9816588,
+            "LATDD": 32.9816588
+          },
+          "longitudeFields": {
+            "LONGITUD": -96.3189244,
+            "LONGDD": -96.3189244
+          }
+        },
+        "rawOwnerComparison": {
+          "status": "OWNER_SOURCE_NOT_REPOSITORY_AVAILABLE",
+          "rawRecord": null,
+          "coordinatesChanged": null,
+          "countyIdentityChanged": null,
+          "stateIdentityChanged": null,
+          "crossingIdChanged": null
+        },
+        "classification": "BORDER_TOLERANCE_REVIEW",
+        "reviewThresholdMeters": 25,
+        "assignmentEvidence": "2025 TIGER polygon containment; distance is classification only"
+      },
+      "canonicalPlaces": [
+        {
+          "place_geoid": "4863668",
+          "sourceMemberships": [
+            [
+              "415195N",
+              "48085",
+              "COLLIN"
+            ]
+          ]
+        }
+      ],
+      "classification": {
+        "id": "415195N",
+        "reportability": {
+          "reportable": true,
+          "reasons": [],
+          "eligibility": "reportable_at_grade",
+          "normalizedCrossingId": "415195N"
+        },
+        "public": true,
+        "source": "statewide FRA source",
+        "record": {
+          "id": "FRA-415195N",
+          "name": "EAST COUNTY LINE ROAD",
+          "lat": 32.9816587997927,
+          "lng": -96.3189244003251,
+          "props": {
+            "OBJECTID": 211366,
+            "CROSSING": "415195N",
+            "EFFDATE": 1764547200000,
+            "REASON": "14",
+            "StateCode": "48",
+            "CountyCode": "48085",
+            "STCYFIPS": "48085",
+            "CITYCD": "480856010",
+            "RAILROAD": "DGNO",
+            "RRDIV": "american region",
+            "RRSUBDIV": "DALLAS",
+            "HIGHWAY": "LS0000",
+            "STREET": "EAST COUNTY LINE ROAD",
+            "TTSTN": "667110",
+            "MILEPOST": "0729.47",
+            "TYPEXING": "Public",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "INIT": "2",
+            "LATITUDE": 32.9816588,
+            "LONGITUD": -96.3189244,
+            "LLSOURCE": "2",
+            "WHISTBAN": "0",
+            "RRCONT": "8008003490",
+            "POLCONT": "8008003490",
+            "INV_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=I&txtcrossingnum=415195N",
+            "ACC_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=A&txtcrossingnum=415195N",
+            "TTSTNNAM": "ROYSE CITY",
+            "XPURPOSE": "1",
+            "OPERATINGR": "DGNO",
+            "OPERATIN_1": "Primary",
+            "DAYTHRU": 1,
+            "NGHTTHRU": 3,
+            "MAINTRK": 1,
+            "SIDINGTRK": 0,
+            "YARDTRK": 0,
+            "TRANSITTRK": 0,
+            "INDUSTRYTR": 0,
+            "OTHRTRK": 0,
+            "WDCODE": "Crossbucks",
+            "REVISIONDA": "1992/01/01 00:00:00",
+            "LASTUPDATE": "12/1/2025",
+            "AADT": "84",
+            "AADTYEAR": "2019",
+            "STATENAME": "TEXAS",
+            "STATEAB": "TX",
+            "COUNTYNAME": "COLLIN",
+            "CITYNAME": "ROYSE CITY",
+            "LATDD": 32.9816588,
+            "LONGDD": -96.3189244
+          }
+        }
+      },
+      "reason": "Original certifier treated preserved FRA/source-county membership as package ownership. Certified geographic ownership assigns the crossing to its containing county; package and normalized stable ID agree.",
+      "checks": {
+        "uniquePackage": true,
+        "geographicOwnerMatches": true,
+        "sourceProvenancePreserved": true,
+        "normalizedIdPreserved": true,
+        "directCertifiedPolygonContainment": true
+      },
+      "directGeometryProof": {
+        "source": "assets/location-resolution/gridly-authoritative-county-geometry-v1.json",
+        "containingCounties": [
+          "rockwall-tx"
+        ],
+        "packageOwner": "rockwall-tx",
+        "pass": true
+      },
+      "runtimeOwnerBrowserProof": {
+        "county": "rockwall-tx",
+        "place": "4819000",
+        "id": "FRA-415195N",
+        "loaded": true
+      }
+    },
+    {
+      "originalFailureId": "LP24449-ledger-02382",
+      "crossingId": "848970B",
+      "runtimeId": "FRA-848970B",
+      "canonicalMembershipCounty": "dallas-tx",
+      "operationalCounty": "dallas-tx",
+      "sourceCountyFips": "48113",
+      "rawProperties": {
+        "OBJECTID": 213050,
+        "CROSSING": "848970B",
+        "EFFDATE": 1758585600000,
+        "REASON": "24",
+        "StateCode": "48",
+        "CountyCode": "48113",
+        "STCYFIPS": "48113",
+        "CITYCD": "481132800",
+        "RAILROAD": "UP",
+        "RRDIV": "Texoma",
+        "RRSUBDIV": "Great Southwest North",
+        "HIGHWAY": "ST 0000",
+        "STREET": "AVENUE R",
+        "TTSTN": "667268",
+        "MILEPOST": "0005.400",
+        "TYPEXING": "Public",
+        "POSXING": "At Grade",
+        "PRVCAT": "24",
+        "INIT": "1",
+        "LATITUDE": 32.783783,
+        "LONGITUD": -97.038073,
+        "LLSOURCE": "1",
+        "WHISTBAN": "0",
+        "RRCONT": "4025443721",
+        "POLCONT": "8008488715",
+        "INV_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=I&txtcrossingnum=848970B",
+        "ACC_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=A&txtcrossingnum=848970B",
+        "TTSTNNAM": "",
+        "XPURPOSE": "1",
+        "OPERATINGR": "UP",
+        "OPERATIN_1": "Primary",
+        "DAYTHRU": 0,
+        "NGHTTHRU": 0,
+        "MAINTRK": 0,
+        "SIDINGTRK": 0,
+        "YARDTRK": 0,
+        "TRANSITTRK": 0,
+        "INDUSTRYTR": 1,
+        "OTHRTRK": 1,
+        "WDCODE": "Crossbucks",
+        "REVISIONDA": "1975/01/01 00:00:00",
+        "LASTUPDATE": "9/23/2025",
+        "AADT": "1258",
+        "AADTYEAR": "2019",
+        "STATENAME": "TEXAS",
+        "STATEAB": "TX",
+        "COUNTYNAME": "DALLAS",
+        "CITYNAME": "GRAND PRAIRIE",
+        "LATDD": 32.783783,
+        "LONGDD": -97.038073,
+        "gridlyProductionCertified": true,
+        "gridlyClassification": "PUBLIC_ROADWAY",
+        "gridlyDisplayName": "AVENUE R",
+        "gridlyId": "FRA-848970B"
+      },
+      "coordinates": [
+        -97.0380729998158,
+        32.7837829999712
+      ],
+      "packages": [
+        {
+          "county": "tarrant-tx",
+          "fips": "48439",
+          "path": "Crossing-Packages/tarrant/Production/tarrant-production-crossings.geojson"
+        }
+      ],
+      "geographicAuthority": {
+        "crossingId": "848970B",
+        "fraSourceCountyFips": "48113",
+        "fraSourceCountyName": "DALLAS",
+        "gridlyCountyId": "tarrant",
+        "gridlyCountyFips": "48439",
+        "resolution": "CLEAR_GEOGRAPHIC_REASSIGNMENT",
+        "evidence": {
+          "authority": "certified 2025 TIGER polygon containment",
+          "exceptionType": "CROSS_COUNTY_MISMATCH",
+          "distanceToSourceCountyBoundaryMeters": 306.778
+        }
+      },
+      "geometryEvidence": {
+        "crossingId": "848970B",
+        "exceptionType": "CROSS_COUNTY_MISMATCH",
+        "sourceCountyFips": "48113",
+        "sourceCountyName": "Dallas County",
+        "coordinateResolvedCountyFips": "48439",
+        "coordinateResolvedCountyName": "Tarrant County",
+        "latitude": 32.7837829999712,
+        "longitude": -97.0380729998158,
+        "railroad": "UP",
+        "streetHighway": "AVENUE R",
+        "sourceLastUpdate": "9/23/2025",
+        "distanceToSourceCountyBoundaryMeters": 306.778,
+        "distanceToResolvedCountyBoundaryMeters": 306.778,
+        "distanceBucket": "100_TO_500_M",
+        "rawFraCountyStateFields": {
+          "CountyCode": "48113",
+          "COUNTYNAME": "DALLAS",
+          "STATEAB": "TX",
+          "StateCode": "48",
+          "STATENAME": "TEXAS",
+          "STCYFIPS": "48113"
+        },
+        "processedEvidence": {
+          "geometryCoordinates": [
+            -97.0380729998158,
+            32.7837829999712
+          ],
+          "latitudeFields": {
+            "LATITUDE": 32.783783,
+            "LATDD": 32.783783
+          },
+          "longitudeFields": {
+            "LONGITUD": -97.038073,
+            "LONGDD": -97.038073
+          }
+        },
+        "rawOwnerComparison": {
+          "status": "OWNER_SOURCE_NOT_REPOSITORY_AVAILABLE",
+          "rawRecord": null,
+          "coordinatesChanged": null,
+          "countyIdentityChanged": null,
+          "stateIdentityChanged": null,
+          "crossingIdChanged": null
+        },
+        "classification": "CLEAR_GEOGRAPHIC_REASSIGNMENT",
+        "reviewThresholdMeters": 25,
+        "assignmentEvidence": "2025 TIGER polygon containment; distance is classification only"
+      },
+      "canonicalPlaces": [
+        {
+          "place_geoid": "4830464",
+          "sourceMemberships": [
+            [
+              "848970B",
+              "48113",
+              "DALLAS"
+            ]
+          ]
+        }
+      ],
+      "classification": {
+        "id": "848970B",
+        "reportability": {
+          "reportable": true,
+          "reasons": [],
+          "eligibility": "reportable_at_grade",
+          "normalizedCrossingId": "848970B"
+        },
+        "public": true,
+        "source": "statewide FRA source",
+        "record": {
+          "id": "FRA-848970B",
+          "name": "AVENUE R",
+          "lat": 32.7837829999712,
+          "lng": -97.0380729998158,
+          "props": {
+            "OBJECTID": 213050,
+            "CROSSING": "848970B",
+            "EFFDATE": 1758585600000,
+            "REASON": "24",
+            "StateCode": "48",
+            "CountyCode": "48113",
+            "STCYFIPS": "48113",
+            "CITYCD": "481132800",
+            "RAILROAD": "UP",
+            "RRDIV": "Texoma",
+            "RRSUBDIV": "Great Southwest North",
+            "HIGHWAY": "ST 0000",
+            "STREET": "AVENUE R",
+            "TTSTN": "667268",
+            "MILEPOST": "0005.400",
+            "TYPEXING": "Public",
+            "POSXING": "At Grade",
+            "PRVCAT": "24",
+            "INIT": "1",
+            "LATITUDE": 32.783783,
+            "LONGITUD": -97.038073,
+            "LLSOURCE": "1",
+            "WHISTBAN": "0",
+            "RRCONT": "4025443721",
+            "POLCONT": "8008488715",
+            "INV_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=I&txtcrossingnum=848970B",
+            "ACC_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=A&txtcrossingnum=848970B",
+            "TTSTNNAM": "",
+            "XPURPOSE": "1",
+            "OPERATINGR": "UP",
+            "OPERATIN_1": "Primary",
+            "DAYTHRU": 0,
+            "NGHTTHRU": 0,
+            "MAINTRK": 0,
+            "SIDINGTRK": 0,
+            "YARDTRK": 0,
+            "TRANSITTRK": 0,
+            "INDUSTRYTR": 1,
+            "OTHRTRK": 1,
+            "WDCODE": "Crossbucks",
+            "REVISIONDA": "1975/01/01 00:00:00",
+            "LASTUPDATE": "9/23/2025",
+            "AADT": "1258",
+            "AADTYEAR": "2019",
+            "STATENAME": "TEXAS",
+            "STATEAB": "TX",
+            "COUNTYNAME": "DALLAS",
+            "CITYNAME": "GRAND PRAIRIE",
+            "LATDD": 32.783783,
+            "LONGDD": -97.038073
+          }
+        }
+      },
+      "reason": "Original certifier treated preserved FRA/source-county membership as package ownership. Certified geographic ownership assigns the crossing to its containing county; package and normalized stable ID agree.",
+      "checks": {
+        "uniquePackage": true,
+        "geographicOwnerMatches": true,
+        "sourceProvenancePreserved": true,
+        "normalizedIdPreserved": true,
+        "directCertifiedPolygonContainment": true
+      },
+      "directGeometryProof": {
+        "source": "assets/location-resolution/gridly-authoritative-county-geometry-v1.json",
+        "containingCounties": [
+          "tarrant-tx"
+        ],
+        "packageOwner": "tarrant-tx",
+        "pass": true
+      },
+      "runtimeOwnerBrowserProof": {
+        "county": "tarrant-tx",
+        "place": "4804000",
+        "id": "FRA-848970B",
+        "loaded": true
+      }
+    },
+    {
+      "originalFailureId": "LP24449-ledger-02383",
+      "crossingId": "764992R",
+      "runtimeId": "FRA-764992R",
+      "canonicalMembershipCounty": "dewitt-tx",
+      "operationalCounty": "dewitt-tx",
+      "sourceCountyFips": "48123",
+      "rawProperties": {
+        "OBJECTID": 209647,
+        "CROSSING": "764992R",
+        "EFFDATE": 1756252800000,
+        "REASON": "14",
+        "StateCode": "48",
+        "CountyCode": "48123",
+        "STCYFIPS": "48123",
+        "CITYCD": "481237630",
+        "RAILROAD": "UP",
+        "RRDIV": "SOUTH TEXAS",
+        "RRSUBDIV": "CUERO SUB",
+        "HIGHWAY": "ST 0000",
+        "STREET": "MATHEW STREET",
+        "TTSTN": "687190",
+        "MILEPOST": "0073.231",
+        "TYPEXING": "Public",
+        "POSXING": "At Grade",
+        "PRVCAT": "14",
+        "INIT": "1",
+        "LATITUDE": 29.2997993,
+        "LONGITUD": -97.1497173,
+        "LLSOURCE": "1",
+        "WHISTBAN": "0",
+        "RRCONT": "4025443721",
+        "POLCONT": "8008488715",
+        "INV_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=I&txtcrossingnum=764992R",
+        "ACC_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=A&txtcrossingnum=764992R",
+        "TTSTNNAM": "",
+        "XPURPOSE": "1",
+        "OPERATINGR": "UP",
+        "OPERATIN_1": "Primary",
+        "DAYTHRU": 1,
+        "NGHTTHRU": 0,
+        "MAINTRK": 1,
+        "SIDINGTRK": 0,
+        "YARDTRK": 0,
+        "TRANSITTRK": 0,
+        "INDUSTRYTR": 0,
+        "OTHRTRK": 0,
+        "WDCODE": "All other Gates",
+        "REVISIONDA": "1975/01/01 00:00:00",
+        "LASTUPDATE": "8/27/2025",
+        "AADT": "1503",
+        "AADTYEAR": "2019",
+        "STATENAME": "TEXAS",
+        "STATEAB": "TX",
+        "COUNTYNAME": "DE WITT",
+        "CITYNAME": "YOAKUM",
+        "LATDD": 29.2997993,
+        "LONGDD": -97.1497173,
+        "gridlyProductionCertified": true,
+        "gridlyClassification": "PUBLIC_ROADWAY",
+        "gridlyDisplayName": "MATHEW STREET",
+        "gridlyId": "FRA-764992R"
+      },
+      "coordinates": [
+        -97.1497172995825,
+        29.2997993000834
+      ],
+      "packages": [
+        {
+          "county": "lavaca-tx",
+          "fips": "48285",
+          "path": "Crossing-Packages/lavaca/Production/lavaca-production-crossings.geojson"
+        }
+      ],
+      "geographicAuthority": {
+        "crossingId": "764992R",
+        "fraSourceCountyFips": "48123",
+        "fraSourceCountyName": "DE WITT",
+        "gridlyCountyId": "lavaca",
+        "gridlyCountyFips": "48285",
+        "resolution": "CLEAR_GEOGRAPHIC_REASSIGNMENT",
+        "evidence": {
+          "authority": "certified 2025 TIGER polygon containment",
+          "exceptionType": "CROSS_COUNTY_MISMATCH",
+          "distanceToSourceCountyBoundaryMeters": 655.967
+        }
+      },
+      "geometryEvidence": {
+        "crossingId": "764992R",
+        "exceptionType": "CROSS_COUNTY_MISMATCH",
+        "sourceCountyFips": "48123",
+        "sourceCountyName": "DeWitt County",
+        "coordinateResolvedCountyFips": "48285",
+        "coordinateResolvedCountyName": "Lavaca County",
+        "latitude": 29.2997993000834,
+        "longitude": -97.1497172995825,
+        "railroad": "UP",
+        "streetHighway": "MATHEW STREET",
+        "sourceLastUpdate": "8/27/2025",
+        "distanceToSourceCountyBoundaryMeters": 655.967,
+        "distanceToResolvedCountyBoundaryMeters": 655.967,
+        "distanceBucket": "500_M_TO_1_KM",
+        "rawFraCountyStateFields": {
+          "CountyCode": "48123",
+          "COUNTYNAME": "DE WITT",
+          "STATEAB": "TX",
+          "StateCode": "48",
+          "STATENAME": "TEXAS",
+          "STCYFIPS": "48123"
+        },
+        "processedEvidence": {
+          "geometryCoordinates": [
+            -97.1497172995825,
+            29.2997993000834
+          ],
+          "latitudeFields": {
+            "LATITUDE": 29.2997993,
+            "LATDD": 29.2997993
+          },
+          "longitudeFields": {
+            "LONGITUD": -97.1497173,
+            "LONGDD": -97.1497173
+          }
+        },
+        "rawOwnerComparison": {
+          "status": "OWNER_SOURCE_NOT_REPOSITORY_AVAILABLE",
+          "rawRecord": null,
+          "coordinatesChanged": null,
+          "countyIdentityChanged": null,
+          "stateIdentityChanged": null,
+          "crossingIdChanged": null
+        },
+        "classification": "CLEAR_GEOGRAPHIC_REASSIGNMENT",
+        "reviewThresholdMeters": 25,
+        "assignmentEvidence": "2025 TIGER polygon containment; distance is classification only"
+      },
+      "canonicalPlaces": [
+        {
+          "place_geoid": "4880560",
+          "sourceMemberships": [
+            [
+              "764992R",
+              "48123",
+              "DE WITT"
+            ]
+          ]
+        }
+      ],
+      "classification": {
+        "id": "764992R",
+        "reportability": {
+          "reportable": true,
+          "reasons": [],
+          "eligibility": "reportable_at_grade",
+          "normalizedCrossingId": "764992R"
+        },
+        "public": true,
+        "source": "statewide FRA source",
+        "record": {
+          "id": "FRA-764992R",
+          "name": "MATHEW STREET",
+          "lat": 29.2997993000834,
+          "lng": -97.1497172995825,
+          "props": {
+            "OBJECTID": 209647,
+            "CROSSING": "764992R",
+            "EFFDATE": 1756252800000,
+            "REASON": "14",
+            "StateCode": "48",
+            "CountyCode": "48123",
+            "STCYFIPS": "48123",
+            "CITYCD": "481237630",
+            "RAILROAD": "UP",
+            "RRDIV": "SOUTH TEXAS",
+            "RRSUBDIV": "CUERO SUB",
+            "HIGHWAY": "ST 0000",
+            "STREET": "MATHEW STREET",
+            "TTSTN": "687190",
+            "MILEPOST": "0073.231",
+            "TYPEXING": "Public",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "INIT": "1",
+            "LATITUDE": 29.2997993,
+            "LONGITUD": -97.1497173,
+            "LLSOURCE": "1",
+            "WHISTBAN": "0",
+            "RRCONT": "4025443721",
+            "POLCONT": "8008488715",
+            "INV_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=I&txtcrossingnum=764992R",
+            "ACC_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=A&txtcrossingnum=764992R",
+            "TTSTNNAM": "",
+            "XPURPOSE": "1",
+            "OPERATINGR": "UP",
+            "OPERATIN_1": "Primary",
+            "DAYTHRU": 1,
+            "NGHTTHRU": 0,
+            "MAINTRK": 1,
+            "SIDINGTRK": 0,
+            "YARDTRK": 0,
+            "TRANSITTRK": 0,
+            "INDUSTRYTR": 0,
+            "OTHRTRK": 0,
+            "WDCODE": "All other Gates",
+            "REVISIONDA": "1975/01/01 00:00:00",
+            "LASTUPDATE": "8/27/2025",
+            "AADT": "1503",
+            "AADTYEAR": "2019",
+            "STATENAME": "TEXAS",
+            "STATEAB": "TX",
+            "COUNTYNAME": "DE WITT",
+            "CITYNAME": "YOAKUM",
+            "LATDD": 29.2997993,
+            "LONGDD": -97.1497173
+          }
+        }
+      },
+      "reason": "Original certifier treated preserved FRA/source-county membership as package ownership. Certified geographic ownership assigns the crossing to its containing county; package and normalized stable ID agree.",
+      "checks": {
+        "uniquePackage": true,
+        "geographicOwnerMatches": true,
+        "sourceProvenancePreserved": true,
+        "normalizedIdPreserved": true,
+        "directCertifiedPolygonContainment": true
+      },
+      "directGeometryProof": {
+        "source": "assets/location-resolution/gridly-authoritative-county-geometry-v1.json",
+        "containingCounties": [
+          "lavaca-tx"
+        ],
+        "packageOwner": "lavaca-tx",
+        "pass": true
+      },
+      "runtimeOwnerBrowserProof": {
+        "county": "lavaca-tx",
+        "place": "4831868",
+        "id": "FRA-764992R",
+        "loaded": true
+      }
+    },
+    {
+      "originalFailureId": "LP24449-ledger-02384",
+      "crossingId": "415596N",
+      "runtimeId": "FRA-415596N",
+      "canonicalMembershipCounty": "guadalupe-tx",
+      "operationalCounty": "guadalupe-tx",
+      "sourceCountyFips": "48187",
+      "rawProperties": {
+        "OBJECTID": 210796,
+        "CROSSING": "415596N",
+        "EFFDATE": 1769644800000,
+        "REASON": "14",
+        "StateCode": "48",
+        "CountyCode": "48187",
+        "STCYFIPS": "48187",
+        "CITYCD": "481876237",
+        "RAILROAD": "UP",
+        "RRDIV": "SOUTH TEXAS",
+        "RRSUBDIV": "AUSTIN SUB",
+        "HIGHWAY": "LS0000",
+        "STREET": "DOERR LANE",
+        "TTSTN": "685980",
+        "MILEPOST": "0238.680",
+        "TYPEXING": "Public",
+        "POSXING": "At Grade",
+        "PRVCAT": "14",
+        "INIT": "2",
+        "LATITUDE": 29.6121864,
+        "LONGITUD": -98.2919708,
+        "LLSOURCE": "1",
+        "WHISTBAN": "0",
+        "RRCONT": "4025443721",
+        "POLCONT": "8008488715",
+        "INV_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=I&txtcrossingnum=415596N",
+        "ACC_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=A&txtcrossingnum=415596N",
+        "TTSTNNAM": "",
+        "XPURPOSE": "1",
+        "OPERATINGR": "UP",
+        "OPERATIN_1": "Primary",
+        "DAYTHRU": 7,
+        "NGHTTHRU": 6,
+        "MAINTRK": 1,
+        "SIDINGTRK": 0,
+        "YARDTRK": 0,
+        "TRANSITTRK": 0,
+        "INDUSTRYTR": 0,
+        "OTHRTRK": 0,
+        "WDCODE": "All other Gates",
+        "REVISIONDA": "1975/01/01 00:00:00",
+        "LASTUPDATE": "1/29/2026",
+        "AADT": "1822",
+        "AADTYEAR": "2023",
+        "STATENAME": "TEXAS",
+        "STATEAB": "TX",
+        "COUNTYNAME": "GUADALUPE",
+        "CITYNAME": "SCHERTZ",
+        "LATDD": 29.6121864,
+        "LONGDD": -98.2919708,
+        "gridlyProductionCertified": true,
+        "gridlyClassification": "PUBLIC_ROADWAY",
+        "gridlyDisplayName": "DOERR LANE",
+        "gridlyId": "FRA-415596N"
+      },
+      "coordinates": [
+        -98.2919707997906,
+        29.6121863996452
+      ],
+      "packages": [
+        {
+          "county": "comal-tx",
+          "fips": "48091",
+          "path": "Crossing-Packages/comal/Production/comal-production-crossings.geojson"
+        }
+      ],
+      "geographicAuthority": {
+        "crossingId": "415596N",
+        "fraSourceCountyFips": "48187",
+        "fraSourceCountyName": "GUADALUPE",
+        "gridlyCountyId": "comal",
+        "gridlyCountyFips": "48091",
+        "resolution": "CLEAR_GEOGRAPHIC_REASSIGNMENT",
+        "evidence": {
+          "authority": "certified 2025 TIGER polygon containment",
+          "exceptionType": "CROSS_COUNTY_MISMATCH",
+          "distanceToSourceCountyBoundaryMeters": 1069.898
+        }
+      },
+      "geometryEvidence": {
+        "crossingId": "415596N",
+        "exceptionType": "CROSS_COUNTY_MISMATCH",
+        "sourceCountyFips": "48187",
+        "sourceCountyName": "Guadalupe County",
+        "coordinateResolvedCountyFips": "48091",
+        "coordinateResolvedCountyName": "Comal County",
+        "latitude": 29.6121863996452,
+        "longitude": -98.2919707997906,
+        "railroad": "UP",
+        "streetHighway": "DOERR LANE",
+        "sourceLastUpdate": "1/29/2026",
+        "distanceToSourceCountyBoundaryMeters": 1069.898,
+        "distanceToResolvedCountyBoundaryMeters": 1069.898,
+        "distanceBucket": "GT_1_KM",
+        "rawFraCountyStateFields": {
+          "CountyCode": "48187",
+          "COUNTYNAME": "GUADALUPE",
+          "STATEAB": "TX",
+          "StateCode": "48",
+          "STATENAME": "TEXAS",
+          "STCYFIPS": "48187"
+        },
+        "processedEvidence": {
+          "geometryCoordinates": [
+            -98.2919707997906,
+            29.6121863996452
+          ],
+          "latitudeFields": {
+            "LATITUDE": 29.6121864,
+            "LATDD": 29.6121864
+          },
+          "longitudeFields": {
+            "LONGITUD": -98.2919708,
+            "LONGDD": -98.2919708
+          }
+        },
+        "rawOwnerComparison": {
+          "status": "OWNER_SOURCE_NOT_REPOSITORY_AVAILABLE",
+          "rawRecord": null,
+          "coordinatesChanged": null,
+          "countyIdentityChanged": null,
+          "stateIdentityChanged": null,
+          "crossingIdChanged": null
+        },
+        "classification": "CLEAR_GEOGRAPHIC_REASSIGNMENT",
+        "reviewThresholdMeters": 25,
+        "assignmentEvidence": "2025 TIGER polygon containment; distance is classification only"
+      },
+      "canonicalPlaces": [
+        {
+          "place_geoid": "4866128",
+          "sourceMemberships": [
+            [
+              "415596N",
+              "48187",
+              "GUADALUPE"
+            ]
+          ]
+        }
+      ],
+      "classification": {
+        "id": "415596N",
+        "reportability": {
+          "reportable": true,
+          "reasons": [],
+          "eligibility": "reportable_at_grade",
+          "normalizedCrossingId": "415596N"
+        },
+        "public": true,
+        "source": "statewide FRA source",
+        "record": {
+          "id": "FRA-415596N",
+          "name": "DOERR LANE",
+          "lat": 29.6121863996452,
+          "lng": -98.2919707997906,
+          "props": {
+            "OBJECTID": 210796,
+            "CROSSING": "415596N",
+            "EFFDATE": 1769644800000,
+            "REASON": "14",
+            "StateCode": "48",
+            "CountyCode": "48187",
+            "STCYFIPS": "48187",
+            "CITYCD": "481876237",
+            "RAILROAD": "UP",
+            "RRDIV": "SOUTH TEXAS",
+            "RRSUBDIV": "AUSTIN SUB",
+            "HIGHWAY": "LS0000",
+            "STREET": "DOERR LANE",
+            "TTSTN": "685980",
+            "MILEPOST": "0238.680",
+            "TYPEXING": "Public",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "INIT": "2",
+            "LATITUDE": 29.6121864,
+            "LONGITUD": -98.2919708,
+            "LLSOURCE": "1",
+            "WHISTBAN": "0",
+            "RRCONT": "4025443721",
+            "POLCONT": "8008488715",
+            "INV_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=I&txtcrossingnum=415596N",
+            "ACC_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=A&txtcrossingnum=415596N",
+            "TTSTNNAM": "",
+            "XPURPOSE": "1",
+            "OPERATINGR": "UP",
+            "OPERATIN_1": "Primary",
+            "DAYTHRU": 7,
+            "NGHTTHRU": 6,
+            "MAINTRK": 1,
+            "SIDINGTRK": 0,
+            "YARDTRK": 0,
+            "TRANSITTRK": 0,
+            "INDUSTRYTR": 0,
+            "OTHRTRK": 0,
+            "WDCODE": "All other Gates",
+            "REVISIONDA": "1975/01/01 00:00:00",
+            "LASTUPDATE": "1/29/2026",
+            "AADT": "1822",
+            "AADTYEAR": "2023",
+            "STATENAME": "TEXAS",
+            "STATEAB": "TX",
+            "COUNTYNAME": "GUADALUPE",
+            "CITYNAME": "SCHERTZ",
+            "LATDD": 29.6121864,
+            "LONGDD": -98.2919708
+          }
+        }
+      },
+      "reason": "Original certifier treated preserved FRA/source-county membership as package ownership. Certified geographic ownership assigns the crossing to its containing county; package and normalized stable ID agree.",
+      "checks": {
+        "uniquePackage": true,
+        "geographicOwnerMatches": true,
+        "sourceProvenancePreserved": true,
+        "normalizedIdPreserved": true,
+        "directCertifiedPolygonContainment": true
+      },
+      "directGeometryProof": {
+        "source": "assets/location-resolution/gridly-authoritative-county-geometry-v1.json",
+        "containingCounties": [
+          "comal-tx"
+        ],
+        "packageOwner": "comal-tx",
+        "pass": true
+      },
+      "runtimeOwnerBrowserProof": {
+        "county": "comal-tx",
+        "place": "4811224",
+        "id": "FRA-415596N",
+        "loaded": true
+      }
+    },
+    {
+      "originalFailureId": "LP24449-ledger-02385",
+      "crossingId": "597155S",
+      "runtimeId": "FRA-597155S",
+      "canonicalMembershipCounty": "madison-tx",
+      "operationalCounty": "madison-tx",
+      "sourceCountyFips": "48313",
+      "rawProperties": {
+        "OBJECTID": 205016,
+        "CROSSING": "597155S",
+        "EFFDATE": 1739232000000,
+        "REASON": "14",
+        "StateCode": "48",
+        "CountyCode": "48313",
+        "STCYFIPS": "48313",
+        "CITYCD": "483134940",
+        "RAILROAD": "BNSF",
+        "RRDIV": "RED RIVER",
+        "RRSUBDIV": "HOUSTON",
+        "HIGHWAY": "SH 0999",
+        "STREET": "SH 0999",
+        "TTSTN": "682358",
+        "MILEPOST": "0159.367",
+        "TYPEXING": "Public",
+        "POSXING": "At Grade",
+        "PRVCAT": "14",
+        "INIT": "1",
+        "LATITUDE": 31.0272094,
+        "LONGITUD": -96.113422,
+        "LLSOURCE": "1",
+        "WHISTBAN": "0",
+        "RRCONT": "8173521549",
+        "POLCONT": "8008325452",
+        "INV_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=I&txtcrossingnum=597155S",
+        "ACC_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=A&txtcrossingnum=597155S",
+        "TTSTNNAM": "ZULCH",
+        "XPURPOSE": "1",
+        "OPERATINGR": "BNSF",
+        "OPERATIN_1": "Primary",
+        "DAYTHRU": 3,
+        "NGHTTHRU": 2,
+        "MAINTRK": 1,
+        "SIDINGTRK": 0,
+        "YARDTRK": 0,
+        "TRANSITTRK": 0,
+        "INDUSTRYTR": 0,
+        "OTHRTRK": 0,
+        "WDCODE": "All other Gates",
+        "REVISIONDA": "1996/01/01 00:00:00",
+        "LASTUPDATE": "2/11/2025",
+        "AADT": "2800",
+        "AADTYEAR": "2010",
+        "STATENAME": "TEXAS",
+        "STATEAB": "TX",
+        "COUNTYNAME": "MADISON",
+        "CITYNAME": "NORMANGEE",
+        "LATDD": 31.0272094,
+        "LONGDD": -96.113422,
+        "gridlyProductionCertified": true,
+        "gridlyClassification": "PUBLIC_ROADWAY",
+        "gridlyDisplayName": "SH 0999",
+        "gridlyId": "FRA-597155S"
+      },
+      "coordinates": [
+        -96.1134219996495,
+        31.0272093999274
+      ],
+      "packages": [
+        {
+          "county": "leon-tx",
+          "fips": "48289",
+          "path": "Crossing-Packages/leon/Production/leon-production-crossings.geojson"
+        }
+      ],
+      "geographicAuthority": {
+        "crossingId": "597155S",
+        "fraSourceCountyFips": "48313",
+        "fraSourceCountyName": "MADISON",
+        "gridlyCountyId": "leon",
+        "gridlyCountyFips": "48289",
+        "resolution": "BORDER_TOLERANCE_REVIEW",
+        "evidence": {
+          "authority": "certified 2025 TIGER polygon containment",
+          "exceptionType": "CROSS_COUNTY_MISMATCH",
+          "distanceToSourceCountyBoundaryMeters": 1.284
+        }
+      },
+      "geometryEvidence": {
+        "crossingId": "597155S",
+        "exceptionType": "CROSS_COUNTY_MISMATCH",
+        "sourceCountyFips": "48313",
+        "sourceCountyName": "Madison County",
+        "coordinateResolvedCountyFips": "48289",
+        "coordinateResolvedCountyName": "Leon County",
+        "latitude": 31.0272093999274,
+        "longitude": -96.1134219996495,
+        "railroad": "BNSF",
+        "streetHighway": "SH 0999",
+        "sourceLastUpdate": "2/11/2025",
+        "distanceToSourceCountyBoundaryMeters": 1.284,
+        "distanceToResolvedCountyBoundaryMeters": 1.284,
+        "distanceBucket": "LE_25_M",
+        "rawFraCountyStateFields": {
+          "CountyCode": "48313",
+          "COUNTYNAME": "MADISON",
+          "STATEAB": "TX",
+          "StateCode": "48",
+          "STATENAME": "TEXAS",
+          "STCYFIPS": "48313"
+        },
+        "processedEvidence": {
+          "geometryCoordinates": [
+            -96.1134219996495,
+            31.0272093999274
+          ],
+          "latitudeFields": {
+            "LATITUDE": 31.0272094,
+            "LATDD": 31.0272094
+          },
+          "longitudeFields": {
+            "LONGITUD": -96.113422,
+            "LONGDD": -96.113422
+          }
+        },
+        "rawOwnerComparison": {
+          "status": "OWNER_SOURCE_NOT_REPOSITORY_AVAILABLE",
+          "rawRecord": null,
+          "coordinatesChanged": null,
+          "countyIdentityChanged": null,
+          "stateIdentityChanged": null,
+          "crossingIdChanged": null
+        },
+        "classification": "BORDER_TOLERANCE_REVIEW",
+        "reviewThresholdMeters": 25,
+        "assignmentEvidence": "2025 TIGER polygon containment; distance is classification only"
+      },
+      "canonicalPlaces": [
+        {
+          "place_geoid": "4851840",
+          "sourceMemberships": [
+            [
+              "597155S",
+              "48313",
+              "MADISON"
+            ]
+          ]
+        }
+      ],
+      "classification": {
+        "id": "597155S",
+        "reportability": {
+          "reportable": true,
+          "reasons": [],
+          "eligibility": "reportable_at_grade",
+          "normalizedCrossingId": "597155S"
+        },
+        "public": true,
+        "source": "statewide FRA source",
+        "record": {
+          "id": "FRA-597155S",
+          "name": "SH 0999",
+          "lat": 31.0272093999274,
+          "lng": -96.1134219996495,
+          "props": {
+            "OBJECTID": 205016,
+            "CROSSING": "597155S",
+            "EFFDATE": 1739232000000,
+            "REASON": "14",
+            "StateCode": "48",
+            "CountyCode": "48313",
+            "STCYFIPS": "48313",
+            "CITYCD": "483134940",
+            "RAILROAD": "BNSF",
+            "RRDIV": "RED RIVER",
+            "RRSUBDIV": "HOUSTON",
+            "HIGHWAY": "SH 0999",
+            "STREET": "SH 0999",
+            "TTSTN": "682358",
+            "MILEPOST": "0159.367",
+            "TYPEXING": "Public",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "INIT": "1",
+            "LATITUDE": 31.0272094,
+            "LONGITUD": -96.113422,
+            "LLSOURCE": "1",
+            "WHISTBAN": "0",
+            "RRCONT": "8173521549",
+            "POLCONT": "8008325452",
+            "INV_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=I&txtcrossingnum=597155S",
+            "ACC_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=A&txtcrossingnum=597155S",
+            "TTSTNNAM": "ZULCH",
+            "XPURPOSE": "1",
+            "OPERATINGR": "BNSF",
+            "OPERATIN_1": "Primary",
+            "DAYTHRU": 3,
+            "NGHTTHRU": 2,
+            "MAINTRK": 1,
+            "SIDINGTRK": 0,
+            "YARDTRK": 0,
+            "TRANSITTRK": 0,
+            "INDUSTRYTR": 0,
+            "OTHRTRK": 0,
+            "WDCODE": "All other Gates",
+            "REVISIONDA": "1996/01/01 00:00:00",
+            "LASTUPDATE": "2/11/2025",
+            "AADT": "2800",
+            "AADTYEAR": "2010",
+            "STATENAME": "TEXAS",
+            "STATEAB": "TX",
+            "COUNTYNAME": "MADISON",
+            "CITYNAME": "NORMANGEE",
+            "LATDD": 31.0272094,
+            "LONGDD": -96.113422
+          }
+        }
+      },
+      "reason": "Original certifier treated preserved FRA/source-county membership as package ownership. Certified geographic ownership assigns the crossing to its containing county; package and normalized stable ID agree.",
+      "checks": {
+        "uniquePackage": true,
+        "geographicOwnerMatches": true,
+        "sourceProvenancePreserved": true,
+        "normalizedIdPreserved": true,
+        "directCertifiedPolygonContainment": true
+      },
+      "directGeometryProof": {
+        "source": "assets/location-resolution/gridly-authoritative-county-geometry-v1.json",
+        "containingCounties": [
+          "leon-tx"
+        ],
+        "packageOwner": "leon-tx",
+        "pass": true
+      },
+      "runtimeOwnerBrowserProof": {
+        "county": "leon-tx",
+        "place": "4811116",
+        "id": "FRA-597155S",
+        "loaded": true
+      }
+    },
+    {
+      "originalFailureId": "LP24449-ledger-02386",
+      "crossingId": "765665J",
+      "runtimeId": "FRA-765665J",
+      "canonicalMembershipCounty": "travis-tx",
+      "operationalCounty": "travis-tx",
+      "sourceCountyFips": "48453",
+      "rawProperties": {
+        "OBJECTID": 203449,
+        "CROSSING": "765665J",
+        "EFFDATE": 1730764800000,
+        "REASON": "14",
+        "StateCode": "48",
+        "CountyCode": "48453",
+        "STCYFIPS": "48453",
+        "CITYCD": "484534253",
+        "RAILROAD": "CMTY",
+        "RRDIV": "CMTA",
+        "RRSUBDIV": "CENTRAL",
+        "HIGHWAY": "CO 2623",
+        "STREET": "CR 2623-MCNEIL RR",
+        "TTSTN": "685426",
+        "MILEPOST": "0071.69",
+        "TYPEXING": "Public",
+        "POSXING": "At Grade",
+        "PRVCAT": "14",
+        "INIT": "1",
+        "LATITUDE": 30.4567199,
+        "LONGITUD": -97.7210065,
+        "LLSOURCE": "2",
+        "WHISTBAN": "0",
+        "RRCONT": "5123344000",
+        "POLCONT": "8445928046",
+        "INV_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=I&txtcrossingnum=765665J",
+        "ACC_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=A&txtcrossingnum=765665J",
+        "TTSTNNAM": "MCNEIL",
+        "XPURPOSE": "1",
+        "OPERATINGR": "CMTY",
+        "OPERATIN_1": "Primary",
+        "DAYTHRU": 37,
+        "NGHTTHRU": 15,
+        "MAINTRK": 2,
+        "SIDINGTRK": 0,
+        "YARDTRK": 0,
+        "TRANSITTRK": 0,
+        "INDUSTRYTR": 0,
+        "OTHRTRK": 0,
+        "WDCODE": "All other Gates",
+        "REVISIONDA": "2007/01/01 00:00:00",
+        "LASTUPDATE": "11/5/2024",
+        "AADT": "009550",
+        "AADTYEAR": "2013",
+        "STATENAME": "TEXAS",
+        "STATEAB": "TX",
+        "COUNTYNAME": "TRAVIS",
+        "CITYNAME": "MCNEIL",
+        "LATDD": 30.4567199,
+        "LONGDD": -97.7210065,
+        "gridlyProductionCertified": true,
+        "gridlyClassification": "PUBLIC_ROADWAY",
+        "gridlyDisplayName": "CR 2623-MCNEIL RR",
+        "gridlyId": "FRA-765665J"
+      },
+      "coordinates": [
+        -97.7210065001242,
+        30.4567199003781
+      ],
+      "packages": [
+        {
+          "county": "williamson-tx",
+          "fips": "48491",
+          "path": "Crossing-Packages/williamson/Production/williamson-production-crossings.geojson"
+        }
+      ],
+      "geographicAuthority": {
+        "crossingId": "765665J",
+        "fraSourceCountyFips": "48453",
+        "fraSourceCountyName": "TRAVIS",
+        "gridlyCountyId": "williamson",
+        "gridlyCountyFips": "48491",
+        "resolution": "CLEAR_GEOGRAPHIC_REASSIGNMENT",
+        "evidence": {
+          "authority": "certified 2025 TIGER polygon containment",
+          "exceptionType": "CROSS_COUNTY_MISMATCH",
+          "distanceToSourceCountyBoundaryMeters": 87.019
+        }
+      },
+      "geometryEvidence": {
+        "crossingId": "765665J",
+        "exceptionType": "CROSS_COUNTY_MISMATCH",
+        "sourceCountyFips": "48453",
+        "sourceCountyName": "Travis County",
+        "coordinateResolvedCountyFips": "48491",
+        "coordinateResolvedCountyName": "Williamson County",
+        "latitude": 30.4567199003781,
+        "longitude": -97.7210065001242,
+        "railroad": "CMTY",
+        "streetHighway": "CR 2623-MCNEIL RR",
+        "sourceLastUpdate": "11/5/2024",
+        "distanceToSourceCountyBoundaryMeters": 87.019,
+        "distanceToResolvedCountyBoundaryMeters": 87.019,
+        "distanceBucket": "25_TO_100_M",
+        "rawFraCountyStateFields": {
+          "CountyCode": "48453",
+          "COUNTYNAME": "TRAVIS",
+          "STATEAB": "TX",
+          "StateCode": "48",
+          "STATENAME": "TEXAS",
+          "STCYFIPS": "48453"
+        },
+        "processedEvidence": {
+          "geometryCoordinates": [
+            -97.7210065001242,
+            30.4567199003781
+          ],
+          "latitudeFields": {
+            "LATITUDE": 30.4567199,
+            "LATDD": 30.4567199
+          },
+          "longitudeFields": {
+            "LONGITUD": -97.7210065,
+            "LONGDD": -97.7210065
+          }
+        },
+        "rawOwnerComparison": {
+          "status": "OWNER_SOURCE_NOT_REPOSITORY_AVAILABLE",
+          "rawRecord": null,
+          "coordinatesChanged": null,
+          "countyIdentityChanged": null,
+          "stateIdentityChanged": null,
+          "crossingIdChanged": null
+        },
+        "classification": "CLEAR_GEOGRAPHIC_REASSIGNMENT",
+        "reviewThresholdMeters": 25,
+        "assignmentEvidence": "2025 TIGER polygon containment; distance is classification only"
+      },
+      "canonicalPlaces": [
+        {
+          "place_geoid": "4805000",
+          "sourceMemberships": [
+            [
+              "765665J",
+              "48453",
+              "TRAVIS"
+            ]
+          ]
+        }
+      ],
+      "classification": {
+        "id": "765665J",
+        "reportability": {
+          "reportable": true,
+          "reasons": [],
+          "eligibility": "reportable_at_grade",
+          "normalizedCrossingId": "765665J"
+        },
+        "public": true,
+        "source": "statewide FRA source",
+        "record": {
+          "id": "FRA-765665J",
+          "name": "CR 2623-MCNEIL RR",
+          "lat": 30.4567199003781,
+          "lng": -97.7210065001242,
+          "props": {
+            "OBJECTID": 203449,
+            "CROSSING": "765665J",
+            "EFFDATE": 1730764800000,
+            "REASON": "14",
+            "StateCode": "48",
+            "CountyCode": "48453",
+            "STCYFIPS": "48453",
+            "CITYCD": "484534253",
+            "RAILROAD": "CMTY",
+            "RRDIV": "CMTA",
+            "RRSUBDIV": "CENTRAL",
+            "HIGHWAY": "CO 2623",
+            "STREET": "CR 2623-MCNEIL RR",
+            "TTSTN": "685426",
+            "MILEPOST": "0071.69",
+            "TYPEXING": "Public",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "INIT": "1",
+            "LATITUDE": 30.4567199,
+            "LONGITUD": -97.7210065,
+            "LLSOURCE": "2",
+            "WHISTBAN": "0",
+            "RRCONT": "5123344000",
+            "POLCONT": "8445928046",
+            "INV_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=I&txtcrossingnum=765665J",
+            "ACC_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=A&txtcrossingnum=765665J",
+            "TTSTNNAM": "MCNEIL",
+            "XPURPOSE": "1",
+            "OPERATINGR": "CMTY",
+            "OPERATIN_1": "Primary",
+            "DAYTHRU": 37,
+            "NGHTTHRU": 15,
+            "MAINTRK": 2,
+            "SIDINGTRK": 0,
+            "YARDTRK": 0,
+            "TRANSITTRK": 0,
+            "INDUSTRYTR": 0,
+            "OTHRTRK": 0,
+            "WDCODE": "All other Gates",
+            "REVISIONDA": "2007/01/01 00:00:00",
+            "LASTUPDATE": "11/5/2024",
+            "AADT": "009550",
+            "AADTYEAR": "2013",
+            "STATENAME": "TEXAS",
+            "STATEAB": "TX",
+            "COUNTYNAME": "TRAVIS",
+            "CITYNAME": "MCNEIL",
+            "LATDD": 30.4567199,
+            "LONGDD": -97.7210065
+          }
+        }
+      },
+      "reason": "Original certifier treated preserved FRA/source-county membership as package ownership. Certified geographic ownership assigns the crossing to its containing county; package and normalized stable ID agree.",
+      "checks": {
+        "uniquePackage": true,
+        "geographicOwnerMatches": true,
+        "sourceProvenancePreserved": true,
+        "normalizedIdPreserved": true,
+        "directCertifiedPolygonContainment": true
+      },
+      "directGeometryProof": {
+        "source": "assets/location-resolution/gridly-authoritative-county-geometry-v1.json",
+        "containingCounties": [
+          "williamson-tx"
+        ],
+        "packageOwner": "williamson-tx",
+        "pass": true
+      },
+      "runtimeOwnerBrowserProof": {
+        "county": "williamson-tx",
+        "place": "4805000",
+        "id": "FRA-765665J",
+        "loaded": true
+      }
+    },
+    {
+      "originalFailureId": "LP24449-ledger-02386",
+      "crossingId": "925947T",
+      "runtimeId": "FRA-925947T",
+      "canonicalMembershipCounty": "travis-tx",
+      "operationalCounty": "travis-tx",
+      "sourceCountyFips": "48453",
+      "rawProperties": {
+        "OBJECTID": 203465,
+        "CROSSING": "925947T",
+        "EFFDATE": 1730764800000,
+        "REASON": "20",
+        "StateCode": "48",
+        "CountyCode": "48453",
+        "STCYFIPS": "48453",
+        "CITYCD": "484530330",
+        "RAILROAD": "CMTY",
+        "RRDIV": "CMTY",
+        "RRSUBDIV": "CENTRAL",
+        "HIGHWAY": "ST 0000",
+        "STREET": "w HOWARD LANE",
+        "TTSTN": "683522",
+        "MILEPOST": "0000.20",
+        "TYPEXING": "Public",
+        "POSXING": "At Grade",
+        "PRVCAT": "20",
+        "INIT": "1",
+        "LATITUDE": 30.482536,
+        "LONGITUD": -97.787525,
+        "LLSOURCE": "1",
+        "WHISTBAN": "1",
+        "RRCONT": "5123344000",
+        "POLCONT": "8445928046",
+        "INV_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=I&txtcrossingnum=925947T",
+        "ACC_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=A&txtcrossingnum=925947T",
+        "TTSTNNAM": "Abbott",
+        "XPURPOSE": "1",
+        "OPERATINGR": "CMTY",
+        "OPERATIN_1": "Primary",
+        "DAYTHRU": 0,
+        "NGHTTHRU": 0,
+        "MAINTRK": 0,
+        "SIDINGTRK": 0,
+        "YARDTRK": 0,
+        "TRANSITTRK": 0,
+        "INDUSTRYTR": 1,
+        "OTHRTRK": 0,
+        "WDCODE": "All other Gates",
+        "REVISIONDA": "2007/01/01 00:00:00",
+        "LASTUPDATE": "11/5/2024",
+        "AADT": "014709",
+        "AADTYEAR": "2020",
+        "STATENAME": "TEXAS",
+        "STATEAB": "TX",
+        "COUNTYNAME": "TRAVIS",
+        "CITYNAME": "AUSTIN",
+        "LATDD": 30.482536,
+        "LONGDD": -97.787525,
+        "gridlyProductionCertified": true,
+        "gridlyClassification": "PUBLIC_ROADWAY",
+        "gridlyDisplayName": "w HOWARD LANE",
+        "gridlyId": "FRA-925947T"
+      },
+      "coordinates": [
+        -97.78752499969,
+        30.4825360002546
+      ],
+      "packages": [
+        {
+          "county": "williamson-tx",
+          "fips": "48491",
+          "path": "Crossing-Packages/williamson/Production/williamson-production-crossings.geojson"
+        }
+      ],
+      "geographicAuthority": {
+        "crossingId": "925947T",
+        "fraSourceCountyFips": "48453",
+        "fraSourceCountyName": "TRAVIS",
+        "gridlyCountyId": "williamson",
+        "gridlyCountyFips": "48491",
+        "resolution": "CLEAR_GEOGRAPHIC_REASSIGNMENT",
+        "evidence": {
+          "authority": "certified 2025 TIGER polygon containment",
+          "exceptionType": "CROSS_COUNTY_MISMATCH",
+          "distanceToSourceCountyBoundaryMeters": 4106.092
+        }
+      },
+      "geometryEvidence": {
+        "crossingId": "925947T",
+        "exceptionType": "CROSS_COUNTY_MISMATCH",
+        "sourceCountyFips": "48453",
+        "sourceCountyName": "Travis County",
+        "coordinateResolvedCountyFips": "48491",
+        "coordinateResolvedCountyName": "Williamson County",
+        "latitude": 30.4825360002546,
+        "longitude": -97.78752499969,
+        "railroad": "CMTY",
+        "streetHighway": "w HOWARD LANE",
+        "sourceLastUpdate": "11/5/2024",
+        "distanceToSourceCountyBoundaryMeters": 4106.092,
+        "distanceToResolvedCountyBoundaryMeters": 4106.092,
+        "distanceBucket": "GT_1_KM",
+        "rawFraCountyStateFields": {
+          "CountyCode": "48453",
+          "COUNTYNAME": "TRAVIS",
+          "STATEAB": "TX",
+          "StateCode": "48",
+          "STATENAME": "TEXAS",
+          "STCYFIPS": "48453"
+        },
+        "processedEvidence": {
+          "geometryCoordinates": [
+            -97.78752499969,
+            30.4825360002546
+          ],
+          "latitudeFields": {
+            "LATITUDE": 30.482536,
+            "LATDD": 30.482536
+          },
+          "longitudeFields": {
+            "LONGITUD": -97.787525,
+            "LONGDD": -97.787525
+          }
+        },
+        "rawOwnerComparison": {
+          "status": "OWNER_SOURCE_NOT_REPOSITORY_AVAILABLE",
+          "rawRecord": null,
+          "coordinatesChanged": null,
+          "countyIdentityChanged": null,
+          "stateIdentityChanged": null,
+          "crossingIdChanged": null
+        },
+        "classification": "CLEAR_GEOGRAPHIC_REASSIGNMENT",
+        "reviewThresholdMeters": 25,
+        "assignmentEvidence": "2025 TIGER polygon containment; distance is classification only"
+      },
+      "canonicalPlaces": [
+        {
+          "place_geoid": "4805000",
+          "sourceMemberships": [
+            [
+              "925947T",
+              "48453",
+              "TRAVIS"
+            ]
+          ]
+        }
+      ],
+      "classification": {
+        "id": "925947T",
+        "reportability": {
+          "reportable": true,
+          "reasons": [],
+          "eligibility": "reportable_at_grade",
+          "normalizedCrossingId": "925947T"
+        },
+        "public": true,
+        "source": "statewide FRA source",
+        "record": {
+          "id": "FRA-925947T",
+          "name": "w HOWARD LANE",
+          "lat": 30.4825360002546,
+          "lng": -97.78752499969,
+          "props": {
+            "OBJECTID": 203465,
+            "CROSSING": "925947T",
+            "EFFDATE": 1730764800000,
+            "REASON": "20",
+            "StateCode": "48",
+            "CountyCode": "48453",
+            "STCYFIPS": "48453",
+            "CITYCD": "484530330",
+            "RAILROAD": "CMTY",
+            "RRDIV": "CMTY",
+            "RRSUBDIV": "CENTRAL",
+            "HIGHWAY": "ST 0000",
+            "STREET": "w HOWARD LANE",
+            "TTSTN": "683522",
+            "MILEPOST": "0000.20",
+            "TYPEXING": "Public",
+            "POSXING": "At Grade",
+            "PRVCAT": "20",
+            "INIT": "1",
+            "LATITUDE": 30.482536,
+            "LONGITUD": -97.787525,
+            "LLSOURCE": "1",
+            "WHISTBAN": "1",
+            "RRCONT": "5123344000",
+            "POLCONT": "8445928046",
+            "INV_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=I&txtcrossingnum=925947T",
+            "ACC_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=A&txtcrossingnum=925947T",
+            "TTSTNNAM": "Abbott",
+            "XPURPOSE": "1",
+            "OPERATINGR": "CMTY",
+            "OPERATIN_1": "Primary",
+            "DAYTHRU": 0,
+            "NGHTTHRU": 0,
+            "MAINTRK": 0,
+            "SIDINGTRK": 0,
+            "YARDTRK": 0,
+            "TRANSITTRK": 0,
+            "INDUSTRYTR": 1,
+            "OTHRTRK": 0,
+            "WDCODE": "All other Gates",
+            "REVISIONDA": "2007/01/01 00:00:00",
+            "LASTUPDATE": "11/5/2024",
+            "AADT": "014709",
+            "AADTYEAR": "2020",
+            "STATENAME": "TEXAS",
+            "STATEAB": "TX",
+            "COUNTYNAME": "TRAVIS",
+            "CITYNAME": "AUSTIN",
+            "LATDD": 30.482536,
+            "LONGDD": -97.787525
+          }
+        }
+      },
+      "reason": "Original certifier treated preserved FRA/source-county membership as package ownership. Certified geographic ownership assigns the crossing to its containing county; package and normalized stable ID agree.",
+      "checks": {
+        "uniquePackage": true,
+        "geographicOwnerMatches": true,
+        "sourceProvenancePreserved": true,
+        "normalizedIdPreserved": true,
+        "directCertifiedPolygonContainment": true
+      },
+      "directGeometryProof": {
+        "source": "assets/location-resolution/gridly-authoritative-county-geometry-v1.json",
+        "containingCounties": [
+          "williamson-tx"
+        ],
+        "packageOwner": "williamson-tx",
+        "pass": true
+      },
+      "runtimeOwnerBrowserProof": {
+        "county": "williamson-tx",
+        "place": "4805000",
+        "id": "FRA-925947T",
+        "loaded": true
+      }
+    },
+    {
+      "originalFailureId": "LP24449-ledger-02387",
+      "crossingId": "274638F",
+      "runtimeId": "FRA-274638F",
+      "canonicalMembershipCounty": "wise-tx",
+      "operationalCounty": "wise-tx",
+      "sourceCountyFips": "48497",
+      "rawProperties": {
+        "OBJECTID": 216084,
+        "CROSSING": "274638F",
+        "EFFDATE": 1768262400000,
+        "REASON": "14",
+        "StateCode": "48",
+        "CountyCode": "48497",
+        "STCYFIPS": "48497",
+        "CITYCD": "484392450",
+        "RAILROAD": "BNSF",
+        "RRDIV": "RED RIVER",
+        "RRSUBDIV": "WICHITA FALLS",
+        "HIGHWAY": "CR4029",
+        "STREET": "AVONDALE HASLET ROAD",
+        "TTSTN": "668123",
+        "MILEPOST": "0018.234",
+        "TYPEXING": "Public",
+        "POSXING": "At Grade",
+        "PRVCAT": "14",
+        "INIT": "2",
+        "LATITUDE": 32.9688656,
+        "LONGITUD": -97.4041212,
+        "LLSOURCE": "1",
+        "WHISTBAN": "1",
+        "RRCONT": "8173521549",
+        "POLCONT": "8008325452",
+        "INV_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=I&txtcrossingnum=274638F",
+        "ACC_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=A&txtcrossingnum=274638F",
+        "TTSTNNAM": "AVONDALE",
+        "XPURPOSE": "1",
+        "OPERATINGR": "BNSF",
+        "OPERATIN_1": "Primary",
+        "DAYTHRU": 3,
+        "NGHTTHRU": 3,
+        "MAINTRK": 1,
+        "SIDINGTRK": 0,
+        "YARDTRK": 0,
+        "TRANSITTRK": 0,
+        "INDUSTRYTR": 0,
+        "OTHRTRK": 0,
+        "WDCODE": "All other Gates",
+        "REVISIONDA": "1996/01/01 00:00:00",
+        "LASTUPDATE": "1/13/2026",
+        "AADT": "9850",
+        "AADTYEAR": "2024",
+        "STATENAME": "TEXAS",
+        "STATEAB": "TX",
+        "COUNTYNAME": "WISE",
+        "CITYNAME": "FORT WORTH",
+        "LATDD": 32.9688656,
+        "LONGDD": -97.4041212,
+        "gridlyProductionCertified": true,
+        "gridlyClassification": "PUBLIC_ROADWAY",
+        "gridlyDisplayName": "AVONDALE HASLET ROAD",
+        "gridlyId": "FRA-274638F"
+      },
+      "coordinates": [
+        -97.4041212004464,
+        32.9688655998569
+      ],
+      "packages": [
+        {
+          "county": "tarrant-tx",
+          "fips": "48439",
+          "path": "Crossing-Packages/tarrant/Production/tarrant-production-crossings.geojson"
+        }
+      ],
+      "geographicAuthority": {
+        "crossingId": "274638F",
+        "fraSourceCountyFips": "48497",
+        "fraSourceCountyName": "WISE",
+        "gridlyCountyId": "tarrant",
+        "gridlyCountyFips": "48439",
+        "resolution": "CLEAR_GEOGRAPHIC_REASSIGNMENT",
+        "evidence": {
+          "authority": "certified 2025 TIGER polygon containment",
+          "exceptionType": "CROSS_COUNTY_MISMATCH",
+          "distanceToSourceCountyBoundaryMeters": 2479.618
+        }
+      },
+      "geometryEvidence": {
+        "crossingId": "274638F",
+        "exceptionType": "CROSS_COUNTY_MISMATCH",
+        "sourceCountyFips": "48497",
+        "sourceCountyName": "Wise County",
+        "coordinateResolvedCountyFips": "48439",
+        "coordinateResolvedCountyName": "Tarrant County",
+        "latitude": 32.9688655998569,
+        "longitude": -97.4041212004464,
+        "railroad": "BNSF",
+        "streetHighway": "AVONDALE HASLET ROAD",
+        "sourceLastUpdate": "1/13/2026",
+        "distanceToSourceCountyBoundaryMeters": 2479.618,
+        "distanceToResolvedCountyBoundaryMeters": 2479.618,
+        "distanceBucket": "GT_1_KM",
+        "rawFraCountyStateFields": {
+          "CountyCode": "48497",
+          "COUNTYNAME": "WISE",
+          "STATEAB": "TX",
+          "StateCode": "48",
+          "STATENAME": "TEXAS",
+          "STCYFIPS": "48497"
+        },
+        "processedEvidence": {
+          "geometryCoordinates": [
+            -97.4041212004464,
+            32.9688655998569
+          ],
+          "latitudeFields": {
+            "LATITUDE": 32.9688656,
+            "LATDD": 32.9688656
+          },
+          "longitudeFields": {
+            "LONGITUD": -97.4041212,
+            "LONGDD": -97.4041212
+          }
+        },
+        "rawOwnerComparison": {
+          "status": "OWNER_SOURCE_NOT_REPOSITORY_AVAILABLE",
+          "rawRecord": null,
+          "coordinatesChanged": null,
+          "countyIdentityChanged": null,
+          "stateIdentityChanged": null,
+          "crossingIdChanged": null
+        },
+        "classification": "CLEAR_GEOGRAPHIC_REASSIGNMENT",
+        "reviewThresholdMeters": 25,
+        "assignmentEvidence": "2025 TIGER polygon containment; distance is classification only"
+      },
+      "canonicalPlaces": [
+        {
+          "place_geoid": "4827000",
+          "sourceMemberships": [
+            [
+              "274638F",
+              "48497",
+              "WISE"
+            ]
+          ]
+        }
+      ],
+      "classification": {
+        "id": "274638F",
+        "reportability": {
+          "reportable": true,
+          "reasons": [],
+          "eligibility": "reportable_at_grade",
+          "normalizedCrossingId": "274638F"
+        },
+        "public": true,
+        "source": "statewide FRA source",
+        "record": {
+          "id": "FRA-274638F",
+          "name": "AVONDALE HASLET ROAD",
+          "lat": 32.9688655998569,
+          "lng": -97.4041212004464,
+          "props": {
+            "OBJECTID": 216084,
+            "CROSSING": "274638F",
+            "EFFDATE": 1768262400000,
+            "REASON": "14",
+            "StateCode": "48",
+            "CountyCode": "48497",
+            "STCYFIPS": "48497",
+            "CITYCD": "484392450",
+            "RAILROAD": "BNSF",
+            "RRDIV": "RED RIVER",
+            "RRSUBDIV": "WICHITA FALLS",
+            "HIGHWAY": "CR4029",
+            "STREET": "AVONDALE HASLET ROAD",
+            "TTSTN": "668123",
+            "MILEPOST": "0018.234",
+            "TYPEXING": "Public",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "INIT": "2",
+            "LATITUDE": 32.9688656,
+            "LONGITUD": -97.4041212,
+            "LLSOURCE": "1",
+            "WHISTBAN": "1",
+            "RRCONT": "8173521549",
+            "POLCONT": "8008325452",
+            "INV_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=I&txtcrossingnum=274638F",
+            "ACC_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=A&txtcrossingnum=274638F",
+            "TTSTNNAM": "AVONDALE",
+            "XPURPOSE": "1",
+            "OPERATINGR": "BNSF",
+            "OPERATIN_1": "Primary",
+            "DAYTHRU": 3,
+            "NGHTTHRU": 3,
+            "MAINTRK": 1,
+            "SIDINGTRK": 0,
+            "YARDTRK": 0,
+            "TRANSITTRK": 0,
+            "INDUSTRYTR": 0,
+            "OTHRTRK": 0,
+            "WDCODE": "All other Gates",
+            "REVISIONDA": "1996/01/01 00:00:00",
+            "LASTUPDATE": "1/13/2026",
+            "AADT": "9850",
+            "AADTYEAR": "2024",
+            "STATENAME": "TEXAS",
+            "STATEAB": "TX",
+            "COUNTYNAME": "WISE",
+            "CITYNAME": "FORT WORTH",
+            "LATDD": 32.9688656,
+            "LONGDD": -97.4041212
+          }
+        }
+      },
+      "reason": "Original certifier treated preserved FRA/source-county membership as package ownership. Certified geographic ownership assigns the crossing to its containing county; package and normalized stable ID agree.",
+      "checks": {
+        "uniquePackage": true,
+        "geographicOwnerMatches": true,
+        "sourceProvenancePreserved": true,
+        "normalizedIdPreserved": true,
+        "directCertifiedPolygonContainment": true
+      },
+      "directGeometryProof": {
+        "source": "assets/location-resolution/gridly-authoritative-county-geometry-v1.json",
+        "containingCounties": [
+          "tarrant-tx"
+        ],
+        "packageOwner": "tarrant-tx",
+        "pass": true
+      },
+      "runtimeOwnerBrowserProof": {
+        "county": "tarrant-tx",
+        "place": "4804000",
+        "id": "FRA-274638F",
+        "loaded": true
+      }
+    },
+    {
+      "originalFailureId": "LP24449-ledger-02388",
+      "crossingId": "598303M",
+      "runtimeId": "FRA-598303M",
+      "canonicalMembershipCounty": "wise-tx",
+      "operationalCounty": "wise-tx",
+      "sourceCountyFips": "48497",
+      "rawProperties": {
+        "OBJECTID": 214533,
+        "CROSSING": "598303M",
+        "EFFDATE": 1768348800000,
+        "REASON": "14",
+        "StateCode": "48",
+        "CountyCode": "48497",
+        "STCYFIPS": "48497",
+        "CITYCD": "484974855",
+        "RAILROAD": "UP",
+        "RRDIV": "Texoma",
+        "RRSUBDIV": "Duncan Sub",
+        "HIGHWAY": "Cr0000",
+        "STREET": "Tinsley Lane",
+        "TTSTN": "668124",
+        "MILEPOST": "0597.015",
+        "TYPEXING": "Public",
+        "POSXING": "At Grade",
+        "PRVCAT": "14",
+        "INIT": "2",
+        "LATITUDE": 32.9533232,
+        "LONGITUD": -97.4236437,
+        "LLSOURCE": "1",
+        "WHISTBAN": "0",
+        "RRCONT": "4025443721",
+        "POLCONT": "8008488715",
+        "INV_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=I&txtcrossingnum=598303M",
+        "ACC_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=A&txtcrossingnum=598303M",
+        "TTSTNNAM": "",
+        "XPURPOSE": "1",
+        "OPERATINGR": "UP",
+        "OPERATIN_1": "Primary",
+        "DAYTHRU": 5,
+        "NGHTTHRU": 4,
+        "MAINTRK": 1,
+        "SIDINGTRK": 0,
+        "YARDTRK": 0,
+        "TRANSITTRK": 0,
+        "INDUSTRYTR": 0,
+        "OTHRTRK": 0,
+        "WDCODE": "All other Gates",
+        "REVISIONDA": "1975/01/01 00:00:00",
+        "LASTUPDATE": "1/14/2026",
+        "AADT": "1882",
+        "AADTYEAR": "2024",
+        "STATENAME": "TEXAS",
+        "STATEAB": "TX",
+        "COUNTYNAME": "WISE",
+        "CITYNAME": "NEWARK",
+        "LATDD": 32.9533232,
+        "LONGDD": -97.4236437,
+        "gridlyProductionCertified": true,
+        "gridlyClassification": "PUBLIC_ROADWAY",
+        "gridlyDisplayName": "Tinsley Lane",
+        "gridlyId": "FRA-598303M"
+      },
+      "coordinates": [
+        -97.4236436999163,
+        32.9533232000175
+      ],
+      "packages": [
+        {
+          "county": "tarrant-tx",
+          "fips": "48439",
+          "path": "Crossing-Packages/tarrant/Production/tarrant-production-crossings.geojson"
+        }
+      ],
+      "geographicAuthority": {
+        "crossingId": "598303M",
+        "fraSourceCountyFips": "48497",
+        "fraSourceCountyName": "WISE",
+        "gridlyCountyId": "tarrant",
+        "gridlyCountyFips": "48439",
+        "resolution": "CLEAR_GEOGRAPHIC_REASSIGNMENT",
+        "evidence": {
+          "authority": "certified 2025 TIGER polygon containment",
+          "exceptionType": "CROSS_COUNTY_MISMATCH",
+          "distanceToSourceCountyBoundaryMeters": 4326.72
+        }
+      },
+      "geometryEvidence": {
+        "crossingId": "598303M",
+        "exceptionType": "CROSS_COUNTY_MISMATCH",
+        "sourceCountyFips": "48497",
+        "sourceCountyName": "Wise County",
+        "coordinateResolvedCountyFips": "48439",
+        "coordinateResolvedCountyName": "Tarrant County",
+        "latitude": 32.9533232000175,
+        "longitude": -97.4236436999163,
+        "railroad": "UP",
+        "streetHighway": "Tinsley Lane",
+        "sourceLastUpdate": "1/14/2026",
+        "distanceToSourceCountyBoundaryMeters": 4326.72,
+        "distanceToResolvedCountyBoundaryMeters": 4326.72,
+        "distanceBucket": "GT_1_KM",
+        "rawFraCountyStateFields": {
+          "CountyCode": "48497",
+          "COUNTYNAME": "WISE",
+          "STATEAB": "TX",
+          "StateCode": "48",
+          "STATENAME": "TEXAS",
+          "STCYFIPS": "48497"
+        },
+        "processedEvidence": {
+          "geometryCoordinates": [
+            -97.4236436999163,
+            32.9533232000175
+          ],
+          "latitudeFields": {
+            "LATITUDE": 32.9533232,
+            "LATDD": 32.9533232
+          },
+          "longitudeFields": {
+            "LONGITUD": -97.4236437,
+            "LONGDD": -97.4236437
+          }
+        },
+        "rawOwnerComparison": {
+          "status": "OWNER_SOURCE_NOT_REPOSITORY_AVAILABLE",
+          "rawRecord": null,
+          "coordinatesChanged": null,
+          "countyIdentityChanged": null,
+          "stateIdentityChanged": null,
+          "crossingIdChanged": null
+        },
+        "classification": "CLEAR_GEOGRAPHIC_REASSIGNMENT",
+        "reviewThresholdMeters": 25,
+        "assignmentEvidence": "2025 TIGER polygon containment; distance is classification only"
+      },
+      "canonicalPlaces": [
+        {
+          "place_geoid": "4856462",
+          "sourceMemberships": [
+            [
+              "598303M",
+              "48497",
+              "WISE"
+            ]
+          ]
+        }
+      ],
+      "classification": {
+        "id": "598303M",
+        "reportability": {
+          "reportable": true,
+          "reasons": [],
+          "eligibility": "reportable_at_grade",
+          "normalizedCrossingId": "598303M"
+        },
+        "public": true,
+        "source": "statewide FRA source",
+        "record": {
+          "id": "FRA-598303M",
+          "name": "Tinsley Lane",
+          "lat": 32.9533232000175,
+          "lng": -97.4236436999163,
+          "props": {
+            "OBJECTID": 214533,
+            "CROSSING": "598303M",
+            "EFFDATE": 1768348800000,
+            "REASON": "14",
+            "StateCode": "48",
+            "CountyCode": "48497",
+            "STCYFIPS": "48497",
+            "CITYCD": "484974855",
+            "RAILROAD": "UP",
+            "RRDIV": "Texoma",
+            "RRSUBDIV": "Duncan Sub",
+            "HIGHWAY": "Cr0000",
+            "STREET": "Tinsley Lane",
+            "TTSTN": "668124",
+            "MILEPOST": "0597.015",
+            "TYPEXING": "Public",
+            "POSXING": "At Grade",
+            "PRVCAT": "14",
+            "INIT": "2",
+            "LATITUDE": 32.9533232,
+            "LONGITUD": -97.4236437,
+            "LLSOURCE": "1",
+            "WHISTBAN": "0",
+            "RRCONT": "4025443721",
+            "POLCONT": "8008488715",
+            "INV_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=I&txtcrossingnum=598303M",
+            "ACC_LINK": "https://safetydata.fra.dot.gov/OfficeofSafety/PublicSite/Crossing/Crossing.aspx?phasetype=C&rpttype=A&txtcrossingnum=598303M",
+            "TTSTNNAM": "",
+            "XPURPOSE": "1",
+            "OPERATINGR": "UP",
+            "OPERATIN_1": "Primary",
+            "DAYTHRU": 5,
+            "NGHTTHRU": 4,
+            "MAINTRK": 1,
+            "SIDINGTRK": 0,
+            "YARDTRK": 0,
+            "TRANSITTRK": 0,
+            "INDUSTRYTR": 0,
+            "OTHRTRK": 0,
+            "WDCODE": "All other Gates",
+            "REVISIONDA": "1975/01/01 00:00:00",
+            "LASTUPDATE": "1/14/2026",
+            "AADT": "1882",
+            "AADTYEAR": "2024",
+            "STATENAME": "TEXAS",
+            "STATEAB": "TX",
+            "COUNTYNAME": "WISE",
+            "CITYNAME": "NEWARK",
+            "LATDD": 32.9533232,
+            "LONGDD": -97.4236437
+          }
+        }
+      },
+      "reason": "Original certifier treated preserved FRA/source-county membership as package ownership. Certified geographic ownership assigns the crossing to its containing county; package and normalized stable ID agree.",
+      "checks": {
+        "uniquePackage": true,
+        "geographicOwnerMatches": true,
+        "sourceProvenancePreserved": true,
+        "normalizedIdPreserved": true,
+        "directCertifiedPolygonContainment": true
+      },
+      "directGeometryProof": {
+        "source": "assets/location-resolution/gridly-authoritative-county-geometry-v1.json",
+        "containingCounties": [
+          "tarrant-tx"
+        ],
+        "packageOwner": "tarrant-tx",
+        "pass": true
+      },
+      "runtimeOwnerBrowserProof": {
+        "county": "tarrant-tx",
+        "place": "4804000",
+        "id": "FRA-598303M",
+        "loaded": true
+      }
+    }
+  ],
+  "summary": {
+    "assertions": 12,
+    "identities": 14,
+    "reclassified": 12,
+    "packageFailures": 0,
+    "geometryPassed": 14
+  }
+}

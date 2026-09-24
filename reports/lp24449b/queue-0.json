@@ -1,0 +1,55 @@
+{
+  "shard": 0,
+  "runs": [
+    {
+      "job": [
+        "search.mjs"
+      ],
+      "startedAt": "2026-09-24T17:58:54.719Z",
+      "finishedAt": "2026-09-24T18:49:59.368Z",
+      "exitCode": 0
+    },
+    {
+      "job": [
+        "transitions.mjs",
+        "--shard=0/2"
+      ],
+      "startedAt": "2026-09-24T18:49:59.373Z",
+      "finishedAt": "2026-09-24T18:50:01.533Z",
+      "exitCode": 0
+    },
+    {
+      "job": [
+        "profiles.mjs"
+      ],
+      "startedAt": "2026-09-24T18:50:01.534Z",
+      "finishedAt": "2026-09-24T18:51:24.337Z",
+      "exitCode": 0
+    },
+    {
+      "job": [
+        "visible-search.mjs"
+      ],
+      "startedAt": "2026-09-24T18:51:24.340Z",
+      "finishedAt": "2026-09-24T18:58:43.638Z",
+      "exitCode": 0
+    },
+    {
+      "job": [
+        "label-baseline.mjs"
+      ],
+      "startedAt": "2026-09-24T18:58:43.639Z",
+      "finishedAt": "2026-09-24T18:58:44.191Z",
+      "exitCode": 0
+    },
+    {
+      "job": [
+        "home-read-performance.mjs"
+      ],
+      "startedAt": "2026-09-24T18:58:44.205Z",
+      "finishedAt": "2026-09-24T18:59:11.497Z",
+      "exitCode": 0
+    }
+  ],
+  "completed": true
+}

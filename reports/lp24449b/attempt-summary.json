@@ -1,0 +1,52 @@
+{
+  "scope": "Persisted Home, Search and statewide Pulse JSONL attempts. Exploratory provider pilots and visual suite invocations are separate logs, not membership retries.",
+  "files": [
+    "home-progress-0.jsonl",
+    "home-progress-1.jsonl",
+    "pulse-statewide-progress.jsonl",
+    "search-progress.jsonl"
+  ],
+  "recordedAttempts": 3106,
+  "finalAppSourceAttempts": 3106,
+  "otherAppSourceAttempts": 0,
+  "uniqueFinalSourceCases": 3105,
+  "retriedCases": 1,
+  "extraAttempts": 1,
+  "repeated": [
+    {
+      "suite": "Home",
+      "county": "harris-tx",
+      "place": "4877956",
+      "attempts": [
+        {
+          "file": "home-progress-0.jsonl",
+          "startedAt": "2026-09-24T17:12:21.725Z",
+          "pass": true,
+          "runtimeMs": 294078
+        },
+        {
+          "file": "home-progress-0.jsonl",
+          "startedAt": "2026-09-24T18:32:42.527Z",
+          "pass": true,
+          "runtimeMs": 186406
+        }
+      ]
+    }
+  ],
+  "failedAttempts": [
+    {
+      "file": "pulse-statewide-progress.jsonl",
+      "county": "montgomery-tx",
+      "place": "4816432",
+      "checks": {
+        "active": true,
+        "activeRows": true,
+        "clearPublication": false,
+        "clearRows": true,
+        "clearMarkers": true,
+        "truthful": true
+      }
+    }
+  ],
+  "timeoutAttempts": []
+}

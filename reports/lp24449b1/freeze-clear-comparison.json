@@ -1,0 +1,31 @@
+{
+  "purpose": "Compare the historical crossing-clear timeout on starting and repaired source; no LP244.49B repair or live-provider certification.",
+  "runs": [
+    {
+      "baseline": true,
+      "exitCode": 0,
+      "sourceHash": "857dc05e8f12786ace4ccded59e7ed582e3438da3f76d65f2fb4d579af6ceb91",
+      "passed": true,
+      "completedStates": [
+        "A-quiet",
+        "B-blocked",
+        "F-blocked-cleared"
+      ]
+    },
+    {
+      "baseline": false,
+      "exitCode": 0,
+      "sourceHash": "f57fac7440ad6ad9bf230e1f41cffeefb7f22405c0a58b696e48bba3ce0ed0cd",
+      "passed": true,
+      "completedStates": [
+        "A-quiet",
+        "B-blocked",
+        "F-blocked-cleared"
+      ]
+    }
+  ],
+  "newFailure": false,
+  "sameFailure": false,
+  "classification": "BOTH_PASS_ON_REPLAY",
+  "comparisonPass": true
+}

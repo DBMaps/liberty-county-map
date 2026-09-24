@@ -1,0 +1,149 @@
+{
+  "homeAttempts": 794,
+  "uniqueMemberships": 793,
+  "failedAttempts": [
+    {
+      "county": "harris-tx",
+      "place": "4801696",
+      "startedAt": "2026-09-24T21:25:29.552Z",
+      "runtimeMs": 254702,
+      "error": "page.waitForFunction: Timeout 30000ms exceeded.\n    at weatherReady (C:\\GitHub\\liberty-county-map\\tools\\lp24449b1\\home-browser.mjs:22:54)\n    at C:\\GitHub\\liberty-county-map\\tools\\lp24449b1\\home-browser.mjs:51:9",
+      "finalPass": true,
+      "finalWeatherDiagnostics": [
+        {
+          "stage": "reloaded",
+          "samples": [
+            {
+              "elapsedMs": 12937,
+              "at": 1790289625767,
+              "context": {
+                "probeVersion": 3,
+                "type": "HOME",
+                "place": "4801696",
+                "name": "Aldine",
+                "county": "harris-tx",
+                "lat": 29.9320498,
+                "lng": -95.3790508,
+                "generation": 1,
+                "health": "FRESH",
+                "expiresAt": null,
+                "startupProviderFocus": null
+              },
+              "point": {
+                "awarenessKey": "place-4801696",
+                "identityClass": "CANONICAL_PLACE",
+                "countyId": "harris-tx",
+                "stableIdentity": "4801696",
+                "lat": 29.9320498,
+                "lng": -95.3790508,
+                "placeGeoid": "4801696"
+              },
+              "requestInFlight": false,
+              "requestAttempted": true,
+              "pointsRequestAttempted": true,
+              "requestSucceeded": true,
+              "responseIdentity": "4801696|place-4801696|29.9320498,-95.3790508",
+              "currentAwarenessIdentity": "4801696|place-4801696|29.9320498,-95.3790508",
+              "freshnessStatus": "FRESH",
+              "forecastRequestSucceeded": true,
+              "lastRequestAt": "2026-09-24T22:39:21.980Z",
+              "lastSuccessAt": "2026-09-24T22:39:22.281Z",
+              "lastFailureAt": null,
+              "lastError": null,
+              "pointEndpoint": "https://api.weather.gov/alerts/active?point=29.9320498,-95.3790508",
+              "pointsLookupEndpoint": "https://api.weather.gov/points/29.9320498,-95.3790508"
+            }
+          ],
+          "policy": "Passive observation only; no fetch, refresh or count mutation. Extended diagnostic window records why the earlier 30-second completion wait expired."
+        },
+        {
+          "stage": "returned",
+          "samples": [
+            {
+              "elapsedMs": 7607,
+              "at": 1790289727438,
+              "context": {
+                "probeVersion": 3,
+                "type": "HOME",
+                "place": "4801696",
+                "name": "Aldine",
+                "county": "harris-tx",
+                "lat": 29.9320498,
+                "lng": -95.3790508,
+                "generation": 3,
+                "health": "FRESH",
+                "expiresAt": null,
+                "startupProviderFocus": null
+              },
+              "point": {
+                "awarenessKey": "place-4801696",
+                "identityClass": "CANONICAL_PLACE",
+                "countyId": "harris-tx",
+                "stableIdentity": "4801696",
+                "lat": 29.9320498,
+                "lng": -95.3790508,
+                "placeGeoid": "4801696"
+              },
+              "requestInFlight": true,
+              "requestAttempted": true,
+              "pointsRequestAttempted": true,
+              "requestSucceeded": true,
+              "responseIdentity": "4801696|place-4801696|29.9320498,-95.3790508",
+              "currentAwarenessIdentity": "4801696|place-4801696|29.9320498,-95.3790508",
+              "freshnessStatus": "STALE",
+              "forecastRequestSucceeded": true,
+              "lastRequestAt": "2026-09-24T22:41:59.758Z",
+              "lastSuccessAt": "2026-09-24T22:39:22.281Z",
+              "lastFailureAt": null,
+              "lastError": null,
+              "pointEndpoint": "https://api.weather.gov/alerts/active?point=29.9320498,-95.3790508",
+              "pointsLookupEndpoint": "https://api.weather.gov/points/29.9320498,-95.3790508"
+            },
+            {
+              "elapsedMs": 13326,
+              "at": 1790289733162,
+              "context": {
+                "probeVersion": 3,
+                "type": "HOME",
+                "place": "4801696",
+                "name": "Aldine",
+                "county": "harris-tx",
+                "lat": 29.9320498,
+                "lng": -95.3790508,
+                "generation": 3,
+                "health": "FRESH",
+                "expiresAt": null,
+                "startupProviderFocus": null
+              },
+              "point": {
+                "awarenessKey": "place-4801696",
+                "identityClass": "CANONICAL_PLACE",
+                "countyId": "harris-tx",
+                "stableIdentity": "4801696",
+                "lat": 29.9320498,
+                "lng": -95.3790508,
+                "placeGeoid": "4801696"
+              },
+              "requestInFlight": false,
+              "requestAttempted": true,
+              "pointsRequestAttempted": true,
+              "requestSucceeded": true,
+              "responseIdentity": "4801696|place-4801696|29.9320498,-95.3790508",
+              "currentAwarenessIdentity": "4801696|place-4801696|29.9320498,-95.3790508",
+              "freshnessStatus": "FRESH",
+              "forecastRequestSucceeded": true,
+              "lastRequestAt": "2026-09-24T22:41:59.758Z",
+              "lastSuccessAt": "2026-09-24T22:42:07.809Z",
+              "lastFailureAt": null,
+              "lastError": null,
+              "pointEndpoint": "https://api.weather.gov/alerts/active?point=29.9320498,-95.3790508",
+              "pointsLookupEndpoint": "https://api.weather.gov/points/29.9320498,-95.3790508"
+            }
+          ],
+          "policy": "Passive observation only; no fetch, refresh or count mutation. Extended diagnostic window records why the earlier 30-second completion wait expired."
+        }
+      ]
+    }
+  ],
+  "policy": "Failed attempts remain in append-only JSONL evidence. Final membership status uses the latest final-source record; retries are reported explicitly."
+}

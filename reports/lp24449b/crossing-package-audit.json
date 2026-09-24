@@ -1,0 +1,5059 @@
+{
+  "packages": [
+    {
+      "county_id": "anderson-tx",
+      "county_fips": "48001",
+      "package_path": "Crossing-Packages/anderson/Production/anderson-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 70,
+      "records": 70,
+      "public_records": 50,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "andrews-tx",
+      "county_fips": "48003",
+      "package_path": "Crossing-Packages/andrews/Production/andrews-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 0,
+      "records": 0,
+      "public_records": 0,
+      "state": "ACTIVE_EMPTY",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "angelina-tx",
+      "county_fips": "48005",
+      "package_path": "Crossing-Packages/angelina/Production/angelina-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 100,
+      "records": 100,
+      "public_records": 76,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "aransas-tx",
+      "county_fips": "48007",
+      "package_path": "Crossing-Packages/aransas/Production/aransas-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 5,
+      "records": 5,
+      "public_records": 3,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "archer-tx",
+      "county_fips": "48009",
+      "package_path": "Crossing-Packages/archer/Production/archer-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 0,
+      "records": 0,
+      "public_records": 0,
+      "state": "ACTIVE_EMPTY",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "armstrong-tx",
+      "county_fips": "48011",
+      "package_path": "Crossing-Packages/armstrong/Production/armstrong-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 24,
+      "records": 24,
+      "public_records": 19,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "atascosa-tx",
+      "county_fips": "48013",
+      "package_path": "Crossing-Packages/atascosa/Production/atascosa-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 57,
+      "records": 57,
+      "public_records": 29,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "austin-tx",
+      "county_fips": "48015",
+      "package_path": "Crossing-Packages/austin/Production/austin-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 101,
+      "records": 101,
+      "public_records": 61,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "bailey-tx",
+      "county_fips": "48017",
+      "package_path": "Crossing-Packages/bailey/Production/bailey-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 21,
+      "records": 21,
+      "public_records": 19,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "bandera-tx",
+      "county_fips": "48019",
+      "package_path": "Crossing-Packages/bandera/Production/bandera-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 0,
+      "records": 0,
+      "public_records": 0,
+      "state": "ACTIVE_EMPTY",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "bastrop-tx",
+      "county_fips": "48021",
+      "package_path": "Crossing-Packages/bastrop/Production/bastrop-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 158,
+      "records": 158,
+      "public_records": 90,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "976642K",
+          "fips": "48453"
+        },
+        {
+          "id": "415731E",
+          "fips": "48055"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "baylor-tx",
+      "county_fips": "48023",
+      "package_path": "Crossing-Packages/baylor/Production/baylor-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 0,
+      "records": 0,
+      "public_records": 0,
+      "state": "ACTIVE_EMPTY",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "bee-tx",
+      "county_fips": "48025",
+      "package_path": "Crossing-Packages/bee/Production/bee-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 0,
+      "records": 0,
+      "public_records": 0,
+      "state": "ACTIVE_EMPTY",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "bell-tx",
+      "county_fips": "48027",
+      "package_path": "Crossing-Packages/bell/Production/bell-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 150,
+      "records": 150,
+      "public_records": 111,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "021024W",
+          "fips": "48093"
+        },
+        {
+          "id": "021026K",
+          "fips": "48093"
+        },
+        {
+          "id": "021023P",
+          "fips": "48093"
+        },
+        {
+          "id": "021057J",
+          "fips": "48049"
+        },
+        {
+          "id": "021058R",
+          "fips": "48049"
+        },
+        {
+          "id": "021053G",
+          "fips": "48049"
+        },
+        {
+          "id": "021055V",
+          "fips": "48049"
+        },
+        {
+          "id": "021028Y",
+          "fips": "48093"
+        },
+        {
+          "id": "021029F",
+          "fips": "48093"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "bexar-tx",
+      "county_fips": "48029",
+      "package_path": "Crossing-Packages/bexar/Production/bexar-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 380,
+      "records": 380,
+      "public_records": 322,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "742922P",
+          "fips": "48325"
+        },
+        {
+          "id": "435414E",
+          "fips": "48013"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "blanco-tx",
+      "county_fips": "48031",
+      "package_path": "Crossing-Packages/blanco/Production/blanco-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 7,
+      "records": 7,
+      "public_records": 0,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "930581S",
+          "fips": "48299"
+        },
+        {
+          "id": "976455C",
+          "fips": "48299"
+        },
+        {
+          "id": "976532A",
+          "fips": "48053"
+        },
+        {
+          "id": "745251D",
+          "fips": "48053"
+        },
+        {
+          "id": "930577C",
+          "fips": "48053"
+        },
+        {
+          "id": "930576V",
+          "fips": "48053"
+        },
+        {
+          "id": "930575N",
+          "fips": "48053"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "borden-tx",
+      "county_fips": "48033",
+      "package_path": "Crossing-Packages/borden/Production/borden-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 0,
+      "records": 0,
+      "public_records": 0,
+      "state": "ACTIVE_EMPTY",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "bosque-tx",
+      "county_fips": "48035",
+      "package_path": "Crossing-Packages/bosque/Production/bosque-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 48,
+      "records": 48,
+      "public_records": 14,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "bowie-tx",
+      "county_fips": "48037",
+      "package_path": "Crossing-Packages/bowie/Production/bowie-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 119,
+      "records": 119,
+      "public_records": 80,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "brazoria-tx",
+      "county_fips": "48039",
+      "package_path": "Crossing-Packages/brazoria/Production/brazoria-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 157,
+      "records": 157,
+      "public_records": 100,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "brazos-tx",
+      "county_fips": "48041",
+      "package_path": "Crossing-Packages/brazos/Production/brazos-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 95,
+      "records": 95,
+      "public_records": 78,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "765835B",
+          "fips": "48395"
+        },
+        {
+          "id": "765836H",
+          "fips": "48395"
+        },
+        {
+          "id": "765839D",
+          "fips": "48395"
+        },
+        {
+          "id": "765841E",
+          "fips": "48395"
+        },
+        {
+          "id": "765842L",
+          "fips": "48395"
+        },
+        {
+          "id": "765843T",
+          "fips": "48395"
+        },
+        {
+          "id": "765844A",
+          "fips": "48395"
+        },
+        {
+          "id": "765845G",
+          "fips": "48395"
+        },
+        {
+          "id": "430171M",
+          "fips": "48395"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "brewster-tx",
+      "county_fips": "48043",
+      "package_path": "Crossing-Packages/brewster/Production/brewster-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 55,
+      "records": 55,
+      "public_records": 16,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "019040F",
+          "fips": "48377"
+        },
+        {
+          "id": "019041M",
+          "fips": "48377"
+        },
+        {
+          "id": "019037X",
+          "fips": "48377"
+        },
+        {
+          "id": "019025D",
+          "fips": "48377"
+        },
+        {
+          "id": "019026K",
+          "fips": "48377"
+        },
+        {
+          "id": "019027S",
+          "fips": "48377"
+        },
+        {
+          "id": "019029F",
+          "fips": "48377"
+        },
+        {
+          "id": "019030A",
+          "fips": "48377"
+        },
+        {
+          "id": "019032N",
+          "fips": "48377"
+        },
+        {
+          "id": "019034C",
+          "fips": "48377"
+        },
+        {
+          "id": "019036R",
+          "fips": "48377"
+        },
+        {
+          "id": "019061Y",
+          "fips": "48137"
+        },
+        {
+          "id": "019035J",
+          "fips": "48377"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "briscoe-tx",
+      "county_fips": "48045",
+      "package_path": "Crossing-Packages/briscoe/Production/briscoe-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 0,
+      "records": 0,
+      "public_records": 0,
+      "state": "ACTIVE_EMPTY",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "brooks-tx",
+      "county_fips": "48047",
+      "package_path": "Crossing-Packages/brooks/Production/brooks-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 0,
+      "records": 0,
+      "public_records": 0,
+      "state": "ACTIVE_EMPTY",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "brown-tx",
+      "county_fips": "48049",
+      "package_path": "Crossing-Packages/brown/Production/brown-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 97,
+      "records": 97,
+      "public_records": 65,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "024809R",
+          "fips": "48307"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "burleson-tx",
+      "county_fips": "48051",
+      "package_path": "Crossing-Packages/burleson/Production/burleson-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 67,
+      "records": 67,
+      "public_records": 46,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "burnet-tx",
+      "county_fips": "48053",
+      "package_path": "Crossing-Packages/burnet/Production/burnet-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 63,
+      "records": 63,
+      "public_records": 31,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "caldwell-tx",
+      "county_fips": "48055",
+      "package_path": "Crossing-Packages/caldwell/Production/caldwell-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 47,
+      "records": 47,
+      "public_records": 37,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "742681D",
+          "fips": "48177"
+        },
+        {
+          "id": "742682K",
+          "fips": "48177"
+        },
+        {
+          "id": "415684Y",
+          "fips": "48209"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "calhoun-tx",
+      "county_fips": "48057",
+      "package_path": "Crossing-Packages/calhoun/Production/calhoun-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 74,
+      "records": 74,
+      "public_records": 27,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "callahan-tx",
+      "county_fips": "48059",
+      "package_path": "Crossing-Packages/callahan/Production/callahan-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 26,
+      "records": 26,
+      "public_records": 18,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "864732Y",
+          "fips": "48441"
+        },
+        {
+          "id": "864740R",
+          "fips": "48441"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "cameron-tx",
+      "county_fips": "48061",
+      "package_path": "Crossing-Packages/cameron/Production/cameron-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 290,
+      "records": 290,
+      "public_records": 183,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "448776D",
+          "fips": "48215"
+        },
+        {
+          "id": "758567B",
+          "fips": "48215"
+        },
+        {
+          "id": "432751K",
+          "fips": "48489"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "camp-tx",
+      "county_fips": "48063",
+      "package_path": "Crossing-Packages/camp/Production/camp-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 55,
+      "records": 55,
+      "public_records": 45,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "carson-tx",
+      "county_fips": "48065",
+      "package_path": "Crossing-Packages/carson/Production/carson-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 63,
+      "records": 63,
+      "public_records": 32,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "016995Y",
+          "fips": "48233"
+        },
+        {
+          "id": "016989V",
+          "fips": "48233"
+        },
+        {
+          "id": "016994S",
+          "fips": "48233"
+        },
+        {
+          "id": "016992D",
+          "fips": "48233"
+        },
+        {
+          "id": "016993K",
+          "fips": "48233"
+        },
+        {
+          "id": "017063F",
+          "fips": "48341"
+        },
+        {
+          "id": "014546C",
+          "fips": "48179"
+        },
+        {
+          "id": "275225P",
+          "fips": "48011"
+        },
+        {
+          "id": "014166V",
+          "fips": "48375"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "cass-tx",
+      "county_fips": "48067",
+      "package_path": "Crossing-Packages/cass/Production/cass-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 49,
+      "records": 49,
+      "public_records": 40,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "789612D",
+          "fips": "48343"
+        },
+        {
+          "id": "920069K",
+          "fips": "48343"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "castro-tx",
+      "county_fips": "48069",
+      "package_path": "Crossing-Packages/castro/Production/castro-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 28,
+      "records": 28,
+      "public_records": 21,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "chambers-tx",
+      "county_fips": "48071",
+      "package_path": "Crossing-Packages/chambers/Production/chambers-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 15,
+      "records": 15,
+      "public_records": 6,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "cherokee-tx",
+      "county_fips": "48073",
+      "package_path": "Crossing-Packages/cherokee/Production/cherokee-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 69,
+      "records": 69,
+      "public_records": 38,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "426590D",
+          "fips": "48001"
+        },
+        {
+          "id": "426628X",
+          "fips": "48423"
+        },
+        {
+          "id": "021052A",
+          "fips": "48049"
+        },
+        {
+          "id": "021050L",
+          "fips": "48049"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "childress-tx",
+      "county_fips": "48075",
+      "package_path": "Crossing-Packages/childress/Production/childress-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 28,
+      "records": 28,
+      "public_records": 20,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "982802K",
+          "fips": "48191"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "clay-tx",
+      "county_fips": "48077",
+      "package_path": "Crossing-Packages/clay/Production/clay-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 29,
+      "records": 29,
+      "public_records": 20,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "274994B",
+          "fips": "48485"
+        },
+        {
+          "id": "415442D",
+          "fips": "48485"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "cochran-tx",
+      "county_fips": "48079",
+      "package_path": "Crossing-Packages/cochran/Production/cochran-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 4,
+      "records": 4,
+      "public_records": 4,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "coke-tx",
+      "county_fips": "48081",
+      "package_path": "Crossing-Packages/coke/Production/coke-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 0,
+      "records": 0,
+      "public_records": 0,
+      "state": "ACTIVE_EMPTY",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "coleman-tx",
+      "county_fips": "48083",
+      "package_path": "Crossing-Packages/coleman/Production/coleman-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 58,
+      "records": 58,
+      "public_records": 46,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "collin-tx",
+      "county_fips": "48085",
+      "package_path": "Crossing-Packages/collin/Production/collin-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 185,
+      "records": 185,
+      "public_records": 153,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "763685N",
+          "fips": "48181"
+        },
+        {
+          "id": "765309N",
+          "fips": "48181"
+        },
+        {
+          "id": "971211B",
+          "fips": "48113"
+        },
+        {
+          "id": "928369B",
+          "fips": "48113"
+        },
+        {
+          "id": "966265W",
+          "fips": "48121"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "collingsworth-tx",
+      "county_fips": "48087",
+      "package_path": "Crossing-Packages/collingsworth/Production/collingsworth-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 0,
+      "records": 0,
+      "public_records": 0,
+      "state": "ACTIVE_EMPTY",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "colorado-tx",
+      "county_fips": "48089",
+      "package_path": "Crossing-Packages/colorado/Production/colorado-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 109,
+      "records": 109,
+      "public_records": 65,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "comal-tx",
+      "county_fips": "48091",
+      "package_path": "Crossing-Packages/comal/Production/comal-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 110,
+      "records": 110,
+      "public_records": 72,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "415591E",
+          "fips": "48187"
+        },
+        {
+          "id": "415596N",
+          "fips": "48187"
+        },
+        {
+          "id": "415592L",
+          "fips": "48187"
+        },
+        {
+          "id": "415597V",
+          "fips": "48187"
+        },
+        {
+          "id": "415587P",
+          "fips": "48187"
+        },
+        {
+          "id": "415590X",
+          "fips": "48187"
+        },
+        {
+          "id": "412457H",
+          "fips": "48187"
+        },
+        {
+          "id": "415589D",
+          "fips": "48187"
+        },
+        {
+          "id": "924381U",
+          "fips": "48187"
+        },
+        {
+          "id": "924383H",
+          "fips": "48187"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "comanche-tx",
+      "county_fips": "48093",
+      "package_path": "Crossing-Packages/comanche/Production/comanche-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 80,
+      "records": 80,
+      "public_records": 37,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "020981X",
+          "fips": "48143"
+        },
+        {
+          "id": "020982E",
+          "fips": "48143"
+        },
+        {
+          "id": "967067E",
+          "fips": "48133"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "concho-tx",
+      "county_fips": "48095",
+      "package_path": "Crossing-Packages/concho/Production/concho-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 0,
+      "records": 0,
+      "public_records": 0,
+      "state": "ACTIVE_EMPTY",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "cooke-tx",
+      "county_fips": "48097",
+      "package_path": "Crossing-Packages/cooke/Production/cooke-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 31,
+      "records": 31,
+      "public_records": 24,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "920232E",
+          "fips": "48181"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "coryell-tx",
+      "county_fips": "48099",
+      "package_path": "Crossing-Packages/coryell/Production/coryell-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 12,
+      "records": 12,
+      "public_records": 9,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "cottle-tx",
+      "county_fips": "48101",
+      "package_path": "Crossing-Packages/cottle/Production/cottle-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 0,
+      "records": 0,
+      "public_records": 0,
+      "state": "ACTIVE_EMPTY",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "crane-tx",
+      "county_fips": "48103",
+      "package_path": "Crossing-Packages/crane/Production/crane-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 3,
+      "records": 3,
+      "public_records": 1,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "796278C",
+          "fips": "48135"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "crockett-tx",
+      "county_fips": "48105",
+      "package_path": "Crossing-Packages/crockett/Production/crockett-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 1,
+      "records": 1,
+      "public_records": 0,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "018903R",
+          "fips": "48103"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "crosby-tx",
+      "county_fips": "48107",
+      "package_path": "Crossing-Packages/crosby/Production/crosby-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 0,
+      "records": 0,
+      "public_records": 0,
+      "state": "ACTIVE_EMPTY",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "culberson-tx",
+      "county_fips": "48109",
+      "package_path": "Crossing-Packages/culberson/Production/culberson-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 17,
+      "records": 17,
+      "public_records": 10,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "764219L",
+          "fips": "48229"
+        },
+        {
+          "id": "742886W",
+          "fips": "48243"
+        },
+        {
+          "id": "764218E",
+          "fips": "48243"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "dallam-tx",
+      "county_fips": "48111",
+      "package_path": "Crossing-Packages/dallam/Production/dallam-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 51,
+      "records": 51,
+      "public_records": 30,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "dallas-tx",
+      "county_fips": "48113",
+      "package_path": "Crossing-Packages/dallas/Production/dallas-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 789,
+      "records": 789,
+      "public_records": 687,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "763376B",
+          "fips": "48085"
+        },
+        {
+          "id": "023985K",
+          "fips": "48365"
+        },
+        {
+          "id": "788907S",
+          "fips": "48085"
+        },
+        {
+          "id": "763628A",
+          "fips": "48139"
+        },
+        {
+          "id": "789746C",
+          "fips": "48439"
+        },
+        {
+          "id": "789736W",
+          "fips": "48439"
+        },
+        {
+          "id": "763630B",
+          "fips": "48139"
+        },
+        {
+          "id": "748584P",
+          "fips": "48397"
+        },
+        {
+          "id": "414406E",
+          "fips": "48397"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "dawson-tx",
+      "county_fips": "48115",
+      "package_path": "Crossing-Packages/dawson/Production/dawson-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 0,
+      "records": 0,
+      "public_records": 0,
+      "state": "ACTIVE_EMPTY",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "deaf-smith-tx",
+      "county_fips": "48117",
+      "package_path": "Crossing-Packages/deaf-smith/Production/deaf-smith-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 25,
+      "records": 25,
+      "public_records": 20,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "delta-tx",
+      "county_fips": "48119",
+      "package_path": "Crossing-Packages/delta/Production/delta-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 0,
+      "records": 0,
+      "public_records": 0,
+      "state": "ACTIVE_EMPTY",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "denton-tx",
+      "county_fips": "48121",
+      "package_path": "Crossing-Packages/denton/Production/denton-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 231,
+      "records": 231,
+      "public_records": 190,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "020668V",
+          "fips": "48439"
+        },
+        {
+          "id": "675119L",
+          "fips": "48085"
+        },
+        {
+          "id": "675230R",
+          "fips": "48085"
+        },
+        {
+          "id": "672139M",
+          "fips": "48085"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "dewitt-tx",
+      "county_fips": "48123",
+      "package_path": "Crossing-Packages/dewitt/Production/dewitt-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 57,
+      "records": 57,
+      "public_records": 31,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "dickens-tx",
+      "county_fips": "48125",
+      "package_path": "Crossing-Packages/dickens/Production/dickens-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 0,
+      "records": 0,
+      "public_records": 0,
+      "state": "ACTIVE_EMPTY",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "dimmit-tx",
+      "county_fips": "48127",
+      "package_path": "Crossing-Packages/dimmit/Production/dimmit-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 0,
+      "records": 0,
+      "public_records": 0,
+      "state": "ACTIVE_EMPTY",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "donley-tx",
+      "county_fips": "48129",
+      "package_path": "Crossing-Packages/donley/Production/donley-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 36,
+      "records": 36,
+      "public_records": 33,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "274761E",
+          "fips": "48191"
+        },
+        {
+          "id": "274762L",
+          "fips": "48191"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "duval-tx",
+      "county_fips": "48131",
+      "package_path": "Crossing-Packages/duval/Production/duval-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 49,
+      "records": 49,
+      "public_records": 22,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "eastland-tx",
+      "county_fips": "48133",
+      "package_path": "Crossing-Packages/eastland/Production/eastland-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 34,
+      "records": 34,
+      "public_records": 24,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "312392R",
+          "fips": "48093"
+        },
+        {
+          "id": "924795V",
+          "fips": "48093"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "ector-tx",
+      "county_fips": "48135",
+      "package_path": "Crossing-Packages/ector/Production/ector-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 45,
+      "records": 45,
+      "public_records": 37,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "edwards-tx",
+      "county_fips": "48137",
+      "package_path": "Crossing-Packages/edwards/Production/edwards-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 0,
+      "records": 0,
+      "public_records": 0,
+      "state": "ACTIVE_EMPTY",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "ellis-tx",
+      "county_fips": "48139",
+      "package_path": "Crossing-Packages/ellis/Production/ellis-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 164,
+      "records": 164,
+      "public_records": 128,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "020874H",
+          "fips": "48221"
+        },
+        {
+          "id": "020876W",
+          "fips": "48221"
+        },
+        {
+          "id": "020877D",
+          "fips": "48221"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "el-paso-tx",
+      "county_fips": "48141",
+      "package_path": "Crossing-Packages/el-paso/Production/el-paso-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 198,
+      "records": 198,
+      "public_records": 149,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "erath-tx",
+      "county_fips": "48143",
+      "package_path": "Crossing-Packages/erath/Production/erath-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 93,
+      "records": 93,
+      "public_records": 44,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "967062V",
+          "fips": "48133"
+        },
+        {
+          "id": "024759P",
+          "fips": "48411"
+        },
+        {
+          "id": "024758H",
+          "fips": "48411"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "falls-tx",
+      "county_fips": "48145",
+      "package_path": "Crossing-Packages/falls/Production/falls-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 69,
+      "records": 69,
+      "public_records": 34,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "966345P",
+          "fips": "48293"
+        },
+        {
+          "id": "966344H",
+          "fips": "48293"
+        },
+        {
+          "id": "966343B",
+          "fips": "48293"
+        },
+        {
+          "id": "966342U",
+          "fips": "48293"
+        },
+        {
+          "id": "966341M",
+          "fips": "48293"
+        },
+        {
+          "id": "966340F",
+          "fips": "48293"
+        },
+        {
+          "id": "744850V",
+          "fips": "48395"
+        },
+        {
+          "id": "744851C",
+          "fips": "48395"
+        },
+        {
+          "id": "744852J",
+          "fips": "48395"
+        },
+        {
+          "id": "744848U",
+          "fips": "48395"
+        },
+        {
+          "id": "430233H",
+          "fips": "48395"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "fannin-tx",
+      "county_fips": "48147",
+      "package_path": "Crossing-Packages/fannin/Production/fannin-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 74,
+      "records": 74,
+      "public_records": 47,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "795195K",
+          "fips": "48181"
+        },
+        {
+          "id": "795197Y",
+          "fips": "48181"
+        },
+        {
+          "id": "415093V",
+          "fips": "48181"
+        },
+        {
+          "id": "765400G",
+          "fips": "48181"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "fayette-tx",
+      "county_fips": "48149",
+      "package_path": "Crossing-Packages/fayette/Production/fayette-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 152,
+      "records": 152,
+      "public_records": 80,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "fisher-tx",
+      "county_fips": "48151",
+      "package_path": "Crossing-Packages/fisher/Production/fisher-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 10,
+      "records": 10,
+      "public_records": 6,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "796098E",
+          "fips": "48353"
+        },
+        {
+          "id": "796099L",
+          "fips": "48353"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "floyd-tx",
+      "county_fips": "48153",
+      "package_path": "Crossing-Packages/floyd/Production/floyd-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 1,
+      "records": 1,
+      "public_records": 0,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "017428K",
+          "fips": "48189"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "foard-tx",
+      "county_fips": "48155",
+      "package_path": "Crossing-Packages/foard/Production/foard-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 0,
+      "records": 0,
+      "public_records": 0,
+      "state": "ACTIVE_EMPTY",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "fort-bend-tx",
+      "county_fips": "48157",
+      "package_path": "Crossing-Packages/fort-bend/Production/fort-bend-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 175,
+      "records": 175,
+      "public_records": 113,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "franklin-tx",
+      "county_fips": "48159",
+      "package_path": "Crossing-Packages/franklin/Production/franklin-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 20,
+      "records": 20,
+      "public_records": 13,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "freestone-tx",
+      "county_fips": "48161",
+      "package_path": "Crossing-Packages/freestone/Production/freestone-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 75,
+      "records": 75,
+      "public_records": 55,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "frio-tx",
+      "county_fips": "48163",
+      "package_path": "Crossing-Packages/frio/Production/frio-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 36,
+      "records": 36,
+      "public_records": 22,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "gaines-tx",
+      "county_fips": "48165",
+      "package_path": "Crossing-Packages/gaines/Production/gaines-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 5,
+      "records": 5,
+      "public_records": 5,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "galveston-tx",
+      "county_fips": "48167",
+      "package_path": "Crossing-Packages/galveston/Production/galveston-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 144,
+      "records": 144,
+      "public_records": 89,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "garza-tx",
+      "county_fips": "48169",
+      "package_path": "Crossing-Packages/garza/Production/garza-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 18,
+      "records": 18,
+      "public_records": 13,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "gillespie-tx",
+      "county_fips": "48171",
+      "package_path": "Crossing-Packages/gillespie/Production/gillespie-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 0,
+      "records": 0,
+      "public_records": 0,
+      "state": "ACTIVE_EMPTY",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "glasscock-tx",
+      "county_fips": "48173",
+      "package_path": "Crossing-Packages/glasscock/Production/glasscock-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 0,
+      "records": 0,
+      "public_records": 0,
+      "state": "ACTIVE_EMPTY",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "goliad-tx",
+      "county_fips": "48175",
+      "package_path": "Crossing-Packages/goliad/Production/goliad-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 9,
+      "records": 9,
+      "public_records": 6,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "gonzales-tx",
+      "county_fips": "48177",
+      "package_path": "Crossing-Packages/gonzales/Production/gonzales-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 41,
+      "records": 41,
+      "public_records": 25,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "gray-tx",
+      "county_fips": "48179",
+      "package_path": "Crossing-Packages/gray/Production/gray-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 25,
+      "records": 25,
+      "public_records": 18,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "014634M",
+          "fips": "48065"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "grayson-tx",
+      "county_fips": "48181",
+      "package_path": "Crossing-Packages/grayson/Production/grayson-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 240,
+      "records": 240,
+      "public_records": 192,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "gregg-tx",
+      "county_fips": "48183",
+      "package_path": "Crossing-Packages/gregg/Production/gregg-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 85,
+      "records": 85,
+      "public_records": 71,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "919130P",
+          "fips": "48203"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "grimes-tx",
+      "county_fips": "48185",
+      "package_path": "Crossing-Packages/grimes/Production/grimes-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 109,
+      "records": 109,
+      "public_records": 69,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "guadalupe-tx",
+      "county_fips": "48187",
+      "package_path": "Crossing-Packages/guadalupe/Production/guadalupe-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 58,
+      "records": 58,
+      "public_records": 46,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "742786S",
+          "fips": "48177"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "hale-tx",
+      "county_fips": "48189",
+      "package_path": "Crossing-Packages/hale/Production/hale-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 129,
+      "records": 129,
+      "public_records": 111,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "275951L",
+          "fips": "48069"
+        },
+        {
+          "id": "275947W",
+          "fips": "48069"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "hall-tx",
+      "county_fips": "48191",
+      "package_path": "Crossing-Packages/hall/Production/hall-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 15,
+      "records": 15,
+      "public_records": 12,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "hamilton-tx",
+      "county_fips": "48193",
+      "package_path": "Crossing-Packages/hamilton/Production/hamilton-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 1,
+      "records": 1,
+      "public_records": 0,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "849261Y",
+          "fips": "48093"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "hansford-tx",
+      "county_fips": "48195",
+      "package_path": "Crossing-Packages/hansford/Production/hansford-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 8,
+      "records": 8,
+      "public_records": 0,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "016501C",
+          "fips": "48357"
+        },
+        {
+          "id": "016498W",
+          "fips": "48357"
+        },
+        {
+          "id": "016492F",
+          "fips": "48357"
+        },
+        {
+          "id": "016506L",
+          "fips": "48357"
+        },
+        {
+          "id": "016504X",
+          "fips": "48357"
+        },
+        {
+          "id": "016503R",
+          "fips": "48357"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "hardeman-tx",
+      "county_fips": "48197",
+      "package_path": "Crossing-Packages/hardeman/Production/hardeman-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 39,
+      "records": 39,
+      "public_records": 36,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "hardin-tx",
+      "county_fips": "48199",
+      "package_path": "Crossing-Packages/hardin/Production/hardin-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 82,
+      "records": 82,
+      "public_records": 51,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "harris-tx",
+      "county_fips": "48201",
+      "package_path": "Crossing-Packages/harris/Production/harris-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 1159,
+      "records": 1159,
+      "public_records": 885,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "harrison-tx",
+      "county_fips": "48203",
+      "package_path": "Crossing-Packages/harrison/Production/harrison-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 87,
+      "records": 87,
+      "public_records": 58,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "hartley-tx",
+      "county_fips": "48205",
+      "package_path": "Crossing-Packages/hartley/Production/hartley-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 40,
+      "records": 40,
+      "public_records": 18,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "haskell-tx",
+      "county_fips": "48207",
+      "package_path": "Crossing-Packages/haskell/Production/haskell-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 0,
+      "records": 0,
+      "public_records": 0,
+      "state": "ACTIVE_EMPTY",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "hays-tx",
+      "county_fips": "48209",
+      "package_path": "Crossing-Packages/hays/Production/hays-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 53,
+      "records": 53,
+      "public_records": 48,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "hemphill-tx",
+      "county_fips": "48211",
+      "package_path": "Crossing-Packages/hemphill/Production/hemphill-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 13,
+      "records": 13,
+      "public_records": 5,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "016466R",
+          "fips": "48357"
+        },
+        {
+          "id": "016467X",
+          "fips": "48357"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "henderson-tx",
+      "county_fips": "48213",
+      "package_path": "Crossing-Packages/henderson/Production/henderson-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 85,
+      "records": 85,
+      "public_records": 58,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "hidalgo-tx",
+      "county_fips": "48215",
+      "package_path": "Crossing-Packages/hidalgo/Production/hidalgo-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 265,
+      "records": 265,
+      "public_records": 199,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "hill-tx",
+      "county_fips": "48217",
+      "package_path": "Crossing-Packages/hill/Production/hill-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 45,
+      "records": 45,
+      "public_records": 35,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "hockley-tx",
+      "county_fips": "48219",
+      "package_path": "Crossing-Packages/hockley/Production/hockley-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 52,
+      "records": 52,
+      "public_records": 45,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "hood-tx",
+      "county_fips": "48221",
+      "package_path": "Crossing-Packages/hood/Production/hood-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 56,
+      "records": 56,
+      "public_records": 26,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "020925R",
+          "fips": "48143"
+        },
+        {
+          "id": "020924J",
+          "fips": "48143"
+        },
+        {
+          "id": "020928L",
+          "fips": "48143"
+        },
+        {
+          "id": "020929T",
+          "fips": "48143"
+        },
+        {
+          "id": "020930M",
+          "fips": "48143"
+        },
+        {
+          "id": "020931U",
+          "fips": "48143"
+        },
+        {
+          "id": "020918F",
+          "fips": "48143"
+        },
+        {
+          "id": "020927E",
+          "fips": "48143"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "hopkins-tx",
+      "county_fips": "48223",
+      "package_path": "Crossing-Packages/hopkins/Production/hopkins-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 108,
+      "records": 108,
+      "public_records": 80,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "980417A",
+          "fips": "48159"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "houston-tx",
+      "county_fips": "48225",
+      "package_path": "Crossing-Packages/houston/Production/houston-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 44,
+      "records": 44,
+      "public_records": 30,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "howard-tx",
+      "county_fips": "48227",
+      "package_path": "Crossing-Packages/howard/Production/howard-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 32,
+      "records": 32,
+      "public_records": 25,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "hudspeth-tx",
+      "county_fips": "48229",
+      "package_path": "Crossing-Packages/hudspeth/Production/hudspeth-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 26,
+      "records": 26,
+      "public_records": 16,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "hunt-tx",
+      "county_fips": "48231",
+      "package_path": "Crossing-Packages/hunt/Production/hunt-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 162,
+      "records": 162,
+      "public_records": 118,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "977454Y",
+          "fips": "48147"
+        },
+        {
+          "id": "977455F",
+          "fips": "48147"
+        },
+        {
+          "id": "977855Y",
+          "fips": "48147"
+        },
+        {
+          "id": "977856F",
+          "fips": "48147"
+        },
+        {
+          "id": "415114L",
+          "fips": "48147"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "hutchinson-tx",
+      "county_fips": "48233",
+      "package_path": "Crossing-Packages/hutchinson/Production/hutchinson-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 34,
+      "records": 34,
+      "public_records": 16,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "016998U",
+          "fips": "48065"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "irion-tx",
+      "county_fips": "48235",
+      "package_path": "Crossing-Packages/irion/Production/irion-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 55,
+      "records": 55,
+      "public_records": 14,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "jack-tx",
+      "county_fips": "48237",
+      "package_path": "Crossing-Packages/jack/Production/jack-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 0,
+      "records": 0,
+      "public_records": 0,
+      "state": "ACTIVE_EMPTY",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "jackson-tx",
+      "county_fips": "48239",
+      "package_path": "Crossing-Packages/jackson/Production/jackson-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 74,
+      "records": 74,
+      "public_records": 37,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "jasper-tx",
+      "county_fips": "48241",
+      "package_path": "Crossing-Packages/jasper/Production/jasper-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 106,
+      "records": 106,
+      "public_records": 58,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "jeff-davis-tx",
+      "county_fips": "48243",
+      "package_path": "Crossing-Packages/jeff-davis/Production/jeff-davis-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 10,
+      "records": 10,
+      "public_records": 3,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "796217L",
+          "fips": "48109"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "jefferson-tx",
+      "county_fips": "48245",
+      "package_path": "Crossing-Packages/jefferson/Production/jefferson-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 378,
+      "records": 378,
+      "public_records": 215,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "jim-hogg-tx",
+      "county_fips": "48247",
+      "package_path": "Crossing-Packages/jim-hogg/Production/jim-hogg-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 17,
+      "records": 17,
+      "public_records": 9,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "jim-wells-tx",
+      "county_fips": "48249",
+      "package_path": "Crossing-Packages/jim-wells/Production/jim-wells-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 63,
+      "records": 63,
+      "public_records": 41,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "793798B",
+          "fips": "48131"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "johnson-tx",
+      "county_fips": "48251",
+      "package_path": "Crossing-Packages/johnson/Production/johnson-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 168,
+      "records": 168,
+      "public_records": 114,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "930217E",
+          "fips": "48027"
+        },
+        {
+          "id": "930196N",
+          "fips": "48439"
+        },
+        {
+          "id": "020882A",
+          "fips": "48221"
+        },
+        {
+          "id": "020885V",
+          "fips": "48221"
+        },
+        {
+          "id": "020897P",
+          "fips": "48221"
+        },
+        {
+          "id": "020873B",
+          "fips": "48221"
+        },
+        {
+          "id": "020879S",
+          "fips": "48221"
+        },
+        {
+          "id": "020884N",
+          "fips": "48221"
+        },
+        {
+          "id": "020896H",
+          "fips": "48221"
+        },
+        {
+          "id": "020899D",
+          "fips": "48221"
+        },
+        {
+          "id": "020864C",
+          "fips": "48439"
+        },
+        {
+          "id": "020865J",
+          "fips": "48439"
+        },
+        {
+          "id": "020872U",
+          "fips": "48221"
+        },
+        {
+          "id": "020878K",
+          "fips": "48221"
+        },
+        {
+          "id": "020887J",
+          "fips": "48221"
+        },
+        {
+          "id": "020889X",
+          "fips": "48221"
+        },
+        {
+          "id": "020891Y",
+          "fips": "48221"
+        },
+        {
+          "id": "020898W",
+          "fips": "48221"
+        },
+        {
+          "id": "020861G",
+          "fips": "48439"
+        },
+        {
+          "id": "020901C",
+          "fips": "48221"
+        },
+        {
+          "id": "020902J",
+          "fips": "48221"
+        },
+        {
+          "id": "020903R",
+          "fips": "48221"
+        },
+        {
+          "id": "020867X",
+          "fips": "48367"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "jones-tx",
+      "county_fips": "48253",
+      "package_path": "Crossing-Packages/jones/Production/jones-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 0,
+      "records": 0,
+      "public_records": 0,
+      "state": "ACTIVE_EMPTY",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "karnes-tx",
+      "county_fips": "48255",
+      "package_path": "Crossing-Packages/karnes/Production/karnes-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 0,
+      "records": 0,
+      "public_records": 0,
+      "state": "ACTIVE_EMPTY",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "kaufman-tx",
+      "county_fips": "48257",
+      "package_path": "Crossing-Packages/kaufman/Production/kaufman-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 45,
+      "records": 45,
+      "public_records": 35,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "794806U",
+          "fips": "48113"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "kendall-tx",
+      "county_fips": "48259",
+      "package_path": "Crossing-Packages/kendall/Production/kendall-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 0,
+      "records": 0,
+      "public_records": 0,
+      "state": "ACTIVE_EMPTY",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "kenedy-tx",
+      "county_fips": "48261",
+      "package_path": "Crossing-Packages/kenedy/Production/kenedy-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 22,
+      "records": 22,
+      "public_records": 2,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "kent-tx",
+      "county_fips": "48263",
+      "package_path": "Crossing-Packages/kent/Production/kent-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 0,
+      "records": 0,
+      "public_records": 0,
+      "state": "ACTIVE_EMPTY",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "kerr-tx",
+      "county_fips": "48265",
+      "package_path": "Crossing-Packages/kerr/Production/kerr-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 0,
+      "records": 0,
+      "public_records": 0,
+      "state": "ACTIVE_EMPTY",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "kimble-tx",
+      "county_fips": "48267",
+      "package_path": "Crossing-Packages/kimble/Production/kimble-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 0,
+      "records": 0,
+      "public_records": 0,
+      "state": "ACTIVE_EMPTY",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "king-tx",
+      "county_fips": "48269",
+      "package_path": "Crossing-Packages/king/Production/king-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 0,
+      "records": 0,
+      "public_records": 0,
+      "state": "ACTIVE_EMPTY",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "kinney-tx",
+      "county_fips": "48271",
+      "package_path": "Crossing-Packages/kinney/Production/kinney-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 20,
+      "records": 20,
+      "public_records": 7,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "kleberg-tx",
+      "county_fips": "48273",
+      "package_path": "Crossing-Packages/kleberg/Production/kleberg-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 30,
+      "records": 30,
+      "public_records": 26,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "knox-tx",
+      "county_fips": "48275",
+      "package_path": "Crossing-Packages/knox/Production/knox-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 0,
+      "records": 0,
+      "public_records": 0,
+      "state": "ACTIVE_EMPTY",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "lamar-tx",
+      "county_fips": "48277",
+      "package_path": "Crossing-Packages/lamar/Production/lamar-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 42,
+      "records": 42,
+      "public_records": 32,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "796003U",
+          "fips": "48147"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "lamb-tx",
+      "county_fips": "48279",
+      "package_path": "Crossing-Packages/lamb/Production/lamb-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 29,
+      "records": 29,
+      "public_records": 25,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "017765B",
+          "fips": "48445"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "lampasas-tx",
+      "county_fips": "48281",
+      "package_path": "Crossing-Packages/lampasas/Production/lampasas-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 41,
+      "records": 41,
+      "public_records": 21,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "la-salle-tx",
+      "county_fips": "48283",
+      "package_path": "Crossing-Packages/la-salle/Production/la-salle-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 43,
+      "records": 43,
+      "public_records": 22,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "448972K",
+          "fips": "48163"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "lavaca-tx",
+      "county_fips": "48285",
+      "package_path": "Crossing-Packages/lavaca/Production/lavaca-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 40,
+      "records": 40,
+      "public_records": 31,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "764992R",
+          "fips": "48123"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "lee-tx",
+      "county_fips": "48287",
+      "package_path": "Crossing-Packages/lee/Production/lee-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 47,
+      "records": 47,
+      "public_records": 26,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "leon-tx",
+      "county_fips": "48289",
+      "package_path": "Crossing-Packages/leon/Production/leon-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 82,
+      "records": 82,
+      "public_records": 46,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "597155S",
+          "fips": "48313"
+        },
+        {
+          "id": "598242Y",
+          "fips": "48161"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "liberty-tx",
+      "county_fips": "48291",
+      "package_path": "Crossing-Packages/liberty/Production/liberty-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 115,
+      "records": 115,
+      "public_records": 79,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "limestone-tx",
+      "county_fips": "48293",
+      "package_path": "Crossing-Packages/limestone/Production/limestone-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 45,
+      "records": 45,
+      "public_records": 32,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "lipscomb-tx",
+      "county_fips": "48295",
+      "package_path": "Crossing-Packages/lipscomb/Production/lipscomb-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 21,
+      "records": 21,
+      "public_records": 1,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "live-oak-tx",
+      "county_fips": "48297",
+      "package_path": "Crossing-Packages/live-oak/Production/live-oak-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 56,
+      "records": 56,
+      "public_records": 24,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "435613G",
+          "fips": "48409"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "llano-tx",
+      "county_fips": "48299",
+      "package_path": "Crossing-Packages/llano/Production/llano-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 13,
+      "records": 13,
+      "public_records": 5,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "loving-tx",
+      "county_fips": "48301",
+      "package_path": "Crossing-Packages/loving/Production/loving-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 0,
+      "records": 0,
+      "public_records": 0,
+      "state": "ACTIVE_EMPTY",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "lubbock-tx",
+      "county_fips": "48303",
+      "package_path": "Crossing-Packages/lubbock/Production/lubbock-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 173,
+      "records": 173,
+      "public_records": 151,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "019606B",
+          "fips": "48141"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "lynn-tx",
+      "county_fips": "48305",
+      "package_path": "Crossing-Packages/lynn/Production/lynn-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 0,
+      "records": 0,
+      "public_records": 0,
+      "state": "ACTIVE_EMPTY",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "mcculloch-tx",
+      "county_fips": "48307",
+      "package_path": "Crossing-Packages/mcculloch/Production/mcculloch-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 34,
+      "records": 34,
+      "public_records": 15,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "mclennan-tx",
+      "county_fips": "48309",
+      "package_path": "Crossing-Packages/mclennan/Production/mclennan-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 169,
+      "records": 169,
+      "public_records": 141,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "023081S",
+          "fips": "48035"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "mcmullen-tx",
+      "county_fips": "48311",
+      "package_path": "Crossing-Packages/mcmullen/Production/mcmullen-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 0,
+      "records": 0,
+      "public_records": 0,
+      "state": "ACTIVE_EMPTY",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "madison-tx",
+      "county_fips": "48313",
+      "package_path": "Crossing-Packages/madison/Production/madison-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 16,
+      "records": 16,
+      "public_records": 11,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "marion-tx",
+      "county_fips": "48315",
+      "package_path": "Crossing-Packages/marion/Production/marion-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 44,
+      "records": 44,
+      "public_records": 37,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "martin-tx",
+      "county_fips": "48317",
+      "package_path": "Crossing-Packages/martin/Production/martin-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 12,
+      "records": 12,
+      "public_records": 10,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "mason-tx",
+      "county_fips": "48319",
+      "package_path": "Crossing-Packages/mason/Production/mason-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 0,
+      "records": 0,
+      "public_records": 0,
+      "state": "ACTIVE_EMPTY",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "matagorda-tx",
+      "county_fips": "48321",
+      "package_path": "Crossing-Packages/matagorda/Production/matagorda-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 80,
+      "records": 80,
+      "public_records": 52,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "maverick-tx",
+      "county_fips": "48323",
+      "package_path": "Crossing-Packages/maverick/Production/maverick-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 26,
+      "records": 26,
+      "public_records": 12,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "medina-tx",
+      "county_fips": "48325",
+      "package_path": "Crossing-Packages/medina/Production/medina-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 72,
+      "records": 72,
+      "public_records": 45,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "427943S",
+          "fips": "48013"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "menard-tx",
+      "county_fips": "48327",
+      "package_path": "Crossing-Packages/menard/Production/menard-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 0,
+      "records": 0,
+      "public_records": 0,
+      "state": "ACTIVE_EMPTY",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "midland-tx",
+      "county_fips": "48329",
+      "package_path": "Crossing-Packages/midland/Production/midland-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 35,
+      "records": 35,
+      "public_records": 35,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "795389R",
+          "fips": "48135"
+        },
+        {
+          "id": "796300M",
+          "fips": "48135"
+        },
+        {
+          "id": "796302B",
+          "fips": "48135"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "milam-tx",
+      "county_fips": "48331",
+      "package_path": "Crossing-Packages/milam/Production/milam-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 109,
+      "records": 109,
+      "public_records": 74,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "021032N",
+          "fips": "48049"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "mills-tx",
+      "county_fips": "48333",
+      "package_path": "Crossing-Packages/mills/Production/mills-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 50,
+      "records": 50,
+      "public_records": 15,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "024744A",
+          "fips": "48411"
+        },
+        {
+          "id": "024734U",
+          "fips": "48411"
+        },
+        {
+          "id": "024733M",
+          "fips": "48411"
+        },
+        {
+          "id": "024740X",
+          "fips": "48411"
+        },
+        {
+          "id": "024704C",
+          "fips": "48281"
+        },
+        {
+          "id": "024705J",
+          "fips": "48281"
+        },
+        {
+          "id": "024711M",
+          "fips": "48281"
+        },
+        {
+          "id": "024725V",
+          "fips": "48411"
+        },
+        {
+          "id": "024716W",
+          "fips": "48411"
+        },
+        {
+          "id": "024720L",
+          "fips": "48411"
+        },
+        {
+          "id": "024709L",
+          "fips": "48281"
+        },
+        {
+          "id": "024738W",
+          "fips": "48411"
+        },
+        {
+          "id": "024707X",
+          "fips": "48281"
+        },
+        {
+          "id": "024739D",
+          "fips": "48411"
+        },
+        {
+          "id": "024742L",
+          "fips": "48411"
+        },
+        {
+          "id": "024741E",
+          "fips": "48411"
+        },
+        {
+          "id": "024708E",
+          "fips": "48281"
+        },
+        {
+          "id": "024713B",
+          "fips": "48281"
+        },
+        {
+          "id": "024706R",
+          "fips": "48281"
+        },
+        {
+          "id": "024703V",
+          "fips": "48281"
+        },
+        {
+          "id": "024722A",
+          "fips": "48411"
+        },
+        {
+          "id": "024715P",
+          "fips": "48411"
+        },
+        {
+          "id": "024736H",
+          "fips": "48411"
+        },
+        {
+          "id": "024721T",
+          "fips": "48411"
+        },
+        {
+          "id": "024718K",
+          "fips": "48411"
+        },
+        {
+          "id": "024737P",
+          "fips": "48411"
+        },
+        {
+          "id": "024723G",
+          "fips": "48411"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "mitchell-tx",
+      "county_fips": "48335",
+      "package_path": "Crossing-Packages/mitchell/Production/mitchell-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 22,
+      "records": 22,
+      "public_records": 20,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "montague-tx",
+      "county_fips": "48337",
+      "package_path": "Crossing-Packages/montague/Production/montague-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 64,
+      "records": 64,
+      "public_records": 39,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "274702C",
+          "fips": "48077"
+        },
+        {
+          "id": "274705X",
+          "fips": "48077"
+        },
+        {
+          "id": "598470L",
+          "fips": "48497"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "montgomery-tx",
+      "county_fips": "48339",
+      "package_path": "Crossing-Packages/montgomery/Production/montgomery-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 170,
+      "records": 170,
+      "public_records": 128,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "moore-tx",
+      "county_fips": "48341",
+      "package_path": "Crossing-Packages/moore/Production/moore-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 65,
+      "records": 65,
+      "public_records": 30,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "017075A",
+          "fips": "48421"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "morris-tx",
+      "county_fips": "48343",
+      "package_path": "Crossing-Packages/morris/Production/morris-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 39,
+      "records": 39,
+      "public_records": 25,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "motley-tx",
+      "county_fips": "48345",
+      "package_path": "Crossing-Packages/motley/Production/motley-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 0,
+      "records": 0,
+      "public_records": 0,
+      "state": "ACTIVE_EMPTY",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "nacogdoches-tx",
+      "county_fips": "48347",
+      "package_path": "Crossing-Packages/nacogdoches/Production/nacogdoches-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 52,
+      "records": 52,
+      "public_records": 38,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "navarro-tx",
+      "county_fips": "48349",
+      "package_path": "Crossing-Packages/navarro/Production/navarro-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 116,
+      "records": 116,
+      "public_records": 97,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "765414P",
+          "fips": "48161"
+        },
+        {
+          "id": "765412B",
+          "fips": "48161"
+        },
+        {
+          "id": "765415W",
+          "fips": "48161"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "newton-tx",
+      "county_fips": "48351",
+      "package_path": "Crossing-Packages/newton/Production/newton-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 26,
+      "records": 26,
+      "public_records": 13,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "nolan-tx",
+      "county_fips": "48353",
+      "package_path": "Crossing-Packages/nolan/Production/nolan-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 83,
+      "records": 83,
+      "public_records": 53,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "796127M",
+          "fips": "48335"
+        },
+        {
+          "id": "796092N",
+          "fips": "48441"
+        },
+        {
+          "id": "796094C",
+          "fips": "48441"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "nueces-tx",
+      "county_fips": "48355",
+      "package_path": "Crossing-Packages/nueces/Production/nueces-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 196,
+      "records": 196,
+      "public_records": 112,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "427635L",
+          "fips": "48273"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "ochiltree-tx",
+      "county_fips": "48357",
+      "package_path": "Crossing-Packages/ochiltree/Production/ochiltree-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 8,
+      "records": 8,
+      "public_records": 0,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "oldham-tx",
+      "county_fips": "48359",
+      "package_path": "Crossing-Packages/oldham/Production/oldham-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 5,
+      "records": 5,
+      "public_records": 3,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "276482R",
+          "fips": "48205"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "orange-tx",
+      "county_fips": "48361",
+      "package_path": "Crossing-Packages/orange/Production/orange-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 149,
+      "records": 149,
+      "public_records": 80,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "palo-pinto-tx",
+      "county_fips": "48363",
+      "package_path": "Crossing-Packages/palo-pinto/Production/palo-pinto-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 29,
+      "records": 29,
+      "public_records": 16,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "panola-tx",
+      "county_fips": "48365",
+      "package_path": "Crossing-Packages/panola/Production/panola-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 41,
+      "records": 41,
+      "public_records": 31,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "parker-tx",
+      "county_fips": "48367",
+      "package_path": "Crossing-Packages/parker/Production/parker-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 39,
+      "records": 39,
+      "public_records": 21,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "parmer-tx",
+      "county_fips": "48369",
+      "package_path": "Crossing-Packages/parmer/Production/parmer-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 37,
+      "records": 37,
+      "public_records": 31,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "pecos-tx",
+      "county_fips": "48371",
+      "package_path": "Crossing-Packages/pecos/Production/pecos-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 44,
+      "records": 44,
+      "public_records": 16,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "019017L",
+          "fips": "48043"
+        },
+        {
+          "id": "019012C",
+          "fips": "48043"
+        },
+        {
+          "id": "019013J",
+          "fips": "48043"
+        },
+        {
+          "id": "019014R",
+          "fips": "48043"
+        },
+        {
+          "id": "019010N",
+          "fips": "48043"
+        },
+        {
+          "id": "019011V",
+          "fips": "48043"
+        },
+        {
+          "id": "763855F",
+          "fips": "48443"
+        },
+        {
+          "id": "763856M",
+          "fips": "48443"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "polk-tx",
+      "county_fips": "48373",
+      "package_path": "Crossing-Packages/polk/Production/polk-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 64,
+      "records": 64,
+      "public_records": 41,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "potter-tx",
+      "county_fips": "48375",
+      "package_path": "Crossing-Packages/potter/Production/potter-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 125,
+      "records": 125,
+      "public_records": 73,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "016938K",
+          "fips": "48065"
+        },
+        {
+          "id": "016939S",
+          "fips": "48065"
+        },
+        {
+          "id": "017158N",
+          "fips": "48341"
+        },
+        {
+          "id": "017160P",
+          "fips": "48341"
+        },
+        {
+          "id": "014737M",
+          "fips": "48117"
+        },
+        {
+          "id": "014738U",
+          "fips": "48117"
+        },
+        {
+          "id": "276485L",
+          "fips": "48359"
+        },
+        {
+          "id": "276526N",
+          "fips": "48359"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "presidio-tx",
+      "county_fips": "48377",
+      "package_path": "Crossing-Packages/presidio/Production/presidio-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 44,
+      "records": 44,
+      "public_records": 16,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "764217X",
+          "fips": "48243"
+        },
+        {
+          "id": "764216R",
+          "fips": "48243"
+        },
+        {
+          "id": "764202H",
+          "fips": "48043"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "rains-tx",
+      "county_fips": "48379",
+      "package_path": "Crossing-Packages/rains/Production/rains-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 0,
+      "records": 0,
+      "public_records": 0,
+      "state": "ACTIVE_EMPTY",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "randall-tx",
+      "county_fips": "48381",
+      "package_path": "Crossing-Packages/randall/Production/randall-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 45,
+      "records": 45,
+      "public_records": 37,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "reagan-tx",
+      "county_fips": "48383",
+      "package_path": "Crossing-Packages/reagan/Production/reagan-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 22,
+      "records": 22,
+      "public_records": 10,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "018868E",
+          "fips": "48461"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "real-tx",
+      "county_fips": "48385",
+      "package_path": "Crossing-Packages/real/Production/real-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 0,
+      "records": 0,
+      "public_records": 0,
+      "state": "ACTIVE_EMPTY",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "red-river-tx",
+      "county_fips": "48387",
+      "package_path": "Crossing-Packages/red-river/Production/red-river-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 0,
+      "records": 0,
+      "public_records": 0,
+      "state": "ACTIVE_EMPTY",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "reeves-tx",
+      "county_fips": "48389",
+      "package_path": "Crossing-Packages/reeves/Production/reeves-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 67,
+      "records": 67,
+      "public_records": 37,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "973845E",
+          "fips": "48385"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "refugio-tx",
+      "county_fips": "48391",
+      "package_path": "Crossing-Packages/refugio/Production/refugio-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 39,
+      "records": 39,
+      "public_records": 18,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "427537V",
+          "fips": "48469"
+        },
+        {
+          "id": "427539J",
+          "fips": "48469"
+        },
+        {
+          "id": "427540D",
+          "fips": "48469"
+        },
+        {
+          "id": "427541K",
+          "fips": "48469"
+        },
+        {
+          "id": "427544F",
+          "fips": "48469"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "roberts-tx",
+      "county_fips": "48393",
+      "package_path": "Crossing-Packages/roberts/Production/roberts-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 10,
+      "records": 10,
+      "public_records": 2,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "robertson-tx",
+      "county_fips": "48395",
+      "package_path": "Crossing-Packages/robertson/Production/robertson-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 155,
+      "records": 155,
+      "public_records": 91,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "rockwall-tx",
+      "county_fips": "48397",
+      "package_path": "Crossing-Packages/rockwall/Production/rockwall-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 18,
+      "records": 18,
+      "public_records": 14,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "415195N",
+          "fips": "48085"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "runnels-tx",
+      "county_fips": "48399",
+      "package_path": "Crossing-Packages/runnels/Production/runnels-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 48,
+      "records": 48,
+      "public_records": 25,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "021397V",
+          "fips": "48083"
+        },
+        {
+          "id": "021398C",
+          "fips": "48083"
+        },
+        {
+          "id": "021400B",
+          "fips": "48083"
+        },
+        {
+          "id": "021401H",
+          "fips": "48083"
+        },
+        {
+          "id": "021403W",
+          "fips": "48083"
+        },
+        {
+          "id": "021404D",
+          "fips": "48083"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "rusk-tx",
+      "county_fips": "48401",
+      "package_path": "Crossing-Packages/rusk/Production/rusk-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 58,
+      "records": 58,
+      "public_records": 44,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "024017W",
+          "fips": "48365"
+        },
+        {
+          "id": "024015H",
+          "fips": "48365"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "sabine-tx",
+      "county_fips": "48403",
+      "package_path": "Crossing-Packages/sabine/Production/sabine-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 16,
+      "records": 16,
+      "public_records": 11,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "san-augustine-tx",
+      "county_fips": "48405",
+      "package_path": "Crossing-Packages/san-augustine/Production/san-augustine-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 16,
+      "records": 16,
+      "public_records": 15,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "023927P",
+          "fips": "48419"
+        },
+        {
+          "id": "023933T",
+          "fips": "48419"
+        },
+        {
+          "id": "023922F",
+          "fips": "48419"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "san-jacinto-tx",
+      "county_fips": "48407",
+      "package_path": "Crossing-Packages/san-jacinto/Production/san-jacinto-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 12,
+      "records": 12,
+      "public_records": 6,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "san-patricio-tx",
+      "county_fips": "48409",
+      "package_path": "Crossing-Packages/san-patricio/Production/san-patricio-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 135,
+      "records": 135,
+      "public_records": 94,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "921099F",
+          "fips": "48355"
+        },
+        {
+          "id": "921098Y",
+          "fips": "48273"
+        },
+        {
+          "id": "746308F",
+          "fips": "48007"
+        },
+        {
+          "id": "746307Y",
+          "fips": "48007"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "san-saba-tx",
+      "county_fips": "48411",
+      "package_path": "Crossing-Packages/san-saba/Production/san-saba-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 47,
+      "records": 47,
+      "public_records": 26,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "schleicher-tx",
+      "county_fips": "48413",
+      "package_path": "Crossing-Packages/schleicher/Production/schleicher-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 0,
+      "records": 0,
+      "public_records": 0,
+      "state": "ACTIVE_EMPTY",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "scurry-tx",
+      "county_fips": "48415",
+      "package_path": "Crossing-Packages/scurry/Production/scurry-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 37,
+      "records": 37,
+      "public_records": 33,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "018695S",
+          "fips": "48353"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "shackelford-tx",
+      "county_fips": "48417",
+      "package_path": "Crossing-Packages/shackelford/Production/shackelford-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 0,
+      "records": 0,
+      "public_records": 0,
+      "state": "ACTIVE_EMPTY",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "shelby-tx",
+      "county_fips": "48419",
+      "package_path": "Crossing-Packages/shelby/Production/shelby-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 88,
+      "records": 88,
+      "public_records": 56,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "sherman-tx",
+      "county_fips": "48421",
+      "package_path": "Crossing-Packages/sherman/Production/sherman-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 42,
+      "records": 42,
+      "public_records": 31,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "016495B",
+          "fips": "48357"
+        },
+        {
+          "id": "016517Y",
+          "fips": "48195"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "smith-tx",
+      "county_fips": "48423",
+      "package_path": "Crossing-Packages/smith/Production/smith-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 123,
+      "records": 123,
+      "public_records": 107,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "789807R",
+          "fips": "48213"
+        },
+        {
+          "id": "790425S",
+          "fips": "48213"
+        },
+        {
+          "id": "789462X",
+          "fips": "48459"
+        },
+        {
+          "id": "440149C",
+          "fips": "48213"
+        },
+        {
+          "id": "790435X",
+          "fips": "48213"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "somervell-tx",
+      "county_fips": "48425",
+      "package_path": "Crossing-Packages/somervell/Production/somervell-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 1,
+      "records": 1,
+      "public_records": 0,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "starr-tx",
+      "county_fips": "48427",
+      "package_path": "Crossing-Packages/starr/Production/starr-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 28,
+      "records": 28,
+      "public_records": 13,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "stephens-tx",
+      "county_fips": "48429",
+      "package_path": "Crossing-Packages/stephens/Production/stephens-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 1,
+      "records": 1,
+      "public_records": 0,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "sterling-tx",
+      "county_fips": "48431",
+      "package_path": "Crossing-Packages/sterling/Production/sterling-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 0,
+      "records": 0,
+      "public_records": 0,
+      "state": "ACTIVE_EMPTY",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "stonewall-tx",
+      "county_fips": "48433",
+      "package_path": "Crossing-Packages/stonewall/Production/stonewall-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 0,
+      "records": 0,
+      "public_records": 0,
+      "state": "ACTIVE_EMPTY",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "sutton-tx",
+      "county_fips": "48435",
+      "package_path": "Crossing-Packages/sutton/Production/sutton-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 0,
+      "records": 0,
+      "public_records": 0,
+      "state": "ACTIVE_EMPTY",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "swisher-tx",
+      "county_fips": "48437",
+      "package_path": "Crossing-Packages/swisher/Production/swisher-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 45,
+      "records": 45,
+      "public_records": 37,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "017434N",
+          "fips": "48189"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "tarrant-tx",
+      "county_fips": "48439",
+      "package_path": "Crossing-Packages/tarrant/Production/tarrant-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 615,
+      "records": 615,
+      "public_records": 528,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "795425J",
+          "fips": "48121"
+        },
+        {
+          "id": "930203W",
+          "fips": "48121"
+        },
+        {
+          "id": "967410W",
+          "fips": "48121"
+        },
+        {
+          "id": "021550J",
+          "fips": "48251"
+        },
+        {
+          "id": "021561W",
+          "fips": "48251"
+        },
+        {
+          "id": "274639M",
+          "fips": "48497"
+        },
+        {
+          "id": "021563K",
+          "fips": "48251"
+        },
+        {
+          "id": "848970B",
+          "fips": "48113"
+        },
+        {
+          "id": "795393F",
+          "fips": "48121"
+        },
+        {
+          "id": "598303M",
+          "fips": "48497"
+        },
+        {
+          "id": "839211T",
+          "fips": "48367"
+        },
+        {
+          "id": "274638F",
+          "fips": "48497"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "taylor-tx",
+      "county_fips": "48441",
+      "package_path": "Crossing-Packages/taylor/Production/taylor-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 106,
+      "records": 106,
+      "public_records": 95,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "terrell-tx",
+      "county_fips": "48443",
+      "package_path": "Crossing-Packages/terrell/Production/terrell-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 27,
+      "records": 27,
+      "public_records": 4,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "763872W",
+          "fips": "48465"
+        },
+        {
+          "id": "763870H",
+          "fips": "48465"
+        },
+        {
+          "id": "763873D",
+          "fips": "48465"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "terry-tx",
+      "county_fips": "48445",
+      "package_path": "Crossing-Packages/terry/Production/terry-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 46,
+      "records": 46,
+      "public_records": 35,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "017652V",
+          "fips": "48219"
+        },
+        {
+          "id": "017637T",
+          "fips": "48219"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "throckmorton-tx",
+      "county_fips": "48447",
+      "package_path": "Crossing-Packages/throckmorton/Production/throckmorton-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 0,
+      "records": 0,
+      "public_records": 0,
+      "state": "ACTIVE_EMPTY",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "titus-tx",
+      "county_fips": "48449",
+      "package_path": "Crossing-Packages/titus/Production/titus-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 63,
+      "records": 63,
+      "public_records": 41,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "789388V",
+          "fips": "48223"
+        },
+        {
+          "id": "789387N",
+          "fips": "48223"
+        },
+        {
+          "id": "789391D",
+          "fips": "48223"
+        },
+        {
+          "id": "789398B",
+          "fips": "48223"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "tom-green-tx",
+      "county_fips": "48451",
+      "package_path": "Crossing-Packages/tom-green/Production/tom-green-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 97,
+      "records": 97,
+      "public_records": 64,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "021391E",
+          "fips": "48083"
+        },
+        {
+          "id": "018791U",
+          "fips": "48235"
+        },
+        {
+          "id": "021392L",
+          "fips": "48083"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "travis-tx",
+      "county_fips": "48453",
+      "package_path": "Crossing-Packages/travis/Production/travis-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 176,
+      "records": 176,
+      "public_records": 144,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "744811E",
+          "fips": "48491"
+        },
+        {
+          "id": "745304A",
+          "fips": "48299"
+        },
+        {
+          "id": "744798T",
+          "fips": "48053"
+        },
+        {
+          "id": "930572T",
+          "fips": "48491"
+        },
+        {
+          "id": "930573A",
+          "fips": "48491"
+        },
+        {
+          "id": "930565H",
+          "fips": "48491"
+        },
+        {
+          "id": "416276S",
+          "fips": "48021"
+        },
+        {
+          "id": "416277Y",
+          "fips": "48021"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "trinity-tx",
+      "county_fips": "48455",
+      "package_path": "Crossing-Packages/trinity/Production/trinity-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 13,
+      "records": 13,
+      "public_records": 9,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "tyler-tx",
+      "county_fips": "48457",
+      "package_path": "Crossing-Packages/tyler/Production/tyler-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 0,
+      "records": 0,
+      "public_records": 0,
+      "state": "ACTIVE_EMPTY",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "upshur-tx",
+      "county_fips": "48459",
+      "package_path": "Crossing-Packages/upshur/Production/upshur-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 43,
+      "records": 43,
+      "public_records": 34,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "upton-tx",
+      "county_fips": "48461",
+      "package_path": "Crossing-Packages/upton/Production/upton-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 22,
+      "records": 22,
+      "public_records": 12,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "864587C",
+          "fips": "48475"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "uvalde-tx",
+      "county_fips": "48463",
+      "package_path": "Crossing-Packages/uvalde/Production/uvalde-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 44,
+      "records": 44,
+      "public_records": 24,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "val-verde-tx",
+      "county_fips": "48465",
+      "package_path": "Crossing-Packages/val-verde/Production/val-verde-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 47,
+      "records": 47,
+      "public_records": 20,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "van-zandt-tx",
+      "county_fips": "48467",
+      "package_path": "Crossing-Packages/van-zandt/Production/van-zandt-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 29,
+      "records": 29,
+      "public_records": 27,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "victoria-tx",
+      "county_fips": "48469",
+      "package_path": "Crossing-Packages/victoria/Production/victoria-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 194,
+      "records": 194,
+      "public_records": 128,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "walker-tx",
+      "county_fips": "48471",
+      "package_path": "Crossing-Packages/walker/Production/walker-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 36,
+      "records": 36,
+      "public_records": 27,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "waller-tx",
+      "county_fips": "48473",
+      "package_path": "Crossing-Packages/waller/Production/waller-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 46,
+      "records": 46,
+      "public_records": 37,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "ward-tx",
+      "county_fips": "48475",
+      "package_path": "Crossing-Packages/ward/Production/ward-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 23,
+      "records": 23,
+      "public_records": 17,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "796256C",
+          "fips": "48389"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "washington-tx",
+      "county_fips": "48477",
+      "package_path": "Crossing-Packages/washington/Production/washington-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 44,
+      "records": 44,
+      "public_records": 38,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "021041M",
+          "fips": "48049"
+        },
+        {
+          "id": "021042U",
+          "fips": "48049"
+        },
+        {
+          "id": "021043B",
+          "fips": "48049"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "webb-tx",
+      "county_fips": "48479",
+      "package_path": "Crossing-Packages/webb/Production/webb-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 164,
+      "records": 164,
+      "public_records": 108,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "446671H",
+          "fips": "48283"
+        },
+        {
+          "id": "446672P",
+          "fips": "48283"
+        },
+        {
+          "id": "446677Y",
+          "fips": "48283"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "wharton-tx",
+      "county_fips": "48481",
+      "package_path": "Crossing-Packages/wharton/Production/wharton-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 72,
+      "records": 72,
+      "public_records": 54,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "wheeler-tx",
+      "county_fips": "48483",
+      "package_path": "Crossing-Packages/wheeler/Production/wheeler-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 0,
+      "records": 0,
+      "public_records": 0,
+      "state": "ACTIVE_EMPTY",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "wichita-tx",
+      "county_fips": "48485",
+      "package_path": "Crossing-Packages/wichita/Production/wichita-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 118,
+      "records": 118,
+      "public_records": 84,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "wilbarger-tx",
+      "county_fips": "48487",
+      "package_path": "Crossing-Packages/wilbarger/Production/wilbarger-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 42,
+      "records": 42,
+      "public_records": 30,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "274941C",
+          "fips": "48485"
+        },
+        {
+          "id": "275161F",
+          "fips": "48197"
+        },
+        {
+          "id": "275162M",
+          "fips": "48197"
+        },
+        {
+          "id": "275163U",
+          "fips": "48197"
+        },
+        {
+          "id": "275166P",
+          "fips": "48077"
+        },
+        {
+          "id": "275165H",
+          "fips": "48197"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "willacy-tx",
+      "county_fips": "48489",
+      "package_path": "Crossing-Packages/willacy/Production/willacy-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 43,
+      "records": 43,
+      "public_records": 37,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "williamson-tx",
+      "county_fips": "48491",
+      "package_path": "Crossing-Packages/williamson/Production/williamson-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 166,
+      "records": 166,
+      "public_records": 116,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "765664C",
+          "fips": "48453"
+        },
+        {
+          "id": "765665J",
+          "fips": "48453"
+        },
+        {
+          "id": "925947T",
+          "fips": "48453"
+        },
+        {
+          "id": "446549R",
+          "fips": "48331"
+        },
+        {
+          "id": "446550K",
+          "fips": "48331"
+        },
+        {
+          "id": "416273W",
+          "fips": "48021"
+        },
+        {
+          "id": "435964F",
+          "fips": "48453"
+        },
+        {
+          "id": "439696L",
+          "fips": "48453"
+        },
+        {
+          "id": "416230D",
+          "fips": "48027"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "wilson-tx",
+      "county_fips": "48493",
+      "package_path": "Crossing-Packages/wilson/Production/wilson-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 2,
+      "records": 2,
+      "public_records": 1,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "winkler-tx",
+      "county_fips": "48495",
+      "package_path": "Crossing-Packages/winkler/Production/winkler-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 21,
+      "records": 21,
+      "public_records": 11,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "wise-tx",
+      "county_fips": "48497",
+      "package_path": "Crossing-Packages/wise/Production/wise-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 100,
+      "records": 100,
+      "public_records": 63,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [
+        {
+          "id": "275048M",
+          "fips": "48337"
+        },
+        {
+          "id": "275049U",
+          "fips": "48337"
+        },
+        {
+          "id": "275050N",
+          "fips": "48337"
+        }
+      ],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "wood-tx",
+      "county_fips": "48499",
+      "package_path": "Crossing-Packages/wood/Production/wood-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 37,
+      "records": 37,
+      "public_records": 25,
+      "state": "ACTIVE_POSITIVE",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "yoakum-tx",
+      "county_fips": "48501",
+      "package_path": "Crossing-Packages/yoakum/Production/yoakum-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 0,
+      "records": 0,
+      "public_records": 0,
+      "state": "ACTIVE_EMPTY",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "young-tx",
+      "county_fips": "48503",
+      "package_path": "Crossing-Packages/young/Production/young-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 0,
+      "records": 0,
+      "public_records": 0,
+      "state": "ACTIVE_EMPTY",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "zapata-tx",
+      "county_fips": "48505",
+      "package_path": "Crossing-Packages/zapata/Production/zapata-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 0,
+      "records": 0,
+      "public_records": 0,
+      "state": "ACTIVE_EMPTY",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    },
+    {
+      "county_id": "zavala-tx",
+      "county_fips": "48507",
+      "package_path": "Crossing-Packages/zavala/Production/zavala-production-crossings.geojson",
+      "manifest_status": "PASS",
+      "declared": 0,
+      "records": 0,
+      "public_records": 0,
+      "state": "ACTIVE_EMPTY",
+      "ids_unique": true,
+      "source_fips_differences": [],
+      "geographicOwnershipMismatches": [],
+      "pass": true
+    }
+  ],
+  "totalRecords": 16099,
+  "duplicates": []
+}

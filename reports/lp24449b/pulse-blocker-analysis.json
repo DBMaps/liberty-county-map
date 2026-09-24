@@ -1,0 +1,214 @@
+{
+  "decision": "HOLD",
+  "classification": "E/H candidate: stale retained candidate/shared publication defect; upstream candidate origin and safe repair are not yet unambiguously established.",
+  "currentFindings": [
+    {
+      "code": "PULSE_PUBLISHED_COUNT_STALE_AFTER_CLEAR",
+      "county_id": "montgomery-tx",
+      "place_geoid": "4816432",
+      "community": "Conroe",
+      "evidence": "pulse-statewide.json",
+      "checks": {
+        "active": true,
+        "activeRows": true,
+        "clearPublication": false,
+        "clearRows": true,
+        "clearMarkers": true,
+        "truthful": true
+      },
+      "immediateCount": 1,
+      "settledCount": 1,
+      "visible": {
+        "headline": "Stay aware while traveling.",
+        "subline": "No active issues currently shown. Some sources are currently unavailable · Checked just now.",
+        "location": "No active issues currently shown"
+      },
+      "groupedCount": 0,
+      "markerCount": 0,
+      "governedConsumerRows": {
+        "locationContext": 0,
+        "communityPulse": 0,
+        "alerts": 0,
+        "kbygCommunity": 0,
+        "kbygOfficialRoadways": 0,
+        "map": 0,
+        "popup": 0,
+        "history": 0
+      },
+      "writerDiagnostic": null
+    },
+    {
+      "code": "PULSE_PUBLISHED_COUNT_STALE_AFTER_CLEAR",
+      "county_id": "montague-tx",
+      "place_geoid": "4809640",
+      "community": "Bowie",
+      "evidence": "pulse-sequence-diagnostic.json",
+      "checks": {
+        "active": true,
+        "activeRows": true,
+        "clearPublication": false,
+        "clearRows": true,
+        "clearMarkers": true,
+        "truthful": true
+      },
+      "immediateCount": 1,
+      "settledCount": 1,
+      "visible": {
+        "headline": "Stay aware while traveling.",
+        "subline": "No active issues currently shown. Some sources are currently unavailable · Checked just now.",
+        "location": "No active issues currently shown"
+      },
+      "groupedCount": 0,
+      "markerCount": 0,
+      "governedConsumerRows": {
+        "locationContext": 0,
+        "communityPulse": 0,
+        "alerts": 0,
+        "kbygCommunity": 0,
+        "kbygOfficialRoadways": 0,
+        "map": 0,
+        "popup": 0,
+        "history": 0
+      },
+      "timing": [
+        {
+          "ms": 100,
+          "count": 1
+        },
+        {
+          "ms": 250,
+          "count": 1
+        },
+        {
+          "ms": 500,
+          "count": 1
+        },
+        {
+          "ms": 1000,
+          "count": 1
+        },
+        {
+          "ms": 2000,
+          "count": 1
+        }
+      ],
+      "writerDiagnostic": null
+    },
+    {
+      "code": "PULSE_PUBLISHED_COUNT_STALE_AFTER_CLEAR",
+      "county_id": "bexar-tx",
+      "place_geoid": "4801600",
+      "community": "Alamo Heights",
+      "evidence": "pulse-writer-diagnostic.json",
+      "checks": {
+        "active": true,
+        "activeRows": true,
+        "clearPublication": false,
+        "clearRows": true,
+        "clearMarkers": true,
+        "truthful": true
+      },
+      "immediateCount": 1,
+      "settledCount": 1,
+      "visible": {
+        "headline": "Stay aware while traveling.",
+        "subline": "No active issues currently shown. Some sources are currently unavailable · Checked just now.",
+        "location": "No active issues currently shown"
+      },
+      "groupedCount": 0,
+      "markerCount": 0,
+      "governedConsumerRows": {
+        "locationContext": 0,
+        "communityPulse": 0,
+        "alerts": 0,
+        "kbygCommunity": 0,
+        "kbygOfficialRoadways": 0,
+        "map": 0,
+        "popup": 0,
+        "history": 0
+      },
+      "writerDiagnostic": {
+        "trace": [
+          {
+            "count": 1,
+            "resultCount": 1,
+            "summaryCount": 1,
+            "summaryContract": 1,
+            "resultSummary": 1,
+            "resultContract": 1,
+            "hazards": 0,
+            "grouped": 0,
+            "reused": false,
+            "stack": "Error\n    at publishGridlyCommunityPulseAuditState (eval at evaluate (:291:30), <anonymous>:1:817)\n    at refreshGridlyCommunityPulseSharedModel (http://127.0.0.1:57714/js/app.js?v=lp24448-awareness:67643:3)\n    at http://127.0.0.1:57714/js/app.js?v=lp24448-awareness:56643:70\n    at timeRefreshChild (http://127.0.0.1:57714/js/app.js?v=lp24448-awareness:56636:7)\n    at refreshReportHazardViews (http://127.0.0.1:57714/js/app.js?v=lp24448-awareness:56643:5)\n    at publish (http://127.0.0.1:57714/js/app.js?v=lp24448-awareness:130714:5)\n    at Object.clearOne (http://127.0.0.1:57714/js/app.js?v=lp24448-awareness:130776:5)\n    at eval (eval at evaluate (:291:30), <anonymous>:1:1363)\n    at async <anonymous>:317:30"
+          },
+          {
+            "count": 1,
+            "resultCount": 1,
+            "summaryCount": 1,
+            "summaryContract": 1,
+            "resultSummary": 1,
+            "resultContract": 1,
+            "hazards": 0,
+            "grouped": 0,
+            "reused": true,
+            "stack": "Error\n    at publishGridlyCommunityPulseAuditState (eval at evaluate (:291:30), <anonymous>:1:817)\n    at refreshGridlyCommunityPulseSharedModel (http://127.0.0.1:57714/js/app.js?v=lp24448-awareness:67643:3)\n    at refreshPortraitV2LocalizedIntelligence (http://127.0.0.1:57714/js/app.js?v=lp24448-awareness:115589:73)\n    at http://127.0.0.1:57714/js/app.js?v=lp24448-awareness:56644:70\n    at timeRefreshChild (http://127.0.0.1:57714/js/app.js?v=lp24448-awareness:56636:7)\n    at refreshReportHazardViews (http://127.0.0.1:57714/js/app.js?v=lp24448-awareness:56644:5)\n    at publish (http://127.0.0.1:57714/js/app.js?v=lp24448-awareness:130714:5)\n    at Object.clearOne (http://127.0.0.1:57714/js/app.js?v=lp24448-awareness:130776:5)\n    at eval (eval at evaluate (:291:30), <anonymous>:1:1363)\n    at async <anonymous>:317:30"
+          },
+          {
+            "count": 1,
+            "resultCount": 1,
+            "summaryCount": 1,
+            "summaryContract": 1,
+            "resultSummary": 1,
+            "resultContract": 1,
+            "hazards": 0,
+            "grouped": 0,
+            "reused": true,
+            "stack": "Error\n    at publishGridlyCommunityPulseAuditState (eval at evaluate (:291:30), <anonymous>:1:817)\n    at http://127.0.0.1:57714/js/app.js?v=lp24448-awareness:115680:5\n    at timeGridlyAuditSection (http://127.0.0.1:57714/js/app.js?v=lp24448-awareness:27105:18)\n    at refreshPortraitV2LocalizedIntelligence (http://127.0.0.1:57714/js/app.js?v=lp24448-awareness:115647:3)\n    at http://127.0.0.1:57714/js/app.js?v=lp24448-awareness:56644:70\n    at timeRefreshChild (http://127.0.0.1:57714/js/app.js?v=lp24448-awareness:56636:7)\n    at refreshReportHazardViews (http://127.0.0.1:57714/js/app.js?v=lp24448-awareness:56644:5)\n    at publish (http://127.0.0.1:57714/js/app.js?v=lp24448-awareness:130714:5)\n    at Object.clearOne (http://127.0.0.1:57714/js/app.js?v=lp24448-awareness:130776:5)\n    at eval (eval at evaluate (:291:30), <anonymous>:1:1363)"
+          }
+        ],
+        "freshCount": 1,
+        "freshSummary": 1,
+        "freshContract": 1,
+        "cacheCount": 1,
+        "lightweight": 1
+      }
+    }
+  ],
+  "runs": [
+    {
+      "file": "pulse-statewide.json",
+      "count": 254,
+      "passed": 253,
+      "failed": 1
+    },
+    {
+      "file": "pulse-sequence-diagnostic.json",
+      "count": 254,
+      "passed": 253,
+      "failed": 1
+    },
+    {
+      "file": "pulse-writer-diagnostic.json",
+      "count": 254,
+      "passed": 253,
+      "failed": 1
+    }
+  ],
+  "isolated": {
+    "completed": 5,
+    "converged": 5,
+    "execution": {
+      "planned": 30,
+      "completed": 5,
+      "stoppedAfterCompletedCases": true,
+      "reason": "Bounded five isolated reruns all converged; full statewide sequence diagnostic takes priority. Not a completed 30-case suite."
+    }
+  },
+  "observed": "Primary run: Conroe. Independent timed sequence: Bowie, count 1 through 2000 ms. Writer-instrumented sequence: Alamo Heights, newly built lightweight/Pulse model and shared summary all retain count 1 while raw hazards, grouped incidents, governed consumer rows and markers are empty. Visible Pulse/Location copy is cleared.",
+  "firstDivergence": "refreshReportHazardViews -> refreshGridlyCommunityPulseSharedModel -> buildGridlyCommunityPulseModel/buildGridlyLightweightActiveAwareness -> published activeAwareness count; subsequent shared-model reuse republishes the stale count.",
+  "unknown": "The stale candidate provenance and minimum correction preserving retained active reports during unavailable/loading providers remain unproven. No claim that the old ten observations were merely test/timing artifacts.",
+  "repairPerformed": false,
+  "reasonNotPatched": "User requires unambiguous Pulse RCA before a product patch. Broad invalidation or overriding counts would risk masking active evidence and is not justified by these traces.",
+  "originalWitnesses": "Ten original baseline and repaired-source isolated/timed replays converge. Their closure classification remains STILL_FAIL because the same family reproduces in statewide sequence; replay observation success is reported separately.",
+  "noCommit": true
+}

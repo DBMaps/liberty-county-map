@@ -1,0 +1,23 @@
+{
+  "file": "js/app.js",
+  "startingSha256": "857dc05e8f12786ace4ccded59e7ed582e3438da3f76d65f2fb4d579af6ceb91",
+  "finalSha256": "f57fac7440ad6ad9bf230e1f41cffeefb7f22405c0a58b696e48bba3ce0ed0cd",
+  "edits": [
+    {
+      "old": "function isGridlyCachedAwarenessSummaryForCurrentArea(summary = {}) {",
+      "next": "function isGridlyCachedAwarenessSummaryForCurrentArea(summary = {}) {\n  // Same place does not mean the same active community conditions. A provider\n  // publication captured before clear must not reintroduce its former rows.\n  if (summary.canonicalCommunityRevision && summary.canonicalCommunityRevision !== gridlyGetCanonicalActiveCommunityState().revision) return false;"
+    },
+    {
+      "old": "  return {\n    selectedAwarenessArea: getGridlyAwarenessAreaDebugOption(selectedArea),\n    awarenessAreaName,",
+      "next": "  return {\n    canonicalCommunityRevision: typeof gridlyGetCanonicalActiveCommunityState === \"function\" ? gridlyGetCanonicalActiveCommunityState({ selectedArea }).revision : null,\n    selectedAwarenessArea: getGridlyAwarenessAreaDebugOption(selectedArea),\n    awarenessAreaName,"
+    },
+    {
+      "old": "  const proposedSummary = gridlyLastAuthoritativeCommunityAwarenessSummary || normalizedPatch.communityAwarenessSummary || publisherAuthoritativeSummary;",
+      "next": "  const summaryCandidates = [gridlyLastAuthoritativeCommunityAwarenessSummary, normalizedPatch.communityAwarenessSummary, publisherAuthoritativeSummary];\n  const proposedSummary = summaryCandidates.find((summary) => summary && (!summary.canonicalCommunityRevision || summary.canonicalCommunityRevision === gridlyGetCanonicalActiveCommunityState().revision))\n    || (normalizedPatch.communityAwarenessSummary ? buildGridlyCommunityAwarenessIntelligenceSummary() : null);"
+    },
+    {
+      "old": "function gridlyPublishAuthoritativeCommunityAwarenessSummary(summary, publication = {}) {\n  if (!summary || typeof summary !== \"object\") return null;",
+      "next": "function gridlyPublishAuthoritativeCommunityAwarenessSummary(summary, publication = {}) {\n  if (!summary || typeof summary !== \"object\") return null;\n  if (summary.canonicalCommunityRevision && summary.canonicalCommunityRevision !== gridlyGetCanonicalActiveCommunityState().revision) {\n    summary = buildGridlyCommunityAwarenessIntelligenceSummary();\n  }"
+    }
+  ]
+}

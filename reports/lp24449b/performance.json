@@ -1,0 +1,124 @@
+{
+  "startedAt": "2026-09-24T15:43:53.995Z",
+  "generatedAt": "2026-09-24T19:14:54.580Z",
+  "elapsedWallMs": 12660586,
+  "concurrencyLimit": 2,
+  "completedBrowserScenarioCount": 3619,
+  "scenarioDefinition": "Completed suite transactions or explicitly captured controlled states, itemized in browserScenarioComponents. A Home save/reload/Return transaction counts once. Exploratory provider pilots, retries and incidental subchecks are excluded; persisted attempts are separately reported. The two full Pulse diagnostics and five isolated traces are counted separately in diagnosticBrowserScenarioCount and included in totalBrowserScenarioCount.",
+  "assertionExecutions": 60156,
+  "assertionDefinition": "Named static, Home, Search, crossing, Pulse and provider checks. Test-runner and visual subchecks are reported separately.",
+  "summedHomeAndSearchMs": 17248528,
+  "slowestMembership": {
+    "suite": "Home",
+    "county": "harris-tx",
+    "place": "4867688",
+    "runtimeMs": 228953
+  },
+  "slowestCounty": {
+    "county": "harris-tx",
+    "totalMs": 5903454
+  },
+  "timeouts": [],
+  "retries": "JSONL checkpoints retain attempts; final report chooses the latest final-source membership record.",
+  "attempts": {
+    "scope": "Persisted Home, Search and statewide Pulse JSONL attempts. Exploratory provider pilots and visual suite invocations are separate logs, not membership retries.",
+    "files": [
+      "home-progress-0.jsonl",
+      "home-progress-1.jsonl",
+      "pulse-statewide-progress.jsonl",
+      "search-progress.jsonl"
+    ],
+    "recordedAttempts": 3106,
+    "finalAppSourceAttempts": 3106,
+    "otherAppSourceAttempts": 0,
+    "uniqueFinalSourceCases": 3105,
+    "retriedCases": 1,
+    "extraAttempts": 1,
+    "repeated": [
+      {
+        "suite": "Home",
+        "county": "harris-tx",
+        "place": "4877956",
+        "attempts": [
+          {
+            "file": "home-progress-0.jsonl",
+            "startedAt": "2026-09-24T17:12:21.725Z",
+            "pass": true,
+            "runtimeMs": 294078
+          },
+          {
+            "file": "home-progress-0.jsonl",
+            "startedAt": "2026-09-24T18:32:42.527Z",
+            "pass": true,
+            "runtimeMs": 186406
+          }
+        ]
+      }
+    ],
+    "failedAttempts": [
+      {
+        "file": "pulse-statewide-progress.jsonl",
+        "county": "montgomery-tx",
+        "place": "4816432",
+        "checks": {
+          "active": true,
+          "activeRows": true,
+          "clearPublication": false,
+          "clearRows": true,
+          "clearMarkers": true,
+          "truthful": true
+        }
+      }
+    ],
+    "timeoutAttempts": []
+  },
+  "browserScenarioComponents": {
+    "Home": 793,
+    "Search": 2058,
+    "crossCounty": 254,
+    "startupProfiles": 19,
+    "visibleSearch": 67,
+    "NuecesOriginalWitnesses": 17,
+    "providerMatrix": 10,
+    "originalPulseBaseline": 10,
+    "originalPulseCurrent": 10,
+    "PulseCountyRepresentatives": 254,
+    "filterLifecycle": 6,
+    "railStates": 5,
+    "AroundMeMessages": 20,
+    "routeDetailsThemes": 2,
+    "closeControls": 4,
+    "threeHazardStates": 3,
+    "SettingsChoicesAndReloads": 39,
+    "SettingsViewports": 12,
+    "SettingsFreshDefault": 1,
+    "geometryStates": 23,
+    "SavedPlacesViewports": 4,
+    "HomeReadComparisons": 2,
+    "textSizeComparisons": 2,
+    "historicalClearComparisons": 2,
+    "AransasBaselineAndCurrent": 2
+  },
+  "diagnosticBrowserScenarioCount": 513,
+  "totalBrowserScenarioCount": 4132,
+  "pulseDiagnosticRuns": [
+    {
+      "file": "pulse-statewide.json",
+      "count": 254,
+      "passed": 253,
+      "failed": 1
+    },
+    {
+      "file": "pulse-sequence-diagnostic.json",
+      "count": 254,
+      "passed": 253,
+      "failed": 1
+    },
+    {
+      "file": "pulse-writer-diagnostic.json",
+      "count": 254,
+      "passed": 253,
+      "failed": 1
+    }
+  ]
+}

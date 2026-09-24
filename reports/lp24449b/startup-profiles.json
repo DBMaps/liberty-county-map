@@ -1,0 +1,1145 @@
+[
+  {
+    "name": "empty",
+    "profile": {},
+    "expected": null,
+    "sourceHash": "857dc05e8f12786ace4ccded59e7ed582e3438da3f76d65f2fb4d579af6ceb91",
+    "result": {
+      "identity": {
+        "probeVersion": 3,
+        "type": "NONE",
+        "place": null,
+        "name": "Choose a location",
+        "county": null,
+        "lat": null,
+        "lng": null,
+        "generation": 0,
+        "health": "UNAVAILABLE",
+        "expiresAt": null,
+        "startupProviderFocus": null
+      },
+      "weather": null,
+      "search": [
+        "4827300"
+      ],
+      "bytes": {
+        "gridlyHomePersonalizationV1": null,
+        "gridlyHomeTown": null,
+        "gridlySettingsV1": "{\"notifications\":{\"routeAlerts\":true,\"railAlerts\":true,\"hazardAlerts\":true,\"communityAlerts\":false},\"display\":{\"mapStyle\":\"standard\",\"theme\":\"system\",\"textSize\":\"large\"},\"personalization\":{\"preferredName\":\"\"},\"community\":{\"homeTown\":\"\",\"awarenessArea\":\"\",\"awarenessAreaKey\":\"\",\"countyId\":\"liberty-tx\"}}",
+        "gridlyUserProfileV1": null,
+        "gridlySavedPlacesV1": null
+      },
+      "chooser": false
+    },
+    "checks": {
+      "identity": true,
+      "canonicalCoordinates": true,
+      "searchUsable": true,
+      "startupNoErrors": true,
+      "savedPlacesPreserved": true
+    },
+    "pass": true,
+    "errors": []
+  },
+  {
+    "name": "canonical-single",
+    "profile": {
+      "gridlyHomePersonalizationV1": {
+        "zip": "",
+        "countyId": "nueces-tx",
+        "countyName": "",
+        "countyMemberships": [
+          "48355"
+        ],
+        "communityKey": "4801396",
+        "communityLabel": "Agua Dulce",
+        "awarenessAreaKey": "place-4801396",
+        "consumerLabel": "Agua Dulce",
+        "identityType": "PLACE_GEOID",
+        "canonicalRegionId": null,
+        "resolutionStatus": "manual_confirmed",
+        "resolutionMethod": "profile-fixture",
+        "sourceVersion": "LP217",
+        "confirmedAt": "2026-09-24T00:00:00.000Z",
+        "schemaVersion": "LP051.7.home-personalization.v1"
+      }
+    },
+    "expected": [
+      "4801396",
+      "nueces-tx"
+    ],
+    "sourceHash": "857dc05e8f12786ace4ccded59e7ed582e3438da3f76d65f2fb4d579af6ceb91",
+    "result": {
+      "identity": {
+        "probeVersion": 3,
+        "type": "HOME",
+        "place": "4801396",
+        "name": "Agua Dulce",
+        "county": "nueces-tx",
+        "lat": 27.782846,
+        "lng": -97.9096856,
+        "generation": 1,
+        "health": "FRESH",
+        "expiresAt": null,
+        "startupProviderFocus": null
+      },
+      "weather": {
+        "awarenessKey": "place-4801396",
+        "identityClass": "CANONICAL_PLACE",
+        "countyId": "nueces-tx",
+        "stableIdentity": "4801396",
+        "lat": 27.782846,
+        "lng": -97.9096856,
+        "placeGeoid": "4801396"
+      },
+      "search": [
+        "4827300"
+      ],
+      "bytes": {
+        "gridlyHomePersonalizationV1": "{\"zip\":\"\",\"countyId\":\"nueces-tx\",\"countyName\":\"\",\"countyMemberships\":[\"48355\"],\"communityKey\":\"4801396\",\"communityLabel\":\"Agua Dulce\",\"awarenessAreaKey\":\"place-4801396\",\"consumerLabel\":\"Agua Dulce\",\"identityType\":\"PLACE_GEOID\",\"canonicalRegionId\":null,\"resolutionStatus\":\"manual_confirmed\",\"resolutionMethod\":\"profile-fixture\",\"sourceVersion\":\"LP217\",\"confirmedAt\":\"2026-09-24T00:00:00.000Z\",\"schemaVersion\":\"LP051.7.home-personalization.v1\"}",
+        "gridlyHomeTown": null,
+        "gridlySettingsV1": "{\"notifications\":{\"routeAlerts\":true,\"railAlerts\":true,\"hazardAlerts\":true,\"communityAlerts\":false},\"display\":{\"mapStyle\":\"standard\",\"theme\":\"system\",\"textSize\":\"large\"},\"personalization\":{\"preferredName\":\"\"},\"community\":{\"homeTown\":\"\",\"awarenessArea\":\"\",\"awarenessAreaKey\":\"\",\"countyId\":\"liberty-tx\"}}",
+        "gridlyUserProfileV1": null,
+        "gridlySavedPlacesV1": null
+      },
+      "chooser": false
+    },
+    "checks": {
+      "identity": true,
+      "canonicalCoordinates": true,
+      "searchUsable": true,
+      "startupNoErrors": true,
+      "savedPlacesPreserved": true
+    },
+    "pass": true,
+    "errors": []
+  },
+  {
+    "name": "legacy-single",
+    "profile": {
+      "gridlyHomeTown": "Agua Dulce",
+      "gridlySettingsV1": {
+        "community": {
+          "homeTown": "Agua Dulce",
+          "awarenessArea": "Agua Dulce",
+          "awarenessAreaKey": "nueces-tx-agua-dulce",
+          "countyId": "nueces-tx"
+        }
+      }
+    },
+    "expected": [
+      "4801396",
+      "nueces-tx"
+    ],
+    "sourceHash": "857dc05e8f12786ace4ccded59e7ed582e3438da3f76d65f2fb4d579af6ceb91",
+    "result": {
+      "identity": {
+        "probeVersion": 3,
+        "type": "HOME",
+        "place": "4801396",
+        "name": "Agua Dulce",
+        "county": "nueces-tx",
+        "lat": 27.782846,
+        "lng": -97.9096856,
+        "generation": 1,
+        "health": "FRESH",
+        "expiresAt": null,
+        "startupProviderFocus": null
+      },
+      "weather": {
+        "awarenessKey": "nueces-tx-agua-dulce",
+        "identityClass": "CANONICAL_PLACE",
+        "countyId": "nueces-tx",
+        "stableIdentity": "4801396",
+        "lat": 27.782846,
+        "lng": -97.9096856,
+        "placeGeoid": "4801396"
+      },
+      "search": [
+        "4827300"
+      ],
+      "bytes": {
+        "gridlyHomePersonalizationV1": null,
+        "gridlyHomeTown": "Agua Dulce",
+        "gridlySettingsV1": "{\"notifications\":{\"routeAlerts\":true,\"railAlerts\":true,\"hazardAlerts\":true,\"communityAlerts\":false},\"display\":{\"mapStyle\":\"standard\",\"theme\":\"system\",\"textSize\":\"large\"},\"personalization\":{\"preferredName\":\"\"},\"community\":{\"homeTown\":\"Agua Dulce\",\"awarenessArea\":\"Agua Dulce\",\"awarenessAreaKey\":\"nueces-tx-agua-dulce\",\"countyId\":\"nueces-tx\"}}",
+        "gridlyUserProfileV1": null,
+        "gridlySavedPlacesV1": null
+      },
+      "chooser": false
+    },
+    "checks": {
+      "identity": true,
+      "canonicalCoordinates": true,
+      "searchUsable": true,
+      "startupNoErrors": true,
+      "savedPlacesPreserved": true
+    },
+    "pass": true,
+    "errors": []
+  },
+  {
+    "name": "legacy-single-name-only",
+    "profile": {
+      "gridlyHomeTown": "Palestine"
+    },
+    "expected": [
+      "4854708",
+      "anderson-tx"
+    ],
+    "sourceHash": "857dc05e8f12786ace4ccded59e7ed582e3438da3f76d65f2fb4d579af6ceb91",
+    "result": {
+      "identity": {
+        "probeVersion": 3,
+        "type": "HOME",
+        "place": "4854708",
+        "name": "Palestine",
+        "county": "anderson-tx",
+        "lat": 31.7621153,
+        "lng": -95.6307891,
+        "generation": 1,
+        "health": "FRESH",
+        "expiresAt": null,
+        "startupProviderFocus": null
+      },
+      "weather": {
+        "awarenessKey": "anderson-tx-palestine",
+        "identityClass": "CANONICAL_PLACE",
+        "countyId": "anderson-tx",
+        "stableIdentity": "4854708",
+        "lat": 31.7621153,
+        "lng": -95.6307891,
+        "placeGeoid": "4854708"
+      },
+      "search": [
+        "4827300"
+      ],
+      "bytes": {
+        "gridlyHomePersonalizationV1": null,
+        "gridlyHomeTown": "Palestine",
+        "gridlySettingsV1": "{\"notifications\":{\"routeAlerts\":true,\"railAlerts\":true,\"hazardAlerts\":true,\"communityAlerts\":false},\"display\":{\"mapStyle\":\"standard\",\"theme\":\"system\",\"textSize\":\"large\"},\"personalization\":{\"preferredName\":\"\"},\"community\":{\"homeTown\":\"\",\"awarenessArea\":\"\",\"awarenessAreaKey\":\"\",\"countyId\":\"liberty-tx\"}}",
+        "gridlyUserProfileV1": null,
+        "gridlySavedPlacesV1": null
+      },
+      "chooser": false
+    },
+    "checks": {
+      "identity": true,
+      "canonicalCoordinates": true,
+      "searchUsable": true,
+      "startupNoErrors": true,
+      "savedPlacesPreserved": true
+    },
+    "pass": true,
+    "errors": []
+  },
+  {
+    "name": "legacy-settings-single-no-county",
+    "profile": {
+      "gridlySettingsV1": {
+        "community": {
+          "homeTown": "Palestine"
+        }
+      }
+    },
+    "expected": [
+      "4854708",
+      "anderson-tx"
+    ],
+    "sourceHash": "857dc05e8f12786ace4ccded59e7ed582e3438da3f76d65f2fb4d579af6ceb91",
+    "result": {
+      "identity": {
+        "probeVersion": 3,
+        "type": "HOME",
+        "place": "4854708",
+        "name": "Palestine",
+        "county": "anderson-tx",
+        "lat": 31.7621153,
+        "lng": -95.6307891,
+        "generation": 1,
+        "health": "FRESH",
+        "expiresAt": null,
+        "startupProviderFocus": null
+      },
+      "weather": {
+        "awarenessKey": "anderson-tx-palestine",
+        "identityClass": "CANONICAL_PLACE",
+        "countyId": "anderson-tx",
+        "stableIdentity": "4854708",
+        "lat": 31.7621153,
+        "lng": -95.6307891,
+        "placeGeoid": "4854708"
+      },
+      "search": [
+        "4827300"
+      ],
+      "bytes": {
+        "gridlyHomePersonalizationV1": null,
+        "gridlyHomeTown": null,
+        "gridlySettingsV1": "{\"notifications\":{\"routeAlerts\":true,\"railAlerts\":true,\"hazardAlerts\":true,\"communityAlerts\":false},\"display\":{\"mapStyle\":\"standard\",\"theme\":\"system\",\"textSize\":\"large\"},\"personalization\":{\"preferredName\":\"\"},\"community\":{\"homeTown\":\"Palestine\",\"awarenessArea\":\"Palestine\",\"awarenessAreaKey\":\"anderson-tx-palestine\",\"countyId\":\"anderson-tx\"}}",
+        "gridlyUserProfileV1": null,
+        "gridlySavedPlacesV1": null
+      },
+      "chooser": false
+    },
+    "checks": {
+      "identity": true,
+      "canonicalCoordinates": true,
+      "searchUsable": true,
+      "startupNoErrors": true,
+      "savedPlacesPreserved": true
+    },
+    "pass": true,
+    "errors": []
+  },
+  {
+    "name": "legacy-region-name-collision",
+    "profile": {
+      "gridlyHomeTown": "Spring Branch",
+      "gridlySettingsV1": {
+        "community": {
+          "homeTown": "Spring Branch",
+          "awarenessArea": "Spring Branch",
+          "awarenessAreaKey": "comal-tx-spring-branch",
+          "countyId": "comal-tx"
+        }
+      }
+    },
+    "expected": [
+      "4869608",
+      "comal-tx"
+    ],
+    "sourceHash": "857dc05e8f12786ace4ccded59e7ed582e3438da3f76d65f2fb4d579af6ceb91",
+    "result": {
+      "identity": {
+        "probeVersion": 3,
+        "type": "HOME",
+        "place": "4869608",
+        "name": "Spring Branch",
+        "county": "comal-tx",
+        "lat": 29.890187,
+        "lng": -98.4264344,
+        "generation": 1,
+        "health": "FRESH",
+        "expiresAt": null,
+        "startupProviderFocus": null
+      },
+      "weather": {
+        "awarenessKey": "comal-tx-spring-branch",
+        "identityClass": "CANONICAL_PLACE",
+        "countyId": "comal-tx",
+        "stableIdentity": "4869608",
+        "lat": 29.890187,
+        "lng": -98.4264344,
+        "placeGeoid": "4869608"
+      },
+      "search": [
+        "4827300"
+      ],
+      "bytes": {
+        "gridlyHomePersonalizationV1": null,
+        "gridlyHomeTown": "Spring Branch",
+        "gridlySettingsV1": "{\"notifications\":{\"routeAlerts\":true,\"railAlerts\":true,\"hazardAlerts\":true,\"communityAlerts\":false},\"display\":{\"mapStyle\":\"standard\",\"theme\":\"system\",\"textSize\":\"large\"},\"personalization\":{\"preferredName\":\"\"},\"community\":{\"homeTown\":\"Spring Branch\",\"awarenessArea\":\"Spring Branch\",\"awarenessAreaKey\":\"comal-tx-spring-branch\",\"countyId\":\"comal-tx\"}}",
+        "gridlyUserProfileV1": null,
+        "gridlySavedPlacesV1": null
+      },
+      "chooser": false
+    },
+    "checks": {
+      "identity": true,
+      "canonicalCoordinates": true,
+      "searchUsable": true,
+      "startupNoErrors": true,
+      "savedPlacesPreserved": true
+    },
+    "pass": true,
+    "errors": []
+  },
+  {
+    "name": "canonical-multi-explicit",
+    "profile": {
+      "gridlyHomePersonalizationV1": {
+        "zip": "",
+        "countyId": "henderson-tx",
+        "countyName": "",
+        "countyMemberships": [
+          "48001",
+          "48213"
+        ],
+        "communityKey": "4827300",
+        "communityLabel": "Frankston",
+        "awarenessAreaKey": "place-4827300",
+        "consumerLabel": "Frankston",
+        "identityType": "PLACE_GEOID",
+        "canonicalRegionId": null,
+        "resolutionStatus": "manual_confirmed",
+        "resolutionMethod": "profile-fixture",
+        "sourceVersion": "LP217",
+        "confirmedAt": "2026-09-24T00:00:00.000Z",
+        "schemaVersion": "LP051.7.home-personalization.v1"
+      }
+    },
+    "expected": [
+      "4827300",
+      "henderson-tx"
+    ],
+    "sourceHash": "857dc05e8f12786ace4ccded59e7ed582e3438da3f76d65f2fb4d579af6ceb91",
+    "result": {
+      "identity": {
+        "probeVersion": 3,
+        "type": "HOME",
+        "place": "4827300",
+        "name": "Frankston",
+        "county": "henderson-tx",
+        "lat": 32.0543013,
+        "lng": -95.5059246,
+        "generation": 1,
+        "health": "FRESH",
+        "expiresAt": null,
+        "startupProviderFocus": null
+      },
+      "weather": {
+        "awarenessKey": "place-4827300",
+        "identityClass": "CANONICAL_PLACE",
+        "countyId": "henderson-tx",
+        "stableIdentity": "4827300",
+        "lat": 32.0543013,
+        "lng": -95.5059246,
+        "placeGeoid": "4827300"
+      },
+      "search": [
+        "4827300"
+      ],
+      "bytes": {
+        "gridlyHomePersonalizationV1": "{\"zip\":\"\",\"countyId\":\"henderson-tx\",\"countyName\":\"\",\"countyMemberships\":[\"48001\",\"48213\"],\"communityKey\":\"4827300\",\"communityLabel\":\"Frankston\",\"awarenessAreaKey\":\"place-4827300\",\"consumerLabel\":\"Frankston\",\"identityType\":\"PLACE_GEOID\",\"canonicalRegionId\":null,\"resolutionStatus\":\"manual_confirmed\",\"resolutionMethod\":\"profile-fixture\",\"sourceVersion\":\"LP217\",\"confirmedAt\":\"2026-09-24T00:00:00.000Z\",\"schemaVersion\":\"LP051.7.home-personalization.v1\"}",
+        "gridlyHomeTown": null,
+        "gridlySettingsV1": "{\"notifications\":{\"routeAlerts\":true,\"railAlerts\":true,\"hazardAlerts\":true,\"communityAlerts\":false},\"display\":{\"mapStyle\":\"standard\",\"theme\":\"system\",\"textSize\":\"large\"},\"personalization\":{\"preferredName\":\"\"},\"community\":{\"homeTown\":\"Frankston\",\"awarenessArea\":\"Frankston\",\"awarenessAreaKey\":\"place-4827300\",\"countyId\":\"henderson-tx\"}}",
+        "gridlyUserProfileV1": "{\"version\":1,\"name\":\"\",\"zipCode\":\"\",\"homeTown\":\"Frankston\",\"state\":\"\",\"homeTownLat\":null,\"homeTownLng\":null,\"homeTownLabel\":\"Frankston\",\"setupComplete\":false,\"setupSkipped\":false,\"awarenessArea\":\"Frankston\",\"awarenessAreaKey\":\"place-4827300\",\"awarenessAreaLabel\":\"Frankston\",\"awarenessAreaCountyId\":\"henderson-tx\"}",
+        "gridlySavedPlacesV1": null
+      },
+      "chooser": false
+    },
+    "checks": {
+      "identity": true,
+      "canonicalCoordinates": true,
+      "searchUsable": true,
+      "startupNoErrors": true,
+      "savedPlacesPreserved": true
+    },
+    "pass": true,
+    "errors": []
+  },
+  {
+    "name": "legacy-multi-explicit",
+    "profile": {
+      "gridlyHomeTown": "Frankston",
+      "gridlySettingsV1": {
+        "community": {
+          "homeTown": "Frankston",
+          "awarenessArea": "Frankston",
+          "awarenessAreaKey": "henderson-tx-frankston",
+          "countyId": "henderson-tx"
+        }
+      }
+    },
+    "expected": [
+      "4827300",
+      "henderson-tx"
+    ],
+    "sourceHash": "857dc05e8f12786ace4ccded59e7ed582e3438da3f76d65f2fb4d579af6ceb91",
+    "result": {
+      "identity": {
+        "probeVersion": 3,
+        "type": "HOME",
+        "place": "4827300",
+        "name": "Frankston",
+        "county": "henderson-tx",
+        "lat": 32.0543013,
+        "lng": -95.5059246,
+        "generation": 1,
+        "health": "FRESH",
+        "expiresAt": null,
+        "startupProviderFocus": null
+      },
+      "weather": {
+        "awarenessKey": "henderson-tx-frankston",
+        "identityClass": "CANONICAL_PLACE",
+        "countyId": "henderson-tx",
+        "stableIdentity": "4827300",
+        "lat": 32.0543013,
+        "lng": -95.5059246,
+        "placeGeoid": "4827300"
+      },
+      "search": [
+        "4827300"
+      ],
+      "bytes": {
+        "gridlyHomePersonalizationV1": null,
+        "gridlyHomeTown": "Frankston",
+        "gridlySettingsV1": "{\"notifications\":{\"routeAlerts\":true,\"railAlerts\":true,\"hazardAlerts\":true,\"communityAlerts\":false},\"display\":{\"mapStyle\":\"standard\",\"theme\":\"system\",\"textSize\":\"large\"},\"personalization\":{\"preferredName\":\"\"},\"community\":{\"homeTown\":\"Frankston\",\"awarenessArea\":\"Frankston\",\"awarenessAreaKey\":\"henderson-tx-frankston\",\"countyId\":\"henderson-tx\"}}",
+        "gridlyUserProfileV1": null,
+        "gridlySavedPlacesV1": null
+      },
+      "chooser": false
+    },
+    "checks": {
+      "identity": true,
+      "canonicalCoordinates": true,
+      "searchUsable": true,
+      "startupNoErrors": true,
+      "savedPlacesPreserved": true
+    },
+    "pass": true,
+    "errors": []
+  },
+  {
+    "name": "legacy-county-occurrence-key",
+    "profile": {
+      "gridlyHomeTown": "Frankston",
+      "gridlySettingsV1": {
+        "community": {
+          "homeTown": "Frankston",
+          "awarenessAreaKey": "henderson-tx-frankston"
+        }
+      }
+    },
+    "expected": [
+      "4827300",
+      "henderson-tx"
+    ],
+    "sourceHash": "857dc05e8f12786ace4ccded59e7ed582e3438da3f76d65f2fb4d579af6ceb91",
+    "result": {
+      "identity": {
+        "probeVersion": 3,
+        "type": "HOME",
+        "place": "4827300",
+        "name": "Frankston",
+        "county": "henderson-tx",
+        "lat": 32.0543013,
+        "lng": -95.5059246,
+        "generation": 1,
+        "health": "FRESH",
+        "expiresAt": null,
+        "startupProviderFocus": null
+      },
+      "weather": {
+        "awarenessKey": "henderson-tx-frankston",
+        "identityClass": "CANONICAL_PLACE",
+        "countyId": "henderson-tx",
+        "stableIdentity": "4827300",
+        "lat": 32.0543013,
+        "lng": -95.5059246,
+        "placeGeoid": "4827300"
+      },
+      "search": [
+        "4827300"
+      ],
+      "bytes": {
+        "gridlyHomePersonalizationV1": null,
+        "gridlyHomeTown": "Frankston",
+        "gridlySettingsV1": "{\"notifications\":{\"routeAlerts\":true,\"railAlerts\":true,\"hazardAlerts\":true,\"communityAlerts\":false},\"display\":{\"mapStyle\":\"standard\",\"theme\":\"system\",\"textSize\":\"large\"},\"personalization\":{\"preferredName\":\"\"},\"community\":{\"homeTown\":\"Frankston\",\"awarenessArea\":\"Frankston\",\"awarenessAreaKey\":\"henderson-tx-frankston\",\"countyId\":\"henderson-tx\"}}",
+        "gridlyUserProfileV1": null,
+        "gridlySavedPlacesV1": null
+      },
+      "chooser": false
+    },
+    "checks": {
+      "identity": true,
+      "canonicalCoordinates": true,
+      "searchUsable": true,
+      "startupNoErrors": true,
+      "savedPlacesPreserved": true
+    },
+    "pass": true,
+    "errors": []
+  },
+  {
+    "name": "canonical-outranks-stale-settings",
+    "profile": {
+      "gridlyHomePersonalizationV1": {
+        "zip": "",
+        "countyId": "henderson-tx",
+        "countyName": "",
+        "countyMemberships": [
+          "48001",
+          "48213"
+        ],
+        "communityKey": "4827300",
+        "communityLabel": "Frankston",
+        "awarenessAreaKey": "place-4827300",
+        "consumerLabel": "Frankston",
+        "identityType": "PLACE_GEOID",
+        "canonicalRegionId": null,
+        "resolutionStatus": "manual_confirmed",
+        "resolutionMethod": "profile-fixture",
+        "sourceVersion": "LP217",
+        "confirmedAt": "2026-09-24T00:00:00.000Z",
+        "schemaVersion": "LP051.7.home-personalization.v1"
+      },
+      "gridlySettingsV1": {
+        "community": {
+          "homeTown": "Frankston",
+          "awarenessAreaKey": "anderson-tx-frankston",
+          "countyId": "anderson-tx"
+        }
+      }
+    },
+    "expected": [
+      "4827300",
+      "henderson-tx"
+    ],
+    "sourceHash": "857dc05e8f12786ace4ccded59e7ed582e3438da3f76d65f2fb4d579af6ceb91",
+    "result": {
+      "identity": {
+        "probeVersion": 3,
+        "type": "HOME",
+        "place": "4827300",
+        "name": "Frankston",
+        "county": "henderson-tx",
+        "lat": 32.0543013,
+        "lng": -95.5059246,
+        "generation": 1,
+        "health": "FRESH",
+        "expiresAt": null,
+        "startupProviderFocus": null
+      },
+      "weather": {
+        "awarenessKey": "place-4827300",
+        "identityClass": "CANONICAL_PLACE",
+        "countyId": "henderson-tx",
+        "stableIdentity": "4827300",
+        "lat": 32.0543013,
+        "lng": -95.5059246,
+        "placeGeoid": "4827300"
+      },
+      "search": [
+        "4827300"
+      ],
+      "bytes": {
+        "gridlyHomePersonalizationV1": "{\"zip\":\"\",\"countyId\":\"henderson-tx\",\"countyName\":\"\",\"countyMemberships\":[\"48001\",\"48213\"],\"communityKey\":\"4827300\",\"communityLabel\":\"Frankston\",\"awarenessAreaKey\":\"place-4827300\",\"consumerLabel\":\"Frankston\",\"identityType\":\"PLACE_GEOID\",\"canonicalRegionId\":null,\"resolutionStatus\":\"manual_confirmed\",\"resolutionMethod\":\"profile-fixture\",\"sourceVersion\":\"LP217\",\"confirmedAt\":\"2026-09-24T00:00:00.000Z\",\"schemaVersion\":\"LP051.7.home-personalization.v1\"}",
+        "gridlyHomeTown": null,
+        "gridlySettingsV1": "{\"notifications\":{\"routeAlerts\":true,\"railAlerts\":true,\"hazardAlerts\":true,\"communityAlerts\":false},\"display\":{\"mapStyle\":\"standard\",\"theme\":\"system\",\"textSize\":\"large\"},\"personalization\":{\"preferredName\":\"\"},\"community\":{\"homeTown\":\"Frankston\",\"awarenessArea\":\"Frankston\",\"awarenessAreaKey\":\"place-4827300\",\"countyId\":\"henderson-tx\"}}",
+        "gridlyUserProfileV1": "{\"version\":1,\"name\":\"\",\"zipCode\":\"\",\"homeTown\":\"Frankston\",\"state\":\"\",\"homeTownLat\":null,\"homeTownLng\":null,\"homeTownLabel\":\"Frankston\",\"setupComplete\":false,\"setupSkipped\":false,\"awarenessArea\":\"Frankston\",\"awarenessAreaKey\":\"place-4827300\",\"awarenessAreaLabel\":\"Frankston\",\"awarenessAreaCountyId\":\"henderson-tx\"}",
+        "gridlySavedPlacesV1": null
+      },
+      "chooser": false
+    },
+    "checks": {
+      "identity": true,
+      "canonicalCoordinates": true,
+      "searchUsable": true,
+      "startupNoErrors": true,
+      "savedPlacesPreserved": true
+    },
+    "pass": true,
+    "errors": []
+  },
+  {
+    "name": "multi-missing-county",
+    "profile": {
+      "gridlyHomePersonalizationV1": {
+        "zip": "",
+        "countyId": null,
+        "countyName": "",
+        "countyMemberships": [
+          "48001",
+          "48213"
+        ],
+        "communityKey": "4827300",
+        "communityLabel": "Frankston",
+        "awarenessAreaKey": "place-4827300",
+        "consumerLabel": "Frankston",
+        "identityType": "PLACE_GEOID",
+        "canonicalRegionId": null,
+        "resolutionStatus": "manual_confirmed",
+        "resolutionMethod": "profile-fixture",
+        "sourceVersion": "LP217",
+        "confirmedAt": "2026-09-24T00:00:00.000Z",
+        "schemaVersion": "LP051.7.home-personalization.v1"
+      },
+      "gridlyHomeTown": "Frankston"
+    },
+    "expected": null,
+    "sourceHash": "857dc05e8f12786ace4ccded59e7ed582e3438da3f76d65f2fb4d579af6ceb91",
+    "result": {
+      "identity": {
+        "probeVersion": 3,
+        "type": "NONE",
+        "place": null,
+        "name": "Choose a location",
+        "county": null,
+        "lat": null,
+        "lng": null,
+        "generation": 0,
+        "health": "UNAVAILABLE",
+        "expiresAt": null,
+        "startupProviderFocus": null
+      },
+      "weather": null,
+      "search": [
+        "4827300"
+      ],
+      "bytes": {
+        "gridlyHomePersonalizationV1": "{\"zip\":\"\",\"countyId\":null,\"countyName\":\"\",\"countyMemberships\":[\"48001\",\"48213\"],\"communityKey\":\"4827300\",\"communityLabel\":\"Frankston\",\"awarenessAreaKey\":\"place-4827300\",\"consumerLabel\":\"Frankston\",\"identityType\":\"PLACE_GEOID\",\"canonicalRegionId\":null,\"resolutionStatus\":\"manual_confirmed\",\"resolutionMethod\":\"profile-fixture\",\"sourceVersion\":\"LP217\",\"confirmedAt\":\"2026-09-24T00:00:00.000Z\",\"schemaVersion\":\"LP051.7.home-personalization.v1\"}",
+        "gridlyHomeTown": "Frankston",
+        "gridlySettingsV1": "{\"notifications\":{\"routeAlerts\":true,\"railAlerts\":true,\"hazardAlerts\":true,\"communityAlerts\":false},\"display\":{\"mapStyle\":\"standard\",\"theme\":\"system\",\"textSize\":\"large\"},\"personalization\":{\"preferredName\":\"\"},\"community\":{\"homeTown\":\"\",\"awarenessArea\":\"\",\"awarenessAreaKey\":\"\",\"countyId\":\"liberty-tx\"}}",
+        "gridlyUserProfileV1": null,
+        "gridlySavedPlacesV1": null
+      },
+      "chooser": false
+    },
+    "checks": {
+      "identity": true,
+      "canonicalCoordinates": true,
+      "searchUsable": true,
+      "startupNoErrors": true,
+      "savedPlacesPreserved": true
+    },
+    "pass": true,
+    "errors": []
+  },
+  {
+    "name": "legacy-multi-name-only",
+    "profile": {
+      "gridlyHomeTown": "Frankston"
+    },
+    "expected": null,
+    "sourceHash": "857dc05e8f12786ace4ccded59e7ed582e3438da3f76d65f2fb4d579af6ceb91",
+    "result": {
+      "identity": {
+        "probeVersion": 3,
+        "type": "NONE",
+        "place": null,
+        "name": "Choose a location",
+        "county": null,
+        "lat": null,
+        "lng": null,
+        "generation": 0,
+        "health": "UNAVAILABLE",
+        "expiresAt": null,
+        "startupProviderFocus": null
+      },
+      "weather": null,
+      "search": [
+        "4827300"
+      ],
+      "bytes": {
+        "gridlyHomePersonalizationV1": null,
+        "gridlyHomeTown": "Frankston",
+        "gridlySettingsV1": "{\"notifications\":{\"routeAlerts\":true,\"railAlerts\":true,\"hazardAlerts\":true,\"communityAlerts\":false},\"display\":{\"mapStyle\":\"standard\",\"theme\":\"system\",\"textSize\":\"large\"},\"personalization\":{\"preferredName\":\"\"},\"community\":{\"homeTown\":\"\",\"awarenessArea\":\"\",\"awarenessAreaKey\":\"\",\"countyId\":\"liberty-tx\"}}",
+        "gridlyUserProfileV1": null,
+        "gridlySavedPlacesV1": null
+      },
+      "chooser": false
+    },
+    "checks": {
+      "identity": true,
+      "canonicalCoordinates": true,
+      "searchUsable": true,
+      "startupNoErrors": true,
+      "savedPlacesPreserved": true
+    },
+    "pass": true,
+    "errors": []
+  },
+  {
+    "name": "legacy-multi-default-county-is-member",
+    "profile": {
+      "gridlyHomeTown": "Cleveland"
+    },
+    "expected": null,
+    "sourceHash": "857dc05e8f12786ace4ccded59e7ed582e3438da3f76d65f2fb4d579af6ceb91",
+    "result": {
+      "identity": {
+        "probeVersion": 3,
+        "type": "NONE",
+        "place": null,
+        "name": "Choose a location",
+        "county": null,
+        "lat": null,
+        "lng": null,
+        "generation": 0,
+        "health": "UNAVAILABLE",
+        "expiresAt": null,
+        "startupProviderFocus": null
+      },
+      "weather": null,
+      "search": [
+        "4827300"
+      ],
+      "bytes": {
+        "gridlyHomePersonalizationV1": null,
+        "gridlyHomeTown": "Cleveland",
+        "gridlySettingsV1": "{\"notifications\":{\"routeAlerts\":true,\"railAlerts\":true,\"hazardAlerts\":true,\"communityAlerts\":false},\"display\":{\"mapStyle\":\"standard\",\"theme\":\"system\",\"textSize\":\"large\"},\"personalization\":{\"preferredName\":\"\"},\"community\":{\"homeTown\":\"\",\"awarenessArea\":\"\",\"awarenessAreaKey\":\"\",\"countyId\":\"liberty-tx\"}}",
+        "gridlyUserProfileV1": null,
+        "gridlySavedPlacesV1": null
+      },
+      "chooser": false
+    },
+    "checks": {
+      "identity": true,
+      "canonicalCoordinates": true,
+      "searchUsable": true,
+      "startupNoErrors": true,
+      "savedPlacesPreserved": true
+    },
+    "pass": true,
+    "errors": []
+  },
+  {
+    "name": "legacy-multi-lowercase-name",
+    "profile": {
+      "gridlyHomeTown": "cleveland"
+    },
+    "expected": null,
+    "sourceHash": "857dc05e8f12786ace4ccded59e7ed582e3438da3f76d65f2fb4d579af6ceb91",
+    "result": {
+      "identity": {
+        "probeVersion": 3,
+        "type": "NONE",
+        "place": null,
+        "name": "Choose a location",
+        "county": null,
+        "lat": null,
+        "lng": null,
+        "generation": 0,
+        "health": "UNAVAILABLE",
+        "expiresAt": null,
+        "startupProviderFocus": null
+      },
+      "weather": null,
+      "search": [
+        "4827300"
+      ],
+      "bytes": {
+        "gridlyHomePersonalizationV1": null,
+        "gridlyHomeTown": "cleveland",
+        "gridlySettingsV1": "{\"notifications\":{\"routeAlerts\":true,\"railAlerts\":true,\"hazardAlerts\":true,\"communityAlerts\":false},\"display\":{\"mapStyle\":\"standard\",\"theme\":\"system\",\"textSize\":\"large\"},\"personalization\":{\"preferredName\":\"\"},\"community\":{\"homeTown\":\"\",\"awarenessArea\":\"\",\"awarenessAreaKey\":\"\",\"countyId\":\"liberty-tx\"}}",
+        "gridlyUserProfileV1": null,
+        "gridlySavedPlacesV1": null
+      },
+      "chooser": false
+    },
+    "checks": {
+      "identity": true,
+      "canonicalCoordinates": true,
+      "searchUsable": true,
+      "startupNoErrors": true,
+      "savedPlacesPreserved": true
+    },
+    "pass": true,
+    "errors": []
+  },
+  {
+    "name": "work-only",
+    "profile": {
+      "gridlySavedPlacesV1": {
+        "version": 1,
+        "home": null,
+        "work": {
+          "id": "work",
+          "label": "Work fixture",
+          "lat": 30.0505,
+          "lng": -94.889,
+          "coordinateSource": "geocode",
+          "resolutionStatus": "success",
+          "validationStatus": "passed"
+        },
+        "custom": [],
+        "favorites": []
+      }
+    },
+    "expected": null,
+    "sourceHash": "857dc05e8f12786ace4ccded59e7ed582e3438da3f76d65f2fb4d579af6ceb91",
+    "result": {
+      "identity": {
+        "probeVersion": 3,
+        "type": "NONE",
+        "place": null,
+        "name": "Choose a location",
+        "county": null,
+        "lat": null,
+        "lng": null,
+        "generation": 0,
+        "health": "UNAVAILABLE",
+        "expiresAt": null,
+        "startupProviderFocus": null
+      },
+      "weather": null,
+      "search": [
+        "4827300"
+      ],
+      "bytes": {
+        "gridlyHomePersonalizationV1": null,
+        "gridlyHomeTown": null,
+        "gridlySettingsV1": "{\"notifications\":{\"routeAlerts\":true,\"railAlerts\":true,\"hazardAlerts\":true,\"communityAlerts\":false},\"display\":{\"mapStyle\":\"standard\",\"theme\":\"system\",\"textSize\":\"large\"},\"personalization\":{\"preferredName\":\"\"},\"community\":{\"homeTown\":\"\",\"awarenessArea\":\"\",\"awarenessAreaKey\":\"\",\"countyId\":\"liberty-tx\"}}",
+        "gridlyUserProfileV1": null,
+        "gridlySavedPlacesV1": "{\"version\":1,\"home\":null,\"work\":{\"id\":\"work\",\"label\":\"Work fixture\",\"lat\":30.0505,\"lng\":-94.889,\"coordinateSource\":\"geocode\",\"resolutionStatus\":\"success\",\"validationStatus\":\"passed\"},\"custom\":[],\"favorites\":[]}"
+      },
+      "chooser": false
+    },
+    "checks": {
+      "identity": true,
+      "canonicalCoordinates": true,
+      "searchUsable": true,
+      "startupNoErrors": true,
+      "savedPlacesPreserved": true
+    },
+    "pass": true,
+    "errors": []
+  },
+  {
+    "name": "home-plus-work",
+    "profile": {
+      "gridlySavedPlacesV1": {
+        "version": 1,
+        "home": {
+          "id": "home",
+          "label": "Saved Home fixture",
+          "lat": 30.0505,
+          "lng": -94.889,
+          "coordinateSource": "geocode",
+          "resolutionStatus": "success",
+          "validationStatus": "passed"
+        },
+        "work": {
+          "id": "work",
+          "label": "Work fixture",
+          "lat": 30.0505,
+          "lng": -94.889,
+          "coordinateSource": "geocode",
+          "resolutionStatus": "success",
+          "validationStatus": "passed"
+        },
+        "custom": [],
+        "favorites": []
+      },
+      "gridlyHomePersonalizationV1": {
+        "zip": "",
+        "countyId": "henderson-tx",
+        "countyName": "",
+        "countyMemberships": [
+          "48001",
+          "48213"
+        ],
+        "communityKey": "4827300",
+        "communityLabel": "Frankston",
+        "awarenessAreaKey": "place-4827300",
+        "consumerLabel": "Frankston",
+        "identityType": "PLACE_GEOID",
+        "canonicalRegionId": null,
+        "resolutionStatus": "manual_confirmed",
+        "resolutionMethod": "profile-fixture",
+        "sourceVersion": "LP217",
+        "confirmedAt": "2026-09-24T00:00:00.000Z",
+        "schemaVersion": "LP051.7.home-personalization.v1"
+      }
+    },
+    "expected": [
+      "4827300",
+      "henderson-tx"
+    ],
+    "sourceHash": "857dc05e8f12786ace4ccded59e7ed582e3438da3f76d65f2fb4d579af6ceb91",
+    "result": {
+      "identity": {
+        "probeVersion": 3,
+        "type": "HOME",
+        "place": "4827300",
+        "name": "Frankston",
+        "county": "henderson-tx",
+        "lat": 32.0543013,
+        "lng": -95.5059246,
+        "generation": 1,
+        "health": "FRESH",
+        "expiresAt": null,
+        "startupProviderFocus": null
+      },
+      "weather": {
+        "awarenessKey": "place-4827300",
+        "identityClass": "CANONICAL_PLACE",
+        "countyId": "henderson-tx",
+        "stableIdentity": "4827300",
+        "lat": 32.0543013,
+        "lng": -95.5059246,
+        "placeGeoid": "4827300"
+      },
+      "search": [
+        "4827300"
+      ],
+      "bytes": {
+        "gridlyHomePersonalizationV1": "{\"zip\":\"\",\"countyId\":\"henderson-tx\",\"countyName\":\"\",\"countyMemberships\":[\"48001\",\"48213\"],\"communityKey\":\"4827300\",\"communityLabel\":\"Frankston\",\"awarenessAreaKey\":\"place-4827300\",\"consumerLabel\":\"Frankston\",\"identityType\":\"PLACE_GEOID\",\"canonicalRegionId\":null,\"resolutionStatus\":\"manual_confirmed\",\"resolutionMethod\":\"profile-fixture\",\"sourceVersion\":\"LP217\",\"confirmedAt\":\"2026-09-24T00:00:00.000Z\",\"schemaVersion\":\"LP051.7.home-personalization.v1\"}",
+        "gridlyHomeTown": null,
+        "gridlySettingsV1": "{\"notifications\":{\"routeAlerts\":true,\"railAlerts\":true,\"hazardAlerts\":true,\"communityAlerts\":false},\"display\":{\"mapStyle\":\"standard\",\"theme\":\"system\",\"textSize\":\"large\"},\"personalization\":{\"preferredName\":\"\"},\"community\":{\"homeTown\":\"Frankston\",\"awarenessArea\":\"Frankston\",\"awarenessAreaKey\":\"place-4827300\",\"countyId\":\"henderson-tx\"}}",
+        "gridlyUserProfileV1": "{\"version\":1,\"name\":\"\",\"zipCode\":\"\",\"homeTown\":\"Frankston\",\"state\":\"\",\"homeTownLat\":null,\"homeTownLng\":null,\"homeTownLabel\":\"Frankston\",\"setupComplete\":false,\"setupSkipped\":false,\"awarenessArea\":\"Frankston\",\"awarenessAreaKey\":\"place-4827300\",\"awarenessAreaLabel\":\"Frankston\",\"awarenessAreaCountyId\":\"henderson-tx\"}",
+        "gridlySavedPlacesV1": "{\"version\":1,\"home\":{\"id\":\"home\",\"label\":\"Saved Home fixture\",\"lat\":30.0505,\"lng\":-94.889,\"coordinateSource\":\"geocode\",\"resolutionStatus\":\"success\",\"validationStatus\":\"passed\"},\"work\":{\"id\":\"work\",\"label\":\"Work fixture\",\"lat\":30.0505,\"lng\":-94.889,\"coordinateSource\":\"geocode\",\"resolutionStatus\":\"success\",\"validationStatus\":\"passed\"},\"custom\":[],\"favorites\":[]}"
+      },
+      "chooser": false
+    },
+    "checks": {
+      "identity": true,
+      "canonicalCoordinates": true,
+      "searchUsable": true,
+      "startupNoErrors": true,
+      "savedPlacesPreserved": true
+    },
+    "pass": true,
+    "errors": []
+  },
+  {
+    "name": "malformed-memberships",
+    "profile": {
+      "gridlyHomePersonalizationV1": {
+        "zip": "",
+        "countyId": "henderson-tx",
+        "countyName": "",
+        "countyMemberships": {
+          "bad": true
+        },
+        "communityKey": "4827300",
+        "communityLabel": "Frankston",
+        "awarenessAreaKey": "place-4827300",
+        "consumerLabel": "Frankston",
+        "identityType": "PLACE_GEOID",
+        "canonicalRegionId": null,
+        "resolutionStatus": "manual_confirmed",
+        "resolutionMethod": "profile-fixture",
+        "sourceVersion": "LP217",
+        "confirmedAt": "2026-09-24T00:00:00.000Z",
+        "schemaVersion": "LP051.7.home-personalization.v1"
+      }
+    },
+    "expected": null,
+    "sourceHash": "857dc05e8f12786ace4ccded59e7ed582e3438da3f76d65f2fb4d579af6ceb91",
+    "result": {
+      "identity": {
+        "probeVersion": 3,
+        "type": "NONE",
+        "place": null,
+        "name": "Choose a location",
+        "county": null,
+        "lat": null,
+        "lng": null,
+        "generation": 0,
+        "health": "UNAVAILABLE",
+        "expiresAt": null,
+        "startupProviderFocus": null
+      },
+      "weather": null,
+      "search": [
+        "4827300"
+      ],
+      "bytes": {
+        "gridlyHomePersonalizationV1": "{\"zip\":\"\",\"countyId\":\"henderson-tx\",\"countyName\":\"\",\"countyMemberships\":{\"bad\":true},\"communityKey\":\"4827300\",\"communityLabel\":\"Frankston\",\"awarenessAreaKey\":\"place-4827300\",\"consumerLabel\":\"Frankston\",\"identityType\":\"PLACE_GEOID\",\"canonicalRegionId\":null,\"resolutionStatus\":\"manual_confirmed\",\"resolutionMethod\":\"profile-fixture\",\"sourceVersion\":\"LP217\",\"confirmedAt\":\"2026-09-24T00:00:00.000Z\",\"schemaVersion\":\"LP051.7.home-personalization.v1\"}",
+        "gridlyHomeTown": null,
+        "gridlySettingsV1": "{\"notifications\":{\"routeAlerts\":true,\"railAlerts\":true,\"hazardAlerts\":true,\"communityAlerts\":false},\"display\":{\"mapStyle\":\"standard\",\"theme\":\"system\",\"textSize\":\"large\"},\"personalization\":{\"preferredName\":\"\"},\"community\":{\"homeTown\":\"\",\"awarenessArea\":\"\",\"awarenessAreaKey\":\"\",\"countyId\":\"liberty-tx\"}}",
+        "gridlyUserProfileV1": null,
+        "gridlySavedPlacesV1": null
+      },
+      "chooser": false
+    },
+    "checks": {
+      "identity": true,
+      "canonicalCoordinates": true,
+      "searchUsable": true,
+      "startupNoErrors": true,
+      "savedPlacesPreserved": true
+    },
+    "pass": true,
+    "errors": []
+  },
+  {
+    "name": "malformed-json",
+    "profile": {
+      "gridlyHomePersonalizationV1": "{\"countyId\":"
+    },
+    "expected": null,
+    "sourceHash": "857dc05e8f12786ace4ccded59e7ed582e3438da3f76d65f2fb4d579af6ceb91",
+    "result": {
+      "identity": {
+        "probeVersion": 3,
+        "type": "NONE",
+        "place": null,
+        "name": "Choose a location",
+        "county": null,
+        "lat": null,
+        "lng": null,
+        "generation": 0,
+        "health": "UNAVAILABLE",
+        "expiresAt": null,
+        "startupProviderFocus": null
+      },
+      "weather": null,
+      "search": [
+        "4827300"
+      ],
+      "bytes": {
+        "gridlyHomePersonalizationV1": "{\"countyId\":",
+        "gridlyHomeTown": null,
+        "gridlySettingsV1": "{\"notifications\":{\"routeAlerts\":true,\"railAlerts\":true,\"hazardAlerts\":true,\"communityAlerts\":false},\"display\":{\"mapStyle\":\"standard\",\"theme\":\"system\",\"textSize\":\"large\"},\"personalization\":{\"preferredName\":\"\"},\"community\":{\"homeTown\":\"\",\"awarenessArea\":\"\",\"awarenessAreaKey\":\"\",\"countyId\":\"liberty-tx\"}}",
+        "gridlyUserProfileV1": null,
+        "gridlySavedPlacesV1": null
+      },
+      "chooser": false
+    },
+    "checks": {
+      "identity": true,
+      "canonicalCoordinates": true,
+      "searchUsable": true,
+      "startupNoErrors": true,
+      "savedPlacesPreserved": true
+    },
+    "pass": true,
+    "errors": []
+  },
+  {
+    "name": "malformed-saved-places",
+    "profile": {
+      "gridlySavedPlacesV1": {
+        "version": 1,
+        "home": {
+          "id": "home",
+          "label": "Incomplete"
+        },
+        "work": null
+      }
+    },
+    "expected": null,
+    "allowSavedNormalization": true,
+    "sourceHash": "857dc05e8f12786ace4ccded59e7ed582e3438da3f76d65f2fb4d579af6ceb91",
+    "result": {
+      "identity": {
+        "probeVersion": 3,
+        "type": "NONE",
+        "place": null,
+        "name": "Choose a location",
+        "county": null,
+        "lat": null,
+        "lng": null,
+        "generation": 0,
+        "health": "UNAVAILABLE",
+        "expiresAt": null,
+        "startupProviderFocus": null
+      },
+      "weather": null,
+      "search": [
+        "4827300"
+      ],
+      "bytes": {
+        "gridlyHomePersonalizationV1": null,
+        "gridlyHomeTown": null,
+        "gridlySettingsV1": "{\"notifications\":{\"routeAlerts\":true,\"railAlerts\":true,\"hazardAlerts\":true,\"communityAlerts\":false},\"display\":{\"mapStyle\":\"standard\",\"theme\":\"system\",\"textSize\":\"large\"},\"personalization\":{\"preferredName\":\"\"},\"community\":{\"homeTown\":\"\",\"awarenessArea\":\"\",\"awarenessAreaKey\":\"\",\"countyId\":\"liberty-tx\"}}",
+        "gridlyUserProfileV1": null,
+        "gridlySavedPlacesV1": "{\"version\":1,\"home\":null,\"work\":null,\"custom\":[],\"favorites\":[]}"
+      },
+      "chooser": false
+    },
+    "checks": {
+      "identity": true,
+      "canonicalCoordinates": true,
+      "searchUsable": true,
+      "startupNoErrors": true,
+      "savedPlacesPreserved": true
+    },
+    "pass": true,
+    "errors": []
+  }
+]

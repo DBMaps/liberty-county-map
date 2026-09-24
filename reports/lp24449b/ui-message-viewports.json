@@ -1,0 +1,205 @@
+{
+  "scope": "The initial UI evidence used width for the measured message box, overwriting the configured viewport field. Configured widths below are reconstructed from the recorded test loop order (five outcomes at each explicit setViewportSize call); measured widths remain unchanged. Future captures use separate viewportWidth and width fields.",
+  "rows": [
+    {
+      "configuredViewportWidth": 320,
+      "width": 284,
+      "outcome": "denied",
+      "text": "Location permission was denied. Your area is unchanged.",
+      "hidden": false,
+      "display": "flex",
+      "live": "polite",
+      "height": 56.625
+    },
+    {
+      "configuredViewportWidth": 320,
+      "width": 284,
+      "outcome": "stale",
+      "text": "A fresh location is unavailable. Your area is unchanged. Try Around Me again.",
+      "hidden": false,
+      "display": "flex",
+      "live": "polite",
+      "height": 75.9375
+    },
+    {
+      "configuredViewportWidth": 320,
+      "width": 284,
+      "outcome": "timeout",
+      "text": "Location timed out. Your area is unchanged. Try Around Me again.",
+      "hidden": false,
+      "display": "flex",
+      "live": "polite",
+      "height": 56.625
+    },
+    {
+      "configuredViewportWidth": 320,
+      "width": 284,
+      "outcome": "error",
+      "text": "A fresh location is unavailable. Your area is unchanged. Try Around Me again.",
+      "hidden": false,
+      "display": "flex",
+      "live": "polite",
+      "height": 75.9375
+    },
+    {
+      "configuredViewportWidth": 320,
+      "width": 284,
+      "outcome": "success",
+      "text": "Around Me uses this location for up to two minutes. Your Home is unchanged.",
+      "hidden": false,
+      "display": "flex",
+      "live": "polite",
+      "height": 75.9375
+    },
+    {
+      "configuredViewportWidth": 360,
+      "width": 324,
+      "outcome": "denied",
+      "text": "Location permission was denied. Your area is unchanged.",
+      "hidden": false,
+      "display": "flex",
+      "live": "polite",
+      "height": 56.625
+    },
+    {
+      "configuredViewportWidth": 360,
+      "width": 324,
+      "outcome": "stale",
+      "text": "A fresh location is unavailable. Your area is unchanged. Try Around Me again.",
+      "hidden": false,
+      "display": "flex",
+      "live": "polite",
+      "height": 56.625
+    },
+    {
+      "configuredViewportWidth": 360,
+      "width": 324,
+      "outcome": "timeout",
+      "text": "Location timed out. Your area is unchanged. Try Around Me again.",
+      "hidden": false,
+      "display": "flex",
+      "live": "polite",
+      "height": 56.625
+    },
+    {
+      "configuredViewportWidth": 360,
+      "width": 324,
+      "outcome": "error",
+      "text": "A fresh location is unavailable. Your area is unchanged. Try Around Me again.",
+      "hidden": false,
+      "display": "flex",
+      "live": "polite",
+      "height": 56.625
+    },
+    {
+      "configuredViewportWidth": 360,
+      "width": 324,
+      "outcome": "success",
+      "text": "Around Me uses this location for up to two minutes. Your Home is unchanged.",
+      "hidden": false,
+      "display": "flex",
+      "live": "polite",
+      "height": 56.625
+    },
+    {
+      "configuredViewportWidth": 390,
+      "width": 354,
+      "outcome": "denied",
+      "text": "Location permission was denied. Your area is unchanged.",
+      "hidden": false,
+      "display": "flex",
+      "live": "polite",
+      "height": 56.625
+    },
+    {
+      "configuredViewportWidth": 390,
+      "width": 354,
+      "outcome": "stale",
+      "text": "A fresh location is unavailable. Your area is unchanged. Try Around Me again.",
+      "hidden": false,
+      "display": "flex",
+      "live": "polite",
+      "height": 56.625
+    },
+    {
+      "configuredViewportWidth": 390,
+      "width": 354,
+      "outcome": "timeout",
+      "text": "Location timed out. Your area is unchanged. Try Around Me again.",
+      "hidden": false,
+      "display": "flex",
+      "live": "polite",
+      "height": 56.625
+    },
+    {
+      "configuredViewportWidth": 390,
+      "width": 354,
+      "outcome": "error",
+      "text": "A fresh location is unavailable. Your area is unchanged. Try Around Me again.",
+      "hidden": false,
+      "display": "flex",
+      "live": "polite",
+      "height": 56.625
+    },
+    {
+      "configuredViewportWidth": 390,
+      "width": 354,
+      "outcome": "success",
+      "text": "Around Me uses this location for up to two minutes. Your Home is unchanged.",
+      "hidden": false,
+      "display": "flex",
+      "live": "polite",
+      "height": 56.625
+    },
+    {
+      "configuredViewportWidth": 440,
+      "width": 404,
+      "outcome": "denied",
+      "text": "Location permission was denied. Your area is unchanged.",
+      "hidden": false,
+      "display": "flex",
+      "live": "polite",
+      "height": 56.625
+    },
+    {
+      "configuredViewportWidth": 440,
+      "width": 404,
+      "outcome": "stale",
+      "text": "A fresh location is unavailable. Your area is unchanged. Try Around Me again.",
+      "hidden": false,
+      "display": "flex",
+      "live": "polite",
+      "height": 56.625
+    },
+    {
+      "configuredViewportWidth": 440,
+      "width": 404,
+      "outcome": "timeout",
+      "text": "Location timed out. Your area is unchanged. Try Around Me again.",
+      "hidden": false,
+      "display": "flex",
+      "live": "polite",
+      "height": 56.625
+    },
+    {
+      "configuredViewportWidth": 440,
+      "width": 404,
+      "outcome": "error",
+      "text": "A fresh location is unavailable. Your area is unchanged. Try Around Me again.",
+      "hidden": false,
+      "display": "flex",
+      "live": "polite",
+      "height": 56.625
+    },
+    {
+      "configuredViewportWidth": 440,
+      "width": 404,
+      "outcome": "success",
+      "text": "Around Me uses this location for up to two minutes. Your Home is unchanged.",
+      "hidden": false,
+      "display": "flex",
+      "live": "polite",
+      "height": 56.625
+    }
+  ]
+}

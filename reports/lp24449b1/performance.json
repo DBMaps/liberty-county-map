@@ -1,0 +1,291 @@
+{
+  "startedAt": "2026-09-24T20:25:22.637Z",
+  "finishedAt": "2026-09-24T23:50:35.997Z",
+  "elapsedWallMs": 12313362,
+  "maxBrowserConcurrency": 2,
+  "home": {
+    "homeTotalMs": 13585152,
+    "searchTotalMs": 3369498,
+    "slowHome": [
+      {
+        "county": "harris-tx",
+        "place": "4814929",
+        "ms": 250872
+      },
+      {
+        "county": "harris-tx",
+        "place": "4848772",
+        "ms": 230720
+      },
+      {
+        "county": "harris-tx",
+        "place": "4867688",
+        "ms": 222318
+      },
+      {
+        "county": "harris-tx",
+        "place": "4869908",
+        "ms": 221527
+      },
+      {
+        "county": "harris-tx",
+        "place": "4877956",
+        "ms": 219510
+      },
+      {
+        "county": "harris-tx",
+        "place": "4817756",
+        "ms": 217037
+      },
+      {
+        "county": "harris-tx",
+        "place": "4873316",
+        "ms": 213428
+      },
+      {
+        "county": "harris-tx",
+        "place": "4801696",
+        "ms": 211238
+      },
+      {
+        "county": "harris-tx",
+        "place": "4872656",
+        "ms": 211195
+      },
+      {
+        "county": "harris-tx",
+        "place": "4838476",
+        "ms": 209834
+      }
+    ],
+    "slowSearch": [
+      {
+        "county": "harris-tx",
+        "place": "4866392",
+        "ms": 56970
+      },
+      {
+        "county": "harris-tx",
+        "place": "4872656",
+        "ms": 54736
+      },
+      {
+        "county": "harris-tx",
+        "place": "4849380",
+        "ms": 51189
+      },
+      {
+        "county": "harris-tx",
+        "place": "4838476",
+        "ms": 50859
+      },
+      {
+        "county": "harris-tx",
+        "place": "4867688",
+        "ms": 49467
+      },
+      {
+        "county": "harris-tx",
+        "place": "4848804",
+        "ms": 48945
+      },
+      {
+        "county": "harris-tx",
+        "place": "4869908",
+        "ms": 48673
+      },
+      {
+        "county": "harris-tx",
+        "place": "4857800",
+        "ms": 46605
+      },
+      {
+        "county": "harris-tx",
+        "place": "4869272",
+        "ms": 46118
+      },
+      {
+        "county": "harris-tx",
+        "place": "4871960",
+        "ms": 45748
+      }
+    ],
+    "interpretation": "Headless deterministic harness timings include map rendering, settlement and reload; not human interaction latency.",
+    "homeReadPerformance": [
+      {
+        "baseline": true,
+        "sourceHash": "857dc05e8f12786ace4ccded59e7ed582e3438da3f76d65f2fb4d579af6ceb91",
+        "setup": {
+          "saved": "Houston",
+          "elapsedMs": 10305.60000000149,
+          "context": {
+            "probeVersion": 3,
+            "type": "HOME",
+            "place": "4835000",
+            "name": "Houston",
+            "county": "harris-tx",
+            "lat": 29.7589382,
+            "lng": -95.3676974,
+            "generation": 1,
+            "health": "FRESH",
+            "expiresAt": null,
+            "startupProviderFocus": null
+          },
+          "getterCalls": 22705
+        },
+        "sample": {
+          "count": 1000,
+          "elapsedMs": 12.700000002980232,
+          "area": {
+            "key": "place-4835000",
+            "county": "harris-tx",
+            "place": "4835000"
+          },
+          "context": {
+            "probeVersion": 3,
+            "type": "HOME",
+            "place": "4835000",
+            "name": "Houston",
+            "county": "harris-tx",
+            "lat": 29.7589382,
+            "lng": -95.3676974,
+            "generation": 1,
+            "health": "FRESH",
+            "expiresAt": null,
+            "startupProviderFocus": null
+          }
+        },
+        "canonicalResolverSamples": 3,
+        "totalSamples": 34,
+        "errors": []
+      },
+      {
+        "baseline": false,
+        "sourceHash": "f57fac7440ad6ad9bf230e1f41cffeefb7f22405c0a58b696e48bba3ce0ed0cd",
+        "setup": {
+          "saved": true,
+          "elapsedMs": 17076.89999999851,
+          "context": {
+            "probeVersion": 3,
+            "type": "HOME",
+            "place": "4835000",
+            "name": "Houston",
+            "county": "harris-tx",
+            "lat": 29.7589382,
+            "lng": -95.3676974,
+            "generation": 1,
+            "health": "FRESH",
+            "expiresAt": null,
+            "startupProviderFocus": null
+          },
+          "getterCalls": 21868
+        },
+        "sample": {
+          "count": 1000,
+          "elapsedMs": 12.100000001490116,
+          "area": {
+            "key": "place-4835000",
+            "county": "harris-tx",
+            "place": "4835000"
+          },
+          "context": {
+            "probeVersion": 3,
+            "type": "HOME",
+            "place": "4835000",
+            "name": "Houston",
+            "county": "harris-tx",
+            "lat": 29.7589382,
+            "lng": -95.3676974,
+            "generation": 1,
+            "health": "FRESH",
+            "expiresAt": null,
+            "startupProviderFocus": null
+          }
+        },
+        "canonicalResolverSamples": 2,
+        "totalSamples": 30,
+        "errors": []
+      }
+    ]
+  },
+  "scenarioComponents": {
+    "home": 793,
+    "search": 2058,
+    "crossCounty": 254,
+    "visibleSearch": 67,
+    "profiles": 19,
+    "activeClear": 254,
+    "pairedWitnessRaceBefore": 10,
+    "pairedWitnessRaceAfter": 10,
+    "originalTenExactBaseline": 10,
+    "originalTenExactCurrent": 10,
+    "originalTenProvenance": 20,
+    "controls": 10,
+    "mixedAndRaces": 18,
+    "provider": 10,
+    "rail": 5
+  },
+  "slowest": [
+    {
+      "suite": "Home",
+      "county": "harris-tx",
+      "place": "4814929",
+      "ms": 250872
+    },
+    {
+      "suite": "Home",
+      "county": "harris-tx",
+      "place": "4848772",
+      "ms": 230720
+    },
+    {
+      "suite": "Home",
+      "county": "harris-tx",
+      "place": "4867688",
+      "ms": 222318
+    },
+    {
+      "suite": "Home",
+      "county": "harris-tx",
+      "place": "4869908",
+      "ms": 221527
+    },
+    {
+      "suite": "Home",
+      "county": "harris-tx",
+      "place": "4877956",
+      "ms": 219510
+    },
+    {
+      "suite": "Home",
+      "county": "harris-tx",
+      "place": "4817756",
+      "ms": 217037
+    },
+    {
+      "suite": "Home",
+      "county": "harris-tx",
+      "place": "4873316",
+      "ms": 213428
+    },
+    {
+      "suite": "Home",
+      "county": "harris-tx",
+      "place": "4801696",
+      "ms": 211238
+    },
+    {
+      "suite": "Home",
+      "county": "harris-tx",
+      "place": "4872656",
+      "ms": 211195
+    },
+    {
+      "suite": "Home",
+      "county": "harris-tx",
+      "place": "4838476",
+      "ms": 209834
+    }
+  ],
+  "scope": "Headless Edge timings include reloads, map work and diagnostic settlement. They are not interaction latency benchmarks. Baseline proof and current certification are separately itemized."
+}

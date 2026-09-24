@@ -1,0 +1,1533 @@
+{
+  "total": 254,
+  "localPassed": 251,
+  "pass": 0,
+  "conditional": 251,
+  "fail": 3,
+  "rows": [
+    {
+      "countyId": "anderson-tx",
+      "memberships": 4,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "andrews-tx",
+      "memberships": 2,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "angelina-tx",
+      "memberships": 7,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "aransas-tx",
+      "memberships": 6,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "archer-tx",
+      "memberships": 6,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "armstrong-tx",
+      "memberships": 2,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "atascosa-tx",
+      "memberships": 7,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "austin-tx",
+      "memberships": 8,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "bailey-tx",
+      "memberships": 1,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "bandera-tx",
+      "memberships": 3,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "bastrop-tx",
+      "memberships": 13,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "baylor-tx",
+      "memberships": 1,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "bee-tx",
+      "memberships": 9,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "bell-tx",
+      "memberships": 15,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "bexar-tx",
+      "memberships": 34,
+      "localPass": false,
+      "status": "FAIL"
+    },
+    {
+      "countyId": "blanco-tx",
+      "memberships": 3,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "borden-tx",
+      "memberships": 1,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "bosque-tx",
+      "memberships": 10,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "bowie-tx",
+      "memberships": 10,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "brazoria-tx",
+      "memberships": 28,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "brazos-tx",
+      "memberships": 6,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "brewster-tx",
+      "memberships": 4,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "briscoe-tx",
+      "memberships": 2,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "brooks-tx",
+      "memberships": 5,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "brown-tx",
+      "memberships": 8,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "burleson-tx",
+      "memberships": 9,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "burnet-tx",
+      "memberships": 10,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "caldwell-tx",
+      "memberships": 7,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "calhoun-tx",
+      "memberships": 6,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "callahan-tx",
+      "memberships": 4,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "cameron-tx",
+      "memberships": 52,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "camp-tx",
+      "memberships": 2,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "carson-tx",
+      "memberships": 4,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "cass-tx",
+      "memberships": 11,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "castro-tx",
+      "memberships": 4,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "chambers-tx",
+      "memberships": 13,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "cherokee-tx",
+      "memberships": 11,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "childress-tx",
+      "memberships": 1,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "clay-tx",
+      "memberships": 8,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "cochran-tx",
+      "memberships": 3,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "coke-tx",
+      "memberships": 3,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "coleman-tx",
+      "memberships": 4,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "collin-tx",
+      "memberships": 34,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "collingsworth-tx",
+      "memberships": 4,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "colorado-tx",
+      "memberships": 8,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "comal-tx",
+      "memberships": 9,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "comanche-tx",
+      "memberships": 5,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "concho-tx",
+      "memberships": 2,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "cooke-tx",
+      "memberships": 11,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "coryell-tx",
+      "memberships": 9,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "cottle-tx",
+      "memberships": 1,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "crane-tx",
+      "memberships": 1,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "crockett-tx",
+      "memberships": 1,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "crosby-tx",
+      "memberships": 3,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "culberson-tx",
+      "memberships": 1,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "dallam-tx",
+      "memberships": 2,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "dallas-tx",
+      "memberships": 32,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "dawson-tx",
+      "memberships": 5,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "deaf-smith-tx",
+      "memberships": 1,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "delta-tx",
+      "memberships": 2,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "denton-tx",
+      "memberships": 49,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "dewitt-tx",
+      "memberships": 4,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "dickens-tx",
+      "memberships": 2,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "dimmit-tx",
+      "memberships": 6,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "donley-tx",
+      "memberships": 4,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "duval-tx",
+      "memberships": 5,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "eastland-tx",
+      "memberships": 6,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "ector-tx",
+      "memberships": 4,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "edwards-tx",
+      "memberships": 2,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "ellis-tx",
+      "memberships": 21,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "el-paso-tx",
+      "memberships": 19,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "erath-tx",
+      "memberships": 6,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "falls-tx",
+      "memberships": 6,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "fannin-tx",
+      "memberships": 13,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "fayette-tx",
+      "memberships": 8,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "fisher-tx",
+      "memberships": 5,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "floyd-tx",
+      "memberships": 2,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "foard-tx",
+      "memberships": 1,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "fort-bend-tx",
+      "memberships": 28,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "franklin-tx",
+      "memberships": 2,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "freestone-tx",
+      "memberships": 6,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "frio-tx",
+      "memberships": 6,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "gaines-tx",
+      "memberships": 4,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "galveston-tx",
+      "memberships": 16,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "garza-tx",
+      "memberships": 1,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "gillespie-tx",
+      "memberships": 3,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "glasscock-tx",
+      "memberships": 1,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "goliad-tx",
+      "memberships": 1,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "gonzales-tx",
+      "memberships": 4,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "gray-tx",
+      "memberships": 4,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "grayson-tx",
+      "memberships": 20,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "gregg-tx",
+      "memberships": 11,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "grimes-tx",
+      "memberships": 9,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "guadalupe-tx",
+      "memberships": 18,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "hale-tx",
+      "memberships": 6,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "hall-tx",
+      "memberships": 4,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "hamilton-tx",
+      "memberships": 4,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "hansford-tx",
+      "memberships": 3,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "hardeman-tx",
+      "memberships": 2,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "hardin-tx",
+      "memberships": 7,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "harris-tx",
+      "memberships": 46,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "harrison-tx",
+      "memberships": 6,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "hartley-tx",
+      "memberships": 3,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "haskell-tx",
+      "memberships": 6,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "hays-tx",
+      "memberships": 15,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "hemphill-tx",
+      "memberships": 2,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "henderson-tx",
+      "memberships": 22,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "hidalgo-tx",
+      "memberships": 58,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "hill-tx",
+      "memberships": 14,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "hockley-tx",
+      "memberships": 7,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "hood-tx",
+      "memberships": 9,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "hopkins-tx",
+      "memberships": 4,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "houston-tx",
+      "memberships": 5,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "howard-tx",
+      "memberships": 4,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "hudspeth-tx",
+      "memberships": 4,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "hunt-tx",
+      "memberships": 15,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "hutchinson-tx",
+      "memberships": 5,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "irion-tx",
+      "memberships": 1,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "jack-tx",
+      "memberships": 3,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "jackson-tx",
+      "memberships": 5,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "jasper-tx",
+      "memberships": 6,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "jeff-davis-tx",
+      "memberships": 2,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "jefferson-tx",
+      "memberships": 13,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "jim-hogg-tx",
+      "memberships": 5,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "jim-wells-tx",
+      "memberships": 16,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "johnson-tx",
+      "memberships": 19,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "jones-tx",
+      "memberships": 6,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "karnes-tx",
+      "memberships": 4,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "kaufman-tx",
+      "memberships": 25,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "kendall-tx",
+      "memberships": 3,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "kenedy-tx",
+      "memberships": 1,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "kent-tx",
+      "memberships": 2,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "kerr-tx",
+      "memberships": 3,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "kimble-tx",
+      "memberships": 1,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "king-tx",
+      "memberships": 1,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "kinney-tx",
+      "memberships": 3,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "kleberg-tx",
+      "memberships": 4,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "knox-tx",
+      "memberships": 4,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "lamar-tx",
+      "memberships": 10,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "lamb-tx",
+      "memberships": 7,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "lampasas-tx",
+      "memberships": 4,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "la-salle-tx",
+      "memberships": 3,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "lavaca-tx",
+      "memberships": 4,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "lee-tx",
+      "memberships": 3,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "leon-tx",
+      "memberships": 8,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "liberty-tx",
+      "memberships": 15,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "limestone-tx",
+      "memberships": 7,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "lipscomb-tx",
+      "memberships": 5,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "live-oak-tx",
+      "memberships": 2,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "llano-tx",
+      "memberships": 7,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "loving-tx",
+      "memberships": 1,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "lubbock-tx",
+      "memberships": 9,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "lynn-tx",
+      "memberships": 4,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "mcculloch-tx",
+      "memberships": 3,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "mclennan-tx",
+      "memberships": 23,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "mcmullen-tx",
+      "memberships": 1,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "madison-tx",
+      "memberships": 3,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "marion-tx",
+      "memberships": 2,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "martin-tx",
+      "memberships": 3,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "mason-tx",
+      "memberships": 1,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "matagorda-tx",
+      "memberships": 9,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "maverick-tx",
+      "memberships": 13,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "medina-tx",
+      "memberships": 10,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "menard-tx",
+      "memberships": 1,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "midland-tx",
+      "memberships": 2,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "milam-tx",
+      "memberships": 9,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "mills-tx",
+      "memberships": 3,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "mitchell-tx",
+      "memberships": 4,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "montague-tx",
+      "memberships": 7,
+      "localPass": false,
+      "status": "FAIL"
+    },
+    {
+      "countyId": "montgomery-tx",
+      "memberships": 22,
+      "localPass": false,
+      "status": "FAIL"
+    },
+    {
+      "countyId": "moore-tx",
+      "memberships": 4,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "morris-tx",
+      "memberships": 5,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "motley-tx",
+      "memberships": 2,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "nacogdoches-tx",
+      "memberships": 6,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "navarro-tx",
+      "memberships": 18,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "newton-tx",
+      "memberships": 3,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "nolan-tx",
+      "memberships": 3,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "nueces-tx",
+      "memberships": 18,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "ochiltree-tx",
+      "memberships": 4,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "oldham-tx",
+      "memberships": 4,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "orange-tx",
+      "memberships": 11,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "palo-pinto-tx",
+      "memberships": 8,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "panola-tx",
+      "memberships": 4,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "parker-tx",
+      "memberships": 23,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "parmer-tx",
+      "memberships": 3,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "pecos-tx",
+      "memberships": 5,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "polk-tx",
+      "memberships": 10,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "potter-tx",
+      "memberships": 3,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "presidio-tx",
+      "memberships": 3,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "rains-tx",
+      "memberships": 4,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "randall-tx",
+      "memberships": 9,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "reagan-tx",
+      "memberships": 1,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "real-tx",
+      "memberships": 2,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "red-river-tx",
+      "memberships": 6,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "reeves-tx",
+      "memberships": 4,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "refugio-tx",
+      "memberships": 5,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "roberts-tx",
+      "memberships": 1,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "robertson-tx",
+      "memberships": 4,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "rockwall-tx",
+      "memberships": 9,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "runnels-tx",
+      "memberships": 5,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "rusk-tx",
+      "memberships": 9,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "sabine-tx",
+      "memberships": 3,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "san-augustine-tx",
+      "memberships": 2,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "san-jacinto-tx",
+      "memberships": 6,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "san-patricio-tx",
+      "memberships": 26,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "san-saba-tx",
+      "memberships": 2,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "schleicher-tx",
+      "memberships": 1,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "scurry-tx",
+      "memberships": 3,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "shackelford-tx",
+      "memberships": 3,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "shelby-tx",
+      "memberships": 6,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "sherman-tx",
+      "memberships": 2,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "smith-tx",
+      "memberships": 12,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "somervell-tx",
+      "memberships": 1,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "starr-tx",
+      "memberships": 115,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "stephens-tx",
+      "memberships": 1,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "sterling-tx",
+      "memberships": 1,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "stonewall-tx",
+      "memberships": 1,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "sutton-tx",
+      "memberships": 1,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "swisher-tx",
+      "memberships": 3,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "tarrant-tx",
+      "memberships": 45,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "taylor-tx",
+      "memberships": 9,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "terrell-tx",
+      "memberships": 1,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "terry-tx",
+      "memberships": 3,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "throckmorton-tx",
+      "memberships": 3,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "titus-tx",
+      "memberships": 4,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "tom-green-tx",
+      "memberships": 4,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "travis-tx",
+      "memberships": 31,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "trinity-tx",
+      "memberships": 3,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "tyler-tx",
+      "memberships": 6,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "upshur-tx",
+      "memberships": 8,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "upton-tx",
+      "memberships": 2,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "uvalde-tx",
+      "memberships": 5,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "val-verde-tx",
+      "memberships": 7,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "van-zandt-tx",
+      "memberships": 11,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "victoria-tx",
+      "memberships": 5,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "walker-tx",
+      "memberships": 3,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "waller-tx",
+      "memberships": 8,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "ward-tx",
+      "memberships": 7,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "washington-tx",
+      "memberships": 2,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "webb-tx",
+      "memberships": 40,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "wharton-tx",
+      "memberships": 7,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "wheeler-tx",
+      "memberships": 4,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "wichita-tx",
+      "memberships": 6,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "wilbarger-tx",
+      "memberships": 4,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "willacy-tx",
+      "memberships": 10,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "williamson-tx",
+      "memberships": 21,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "wilson-tx",
+      "memberships": 6,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "winkler-tx",
+      "memberships": 3,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "wise-tx",
+      "memberships": 16,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "wood-tx",
+      "memberships": 7,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "yoakum-tx",
+      "memberships": 2,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "young-tx",
+      "memberships": 4,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "zapata-tx",
+      "memberships": 12,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    },
+    {
+      "countyId": "zavala-tx",
+      "memberships": 6,
+      "localPass": true,
+      "status": "CONDITIONAL"
+    }
+  ]
+}

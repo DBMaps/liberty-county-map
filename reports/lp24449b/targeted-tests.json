@@ -1,0 +1,27 @@
+{
+  "runs": [
+    {
+      "baseline": true,
+      "exitCode": 1,
+      "args": [
+        "--require",
+        "./tools/lp24449b/baseline-test-loader.cjs",
+        "--test",
+        "--test-name-pattern=weather failed recheck|late obsolete weather success",
+        "tests/lp24449b-source-truth-and-filter.test.cjs"
+      ],
+      "log": "✖ weather failed recheck cannot be resurrected by cached success; recovery restores current authority (26.8273ms)\n✖ late obsolete weather success cannot replace a newer same-place failure after A-B-A transitions (4.83ms)\nℹ tests 2\nℹ suites 0\nℹ pass 0\nℹ fail 2\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 294.5867\n\n✖ failing tests:\n\ntest at tests\\lp24449b-source-truth-and-filter.test.cjs:15:1\n✖ weather failed recheck cannot be resurrected by cached success; recovery restores current authority (26.8273ms)\n  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n  \n  true !== false\n  \n      at TestContext.<anonymous> (C:\\GitHub\\liberty-county-map\\tests\\lp24449b-source-truth-and-filter.test.cjs:19:78)\n      at async Test.run (node:internal/test_runner/test:1313:7)\n      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3) {\n    generatedMessage: true,\n    code: 'ERR_ASSERTION',\n    actual: true,\n    expected: false,\n    operator: 'strictEqual',\n    diff: 'simple'\n  }\n\ntest at tests\\lp24449b-source-truth-and-filter.test.cjs:23:1\n✖ late obsolete weather success cannot replace a newer same-place failure after A-B-A transitions (4.83ms)\n  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n  \n  true !== false\n  \n      at TestContext.<anonymous> (C:\\GitHub\\liberty-county-map\\tests\\lp24449b-source-truth-and-filter.test.cjs:35:9)\n      at async Test.run (node:internal/test_runner/test:1313:7)\n      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {\n    generatedMessage: true,\n    code: 'ERR_ASSERTION',\n    actual: true,\n    expected: false,\n    operator: 'strictEqual',\n    diff: 'simple'\n  }\n\n"
+    },
+    {
+      "baseline": false,
+      "exitCode": 0,
+      "args": [
+        "--test",
+        "tests/lp24449b-source-truth-and-filter.test.cjs"
+      ],
+      "log": "✔ healthy empty and governed empty crossings permit quiet; every unavailable family blocks it without hiding active count (18.0138ms)\n✔ County filter retains accepted Home, Search, Around Me and Route Watch ownership over centroid and persisted Home (3.5611ms)\n✔ weather failed recheck cannot be resurrected by cached success; recovery restores current authority (15.2515ms)\n✔ late obsolete weather success cannot replace a newer same-place failure after A-B-A transitions (5.5474ms)\nℹ tests 4\nℹ suites 0\nℹ pass 4\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 304.6259\n\n"
+    }
+  ],
+  "weatherRegressionProven": true,
+  "passed": true
+}

@@ -1,0 +1,5 @@
+import fs from 'node:fs';import {spawn} from 'node:child_process';
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+while(!fs.existsSync('reports/lp24449b/queue-1.json')||!JSON.parse(fs.readFileSync('reports/lp24449b/queue-1.json')).completed)await wait(1000);
+const runs=[],jobs=['filter-lifecycle.mjs','rail-lifecycle.mjs','nueces-baseline.mjs','pulse-statewide.mjs'];
+for(const job of jobs){console.log(JSON.stringify({job,phase:'START'}));const startedAt=new Date().toISOString(),log=fs.openSync(`.artifacts/lp24449b/extra-${job}.log`,'w');const child=spawn(process.execPath,[`tools/lp24449b/${job}`],{stdio:['ignore',log,log]});const code=await new Promise((resolve,reject)=>{child.on('error',reject);child.on('close',resolve);});fs.closeSync(log);runs.push({job,startedAt,finishedAt:new Date().toISOString(),exitCode:code});fs.writeFileSync('reports/lp24449b/extra-queue.json',JSON.stringify({runs,completed:runs.length===jobs.length},null,2)+'\n');console.log(JSON.stringify({job,phase:'END',exitCode:code}));}

@@ -1,0 +1,8 @@
+import {read,write,out} from './inventory.mjs';
+const replay=read('reports/lp24449b/crossing-ownership-replay.json'),geometry=read('assets/location-resolution/gridly-authoritative-county-geometry-v1.json');
+function ringContains([x,y],ring){let inside=false;for(let i=0,j=ring.length-1;i<ring.length;j=i++){const [xi,yi]=ring[i],[xj,yj]=ring[j];if((yi>y)!==(yj>y)&&x<(xj-xi)*(y-yi)/(yj-yi)+xi)inside=!inside;}return inside;}
+function contains(point,g){return (g.type==='Polygon'?[g.coordinates]:g.coordinates).some(p=>ringContains(point,p[0])&&!p.slice(1).some(h=>ringContains(point,h)));}
+for(const row of replay.identities){const [lng,lat]=row.coordinates;const containing=geometry.counties.filter(c=>lat>=c.bounds.south&&lat<=c.bounds.north&&lng>=c.bounds.west&&lng<=c.bounds.east&&contains(row.coordinates,c.geometry)).map(c=>c.countyId);row.directGeometryProof={source:'assets/location-resolution/gridly-authoritative-county-geometry-v1.json',containingCounties:containing,packageOwner:row.packages[0]?.county,pass:containing.length===1&&containing[0]===row.packages[0]?.county};row.checks.directCertifiedPolygonContainment=row.directGeometryProof.pass;}
+replay.summary.geometryPassed=replay.identities.filter(r=>r.directGeometryProof.pass).length;
+for(const row of replay.assertions)if(!replay.identities.filter(r=>r.originalFailureId===row.originalFailureId).every(r=>Object.values(r.checks).every(Boolean)))row.classification='STILL_FAIL';
+write(`${out}/crossing-ownership-replay.json`,replay);console.log(JSON.stringify({geometryPassed:replay.summary.geometryPassed,total:replay.identities.length,failures:replay.identities.filter(r=>!r.directGeometryProof.pass).map(r=>({id:r.crossingId,proof:r.directGeometryProof}))}));

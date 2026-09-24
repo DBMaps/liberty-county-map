@@ -1,0 +1,28 @@
+import fs from 'node:fs';
+import crypto from 'node:crypto';
+import assert from 'node:assert/strict';
+import {createRequire} from 'node:module';
+import {root,out,artifacts,write} from './inventory.mjs';
+const require=createRequire(import.meta.url),session=await require('./session.cjs')({fixtureWeather:true,fixtureReports:true});
+const evidence={sourceHash:crypto.createHash('sha256').update(fs.readFileSync(`${root}/js/app.js`)).digest('hex'),scenario:'Exact LP244.49A frozen three-hazard and disclosure-state acceptance; controlled local NWS/report responses',interactionMethod:'Rendered control click events with explicit state settlement; no product event-handler replacement',states:[]};
+try {
+ const {page,network,context,...rest}=await session.newPage();evidence.network=rest.evidence;
+ await page.addScriptTag({path:`${root}/tools/lp24449b1/runtime-probe.js`});
+ await page.evaluate(async()=>{const g=getGridlyManualAwarenessAreaOptions().find(g=>g.countyId==='liberty-tx'),o=g.communities.find(o=>o.label==='Dayton');if(!gridlySaveCanonicalMultiCountyPlaceHome(o.canonicalResolution,'lp24449b1-frozen-three',g.countyId))throw Error('Home save failed');await lp24449b1.settle();map.setView([30.0466,-94.8852],14,{animate:false});gridlyLocalTestReports.add('flooded-roadway',{lat:30.047253308692213,lng:-94.88737106323242,ageMinutes:0});gridlyLocalTestReports.add('debris-in-road',{lat:30.0505,lng:-94.889,ageMinutes:5});gridlyLocalTestReports.add('downed-power-line',{lat:30.0435,lng:-94.8815,ageMinutes:12});await lp24449b1.settle();});
+ const open=async()=>{await page.locator('#gridlyAlertsDockButton').evaluate(n=>n.click());await page.locator('#gridlyPortraitV2Sheet').waitFor({state:'visible'});await page.waitForFunction(()=>document.querySelectorAll('[data-gridly-lp236-condition-id]').length===3);};
+ const close=async()=>{await page.locator('#gridlyPortraitV2SheetClose').evaluate(n=>n.click());await page.locator('#gridlyPortraitV2Sheet').waitFor({state:'hidden'});};
+ const read=()=>page.evaluate(()=>{const gov=gridlyGetGovernedConsumerProjection(),model=getAlertsSurfaceSnapshot();return {context:lp24449b1.identity(),markers:unifiedIncidentLayer.getLayers().map(m=>m.options.incidentId),surfaces:Object.fromEntries(['locationContext','communityPulse','kbygCommunity','alerts'].map(k=>[k,gov.surfaces[k].map(r=>({id:r.evidenceId,type:r.subtype}))])),pulse:gridlyCommunityPulseAuditState.activeAwareness.activeAwarenessCount,location:document.getElementById('mobileAwarenessPanelIssues').textContent,model:model.alerts.map((r,i)=>({id:gridlyAlertWriterRecordId(r,i),type:r.type})),dom:[...document.querySelectorAll('[data-gridly-lp236-condition-id]')].map(n=>({id:n.dataset.gridlyLp236ConditionId,location:n.dataset.gridlyAlertLocation,text:n.innerText})),disclosure:document.querySelector('[data-gridly-disclosure-key="community_report"]')?.open,undefinedm:document.body.innerText.includes('undefinedm')};});
+ await open();
+ const disclosure=page.locator('[data-gridly-disclosure-key="community_report"]');
+ const toggleDisclosure=async expected=>{const click=await page.evaluate(()=>{const d=document.querySelector('[data-gridly-disclosure-key="community_report"]');const before=d.open;d.querySelector(':scope > summary').click();return {before,after:d.open,connected:d.isConnected,current:document.querySelector('[data-gridly-disclosure-key="community_report"]').open};});assert.equal(click.connected,true);assert.equal(click.after,expected);await page.waitForFunction(expected=>document.querySelector('[data-gridly-disclosure-key="community_report"]').open===expected,expected);return click;};
+ if(!await disclosure.evaluate(n=>n.open))await toggleDisclosure(true);
+ const expected={flooding:'Cook Street and Church Street',debris:'Winfree Street and Flowers Street',other_hazard:'Hope Street and Nancy Street'};
+ const verify=async label=>{const state=await read();assert.equal(state.markers.length,3);assert.equal(state.pulse,3);assert.match(state.location,/^3 roadway issue/);assert.equal(state.dom.length,3);assert.equal(state.undefinedm,false);for(const rows of Object.values(state.surfaces))assert.equal(rows.length,3);for(const row of state.model){const dom=state.dom.find(d=>d.id===row.id);assert.equal(dom?.location,expected[row.type]);assert.match(dom.text,/Updated (?:just now|\d+ minutes? ago)/);}assert.equal(new Set(state.dom.map(d=>d.text.match(/Updated[^\n]+/)[0])).size,3);evidence.states.push({label,...state});await page.screenshot({path:`${artifacts}/three-hazards-${label}.png`});return state;};
+ await verify('initial');
+ await page.evaluate(()=>gridlyRunAlertsBackgroundRefreshAfterOpen('alerts_open_background_refresh'));await page.waitForFunction(()=>document.querySelectorAll('[data-gridly-lp236-condition-id]').length===3);assert.equal((await verify('open-refresh')).disclosure,true);
+ evidence.collapseClick=await toggleDisclosure(false);
+ await page.evaluate(()=>gridlyRunAlertsBackgroundRefreshAfterOpen('alerts_open_background_refresh'));await page.waitForFunction(()=>document.querySelectorAll('[data-gridly-lp236-condition-id]').length===3);assert.equal((await read()).disclosure,false);
+ await close();await open();assert.equal((await read()).disclosure,false);
+ evidence.reopenClick=await toggleDisclosure(true);assert.equal((await verify('reopened')).disclosure,true);
+ assert.equal(rest.evidence.errors.length,0);evidence.passed=true;console.log('Three hazards, all five consumer surfaces, exact streets, separate freshness and disclosure persistence passed.');await context.close();
+}catch(error){evidence.failure=String(error.stack);console.error(error);process.exitCode=1;}finally{write(`${out}/freeze-three-hazards.json`,evidence);await session.close();}

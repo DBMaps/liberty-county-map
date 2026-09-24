@@ -1,0 +1,26 @@
+{
+  "currentHash": "f57fac7440ad6ad9bf230e1f41cffeefb7f22405c0a58b696e48bba3ce0ed0cd",
+  "expectedFinalHash": "f57fac7440ad6ad9bf230e1f41cffeefb7f22405c0a58b696e48bba3ce0ed0cd",
+  "inMemoryReverseHash": "857dc05e8f12786ace4ccded59e7ed582e3438da3f76d65f2fb4d579af6ceb91",
+  "expectedStartingHash": "857dc05e8f12786ace4ccded59e7ed582e3438da3f76d65f2fb4d579af6ceb91",
+  "edits": [
+    {
+      "oldAnchor": "function isGridlyCachedAwarenessSummaryForCurrentArea(summary = {}) {",
+      "matches": 1
+    },
+    {
+      "oldAnchor": "  return {",
+      "matches": 1
+    },
+    {
+      "oldAnchor": "  const proposedSummary = gridlyLastAuthoritativeCommunityAwarenessSummary || normalizedPatch.communityAwarenessSummary || publisherAuthoritativeSummary;",
+      "matches": 1
+    },
+    {
+      "oldAnchor": "function gridlyPublishAuthoritativeCommunityAwarenessSummary(summary, publication = {}) {",
+      "matches": 1
+    }
+  ],
+  "passed": true,
+  "policy": "Reverse the four recorded B1 substitutions in memory only, then compare the exact original dirty49B SHA-256. No workspace file is restored or rewritten."
+}

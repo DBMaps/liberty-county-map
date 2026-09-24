@@ -1,0 +1,10 @@
+{
+  "decision": "CONDITIONAL",
+  "sourceHash": "f57fac7440ad6ad9bf230e1f41cffeefb7f22405c0a58b696e48bba3ce0ed0cd",
+  "weatherHash": "f890f7bb5bf18a5012f2da719e18562ce9a48af106202152ed232f6e98e10d07",
+  "blockers": [],
+  "localGatePass": true,
+  "originalTenClosed": 10,
+  "activeClearPassed": 254,
+  "generatedAt": "2026-09-24T23:50:36.005Z"
+}

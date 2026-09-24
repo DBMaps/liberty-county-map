@@ -1,0 +1,10 @@
+import fs from 'node:fs';
+const input=fs.readFileSync('tools/lp24449b1/clear-lifecycle.mjs','utf8'),start=input.indexOf(' const mixed='),end=input.indexOf(" for(const order of ['provider-before-clear'");if(start<0||end<0)throw Error('Race source boundaries absent');
+let code=input.slice(0,start)+input.slice(end);code=code.replaceAll('clear-lifecycle.json','generation-races.json');
+code=code.replace('return {label,expected,context:', 'return {at:performance.now(),canonicalRevision:gridlyGetCanonicalActiveCommunityState().revision,publishedRevision:gridlyCommunityPulseAuditState.communityAwarenessSummary?.canonicalCommunityRevision,reportVersion:crossingRenderReportsVersion,countyGeneration:gridlyActiveCountyTransitionGeneration,label,expected,context:');
+code=code.replace("const before=b1Clear.capture('active',1);const pending=", "const ordering=[];const mark=label=>ordering.push(b1Clear.capture(label,NaN));const before=b1Clear.capture('active',1);mark('before-report-refresh');const pending=");
+code=code.replace("if(order==='provider-queued-at-clear')", "mark('report-refresh-started');if(order==='provider-queued-at-clear')");
+code=code.replace("gridlyLocalTestReports.clearOne(fixture.id);if(order==='provider-after-clear')", "mark('before-clear');gridlyLocalTestReports.clearOne(fixture.id);mark('after-clear');if(order==='provider-after-clear')");
+code=code.replace("await Promise.resolve(pending);await b1Clear.settle();const states=", "await Promise.resolve(pending);mark('report-refresh-resolved');await b1Clear.settle();const states=");
+code=code.replace('return {name:order,states,pass:', 'return {name:order,ordering,states,pass:');
+fs.writeFileSync('tools/lp24449b1/generation-races.mjs',code);
