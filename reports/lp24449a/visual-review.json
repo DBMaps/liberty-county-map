@@ -1,0 +1,21 @@
+{
+  "sourceHash": "e157d88855529f7a6af3a16905cceb6b05f89f6006b2295bdb0bea2f074dd291",
+  "method": "Visual inspection of six final-source screenshots plus paired baseline/repaired Text Size screenshots",
+  "files": [
+    ".artifacts/lp24449a/saved-places-320.png",
+    ".artifacts/lp24449a/freeze-geometry/active-320x844-expanded.png",
+    ".artifacts/lp24449a/three-hazards-initial.png",
+    ".artifacts/lp24449a/freeze/settings-320-large.png",
+    ".artifacts/lp24449a/freeze/settings-440-compact.png",
+    ".artifacts/lp24449a/freeze-geometry/expanded-popup-390.png",
+    ".artifacts/lp24449a/text-size-baseline-320-large.png",
+    ".artifacts/lp24449a/text-size-repaired-320-large.png"
+  ],
+  "observations": [
+    "Saved Home and Work rows remain separated and contained at 320 px.",
+    "Expanded KBYG and flood popup remain inside the available map layout.",
+    "Alerts shows separate incident labels and freshness; remaining incidents are reached by scrolling.",
+    "Map Style and Theme choice groups remain contained with clear selected states."
+  ],
+  "limitation": "Text Size labels clip within their existing group at 320 px in large-text mode. Exact starting/repaired source comparison confirms identical control metrics; the identity repair does not introduce this presentation defect. See text-size-baseline.json."
+}

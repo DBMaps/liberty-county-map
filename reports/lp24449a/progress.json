@@ -1,0 +1,39 @@
+{
+  "ring": {
+    "completed": 254,
+    "passed": 254,
+    "failed": [],
+    "last": {
+      "county": "zavala-tx",
+      "place": "4803008"
+    }
+  },
+  "at": "2026-09-24T15:34:36.733Z",
+  "search": {
+    "completed": 2058,
+    "passed": 2058,
+    "failed": [],
+    "last": {
+      "county": "zavala-tx",
+      "place": "4843458"
+    }
+  },
+  "home": {
+    "completed": 793,
+    "passed": 793,
+    "failed": [],
+    "last": {
+      "county": "zavala-tx",
+      "place": "4803008"
+    }
+  },
+  "multiHome": {
+    "completed": 362,
+    "passed": 362,
+    "failed": [],
+    "last": {
+      "county": "yoakum-tx",
+      "place": "4819984"
+    }
+  }
+}

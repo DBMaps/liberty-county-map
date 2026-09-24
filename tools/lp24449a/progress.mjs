@@ -1,0 +1,11 @@
+import fs from 'node:fs';
+import crypto from 'node:crypto';
+import {root,artifacts,out,write} from './inventory.mjs';
+const sourceHash=crypto.createHash('sha256').update(fs.readFileSync(`${root}/js/app.js`)).digest('hex');
+const lines=name=>{const file=`${artifacts}/${name}.jsonl`;return fs.existsSync(file)?fs.readFileSync(file,'utf8').trim().split('\n').filter(Boolean).map(JSON.parse):[];};
+const search=lines('search-progress'),home=[...lines('home-progress'),...lines('home-progress-0'),...lines('home-progress-1')];
+const unique=new Map(home.filter(r=>r.sourceHash===sourceHash).map(r=>[`${r.county_id}|${r.place_geoid}`,r]));
+const count=rows=>({completed:rows.length,passed:rows.filter(r=>r.pass).length,failed:rows.filter(r=>!r.pass).map(r=>({county:r.county_id,place:r.place_geoid,checks:r.checks,error:r.error})),last:rows.at(-1)&&{county:rows.at(-1).county_id,place:rows.at(-1).place_geoid}});
+const ring=[...new Map(['transitions-progress','transitions-progress-0','transitions-progress-1'].flatMap(lines).filter(r=>r.sourceHash===sourceHash).map(r=>[r.home.county_id,{...r,county_id:r.home.county_id,place_geoid:r.home.place_geoid}])).values()];
+const result={ring:count(ring),at:new Date().toISOString(),search:count(search),home:count([...unique.values()]),multiHome:count([...unique.values()].filter(r=>r.is_multi_county))};
+write(`${out}/progress.json`,result);console.log(JSON.stringify(result));

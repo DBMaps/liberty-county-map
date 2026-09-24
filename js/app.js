@@ -18650,18 +18650,28 @@ function gridlyLp240ResolveGovernedHomeIdentity(record = {}, area = null) {
 function gridlyLp196ResolveCanonicalMultiCountyPlaceIdentity(record = {}) {
   if (record.identityType !== "PLACE_GEOID" || !/^48\d{5}$/.test(String(record.communityKey || ""))) return null;
   const placeGeoid = String(record.communityKey);
+  if (record.countyMemberships != null && !Array.isArray(record.countyMemberships)) return null;
+  const suppliedMemberships = record.countyMemberships ? [...new Set(record.countyMemberships.map(String))].sort() : null;
+  const canonicalFocus = resolveGridlyCanonicalPlacePresentationFocus({ placeGeoid });
+  // Home reads are frequent during consumer rendering. Reuse only an identical
+  // governed resolution; point hydration/changes participate in the cache key.
+  const cacheKey = JSON.stringify([placeGeoid, suppliedMemberships, canonicalFocus]);
+  const cached = gridlyLp196ResolveCanonicalMultiCountyPlaceIdentity.cachedIdentity;
+  if (cached?.registry === GRIDLY_COUNTY_REGISTRY && cached.key === cacheKey) return cached.identity;
   const rows = Object.entries(GRIDLY_COUNTY_REGISTRY || {}).flatMap(([countyId, county]) => (county.consumerAwarenessAreas || [])
     .filter((community) => String(community?.placeGeoid || "") === placeGeoid)
     .map((community) => ({ countyId, county, community, countyFips: String(county?.countyFips || (typeof GRIDLY_COUNTY_BOUNDARY_OVERLAY_GEOID_BY_ID !== "undefined" ? GRIDLY_COUNTY_BOUNDARY_OVERLAY_GEOID_BY_ID?.[countyId] : "") || "") })));
-  if (rows.length < 2) return null;
+  if (!rows.length) return null;
   const labels = new Set(rows.map((row) => normalizeGridlyAwarenessAreaLookupText(row.community.displayName)));
   const memberships = [...new Set((rows[0].community.countyMemberships || []).map(String))].sort();
   if (labels.size !== 1 || rows.some((row) => row.community.canonicalIdentity !== "PLACE_GEOID" || row.community.consumerEligible !== true || !memberships.includes(row.countyFips) || [...new Set((row.community.countyMemberships || []).map(String))].sort().join("|") !== memberships.join("|"))) return null;
-  const persistedMemberships = [...new Set((record.countyMemberships || []).map(String))].sort();
+  const persistedMemberships = suppliedMemberships || memberships;
   if (persistedMemberships.join("|") !== memberships.join("|")) return null;
-  const focus = rows.map((row) => row.community.focus).find((candidate) => Number.isFinite(Number(candidate?.lat)) && Number.isFinite(Number(candidate?.lng))) || null;
-  const area = Object.freeze({ key: `place-${placeGeoid}`, label: rows[0].community.displayName, storageValue: rows[0].community.displayName, countyId: null, countyIds: Object.freeze(rows.map((row) => row.countyId).sort()), countyMemberships: Object.freeze(memberships), placeGeoid, communityId: placeGeoid, canonicalCommunityIdentity: "PLACE_GEOID", canonicalMultiCountyPlace: true, ...(focus || {}) });
-  return Object.freeze({ identityType: "PLACE_GEOID", placeGeoid, memberships: Object.freeze(memberships), area });
+  const focus = canonicalFocus || rows.map((row) => row.community.focus).find((candidate) => Number.isFinite(Number(candidate?.lat)) && Number.isFinite(Number(candidate?.lng))) || null;
+  const area = Object.freeze({ key: `place-${placeGeoid}`, label: rows[0].community.displayName, storageValue: rows[0].community.displayName, countyId: rows.length === 1 ? rows[0].countyId : null, countyIds: Object.freeze(rows.map((row) => row.countyId).sort()), countyMemberships: Object.freeze(memberships), placeGeoid, communityId: placeGeoid, canonicalCommunityIdentity: "PLACE_GEOID", canonicalMultiCountyPlace: rows.length > 1, ...(focus || {}) });
+  const identity = Object.freeze({ identityType: "PLACE_GEOID", placeGeoid, memberships: Object.freeze(memberships), area });
+  gridlyLp196ResolveCanonicalMultiCountyPlaceIdentity.cachedIdentity = { key: cacheKey, registry: GRIDLY_COUNTY_REGISTRY, identity };
+  return identity;
 }
 function gridlyLp0517ValidateHomeRecord(record = {}) {
   const area = record.awarenessAreaKey ? GRIDLY_AWARENESS_AREA_BY_KEY?.[record.awarenessAreaKey] : resolveGridlyAwarenessAreaForCounty?.(record.consumerLabel || record.communityLabel || "", record.countyId || "");
@@ -18673,7 +18683,11 @@ function gridlyLp0517ValidateHomeRecord(record = {}) {
   const canonicalMultiCountyPlace = gridlyLp196ResolveCanonicalMultiCountyPlaceIdentity(record);
   const governedManualIdentity = governedHomeIdentity || governedPlaceIdentity || governedRegionIdentity || canonicalMultiCountyPlace;
   const areaCountyMatches = Boolean(area && gridlyNormalizeCountyId(area.countyId || "") === gridlyNormalizeCountyId(record.countyId || ""));
-  const canonicalCountyId = canonicalMultiCountyPlace ? gridlyResolvePersistedCanonicalPlaceOperationalCounty(canonicalMultiCountyPlace.area, record) : null;
+  const canonicalCountyId = canonicalMultiCountyPlace
+    ? (canonicalMultiCountyPlace.area.canonicalMultiCountyPlace
+      ? gridlyResolvePersistedCanonicalPlaceOperationalCounty(canonicalMultiCountyPlace.area, record)
+      : (record.countyId === canonicalMultiCountyPlace.area.countyId ? record.countyId : null))
+    : null;
   const canonicalPlaceValid = Boolean(canonicalMultiCountyPlace && canonicalCountyId && record.awarenessAreaKey === `place-${record.communityKey}`);
   const valid = Boolean((zipValid || countywideManual || governedManualIdentity) && record.schemaVersion === GRIDLY_LP0517_HOME_PERSONALIZATION_SCHEMA_VERSION && (canonicalPlaceValid || (record.countyId && GRIDLY_COUNTY_REGISTRY?.[record.countyId] && areaCountyMatches)));
   return { valid, area: valid ? (canonicalMultiCountyPlace ? gridlyProjectCanonicalPlaceOperationalCounty(canonicalMultiCountyPlace.area, canonicalCountyId) : area) : null, selectedIdentity: valid ? governedManualIdentity : null, reason: valid ? "valid" : "invalid_home_personalization_record" };
@@ -18725,7 +18739,7 @@ function gridlyLp0516OpenManualAwarenessAreaPicker() {
 
 function gridlyLp0516ApplyManualAwarenessArea(value = "", canonicalResolution = null, requestedOperationalCountyId = null) {
   const state = gridlyLp0516EnsureState();
-  if (canonicalResolution?.status === "RESOLVED_CANONICAL_MULTI_COUNTY_PLACE") {
+  if (canonicalResolution?.canonicalIdentity === "PLACE_GEOID") {
     const applied = gridlySaveCanonicalMultiCountyPlaceHome(canonicalResolution, "lp0517_manual_place_personalization", requestedOperationalCountyId);
     if (applied) {
       state.prototypeResult = { success: true, placeGeoid: canonicalResolution.placeGeoid, consumerLabel: canonicalResolution.community, countyId: requestedOperationalCountyId, countyMemberships: [...canonicalResolution.countyMemberships], persisted: true };
@@ -40204,7 +40218,7 @@ function gridlySearchQueryHasAddressIndicator(query = "") {
   return tokens.some((token) => GRIDLY_SEARCH_ADDRESS_WORDS.has(token));
 }
 
-function resolveGridlyStatewideCanonicalBarePlaceQuery(query = "") {
+function resolveGridlyStatewideCanonicalBarePlaceQuery(query = "", identity = {}) {
   const normalizedQuery = normalizeGridlyAwarenessAreaLookupText(query);
   if (!normalizedQuery) return null;
   const consumerAlias = (value) => normalizeGridlyAwarenessAreaLookupText(value)
@@ -40217,7 +40231,9 @@ function resolveGridlyStatewideCanonicalBarePlaceQuery(query = "") {
       const displayName = String(place?.displayName || "").trim();
       const canonicalName = normalizeGridlyAwarenessAreaLookupText(displayName);
       if (!/^48\d{5}$/.test(placeGeoid)
-        || (normalizedQuery !== canonicalName && normalizedQuery !== consumerAlias(displayName))) return;
+        || (identity.placeGeoid ? placeGeoid !== String(identity.placeGeoid)
+          : normalizedQuery !== canonicalName && normalizedQuery !== consumerAlias(displayName))
+        || (identity.countyId && countyId !== identity.countyId)) return;
       const existing = matchesByGeoid.get(placeGeoid) || {
         placeGeoid, displayName, countyIds: new Set(), countyMemberships: new Set()
       };
@@ -40296,8 +40312,34 @@ function resolveGridlyStatewideCanonicalBarePlaceQuery(query = "") {
  */
 function resolveGridlyGovernedBareTexasPlaceQuery(query = "") {
   const raw = String(query || "").replace(/\s+/g, " ").trim();
-  if (!raw || raw.length > 96 || !/^[a-z][a-z .'-]*$/i.test(raw)) return null;
+  if (!raw || raw.length > 96 || /[,\d@]/.test(raw)) return null;
   return resolveGridlyStatewideCanonicalBarePlaceQuery(raw);
+}
+
+// Exact governed names (including collisions) and explicit county qualifiers
+// have local identity authority. Substrings, street addresses and businesses
+// continue through the existing provider pipeline.
+function gridlyResolveGovernedPlaceSearchCandidates(query = "") {
+  const raw = String(query || "").replace(/\s+/g, " ").trim();
+  if (!raw || raw.length > 160) return [];
+  const normalized = normalizeGridlyAwarenessAreaLookupText(raw.replace(/,?\s+(?:TX|Texas)\s*$/i, ""));
+  const matches = new Map();
+  Object.entries(GRIDLY_COUNTY_REGISTRY || {}).forEach(([countyId, county]) => {
+    const countyName = normalizeGridlyAwarenessAreaLookupText(county.name || "");
+    const countyShort = countyName.replace(/\s+county$/, "");
+    (county.consumerAwarenessAreas || []).forEach((place) => {
+      if (place.consumerEligible !== true || place.canonicalIdentity !== "PLACE_GEOID") return;
+      const name = normalizeGridlyAwarenessAreaLookupText(place.displayName);
+      const alias = name.replace(/^(?:city|town|village) of\s+/, "");
+      const bare = normalized === name || normalized === alias;
+      const qualified = [name, alias].some(value => normalized === `${value} ${countyName}` || normalized === `${value} ${countyShort}`);
+      if (!bare && !qualified) return;
+      const key = String(place.placeGeoid);
+      const resolved = matches.get(key) || resolveGridlyStatewideCanonicalBarePlaceQuery(place.displayName, { placeGeoid: key });
+      if (resolved) matches.set(key, qualified ? Object.freeze({ ...resolved, requestedOperationalCountyId: countyId }) : resolved);
+    });
+  });
+  return [...matches.values()];
 }
 
 function gridlySearchQueryHasDestinationIndicator(query = "") {
@@ -41061,15 +41103,23 @@ function filterGridlyExplicitIntentRelevance(results = [], options = {}) {
   const query = options.query || ensureGridlySearchState().activeQuery || "";
   const intent = options.intent || classifyGridlyDestinationSearchIntent(query);
   const addressModel = options.addressModel || (intent.type === GRIDLY_DESTINATION_INTENTS.ADDRESS ? buildGridlyLp097AddressModel(query) : null);
+  const governedPlaces = new Map(results.some(result => result?.provider === "gridly_canonical_place")
+    ? gridlyResolveGovernedPlaceSearchCandidates(query).map(place => [place.placeGeoid, place]) : []);
+  const governedExact = result => {
+    const place = governedPlaces.get(result?.placeGeoid);
+    return result?.provider === "gridly_canonical_place" && Boolean(place)
+      && (!place.requestedOperationalCountyId || result.requestedOperationalCountyId === place.requestedOperationalCountyId);
+  };
   if (intent.type === GRIDLY_DESTINATION_INTENTS.ADDRESS) {
     return results.filter((result) => {
+      if (governedExact(result)) return true;
       const classification = classifyGridlyLp097Result(result, addressModel);
       return classification.exactAddress || classification.roadAgreement
         || window.GRIDLY_LP101_SEARCH_QUALITY?.roadwayMatchesAddress?.(query, result) === true;
     });
   }
   if (intent.type === GRIDLY_DESTINATION_INTENTS.BUSINESS_PLACE) {
-    return results.filter((result) => window.GRIDLY_LP101_SEARCH_QUALITY?.businessResultRelevant?.(query, result) === true);
+    return results.filter((result) => governedExact(result) || window.GRIDLY_LP101_SEARCH_QUALITY?.businessResultRelevant?.(query, result) === true);
   }
   return results;
 }
@@ -48686,7 +48736,8 @@ function gridlyGetCurrentAwarenessContext() {
   }
   if (store.temporary) return store.temporary;
   const area = getGridlySelectedAwarenessArea();
-  const signature = [area?.key, area?.countyId, area?.lat, area?.lng].join('|');
+  const homeFocus = area ? resolveGridlyCanonicalPlacePresentationFocus(area) : null;
+  const signature = [area?.key, area?.countyId, homeFocus?.lat ?? area?.lat, homeFocus?.lng ?? area?.lng].join('|');
   if (!store.home || store.homeSignature !== signature || store.home.generation !== store.generation) {
     if (store.home && store.homeSignature !== signature) store.generation += 1;
     store.homeSignature = signature;
@@ -48871,7 +48922,7 @@ function getGridlySelectedAwarenessArea(options = {}) {
     // The profile is written by the completed consumer transition and is the
     // authoritative operational projection of a canonical multi-county PLACE.
     // Runtime state may still belong to the previous session during startup.
-    const operationalCountyId = gridlyResolvePersistedCanonicalPlaceOperationalCounty(
+    const operationalCountyId = persistedIdentity.area.canonicalMultiCountyPlace !== true ? persistedIdentity.area.countyId : gridlyResolvePersistedCanonicalPlaceOperationalCounty(
       persistedIdentity.area,
       persistedHome,
       gridlyUserProfile,
@@ -48879,8 +48930,9 @@ function getGridlySelectedAwarenessArea(options = {}) {
       window?.GRIDLY_ACTIVE_COUNTY_ID
     );
     const projectedArea = gridlyProjectCanonicalPlaceOperationalCounty(persistedIdentity.area, operationalCountyId);
-    const projectedSignature = `PLACE_GEOID|${persistedIdentity.placeGeoid}|${persistedIdentity.memberships.join("|")}|${operationalCountyId || ""}`;
+    const projectedSignature = `PLACE_GEOID|${persistedIdentity.placeGeoid}|${persistedIdentity.memberships.join("|")}|${operationalCountyId || ""}|${projectedArea?.lat ?? ""}|${projectedArea?.lng ?? ""}`;
     const identityChanged = gridlySelectedAwarenessAreaResolutionCache.signature !== projectedSignature;
+    if (!identityChanged && gridlySelectedAwarenessAreaResolutionCache.area) return gridlySelectedAwarenessAreaResolutionCache.area;
     gridlySelectedAwarenessAreaResolutionCache.signature = projectedSignature;
     gridlySelectedAwarenessAreaResolutionCache.area = projectedArea;
     if (identityChanged) window.setTimeout?.(() => window.gridlyWeatherConnector?.refreshAwarenessView?.("canonical-place-awareness-resolved"), 0);
@@ -48901,7 +48953,12 @@ function getGridlySelectedAwarenessArea(options = {}) {
     gridlySelectedAwarenessAreaResolutionCache.cacheHits += 1;
     return gridlySelectedAwarenessAreaResolutionCache.area;
   }
-  const area = gridlyProjectCanonicalPlaceOperationalCounty(resolveGridlyAwarenessArea(requestedTown), community.countyId || gridlyUserProfile?.awarenessAreaCountyId || window?.GRIDLY_ACTIVE_COUNTY_ID);
+  // Stable persisted identity outranks a display label. An unrelated runtime
+  // county is never authority for an ambiguous legacy Home.
+  const stableKey = community.awarenessAreaKey || gridlyUserProfile?.awarenessAreaKey || "";
+  const stableCounty = (community.awarenessAreaKey || community.awarenessArea || community.homeTown)
+    ? community.countyId || "" : gridlyUserProfile?.awarenessAreaCountyId || "";
+  const area = gridlyResolveStableHomeSelectionArea(stableKey || requestedTown, stableCounty);
   if (typeof gridlyLp016RecordAwarenessSwitchEvent === "function") gridlyLp016RecordAwarenessSwitchEvent("canonicalAreaUpdated", { toArea: gridlyLp016AwarenessAreaLabel(area) });
   gridlySelectedAwarenessAreaResolutionCache.signature = signature;
   gridlySelectedAwarenessAreaResolutionCache.area = area;
@@ -49279,7 +49336,9 @@ function gridlyResolvePersistedCanonicalPlaceOperationalCounty(area, homeRecord 
   if (area?.canonicalMultiCountyPlace !== true || !gridlyResolveCanonicalPlaceGeoid(area)) return null;
   const memberships = new Set((area.countyMemberships || []).map(String));
   const validateMemberCounty = (value) => {
-    const normalizedCountyId = gridlyNormalizeCountyId(value || "");
+    const token = String(value || "").trim().toLowerCase();
+    if (!token || !Object.prototype.hasOwnProperty.call(GRIDLY_COUNTY_REGISTRY, token)) return null;
+    const normalizedCountyId = gridlyNormalizeCountyId(token);
     const countyFips = String(GRIDLY_COUNTY_REGISTRY?.[normalizedCountyId]?.countyFips || (typeof GRIDLY_COUNTY_BOUNDARY_OVERLAY_GEOID_BY_ID !== "undefined" ? GRIDLY_COUNTY_BOUNDARY_OVERLAY_GEOID_BY_ID?.[normalizedCountyId] : "") || "");
     return normalizedCountyId && countyFips && memberships.has(countyFips) ? normalizedCountyId : null;
   };
@@ -49297,6 +49356,36 @@ function gridlyResolvePersistedCanonicalPlaceOperationalCounty(area, homeRecord 
   // A canonical PLACE without persisted membership authority remains
   // unresolved.  In particular, do not inherit the previous active county.
   return null;
+}
+
+// This resolver is deliberately Home-only: generic map/filter ownership stays
+// unchanged. Exact keys and explicitly persisted counties survive label collisions.
+function gridlyResolveStableHomeSelectionArea(value = "", countyId = "") {
+  const raw = String(value || "").trim();
+  if (!raw) return null;
+  const explicitCounty = String(countyId || "").trim().toLowerCase();
+  if (explicitCounty && !Object.prototype.hasOwnProperty.call(GRIDLY_COUNTY_REGISTRY, explicitCounty)) return null;
+  let area = GRIDLY_AWARENESS_AREA_BY_KEY?.[raw] || null;
+  const placeMatch = /^place-(48\d{5})$/.exec(raw);
+  if (!area && placeMatch) area = resolveGridlyStatewideCanonicalBarePlaceQuery(raw, { placeGeoid: placeMatch[1] })?.awarenessArea || null;
+  if (!area) {
+    const normalized = normalizeGridlyAwarenessAreaLookupText(raw);
+    const matches = (GRIDLY_AWARENESS_AREA_DEFINITIONS || []).filter(candidate =>
+      (!explicitCounty || candidate.countyId === explicitCounty)
+      && [candidate.label, candidate.storageValue].some(label => normalizeGridlyAwarenessAreaLookupText(label) === normalized));
+    const identities = new Set(matches.map(candidate => gridlyResolveCanonicalPlaceGeoid(candidate) || candidate.key));
+    if (identities.size > 1 || (!explicitCounty && new Set(matches.map(candidate => candidate.countyId)).size > 1)) return null;
+    area = matches[0] || resolveGridlyAwarenessArea(raw);
+  }
+  if (!area) return null;
+  const governedMemberships = area.countyMemberships || gridlyResolveCanonicalPlaceRegistryIdentity(area)?.countyMemberships || [];
+  if (!explicitCounty && governedMemberships.length > 1 && !raw.startsWith(`${area.countyId}-`)) return null;
+  if (area.canonicalMultiCountyPlace === true) {
+    const member = explicitCounty || area.countyId;
+    if (!member || !area.countyMemberships?.includes(String(GRIDLY_COUNTY_REGISTRY[member]?.countyFips || ""))) return null;
+    return gridlyProjectCanonicalPlaceOperationalCounty(area, member);
+  }
+  return explicitCounty && area.countyId !== explicitCounty ? null : area;
 }
 
 function normalizeGridlyHomeTown(value = "") {
@@ -50987,8 +51076,18 @@ function getGridlyHomeTownPreference() {
 
 function saveGridlyHomeTownPreference(town, options = {}) {
   invalidateGridlySelectedAwarenessAreaResolutionCache?.("saveGridlyHomeTownPreference:start");
-  const area = resolveGridlyAwarenessArea(town);
+  const area = gridlyResolveStableHomeSelectionArea(town, options.countyId || "");
   if (!area) return "";
+  const placeGeoid = gridlyResolveCanonicalPlaceGeoid(area);
+  const governed = placeGeoid && GRIDLY_COUNTY_REGISTRY[area.countyId]?.consumerAwarenessAreas?.find(place => String(place.placeGeoid) === placeGeoid);
+  if (governed?.consumerEligible === true && governed.canonicalIdentity === "PLACE_GEOID") {
+    const saved = gridlySaveCanonicalMultiCountyPlaceHome({
+      status: governed.countyMemberships.length > 1 ? "RESOLVED_CANONICAL_MULTI_COUNTY_PLACE" : "RESOLVED_OPERATIONAL",
+      canonicalIdentity: "PLACE_GEOID", community: governed.displayName, placeGeoid,
+      countyMemberships: governed.countyMemberships
+    }, options.source || "canonical_home_selection", area.countyId);
+    return saved ? governed.displayName : "";
+  }
   if (typeof gridlyClearTemporaryAwarenessContext === "function") gridlyClearTemporaryAwarenessContext({ refresh: false });
   // The confirmed-home record outranks Settings/profile state. Retire that
   // owner when the established Settings transaction selects a different area,
@@ -96405,8 +96504,9 @@ async function gridlySearchAddress(query, options = {}) {
   const governedCommunity = Object.prototype.hasOwnProperty.call(options, "governedBarePlace")
     ? options.governedBarePlace
     : resolveGridlyGovernedBareTexasPlaceQuery(rawQuery);
+  const governedCommunities = gridlyResolveGovernedPlaceSearchCandidates(rawQuery);
   let canonicalPlaceResults = [];
-  if (governedCommunity) {
+  for (const governedCommunity of governedCommunities) {
     const area = governedCommunity.awarenessArea || governedCommunity.candidates?.[0]?.awarenessArea;
     let canonicalFocus = resolveGridlyCanonicalPlacePresentationFocus({ placeGeoid: governedCommunity.placeGeoid || area?.placeGeoid });
     if (!canonicalFocus && typeof gridlyLoadStatewidePlacePresentation === "function") {
@@ -96417,7 +96517,7 @@ async function gridlySearchAddress(query, options = {}) {
     const canonicalLng = canonicalFocus?.lng ?? area?.lng;
     if (Number.isFinite(Number(canonicalLat)) && Number.isFinite(Number(canonicalLng))) {
       const countyNames = (governedCommunity.candidates || []).map((candidate) => candidate.county).filter(Boolean);
-      canonicalPlaceResults = [normalizeGridlySearchResult({
+      canonicalPlaceResults.push(...[normalizeGridlySearchResult({
         id: `place-${governedCommunity.placeGeoid || area.placeGeoid || area.communityId}`,
         name: governedCommunity.community || area.label,
         display_name: `${governedCommunity.community || area.label}, Texas`,
@@ -96425,19 +96525,23 @@ async function gridlySearchAddress(query, options = {}) {
         lat: Number(canonicalLat), lon: Number(canonicalLng), type: "city", provider: "gridly_canonical_place",
         address: { city: governedCommunity.community || area.label, county: countyNames.join(", "), state: "Texas" },
         placeGeoid: governedCommunity.placeGeoid || area.placeGeoid || null,
+        requestedOperationalCountyId: governedCommunity.requestedOperationalCountyId || null,
         countyMemberships: governedCommunity.countyMemberships || governedCommunity.candidates?.[0]?.countyMemberships || []
-      })].filter(Boolean);
+      })].filter(Boolean));
     }
   }
   const seedResults = searchGridlyLocalPoiSeeds(rawQuery, { intent });
   const diagnostics = createGridlyDestinationProviderDiagnostics(rawQuery, intent, seedResults.length);
-  if (canonicalPlaceResults.length) diagnostics.governedBarePlaceConsumed = true;
+  if (canonicalPlaceResults.length) {
+    diagnostics.governedBarePlaceConsumed = true;
+    diagnostics.providerSkippedReason = "governed_place_resolved_locally";
+  }
   diagnostics.governedBarePlaceStatus = governedCommunity?.status || null;
   diagnostics.canonicalGovernedCandidateCount = canonicalPlaceResults.length;
   const providerResults = [...seedResults];
   providerResults.unshift(...canonicalPlaceResults);
   const runtimeRequestStartedAt = Date.now();
-  const runtimePoiResults = gridlyQueryAllowsRuntimePoiAcquisition(rawQuery, intent)
+  const runtimePoiResults = !canonicalPlaceResults.length && gridlyQueryAllowsRuntimePoiAcquisition(rawQuery, intent)
     && typeof window.GridlyPoiBrowserProvider?.search === "function"
     ? await searchGridlyRuntimePoiCandidates(rawQuery, { intent, canonicalSemanticQuery, requestStartedAt: runtimeRequestStartedAt }) : [];
   providerResults.push(...runtimePoiResults);
@@ -96505,7 +96609,7 @@ async function gridlySearchAddress(query, options = {}) {
   diagnostics.aggregate = aggregateGridlyAddressVariantOutcomes(diagnostics.variants);
   diagnostics.generalProviderRequestCompletedAt = Date.now();
   diagnostics.mergedCandidateCount = providerResults.length;
-  if (intent.type === GRIDLY_DESTINATION_INTENTS.ADDRESS) {
+  if (intent.type === GRIDLY_DESTINATION_INTENTS.ADDRESS && !canonicalPlaceResults.length) {
     diagnostics.providerStatus = diagnostics.aggregate.finalConsumerClassification === "confirmed_no_result"
       ? "no_results" : diagnostics.aggregate.finalConsumerClassification === "temporarily_paused" ? "rate_limited"
         : diagnostics.aggregate.finalConsumerClassification === "temporarily_unavailable" ? "failed" : "ok";
@@ -96532,7 +96636,11 @@ async function gridlySearchAddress(query, options = {}) {
   const truthfulResults = boundaryFailed && explicitRemoteIntent
     ? localityReservedResults.filter((result) => result?.provider === "saved_place" || result?.raw?.savedPlace === true || result?.raw?.seedSource === "lp097_governed_curated")
     : localityReservedResults;
-  const finalResults = truthfulResults.slice(0, limit).map((result, index) => ({
+  // Verified exact PLACE identities precede generic POI/address eligibility and limits.
+  // Same-name GEOIDs remain separate choices, carrying explicit county qualification.
+  const canonicalGeoids = new Set(canonicalPlaceResults.map(result => result.placeGeoid));
+  const publicationResults = [...canonicalPlaceResults, ...truthfulResults.filter(result => !canonicalGeoids.has(result.placeGeoid))];
+  const finalResults = publicationResults.slice(0, limit).map((result, index) => ({
     ...result,
     searchRank: result.searchRank ? { ...result.searchRank, publishedRank: index + 1 } : result.searchRank
   }));
@@ -102146,11 +102254,15 @@ function normalizeGridlySettings(raw = null) {
   if (GRIDLY_SETTINGS_VALID_TEXT_SIZES.has(aliasedTextSize)) base.display.textSize = aliasedTextSize;
   base.personalization.preferredName = normalizeGridlyPreferredName(personalization.preferredName);
   const explicitCountyId = gridlyNormalizeCountyId(community.countyId || "");
-  const resolvedAwarenessArea = gridlyResolveSettingsAwarenessArea(community.awarenessArea || community.homeTown, explicitCountyId);
+  const persistedCounty = String(community.countyId || "").trim().toLowerCase();
+  const resolvedAwarenessArea = gridlyResolveStableHomeSelectionArea(
+    community.awarenessAreaKey || community.awarenessArea || community.homeTown,
+    persistedCounty && Object.prototype.hasOwnProperty.call(GRIDLY_COUNTY_REGISTRY, persistedCounty) ? persistedCounty : ""
+  );
   base.community.homeTown = resolvedAwarenessArea?.storageValue || "";
   base.community.awarenessArea = resolvedAwarenessArea?.storageValue || "";
   base.community.awarenessAreaKey = resolvedAwarenessArea?.key || "";
-  base.community.countyId = explicitCountyId || gridlyResolveCountyIdForAwarenessArea(base.community.awarenessArea || base.community.homeTown);
+  base.community.countyId = resolvedAwarenessArea?.countyId || explicitCountyId || GRIDLY_DEFAULT_COUNTY_ID;
   return base;
 }
 
@@ -102436,7 +102548,22 @@ function gridlyManualAwarenessSelectionMatches(community = {}, group = {}, selec
 function getGridlyManualAwarenessAreaOptions() {
   return gridlyGetCountyGroupedAwarenessOptions().map((group) => Object.freeze({
     ...group,
-    communities: Object.freeze(group.communities.filter((community) => community.fallback !== true))
+    communities: Object.freeze(group.communities.filter((community) => community.fallback !== true).map((community) => {
+      const governedMatches = (GRIDLY_COUNTY_REGISTRY[group.countyId]?.consumerAwarenessAreas || []).filter(place =>
+        place.consumerEligible === true && place.canonicalIdentity === "PLACE_GEOID"
+        && (community.placeGeoid ? String(place.placeGeoid) === community.placeGeoid
+          : normalizeGridlyAwarenessAreaLookupText(place.displayName) === normalizeGridlyAwarenessAreaLookupText(community.canonicalLabel || community.label)));
+      if (community.countyWide || governedMatches.length !== 1) return community;
+      const governed = governedMatches[0];
+      community = { ...community, placeGeoid: String(governed.placeGeoid), canonicalIdentity: "PLACE_GEOID", consumerEligible: true, canonicalLabel: governed.displayName, countyMemberships: governed.countyMemberships };
+      return Object.freeze({ ...community, value: community.key, requestedOperationalCountyId: group.countyId,
+        canonicalResolution: Object.freeze({
+          status: community.countyMemberships.length > 1 ? "RESOLVED_CANONICAL_MULTI_COUNTY_PLACE" : "RESOLVED_OPERATIONAL",
+          canonicalIdentity: "PLACE_GEOID", placeGeoid: community.placeGeoid,
+          community: community.canonicalLabel, countyMemberships: community.countyMemberships
+        })
+      });
+    }))
   })).filter((group) => group.communities.length > 0);
 }
 
@@ -102770,7 +102897,7 @@ function renderGridlySettingsAwarenessSearchResult(result, surface = {}) {
       const title = document.createElement("span");
       title.textContent = community.label;
       const context = document.createElement("small");
-      context.textContent = community.canonicalResolution ? "Multi-county community" : group.countyLabel;
+      context.textContent = community.canonicalResolution?.countyMemberships?.length > 1 ? "Multi-county community" : group.countyLabel;
       button.append(title, context);
       if (isPending) {
         const state = document.createElement("em");
@@ -102848,7 +102975,8 @@ function renderGridlySettingsAwarenessSearchResult(result, surface = {}) {
 }
 
 function gridlySaveCanonicalMultiCountyPlaceHome(result = {}, source = "canonical_multi_county_place_search", requestedOperationalCountyId = null) {
-  if (result.status !== "RESOLVED_CANONICAL_MULTI_COUNTY_PLACE" || result.canonicalIdentity !== "PLACE_GEOID") return false;
+  // Retain the established entry point and storage schema for every governed PLACE.
+  if (!["RESOLVED_CANONICAL_MULTI_COUNTY_PLACE", "RESOLVED_OPERATIONAL"].includes(result.status) || result.canonicalIdentity !== "PLACE_GEOID") return false;
   gridlyBeginCommunityTransitionTrace({ canonicalCommunity: result.community, canonicalCommunityKey: `place-${result.placeGeoid}`, placeGeoid: result.placeGeoid, governedMemberships: result.countyMemberships, selectedMembership: requestedOperationalCountyId, authoritativeMembership: requestedOperationalCountyId, reason: source });
   const requestedCountyToken = String(requestedOperationalCountyId || "").trim().toLowerCase();
   const requestedCountyId = gridlyNormalizeCountyId(requestedCountyToken);
@@ -103024,7 +103152,7 @@ function selectGridlySettingsAwarenessArea(value = "", source = "settings_awaren
     return gridlySaveCanonicalMultiCountyPlaceHome(canonicalResult, source, selectedCountyId);
   }
   const saveValue = resolveGridlySettingsAwarenessSaveValue(value, root);
-  const saved = typeof saveGridlyHomeTownPreference === "function" ? saveGridlyHomeTownPreference(saveValue, { source }) : "";
+  const saved = typeof saveGridlyHomeTownPreference === "function" ? saveGridlyHomeTownPreference(selectedArea?.key || saveValue, { source, countyId: selectedCountyId || selectedArea?.countyId || "" }) : "";
   if (!saved) {
     safeText("settingsSaveStatus", "Awareness Area could not be saved on this device.");
     document.querySelectorAll("[data-v2-settings-status]").forEach((node) => { node.textContent = "Awareness Area could not be saved on this device."; });

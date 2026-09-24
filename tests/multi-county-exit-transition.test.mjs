@@ -25,6 +25,10 @@ function exitRuntime({ oldPlaceGeoid, oldLabel, oldCountyId, nextPlaceGeoid, nex
     gridlyReadHomePersonalizationRecord: () => storage.has('home-record') ? JSON.parse(storage.get('home-record')) : null,
     invalidateGridlySelectedAwarenessAreaResolutionCache: reason => trace.push(['invalidate', reason, state.generation]),
     resolveGridlyAwarenessArea: value => areas[value] || null,
+    // This fixture exercises the retained non-governed legacy transaction.
+    // Governed canonical replacement is covered by the LP24449A browser matrix.
+    GRIDLY_COUNTY_REGISTRY: {},
+    gridlyResolveStableHomeSelectionArea: value => areas[value] || null,
     gridlyResolveCanonicalPlaceGeoid: area => area?.placeGeoid || null,
     gridlyResolveCountyIdForAwarenessArea: value => areas[value]?.countyId,
     gridlySetActiveCountyContext(countyId) { trace.push(['county', state.activeCounty, countyId, state.generation]); state.activeCounty = countyId; state.roadwayCounty = countyId; state.railCounty = countyId; state.generation += 1; return countyId; },

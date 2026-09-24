@@ -1,0 +1,5085 @@
+{
+  "original": 369,
+  "fixed": 369,
+  "remaining": 0,
+  "records": [
+    {
+      "originalFailureId": "LP24449-0001",
+      "code": "SEARCH_NOT_FOUND",
+      "county_id": "brooks-tx",
+      "place_geoid": "4801514",
+      "community": "Airport Road Addition",
+      "consumer": "search_resolution",
+      "status": "FIXED",
+      "proof": [
+        "search-recertification.json",
+        "visible-search.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0002",
+      "code": "HOME_BASELINE_WRONG_CONTEXT",
+      "county_id": "nueces-tx",
+      "place_geoid": "4803600",
+      "community": "Aransas Pass",
+      "consumer": "home_context",
+      "status": "FIXED",
+      "proof": [
+        "nueces-baseline-replay.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0003",
+      "code": "HOME_BASELINE_WRONG_CONTEXT",
+      "county_id": "nueces-tx",
+      "place_geoid": "4805576",
+      "community": "Banquete",
+      "consumer": "home_context",
+      "status": "FIXED",
+      "proof": [
+        "nueces-baseline-replay.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0004",
+      "code": "HOME_BASELINE_WRONG_CONTEXT",
+      "county_id": "nueces-tx",
+      "place_geoid": "4808392",
+      "community": "Bishop",
+      "consumer": "home_context",
+      "status": "FIXED",
+      "proof": [
+        "nueces-baseline-replay.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0005",
+      "code": "SEARCH_NOT_FOUND",
+      "county_id": "hidalgo-tx",
+      "place_geoid": "4814038",
+      "community": "CÃ©sar ChÃ¡vez",
+      "consumer": "search_resolution",
+      "status": "FIXED",
+      "proof": [
+        "search-recertification.json",
+        "visible-search.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0006",
+      "code": "SEARCH_NOT_FOUND",
+      "county_id": "val-verde-tx",
+      "place_geoid": "4814927",
+      "community": "Cienegas Terrace",
+      "consumer": "search_resolution",
+      "status": "FIXED",
+      "proof": [
+        "search-recertification.json",
+        "visible-search.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0007",
+      "code": "SEARCH_NOT_FOUND",
+      "county_id": "bastrop-tx",
+      "place_geoid": "4814986",
+      "community": "Circle D-KC Estates",
+      "consumer": "search_resolution",
+      "status": "FIXED",
+      "proof": [
+        "search-recertification.json",
+        "visible-search.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0008",
+      "code": "HOME_BASELINE_WRONG_CONTEXT",
+      "county_id": "nueces-tx",
+      "place_geoid": "4817000",
+      "community": "Corpus Christi",
+      "consumer": "home_context",
+      "status": "FIXED",
+      "proof": [
+        "nueces-baseline-replay.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0009",
+      "code": "HOME_BASELINE_WRONG_CONTEXT",
+      "county_id": "nueces-tx",
+      "place_geoid": "4821436",
+      "community": "Driscoll",
+      "consumer": "home_context",
+      "status": "FIXED",
+      "proof": [
+        "nueces-baseline-replay.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0010",
+      "code": "SEARCH_NOT_FOUND",
+      "county_id": "maverick-tx",
+      "place_geoid": "4822810",
+      "community": "Eidson Road",
+      "consumer": "search_resolution",
+      "status": "FIXED",
+      "proof": [
+        "search-recertification.json",
+        "visible-search.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0011",
+      "code": "SEARCH_NOT_FOUND",
+      "county_id": "fort-bend-tx",
+      "place_geoid": "4825795",
+      "community": "Fifth Street",
+      "consumer": "search_resolution",
+      "status": "FIXED",
+      "proof": [
+        "search-recertification.json",
+        "visible-search.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0012",
+      "code": "HOME_BASELINE_WRONG_CONTEXT",
+      "county_id": "nueces-tx",
+      "place_geoid": "4836008",
+      "community": "Ingleside",
+      "consumer": "home_context",
+      "status": "FIXED",
+      "proof": [
+        "nueces-baseline-replay.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0013",
+      "code": "HOME_BASELINE_WRONG_CONTEXT",
+      "county_id": "nueces-tx",
+      "place_geoid": "4841422",
+      "community": "La Paloma-Lost Creek",
+      "consumer": "home_context",
+      "status": "FIXED",
+      "proof": [
+        "nueces-baseline-replay.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0014",
+      "code": "SEARCH_NOT_FOUND",
+      "county_id": "zapata-tx",
+      "place_geoid": "4843960",
+      "community": "LopeÃ±o",
+      "consumer": "search_resolution",
+      "status": "FIXED",
+      "proof": [
+        "search-recertification.json",
+        "visible-search.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0015",
+      "code": "SEARCH_NOT_FOUND",
+      "county_id": "fort-bend-tx",
+      "place_geoid": "4847337",
+      "community": "Meadows Place",
+      "consumer": "search_resolution",
+      "status": "FIXED",
+      "proof": [
+        "search-recertification.json",
+        "visible-search.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0016",
+      "code": "HOME_BASELINE_WRONG_CONTEXT",
+      "county_id": "nueces-tx",
+      "place_geoid": "4852404",
+      "community": "North San Pedro",
+      "consumer": "home_context",
+      "status": "FIXED",
+      "proof": [
+        "nueces-baseline-replay.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0017",
+      "code": "SEARCH_NOT_FOUND",
+      "county_id": "hood-tx",
+      "place_geoid": "4853212",
+      "community": "Oak Trail Shores",
+      "consumer": "search_resolution",
+      "status": "FIXED",
+      "proof": [
+        "search-recertification.json",
+        "visible-search.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0018",
+      "code": "HOME_BASELINE_WRONG_CONTEXT",
+      "county_id": "nueces-tx",
+      "place_geoid": "4857056",
+      "community": "Petronila",
+      "consumer": "home_context",
+      "status": "FIXED",
+      "proof": [
+        "nueces-baseline-replay.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0019",
+      "code": "HOME_BASELINE_WRONG_CONTEXT",
+      "county_id": "nueces-tx",
+      "place_geoid": "4858808",
+      "community": "Port Aransas",
+      "consumer": "home_context",
+      "status": "FIXED",
+      "proof": [
+        "nueces-baseline-replay.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0020",
+      "code": "HOME_BASELINE_WRONG_CONTEXT",
+      "county_id": "nueces-tx",
+      "place_geoid": "4858904",
+      "community": "Portland",
+      "consumer": "home_context",
+      "status": "FIXED",
+      "proof": [
+        "nueces-baseline-replay.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0021",
+      "code": "HOME_BASELINE_WRONG_CONTEXT",
+      "county_id": "nueces-tx",
+      "place_geoid": "4860529",
+      "community": "Rancho Banquete",
+      "consumer": "home_context",
+      "status": "FIXED",
+      "proof": [
+        "nueces-baseline-replay.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0022",
+      "code": "SEARCH_NOT_FOUND",
+      "county_id": "cooke-tx",
+      "place_geoid": "4862486",
+      "community": "Road Runner",
+      "consumer": "search_resolution",
+      "status": "FIXED",
+      "proof": [
+        "search-recertification.json",
+        "visible-search.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0023",
+      "code": "HOME_BASELINE_WRONG_CONTEXT",
+      "county_id": "nueces-tx",
+      "place_geoid": "4862600",
+      "community": "Robstown",
+      "consumer": "home_context",
+      "status": "FIXED",
+      "proof": [
+        "nueces-baseline-replay.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0024",
+      "code": "SEARCH_NOT_FOUND",
+      "county_id": "randall-tx",
+      "place_geoid": "4862834",
+      "community": "Rockwell Place",
+      "consumer": "search_resolution",
+      "status": "FIXED",
+      "proof": [
+        "search-recertification.json",
+        "visible-search.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0025",
+      "code": "SEARCH_NOT_FOUND",
+      "county_id": "bexar-tx",
+      "place_geoid": "4864172",
+      "community": "St. Hedwig",
+      "consumer": "search_resolution",
+      "status": "FIXED",
+      "proof": [
+        "search-recertification.json",
+        "visible-search.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0026",
+      "code": "SEARCH_NOT_FOUND",
+      "county_id": "starr-tx",
+      "place_geoid": "4864316",
+      "community": "SalineÃ±o",
+      "consumer": "search_resolution",
+      "status": "FIXED",
+      "proof": [
+        "search-recertification.json",
+        "visible-search.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0027",
+      "code": "SEARCH_NOT_FOUND",
+      "county_id": "starr-tx",
+      "place_geoid": "4864322",
+      "community": "SalineÃ±o North",
+      "consumer": "search_resolution",
+      "status": "FIXED",
+      "proof": [
+        "search-recertification.json",
+        "visible-search.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0028",
+      "code": "HOME_BASELINE_WRONG_CONTEXT",
+      "county_id": "nueces-tx",
+      "place_geoid": "4865342",
+      "community": "Sandy Hollow-Escondidas",
+      "consumer": "home_context",
+      "status": "FIXED",
+      "proof": [
+        "nueces-baseline-replay.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0029",
+      "code": "SEARCH_NOT_FOUND",
+      "county_id": "harris-tx",
+      "place_geoid": "4869272",
+      "community": "Southside Place",
+      "consumer": "search_resolution",
+      "status": "FIXED",
+      "proof": [
+        "search-recertification.json",
+        "visible-search.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0030",
+      "code": "HOME_BASELINE_WRONG_CONTEXT",
+      "county_id": "nueces-tx",
+      "place_geoid": "4869708",
+      "community": "Spring Gardens",
+      "consumer": "home_context",
+      "status": "FIXED",
+      "proof": [
+        "nueces-baseline-replay.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0031",
+      "code": "HOME_BASELINE_WRONG_CONTEXT",
+      "county_id": "nueces-tx",
+      "place_geoid": "4872952",
+      "community": "Tierra Grande",
+      "consumer": "home_context",
+      "status": "FIXED",
+      "proof": [
+        "nueces-baseline-replay.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0032",
+      "code": "HOME_BASELINE_WRONG_CONTEXT",
+      "county_id": "nueces-tx",
+      "place_geoid": "4872954",
+      "community": "Tierra Verde",
+      "consumer": "home_context",
+      "status": "FIXED",
+      "proof": [
+        "nueces-baseline-replay.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0033",
+      "code": "SEARCH_NOT_FOUND",
+      "county_id": "harris-tx",
+      "place_geoid": "4877956",
+      "community": "West University Place",
+      "consumer": "search_resolution",
+      "status": "FIXED",
+      "proof": [
+        "search-recertification.json",
+        "visible-search.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0034",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "lubbock-tx",
+      "place_geoid": "4800160",
+      "community": "Abernathy",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0035",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "taylor-tx",
+      "place_geoid": "4801000",
+      "community": "Abilene",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0036",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "martin-tx",
+      "place_geoid": "4801108",
+      "community": "Ackerly",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0037",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "nueces-tx",
+      "place_geoid": "4801396",
+      "community": "Agua Dulce",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0038",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "nueces-tx",
+      "place_geoid": "4801396",
+      "community": "Agua Dulce",
+      "consumer": "home_only_identity",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0039",
+      "code": "WEATHER_WRONG_LOCALITY",
+      "county_id": "nueces-tx",
+      "place_geoid": "4801396",
+      "community": "Agua Dulce",
+      "consumer": "home_only_weather_contract",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json",
+        "weather-locality-recertification.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0040",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "nueces-tx",
+      "place_geoid": "4801396",
+      "community": "Agua Dulce",
+      "consumer": "visible_home_county_choice",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0041",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "nueces-tx",
+      "place_geoid": "4801396",
+      "community": "Agua Dulce",
+      "consumer": "visible_home_county_reload",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0042",
+      "code": "SEARCH_PUBLICATION_FAILED",
+      "county_id": "brooks-tx",
+      "place_geoid": "4801514",
+      "community": "Airport Road Addition",
+      "consumer": "search_case_publication",
+      "status": "FIXED",
+      "proof": [
+        "search-recertification.json",
+        "visible-search.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0043",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "wood-tx",
+      "place_geoid": "4801636",
+      "community": "Alba",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0044",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "randall-tx",
+      "place_geoid": "4803000",
+      "community": "Amarillo",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0045",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "nueces-tx",
+      "place_geoid": "4803600",
+      "community": "Aransas Pass",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0046",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "san-patricio-tx",
+      "place_geoid": "4803600",
+      "community": "Aransas Pass",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0047",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "hays-tx",
+      "place_geoid": "4805000",
+      "community": "Austin",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0048",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "travis-tx",
+      "place_geoid": "4805000",
+      "community": "Austin",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0049",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "williamson-tx",
+      "place_geoid": "4805000",
+      "community": "Austin",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0050",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "tarrant-tx",
+      "place_geoid": "4805168",
+      "community": "Azle",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0051",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "williamson-tx",
+      "place_geoid": "4805732",
+      "community": "Bartlett",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0052",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "harris-tx",
+      "place_geoid": "4806128",
+      "community": "Baytown",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0053",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "polk-tx",
+      "place_geoid": "4808240",
+      "community": "Big Thicket Lake Estates",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0054",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "nolan-tx",
+      "place_geoid": "4808488",
+      "community": "Blackwell",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0055",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "ochiltree-tx",
+      "place_geoid": "4809448",
+      "community": "Booker",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0056",
+      "code": "SEARCH_PUBLICATION_FAILED",
+      "county_id": "palo-pinto-tx",
+      "place_geoid": "4810084",
+      "community": "Brazos",
+      "consumer": "search_case_publication",
+      "status": "FIXED",
+      "proof": [
+        "search-recertification.json",
+        "visible-search.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0057",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "tarrant-tx",
+      "place_geoid": "4810192",
+      "community": "Briar",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0058",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "wise-tx",
+      "place_geoid": "4810192",
+      "community": "Briar",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0059",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "mclennan-tx",
+      "place_geoid": "4810828",
+      "community": "Bruceville-Eddy",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0060",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "cherokee-tx",
+      "place_geoid": "4811212",
+      "community": "Bullard",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0061",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "tarrant-tx",
+      "place_geoid": "4811428",
+      "community": "Burleson",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0062",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "randall-tx",
+      "place_geoid": "4811572",
+      "community": "Bushland",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0063",
+      "code": "SEARCH_PUBLICATION_FAILED",
+      "county_id": "cameron-tx",
+      "place_geoid": "4812045",
+      "community": "Cameron Park",
+      "consumer": "search_case_publication",
+      "status": "FIXED",
+      "proof": [
+        "search-recertification.json",
+        "visible-search.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0064",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "dallas-tx",
+      "place_geoid": "4813024",
+      "community": "Carrollton",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0065",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "denton-tx",
+      "place_geoid": "4813024",
+      "community": "Carrollton",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0066",
+      "code": "SEARCH_PUBLICATION_FAILED",
+      "county_id": "wichita-tx",
+      "place_geoid": "4813198",
+      "community": "Cashion Community",
+      "consumer": "search_case_publication",
+      "status": "FIXED",
+      "proof": [
+        "search-recertification.json",
+        "visible-search.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0067",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "dallas-tx",
+      "place_geoid": "4813492",
+      "community": "Cedar Hill",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0068",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "williamson-tx",
+      "place_geoid": "4813552",
+      "community": "Cedar Park",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0069",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "denton-tx",
+      "place_geoid": "4813684",
+      "community": "Celina",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0070",
+      "code": "SEARCH_PUBLICATION_FAILED",
+      "county_id": "hidalgo-tx",
+      "place_geoid": "4814038",
+      "community": "CÃ©sar ChÃ¡vez",
+      "consumer": "search_case_publication",
+      "status": "FIXED",
+      "proof": [
+        "search-recertification.json",
+        "visible-search.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0071",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "cameron-tx",
+      "place_geoid": "4814880",
+      "community": "Chula Vista",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0072",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "cameron-tx",
+      "place_geoid": "4814880",
+      "community": "Chula Vista",
+      "consumer": "home_only_identity",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0073",
+      "code": "WEATHER_WRONG_LOCALITY",
+      "county_id": "cameron-tx",
+      "place_geoid": "4814880",
+      "community": "Chula Vista",
+      "consumer": "home_only_weather_contract",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json",
+        "weather-locality-recertification.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0074",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "cameron-tx",
+      "place_geoid": "4814880",
+      "community": "Chula Vista",
+      "consumer": "visible_home_county_choice",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0075",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "cameron-tx",
+      "place_geoid": "4814880",
+      "community": "Chula Vista",
+      "consumer": "visible_home_county_reload",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0076",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "zavala-tx",
+      "place_geoid": "4814882",
+      "community": "Chula Vista",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0077",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "zavala-tx",
+      "place_geoid": "4814882",
+      "community": "Chula Vista",
+      "consumer": "home_only_identity",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0078",
+      "code": "WEATHER_WRONG_LOCALITY",
+      "county_id": "zavala-tx",
+      "place_geoid": "4814882",
+      "community": "Chula Vista",
+      "consumer": "home_only_weather_contract",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json",
+        "weather-locality-recertification.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0079",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "zavala-tx",
+      "place_geoid": "4814882",
+      "community": "Chula Vista",
+      "consumer": "visible_home_county_choice",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0080",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "zavala-tx",
+      "place_geoid": "4814882",
+      "community": "Chula Vista",
+      "consumer": "visible_home_county_reload",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0081",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "guadalupe-tx",
+      "place_geoid": "4814920",
+      "community": "Cibolo",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0082",
+      "code": "SEARCH_PUBLICATION_FAILED",
+      "county_id": "val-verde-tx",
+      "place_geoid": "4814927",
+      "community": "Cienegas Terrace",
+      "consumer": "search_case_publication",
+      "status": "FIXED",
+      "proof": [
+        "search-recertification.json",
+        "visible-search.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0083",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "fort-bend-tx",
+      "place_geoid": "4814929",
+      "community": "Cinco Ranch",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0084",
+      "code": "SEARCH_PUBLICATION_FAILED",
+      "county_id": "bastrop-tx",
+      "place_geoid": "4814986",
+      "community": "Circle D-KC Estates",
+      "consumer": "search_case_publication",
+      "status": "FIXED",
+      "proof": [
+        "search-recertification.json",
+        "visible-search.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0085",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "upshur-tx",
+      "place_geoid": "4815172",
+      "community": "Clarksville City",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0086",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "montgomery-tx",
+      "place_geoid": "4815436",
+      "community": "Cleveland",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0087",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "san-jacinto-tx",
+      "place_geoid": "4815436",
+      "community": "Cleveland",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0088",
+      "code": "SEARCH_PUBLICATION_FAILED",
+      "county_id": "brazos-tx",
+      "place_geoid": "4815976",
+      "community": "College Station",
+      "consumer": "search_case_publication",
+      "status": "FIXED",
+      "proof": [
+        "search-recertification.json",
+        "visible-search.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0089",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "dallas-tx",
+      "place_geoid": "4816216",
+      "community": "Combine",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0090",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "denton-tx",
+      "place_geoid": "4816612",
+      "community": "Coppell",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0091",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "coryell-tx",
+      "place_geoid": "4816624",
+      "community": "Copperas Cove",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0092",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "lampasas-tx",
+      "place_geoid": "4816624",
+      "community": "Copperas Cove",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0093",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "kleberg-tx",
+      "place_geoid": "4817000",
+      "community": "Corpus Christi",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0094",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "nueces-tx",
+      "place_geoid": "4817000",
+      "community": "Corpus Christi",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0095",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "san-patricio-tx",
+      "place_geoid": "4817000",
+      "community": "Corpus Christi",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0096",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "travis-tx",
+      "place_geoid": "4817612",
+      "community": "Creedmoor",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0097",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "johnson-tx",
+      "place_geoid": "4817648",
+      "community": "Cresson",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0098",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "parker-tx",
+      "place_geoid": "4817648",
+      "community": "Cresson",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0099",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "tarrant-tx",
+      "place_geoid": "4817960",
+      "community": "Crowley",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0100",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "hartley-tx",
+      "place_geoid": "4818524",
+      "community": "Dalhart",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0101",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "dallas-tx",
+      "place_geoid": "4819000",
+      "community": "Dallas",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0102",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "denton-tx",
+      "place_geoid": "4819000",
+      "community": "Dallas",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0103",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "kaufman-tx",
+      "place_geoid": "4819000",
+      "community": "Dallas",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0104",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "rockwall-tx",
+      "place_geoid": "4819000",
+      "community": "Dallas",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0105",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "yoakum-tx",
+      "place_geoid": "4819984",
+      "community": "Denver City",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0106",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "red-river-tx",
+      "place_geoid": "4820020",
+      "community": "Deport",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0107",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "upshur-tx",
+      "place_geoid": "4822168",
+      "community": "East Mountain",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0108",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "rusk-tx",
+      "place_geoid": "4822192",
+      "community": "Easton",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0109",
+      "code": "SEARCH_PUBLICATION_FAILED",
+      "county_id": "maverick-tx",
+      "place_geoid": "4822810",
+      "community": "Eidson Road",
+      "consumer": "search_case_publication",
+      "status": "FIXED",
+      "proof": [
+        "search-recertification.json",
+        "visible-search.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0110",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "webb-tx",
+      "place_geoid": "4822905",
+      "community": "El Cenizo",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0111",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "webb-tx",
+      "place_geoid": "4822905",
+      "community": "El Cenizo",
+      "consumer": "home_only_identity",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0112",
+      "code": "WEATHER_WRONG_LOCALITY",
+      "county_id": "webb-tx",
+      "place_geoid": "4822905",
+      "community": "El Cenizo",
+      "consumer": "home_only_weather_contract",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json",
+        "weather-locality-recertification.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0113",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "webb-tx",
+      "place_geoid": "4822905",
+      "community": "El Cenizo",
+      "consumer": "visible_home_county_choice",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0114",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "webb-tx",
+      "place_geoid": "4822905",
+      "community": "El Cenizo",
+      "consumer": "visible_home_county_reload",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0115",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "travis-tx",
+      "place_geoid": "4823044",
+      "community": "Elgin",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0116",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "wilson-tx",
+      "place_geoid": "4823272",
+      "community": "Elmendorf",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0117",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "hamilton-tx",
+      "place_geoid": "4824864",
+      "community": "Evant",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0118",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "comal-tx",
+      "place_geoid": "4825168",
+      "community": "Fair Oaks Ranch",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0119",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "kendall-tx",
+      "place_geoid": "4825168",
+      "community": "Fair Oaks Ranch",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0120",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "dallas-tx",
+      "place_geoid": "4825752",
+      "community": "Ferris",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0121",
+      "code": "SEARCH_PUBLICATION_FAILED",
+      "county_id": "fort-bend-tx",
+      "place_geoid": "4825795",
+      "community": "Fifth Street",
+      "consumer": "search_case_publication",
+      "status": "FIXED",
+      "proof": [
+        "search-recertification.json",
+        "visible-search.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0122",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "denton-tx",
+      "place_geoid": "4826232",
+      "community": "Flower Mound",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0123",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "coryell-tx",
+      "place_geoid": "4826666",
+      "community": "Fort Cavazos",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0124",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "denton-tx",
+      "place_geoid": "4827000",
+      "community": "Fort Worth",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0125",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "parker-tx",
+      "place_geoid": "4827000",
+      "community": "Fort Worth",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0126",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "tarrant-tx",
+      "place_geoid": "4827000",
+      "community": "Fort Worth",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0127",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "wise-tx",
+      "place_geoid": "4827000",
+      "community": "Fort Worth",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0128",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "henderson-tx",
+      "place_geoid": "4827300",
+      "community": "Frankston",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0129",
+      "code": "MULTICOUNTY_WRONG_MEMBERSHIP",
+      "county_id": "henderson-tx",
+      "place_geoid": "4827300",
+      "community": "Frankston",
+      "consumer": "visible_home_county_choice",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0130",
+      "code": "MULTICOUNTY_WRONG_MEMBERSHIP",
+      "county_id": "henderson-tx",
+      "place_geoid": "4827300",
+      "community": "Frankston",
+      "consumer": "visible_home_county_reload",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0131",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "galveston-tx",
+      "place_geoid": "4827648",
+      "community": "Friendswood",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0132",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "denton-tx",
+      "place_geoid": "4827684",
+      "community": "Frisco",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0133",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "moore-tx",
+      "place_geoid": "4827696",
+      "community": "Fritch",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0134",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "dallas-tx",
+      "place_geoid": "4829000",
+      "community": "Garland",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0135",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "upshur-tx",
+      "place_geoid": "4829660",
+      "community": "Gladewater",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0136",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "dallas-tx",
+      "place_geoid": "4829840",
+      "community": "Glenn Heights",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0137",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "mclennan-tx",
+      "place_geoid": "4830092",
+      "community": "Golinda",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0138",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "dallas-tx",
+      "place_geoid": "4830464",
+      "community": "Grand Prairie",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0139",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "johnson-tx",
+      "place_geoid": "4830464",
+      "community": "Grand Prairie",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0140",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "tarrant-tx",
+      "place_geoid": "4830464",
+      "community": "Grand Prairie",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0141",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "dallas-tx",
+      "place_geoid": "4830644",
+      "community": "Grapevine",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0142",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "denton-tx",
+      "place_geoid": "4830644",
+      "community": "Grapevine",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0143",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "jones-tx",
+      "place_geoid": "4831964",
+      "community": "Hamlin",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0144",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "swisher-tx",
+      "place_geoid": "4832156",
+      "community": "Happy",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0145",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "denton-tx",
+      "place_geoid": "4832720",
+      "community": "Haslet",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0146",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "rockwall-tx",
+      "place_geoid": "4832984",
+      "community": "Heath",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0147",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "denton-tx",
+      "place_geoid": "4833020",
+      "community": "Hebron",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0148",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "hamilton-tx",
+      "place_geoid": "4833548",
+      "community": "Hico",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0149",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "starr-tx",
+      "place_geoid": "4834133",
+      "community": "Hilltop",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0150",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "starr-tx",
+      "place_geoid": "4834133",
+      "community": "Hilltop",
+      "consumer": "home_only_identity",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0151",
+      "code": "WEATHER_WRONG_LOCALITY",
+      "county_id": "starr-tx",
+      "place_geoid": "4834133",
+      "community": "Hilltop",
+      "consumer": "home_only_weather_contract",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json",
+        "weather-locality-recertification.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0152",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "starr-tx",
+      "place_geoid": "4834133",
+      "community": "Hilltop",
+      "consumer": "visible_home_county_choice",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0153",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "starr-tx",
+      "place_geoid": "4834133",
+      "community": "Hilltop",
+      "consumer": "visible_home_county_reload",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0154",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "llano-tx",
+      "place_geoid": "4834862",
+      "community": "Horseshoe Bay",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0155",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "fort-bend-tx",
+      "place_geoid": "4835000",
+      "community": "Houston",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0156",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "harris-tx",
+      "place_geoid": "4835000",
+      "community": "Houston",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0157",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "waller-tx",
+      "place_geoid": "4835000",
+      "community": "Houston",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0158",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "morris-tx",
+      "place_geoid": "4835300",
+      "community": "Hughes Springs",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0159",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "san-patricio-tx",
+      "place_geoid": "4836008",
+      "community": "Ingleside",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0160",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "hunt-tx",
+      "place_geoid": "4838068",
+      "community": "Josephine",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0161",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "fort-bend-tx",
+      "place_geoid": "4838476",
+      "community": "Katy",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0162",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "waller-tx",
+      "place_geoid": "4838476",
+      "community": "Katy",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0163",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "rusk-tx",
+      "place_geoid": "4839124",
+      "community": "Kilgore",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0164",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "travis-tx",
+      "place_geoid": "4840264",
+      "community": "Lago Vista",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0165",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "travis-tx",
+      "place_geoid": "4840264",
+      "community": "Lago Vista",
+      "consumer": "home_only_identity",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0166",
+      "code": "WEATHER_WRONG_LOCALITY",
+      "county_id": "travis-tx",
+      "place_geoid": "4840264",
+      "community": "Lago Vista",
+      "consumer": "home_only_weather_contract",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json",
+        "weather-locality-recertification.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0167",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "travis-tx",
+      "place_geoid": "4840264",
+      "community": "Lago Vista",
+      "consumer": "visible_home_county_choice",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0168",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "travis-tx",
+      "place_geoid": "4840264",
+      "community": "Lago Vista",
+      "consumer": "visible_home_county_reload",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0169",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "rusk-tx",
+      "place_geoid": "4840468",
+      "community": "Lake Cherokee",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0170",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "medina-tx",
+      "place_geoid": "4840674",
+      "community": "Lake Medina Shores",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0171",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "tarrant-tx",
+      "place_geoid": "4840744",
+      "community": "Lakeside",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0172",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "tarrant-tx",
+      "place_geoid": "4840744",
+      "community": "Lakeside",
+      "consumer": "home_only_identity",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0173",
+      "code": "WEATHER_WRONG_LOCALITY",
+      "county_id": "tarrant-tx",
+      "place_geoid": "4840744",
+      "community": "Lakeside",
+      "consumer": "home_only_weather_contract",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json",
+        "weather-locality-recertification.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0174",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "tarrant-tx",
+      "place_geoid": "4840744",
+      "community": "Lakeside",
+      "consumer": "visible_home_county_choice",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0175",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "tarrant-tx",
+      "place_geoid": "4840744",
+      "community": "Lakeside",
+      "consumer": "visible_home_county_reload",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0176",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "galveston-tx",
+      "place_geoid": "4841980",
+      "community": "League City",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0177",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "williamson-tx",
+      "place_geoid": "4842016",
+      "community": "Leander",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0178",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "denton-tx",
+      "place_geoid": "4842508",
+      "community": "Lewisville",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0179",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "reeves-tx",
+      "place_geoid": "4842874",
+      "community": "Lindsay",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0180",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "reeves-tx",
+      "place_geoid": "4842874",
+      "community": "Lindsay",
+      "consumer": "home_only_identity",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0181",
+      "code": "WEATHER_WRONG_LOCALITY",
+      "county_id": "reeves-tx",
+      "place_geoid": "4842874",
+      "community": "Lindsay",
+      "consumer": "home_only_weather_contract",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json",
+        "weather-locality-recertification.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0182",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "reeves-tx",
+      "place_geoid": "4842874",
+      "community": "Lindsay",
+      "consumer": "visible_home_county_choice",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0183",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "reeves-tx",
+      "place_geoid": "4842874",
+      "community": "Lindsay",
+      "consumer": "visible_home_county_reload",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0184",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "starr-tx",
+      "place_geoid": "4843463",
+      "community": "Loma Linda East",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0185",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "starr-tx",
+      "place_geoid": "4843463",
+      "community": "Loma Linda East",
+      "consumer": "home_only_identity",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0186",
+      "code": "WEATHER_WRONG_LOCALITY",
+      "county_id": "starr-tx",
+      "place_geoid": "4843463",
+      "community": "Loma Linda East",
+      "consumer": "home_only_weather_contract",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json",
+        "weather-locality-recertification.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0187",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "starr-tx",
+      "place_geoid": "4843463",
+      "community": "Loma Linda East",
+      "consumer": "visible_home_county_choice",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0188",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "starr-tx",
+      "place_geoid": "4843463",
+      "community": "Loma Linda East",
+      "consumer": "visible_home_county_reload",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0189",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "harrison-tx",
+      "place_geoid": "4843888",
+      "community": "Longview",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0190",
+      "code": "SEARCH_PUBLICATION_FAILED",
+      "county_id": "zapata-tx",
+      "place_geoid": "4843960",
+      "community": "LopeÃ±o",
+      "consumer": "search_case_publication",
+      "status": "FIXED",
+      "proof": [
+        "search-recertification.json",
+        "visible-search.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0191",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "starr-tx",
+      "place_geoid": "4844110",
+      "community": "Los Ebanos",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0192",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "starr-tx",
+      "place_geoid": "4844110",
+      "community": "Los Ebanos",
+      "consumer": "home_only_identity",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0193",
+      "code": "WEATHER_WRONG_LOCALITY",
+      "county_id": "starr-tx",
+      "place_geoid": "4844110",
+      "community": "Los Ebanos",
+      "consumer": "home_only_weather_contract",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json",
+        "weather-locality-recertification.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0194",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "starr-tx",
+      "place_geoid": "4844110",
+      "community": "Los Ebanos",
+      "consumer": "visible_home_county_choice",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0195",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "starr-tx",
+      "place_geoid": "4844110",
+      "community": "Los Ebanos",
+      "consumer": "visible_home_county_reload",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0196",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "cameron-tx",
+      "place_geoid": "4844116",
+      "community": "Los Fresnos",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0197",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "cameron-tx",
+      "place_geoid": "4844116",
+      "community": "Los Fresnos",
+      "consumer": "home_only_identity",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0198",
+      "code": "WEATHER_WRONG_LOCALITY",
+      "county_id": "cameron-tx",
+      "place_geoid": "4844116",
+      "community": "Los Fresnos",
+      "consumer": "home_only_weather_contract",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json",
+        "weather-locality-recertification.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0199",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "cameron-tx",
+      "place_geoid": "4844116",
+      "community": "Los Fresnos",
+      "consumer": "visible_home_county_choice",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0200",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "cameron-tx",
+      "place_geoid": "4844116",
+      "community": "Los Fresnos",
+      "consumer": "visible_home_county_reload",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0201",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "shackelford-tx",
+      "place_geoid": "4845048",
+      "community": "Lueders",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0202",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "guadalupe-tx",
+      "place_geoid": "4845096",
+      "community": "Luling",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0203",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "bexar-tx",
+      "place_geoid": "4845288",
+      "community": "Lytle",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0204",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "medina-tx",
+      "place_geoid": "4845288",
+      "community": "Lytle",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0205",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "kaufman-tx",
+      "place_geoid": "4845324",
+      "community": "Mabank",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0206",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "van-zandt-tx",
+      "place_geoid": "4845324",
+      "community": "Mabank",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0207",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "mclennan-tx",
+      "place_geoid": "4845672",
+      "community": "McGregor",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0208",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "rockwall-tx",
+      "place_geoid": "4845804",
+      "community": "McLendon-Chisholm",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0209",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "johnson-tx",
+      "place_geoid": "4846452",
+      "community": "Mansfield",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0210",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "tarrant-tx",
+      "place_geoid": "4846452",
+      "community": "Mansfield",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0211",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "mclennan-tx",
+      "place_geoid": "4846824",
+      "community": "Mart",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0212",
+      "code": "SEARCH_PUBLICATION_FAILED",
+      "county_id": "fort-bend-tx",
+      "place_geoid": "4847337",
+      "community": "Meadows Place",
+      "consumer": "search_case_publication",
+      "status": "FIXED",
+      "proof": [
+        "search-recertification.json",
+        "visible-search.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0213",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "dallas-tx",
+      "place_geoid": "4847892",
+      "community": "Mesquite",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0214",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "starr-tx",
+      "place_geoid": "4847898",
+      "community": "Mesquite",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0215",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "starr-tx",
+      "place_geoid": "4847898",
+      "community": "Mesquite",
+      "consumer": "home_only_identity",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0216",
+      "code": "WEATHER_WRONG_LOCALITY",
+      "county_id": "starr-tx",
+      "place_geoid": "4847898",
+      "community": "Mesquite",
+      "consumer": "home_only_weather_contract",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json",
+        "weather-locality-recertification.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0217",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "starr-tx",
+      "place_geoid": "4847898",
+      "community": "Mesquite",
+      "consumer": "visible_home_county_choice",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0218",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "starr-tx",
+      "place_geoid": "4847898",
+      "community": "Mesquite",
+      "consumer": "visible_home_county_reload",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0219",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "midland-tx",
+      "place_geoid": "4848072",
+      "community": "Midland",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0220",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "parker-tx",
+      "place_geoid": "4848684",
+      "community": "Mineral Wells",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0221",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "fort-bend-tx",
+      "place_geoid": "4848772",
+      "community": "Mission Bend",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0222",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "fort-bend-tx",
+      "place_geoid": "4848804",
+      "community": "Missouri City",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0223",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "winkler-tx",
+      "place_geoid": "4848936",
+      "community": "Monahans",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0224",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "liberty-tx",
+      "place_geoid": "4849068",
+      "community": "Mont Belvieu",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0225",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "harris-tx",
+      "place_geoid": "4849380",
+      "community": "Morgan's Point",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0226",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "caldwell-tx",
+      "place_geoid": "4850200",
+      "community": "Mustang Ridge",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0227",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "travis-tx",
+      "place_geoid": "4850200",
+      "community": "Mustang Ridge",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0228",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "grimes-tx",
+      "place_geoid": "4850472",
+      "community": "Navasota",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0229",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "wise-tx",
+      "place_geoid": "4850772",
+      "community": "Newark",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0230",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "guadalupe-tx",
+      "place_geoid": "4850820",
+      "community": "New Braunfels",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0231",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "denton-tx",
+      "place_geoid": "4850920",
+      "community": "New Fairview",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0232",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "hays-tx",
+      "place_geoid": "4851492",
+      "community": "Niederwald",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0233",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "wilson-tx",
+      "place_geoid": "4851588",
+      "community": "Nixon",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0234",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "madison-tx",
+      "place_geoid": "4851840",
+      "community": "Normangee",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0235",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "kaufman-tx",
+      "place_geoid": "4853160",
+      "community": "Oak Ridge",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0236",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "kaufman-tx",
+      "place_geoid": "4853160",
+      "community": "Oak Ridge",
+      "consumer": "home_only_identity",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0237",
+      "code": "WEATHER_WRONG_LOCALITY",
+      "county_id": "kaufman-tx",
+      "place_geoid": "4853160",
+      "community": "Oak Ridge",
+      "consumer": "home_only_weather_contract",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json",
+        "weather-locality-recertification.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0238",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "kaufman-tx",
+      "place_geoid": "4853160",
+      "community": "Oak Ridge",
+      "consumer": "visible_home_county_choice",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0239",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "kaufman-tx",
+      "place_geoid": "4853160",
+      "community": "Oak Ridge",
+      "consumer": "visible_home_county_reload",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0240",
+      "code": "SEARCH_PUBLICATION_FAILED",
+      "county_id": "hood-tx",
+      "place_geoid": "4853212",
+      "community": "Oak Trail Shores",
+      "consumer": "search_case_publication",
+      "status": "FIXED",
+      "proof": [
+        "search-recertification.json",
+        "visible-search.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0241",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "leon-tx",
+      "place_geoid": "4853232",
+      "community": "Oakwood",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0242",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "midland-tx",
+      "place_geoid": "4853388",
+      "community": "Odessa",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0243",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "lynn-tx",
+      "place_geoid": "4853436",
+      "community": "O'Donnell",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0244",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "chambers-tx",
+      "place_geoid": "4853824",
+      "community": "Old River-Winfree",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0245",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "rusk-tx",
+      "place_geoid": "4854432",
+      "community": "Overton",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0246",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "dallas-tx",
+      "place_geoid": "4854444",
+      "community": "Ovilla",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0247",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "cameron-tx",
+      "place_geoid": "4854748",
+      "community": "Palmer",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0248",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "cameron-tx",
+      "place_geoid": "4854748",
+      "community": "Palmer",
+      "consumer": "home_only_identity",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0249",
+      "code": "WEATHER_WRONG_LOCALITY",
+      "county_id": "cameron-tx",
+      "place_geoid": "4854748",
+      "community": "Palmer",
+      "consumer": "home_only_weather_contract",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json",
+        "weather-locality-recertification.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0250",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "cameron-tx",
+      "place_geoid": "4854748",
+      "community": "Palmer",
+      "consumer": "visible_home_county_choice",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0251",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "cameron-tx",
+      "place_geoid": "4854748",
+      "community": "Palmer",
+      "consumer": "visible_home_county_reload",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0252",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "brazoria-tx",
+      "place_geoid": "4856348",
+      "community": "Pearland",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0253",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "fort-bend-tx",
+      "place_geoid": "4856348",
+      "community": "Pearland",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0254",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "wise-tx",
+      "place_geoid": "4856462",
+      "community": "Pecan Acres",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0255",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "fannin-tx",
+      "place_geoid": "4856468",
+      "community": "Pecan Gap",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0256",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "johnson-tx",
+      "place_geoid": "4856498",
+      "community": "Pecan Plantation",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0257",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "williamson-tx",
+      "place_geoid": "4857176",
+      "community": "Pflugerville",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0258",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "denton-tx",
+      "place_geoid": "4857476",
+      "community": "Pilot Point",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0259",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "grayson-tx",
+      "place_geoid": "4857476",
+      "community": "Pilot Point",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0260",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "orange-tx",
+      "place_geoid": "4857608",
+      "community": "Pinehurst",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0261",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "orange-tx",
+      "place_geoid": "4857608",
+      "community": "Pinehurst",
+      "consumer": "home_only_identity",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0262",
+      "code": "WEATHER_WRONG_LOCALITY",
+      "county_id": "orange-tx",
+      "place_geoid": "4857608",
+      "community": "Pinehurst",
+      "consumer": "home_only_weather_contract",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json",
+        "weather-locality-recertification.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0263",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "orange-tx",
+      "place_geoid": "4857608",
+      "community": "Pinehurst",
+      "consumer": "visible_home_county_choice",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0264",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "orange-tx",
+      "place_geoid": "4857608",
+      "community": "Pinehurst",
+      "consumer": "visible_home_county_reload",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0265",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "denton-tx",
+      "place_geoid": "4858016",
+      "community": "Plano",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0266",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "kaufman-tx",
+      "place_geoid": "4858502",
+      "community": "Poetry",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0267",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "orange-tx",
+      "place_geoid": "4858820",
+      "community": "Port Arthur",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0268",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "san-patricio-tx",
+      "place_geoid": "4858904",
+      "community": "Portland",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0269",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "denton-tx",
+      "place_geoid": "4859696",
+      "community": "Prosper",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0270",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "cameron-tx",
+      "place_geoid": "4860544",
+      "community": "Rancho Viejo",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0271",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "cameron-tx",
+      "place_geoid": "4860544",
+      "community": "Rancho Viejo",
+      "consumer": "home_only_identity",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0272",
+      "code": "WEATHER_WRONG_LOCALITY",
+      "county_id": "cameron-tx",
+      "place_geoid": "4860544",
+      "community": "Rancho Viejo",
+      "consumer": "home_only_weather_contract",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json",
+        "weather-locality-recertification.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0273",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "cameron-tx",
+      "place_geoid": "4860544",
+      "community": "Rancho Viejo",
+      "consumer": "visible_home_county_choice",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0274",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "cameron-tx",
+      "place_geoid": "4860544",
+      "community": "Rancho Viejo",
+      "consumer": "visible_home_county_reload",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0275",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "rusk-tx",
+      "place_geoid": "4861508",
+      "community": "Reklaw",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0276",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "parker-tx",
+      "place_geoid": "4861604",
+      "community": "Reno",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0277",
+      "code": "MULTICOUNTY_WRONG_MEMBERSHIP",
+      "county_id": "parker-tx",
+      "place_geoid": "4861604",
+      "community": "Reno",
+      "consumer": "visible_home_county_choice",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0278",
+      "code": "MULTICOUNTY_WRONG_MEMBERSHIP",
+      "county_id": "parker-tx",
+      "place_geoid": "4861604",
+      "community": "Reno",
+      "consumer": "visible_home_county_reload",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0279",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "tarrant-tx",
+      "place_geoid": "4861604",
+      "community": "Reno",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0280",
+      "code": "MULTICOUNTY_WRONG_MEMBERSHIP",
+      "county_id": "tarrant-tx",
+      "place_geoid": "4861604",
+      "community": "Reno",
+      "consumer": "visible_home_county_choice",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0281",
+      "code": "MULTICOUNTY_WRONG_MEMBERSHIP",
+      "county_id": "tarrant-tx",
+      "place_geoid": "4861604",
+      "community": "Reno",
+      "consumer": "visible_home_county_reload",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0282",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "dallas-tx",
+      "place_geoid": "4861796",
+      "community": "Richardson",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0283",
+      "code": "SEARCH_PUBLICATION_FAILED",
+      "county_id": "cooke-tx",
+      "place_geoid": "4862486",
+      "community": "Road Runner",
+      "consumer": "search_case_publication",
+      "status": "FIXED",
+      "proof": [
+        "search-recertification.json",
+        "visible-search.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0284",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "denton-tx",
+      "place_geoid": "4862504",
+      "community": "Roanoke",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0285",
+      "code": "SEARCH_PUBLICATION_FAILED",
+      "county_id": "randall-tx",
+      "place_geoid": "4862834",
+      "community": "Rockwell Place",
+      "consumer": "search_case_publication",
+      "status": "FIXED",
+      "proof": [
+        "search-recertification.json",
+        "visible-search.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0286",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "williamson-tx",
+      "place_geoid": "4863500",
+      "community": "Round Rock",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0287",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "dallas-tx",
+      "place_geoid": "4863572",
+      "community": "Rowlett",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0288",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "hunt-tx",
+      "place_geoid": "4863668",
+      "community": "Royse City",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0289",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "rockwall-tx",
+      "place_geoid": "4863668",
+      "community": "Royse City",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0290",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "dallas-tx",
+      "place_geoid": "4864064",
+      "community": "Sachse",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0291",
+      "code": "SEARCH_PUBLICATION_FAILED",
+      "county_id": "bexar-tx",
+      "place_geoid": "4864172",
+      "community": "St. Hedwig",
+      "consumer": "search_case_publication",
+      "status": "FIXED",
+      "proof": [
+        "search-recertification.json",
+        "visible-search.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0292",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "san-patricio-tx",
+      "place_geoid": "4864244",
+      "community": "St. Paul",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0293",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "san-patricio-tx",
+      "place_geoid": "4864244",
+      "community": "St. Paul",
+      "consumer": "home_only_identity",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0294",
+      "code": "WEATHER_WRONG_LOCALITY",
+      "county_id": "san-patricio-tx",
+      "place_geoid": "4864244",
+      "community": "St. Paul",
+      "consumer": "home_only_weather_contract",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json",
+        "weather-locality-recertification.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0295",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "san-patricio-tx",
+      "place_geoid": "4864244",
+      "community": "St. Paul",
+      "consumer": "visible_home_county_choice",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0296",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "san-patricio-tx",
+      "place_geoid": "4864244",
+      "community": "St. Paul",
+      "consumer": "visible_home_county_reload",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0297",
+      "code": "SEARCH_PUBLICATION_FAILED",
+      "county_id": "starr-tx",
+      "place_geoid": "4864316",
+      "community": "SalineÃ±o",
+      "consumer": "search_case_publication",
+      "status": "FIXED",
+      "proof": [
+        "search-recertification.json",
+        "visible-search.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0298",
+      "code": "SEARCH_PUBLICATION_FAILED",
+      "county_id": "starr-tx",
+      "place_geoid": "4864322",
+      "community": "SalineÃ±o North",
+      "consumer": "search_case_publication",
+      "status": "FIXED",
+      "proof": [
+        "search-recertification.json",
+        "visible-search.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0299",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "comal-tx",
+      "place_geoid": "4865000",
+      "community": "San Antonio",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0300",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "medina-tx",
+      "place_geoid": "4865000",
+      "community": "San Antonio",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0301",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "jim-wells-tx",
+      "place_geoid": "4865180",
+      "community": "San Diego",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0302",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "denton-tx",
+      "place_geoid": "4865408",
+      "community": "Sanger",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0303",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "starr-tx",
+      "place_geoid": "4865532",
+      "community": "San Juan",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0304",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "starr-tx",
+      "place_geoid": "4865532",
+      "community": "San Juan",
+      "consumer": "home_only_identity",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0305",
+      "code": "WEATHER_WRONG_LOCALITY",
+      "county_id": "starr-tx",
+      "place_geoid": "4865532",
+      "community": "San Juan",
+      "consumer": "home_only_weather_contract",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json",
+        "weather-locality-recertification.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0306",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "starr-tx",
+      "place_geoid": "4865532",
+      "community": "San Juan",
+      "consumer": "visible_home_county_choice",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0307",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "starr-tx",
+      "place_geoid": "4865532",
+      "community": "San Juan",
+      "consumer": "visible_home_county_reload",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0308",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "guadalupe-tx",
+      "place_geoid": "4865600",
+      "community": "San Marcos",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0309",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "hays-tx",
+      "place_geoid": "4865600",
+      "community": "San Marcos",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0310",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "starr-tx",
+      "place_geoid": "4865678",
+      "community": "Santa Anna",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0311",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "starr-tx",
+      "place_geoid": "4865678",
+      "community": "Santa Anna",
+      "consumer": "home_only_identity",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0312",
+      "code": "WEATHER_WRONG_LOCALITY",
+      "county_id": "starr-tx",
+      "place_geoid": "4865678",
+      "community": "Santa Anna",
+      "consumer": "home_only_weather_contract",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json",
+        "weather-locality-recertification.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0313",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "starr-tx",
+      "place_geoid": "4865678",
+      "community": "Santa Anna",
+      "consumer": "visible_home_county_choice",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0314",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "starr-tx",
+      "place_geoid": "4865678",
+      "community": "Santa Anna",
+      "consumer": "visible_home_county_reload",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0315",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "cameron-tx",
+      "place_geoid": "4865768",
+      "community": "Santa Rosa",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0316",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "cameron-tx",
+      "place_geoid": "4865768",
+      "community": "Santa Rosa",
+      "consumer": "home_only_identity",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0317",
+      "code": "WEATHER_WRONG_LOCALITY",
+      "county_id": "cameron-tx",
+      "place_geoid": "4865768",
+      "community": "Santa Rosa",
+      "consumer": "home_only_weather_contract",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json",
+        "weather-locality-recertification.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0318",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "cameron-tx",
+      "place_geoid": "4865768",
+      "community": "Santa Rosa",
+      "consumer": "visible_home_county_choice",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0319",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "cameron-tx",
+      "place_geoid": "4865768",
+      "community": "Santa Rosa",
+      "consumer": "visible_home_county_reload",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0320",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "comal-tx",
+      "place_geoid": "4866128",
+      "community": "Schertz",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0321",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "guadalupe-tx",
+      "place_geoid": "4866128",
+      "community": "Schertz",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0322",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "harris-tx",
+      "place_geoid": "4866392",
+      "community": "Seabrook",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0323",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "dallas-tx",
+      "place_geoid": "4866428",
+      "community": "Seagoville",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0324",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "comal-tx",
+      "place_geoid": "4866704",
+      "community": "Selma",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0325",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "guadalupe-tx",
+      "place_geoid": "4866704",
+      "community": "Selma",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0326",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "kaufman-tx",
+      "place_geoid": "4866908",
+      "community": "Seven Points",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0327",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "harris-tx",
+      "place_geoid": "4867688",
+      "community": "Shoreacres",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0328",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "denton-tx",
+      "place_geoid": "4869032",
+      "community": "Southlake",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0329",
+      "code": "SEARCH_PUBLICATION_FAILED",
+      "county_id": "harris-tx",
+      "place_geoid": "4869272",
+      "community": "Southside Place",
+      "consumer": "search_case_publication",
+      "status": "FIXED",
+      "proof": [
+        "search-recertification.json",
+        "visible-search.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0330",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "comal-tx",
+      "place_geoid": "4869608",
+      "community": "Spring Branch",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0331",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "comal-tx",
+      "place_geoid": "4869608",
+      "community": "Spring Branch",
+      "consumer": "visible_home_county_choice",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0332",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "comal-tx",
+      "place_geoid": "4869608",
+      "community": "Spring Branch",
+      "consumer": "visible_home_county_reload",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0333",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "wise-tx",
+      "place_geoid": "4869800",
+      "community": "Springtown",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0334",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "fort-bend-tx",
+      "place_geoid": "4869908",
+      "community": "Stafford",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0335",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "jones-tx",
+      "place_geoid": "4869980",
+      "community": "Stamford",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0336",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "navarro-tx",
+      "place_geoid": "4870604",
+      "community": "Streetman",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0337",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "starr-tx",
+      "place_geoid": "4871274",
+      "community": "Sunset",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0338",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "starr-tx",
+      "place_geoid": "4871274",
+      "community": "Sunset",
+      "consumer": "home_only_identity",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0339",
+      "code": "WEATHER_WRONG_LOCALITY",
+      "county_id": "starr-tx",
+      "place_geoid": "4871274",
+      "community": "Sunset",
+      "consumer": "home_only_weather_contract",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json",
+        "weather-locality-recertification.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0340",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "starr-tx",
+      "place_geoid": "4871274",
+      "community": "Sunset",
+      "consumer": "visible_home_county_choice",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0341",
+      "code": "HOME_MEMBERSHIP_WRONG_CONTEXT",
+      "county_id": "starr-tx",
+      "place_geoid": "4871274",
+      "community": "Sunset",
+      "consumer": "visible_home_county_reload",
+      "status": "FIXED",
+      "proof": [
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0342",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "rusk-tx",
+      "place_geoid": "4871924",
+      "community": "Tatum",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0343",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "galveston-tx",
+      "place_geoid": "4872392",
+      "community": "Texas City",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0344",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "harris-tx",
+      "place_geoid": "4872656",
+      "community": "The Woodlands",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0345",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "williamson-tx",
+      "place_geoid": "4872776",
+      "community": "Thorndale",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0346",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "harris-tx",
+      "place_geoid": "4873316",
+      "community": "Tomball",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0347",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "fannin-tx",
+      "place_geoid": "4873592",
+      "community": "Trenton",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0348",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "grayson-tx",
+      "place_geoid": "4873592",
+      "community": "Trenton",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0349",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "denton-tx",
+      "place_geoid": "4873710",
+      "community": "Trophy Club",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0350",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "cherokee-tx",
+      "place_geoid": "4873724",
+      "community": "Troup",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0351",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "hays-tx",
+      "place_geoid": "4874216",
+      "community": "Uhland",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0352",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "guadalupe-tx",
+      "place_geoid": "4874408",
+      "community": "Universal City",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0353",
+      "code": "SEARCH_PUBLICATION_FAILED",
+      "county_id": "dallas-tx",
+      "place_geoid": "4874492",
+      "community": "University Park",
+      "consumer": "search_case_publication",
+      "status": "FIXED",
+      "proof": [
+        "search-recertification.json",
+        "visible-search.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0354",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "mclennan-tx",
+      "place_geoid": "4874732",
+      "community": "Valley Mills",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0355",
+      "code": "SEARCH_PUBLICATION_FAILED",
+      "county_id": "val-verde-tx",
+      "place_geoid": "4874895",
+      "community": "Val Verde Park",
+      "consumer": "search_case_publication",
+      "status": "FIXED",
+      "proof": [
+        "search-recertification.json",
+        "visible-search.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0356",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "grayson-tx",
+      "place_geoid": "4874924",
+      "community": "Van Alstyne",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0357",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "johnson-tx",
+      "place_geoid": "4875236",
+      "community": "Venus",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0358",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "waller-tx",
+      "place_geoid": "4876228",
+      "community": "Waller",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0359",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "upshur-tx",
+      "place_geoid": "4876576",
+      "community": "Warren City",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0360",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "denton-tx",
+      "place_geoid": "4877620",
+      "community": "Westlake",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0361",
+      "code": "SEARCH_PUBLICATION_FAILED",
+      "county_id": "harris-tx",
+      "place_geoid": "4877956",
+      "community": "West University Place",
+      "consumer": "search_case_publication",
+      "status": "FIXED",
+      "proof": [
+        "search-recertification.json",
+        "visible-search.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0362",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "grayson-tx",
+      "place_geoid": "4878628",
+      "community": "Whitewright",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0363",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "wichita-tx",
+      "place_geoid": "4879000",
+      "community": "Wichita Falls",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0364",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "tyler-tx",
+      "place_geoid": "4879204",
+      "community": "Wildwood",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0365",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "clay-tx",
+      "place_geoid": "4879696",
+      "community": "Windthorst",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0366",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "wood-tx",
+      "place_geoid": "4879816",
+      "community": "Winnsboro",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0367",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "dallas-tx",
+      "place_geoid": "4880356",
+      "community": "Wylie",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0368",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "rockwall-tx",
+      "place_geoid": "4880356",
+      "community": "Wylie",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    },
+    {
+      "originalFailureId": "LP24449-0369",
+      "code": "HOME_CHOICE_IDENTITY_BINDING_LOSS",
+      "county_id": "dewitt-tx",
+      "place_geoid": "4880560",
+      "community": "Yoakum",
+      "consumer": "home_county_query_binding",
+      "status": "FIXED",
+      "proof": [
+        "home-identity-summary.json",
+        "home-browser-results.json"
+      ],
+      "reason": "Exact original identity and governed operational county pass the mapped final-source reproduction."
+    }
+  ]
+}

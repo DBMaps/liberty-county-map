@@ -72,7 +72,7 @@ test('late Crosby NWS publication cannot replace Dayton; unavailable context cle
 
 test('Home-only adapter bypasses active Search for Settings without clearing it',()=>{
   const {h}=runtime();h.select('Crosby');
-  Object.assign(h,{gridlySelectedAwarenessAreaResolutionCache:{totalGetterCalls:0},gridlyRecordSelectedAwarenessAreaGetterCaller:()=>{},gridlyReadHomePersonalizationRecord:()=>null,getGridlySettingsPreferences:()=>({community:{homeTown:'Cleveland'}}),gridlyUserProfile:{},resolveGridlyAwarenessArea:()=>areaFor('Cleveland')});
+  Object.assign(h,{gridlySelectedAwarenessAreaResolutionCache:{totalGetterCalls:0},gridlyRecordSelectedAwarenessAreaGetterCaller:()=>{},gridlyReadHomePersonalizationRecord:()=>null,getGridlySettingsPreferences:()=>({community:{homeTown:'Cleveland'}}),gridlyUserProfile:{},resolveGridlyAwarenessArea:()=>areaFor('Cleveland'),gridlyResolveStableHomeSelectionArea:()=>areaFor('Cleveland')});
   const start=app.indexOf('function getGridlySelectedAwarenessArea('),end=app.indexOf('// Read-only consumer projection',start);
   vm.runInContext(app.slice(start,end),h);
   assert.equal(h.getGridlySelectedAwarenessArea().label,'Crosby');
