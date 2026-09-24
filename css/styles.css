@@ -30076,3 +30076,53 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet[data-active-sheet="repo
     margin-block-end: 4px !important;
   }
 }
+
+/* LP244.48H — the consumer Route Details pane uses the existing theme roles. */
+body[data-layout-mode="portrait"] #gridlyDestinationImpactPane .gridly-destination-impact-card {
+  background-color: var(--gridly-elevated) !important;
+  color: var(--gridly-text-primary) !important;
+}
+body[data-layout-mode="portrait"] #gridlyDestinationImpactPane :is(.gridly-destination-impact-body, .gridly-current-route-details) {
+  background: var(--gridly-nested) !important;
+  border-color: var(--gridly-border-neutral) !important;
+}
+body[data-layout-mode="portrait"] #gridlyDestinationImpactPane .gridly-destination-impact-significance {
+  background: transparent !important;
+}
+body[data-layout-mode="portrait"] #gridlyDestinationImpactPane :is(h2, #gridlyCurrentRouteLine, #gridlyDestinationImpactPaneSeverity) {
+  color: var(--gridly-text-primary) !important;
+}
+body[data-layout-mode="portrait"] #gridlyDestinationImpactPane :is(.gridly-destination-impact-subtitle, #gridlyCurrentRouteMeta, .gridly-destination-impact-why, .gridly-destination-impact-reasons li, .gridly-destination-impact-quiet-note, .gridly-destination-impact-significance em, .gridly-destination-impact-significance span) {
+  color: var(--gridly-text-secondary) !important;
+}
+body[data-layout-mode="portrait"] #gridlyDestinationImpactPane .eyebrow {
+  color: var(--gridly-accent) !important;
+}
+body[data-layout-mode="portrait"] #gridlyDestinationImpactPane :is(button, summary, a):focus-visible {
+  outline: 3px solid var(--gridly-accent) !important;
+  outline-offset: -3px;
+}
+
+body[data-layout-mode="portrait"] #gridlyDestinationImpactPane .gridly-destination-impact-actions {
+  background: var(--gridly-elevated) !important;
+}
+
+/* LP244.48H1 — reuse Settings choice buttons; no native popup or new persistence. */
+body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet .settings-display-choice {
+  display: grid; grid-column: 1 / -1; gap: 9px;
+}
+body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet .settings-display-choice .settings-text-size-segments {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  background: var(--gridly-nested); border-color: var(--gridly-border-neutral); box-shadow: none;
+}
+body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet .settings-display-choice [data-gridly-select="gridlyPortraitMapStyleChoice"] {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet .settings-display-choice .settings-text-size-segment {
+  min-height: 44px; color: var(--gridly-text-primary); background: var(--gridly-input-bg);
+  border-color: var(--gridly-border-neutral); box-shadow: none;
+}
+body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet .settings-display-choice .settings-text-size-segment.is-selected {
+  color: var(--gridly-accent-foreground) !important; background: var(--gridly-accent) !important;
+  border-color: var(--gridly-accent) !important;
+}

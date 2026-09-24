@@ -14,6 +14,7 @@
   });
   const COMMUNITY_POLICY = Object.freeze({
     blocked_crossing: { locationContext: true, communityPulse: true, alerts: true, kbygCommunity: true, kbygOfficialRoadways: false, map: true, popup: true, history: true },
+    crossing_delay: { locationContext: true, communityPulse: true, alerts: true, kbygCommunity: true, kbygOfficialRoadways: false, map: true, popup: true, history: true },
     rail_crossing_issue: { locationContext: true, communityPulse: true, alerts: true, kbygCommunity: null, kbygOfficialRoadways: false, map: true, popup: true, history: null },
     disabled_vehicle: { locationContext: false, communityPulse: false, alerts: true, kbygCommunity: null, kbygOfficialRoadways: false, map: true, popup: true },
     flooded_road: { locationContext: true, communityPulse: true, alerts: true, kbygCommunity: null, kbygOfficialRoadways: false, map: true, popup: true },
@@ -30,7 +31,10 @@
   const slug = (value) => text(value).toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
   function subtypeOf(record = {}) {
     const raw = slug(record.subtype || record.classification || record.report_type || record.reportType || record.type || record.condition || record.category || "unknown");
+    // Legacy heavy denotes a crossing delay only with explicit crossing ownership.
+    if (raw === "heavy" && (record.reportKind === "crossing" || text(record.crossingId || record.crossing_id))) return "crossing_delay";
     const aliases = {
+      rail_delay: "crossing_delay", reported_crossing_delay: "crossing_delay",
       blocked: "blocked_crossing", rail_blocked: "blocked_crossing", crossing_blocked: "blocked_crossing",
       crossing_issue: "rail_crossing_issue", rail_issue: "rail_crossing_issue",
       disabled: "disabled_vehicle", vehicle_disabled: "disabled_vehicle", stalled_vehicle: "disabled_vehicle",
@@ -111,7 +115,7 @@
   function isCrossingCommunityRecord(record = {}) {
     const subtype = subtypeOf(record);
     return sourceKindOf(record) === "community_report"
-      && (subtype === "blocked_crossing" || subtype === "cleared" || subtype === "recently_cleared" || text(record.reportKind).toLowerCase() === "crossing");
+      && (subtype === "blocked_crossing" || subtype === "crossing_delay" || subtype === "cleared" || subtype === "recently_cleared" || text(record.reportKind).toLowerCase() === "crossing");
   }
   function lifecycleRoleOf(record = {}) {
     const subtype = subtypeOf(record);
@@ -227,7 +231,7 @@
     return "PROPAGATION_FAILURE";
   }
   function surfaceOwner(sourceKind, subtype, surface) {
-    if (sourceKind === "community_report" && subtype === "blocked_crossing") return BLOCKED_CROSSING_OWNERS[surface] || "none";
+    if (sourceKind === "community_report" && ["blocked_crossing", "crossing_delay"].includes(subtype)) return BLOCKED_CROSSING_OWNERS[surface] || "none";
     return "governed_awareness";
   }
   const LOCATION_FIELDS = Object.freeze([

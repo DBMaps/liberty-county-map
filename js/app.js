@@ -3425,7 +3425,9 @@ function gridlyGetGovernedConsumerProjection(options = {}) {
     weatherFamilyIdentity: weatherSelection?.weatherFamilyIdentity || null
   }));
   const records = Array.isArray(options.records) ? options.records : [
-    ...(Array.isArray(activeReports) ? activeReports : []),
+    // Use the same latest-per-crossing state as crossing markers and grouped incidents.
+    // Report evidence stays in activeReports; one crossing condition counts once.
+    ...getLatestReportsByCrossing(),
     ...(Array.isArray(activeHazards) ? activeHazards : []),
     ...governedDriveTexasRecords,
     ...governedWeatherRecords
@@ -3656,10 +3658,28 @@ function gridlyStoryWeatherEvidence(options = {}) {
   return Object.freeze({ label: "Weather", available: true, kind: impact.kind, situation: impact.situation, recommendation: impact.recommendation, detail: impact.detail });
 }
 
+// LP244.48H: presentation reads explicit crossing state before legacy descriptive copy.
+// No lifecycle, severity, geometry, storage or report payload is changed here.
+function gridlyCrossingPresentationState(record = {}) {
+  const owners = [record?.canonicalSourceRecord, record?.latestReport, record?.raw, record?.record, record].filter((value) => value && typeof value === "object");
+  const crossingOwned = owners.some((value) => value.reportKind === "crossing" || value.sourceKind === "crossing_report" || Boolean(value.sourceLocationFields?.crossingName) || /^FRA-/i.test(String(value.crossingId || value.crossing_id || "")) || /^rail_/.test(String(value.type || "")));
+  if (!crossingOwned) return "";
+  for (const owner of owners) {
+    const tokens = [owner.legacyReportType, owner.submittedReportType, owner.report_type, owner.reportType, owner.normalizedEvent?.provenance?.rawType, owner.type, owner.category];
+    for (const value of tokens) {
+      const token = String(value || "").trim().toLowerCase().replace(/[ -]+/g, "_");
+      if (["heavy", "delay", "delayed", "rail_delay", "crossing_delay", "reported_crossing_delay"].includes(token)) return "delay";
+      if (["blocked", "rail_blocked", "crossing_blocked", "blocked_crossing", "train_blocking_crossing", "rail_blockage"].includes(token)) return "blocked";
+      if (["cleared", "rail_cleared"].includes(token)) return "cleared";
+    }
+  }
+  return "";
+}
+
 function gridlyStoryCrossingEvidence(records = []) {
   const crossingRecords = records.filter((record) => /crossing|train|rail|blocked|blocking/i.test(gridlyStoryRecordText(record)));
   if (!crossingRecords.length) return null;
-  return Object.freeze({ label: "Rail", available: true, count: crossingRecords.length, detail: crossingRecords.length === 1 ? "One crossing concern is active nearby." : `${crossingRecords.length} crossing concerns are active nearby.` });
+  return Object.freeze({ label: "Rail", available: true, count: crossingRecords.length, delayCount: crossingRecords.filter((record) => gridlyCrossingPresentationState(record) === "delay").length, blockedCount: crossingRecords.filter((record) => gridlyCrossingPresentationState(record) === "blocked").length, detail: crossingRecords.length === 1 ? "One crossing concern is active nearby." : `${crossingRecords.length} crossing concerns are active nearby.` });
 }
 
 function gridlyStoryTransportationConnectorRecords() {
@@ -3717,7 +3737,7 @@ function gridlyStoryCommunityEvidence(records = []) {
 }
 
 function gridlyStoryConfidence(records = [], evidence = {}) {
-  const evidenceCount = [evidence.community?.count > 0, evidence.weather, evidence.transportation, evidence.rail].filter(Boolean).length;
+  const evidenceCount = [evidence.community?.count > 0, evidence.weather, evidence.transportation, evidence.rail && !(evidence.community?.count > 0)].filter(Boolean).length;
   if (evidenceCount >= 3 || records.length >= 3) return "Several recent signals support this.";
   if (evidenceCount >= 2 || records.length >= 2) return "Some recent evidence supports this.";
   if (records.length === 1 || evidence.weather || evidence.transportation || evidence.rail) return "Early signs point to this.";
@@ -3802,7 +3822,7 @@ function buildGridlyAwarenessStory(input = {}) {
     recommendation = weatherEvidence.recommendation;
     template = `weather_${weatherEvidence.kind}`;
   } else if (hasRailBlock) {
-    situation = "Train blocking crossing.";
+    situation = evidence.rail?.delayCount > 0 && !evidence.rail?.blockedCount ? "Crossing delays reported." : "Train blocking crossing.";
     recommendation = "Allow extra travel time.";
     template = "train_blocking_crossing";
   } else if (hasTransport) {
@@ -4659,7 +4679,11 @@ function gridlyTravelBriefIncidentActionApplicability(model) {
 }
 
 function gridlyTravelBriefDecisionReason(story = {}, evidence = {}) {
-  if (evidence.community?.count > 0 && evidence.rail?.count > 0) return "Community reports indicate a blocked or delayed crossing.";
+  if (evidence.community?.count > 0 && evidence.rail?.count > 0) {
+    if (evidence.rail.delayCount > 0 && !evidence.rail.blockedCount) return "Community reports indicate a crossing delay.";
+    if (evidence.rail.blockedCount > 0 && !evidence.rail.delayCount) return "Community reports indicate a blocked crossing.";
+    return "Community reports indicate crossing disruptions.";
+  }
   if (evidence.community?.count > 0) return evidence.community.count > 1 ? "Multiple community reports are active nearby." : "A community report is active nearby.";
   if (evidence.transportation) return "Official roadway information shows a nearby travel concern.";
   if (evidence.weather) return evidence.weather.detail || "Weather is affecting nearby travel.";
@@ -42025,9 +42049,13 @@ function buildGridlyDestinationDecisionPresentation({ audit = null, intelligence
   const existingAudit = audit || (typeof window.gridlyDestinationRouteImpactAudit === "function" ? window.gridlyDestinationRouteImpactAudit() : {});
   const existingIntelligence = intelligence || (typeof window.gridlyDestinationRouteIntelligenceAudit === "function" ? window.gridlyDestinationRouteIntelligenceAudit() : {});
   const impactLevel = String(existingAudit?.impactLevel || "none").toLowerCase();
-  const conditionCount = Math.max(0, Number(existingAudit?.hazardsConsidered || 0))
-    + Math.max(0, Number(existingAudit?.alertsConsidered || 0))
-    + Math.max(0, Number(existingAudit?.reportsConsidered || 0));
+  const projectedMatches = [existingIntelligence?.matchedHazards, existingIntelligence?.matchedAlerts, existingIntelligence?.matchedReports].flatMap((rows) => Array.isArray(rows) ? rows : []);
+  // One canonical report can appear in both route projections; count it once in copy.
+  const conditionCount = projectedMatches.length
+    ? new Set(projectedMatches.map((row, index) => row?.id || `unidentified-${index}`)).size
+    : Math.max(0, Number(existingAudit?.hazardsConsidered || 0))
+      + Math.max(0, Number(existingAudit?.alertsConsidered || 0))
+      + Math.max(0, Number(existingAudit?.reportsConsidered || 0));
   const quiet = impactLevel === "none" && conditionCount === 0;
   const coverageSnapshot = coverage || getGridlyDestinationCoverageState();
   const quietAllowed = quiet && coverageSnapshot.coverageState === "COVERAGE_COMPLETE";
@@ -42039,8 +42067,10 @@ function buildGridlyDestinationDecisionPresentation({ audit = null, intelligence
     reason = "Multiple nearby conditions may affect travel.";
   } else if (!quiet) {
     interpretation = impactLevel === "high" ? "Allow extra travel time." : "Check before leaving.";
-    reason = isGridlyDestinationRouteActiveRailReason({ title: existingAudit?.primaryImpactReason })
-      ? "A blocked crossing may delay your trip to your destination."
+    reason = /reported crossing delay/i.test(String(existingAudit?.primaryImpactReason || ""))
+      ? "A reported crossing delay may affect your trip to your destination."
+      : isGridlyDestinationRouteActiveRailReason({ title: existingAudit?.primaryImpactReason })
+        ? "A blocked crossing may delay your trip to your destination."
       : impactLevel === "low"
         ? "Community activity may affect your destination."
         : "Nearby roadway conditions could affect travel to your destination.";
@@ -42052,6 +42082,8 @@ function buildGridlyDestinationDecisionPresentation({ audit = null, intelligence
       ? coverageSnapshot.coverageState === "COVERAGE_UNAVAILABLE" ? "Route information unavailable" : "Route check incomplete"
     : conditionCount > 1
       ? "Multiple recent signals"
+      : projectedMatches.length > 0 && projectedMatches.every((row) => /^(?:user|community|community_report)$/.test(String(row?.sourceType || row?.sourceKind || "")))
+        ? "Developing conditions"
       : /live reports checked/i.test(existingConfidence)
         ? "Strong supporting evidence"
         : "Developing conditions";
@@ -42134,6 +42166,9 @@ function gridlyQualifyDestinationWeatherEvidence({ records = [], weatherSelectio
 if (typeof window !== "undefined") window.gridlyQualifyDestinationWeatherEvidence = gridlyQualifyDestinationWeatherEvidence;
 
 function getGridlyDestinationRouteActiveRailReasonCopy(matches = []) {
+  const states = (Array.isArray(matches) ? matches : []).map(gridlyCrossingPresentationState);
+  if (states.includes("blocked")) return "A blocked crossing may delay this trip";
+  if (states.includes("delay")) return "A reported crossing delay may affect this trip";
   const text = (Array.isArray(matches) ? matches : [])
     .map((item) => getGridlyDestinationRouteReasonInspectionText(item))
     .join(" ");
@@ -61302,8 +61337,10 @@ function renderCrossings(reason = "unspecified", options = {}) {
     });
     return;
   }
-  const popupStateChangeGuardActive = reasonContainsStateChange && popupGuardActive;
-  const popupViewportGuardActive = reasonContainsViewportChange && popupGuardActive;
+  // Report changes must reach the incremental marker updater even during popup interaction.
+  // Only selection/camera-only renders may be suppressed by the popup guard.
+  const popupStateChangeGuardActive = reasonContainsStateChange && popupGuardActive && !crossingDataSignatureChanged;
+  const popupViewportGuardActive = reasonContainsViewportChange && popupGuardActive && !crossingDataSignatureChanged;
   if ((popupStateChangeGuardActive || popupViewportGuardActive) && crossingLayer && Array.isArray(crossings) && crossings.length) {
     const boundsForGuard = map?.getBounds?.();
     const policyForGuard = getGridlyRegionalCrossingVisibilityPolicy({
@@ -83960,9 +83997,11 @@ function getUnifiedIncidents() {
       severity: latest.severity === "moderate" ? "medium" : latest.severity || "medium",
       status: isActive ? "active" : "cleared",
       title: isActive
-        ? (headlineLocation ? `Train blocking crossing on ${headlineLocation}` : "Train blocking crossing")
+        ? (gridlyCrossingPresentationState(latest) === "delay"
+          ? (headlineLocation ? `Reported crossing delay on ${headlineLocation}` : "Reported crossing delay")
+          : (headlineLocation ? `Train blocking crossing on ${headlineLocation}` : "Train blocking crossing"))
         : (locationLineLabel ? `✓ ${locationLineLabel} cleared` : "✓ Train blocking crossing cleared"),
-      description: latest.detail,
+      description: gridlyCrossingPresentationState(latest) === "delay" ? "Community report: traffic is moving slowly near this crossing." : latest.detail,
       crossingName: incident.crossingName,
       crossingLabel: locationLineLabel,
       resolvedCrossingName: locationLineLabel,
@@ -94429,8 +94468,8 @@ async function createSharedReport(crossing, reportType, confidence, buttonEl = n
       buttonEl.textContent = "Submitting…";
     }
 
-    setSync("Submitting your report…");
-    setConfirmation(`Submitting your report for ${crossing.name}…`, "success", { persist: true });
+    setSync("Preparing your report…");
+    setConfirmation(`Preparing your report for ${crossing.name}…`, "success", { persist: true });
 
     if (reportType === "cleared") gridlyLp0534bClearDiagnostics.crossingClearSubmitStartCount += 1;
     gridlyMarkReportSubmissionRecovery("writeStarted", { flow: "crossing", reportType });
@@ -102333,10 +102372,19 @@ function syncGridlySettingsTextSizeSegments(root, selectedValue = "standard") {
   });
 }
 
+function buildGridlySettingsDisplayChoiceHtml(field, label, selectedValue, options) {
+  const id = field === "mapStyle" ? "gridlyPortraitMapStyleChoice" : "gridlyPortraitThemeChoice";
+  return `<div class="settings-display-choice"><span>${escapeGridlySettingsAttribute(label)}</span>
+    <input type="hidden" id="${id}" data-v2-settings-field="display.${field}" value="${escapeGridlySettingsAttribute(selectedValue)}">
+    <div class="settings-text-size-segments" role="radiogroup" aria-label="${escapeGridlySettingsAttribute(label)}" data-gridly-select="${id}">
+      ${options.map(([value, text]) => `<button type="button" class="settings-text-size-segment" role="radio" aria-checked="${value === selectedValue}" tabindex="${value === selectedValue ? 0 : -1}" data-value="${value}">${text}</button>`).join("")}
+    </div></div>`;
+}
+
 function installGridlyGovernedChoiceControls(root = document) {
   root.querySelectorAll?.("[data-gridly-select]").forEach((group) => {
     if (group.dataset.gridlyChoiceBound === "true") return;
-    const select = root.getElementById(group.dataset.gridlySelect);
+    const select = (root.ownerDocument || root).getElementById(group.dataset.gridlySelect);
     if (!select) return;
     const sync = () => group.querySelectorAll('[role="radio"]').forEach((button) => {
       const selected = button.dataset.value === select.value;
@@ -102352,11 +102400,12 @@ function installGridlyGovernedChoiceControls(root = document) {
       sync(); button.focus();
     });
     group.addEventListener("keydown", (event) => {
-      if (!["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(event.key)) return;
+      if (!["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End"].includes(event.key)) return;
       event.preventDefault();
       const buttons = [...group.querySelectorAll('[role="radio"]')];
       const current = Math.max(0, buttons.indexOf(document.activeElement));
-      buttons[(current + (["ArrowRight", "ArrowDown"].includes(event.key) ? 1 : -1) + buttons.length) % buttons.length].click();
+      const next = event.key === "Home" ? 0 : event.key === "End" ? buttons.length - 1 : (current + (["ArrowRight", "ArrowDown"].includes(event.key) ? 1 : -1) + buttons.length) % buttons.length;
+      buttons[next].click();
     });
     select.addEventListener("change", sync);
     group.dataset.gridlyChoiceBound = "true";
@@ -120269,6 +120318,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   }
 
   function gridlyLP236SummarySentence(alert, condition) {
+    if (gridlyCrossingPresentationState(alert) === "delay") return "Community report: traffic is moving slowly near this crossing.";
     const clean = gridlyLP236SafeProviderText(pickFirstNonEmptyText([alert?.localizedSummary, alert?.description, alert?.detail]));
     if (!clean) return "";
     const conditionKey = String(condition).toLocaleLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
@@ -120438,7 +120488,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const authorityState = snapshot?.activeConditionAuthorityAvailable === true
       ? (total > 0 ? "AVAILABLE_NONEMPTY" : "AVAILABLE_EMPTY")
       : "UNAVAILABLE";
-    const currentTotal = sections.filter((section) => section.authorityState === "ACTIVE" || gridlyLP236RetainCommunityRowsDuringLoading(section)).reduce((sum, section) => sum + section.activeConditionCount, 0);
+    const currentTotal = sections.filter((section) => section.authorityState === "ACTIVE" || gridlyLP236RetainCommunityRowsDuringReadUncertainty(section)).reduce((sum, section) => sum + section.activeConditionCount, 0);
     const coverageComplete = sections.every((section) => section.authorityState === "ACTIVE" || section.authorityState === "QUIET");
     const headerLabel = coverageComplete ? (currentTotal + " active condition" + (currentTotal === 1 ? "" : "s"))
       : currentTotal > 0 ? (currentTotal + " current condition" + (currentTotal === 1 ? "" : "s") + " · Coverage incomplete")
@@ -120446,10 +120496,10 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     return { snapshot, alerts, total, currentTotal, coverageComplete, headerLabel, sections, firstSource, critical, authorityState };
   }
 
-  // A pending backend read does not erase already governed active community rows.
-  // Keep the read health as LOADING and preserve the incomplete-coverage warning.
-  function gridlyLP236RetainCommunityRowsDuringLoading(section) {
-    return section?.sourceClass === "community_report" && section?.authorityState === "LOADING" && section?.activeConditionCount > 0;
+  // Read health does not erase current, governed community evidence.
+  // Keep source uncertainty explicit; lifecycle/geography still own row membership.
+  function gridlyLP236RetainCommunityRowsDuringReadUncertainty(section) {
+    return section?.sourceClass === "community_report" && ["LOADING", "UNAVAILABLE", "STALE"].includes(section?.authorityState) && section?.activeConditionCount > 0;
   }
 
   function gridlyLP236AlertsInformationArchitectureAudit() {
@@ -120752,7 +120802,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     }).join("");
     const sectionsHtml = [...model.sections].sort((a, b) => Number(b.activeConditionCount > 0) - Number(a.activeConditionCount > 0)).map((source) => {
       const sourceKey = source.sourceClass;
-      if (source.authorityState !== "ACTIVE" && !gridlyLP236RetainCommunityRowsDuringLoading(source)) {
+      if (source.authorityState !== "ACTIVE" && !gridlyLP236RetainCommunityRowsDuringReadUncertainty(source)) {
         const quiet = source.authorityState === "QUIET";
         const family = source.sourceClass === "community_report" ? "community reports" : source.sourceClass === "weather" ? "weather alerts" : "official roadway conditions";
         const quietStatus = source.sourceClass === "community_report" ? "No active community reports" : source.sourceClass === "weather" ? "No active weather alerts" : "No active official roadway conditions";
@@ -120764,7 +120814,8 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       }
       const open = gridlyLP236AlertsState.disclosure.initialized ? gridlyLP236AlertsState.disclosure.sourceKeys.has(sourceKey) : model.total === 1 || source.sourceClass === model.firstSource;
       const groupsHtml = source.sourceClass === "official_roadway" ? renderOfficialRoadways(source) : source.groups.map((group, groupIndex) => renderGroup(group, source, groupIndex)).join("");
-      const sourceStatus = gridlyLP236RetainCommunityRowsDuringLoading(source) ? `${source.provenance} · Checking live community reports` : source.provenance;
+      const readStatus = source.authorityState === "LOADING" ? "Checking live community reports" : source.authorityState === "STALE" ? "Live community updates delayed" : "Live community updates unavailable";
+      const sourceStatus = gridlyLP236RetainCommunityRowsDuringReadUncertainty(source) ? `${source.provenance} · ${readStatus}` : source.provenance;
       return `<details class="gridly-lp236-source" data-gridly-disclosure-key="${sanitizeText(sourceKey)}" data-gridly-lp236-source="${source.sourceClass}" data-gridly-lp236-count="${source.activeConditionCount}" data-gridly-lp236-authority-state="${sanitizeText(source.authorityState)}"${open ? " open" : ""}><summary aria-label="${sanitizeText(source.label)}, ${source.activeConditionCount} active condition${source.activeConditionCount === 1 ? "" : "s"}"><span><strong>${sanitizeText(source.label)}</strong><small>${sanitizeText(sourceStatus)}</small></span><b aria-label="${source.activeConditionCount} active condition${source.activeConditionCount === 1 ? "" : "s"}">${source.activeConditionCount}</b></summary><div class="gridly-lp236-groups">${groupsHtml}</div></details>`;
     }).join("");
     return `<div class="gridly-alerts-active gridly-lp236-alerts" data-gridly-lp236-alerts="true"><header class="gridly-lp236-header"><strong aria-label="${sanitizeText(model.headerLabel)}">${sanitizeText(model.headerLabel)}</strong></header>${criticalHtml}<div class="gridly-lp236-sections">${sectionsHtml}</div></div>`;
@@ -120852,8 +120903,8 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
           <div class="settings-list-detail">
             <p class="settings-placeholder-note">Tune how Gridly looks on this device. Display changes apply immediately.</p>
             <div class="settings-select-grid">
-              <label>Map Style<select data-v2-settings-field="display.mapStyle"><option value="standard"${selected(settings.display.mapStyle, "standard")}>Standard</option><option value="satellite"${selected(settings.display.mapStyle, "satellite")}>Satellite</option></select></label>
-              <label>Theme<select data-v2-settings-field="display.theme"><option value="system"${selected(settings.display.theme, "system")}>Use device setting</option><option value="light"${selected(settings.display.theme, "light")}>Light</option><option value="dark"${selected(settings.display.theme, "dark")}>Dark</option></select></label>
+              ${buildGridlySettingsDisplayChoiceHtml("mapStyle", "Map Style", settings.display.mapStyle, [["standard", "Standard"], ["satellite", "Satellite"]])}
+              ${buildGridlySettingsDisplayChoiceHtml("theme", "Theme", settings.display.theme, [["system", "Device"], ["light", "Light"], ["dark", "Dark"]])}
               <label class="settings-text-size-label"><span>Text Size</span>${buildGridlySettingsTextSizeSegmentsHtml(settings.display.textSize)}</label>
             </div>
             <p class="settings-placeholder-note">Map Style, Theme, and Text Size are saved locally for your next visit.</p>
@@ -121301,7 +121352,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       routePreviewReason,
       routeManageReason: "",
       alertsReason: "Set alert preferences to personalize what triggers your alerts.",
-      settingsReason: "Set Home Area and preferences to unlock route and alerts intelligence."
+      settingsReason: "Manage your Home Area, saved places and preferences."
     };
   }
   function refreshRouteButtonStates(source = "unknown") {
@@ -122242,6 +122293,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       });
       body.dataset.gridlyV2SettingsChangeBound = "1";
     }
+    if (activeSheet === "settings") installGridlyGovernedChoiceControls(body);
     const preconditions = getV2PreconditionsState();
     refreshPortraitV2ReportCtas(body, preconditions);
     body.querySelectorAll("[data-v2-action], [data-action], [data-route-action]").forEach((button) => {

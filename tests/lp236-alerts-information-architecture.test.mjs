@@ -6,7 +6,8 @@ import conditionAuthority from '../js/gridlyConditionDisplayLabel.js';
 
 const app = fs.readFileSync(new URL('../js/app.js', import.meta.url), 'utf8');
 const css = fs.readFileSync(new URL('../css/styles.css', import.meta.url), 'utf8');
-const source = app.slice(app.indexOf('const gridlyLP236AlertsState'), app.indexOf('\n  function buildAlertsSurfaceHtml'));
+const crossingPresentationSource = app.slice(app.indexOf('function gridlyCrossingPresentationState('), app.indexOf('function gridlyStoryCrossingEvidence('));
+const source = crossingPresentationSource + app.slice(app.indexOf('const gridlyLP236AlertsState'), app.indexOf('\n  function buildAlertsSurfaceHtml'));
 const sandbox = {
   window: {}, globalThis: {}, document: { querySelector: () => null },
   gridlyAlertWriterRecordId: (row, index) => row.id || `row-${index}`,
@@ -23,6 +24,29 @@ const sandbox = {
 sandbox.gridlyConditionDisplayLabel = conditionAuthority.gridlyConditionDisplayLabel;
 vm.runInNewContext(`${source}\nthis.buildLP236 = gridlyLP236BuildModel; this.renderLP236 = gridlyLP236RenderAlertsPresentation; this.auditLP236 = gridlyLP236AlertsInformationArchitectureAudit; this.bindLP236 = gridlyLP236BindDisclosureState; this.captureLP236 = gridlyLP236CaptureDisclosureState; this.locationClueLP236 = gridlyLP236LocationClue;`, sandbox);
 const build = rows => sandbox.buildLP236(rows, { authoritativeMembership: { community: 'Dallas' } });
+
+test('H1 read uncertainty retains governed active cards without claiming live coverage', () => {
+  const rows = [{ id: 'known-current', sourceClass: 'community_report', category: 'Flooding', location: 'Cook Street' }];
+  try {
+    for (const [state, wording] of [['LOADING','Checking live community reports'],['UNAVAILABLE','Live community updates unavailable'],['STALE','Live community updates delayed']]) {
+      sandbox.gridlyReadAlertsFamilyAuthority = () => ({ community_report: { state, checked: false, available: false } });
+      const html = sandbox.renderLP236({ activeConditionAuthorityAvailable: true }, rows);
+      assert.match(html, /data-gridly-lp236-condition-id="known-current"/);
+      assert.ok(html.includes(wording));
+      assert.match(html, /1 current condition · Coverage incomplete/);
+      const cleared = sandbox.renderLP236({ activeConditionAuthorityAvailable: true }, []);
+      assert.doesNotMatch(cleared, /data-gridly-lp236-condition-id=/);
+      assert.doesNotMatch(cleared, /No active community reports/);
+    }
+  } finally { delete sandbox.gridlyReadAlertsFamilyAuthority; }
+});
+
+test('LP244.48H crossing delay summary does not repeat legacy stored blockage prose', () => {
+  const row = { id: 'delay', sourceClass: 'community_report', reportKind: 'crossing', type: 'heavy', category: 'Reported Crossing Delay', crossingId: 'FRA-762785P', detail: 'Shared report: a train is blocking a crossing and may affect travel.' };
+  const html = sandbox.renderLP236({ activeConditionAuthorityAvailable: true }, [row]);
+  assert.match(html, /traffic is moving slowly near this crossing/);
+  assert.doesNotMatch(html, /train is blocking/);
+});
 
 test('top and section counts use governed active identities rather than presentation cards', () => {
   const model = build(Array.from({ length: 26 }, (_, index) => ({ id: `official-${index}`, sourceClass: 'official_roadway', category: index % 2 ? 'Lane Closure' : 'Road Closure' })));
