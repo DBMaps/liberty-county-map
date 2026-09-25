@@ -15,7 +15,7 @@ test('generated submission manifest binds current client, PWA authority and sche
   assert.deepEqual(await communitySubmissionContract(dir),first);
   assert.equal(first.legacyCreationCompatible,false);
   assert.equal(first.protocol_version,2);
-  assert.equal(Object.keys(first.schema).length,4);
+  assert.equal(Object.keys(first.schema).length,5);
   const sw=await readFile('service-worker.js','utf8');
   assert.ok(sw.includes(`const GRIDLY_SW_VERSION = "${first.version}"`));
   assert.ok(sw.includes(`const GRIDLY_CLOSURE_CACHE_NAME = "${first.cache}"`));
@@ -28,12 +28,11 @@ test('generated submission manifest binds current client, PWA authority and sche
  } finally {await rm(dir,{recursive:true,force:true});}
 });
 
-test('regenerated Android client is certified against the current protocol bundle',async()=>{
- const directory='android/app/src/main/assets/public';
- const expected=await communitySubmissionContract(directory);
- assert.deepEqual(await verifyCommunitySubmissionBundle(directory),expected);
- assert.equal(expected.version,'lp244.29a-reporting-availability-guard');
- assert.equal(expected.cache,'gridly-pwa-shell-lp24429a-v1');
- assert.equal(expected.protocol_version,2);
- assert.equal(expected.legacyCreationCompatible,false);
+test('retired native client is rejected independently of ambient Android output',async()=>{
+ const directory=await mkdtemp(join(tmpdir(),'gridly-retired-client-'));
+ try {
+  await mkdir(join(directory,'js'));
+  await writeFile(join(directory,'js/app.js'),'retired native app');
+  await assert.rejects(verifyCommunitySubmissionBundle(directory),/Retired or mismatched submission client: js\/app.js/);
+ } finally {await rm(directory,{recursive:true,force:true});}
 });
