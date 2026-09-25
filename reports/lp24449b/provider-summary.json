@@ -1,0 +1,11 @@
+{
+  "sourceModel": "source-health-model.json",
+  "matrixPass": true,
+  "originalReplays": 1997,
+  "liveProviderStatus": "NEEDS_LIVE_PROVIDER_CONFIRMATION",
+  "membershipCount": 2058,
+  "countyCount": 254,
+  "communityCount": 1859,
+  "native": "NOT_DEVICE_TESTED",
+  "scope": "Only deterministic local responses and blocked/unavailable sources; no live provider certification is claimed."
+}

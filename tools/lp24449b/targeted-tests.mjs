@@ -1,0 +1,4 @@
+import fs from 'node:fs';import {spawnSync} from 'node:child_process';
+const runs=[];
+for(const baseline of [true,false]){const args=[...(baseline?['--require','./tools/lp24449b/baseline-test-loader.cjs']:[]),'--test',...(baseline?['--test-name-pattern=weather failed recheck|late obsolete weather success']:[]),'tests/lp24449b-source-truth-and-filter.test.cjs'];const r=spawnSync(process.execPath,args,{encoding:'utf8'});const log=r.stdout+'\n'+r.stderr;fs.writeFileSync(`.artifacts/lp24449b/targeted-${baseline?'baseline':'current'}.log`,log);runs.push({baseline,exitCode:r.status,args,log});}
+fs.writeFileSync('reports/lp24449b/targeted-tests.json',JSON.stringify({runs,weatherRegressionProven:runs[0].exitCode===1&&runs[1].exitCode===0,passed:runs[1].exitCode===0},null,2)+'\n');console.log(JSON.stringify(runs.map(({log,...r})=>r)));

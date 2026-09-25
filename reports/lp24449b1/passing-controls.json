@@ -1,0 +1,234 @@
+{
+  "count": 10,
+  "passed": 10,
+  "records": [
+    {
+      "row": {
+        "county_id": "dallas-tx",
+        "county_fips": "48113",
+        "county_name": "Dallas County",
+        "operational_county_id": "dallas-tx",
+        "place_geoid": "4801240",
+        "community_name": "Addison",
+        "canonical_place_name": "Addison",
+        "membership_index": 1,
+        "membership_count": 1,
+        "is_multi_county": false,
+        "presentation_lat": 32.96179,
+        "presentation_lng": -96.8291685
+      },
+      "pass": true,
+      "crossingState": "ACTIVE_POSITIVE"
+    },
+    {
+      "row": {
+        "county_id": "mills-tx",
+        "county_fips": "48333",
+        "county_name": "Mills County",
+        "operational_county_id": "mills-tx",
+        "place_geoid": "4830056",
+        "community_name": "Goldthwaite",
+        "canonical_place_name": "Goldthwaite",
+        "membership_index": 1,
+        "membership_count": 1,
+        "is_multi_county": false,
+        "presentation_lat": 31.4508098,
+        "presentation_lng": -98.570017
+      },
+      "pass": true,
+      "crossingState": "ACTIVE_POSITIVE"
+    },
+    {
+      "row": {
+        "county_id": "liberty-tx",
+        "county_fips": "48291",
+        "county_name": "Liberty County",
+        "operational_county_id": "liberty-tx",
+        "place_geoid": "4803072",
+        "community_name": "Ames",
+        "canonical_place_name": "Ames",
+        "membership_index": 1,
+        "membership_count": 1,
+        "is_multi_county": false,
+        "presentation_lat": 30.0537864,
+        "presentation_lng": -94.7438033
+      },
+      "pass": true,
+      "crossingState": "ACTIVE_POSITIVE"
+    },
+    {
+      "row": {
+        "county_id": "el-paso-tx",
+        "county_fips": "48141",
+        "county_name": "El Paso County",
+        "operational_county_id": "el-paso-tx",
+        "place_geoid": "4801390",
+        "community_name": "Agua Dulce",
+        "canonical_place_name": "Agua Dulce",
+        "membership_index": 1,
+        "membership_count": 1,
+        "is_multi_county": false,
+        "presentation_lat": 31.6551136,
+        "presentation_lng": -106.1388658
+      },
+      "pass": true,
+      "crossingState": "ACTIVE_POSITIVE"
+    },
+    {
+      "row": {
+        "county_id": "potter-tx",
+        "county_fips": "48375",
+        "county_name": "Potter County",
+        "operational_county_id": "potter-tx",
+        "place_geoid": "4803000",
+        "community_name": "Amarillo",
+        "canonical_place_name": "Amarillo",
+        "membership_index": 1,
+        "membership_count": 2,
+        "is_multi_county": true,
+        "presentation_lat": 35.20729,
+        "presentation_lng": -101.8371192
+      },
+      "pass": true,
+      "crossingState": "ACTIVE_POSITIVE"
+    },
+    {
+      "row": {
+        "county_id": "galveston-tx",
+        "county_fips": "48167",
+        "county_name": "Galveston County",
+        "operational_county_id": "galveston-tx",
+        "place_geoid": "4805180",
+        "community_name": "Bacliff",
+        "canonical_place_name": "Bacliff",
+        "membership_index": 1,
+        "membership_count": 1,
+        "is_multi_county": false,
+        "presentation_lat": 29.506321,
+        "presentation_lng": -94.987748
+      },
+      "pass": true,
+      "crossingState": "ACTIVE_POSITIVE"
+    },
+    {
+      "row": {
+        "county_id": "cameron-tx",
+        "county_fips": "48061",
+        "county_name": "Cameron County",
+        "operational_county_id": "cameron-tx",
+        "place_geoid": "4804174",
+        "community_name": "Arroyo Colorado Estates",
+        "canonical_place_name": "Arroyo Colorado Estates",
+        "membership_index": 1,
+        "membership_count": 1,
+        "is_multi_county": false,
+        "presentation_lat": 26.1856381,
+        "presentation_lng": -97.6118256
+      },
+      "pass": true,
+      "crossingState": "ACTIVE_POSITIVE"
+    },
+    {
+      "row": {
+        "county_id": "aransas-tx",
+        "county_fips": "48007",
+        "county_name": "Aransas County",
+        "operational_county_id": "aransas-tx",
+        "place_geoid": "4803600",
+        "community_name": "Aransas Pass",
+        "canonical_place_name": "Aransas Pass",
+        "membership_index": 1,
+        "membership_count": 3,
+        "is_multi_county": true,
+        "presentation_lat": 27.909666,
+        "presentation_lng": -97.1503865
+      },
+      "pass": true,
+      "crossingState": "ACTIVE_POSITIVE"
+    },
+    {
+      "row": {
+        "county_id": "loving-tx",
+        "county_fips": "48301",
+        "county_name": "Loving County",
+        "operational_county_id": "loving-tx",
+        "place_geoid": "4847676",
+        "community_name": "Mentone",
+        "canonical_place_name": "Mentone",
+        "membership_index": 1,
+        "membership_count": 1,
+        "is_multi_county": false,
+        "presentation_lat": 31.7067317,
+        "presentation_lng": -103.5985429
+      },
+      "pass": true,
+      "crossingState": "ACTIVE_EMPTY"
+    },
+    {
+      "row": {
+        "county_id": "smith-tx",
+        "county_fips": "48423",
+        "county_name": "Smith County",
+        "operational_county_id": "smith-tx",
+        "place_geoid": "4804156",
+        "community_name": "Arp",
+        "canonical_place_name": "Arp",
+        "membership_index": 1,
+        "membership_count": 1,
+        "is_multi_county": false,
+        "presentation_lat": 32.2254831,
+        "presentation_lng": -95.059035
+      },
+      "pass": true,
+      "crossingState": "ACTIVE_POSITIVE"
+    }
+  ],
+  "regions": [
+    "metro",
+    "rural",
+    "East Texas",
+    "West Texas",
+    "Panhandle",
+    "Gulf Coast",
+    "Rio Grande"
+  ],
+  "multiCounty": [
+    {
+      "row": {
+        "county_id": "potter-tx",
+        "county_fips": "48375",
+        "county_name": "Potter County",
+        "operational_county_id": "potter-tx",
+        "place_geoid": "4803000",
+        "community_name": "Amarillo",
+        "canonical_place_name": "Amarillo",
+        "membership_index": 1,
+        "membership_count": 2,
+        "is_multi_county": true,
+        "presentation_lat": 35.20729,
+        "presentation_lng": -101.8371192
+      },
+      "pass": true,
+      "crossingState": "ACTIVE_POSITIVE"
+    },
+    {
+      "row": {
+        "county_id": "aransas-tx",
+        "county_fips": "48007",
+        "county_name": "Aransas County",
+        "operational_county_id": "aransas-tx",
+        "place_geoid": "4803600",
+        "community_name": "Aransas Pass",
+        "canonical_place_name": "Aransas Pass",
+        "membership_index": 1,
+        "membership_count": 3,
+        "is_multi_county": true,
+        "presentation_lat": 27.909666,
+        "presentation_lng": -97.1503865
+      },
+      "pass": true,
+      "crossingState": "ACTIVE_POSITIVE"
+    }
+  ],
+  "evidence": "publication-race-controls.json"
+}

@@ -1,0 +1,1023 @@
+{
+  "total": 254,
+  "conditional": 254,
+  "fail": 0,
+  "records": [
+    {
+      "countyId": "anderson-tx",
+      "pass": true
+    },
+    {
+      "countyId": "andrews-tx",
+      "pass": true
+    },
+    {
+      "countyId": "angelina-tx",
+      "pass": true
+    },
+    {
+      "countyId": "aransas-tx",
+      "pass": true
+    },
+    {
+      "countyId": "archer-tx",
+      "pass": true
+    },
+    {
+      "countyId": "armstrong-tx",
+      "pass": true
+    },
+    {
+      "countyId": "atascosa-tx",
+      "pass": true
+    },
+    {
+      "countyId": "austin-tx",
+      "pass": true
+    },
+    {
+      "countyId": "bailey-tx",
+      "pass": true
+    },
+    {
+      "countyId": "bandera-tx",
+      "pass": true
+    },
+    {
+      "countyId": "bastrop-tx",
+      "pass": true
+    },
+    {
+      "countyId": "baylor-tx",
+      "pass": true
+    },
+    {
+      "countyId": "bee-tx",
+      "pass": true
+    },
+    {
+      "countyId": "bell-tx",
+      "pass": true
+    },
+    {
+      "countyId": "bexar-tx",
+      "pass": true
+    },
+    {
+      "countyId": "blanco-tx",
+      "pass": true
+    },
+    {
+      "countyId": "borden-tx",
+      "pass": true
+    },
+    {
+      "countyId": "bosque-tx",
+      "pass": true
+    },
+    {
+      "countyId": "bowie-tx",
+      "pass": true
+    },
+    {
+      "countyId": "brazoria-tx",
+      "pass": true
+    },
+    {
+      "countyId": "brazos-tx",
+      "pass": true
+    },
+    {
+      "countyId": "brewster-tx",
+      "pass": true
+    },
+    {
+      "countyId": "briscoe-tx",
+      "pass": true
+    },
+    {
+      "countyId": "brooks-tx",
+      "pass": true
+    },
+    {
+      "countyId": "brown-tx",
+      "pass": true
+    },
+    {
+      "countyId": "burleson-tx",
+      "pass": true
+    },
+    {
+      "countyId": "burnet-tx",
+      "pass": true
+    },
+    {
+      "countyId": "caldwell-tx",
+      "pass": true
+    },
+    {
+      "countyId": "calhoun-tx",
+      "pass": true
+    },
+    {
+      "countyId": "callahan-tx",
+      "pass": true
+    },
+    {
+      "countyId": "cameron-tx",
+      "pass": true
+    },
+    {
+      "countyId": "camp-tx",
+      "pass": true
+    },
+    {
+      "countyId": "carson-tx",
+      "pass": true
+    },
+    {
+      "countyId": "cass-tx",
+      "pass": true
+    },
+    {
+      "countyId": "castro-tx",
+      "pass": true
+    },
+    {
+      "countyId": "chambers-tx",
+      "pass": true
+    },
+    {
+      "countyId": "cherokee-tx",
+      "pass": true
+    },
+    {
+      "countyId": "childress-tx",
+      "pass": true
+    },
+    {
+      "countyId": "clay-tx",
+      "pass": true
+    },
+    {
+      "countyId": "cochran-tx",
+      "pass": true
+    },
+    {
+      "countyId": "coke-tx",
+      "pass": true
+    },
+    {
+      "countyId": "coleman-tx",
+      "pass": true
+    },
+    {
+      "countyId": "collin-tx",
+      "pass": true
+    },
+    {
+      "countyId": "collingsworth-tx",
+      "pass": true
+    },
+    {
+      "countyId": "colorado-tx",
+      "pass": true
+    },
+    {
+      "countyId": "comal-tx",
+      "pass": true
+    },
+    {
+      "countyId": "comanche-tx",
+      "pass": true
+    },
+    {
+      "countyId": "concho-tx",
+      "pass": true
+    },
+    {
+      "countyId": "cooke-tx",
+      "pass": true
+    },
+    {
+      "countyId": "coryell-tx",
+      "pass": true
+    },
+    {
+      "countyId": "cottle-tx",
+      "pass": true
+    },
+    {
+      "countyId": "crane-tx",
+      "pass": true
+    },
+    {
+      "countyId": "crockett-tx",
+      "pass": true
+    },
+    {
+      "countyId": "crosby-tx",
+      "pass": true
+    },
+    {
+      "countyId": "culberson-tx",
+      "pass": true
+    },
+    {
+      "countyId": "dallam-tx",
+      "pass": true
+    },
+    {
+      "countyId": "dallas-tx",
+      "pass": true
+    },
+    {
+      "countyId": "dawson-tx",
+      "pass": true
+    },
+    {
+      "countyId": "deaf-smith-tx",
+      "pass": true
+    },
+    {
+      "countyId": "delta-tx",
+      "pass": true
+    },
+    {
+      "countyId": "denton-tx",
+      "pass": true
+    },
+    {
+      "countyId": "dewitt-tx",
+      "pass": true
+    },
+    {
+      "countyId": "dickens-tx",
+      "pass": true
+    },
+    {
+      "countyId": "dimmit-tx",
+      "pass": true
+    },
+    {
+      "countyId": "donley-tx",
+      "pass": true
+    },
+    {
+      "countyId": "duval-tx",
+      "pass": true
+    },
+    {
+      "countyId": "eastland-tx",
+      "pass": true
+    },
+    {
+      "countyId": "ector-tx",
+      "pass": true
+    },
+    {
+      "countyId": "edwards-tx",
+      "pass": true
+    },
+    {
+      "countyId": "ellis-tx",
+      "pass": true
+    },
+    {
+      "countyId": "el-paso-tx",
+      "pass": true
+    },
+    {
+      "countyId": "erath-tx",
+      "pass": true
+    },
+    {
+      "countyId": "falls-tx",
+      "pass": true
+    },
+    {
+      "countyId": "fannin-tx",
+      "pass": true
+    },
+    {
+      "countyId": "fayette-tx",
+      "pass": true
+    },
+    {
+      "countyId": "fisher-tx",
+      "pass": true
+    },
+    {
+      "countyId": "floyd-tx",
+      "pass": true
+    },
+    {
+      "countyId": "foard-tx",
+      "pass": true
+    },
+    {
+      "countyId": "fort-bend-tx",
+      "pass": true
+    },
+    {
+      "countyId": "franklin-tx",
+      "pass": true
+    },
+    {
+      "countyId": "freestone-tx",
+      "pass": true
+    },
+    {
+      "countyId": "frio-tx",
+      "pass": true
+    },
+    {
+      "countyId": "gaines-tx",
+      "pass": true
+    },
+    {
+      "countyId": "galveston-tx",
+      "pass": true
+    },
+    {
+      "countyId": "garza-tx",
+      "pass": true
+    },
+    {
+      "countyId": "gillespie-tx",
+      "pass": true
+    },
+    {
+      "countyId": "glasscock-tx",
+      "pass": true
+    },
+    {
+      "countyId": "goliad-tx",
+      "pass": true
+    },
+    {
+      "countyId": "gonzales-tx",
+      "pass": true
+    },
+    {
+      "countyId": "gray-tx",
+      "pass": true
+    },
+    {
+      "countyId": "grayson-tx",
+      "pass": true
+    },
+    {
+      "countyId": "gregg-tx",
+      "pass": true
+    },
+    {
+      "countyId": "grimes-tx",
+      "pass": true
+    },
+    {
+      "countyId": "guadalupe-tx",
+      "pass": true
+    },
+    {
+      "countyId": "hale-tx",
+      "pass": true
+    },
+    {
+      "countyId": "hall-tx",
+      "pass": true
+    },
+    {
+      "countyId": "hamilton-tx",
+      "pass": true
+    },
+    {
+      "countyId": "hansford-tx",
+      "pass": true
+    },
+    {
+      "countyId": "hardeman-tx",
+      "pass": true
+    },
+    {
+      "countyId": "hardin-tx",
+      "pass": true
+    },
+    {
+      "countyId": "harris-tx",
+      "pass": true
+    },
+    {
+      "countyId": "harrison-tx",
+      "pass": true
+    },
+    {
+      "countyId": "hartley-tx",
+      "pass": true
+    },
+    {
+      "countyId": "haskell-tx",
+      "pass": true
+    },
+    {
+      "countyId": "hays-tx",
+      "pass": true
+    },
+    {
+      "countyId": "hemphill-tx",
+      "pass": true
+    },
+    {
+      "countyId": "henderson-tx",
+      "pass": true
+    },
+    {
+      "countyId": "hidalgo-tx",
+      "pass": true
+    },
+    {
+      "countyId": "hill-tx",
+      "pass": true
+    },
+    {
+      "countyId": "hockley-tx",
+      "pass": true
+    },
+    {
+      "countyId": "hood-tx",
+      "pass": true
+    },
+    {
+      "countyId": "hopkins-tx",
+      "pass": true
+    },
+    {
+      "countyId": "houston-tx",
+      "pass": true
+    },
+    {
+      "countyId": "howard-tx",
+      "pass": true
+    },
+    {
+      "countyId": "hudspeth-tx",
+      "pass": true
+    },
+    {
+      "countyId": "hunt-tx",
+      "pass": true
+    },
+    {
+      "countyId": "hutchinson-tx",
+      "pass": true
+    },
+    {
+      "countyId": "irion-tx",
+      "pass": true
+    },
+    {
+      "countyId": "jack-tx",
+      "pass": true
+    },
+    {
+      "countyId": "jackson-tx",
+      "pass": true
+    },
+    {
+      "countyId": "jasper-tx",
+      "pass": true
+    },
+    {
+      "countyId": "jeff-davis-tx",
+      "pass": true
+    },
+    {
+      "countyId": "jefferson-tx",
+      "pass": true
+    },
+    {
+      "countyId": "jim-hogg-tx",
+      "pass": true
+    },
+    {
+      "countyId": "jim-wells-tx",
+      "pass": true
+    },
+    {
+      "countyId": "johnson-tx",
+      "pass": true
+    },
+    {
+      "countyId": "jones-tx",
+      "pass": true
+    },
+    {
+      "countyId": "karnes-tx",
+      "pass": true
+    },
+    {
+      "countyId": "kaufman-tx",
+      "pass": true
+    },
+    {
+      "countyId": "kendall-tx",
+      "pass": true
+    },
+    {
+      "countyId": "kenedy-tx",
+      "pass": true
+    },
+    {
+      "countyId": "kent-tx",
+      "pass": true
+    },
+    {
+      "countyId": "kerr-tx",
+      "pass": true
+    },
+    {
+      "countyId": "kimble-tx",
+      "pass": true
+    },
+    {
+      "countyId": "king-tx",
+      "pass": true
+    },
+    {
+      "countyId": "kinney-tx",
+      "pass": true
+    },
+    {
+      "countyId": "kleberg-tx",
+      "pass": true
+    },
+    {
+      "countyId": "knox-tx",
+      "pass": true
+    },
+    {
+      "countyId": "lamar-tx",
+      "pass": true
+    },
+    {
+      "countyId": "lamb-tx",
+      "pass": true
+    },
+    {
+      "countyId": "lampasas-tx",
+      "pass": true
+    },
+    {
+      "countyId": "la-salle-tx",
+      "pass": true
+    },
+    {
+      "countyId": "lavaca-tx",
+      "pass": true
+    },
+    {
+      "countyId": "lee-tx",
+      "pass": true
+    },
+    {
+      "countyId": "leon-tx",
+      "pass": true
+    },
+    {
+      "countyId": "liberty-tx",
+      "pass": true
+    },
+    {
+      "countyId": "limestone-tx",
+      "pass": true
+    },
+    {
+      "countyId": "lipscomb-tx",
+      "pass": true
+    },
+    {
+      "countyId": "live-oak-tx",
+      "pass": true
+    },
+    {
+      "countyId": "llano-tx",
+      "pass": true
+    },
+    {
+      "countyId": "loving-tx",
+      "pass": true
+    },
+    {
+      "countyId": "lubbock-tx",
+      "pass": true
+    },
+    {
+      "countyId": "lynn-tx",
+      "pass": true
+    },
+    {
+      "countyId": "mcculloch-tx",
+      "pass": true
+    },
+    {
+      "countyId": "mclennan-tx",
+      "pass": true
+    },
+    {
+      "countyId": "mcmullen-tx",
+      "pass": true
+    },
+    {
+      "countyId": "madison-tx",
+      "pass": true
+    },
+    {
+      "countyId": "marion-tx",
+      "pass": true
+    },
+    {
+      "countyId": "martin-tx",
+      "pass": true
+    },
+    {
+      "countyId": "mason-tx",
+      "pass": true
+    },
+    {
+      "countyId": "matagorda-tx",
+      "pass": true
+    },
+    {
+      "countyId": "maverick-tx",
+      "pass": true
+    },
+    {
+      "countyId": "medina-tx",
+      "pass": true
+    },
+    {
+      "countyId": "menard-tx",
+      "pass": true
+    },
+    {
+      "countyId": "midland-tx",
+      "pass": true
+    },
+    {
+      "countyId": "milam-tx",
+      "pass": true
+    },
+    {
+      "countyId": "mills-tx",
+      "pass": true
+    },
+    {
+      "countyId": "mitchell-tx",
+      "pass": true
+    },
+    {
+      "countyId": "montague-tx",
+      "pass": true
+    },
+    {
+      "countyId": "montgomery-tx",
+      "pass": true
+    },
+    {
+      "countyId": "moore-tx",
+      "pass": true
+    },
+    {
+      "countyId": "morris-tx",
+      "pass": true
+    },
+    {
+      "countyId": "motley-tx",
+      "pass": true
+    },
+    {
+      "countyId": "nacogdoches-tx",
+      "pass": true
+    },
+    {
+      "countyId": "navarro-tx",
+      "pass": true
+    },
+    {
+      "countyId": "newton-tx",
+      "pass": true
+    },
+    {
+      "countyId": "nolan-tx",
+      "pass": true
+    },
+    {
+      "countyId": "nueces-tx",
+      "pass": true
+    },
+    {
+      "countyId": "ochiltree-tx",
+      "pass": true
+    },
+    {
+      "countyId": "oldham-tx",
+      "pass": true
+    },
+    {
+      "countyId": "orange-tx",
+      "pass": true
+    },
+    {
+      "countyId": "palo-pinto-tx",
+      "pass": true
+    },
+    {
+      "countyId": "panola-tx",
+      "pass": true
+    },
+    {
+      "countyId": "parker-tx",
+      "pass": true
+    },
+    {
+      "countyId": "parmer-tx",
+      "pass": true
+    },
+    {
+      "countyId": "pecos-tx",
+      "pass": true
+    },
+    {
+      "countyId": "polk-tx",
+      "pass": true
+    },
+    {
+      "countyId": "potter-tx",
+      "pass": true
+    },
+    {
+      "countyId": "presidio-tx",
+      "pass": true
+    },
+    {
+      "countyId": "rains-tx",
+      "pass": true
+    },
+    {
+      "countyId": "randall-tx",
+      "pass": true
+    },
+    {
+      "countyId": "reagan-tx",
+      "pass": true
+    },
+    {
+      "countyId": "real-tx",
+      "pass": true
+    },
+    {
+      "countyId": "red-river-tx",
+      "pass": true
+    },
+    {
+      "countyId": "reeves-tx",
+      "pass": true
+    },
+    {
+      "countyId": "refugio-tx",
+      "pass": true
+    },
+    {
+      "countyId": "roberts-tx",
+      "pass": true
+    },
+    {
+      "countyId": "robertson-tx",
+      "pass": true
+    },
+    {
+      "countyId": "rockwall-tx",
+      "pass": true
+    },
+    {
+      "countyId": "runnels-tx",
+      "pass": true
+    },
+    {
+      "countyId": "rusk-tx",
+      "pass": true
+    },
+    {
+      "countyId": "sabine-tx",
+      "pass": true
+    },
+    {
+      "countyId": "san-augustine-tx",
+      "pass": true
+    },
+    {
+      "countyId": "san-jacinto-tx",
+      "pass": true
+    },
+    {
+      "countyId": "san-patricio-tx",
+      "pass": true
+    },
+    {
+      "countyId": "san-saba-tx",
+      "pass": true
+    },
+    {
+      "countyId": "schleicher-tx",
+      "pass": true
+    },
+    {
+      "countyId": "scurry-tx",
+      "pass": true
+    },
+    {
+      "countyId": "shackelford-tx",
+      "pass": true
+    },
+    {
+      "countyId": "shelby-tx",
+      "pass": true
+    },
+    {
+      "countyId": "sherman-tx",
+      "pass": true
+    },
+    {
+      "countyId": "smith-tx",
+      "pass": true
+    },
+    {
+      "countyId": "somervell-tx",
+      "pass": true
+    },
+    {
+      "countyId": "starr-tx",
+      "pass": true
+    },
+    {
+      "countyId": "stephens-tx",
+      "pass": true
+    },
+    {
+      "countyId": "sterling-tx",
+      "pass": true
+    },
+    {
+      "countyId": "stonewall-tx",
+      "pass": true
+    },
+    {
+      "countyId": "sutton-tx",
+      "pass": true
+    },
+    {
+      "countyId": "swisher-tx",
+      "pass": true
+    },
+    {
+      "countyId": "tarrant-tx",
+      "pass": true
+    },
+    {
+      "countyId": "taylor-tx",
+      "pass": true
+    },
+    {
+      "countyId": "terrell-tx",
+      "pass": true
+    },
+    {
+      "countyId": "terry-tx",
+      "pass": true
+    },
+    {
+      "countyId": "throckmorton-tx",
+      "pass": true
+    },
+    {
+      "countyId": "titus-tx",
+      "pass": true
+    },
+    {
+      "countyId": "tom-green-tx",
+      "pass": true
+    },
+    {
+      "countyId": "travis-tx",
+      "pass": true
+    },
+    {
+      "countyId": "trinity-tx",
+      "pass": true
+    },
+    {
+      "countyId": "tyler-tx",
+      "pass": true
+    },
+    {
+      "countyId": "upshur-tx",
+      "pass": true
+    },
+    {
+      "countyId": "upton-tx",
+      "pass": true
+    },
+    {
+      "countyId": "uvalde-tx",
+      "pass": true
+    },
+    {
+      "countyId": "val-verde-tx",
+      "pass": true
+    },
+    {
+      "countyId": "van-zandt-tx",
+      "pass": true
+    },
+    {
+      "countyId": "victoria-tx",
+      "pass": true
+    },
+    {
+      "countyId": "walker-tx",
+      "pass": true
+    },
+    {
+      "countyId": "waller-tx",
+      "pass": true
+    },
+    {
+      "countyId": "ward-tx",
+      "pass": true
+    },
+    {
+      "countyId": "washington-tx",
+      "pass": true
+    },
+    {
+      "countyId": "webb-tx",
+      "pass": true
+    },
+    {
+      "countyId": "wharton-tx",
+      "pass": true
+    },
+    {
+      "countyId": "wheeler-tx",
+      "pass": true
+    },
+    {
+      "countyId": "wichita-tx",
+      "pass": true
+    },
+    {
+      "countyId": "wilbarger-tx",
+      "pass": true
+    },
+    {
+      "countyId": "willacy-tx",
+      "pass": true
+    },
+    {
+      "countyId": "williamson-tx",
+      "pass": true
+    },
+    {
+      "countyId": "wilson-tx",
+      "pass": true
+    },
+    {
+      "countyId": "winkler-tx",
+      "pass": true
+    },
+    {
+      "countyId": "wise-tx",
+      "pass": true
+    },
+    {
+      "countyId": "wood-tx",
+      "pass": true
+    },
+    {
+      "countyId": "yoakum-tx",
+      "pass": true
+    },
+    {
+      "countyId": "young-tx",
+      "pass": true
+    },
+    {
+      "countyId": "zapata-tx",
+      "pass": true
+    },
+    {
+      "countyId": "zavala-tx",
+      "pass": true
+    }
+  ]
+}

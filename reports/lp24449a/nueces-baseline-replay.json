@@ -1,0 +1,1649 @@
+{
+  "sourceHash": "e157d88855529f7a6af3a16905cceb6b05f89f6006b2295bdb0bea2f074dd291",
+  "home": {
+    "county_id": "nueces-tx",
+    "county_fips": "48355",
+    "county_name": "Nueces County",
+    "operational_county_id": "nueces-tx",
+    "place_geoid": "4801396",
+    "community_name": "Agua Dulce",
+    "canonical_place_name": "Agua Dulce",
+    "membership_index": 1,
+    "membership_count": 1,
+    "is_multi_county": false,
+    "presentation_lat": 27.782846,
+    "presentation_lng": -97.9096856
+  },
+  "count": 17,
+  "passed": 17,
+  "records": [
+    {
+      "originalFailureId": "LP24449-0002",
+      "target": {
+        "county_id": "nueces-tx",
+        "county_fips": "48355",
+        "county_name": "Nueces County",
+        "operational_county_id": "nueces-tx",
+        "place_geoid": "4803600",
+        "community_name": "Aransas Pass",
+        "canonical_place_name": "Aransas Pass",
+        "membership_index": 2,
+        "membership_count": 3,
+        "is_multi_county": true,
+        "presentation_lat": 27.909666,
+        "presentation_lng": -97.1503865
+      },
+      "proof": {
+        "baseline": {
+          "probeVersion": 3,
+          "type": "HOME",
+          "place": "4801396",
+          "name": "Agua Dulce",
+          "county": "nueces-tx",
+          "lat": 27.782846,
+          "lng": -97.9096856,
+          "generation": 1,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "searched": {
+          "probeVersion": 3,
+          "type": "SEARCH",
+          "place": "4803600",
+          "name": "Aransas Pass",
+          "county": "nueces-tx",
+          "lat": 27.909666,
+          "lng": -97.1503865,
+          "generation": 2,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "returned": {
+          "probeVersion": 3,
+          "type": "HOME",
+          "place": "4801396",
+          "name": "Agua Dulce",
+          "county": "nueces-tx",
+          "lat": 27.782846,
+          "lng": -97.9096856,
+          "generation": 3,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "weather": {
+          "awarenessKey": "place-4801396",
+          "identityClass": "CANONICAL_PLACE",
+          "countyId": "nueces-tx",
+          "stableIdentity": "4801396",
+          "lat": 27.782846,
+          "lng": -97.9096856,
+          "placeGeoid": "4801396"
+        },
+        "storageUnchanged": true
+      },
+      "checks": {
+        "baseline": true,
+        "search": true,
+        "returnHome": true,
+        "weather": true,
+        "storage": true
+      },
+      "pass": true
+    },
+    {
+      "originalFailureId": "LP24449-0003",
+      "target": {
+        "county_id": "nueces-tx",
+        "county_fips": "48355",
+        "county_name": "Nueces County",
+        "operational_county_id": "nueces-tx",
+        "place_geoid": "4805576",
+        "community_name": "Banquete",
+        "canonical_place_name": "Banquete",
+        "membership_index": 1,
+        "membership_count": 1,
+        "is_multi_county": false,
+        "presentation_lat": 27.8061352,
+        "presentation_lng": -97.7961085
+      },
+      "proof": {
+        "baseline": {
+          "probeVersion": 3,
+          "type": "HOME",
+          "place": "4801396",
+          "name": "Agua Dulce",
+          "county": "nueces-tx",
+          "lat": 27.782846,
+          "lng": -97.9096856,
+          "generation": 3,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "searched": {
+          "probeVersion": 3,
+          "type": "SEARCH",
+          "place": "4805576",
+          "name": "Banquete",
+          "county": "nueces-tx",
+          "lat": 27.8061352,
+          "lng": -97.7961085,
+          "generation": 4,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "returned": {
+          "probeVersion": 3,
+          "type": "HOME",
+          "place": "4801396",
+          "name": "Agua Dulce",
+          "county": "nueces-tx",
+          "lat": 27.782846,
+          "lng": -97.9096856,
+          "generation": 5,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "weather": {
+          "awarenessKey": "place-4801396",
+          "identityClass": "CANONICAL_PLACE",
+          "countyId": "nueces-tx",
+          "stableIdentity": "4801396",
+          "lat": 27.782846,
+          "lng": -97.9096856,
+          "placeGeoid": "4801396"
+        },
+        "storageUnchanged": true
+      },
+      "checks": {
+        "baseline": true,
+        "search": true,
+        "returnHome": true,
+        "weather": true,
+        "storage": true
+      },
+      "pass": true
+    },
+    {
+      "originalFailureId": "LP24449-0004",
+      "target": {
+        "county_id": "nueces-tx",
+        "county_fips": "48355",
+        "county_name": "Nueces County",
+        "operational_county_id": "nueces-tx",
+        "place_geoid": "4808392",
+        "community_name": "Bishop",
+        "canonical_place_name": "Bishop",
+        "membership_index": 1,
+        "membership_count": 1,
+        "is_multi_county": false,
+        "presentation_lat": 27.5861441,
+        "presentation_lng": -97.7991636
+      },
+      "proof": {
+        "baseline": {
+          "probeVersion": 3,
+          "type": "HOME",
+          "place": "4801396",
+          "name": "Agua Dulce",
+          "county": "nueces-tx",
+          "lat": 27.782846,
+          "lng": -97.9096856,
+          "generation": 5,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "searched": {
+          "probeVersion": 3,
+          "type": "SEARCH",
+          "place": "4808392",
+          "name": "Bishop",
+          "county": "nueces-tx",
+          "lat": 27.5861441,
+          "lng": -97.7991636,
+          "generation": 6,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "returned": {
+          "probeVersion": 3,
+          "type": "HOME",
+          "place": "4801396",
+          "name": "Agua Dulce",
+          "county": "nueces-tx",
+          "lat": 27.782846,
+          "lng": -97.9096856,
+          "generation": 7,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "weather": {
+          "awarenessKey": "place-4801396",
+          "identityClass": "CANONICAL_PLACE",
+          "countyId": "nueces-tx",
+          "stableIdentity": "4801396",
+          "lat": 27.782846,
+          "lng": -97.9096856,
+          "placeGeoid": "4801396"
+        },
+        "storageUnchanged": true
+      },
+      "checks": {
+        "baseline": true,
+        "search": true,
+        "returnHome": true,
+        "weather": true,
+        "storage": true
+      },
+      "pass": true
+    },
+    {
+      "originalFailureId": "LP24449-0008",
+      "target": {
+        "county_id": "nueces-tx",
+        "county_fips": "48355",
+        "county_name": "Nueces County",
+        "operational_county_id": "nueces-tx",
+        "place_geoid": "4817000",
+        "community_name": "Corpus Christi",
+        "canonical_place_name": "Corpus Christi",
+        "membership_index": 3,
+        "membership_count": 4,
+        "is_multi_county": true,
+        "presentation_lat": 27.7635302,
+        "presentation_lng": -97.4033191
+      },
+      "proof": {
+        "baseline": {
+          "probeVersion": 3,
+          "type": "HOME",
+          "place": "4801396",
+          "name": "Agua Dulce",
+          "county": "nueces-tx",
+          "lat": 27.782846,
+          "lng": -97.9096856,
+          "generation": 7,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "searched": {
+          "probeVersion": 3,
+          "type": "SEARCH",
+          "place": "4817000",
+          "name": "Corpus Christi",
+          "county": "nueces-tx",
+          "lat": 27.7635302,
+          "lng": -97.4033191,
+          "generation": 8,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "returned": {
+          "probeVersion": 3,
+          "type": "HOME",
+          "place": "4801396",
+          "name": "Agua Dulce",
+          "county": "nueces-tx",
+          "lat": 27.782846,
+          "lng": -97.9096856,
+          "generation": 9,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "weather": {
+          "awarenessKey": "place-4801396",
+          "identityClass": "CANONICAL_PLACE",
+          "countyId": "nueces-tx",
+          "stableIdentity": "4801396",
+          "lat": 27.782846,
+          "lng": -97.9096856,
+          "placeGeoid": "4801396"
+        },
+        "storageUnchanged": true
+      },
+      "checks": {
+        "baseline": true,
+        "search": true,
+        "returnHome": true,
+        "weather": true,
+        "storage": true
+      },
+      "pass": true
+    },
+    {
+      "originalFailureId": "LP24449-0009",
+      "target": {
+        "county_id": "nueces-tx",
+        "county_fips": "48355",
+        "county_name": "Nueces County",
+        "operational_county_id": "nueces-tx",
+        "place_geoid": "4821436",
+        "community_name": "Driscoll",
+        "canonical_place_name": "Driscoll",
+        "membership_index": 1,
+        "membership_count": 1,
+        "is_multi_county": false,
+        "presentation_lat": 27.6717361,
+        "presentation_lng": -97.7505646
+      },
+      "proof": {
+        "baseline": {
+          "probeVersion": 3,
+          "type": "HOME",
+          "place": "4801396",
+          "name": "Agua Dulce",
+          "county": "nueces-tx",
+          "lat": 27.782846,
+          "lng": -97.9096856,
+          "generation": 9,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "searched": {
+          "probeVersion": 3,
+          "type": "SEARCH",
+          "place": "4821436",
+          "name": "Driscoll",
+          "county": "nueces-tx",
+          "lat": 27.6717361,
+          "lng": -97.7505646,
+          "generation": 10,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "returned": {
+          "probeVersion": 3,
+          "type": "HOME",
+          "place": "4801396",
+          "name": "Agua Dulce",
+          "county": "nueces-tx",
+          "lat": 27.782846,
+          "lng": -97.9096856,
+          "generation": 11,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "weather": {
+          "awarenessKey": "place-4801396",
+          "identityClass": "CANONICAL_PLACE",
+          "countyId": "nueces-tx",
+          "stableIdentity": "4801396",
+          "lat": 27.782846,
+          "lng": -97.9096856,
+          "placeGeoid": "4801396"
+        },
+        "storageUnchanged": true
+      },
+      "checks": {
+        "baseline": true,
+        "search": true,
+        "returnHome": true,
+        "weather": true,
+        "storage": true
+      },
+      "pass": true
+    },
+    {
+      "originalFailureId": "LP24449-0012",
+      "target": {
+        "county_id": "nueces-tx",
+        "county_fips": "48355",
+        "county_name": "Nueces County",
+        "operational_county_id": "nueces-tx",
+        "place_geoid": "4836008",
+        "community_name": "Ingleside",
+        "canonical_place_name": "Ingleside",
+        "membership_index": 1,
+        "membership_count": 2,
+        "is_multi_county": true,
+        "presentation_lat": 27.876615,
+        "presentation_lng": -97.2098831
+      },
+      "proof": {
+        "baseline": {
+          "probeVersion": 3,
+          "type": "HOME",
+          "place": "4801396",
+          "name": "Agua Dulce",
+          "county": "nueces-tx",
+          "lat": 27.782846,
+          "lng": -97.9096856,
+          "generation": 11,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "searched": {
+          "probeVersion": 3,
+          "type": "SEARCH",
+          "place": "4836008",
+          "name": "Ingleside",
+          "county": "nueces-tx",
+          "lat": 27.876615,
+          "lng": -97.2098831,
+          "generation": 12,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "returned": {
+          "probeVersion": 3,
+          "type": "HOME",
+          "place": "4801396",
+          "name": "Agua Dulce",
+          "county": "nueces-tx",
+          "lat": 27.782846,
+          "lng": -97.9096856,
+          "generation": 13,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "weather": {
+          "awarenessKey": "place-4801396",
+          "identityClass": "CANONICAL_PLACE",
+          "countyId": "nueces-tx",
+          "stableIdentity": "4801396",
+          "lat": 27.782846,
+          "lng": -97.9096856,
+          "placeGeoid": "4801396"
+        },
+        "storageUnchanged": true
+      },
+      "checks": {
+        "baseline": true,
+        "search": true,
+        "returnHome": true,
+        "weather": true,
+        "storage": true
+      },
+      "pass": true
+    },
+    {
+      "originalFailureId": "LP24449-0013",
+      "target": {
+        "county_id": "nueces-tx",
+        "county_fips": "48355",
+        "county_name": "Nueces County",
+        "operational_county_id": "nueces-tx",
+        "place_geoid": "4841422",
+        "community_name": "La Paloma-Lost Creek",
+        "canonical_place_name": "La Paloma-Lost Creek",
+        "membership_index": 1,
+        "membership_count": 1,
+        "is_multi_county": false,
+        "presentation_lat": 27.71954,
+        "presentation_lng": -97.7392039
+      },
+      "proof": {
+        "baseline": {
+          "probeVersion": 3,
+          "type": "HOME",
+          "place": "4801396",
+          "name": "Agua Dulce",
+          "county": "nueces-tx",
+          "lat": 27.782846,
+          "lng": -97.9096856,
+          "generation": 13,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "searched": {
+          "probeVersion": 3,
+          "type": "SEARCH",
+          "place": "4841422",
+          "name": "La Paloma-Lost Creek",
+          "county": "nueces-tx",
+          "lat": 27.71954,
+          "lng": -97.7392039,
+          "generation": 14,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "returned": {
+          "probeVersion": 3,
+          "type": "HOME",
+          "place": "4801396",
+          "name": "Agua Dulce",
+          "county": "nueces-tx",
+          "lat": 27.782846,
+          "lng": -97.9096856,
+          "generation": 15,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "weather": {
+          "awarenessKey": "place-4801396",
+          "identityClass": "CANONICAL_PLACE",
+          "countyId": "nueces-tx",
+          "stableIdentity": "4801396",
+          "lat": 27.782846,
+          "lng": -97.9096856,
+          "placeGeoid": "4801396"
+        },
+        "storageUnchanged": true
+      },
+      "checks": {
+        "baseline": true,
+        "search": true,
+        "returnHome": true,
+        "weather": true,
+        "storage": true
+      },
+      "pass": true
+    },
+    {
+      "originalFailureId": "LP24449-0016",
+      "target": {
+        "county_id": "nueces-tx",
+        "county_fips": "48355",
+        "county_name": "Nueces County",
+        "operational_county_id": "nueces-tx",
+        "place_geoid": "4852404",
+        "community_name": "North San Pedro",
+        "canonical_place_name": "North San Pedro",
+        "membership_index": 1,
+        "membership_count": 1,
+        "is_multi_county": false,
+        "presentation_lat": 27.8026628,
+        "presentation_lng": -97.6820083
+      },
+      "proof": {
+        "baseline": {
+          "probeVersion": 3,
+          "type": "HOME",
+          "place": "4801396",
+          "name": "Agua Dulce",
+          "county": "nueces-tx",
+          "lat": 27.782846,
+          "lng": -97.9096856,
+          "generation": 15,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "searched": {
+          "probeVersion": 3,
+          "type": "SEARCH",
+          "place": "4852404",
+          "name": "North San Pedro",
+          "county": "nueces-tx",
+          "lat": 27.8026628,
+          "lng": -97.6820083,
+          "generation": 16,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "returned": {
+          "probeVersion": 3,
+          "type": "HOME",
+          "place": "4801396",
+          "name": "Agua Dulce",
+          "county": "nueces-tx",
+          "lat": 27.782846,
+          "lng": -97.9096856,
+          "generation": 17,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "weather": {
+          "awarenessKey": "place-4801396",
+          "identityClass": "CANONICAL_PLACE",
+          "countyId": "nueces-tx",
+          "stableIdentity": "4801396",
+          "lat": 27.782846,
+          "lng": -97.9096856,
+          "placeGeoid": "4801396"
+        },
+        "storageUnchanged": true
+      },
+      "checks": {
+        "baseline": true,
+        "search": true,
+        "returnHome": true,
+        "weather": true,
+        "storage": true
+      },
+      "pass": true
+    },
+    {
+      "originalFailureId": "LP24449-0018",
+      "target": {
+        "county_id": "nueces-tx",
+        "county_fips": "48355",
+        "county_name": "Nueces County",
+        "operational_county_id": "nueces-tx",
+        "place_geoid": "4857056",
+        "community_name": "Petronila",
+        "canonical_place_name": "Petronila",
+        "membership_index": 1,
+        "membership_count": 1,
+        "is_multi_county": false,
+        "presentation_lat": 27.671975,
+        "presentation_lng": -97.6358282
+      },
+      "proof": {
+        "baseline": {
+          "probeVersion": 3,
+          "type": "HOME",
+          "place": "4801396",
+          "name": "Agua Dulce",
+          "county": "nueces-tx",
+          "lat": 27.782846,
+          "lng": -97.9096856,
+          "generation": 17,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "searched": {
+          "probeVersion": 3,
+          "type": "SEARCH",
+          "place": "4857056",
+          "name": "Petronila",
+          "county": "nueces-tx",
+          "lat": 27.671975,
+          "lng": -97.6358282,
+          "generation": 18,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "returned": {
+          "probeVersion": 3,
+          "type": "HOME",
+          "place": "4801396",
+          "name": "Agua Dulce",
+          "county": "nueces-tx",
+          "lat": 27.782846,
+          "lng": -97.9096856,
+          "generation": 19,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "weather": {
+          "awarenessKey": "place-4801396",
+          "identityClass": "CANONICAL_PLACE",
+          "countyId": "nueces-tx",
+          "stableIdentity": "4801396",
+          "lat": 27.782846,
+          "lng": -97.9096856,
+          "placeGeoid": "4801396"
+        },
+        "storageUnchanged": true
+      },
+      "checks": {
+        "baseline": true,
+        "search": true,
+        "returnHome": true,
+        "weather": true,
+        "storage": true
+      },
+      "pass": true
+    },
+    {
+      "originalFailureId": "LP24449-0019",
+      "target": {
+        "county_id": "nueces-tx",
+        "county_fips": "48355",
+        "county_name": "Nueces County",
+        "operational_county_id": "nueces-tx",
+        "place_geoid": "4858808",
+        "community_name": "Port Aransas",
+        "canonical_place_name": "Port Aransas",
+        "membership_index": 1,
+        "membership_count": 1,
+        "is_multi_county": false,
+        "presentation_lat": 27.8332175,
+        "presentation_lng": -97.0618324
+      },
+      "proof": {
+        "baseline": {
+          "probeVersion": 3,
+          "type": "HOME",
+          "place": "4801396",
+          "name": "Agua Dulce",
+          "county": "nueces-tx",
+          "lat": 27.782846,
+          "lng": -97.9096856,
+          "generation": 19,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "searched": {
+          "probeVersion": 3,
+          "type": "SEARCH",
+          "place": "4858808",
+          "name": "Port Aransas",
+          "county": "nueces-tx",
+          "lat": 27.8332175,
+          "lng": -97.0618324,
+          "generation": 20,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "returned": {
+          "probeVersion": 3,
+          "type": "HOME",
+          "place": "4801396",
+          "name": "Agua Dulce",
+          "county": "nueces-tx",
+          "lat": 27.782846,
+          "lng": -97.9096856,
+          "generation": 21,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "weather": {
+          "awarenessKey": "place-4801396",
+          "identityClass": "CANONICAL_PLACE",
+          "countyId": "nueces-tx",
+          "stableIdentity": "4801396",
+          "lat": 27.782846,
+          "lng": -97.9096856,
+          "placeGeoid": "4801396"
+        },
+        "storageUnchanged": true
+      },
+      "checks": {
+        "baseline": true,
+        "search": true,
+        "returnHome": true,
+        "weather": true,
+        "storage": true
+      },
+      "pass": true
+    },
+    {
+      "originalFailureId": "LP24449-0020",
+      "target": {
+        "county_id": "nueces-tx",
+        "county_fips": "48355",
+        "county_name": "Nueces County",
+        "operational_county_id": "nueces-tx",
+        "place_geoid": "4858904",
+        "community_name": "Portland",
+        "canonical_place_name": "Portland",
+        "membership_index": 1,
+        "membership_count": 2,
+        "is_multi_county": true,
+        "presentation_lat": 27.8818828,
+        "presentation_lng": -97.3188666
+      },
+      "proof": {
+        "baseline": {
+          "probeVersion": 3,
+          "type": "HOME",
+          "place": "4801396",
+          "name": "Agua Dulce",
+          "county": "nueces-tx",
+          "lat": 27.782846,
+          "lng": -97.9096856,
+          "generation": 21,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "searched": {
+          "probeVersion": 3,
+          "type": "SEARCH",
+          "place": "4858904",
+          "name": "Portland",
+          "county": "nueces-tx",
+          "lat": 27.8818828,
+          "lng": -97.3188666,
+          "generation": 22,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "returned": {
+          "probeVersion": 3,
+          "type": "HOME",
+          "place": "4801396",
+          "name": "Agua Dulce",
+          "county": "nueces-tx",
+          "lat": 27.782846,
+          "lng": -97.9096856,
+          "generation": 23,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "weather": {
+          "awarenessKey": "place-4801396",
+          "identityClass": "CANONICAL_PLACE",
+          "countyId": "nueces-tx",
+          "stableIdentity": "4801396",
+          "lat": 27.782846,
+          "lng": -97.9096856,
+          "placeGeoid": "4801396"
+        },
+        "storageUnchanged": true
+      },
+      "checks": {
+        "baseline": true,
+        "search": true,
+        "returnHome": true,
+        "weather": true,
+        "storage": true
+      },
+      "pass": true
+    },
+    {
+      "originalFailureId": "LP24449-0021",
+      "target": {
+        "county_id": "nueces-tx",
+        "county_fips": "48355",
+        "county_name": "Nueces County",
+        "operational_county_id": "nueces-tx",
+        "place_geoid": "4860529",
+        "community_name": "Rancho Banquete",
+        "canonical_place_name": "Rancho Banquete",
+        "membership_index": 1,
+        "membership_count": 1,
+        "is_multi_county": false,
+        "presentation_lat": 27.8093944,
+        "presentation_lng": -97.8454856
+      },
+      "proof": {
+        "baseline": {
+          "probeVersion": 3,
+          "type": "HOME",
+          "place": "4801396",
+          "name": "Agua Dulce",
+          "county": "nueces-tx",
+          "lat": 27.782846,
+          "lng": -97.9096856,
+          "generation": 23,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "searched": {
+          "probeVersion": 3,
+          "type": "SEARCH",
+          "place": "4860529",
+          "name": "Rancho Banquete",
+          "county": "nueces-tx",
+          "lat": 27.8093944,
+          "lng": -97.8454856,
+          "generation": 24,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "returned": {
+          "probeVersion": 3,
+          "type": "HOME",
+          "place": "4801396",
+          "name": "Agua Dulce",
+          "county": "nueces-tx",
+          "lat": 27.782846,
+          "lng": -97.9096856,
+          "generation": 25,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "weather": {
+          "awarenessKey": "place-4801396",
+          "identityClass": "CANONICAL_PLACE",
+          "countyId": "nueces-tx",
+          "stableIdentity": "4801396",
+          "lat": 27.782846,
+          "lng": -97.9096856,
+          "placeGeoid": "4801396"
+        },
+        "storageUnchanged": true
+      },
+      "checks": {
+        "baseline": true,
+        "search": true,
+        "returnHome": true,
+        "weather": true,
+        "storage": true
+      },
+      "pass": true
+    },
+    {
+      "originalFailureId": "LP24449-0023",
+      "target": {
+        "county_id": "nueces-tx",
+        "county_fips": "48355",
+        "county_name": "Nueces County",
+        "operational_county_id": "nueces-tx",
+        "place_geoid": "4862600",
+        "community_name": "Robstown",
+        "canonical_place_name": "Robstown",
+        "membership_index": 1,
+        "membership_count": 1,
+        "is_multi_county": false,
+        "presentation_lat": 27.7903032,
+        "presentation_lng": -97.6688843
+      },
+      "proof": {
+        "baseline": {
+          "probeVersion": 3,
+          "type": "HOME",
+          "place": "4801396",
+          "name": "Agua Dulce",
+          "county": "nueces-tx",
+          "lat": 27.782846,
+          "lng": -97.9096856,
+          "generation": 25,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "searched": {
+          "probeVersion": 3,
+          "type": "SEARCH",
+          "place": "4862600",
+          "name": "Robstown",
+          "county": "nueces-tx",
+          "lat": 27.7903032,
+          "lng": -97.6688843,
+          "generation": 26,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "returned": {
+          "probeVersion": 3,
+          "type": "HOME",
+          "place": "4801396",
+          "name": "Agua Dulce",
+          "county": "nueces-tx",
+          "lat": 27.782846,
+          "lng": -97.9096856,
+          "generation": 27,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "weather": {
+          "awarenessKey": "place-4801396",
+          "identityClass": "CANONICAL_PLACE",
+          "countyId": "nueces-tx",
+          "stableIdentity": "4801396",
+          "lat": 27.782846,
+          "lng": -97.9096856,
+          "placeGeoid": "4801396"
+        },
+        "storageUnchanged": true
+      },
+      "checks": {
+        "baseline": true,
+        "search": true,
+        "returnHome": true,
+        "weather": true,
+        "storage": true
+      },
+      "pass": true
+    },
+    {
+      "originalFailureId": "LP24449-0028",
+      "target": {
+        "county_id": "nueces-tx",
+        "county_fips": "48355",
+        "county_name": "Nueces County",
+        "operational_county_id": "nueces-tx",
+        "place_geoid": "4865342",
+        "community_name": "Sandy Hollow-Escondidas",
+        "canonical_place_name": "Sandy Hollow-Escondidas",
+        "membership_index": 1,
+        "membership_count": 1,
+        "is_multi_county": false,
+        "presentation_lat": 27.9282407,
+        "presentation_lng": -97.8015246
+      },
+      "proof": {
+        "baseline": {
+          "probeVersion": 3,
+          "type": "HOME",
+          "place": "4801396",
+          "name": "Agua Dulce",
+          "county": "nueces-tx",
+          "lat": 27.782846,
+          "lng": -97.9096856,
+          "generation": 27,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "searched": {
+          "probeVersion": 3,
+          "type": "SEARCH",
+          "place": "4865342",
+          "name": "Sandy Hollow-Escondidas",
+          "county": "nueces-tx",
+          "lat": 27.9282407,
+          "lng": -97.8015246,
+          "generation": 28,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "returned": {
+          "probeVersion": 3,
+          "type": "HOME",
+          "place": "4801396",
+          "name": "Agua Dulce",
+          "county": "nueces-tx",
+          "lat": 27.782846,
+          "lng": -97.9096856,
+          "generation": 29,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "weather": {
+          "awarenessKey": "place-4801396",
+          "identityClass": "CANONICAL_PLACE",
+          "countyId": "nueces-tx",
+          "stableIdentity": "4801396",
+          "lat": 27.782846,
+          "lng": -97.9096856,
+          "placeGeoid": "4801396"
+        },
+        "storageUnchanged": true
+      },
+      "checks": {
+        "baseline": true,
+        "search": true,
+        "returnHome": true,
+        "weather": true,
+        "storage": true
+      },
+      "pass": true
+    },
+    {
+      "originalFailureId": "LP24449-0030",
+      "target": {
+        "county_id": "nueces-tx",
+        "county_fips": "48355",
+        "county_name": "Nueces County",
+        "operational_county_id": "nueces-tx",
+        "place_geoid": "4869708",
+        "community_name": "Spring Gardens",
+        "canonical_place_name": "Spring Gardens",
+        "membership_index": 1,
+        "membership_count": 1,
+        "is_multi_county": false,
+        "presentation_lat": 27.7615292,
+        "presentation_lng": -97.7418731
+      },
+      "proof": {
+        "baseline": {
+          "probeVersion": 3,
+          "type": "HOME",
+          "place": "4801396",
+          "name": "Agua Dulce",
+          "county": "nueces-tx",
+          "lat": 27.782846,
+          "lng": -97.9096856,
+          "generation": 29,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "searched": {
+          "probeVersion": 3,
+          "type": "SEARCH",
+          "place": "4869708",
+          "name": "Spring Gardens",
+          "county": "nueces-tx",
+          "lat": 27.7615292,
+          "lng": -97.7418731,
+          "generation": 30,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "returned": {
+          "probeVersion": 3,
+          "type": "HOME",
+          "place": "4801396",
+          "name": "Agua Dulce",
+          "county": "nueces-tx",
+          "lat": 27.782846,
+          "lng": -97.9096856,
+          "generation": 31,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "weather": {
+          "awarenessKey": "place-4801396",
+          "identityClass": "CANONICAL_PLACE",
+          "countyId": "nueces-tx",
+          "stableIdentity": "4801396",
+          "lat": 27.782846,
+          "lng": -97.9096856,
+          "placeGeoid": "4801396"
+        },
+        "storageUnchanged": true
+      },
+      "checks": {
+        "baseline": true,
+        "search": true,
+        "returnHome": true,
+        "weather": true,
+        "storage": true
+      },
+      "pass": true
+    },
+    {
+      "originalFailureId": "LP24449-0031",
+      "target": {
+        "county_id": "nueces-tx",
+        "county_fips": "48355",
+        "county_name": "Nueces County",
+        "operational_county_id": "nueces-tx",
+        "place_geoid": "4872952",
+        "community_name": "Tierra Grande",
+        "canonical_place_name": "Tierra Grande",
+        "membership_index": 1,
+        "membership_count": 1,
+        "is_multi_county": false,
+        "presentation_lat": 27.7036864,
+        "presentation_lng": -97.5718186
+      },
+      "proof": {
+        "baseline": {
+          "probeVersion": 3,
+          "type": "HOME",
+          "place": "4801396",
+          "name": "Agua Dulce",
+          "county": "nueces-tx",
+          "lat": 27.782846,
+          "lng": -97.9096856,
+          "generation": 31,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "searched": {
+          "probeVersion": 3,
+          "type": "SEARCH",
+          "place": "4872952",
+          "name": "Tierra Grande",
+          "county": "nueces-tx",
+          "lat": 27.7036864,
+          "lng": -97.5718186,
+          "generation": 32,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "returned": {
+          "probeVersion": 3,
+          "type": "HOME",
+          "place": "4801396",
+          "name": "Agua Dulce",
+          "county": "nueces-tx",
+          "lat": 27.782846,
+          "lng": -97.9096856,
+          "generation": 33,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "weather": {
+          "awarenessKey": "place-4801396",
+          "identityClass": "CANONICAL_PLACE",
+          "countyId": "nueces-tx",
+          "stableIdentity": "4801396",
+          "lat": 27.782846,
+          "lng": -97.9096856,
+          "placeGeoid": "4801396"
+        },
+        "storageUnchanged": true
+      },
+      "checks": {
+        "baseline": true,
+        "search": true,
+        "returnHome": true,
+        "weather": true,
+        "storage": true
+      },
+      "pass": true
+    },
+    {
+      "originalFailureId": "LP24449-0032",
+      "target": {
+        "county_id": "nueces-tx",
+        "county_fips": "48355",
+        "county_name": "Nueces County",
+        "operational_county_id": "nueces-tx",
+        "place_geoid": "4872954",
+        "community_name": "Tierra Verde",
+        "canonical_place_name": "Tierra Verde",
+        "membership_index": 1,
+        "membership_count": 1,
+        "is_multi_county": false,
+        "presentation_lat": 27.7615714,
+        "presentation_lng": -97.7173844
+      },
+      "proof": {
+        "baseline": {
+          "probeVersion": 3,
+          "type": "HOME",
+          "place": "4801396",
+          "name": "Agua Dulce",
+          "county": "nueces-tx",
+          "lat": 27.782846,
+          "lng": -97.9096856,
+          "generation": 33,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "searched": {
+          "probeVersion": 3,
+          "type": "SEARCH",
+          "place": "4872954",
+          "name": "Tierra Verde",
+          "county": "nueces-tx",
+          "lat": 27.7615714,
+          "lng": -97.7173844,
+          "generation": 34,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "returned": {
+          "probeVersion": 3,
+          "type": "HOME",
+          "place": "4801396",
+          "name": "Agua Dulce",
+          "county": "nueces-tx",
+          "lat": 27.782846,
+          "lng": -97.9096856,
+          "generation": 35,
+          "health": "FRESH",
+          "expiresAt": null,
+          "startupProviderFocus": null
+        },
+        "weather": {
+          "awarenessKey": "place-4801396",
+          "identityClass": "CANONICAL_PLACE",
+          "countyId": "nueces-tx",
+          "stableIdentity": "4801396",
+          "lat": 27.782846,
+          "lng": -97.9096856,
+          "placeGeoid": "4801396"
+        },
+        "storageUnchanged": true
+      },
+      "checks": {
+        "baseline": true,
+        "search": true,
+        "returnHome": true,
+        "weather": true,
+        "storage": true
+      },
+      "pass": true
+    }
+  ],
+  "network": {
+    "errors": [],
+    "warnings": [
+      "Service Worker registration blocked by Playwright",
+      "Gridly crossing load cancelled because active county changed: Active county changed during crossing load: liberty-tx -> nueces-tx"
+    ],
+    "blockedWrites": [
+      {
+        "method": "POST",
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+      }
+    ],
+    "providerRequests": [
+      {
+        "url": "https://api.weather.gov/points/27.782846,-97.9096856",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/gridpoints/TEST/1,1/forecast",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/alerts/active?point=27.782846,-97.9096856",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&expires_at=gt.2026-09-24T13%3A25%3A00.385Z&order=created_at.desc%2Cid.desc&limit=300",
+        "method": "GET",
+        "result": "CONTROLLED_EMPTY_REPORT_FIXTURE"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&report_type=eq.hazard_cleared&created_at=gte.2026-09-24T10%3A25%3A00.385Z&order=created_at.desc%2Cid.desc&limit=100",
+        "method": "GET",
+        "result": "CONTROLLED_EMPTY_REPORT_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/points/27.909666,-97.1503865",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/gridpoints/TEST/1,1/forecast",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/points/27.8061352,-97.7961085",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/alerts/active?point=27.909666,-97.1503865",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/gridpoints/TEST/1,1/forecast",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/points/27.5861441,-97.7991636",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/alerts/active?point=27.8061352,-97.7961085",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/gridpoints/TEST/1,1/forecast",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/points/27.7635302,-97.4033191",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/alerts/active?point=27.5861441,-97.7991636",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/gridpoints/TEST/1,1/forecast",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/points/27.6717361,-97.7505646",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/alerts/active?point=27.7635302,-97.4033191",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/gridpoints/TEST/1,1/forecast",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/points/27.876615,-97.2098831",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/alerts/active?point=27.6717361,-97.7505646",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/gridpoints/TEST/1,1/forecast",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/points/27.71954,-97.7392039",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/alerts/active?point=27.876615,-97.2098831",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/gridpoints/TEST/1,1/forecast",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/points/27.8026628,-97.6820083",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/alerts/active?point=27.71954,-97.7392039",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/gridpoints/TEST/1,1/forecast",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/points/27.671975,-97.6358282",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/alerts/active?point=27.8026628,-97.6820083",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/gridpoints/TEST/1,1/forecast",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/alerts/active?point=27.671975,-97.6358282",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/points/27.8332175,-97.0618324",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/points/27.782846,-97.9096856",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/gridpoints/TEST/1,1/forecast",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/gridpoints/TEST/1,1/forecast",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/points/27.8818828,-97.3188666",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/alerts/active?point=27.8332175,-97.0618324",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/points/27.782846,-97.9096856",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/alerts/active?point=27.782846,-97.9096856",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/gridpoints/TEST/1,1/forecast",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/gridpoints/TEST/1,1/forecast",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/alerts/active?point=27.8818828,-97.3188666",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/points/27.8093944,-97.8454856",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/alerts/active?point=27.782846,-97.9096856",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/gridpoints/TEST/1,1/forecast",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/points/27.7903032,-97.6688843",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/alerts/active?point=27.8093944,-97.8454856",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/gridpoints/TEST/1,1/forecast",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/alerts/active?point=27.7903032,-97.6688843",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/points/27.9282407,-97.8015246",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/gridpoints/TEST/1,1/forecast",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/alerts/active?point=27.9282407,-97.8015246",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/points/27.7615292,-97.7418731",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/gridpoints/TEST/1,1/forecast",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/points/27.7036864,-97.5718186",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/alerts/active?point=27.7615292,-97.7418731",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/gridpoints/TEST/1,1/forecast",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&expires_at=gt.2026-09-24T13%3A25%3A15.552Z&order=created_at.desc%2Cid.desc&limit=300",
+        "method": "GET",
+        "result": "CONTROLLED_EMPTY_REPORT_FIXTURE"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&report_type=eq.hazard_cleared&created_at=gte.2026-09-24T10%3A25%3A15.552Z&order=created_at.desc%2Cid.desc&limit=100",
+        "method": "GET",
+        "result": "CONTROLLED_EMPTY_REPORT_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/alerts/active?point=27.7036864,-97.5718186",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/points/27.7615714,-97.7173844",
+        "method": "GET",
+        "result": "CONTROLLED_HEALTHY_EMPTY_FIXTURE"
+      }
+    ],
+    "localRequests": [
+      "/data/runtime/canonical-crossing-memberships-v1.json",
+      "/data/runtime/canonical-crossing-records-v1.json",
+      "/data/generated/gridly-statewide-place-presentation-v1.json",
+      "/Crossing-Packages/liberty/package-manifest.json",
+      "/Crossing-Packages/nueces/package-manifest.json",
+      "/Crossing-Packages/production-crossing-manifest.json",
+      "/Crossing-Packages/production-crossing-manifest.json",
+      "/Crossing-Packages/liberty/Production/liberty-production-crossings.geojson",
+      "/Crossing-Packages/nueces/Production/nueces-production-crossings.geojson"
+    ]
+  }
+}

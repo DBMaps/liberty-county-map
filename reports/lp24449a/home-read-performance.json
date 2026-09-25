@@ -1,0 +1,96 @@
+[
+  {
+    "baseline": true,
+    "sourceHash": "071bef6f2ef2b6ed07703520be7dcc3dc26065cd6b2f94cf4181c5fb903a9979",
+    "setup": {
+      "saved": "Houston",
+      "elapsedMs": 2336.5,
+      "context": {
+        "probeVersion": 3,
+        "type": "HOME",
+        "place": "4835000",
+        "name": "Houston",
+        "county": "montgomery-tx",
+        "lat": 29.7589382,
+        "lng": -95.3676974,
+        "generation": 1,
+        "health": "FRESH",
+        "expiresAt": null,
+        "startupProviderFocus": null
+      },
+      "getterCalls": 16997
+    },
+    "sample": {
+      "count": 1000,
+      "elapsedMs": 26.700000000186265,
+      "area": {
+        "key": "montgomery-tx-houston",
+        "county": "montgomery-tx",
+        "place": "4835000"
+      },
+      "context": {
+        "probeVersion": 3,
+        "type": "HOME",
+        "place": "4835000",
+        "name": "Houston",
+        "county": "montgomery-tx",
+        "lat": 29.7589382,
+        "lng": -95.3676974,
+        "generation": 1,
+        "health": "FRESH",
+        "expiresAt": null,
+        "startupProviderFocus": null
+      }
+    },
+    "canonicalResolverSamples": 0,
+    "totalSamples": 23,
+    "errors": []
+  },
+  {
+    "baseline": false,
+    "sourceHash": "e157d88855529f7a6af3a16905cceb6b05f89f6006b2295bdb0bea2f074dd291",
+    "setup": {
+      "saved": true,
+      "elapsedMs": 11099.099999999627,
+      "context": {
+        "probeVersion": 3,
+        "type": "HOME",
+        "place": "4835000",
+        "name": "Houston",
+        "county": "harris-tx",
+        "lat": 29.7589382,
+        "lng": -95.3676974,
+        "generation": 1,
+        "health": "FRESH",
+        "expiresAt": null,
+        "startupProviderFocus": null
+      },
+      "getterCalls": 15091
+    },
+    "sample": {
+      "count": 1000,
+      "elapsedMs": 11.300000000745058,
+      "area": {
+        "key": "place-4835000",
+        "county": "harris-tx",
+        "place": "4835000"
+      },
+      "context": {
+        "probeVersion": 3,
+        "type": "HOME",
+        "place": "4835000",
+        "name": "Houston",
+        "county": "harris-tx",
+        "lat": 29.7589382,
+        "lng": -95.3676974,
+        "generation": 1,
+        "health": "FRESH",
+        "expiresAt": null,
+        "startupProviderFocus": null
+      }
+    },
+    "canonicalResolverSamples": 4,
+    "totalSamples": 34,
+    "errors": []
+  }
+]

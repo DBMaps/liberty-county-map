@@ -1,0 +1,870 @@
+{
+  "sourceHash": "f57fac7440ad6ad9bf230e1f41cffeefb7f22405c0a58b696e48bba3ce0ed0cd",
+  "rca": {
+    "provenAt": "2026-09-24T20:36:30.138Z",
+    "productPatched": false,
+    "rootCause": "Same-area published community summaries are reusable without the existing canonical community revision. A DriveTexas consumer publication while a local report is active captures that normalized report in activeHazardsInArea. After clear removes the current authoritative rows, getGridlyAlertsSurfaceActiveCommunityReportRows falls back to the still-area-valid published summary; its original report object re-enters the lightweight Pulse model. Shared-model caching then republishes the wrong count.",
+    "exactCandidate": {
+      "id": "gridly-test-lp24448a-1790281876622-145",
+      "county": "leon-tx",
+      "place": "4811116",
+      "object": "object-18221",
+      "source": "published summary activeHazardsInArea",
+      "firstRetainer": "gridlyGetPublishedAwarenessAlertRecordsForCurrentArea",
+      "downstream": [
+        "getGridlyAlertsSurfaceActiveCommunityReportRows",
+        "getGridlyUserFacingActiveRoadHazardIncidents",
+        "buildGridlyLightweightActiveAwareness",
+        "buildGridlyCommunityPulseModel",
+        "refreshGridlyCommunityPulseSharedModel"
+      ]
+    },
+    "evidence": {
+      "sequence": "provenance-statewide.json",
+      "pairedRace": "publication-race-before.json",
+      "pairedCases": [
+        {
+          "county": "montgomery-tx",
+          "place": "4816432",
+          "publishBeforeClear": false,
+          "immediate": 0,
+          "at2000": 0,
+          "afterRefreshes": [
+            0,
+            0
+          ]
+        },
+        {
+          "county": "montgomery-tx",
+          "place": "4816432",
+          "publishBeforeClear": true,
+          "immediate": 1,
+          "at2000": 1,
+          "afterRefreshes": [
+            1,
+            1
+          ]
+        },
+        {
+          "county": "montague-tx",
+          "place": "4809640",
+          "publishBeforeClear": false,
+          "immediate": 0,
+          "at2000": 0,
+          "afterRefreshes": [
+            0,
+            0
+          ]
+        },
+        {
+          "county": "montague-tx",
+          "place": "4809640",
+          "publishBeforeClear": true,
+          "immediate": 1,
+          "at2000": 1,
+          "afterRefreshes": [
+            1,
+            1
+          ]
+        },
+        {
+          "county": "bexar-tx",
+          "place": "4801600",
+          "publishBeforeClear": false,
+          "immediate": 0,
+          "at2000": 0,
+          "afterRefreshes": [
+            0,
+            0
+          ]
+        },
+        {
+          "county": "bexar-tx",
+          "place": "4801600",
+          "publishBeforeClear": true,
+          "immediate": 1,
+          "at2000": 1,
+          "afterRefreshes": [
+            1,
+            1
+          ]
+        },
+        {
+          "county": "dallas-tx",
+          "place": "4801240",
+          "publishBeforeClear": false,
+          "immediate": 0,
+          "at2000": 0,
+          "afterRefreshes": [
+            0,
+            0
+          ]
+        },
+        {
+          "county": "dallas-tx",
+          "place": "4801240",
+          "publishBeforeClear": true,
+          "immediate": 1,
+          "at2000": 1,
+          "afterRefreshes": [
+            1,
+            1
+          ]
+        },
+        {
+          "county": "mills-tx",
+          "place": "4830056",
+          "publishBeforeClear": false,
+          "immediate": 0,
+          "at2000": 0,
+          "afterRefreshes": [
+            0,
+            0
+          ]
+        },
+        {
+          "county": "mills-tx",
+          "place": "4830056",
+          "publishBeforeClear": true,
+          "immediate": 1,
+          "at2000": 1,
+          "afterRefreshes": [
+            1,
+            1
+          ]
+        }
+      ]
+    },
+    "visibleDifference": "Visible consumers read the governed projection, which is empty. The legacy active-awareness branch additionally trusts the old same-area publication.",
+    "sequenceSensitivity": "A provider/periodic publication must occur in the active interval. Five paired witnesses/controls clear without it and fail deterministically with it; county identity is not causal.",
+    "repairPlan": "Bind existing community-summary caches to gridlyGetCanonicalActiveCommunityState().revision at construction. Reject stale revisions at reuse/publication, rebuilding only a stale incoming summary when required. Preserve the existing official source envelope and retention contract; no timer, count override, fixture special case or blanket purge.",
+    "hypotheses": [
+      {
+        "id": 1,
+        "result": "RULED_OUT",
+        "evidence": "raw activeHazards and normalized activeReports empty"
+      },
+      {
+        "id": 2,
+        "result": "RULED_OUT",
+        "evidence": "grouped current incident arrays empty"
+      },
+      {
+        "id": 3,
+        "result": "RULED_OUT",
+        "evidence": "marker layers/DOM empty after clear; retained object originates in publication"
+      },
+      {
+        "id": 4,
+        "result": "RULED_IN",
+        "evidence": "same-area cached summary retains obsolete community candidate"
+      },
+      {
+        "id": 5,
+        "result": "RULED_OUT",
+        "evidence": "new candidate collections inherit publication fallback; no persistent Set/Map removal failure"
+      },
+      {
+        "id": 6,
+        "result": "RULED_OUT",
+        "evidence": "same normalized object identity followed through fallback; raw removal succeeds"
+      },
+      {
+        "id": 7,
+        "result": "PROVEN",
+        "evidence": "published activeHazardsInArea retains original normalized report"
+      },
+      {
+        "id": 8,
+        "result": "PROVEN",
+        "evidence": "community clear revision missing from summary validity"
+      },
+      {
+        "id": 9,
+        "result": "RULED_OUT",
+        "evidence": "accepted context generation remains identical across clear; data revision changes"
+      },
+      {
+        "id": 10,
+        "result": "PROVEN",
+        "evidence": "provider publication before clear is causal; absence is paired passing control"
+      },
+      {
+        "id": 11,
+        "result": "PROVEN",
+        "evidence": "provider publication captures active model; later refreshes reuse old candidate"
+      },
+      {
+        "id": 12,
+        "result": "RULED_OUT",
+        "evidence": "fresh contexts in all three witnesses and two controls reproduce"
+      },
+      {
+        "id": 13,
+        "result": "RULED_OUT",
+        "evidence": "retained identity is exact flood fixture, not a crossing"
+      },
+      {
+        "id": 14,
+        "result": "PROVEN",
+        "evidence": "fixture/raw overlay removed; published normalized object remains"
+      },
+      {
+        "id": 15,
+        "result": "PROVEN",
+        "evidence": "cache keyed by area without canonical clear revision"
+      },
+      {
+        "id": 16,
+        "result": "RULED_OUT",
+        "evidence": "production provider consumer publication reproduces on fresh contexts with passive timed reads"
+      }
+    ]
+  },
+  "repair": {
+    "file": "js/app.js",
+    "startingSha256": "857dc05e8f12786ace4ccded59e7ed582e3438da3f76d65f2fb4d579af6ceb91",
+    "finalSha256": "f57fac7440ad6ad9bf230e1f41cffeefb7f22405c0a58b696e48bba3ce0ed0cd",
+    "edits": [
+      {
+        "old": "function isGridlyCachedAwarenessSummaryForCurrentArea(summary = {}) {",
+        "next": "function isGridlyCachedAwarenessSummaryForCurrentArea(summary = {}) {\n  // Same place does not mean the same active community conditions. A provider\n  // publication captured before clear must not reintroduce its former rows.\n  if (summary.canonicalCommunityRevision && summary.canonicalCommunityRevision !== gridlyGetCanonicalActiveCommunityState().revision) return false;"
+      },
+      {
+        "old": "  return {\n    selectedAwarenessArea: getGridlyAwarenessAreaDebugOption(selectedArea),\n    awarenessAreaName,",
+        "next": "  return {\n    canonicalCommunityRevision: typeof gridlyGetCanonicalActiveCommunityState === \"function\" ? gridlyGetCanonicalActiveCommunityState({ selectedArea }).revision : null,\n    selectedAwarenessArea: getGridlyAwarenessAreaDebugOption(selectedArea),\n    awarenessAreaName,"
+      },
+      {
+        "old": "  const proposedSummary = gridlyLastAuthoritativeCommunityAwarenessSummary || normalizedPatch.communityAwarenessSummary || publisherAuthoritativeSummary;",
+        "next": "  const summaryCandidates = [gridlyLastAuthoritativeCommunityAwarenessSummary, normalizedPatch.communityAwarenessSummary, publisherAuthoritativeSummary];\n  const proposedSummary = summaryCandidates.find((summary) => summary && (!summary.canonicalCommunityRevision || summary.canonicalCommunityRevision === gridlyGetCanonicalActiveCommunityState().revision))\n    || (normalizedPatch.communityAwarenessSummary ? buildGridlyCommunityAwarenessIntelligenceSummary() : null);"
+      },
+      {
+        "old": "function gridlyPublishAuthoritativeCommunityAwarenessSummary(summary, publication = {}) {\n  if (!summary || typeof summary !== \"object\") return null;",
+        "next": "function gridlyPublishAuthoritativeCommunityAwarenessSummary(summary, publication = {}) {\n  if (!summary || typeof summary !== \"object\") return null;\n  if (summary.canonicalCommunityRevision && summary.canonicalCommunityRevision !== gridlyGetCanonicalActiveCommunityState().revision) {\n    summary = buildGridlyCommunityAwarenessIntelligenceSummary();\n  }"
+      }
+    ]
+  },
+  "firstDivergence": {
+    "candidate": {
+      "object": "object-18418",
+      "recordObject": "object-18221",
+      "rawObject": "object-18463",
+      "id": "gridly-test-lp24448a-1790281876622-145",
+      "source": "user",
+      "type": "flooding",
+      "state": "TX",
+      "local": true,
+      "lat": 31.4634891,
+      "lng": -96.0641283,
+      "county": "leon-tx",
+      "place": "4811116",
+      "evidenceId": "active_hazard:hazard-gridly-test-lp24448a-1790281876622-145",
+      "expired": false
+    },
+    "lifecycleClassification": {
+      "lifecycleState": "ACTIVE",
+      "lifecycleStage": "ACTIVE",
+      "trustLabel": "Recently reported",
+      "ageBucket": "0-6h",
+      "historicalEligible": false,
+      "lifecycleReason": "flooding report is Recently reported; age=0m; timestamp=submittedAt; state=ACTIVE",
+      "lifecycleAgeMinutes": 0,
+      "lifecycleConfidence": "unverified",
+      "lifecycleType": "flooding",
+      "lifecycleRecommendedAction": "keep_active",
+      "extendedRetentionCandidate": true,
+      "eventDrivenCandidate": false,
+      "timestampSourceUsed": "submittedAt",
+      "timestampParseValid": true,
+      "destructiveActionTaken": false
+    },
+    "fixtureAfterClear": {
+      "id": "gridly-test-lp24448a-1790281876622-145",
+      "preset": "flooded-roadway",
+      "state": "cleared",
+      "countyId": "leon-tx",
+      "lat": 31.4634891,
+      "lng": -96.0641283,
+      "ageMinutes": 0,
+      "reportCount": 1,
+      "crossingId": null
+    },
+    "cache": {
+      "pulse": {
+        "object": "object-18282",
+        "count": 1,
+        "selectedCount": 0,
+        "canonicalIds": [],
+        "selectedDetail": {
+          "object": null,
+          "recordObject": "object-18394",
+          "rawObject": "object-18395"
+        },
+        "hazards": [],
+        "reports": [],
+        "selected": [],
+        "candidates": []
+      },
+      "signature": "{\"activeCounty\":\"leon-tx\",\"awarenessArea\":\"\",\"v737OwnershipSignature\":\"leon-tx:\",\"selectedFilter\":\"\",\"routeWatchActivated\":false,\"routeWatchIdle\":false,\"activeHazards\":\"\",\"activeReports\":\"\",\"crossings\":\"{\\\"id\\\":\\\"FRA-432231B\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.20822\\\",\\\"lng\\\":\\\"-96.26323\\\"}|{\\\"id\\\":\\\"FRA-432232H\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.20434\\\",\\\"lng\\\":\\\"-96.26366\\\"}|{\\\"id\\\":\\\"FRA-432233P\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.19796\\\",\\\"lng\\\":\\\"-96.26832\\\"}|{\\\"id\\\":\\\"FRA-432332M\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.55133\\\",\\\"lng\\\":\\\"-95.91480\\\"}|{\\\"id\\\":\\\"FRA-432334B\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.52253\\\",\\\"lng\\\":\\\"-95.93639\\\"}|{\\\"id\\\":\\\"FRA-432335H\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.52152\\\",\\\"lng\\\":\\\"-95.93754\\\"}|{\\\"id\\\":\\\"FRA-432336P\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.51733\\\",\\\"lng\\\":\\\"-95.94809\\\"}|{\\\"id\\\":\\\"FRA-432337W\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.51657\\\",\\\"lng\\\":\\\"-95.95356\\\"}|{\\\"id\\\":\\\"FRA-432338D\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.50355\\\",\\\"lng\\\":\\\"-95.96528\\\"}|{\\\"id\\\":\\\"FRA-432339K\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.49853\\\",\\\"lng\\\":\\\"-95.97176\\\"}|{\\\"id\\\":\\\"FRA-432341L\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.49487\\\",\\\"lng\\\":\\\"-95.97923\\\"}|{\\\"id\\\":\\\"FRA-432344G\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.42717\\\",\\\"lng\\\":\\\"-96.08902\\\"}|{\\\"id\\\":\\\"FRA-432345N\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.41982\\\",\\\"lng\\\":\\\"-96.09689\\\"}|{\\\"id\\\":\\\"FRA-432346V\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.37291\\\",\\\"lng\\\":\\\"-96.13376\\\"}|{\\\"id\\\":\\\"FRA-432348J\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.58452\\\",\\\"lng\\\":\\\"-95.84734\\\"}|{\\\"id\\\":\\\"FRA-432349R\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.58404\\\",\\\"lng\\\":\\\"-95.84827\\\"}|{\\\"id\\\":\\\"FRA-432350K\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.58287\\\",\\\"lng\\\":\\\"-95.85065\\\"}|{\\\"id\\\":\\\"FRA-432351S\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.46765\\\",\\\"lng\\\":\\\"-96.04866\\\"}|{\\\"id\\\":\\\"FRA-432353F\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.46333\\\",\\\"lng\\\":\\\"-96.05814\\\"}|{\\\"id\\\":\\\"FRA-432354M\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.46291\\\",\\\"lng\\\":\\\"-96.05918\\\"}|{\\\"id\\\":\\\"FRA-432355U\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.45947\\\",\\\"lng\\\":\\\"-96.06320\\\"}|{\\\"id\\\":\\\"FRA-432356B\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.45041\\\",\\\"lng\\\":\\\"-96.06737\\\"}|{\\\"id\\\":\\\"FRA-432357H\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.44530\\\",\\\"lng\\\":\\\"-96.07088\\\"}|{\\\"id\\\":\\\"FRA-432358P\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.44242\\\",\\\"lng\\\":\\\"-96.07482\\\"}|{\\\"id\\\":\\\"FRA-432359W\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.38918\\\",\\\"lng\\\":\\\"-96.11485\\\"}|{\\\"id\\\":\\\"FRA-432361X\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.36050\\\",\\\"lng\\\":\\\"-96.14392\\\"}|{\\\"id\\\":\\\"FRA-432362E\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.35870\\\",\\\"lng\\\":\\\"-96.14503\\\"}|{\\\"id\\\":\\\"FRA-432364T\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.35117\\\",\\\"lng\\\":\\\"-96.14978\\\"}|{\\\"id\\\":\\\"FRA-432365A\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.34412\\\",\\\"lng\\\":\\\"-96.16394\\\"}|{\\\"id\\\":\\\"FRA-432366G\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.34422\\\",\\\"lng\\\":\\\"-96.16470\\\"}|{\\\"id\\\":\\\"FRA-432367N\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.33944\\\",\\\"lng\\\":\\\"-96.17699\\\"}|{\\\"id\\\":\\\"FRA-432368V\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.32232\\\",\\\"lng\\\":\\\"-96.19319\\\"}|{\\\"id\\\":\\\"FRA-432369C\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.31684\\\",\\\"lng\\\":\\\"-96.20339\\\"}|{\\\"id\\\":\\\"FRA-432370W\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.28597\\\",\\\"lng\\\":\\\"-96.23019\\\"}|{\\\"id\\\":\\\"FRA-432371D\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.28172\\\",\\\"lng\\\":\\\"-96.23305\\\"}|{\\\"id\\\":\\\"FRA-432372K\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.27061\\\",\\\"lng\\\":\\\"-96.24053\\\"}|{\\\"id\\\":\\\"FRA-432373S\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.26614\\\",\\\"lng\\\":\\\"-96.24354\\\"}|{\\\"id\\\":\\\"FRA-432374Y\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.26019\\\",\\\"lng\\\":\\\"-96.24754\\\"}|{\\\"id\\\":\\\"FRA-432375F\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.25412\\\",\\\"lng\\\":\\\"-96.25155\\\"}|{\\\"id\\\":\\\"FRA-432376M\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.24337\\\",\\\"lng\\\":\\\"-96.25604\\\"}|{\\\"id\\\":\\\"FRA-432377U\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.24039\\\",\\\"lng\\\":\\\"-96.25727\\\"}|{\\\"id\\\":\\\"FRA-432378B\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.23698\\\",\\\"lng\\\":\\\"-96.25868\\\"}|{\\\"id\\\":\\\"FRA-432380C\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.21930\\\",\\\"lng\\\":\\\"-96.26209\\\"}|{\\\"id\\\":\\\"FRA-432381J\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.21204\\\",\\\"lng\\\":\\\"-96.26284\\\"}|{\\\"id\\\":\\\"FRA-450415Y\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.24033\\\",\\\"lng\\\":\\\"-96.25759\\\"}|{\\\"id\\\":\\\"FRA-597155S\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.02721\\\",\\\"lng\\\":\\\"-96.11342\\\"}|{\\\"id\\\":\\\"FRA-597156Y\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.02991\\\",\\\"lng\\\":\\\"-96.11380\\\"}|{\\\"id\\\":\\\"FRA-597157F\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.07485\\\",\\\"lng\\\":\\\"-96.11344\\\"}|{\\\"id\\\":\\\"FRA-597158M\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.09720\\\",\\\"lng\\\":\\\"-96.12499\\\"}|{\\\"id\\\":\\\"FRA-597159U\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.15124\\\",\\\"lng\\\":\\\"-96.12524\\\"}|{\\\"id\\\":\\\"FRA-597161V\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.18645\\\",\\\"lng\\\":\\\"-96.13008\\\"}|{\\\"id\\\":\\\"FRA-597162C\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.20101\\\",\\\"lng\\\":\\\"-96.12883\\\"}|{\\\"id\\\":\\\"FRA-597163J\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.22703\\\",\\\"lng\\\":\\\"-96.12804\\\"}|{\\\"id\\\":\\\"FRA-597164R\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.24562\\\",\\\"lng\\\":\\\"-96.13048\\\"}|{\\\"id\\\":\\\"FRA-597165X\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.25404\\\",\\\"lng\\\":\\\"-96.14687\\\"}|{\\\"id\\\":\\\"FRA-597166E\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.26020\\\",\\\"lng\\\":\\\"-96.14585\\\"}|{\\\"id\\\":\\\"FRA-597167L\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.28302\\\",\\\"lng\\\":\\\"-96.13742\\\"}|{\\\"id\\\":\\\"FRA-597168T\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.32262\\\",\\\"lng\\\":\\\"-96.16599\\\"}|{\\\"id\\\":\\\"FRA-597169A\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.34271\\\",\\\"lng\\\":\\\"-96.17013\\\"}|{\\\"id\\\":\\\"FRA-597171B\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.36718\\\",\\\"lng\\\":\\\"-96.18118\\\"}|{\\\"id\\\":\\\"FRA-597172H\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.38167\\\",\\\"lng\\\":\\\"-96.18800\\\"}|{\\\"id\\\":\\\"FRA-597173P\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.38610\\\",\\\"lng\\\":\\\"-96.18821\\\"}|{\\\"id\\\":\\\"FRA-598225H\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.06710\\\",\\\"lng\\\":\\\"-96.10825\\\"}|{\\\"id\\\":\\\"FRA-598226P\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.08739\\\",\\\"lng\\\":\\\"-96.12184\\\"}|{\\\"id\\\":\\\"FRA-598227W\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.10107\\\",\\\"lng\\\":\\\"-96.12433\\\"}|{\\\"id\\\":\\\"FRA-598230E\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.13545\\\",\\\"lng\\\":\\\"-96.12061\\\"}|{\\\"id\\\":\\\"FRA-598231L\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.16946\\\",\\\"lng\\\":\\\"-96.13028\\\"}|{\\\"id\\\":\\\"FRA-598232T\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.17780\\\",\\\"lng\\\":\\\"-96.13026\\\"}|{\\\"id\\\":\\\"FRA-598233A\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.27390\\\",\\\"lng\\\":\\\"-96.14312\\\"}|{\\\"id\\\":\\\"FRA-598234G\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.28929\\\",\\\"lng\\\":\\\"-96.13636\\\"}|{\\\"id\\\":\\\"FRA-598235N\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.29958\\\",\\\"lng\\\":\\\"-96.13680\\\"}|{\\\"id\\\":\\\"FRA-598236V\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.30178\\\",\\\"lng\\\":\\\"-96.13689\\\"}|{\\\"id\\\":\\\"FRA-598237C\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.31232\\\",\\\"lng\\\":\\\"-96.14542\\\"}|{\\\"id\\\":\\\"FRA-598238J\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.35854\\\",\\\"lng\\\":\\\"-96.17700\\\"}|{\\\"id\\\":\\\"FRA-598239R\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.39573\\\",\\\"lng\\\":\\\"-96.18692\\\"}|{\\\"id\\\":\\\"FRA-598241S\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.41010\\\",\\\"lng\\\":\\\"-96.18213\\\"}|{\\\"id\\\":\\\"FRA-598242Y\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.43053\\\",\\\"lng\\\":\\\"-96.19303\\\"}|{\\\"id\\\":\\\"FRA-673565Y\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.11148\\\",\\\"lng\\\":\\\"-96.12255\\\"}|{\\\"id\\\":\\\"FRA-673571C\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.12600\\\",\\\"lng\\\":\\\"-96.12000\\\"}|{\\\"id\\\":\\\"FRA-921140V\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.48081\\\",\\\"lng\\\":\\\"-96.02208\\\"}|{\\\"id\\\":\\\"FRA-921143R\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.30642\\\",\\\"lng\\\":\\\"-96.20998\\\"}|{\\\"id\\\":\\\"FRA-921144X\\\",\\\"lifecycle\\\":\\\"Texas\\\",\\\"type\\\":\\\"\\\",\\\"reportCount\\\":\\\"\\\",\\\"lat\\\":\\\"31.29094\\\",\\\"lng\\\":\\\"-96.22685\\\"}\",\"latestAlerts\":\"\",\"officialRoadwayAwarenessRevision\":292,\"governedKbygAuthorityIds\":[],\"topAwarenessMicrolineReadOnly\":true,\"communityAwarenessSummaryArea\":\"\"}",
+      "lastSummary": {
+        "object": "object-18327",
+        "selectedDetail": {
+          "object": null,
+          "recordObject": "object-18396",
+          "rawObject": "object-18397"
+        },
+        "hazards": [
+          {
+            "object": "object-18221",
+            "recordObject": "object-18221",
+            "rawObject": "object-18398",
+            "id": "gridly-test-lp24448a-1790281876622-145",
+            "source": "user",
+            "type": "flooding",
+            "state": "TX",
+            "local": true,
+            "lat": 31.4634891,
+            "lng": -96.0641283,
+            "county": "leon-tx",
+            "place": "4811116",
+            "evidenceId": "active_hazard:hazard-gridly-test-lp24448a-1790281876622-145",
+            "expired": false
+          }
+        ],
+        "reports": [],
+        "summaryCount": 1,
+        "sharedCount": 1,
+        "selected": [],
+        "candidates": []
+      },
+      "refreshCycle": false,
+      "reportVersion": 292,
+      "countyGeneration": 0
+    },
+    "note": "The normalized candidate state field TX is geographic state, not lifecycle status. Lifecycle classification and fixture-after-clear state are recorded separately."
+  },
+  "records": [
+    {
+      "county": "montgomery-tx",
+      "place": "4816432",
+      "community": "Conroe",
+      "publishBeforeClear": false,
+      "fixture": "gridly-test-lp24448a-1790281865350-1",
+      "candidate": {
+        "object": null,
+        "recordObject": "object-234",
+        "rawObject": "object-235"
+      },
+      "cacheOwner": "gridlyLastAuthoritativeCommunityAwarenessSummary.activeHazardsInArea",
+      "before": {
+        "immediate": 0,
+        "timed": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "fresh": 0,
+        "refreshes": [
+          0,
+          0
+        ]
+      },
+      "after": {
+        "immediate": 0,
+        "timed": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "fresh": 0,
+        "refreshes": [
+          0,
+          0
+        ],
+        "pass": true
+      }
+    },
+    {
+      "county": "montgomery-tx",
+      "place": "4816432",
+      "community": "Conroe",
+      "publishBeforeClear": true,
+      "fixture": "gridly-test-lp24448a-1790281936568-1",
+      "candidate": {
+        "object": "object-247",
+        "recordObject": "object-39",
+        "rawObject": "object-292",
+        "id": "gridly-test-lp24448a-1790281936568-1",
+        "source": "user",
+        "type": "flooding",
+        "state": "TX",
+        "local": true,
+        "lat": 30.3118769,
+        "lng": -95.4560512,
+        "county": "montgomery-tx",
+        "place": "4816432",
+        "evidenceId": "active_hazard:hazard-gridly-test-lp24448a-1790281936568-1",
+        "expired": false
+      },
+      "cacheOwner": "gridlyLastAuthoritativeCommunityAwarenessSummary.activeHazardsInArea",
+      "before": {
+        "immediate": 1,
+        "timed": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "fresh": 1,
+        "refreshes": [
+          1,
+          1
+        ]
+      },
+      "after": {
+        "immediate": 0,
+        "timed": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "fresh": 0,
+        "refreshes": [
+          0,
+          0
+        ],
+        "pass": true
+      }
+    },
+    {
+      "county": "montague-tx",
+      "place": "4809640",
+      "community": "Bowie",
+      "publishBeforeClear": false,
+      "fixture": "gridly-test-lp24448a-1790281999994-1",
+      "candidate": {
+        "object": null,
+        "recordObject": "object-218",
+        "rawObject": "object-219"
+      },
+      "cacheOwner": "gridlyLastAuthoritativeCommunityAwarenessSummary.activeHazardsInArea",
+      "before": {
+        "immediate": 0,
+        "timed": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "fresh": 0,
+        "refreshes": [
+          0,
+          0
+        ]
+      },
+      "after": {
+        "immediate": 0,
+        "timed": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "fresh": 0,
+        "refreshes": [
+          0,
+          0
+        ],
+        "pass": true
+      }
+    },
+    {
+      "county": "montague-tx",
+      "place": "4809640",
+      "community": "Bowie",
+      "publishBeforeClear": true,
+      "fixture": "gridly-test-lp24448a-1790282006977-1",
+      "candidate": {
+        "object": "object-221",
+        "recordObject": "object-41",
+        "rawObject": "object-266",
+        "id": "gridly-test-lp24448a-1790282006977-1",
+        "source": "user",
+        "type": "flooding",
+        "state": "TX",
+        "local": true,
+        "lat": 33.558993,
+        "lng": -97.8484719,
+        "county": "montague-tx",
+        "place": "4809640",
+        "evidenceId": "active_hazard:hazard-gridly-test-lp24448a-1790282006977-1",
+        "expired": false
+      },
+      "cacheOwner": "gridlyLastAuthoritativeCommunityAwarenessSummary.activeHazardsInArea",
+      "before": {
+        "immediate": 1,
+        "timed": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "fresh": 1,
+        "refreshes": [
+          1,
+          1
+        ]
+      },
+      "after": {
+        "immediate": 0,
+        "timed": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "fresh": 0,
+        "refreshes": [
+          0,
+          0
+        ],
+        "pass": true
+      }
+    },
+    {
+      "county": "bexar-tx",
+      "place": "4801600",
+      "community": "Alamo Heights",
+      "publishBeforeClear": false,
+      "fixture": "gridly-test-lp24448a-1790282014222-1",
+      "candidate": {
+        "object": null,
+        "recordObject": "object-250",
+        "rawObject": "object-251"
+      },
+      "cacheOwner": "gridlyLastAuthoritativeCommunityAwarenessSummary.activeHazardsInArea",
+      "before": {
+        "immediate": 0,
+        "timed": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "fresh": 0,
+        "refreshes": [
+          0,
+          0
+        ]
+      },
+      "after": {
+        "immediate": 0,
+        "timed": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "fresh": 0,
+        "refreshes": [
+          0,
+          0
+        ],
+        "pass": true
+      }
+    },
+    {
+      "county": "bexar-tx",
+      "place": "4801600",
+      "community": "Alamo Heights",
+      "publishBeforeClear": true,
+      "fixture": "gridly-test-lp24448a-1790282021922-1",
+      "candidate": {
+        "object": "object-253",
+        "recordObject": "object-41",
+        "rawObject": "object-298",
+        "id": "gridly-test-lp24448a-1790282021922-1",
+        "source": "user",
+        "type": "flooding",
+        "state": "TX",
+        "local": true,
+        "lat": 29.4832264,
+        "lng": -98.468455,
+        "county": "bexar-tx",
+        "place": "4801600",
+        "evidenceId": "active_hazard:hazard-gridly-test-lp24448a-1790282021922-1",
+        "expired": false
+      },
+      "cacheOwner": "gridlyLastAuthoritativeCommunityAwarenessSummary.activeHazardsInArea",
+      "before": {
+        "immediate": 1,
+        "timed": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "fresh": 1,
+        "refreshes": [
+          1,
+          1
+        ]
+      },
+      "after": {
+        "immediate": 0,
+        "timed": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "fresh": 0,
+        "refreshes": [
+          0,
+          0
+        ],
+        "pass": true
+      }
+    },
+    {
+      "county": "dallas-tx",
+      "place": "4801240",
+      "community": "Addison",
+      "publishBeforeClear": false,
+      "fixture": "gridly-test-lp24448a-1790282035747-1",
+      "candidate": {
+        "object": null,
+        "recordObject": "object-243",
+        "rawObject": "object-244"
+      },
+      "cacheOwner": "gridlyLastAuthoritativeCommunityAwarenessSummary.activeHazardsInArea",
+      "before": {
+        "immediate": 0,
+        "timed": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "fresh": 0,
+        "refreshes": [
+          0,
+          0
+        ]
+      },
+      "after": {
+        "immediate": 0,
+        "timed": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "fresh": 0,
+        "refreshes": [
+          0,
+          0
+        ],
+        "pass": true
+      }
+    },
+    {
+      "county": "dallas-tx",
+      "place": "4801240",
+      "community": "Addison",
+      "publishBeforeClear": true,
+      "fixture": "gridly-test-lp24448a-1790282061559-1",
+      "candidate": {
+        "object": "object-233",
+        "recordObject": "object-35",
+        "rawObject": "object-278",
+        "id": "gridly-test-lp24448a-1790282061559-1",
+        "source": "user",
+        "type": "flooding",
+        "state": "TX",
+        "local": true,
+        "lat": 32.96179,
+        "lng": -96.8291685,
+        "county": "dallas-tx",
+        "place": "4801240",
+        "evidenceId": "active_hazard:hazard-gridly-test-lp24448a-1790282061559-1",
+        "expired": false
+      },
+      "cacheOwner": "gridlyLastAuthoritativeCommunityAwarenessSummary.activeHazardsInArea",
+      "before": {
+        "immediate": 1,
+        "timed": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "fresh": 1,
+        "refreshes": [
+          1,
+          1
+        ]
+      },
+      "after": {
+        "immediate": 0,
+        "timed": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "fresh": 0,
+        "refreshes": [
+          0,
+          0
+        ],
+        "pass": true
+      }
+    },
+    {
+      "county": "mills-tx",
+      "place": "4830056",
+      "community": "Goldthwaite",
+      "publishBeforeClear": false,
+      "fixture": "gridly-test-lp24448a-1790282081035-1",
+      "candidate": {
+        "object": null,
+        "recordObject": "object-210",
+        "rawObject": "object-211"
+      },
+      "cacheOwner": "gridlyLastAuthoritativeCommunityAwarenessSummary.activeHazardsInArea",
+      "before": {
+        "immediate": 0,
+        "timed": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "fresh": 0,
+        "refreshes": [
+          0,
+          0
+        ]
+      },
+      "after": {
+        "immediate": 0,
+        "timed": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "fresh": 0,
+        "refreshes": [
+          0,
+          0
+        ],
+        "pass": true
+      }
+    },
+    {
+      "county": "mills-tx",
+      "place": "4830056",
+      "community": "Goldthwaite",
+      "publishBeforeClear": true,
+      "fixture": "gridly-test-lp24448a-1790282088047-1",
+      "candidate": {
+        "object": "object-213",
+        "recordObject": "object-33",
+        "rawObject": "object-258",
+        "id": "gridly-test-lp24448a-1790282088047-1",
+        "source": "user",
+        "type": "flooding",
+        "state": "TX",
+        "local": true,
+        "lat": 31.4508098,
+        "lng": -98.570017,
+        "county": "mills-tx",
+        "place": "4830056",
+        "evidenceId": "active_hazard:hazard-gridly-test-lp24448a-1790282088047-1",
+        "expired": false
+      },
+      "cacheOwner": "gridlyLastAuthoritativeCommunityAwarenessSummary.activeHazardsInArea",
+      "before": {
+        "immediate": 1,
+        "timed": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "fresh": 1,
+        "refreshes": [
+          1,
+          1
+        ]
+      },
+      "after": {
+        "immediate": 0,
+        "timed": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "fresh": 0,
+        "refreshes": [
+          0,
+          0
+        ],
+        "pass": true
+      }
+    }
+  ],
+  "evidence": [
+    "provenance-statewide.json",
+    "provenance-witness-controls.json",
+    "publication-race-before.json",
+    "publication-race-after.json"
+  ],
+  "observationPolicy": "Raw passive captures precede diagnostic builder reads. WeakMap identities are diagnostic-only. Timings are observed at or after the target; no timeout or repetition is used by the repair."
+}

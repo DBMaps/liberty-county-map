@@ -1,0 +1,7 @@
+import fs from 'node:fs';import crypto from 'node:crypto';import {execFileSync} from 'node:child_process';import {out,read,write} from './inventory.mjs';
+const baseline=read('reports/lp24449b1/starting-baseline.json');
+const hash=file=>fs.existsSync(file)?crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex'):null;
+const compare=rows=>rows.map(row=>{const currentSha256=hash(row.file);return {...row,currentSha256,unchanged:currentSha256===row.sha256};});
+const protectedFiles=compare(baseline.tracked),priorEvidence=compare(baseline.priorUntracked),changed=protectedFiles.filter(r=>!r.unchanged),markers=protectedFiles.filter(r=>r.file.startsWith('assets/markers/')&&r.file.endsWith('.png'));
+const report={checkedAt:new Date().toISOString(),branch:execFileSync('git',['branch','--show-current'],{encoding:'utf8'}).trim(),head:execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),protectedCount:protectedFiles.length,changedProtected:changed,protectedPass:changed.length===1&&changed[0].file==='js/app.js',priorEvidenceCount:priorEvidence.length,priorEvidencePass:priorEvidence.length>0&&priorEvidence.every(r=>r.unchanged),priorEvidenceChanges:priorEvidence.filter(r=>!r.unchanged),markerCount:markers.length,markerPass:markers.length===45&&markers.every(r=>r.unchanged),productSourceSha256:hash('js/app.js'),weatherSourceSha256:hash('js/gridlyWeatherLiveConnector.js'),protectedFiles,priorEvidence};
+write(`${out}/integrity.json`,report);console.log(JSON.stringify({...report,protectedFiles:undefined,priorEvidence:undefined}));

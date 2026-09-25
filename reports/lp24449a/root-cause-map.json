@@ -1,0 +1,2720 @@
+{
+  "recordedAt": "2026-09-24T09:16:22.144Z",
+  "productPatched": false,
+  "originalFailureCount": 369,
+  "roots": [
+    {
+      "id": "home-choice-binding",
+      "functions": [
+        "gridlyGetCountyGroupedAwarenessOptions",
+        "getGridlyManualAwarenessAreaOptions",
+        "renderGridlyManualAwarenessAreaPicker",
+        "selectGridlySettingsAwarenessArea"
+      ],
+      "firstDivergence": "County-filtered choices carry placeGeoid and countyId but no canonicalResolution; the apply listener falls through to a name/value-only save and drops the selected membership.",
+      "lostFields": [
+        "placeGeoid",
+        "requestedOperationalCountyId"
+      ],
+      "downstream": [
+        "saved Home",
+        "startup",
+        "Return Home",
+        "weather",
+        "consumer ownership"
+      ]
+    },
+    {
+      "id": "home-legacy-roundtrip",
+      "functions": [
+        "saveGridlyHomeTownPreference",
+        "getGridlySelectedAwarenessArea",
+        "gridlyLp0517ValidateHomeRecord"
+      ],
+      "firstDivergence": "Legacy save resolves the selected area key, then re-resolves its nonunique storage label for county. Fallback getter ignores persisted stable area key and resolves the label again. Spring Branch collides with a Houston region alias.",
+      "lostFields": [
+        "stable area key",
+        "PLACE identity",
+        "county authority"
+      ],
+      "downstream": [
+        "Home anchor",
+        "weather coordinates",
+        "active county"
+      ]
+    },
+    {
+      "id": "canonical-search-publication",
+      "functions": [
+        "resolveGridlyGovernedBareTexasPlaceQuery",
+        "gridlySearchAddress",
+        "filterGridlyExplicitIntentRelevance",
+        "preserveGridlyLp097StrongLocalResults"
+      ],
+      "firstDivergence": "Exact governed PLACE candidates enter generic address/business/locality ranking and eligibility stages and can be discarded or fall outside the top-N cap. ASCII-only recognition additionally rejects four governed names with frozen encoding artifacts.",
+      "lostFields": [
+        "governed exact PLACE publication authority"
+      ],
+      "downstream": [
+        "visible Search",
+        "temporary context creation"
+      ]
+    },
+    {
+      "id": "qualified-collision-acquisition",
+      "functions": [
+        "resolveGridlyStatewideCanonicalBarePlaceQuery",
+        "gridlySearchAddress"
+      ],
+      "firstDivergence": "Bare resolver intentionally returns null for duplicate names; county-qualified canonical names have no equivalent local membership-aware acquisition, leaving them dependent on external geocoding.",
+      "lostFields": [
+        "explicit county qualification at local acquisition"
+      ],
+      "downstream": [
+        "deterministic collision resolution",
+        "multi-county Search"
+      ]
+    },
+    {
+      "id": "weather-downstream",
+      "functions": [
+        "getGridlySelectedAwarenessArea",
+        "gridlyResolveGovernedWeatherPoint"
+      ],
+      "firstDivergence": "Weather inherits the wrong Home identity; accepted Search points already passed. Repair upstream authority, not weather exceptions.",
+      "lostFields": [
+        "accepted Home PLACE"
+      ],
+      "downstream": [
+        "weather label",
+        "weather provider point"
+      ]
+    }
+  ],
+  "families": {
+    "SEARCH_NOT_FOUND": {
+      "count": 16,
+      "identities": [
+        {
+          "originalFailureId": "LP24449-0001",
+          "county": "brooks-tx",
+          "place": "4801514",
+          "community": "Airport Road Addition",
+          "consumer": "search_resolution"
+        },
+        {
+          "originalFailureId": "LP24449-0005",
+          "county": "hidalgo-tx",
+          "place": "4814038",
+          "community": "CÃ©sar ChÃ¡vez",
+          "consumer": "search_resolution"
+        },
+        {
+          "originalFailureId": "LP24449-0006",
+          "county": "val-verde-tx",
+          "place": "4814927",
+          "community": "Cienegas Terrace",
+          "consumer": "search_resolution"
+        },
+        {
+          "originalFailureId": "LP24449-0007",
+          "county": "bastrop-tx",
+          "place": "4814986",
+          "community": "Circle D-KC Estates",
+          "consumer": "search_resolution"
+        },
+        {
+          "originalFailureId": "LP24449-0010",
+          "county": "maverick-tx",
+          "place": "4822810",
+          "community": "Eidson Road",
+          "consumer": "search_resolution"
+        },
+        {
+          "originalFailureId": "LP24449-0011",
+          "county": "fort-bend-tx",
+          "place": "4825795",
+          "community": "Fifth Street",
+          "consumer": "search_resolution"
+        },
+        {
+          "originalFailureId": "LP24449-0014",
+          "county": "zapata-tx",
+          "place": "4843960",
+          "community": "LopeÃ±o",
+          "consumer": "search_resolution"
+        },
+        {
+          "originalFailureId": "LP24449-0015",
+          "county": "fort-bend-tx",
+          "place": "4847337",
+          "community": "Meadows Place",
+          "consumer": "search_resolution"
+        },
+        {
+          "originalFailureId": "LP24449-0017",
+          "county": "hood-tx",
+          "place": "4853212",
+          "community": "Oak Trail Shores",
+          "consumer": "search_resolution"
+        },
+        {
+          "originalFailureId": "LP24449-0022",
+          "county": "cooke-tx",
+          "place": "4862486",
+          "community": "Road Runner",
+          "consumer": "search_resolution"
+        },
+        {
+          "originalFailureId": "LP24449-0024",
+          "county": "randall-tx",
+          "place": "4862834",
+          "community": "Rockwell Place",
+          "consumer": "search_resolution"
+        },
+        {
+          "originalFailureId": "LP24449-0025",
+          "county": "bexar-tx",
+          "place": "4864172",
+          "community": "St. Hedwig",
+          "consumer": "search_resolution"
+        },
+        {
+          "originalFailureId": "LP24449-0026",
+          "county": "starr-tx",
+          "place": "4864316",
+          "community": "SalineÃ±o",
+          "consumer": "search_resolution"
+        },
+        {
+          "originalFailureId": "LP24449-0027",
+          "county": "starr-tx",
+          "place": "4864322",
+          "community": "SalineÃ±o North",
+          "consumer": "search_resolution"
+        },
+        {
+          "originalFailureId": "LP24449-0029",
+          "county": "harris-tx",
+          "place": "4869272",
+          "community": "Southside Place",
+          "consumer": "search_resolution"
+        },
+        {
+          "originalFailureId": "LP24449-0033",
+          "county": "harris-tx",
+          "place": "4877956",
+          "community": "West University Place",
+          "consumer": "search_resolution"
+        }
+      ]
+    },
+    "HOME_BASELINE_WRONG_CONTEXT": {
+      "count": 17,
+      "identities": [
+        {
+          "originalFailureId": "LP24449-0002",
+          "county": "nueces-tx",
+          "place": "4803600",
+          "community": "Aransas Pass",
+          "consumer": "home_context"
+        },
+        {
+          "originalFailureId": "LP24449-0003",
+          "county": "nueces-tx",
+          "place": "4805576",
+          "community": "Banquete",
+          "consumer": "home_context"
+        },
+        {
+          "originalFailureId": "LP24449-0004",
+          "county": "nueces-tx",
+          "place": "4808392",
+          "community": "Bishop",
+          "consumer": "home_context"
+        },
+        {
+          "originalFailureId": "LP24449-0008",
+          "county": "nueces-tx",
+          "place": "4817000",
+          "community": "Corpus Christi",
+          "consumer": "home_context"
+        },
+        {
+          "originalFailureId": "LP24449-0009",
+          "county": "nueces-tx",
+          "place": "4821436",
+          "community": "Driscoll",
+          "consumer": "home_context"
+        },
+        {
+          "originalFailureId": "LP24449-0012",
+          "county": "nueces-tx",
+          "place": "4836008",
+          "community": "Ingleside",
+          "consumer": "home_context"
+        },
+        {
+          "originalFailureId": "LP24449-0013",
+          "county": "nueces-tx",
+          "place": "4841422",
+          "community": "La Paloma-Lost Creek",
+          "consumer": "home_context"
+        },
+        {
+          "originalFailureId": "LP24449-0016",
+          "county": "nueces-tx",
+          "place": "4852404",
+          "community": "North San Pedro",
+          "consumer": "home_context"
+        },
+        {
+          "originalFailureId": "LP24449-0018",
+          "county": "nueces-tx",
+          "place": "4857056",
+          "community": "Petronila",
+          "consumer": "home_context"
+        },
+        {
+          "originalFailureId": "LP24449-0019",
+          "county": "nueces-tx",
+          "place": "4858808",
+          "community": "Port Aransas",
+          "consumer": "home_context"
+        },
+        {
+          "originalFailureId": "LP24449-0020",
+          "county": "nueces-tx",
+          "place": "4858904",
+          "community": "Portland",
+          "consumer": "home_context"
+        },
+        {
+          "originalFailureId": "LP24449-0021",
+          "county": "nueces-tx",
+          "place": "4860529",
+          "community": "Rancho Banquete",
+          "consumer": "home_context"
+        },
+        {
+          "originalFailureId": "LP24449-0023",
+          "county": "nueces-tx",
+          "place": "4862600",
+          "community": "Robstown",
+          "consumer": "home_context"
+        },
+        {
+          "originalFailureId": "LP24449-0028",
+          "county": "nueces-tx",
+          "place": "4865342",
+          "community": "Sandy Hollow-Escondidas",
+          "consumer": "home_context"
+        },
+        {
+          "originalFailureId": "LP24449-0030",
+          "county": "nueces-tx",
+          "place": "4869708",
+          "community": "Spring Gardens",
+          "consumer": "home_context"
+        },
+        {
+          "originalFailureId": "LP24449-0031",
+          "county": "nueces-tx",
+          "place": "4872952",
+          "community": "Tierra Grande",
+          "consumer": "home_context"
+        },
+        {
+          "originalFailureId": "LP24449-0032",
+          "county": "nueces-tx",
+          "place": "4872954",
+          "community": "Tierra Verde",
+          "consumer": "home_context"
+        }
+      ]
+    },
+    "HOME_CHOICE_IDENTITY_BINDING_LOSS": {
+      "count": 222,
+      "identities": [
+        {
+          "originalFailureId": "LP24449-0034",
+          "county": "lubbock-tx",
+          "place": "4800160",
+          "community": "Abernathy",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0035",
+          "county": "taylor-tx",
+          "place": "4801000",
+          "community": "Abilene",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0036",
+          "county": "martin-tx",
+          "place": "4801108",
+          "community": "Ackerly",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0037",
+          "county": "nueces-tx",
+          "place": "4801396",
+          "community": "Agua Dulce",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0043",
+          "county": "wood-tx",
+          "place": "4801636",
+          "community": "Alba",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0044",
+          "county": "randall-tx",
+          "place": "4803000",
+          "community": "Amarillo",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0045",
+          "county": "nueces-tx",
+          "place": "4803600",
+          "community": "Aransas Pass",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0046",
+          "county": "san-patricio-tx",
+          "place": "4803600",
+          "community": "Aransas Pass",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0047",
+          "county": "hays-tx",
+          "place": "4805000",
+          "community": "Austin",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0048",
+          "county": "travis-tx",
+          "place": "4805000",
+          "community": "Austin",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0049",
+          "county": "williamson-tx",
+          "place": "4805000",
+          "community": "Austin",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0050",
+          "county": "tarrant-tx",
+          "place": "4805168",
+          "community": "Azle",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0051",
+          "county": "williamson-tx",
+          "place": "4805732",
+          "community": "Bartlett",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0052",
+          "county": "harris-tx",
+          "place": "4806128",
+          "community": "Baytown",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0053",
+          "county": "polk-tx",
+          "place": "4808240",
+          "community": "Big Thicket Lake Estates",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0054",
+          "county": "nolan-tx",
+          "place": "4808488",
+          "community": "Blackwell",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0055",
+          "county": "ochiltree-tx",
+          "place": "4809448",
+          "community": "Booker",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0057",
+          "county": "tarrant-tx",
+          "place": "4810192",
+          "community": "Briar",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0058",
+          "county": "wise-tx",
+          "place": "4810192",
+          "community": "Briar",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0059",
+          "county": "mclennan-tx",
+          "place": "4810828",
+          "community": "Bruceville-Eddy",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0060",
+          "county": "cherokee-tx",
+          "place": "4811212",
+          "community": "Bullard",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0061",
+          "county": "tarrant-tx",
+          "place": "4811428",
+          "community": "Burleson",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0062",
+          "county": "randall-tx",
+          "place": "4811572",
+          "community": "Bushland",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0064",
+          "county": "dallas-tx",
+          "place": "4813024",
+          "community": "Carrollton",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0065",
+          "county": "denton-tx",
+          "place": "4813024",
+          "community": "Carrollton",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0067",
+          "county": "dallas-tx",
+          "place": "4813492",
+          "community": "Cedar Hill",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0068",
+          "county": "williamson-tx",
+          "place": "4813552",
+          "community": "Cedar Park",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0069",
+          "county": "denton-tx",
+          "place": "4813684",
+          "community": "Celina",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0071",
+          "county": "cameron-tx",
+          "place": "4814880",
+          "community": "Chula Vista",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0076",
+          "county": "zavala-tx",
+          "place": "4814882",
+          "community": "Chula Vista",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0081",
+          "county": "guadalupe-tx",
+          "place": "4814920",
+          "community": "Cibolo",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0083",
+          "county": "fort-bend-tx",
+          "place": "4814929",
+          "community": "Cinco Ranch",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0085",
+          "county": "upshur-tx",
+          "place": "4815172",
+          "community": "Clarksville City",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0086",
+          "county": "montgomery-tx",
+          "place": "4815436",
+          "community": "Cleveland",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0087",
+          "county": "san-jacinto-tx",
+          "place": "4815436",
+          "community": "Cleveland",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0089",
+          "county": "dallas-tx",
+          "place": "4816216",
+          "community": "Combine",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0090",
+          "county": "denton-tx",
+          "place": "4816612",
+          "community": "Coppell",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0091",
+          "county": "coryell-tx",
+          "place": "4816624",
+          "community": "Copperas Cove",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0092",
+          "county": "lampasas-tx",
+          "place": "4816624",
+          "community": "Copperas Cove",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0093",
+          "county": "kleberg-tx",
+          "place": "4817000",
+          "community": "Corpus Christi",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0094",
+          "county": "nueces-tx",
+          "place": "4817000",
+          "community": "Corpus Christi",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0095",
+          "county": "san-patricio-tx",
+          "place": "4817000",
+          "community": "Corpus Christi",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0096",
+          "county": "travis-tx",
+          "place": "4817612",
+          "community": "Creedmoor",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0097",
+          "county": "johnson-tx",
+          "place": "4817648",
+          "community": "Cresson",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0098",
+          "county": "parker-tx",
+          "place": "4817648",
+          "community": "Cresson",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0099",
+          "county": "tarrant-tx",
+          "place": "4817960",
+          "community": "Crowley",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0100",
+          "county": "hartley-tx",
+          "place": "4818524",
+          "community": "Dalhart",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0101",
+          "county": "dallas-tx",
+          "place": "4819000",
+          "community": "Dallas",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0102",
+          "county": "denton-tx",
+          "place": "4819000",
+          "community": "Dallas",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0103",
+          "county": "kaufman-tx",
+          "place": "4819000",
+          "community": "Dallas",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0104",
+          "county": "rockwall-tx",
+          "place": "4819000",
+          "community": "Dallas",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0105",
+          "county": "yoakum-tx",
+          "place": "4819984",
+          "community": "Denver City",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0106",
+          "county": "red-river-tx",
+          "place": "4820020",
+          "community": "Deport",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0107",
+          "county": "upshur-tx",
+          "place": "4822168",
+          "community": "East Mountain",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0108",
+          "county": "rusk-tx",
+          "place": "4822192",
+          "community": "Easton",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0110",
+          "county": "webb-tx",
+          "place": "4822905",
+          "community": "El Cenizo",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0115",
+          "county": "travis-tx",
+          "place": "4823044",
+          "community": "Elgin",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0116",
+          "county": "wilson-tx",
+          "place": "4823272",
+          "community": "Elmendorf",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0117",
+          "county": "hamilton-tx",
+          "place": "4824864",
+          "community": "Evant",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0118",
+          "county": "comal-tx",
+          "place": "4825168",
+          "community": "Fair Oaks Ranch",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0119",
+          "county": "kendall-tx",
+          "place": "4825168",
+          "community": "Fair Oaks Ranch",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0120",
+          "county": "dallas-tx",
+          "place": "4825752",
+          "community": "Ferris",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0122",
+          "county": "denton-tx",
+          "place": "4826232",
+          "community": "Flower Mound",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0123",
+          "county": "coryell-tx",
+          "place": "4826666",
+          "community": "Fort Cavazos",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0124",
+          "county": "denton-tx",
+          "place": "4827000",
+          "community": "Fort Worth",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0125",
+          "county": "parker-tx",
+          "place": "4827000",
+          "community": "Fort Worth",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0126",
+          "county": "tarrant-tx",
+          "place": "4827000",
+          "community": "Fort Worth",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0127",
+          "county": "wise-tx",
+          "place": "4827000",
+          "community": "Fort Worth",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0128",
+          "county": "henderson-tx",
+          "place": "4827300",
+          "community": "Frankston",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0131",
+          "county": "galveston-tx",
+          "place": "4827648",
+          "community": "Friendswood",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0132",
+          "county": "denton-tx",
+          "place": "4827684",
+          "community": "Frisco",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0133",
+          "county": "moore-tx",
+          "place": "4827696",
+          "community": "Fritch",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0134",
+          "county": "dallas-tx",
+          "place": "4829000",
+          "community": "Garland",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0135",
+          "county": "upshur-tx",
+          "place": "4829660",
+          "community": "Gladewater",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0136",
+          "county": "dallas-tx",
+          "place": "4829840",
+          "community": "Glenn Heights",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0137",
+          "county": "mclennan-tx",
+          "place": "4830092",
+          "community": "Golinda",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0138",
+          "county": "dallas-tx",
+          "place": "4830464",
+          "community": "Grand Prairie",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0139",
+          "county": "johnson-tx",
+          "place": "4830464",
+          "community": "Grand Prairie",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0140",
+          "county": "tarrant-tx",
+          "place": "4830464",
+          "community": "Grand Prairie",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0141",
+          "county": "dallas-tx",
+          "place": "4830644",
+          "community": "Grapevine",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0142",
+          "county": "denton-tx",
+          "place": "4830644",
+          "community": "Grapevine",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0143",
+          "county": "jones-tx",
+          "place": "4831964",
+          "community": "Hamlin",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0144",
+          "county": "swisher-tx",
+          "place": "4832156",
+          "community": "Happy",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0145",
+          "county": "denton-tx",
+          "place": "4832720",
+          "community": "Haslet",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0146",
+          "county": "rockwall-tx",
+          "place": "4832984",
+          "community": "Heath",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0147",
+          "county": "denton-tx",
+          "place": "4833020",
+          "community": "Hebron",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0148",
+          "county": "hamilton-tx",
+          "place": "4833548",
+          "community": "Hico",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0149",
+          "county": "starr-tx",
+          "place": "4834133",
+          "community": "Hilltop",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0154",
+          "county": "llano-tx",
+          "place": "4834862",
+          "community": "Horseshoe Bay",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0155",
+          "county": "fort-bend-tx",
+          "place": "4835000",
+          "community": "Houston",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0156",
+          "county": "harris-tx",
+          "place": "4835000",
+          "community": "Houston",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0157",
+          "county": "waller-tx",
+          "place": "4835000",
+          "community": "Houston",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0158",
+          "county": "morris-tx",
+          "place": "4835300",
+          "community": "Hughes Springs",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0159",
+          "county": "san-patricio-tx",
+          "place": "4836008",
+          "community": "Ingleside",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0160",
+          "county": "hunt-tx",
+          "place": "4838068",
+          "community": "Josephine",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0161",
+          "county": "fort-bend-tx",
+          "place": "4838476",
+          "community": "Katy",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0162",
+          "county": "waller-tx",
+          "place": "4838476",
+          "community": "Katy",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0163",
+          "county": "rusk-tx",
+          "place": "4839124",
+          "community": "Kilgore",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0164",
+          "county": "travis-tx",
+          "place": "4840264",
+          "community": "Lago Vista",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0169",
+          "county": "rusk-tx",
+          "place": "4840468",
+          "community": "Lake Cherokee",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0170",
+          "county": "medina-tx",
+          "place": "4840674",
+          "community": "Lake Medina Shores",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0171",
+          "county": "tarrant-tx",
+          "place": "4840744",
+          "community": "Lakeside",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0176",
+          "county": "galveston-tx",
+          "place": "4841980",
+          "community": "League City",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0177",
+          "county": "williamson-tx",
+          "place": "4842016",
+          "community": "Leander",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0178",
+          "county": "denton-tx",
+          "place": "4842508",
+          "community": "Lewisville",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0179",
+          "county": "reeves-tx",
+          "place": "4842874",
+          "community": "Lindsay",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0184",
+          "county": "starr-tx",
+          "place": "4843463",
+          "community": "Loma Linda East",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0189",
+          "county": "harrison-tx",
+          "place": "4843888",
+          "community": "Longview",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0191",
+          "county": "starr-tx",
+          "place": "4844110",
+          "community": "Los Ebanos",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0196",
+          "county": "cameron-tx",
+          "place": "4844116",
+          "community": "Los Fresnos",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0201",
+          "county": "shackelford-tx",
+          "place": "4845048",
+          "community": "Lueders",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0202",
+          "county": "guadalupe-tx",
+          "place": "4845096",
+          "community": "Luling",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0203",
+          "county": "bexar-tx",
+          "place": "4845288",
+          "community": "Lytle",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0204",
+          "county": "medina-tx",
+          "place": "4845288",
+          "community": "Lytle",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0205",
+          "county": "kaufman-tx",
+          "place": "4845324",
+          "community": "Mabank",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0206",
+          "county": "van-zandt-tx",
+          "place": "4845324",
+          "community": "Mabank",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0207",
+          "county": "mclennan-tx",
+          "place": "4845672",
+          "community": "McGregor",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0208",
+          "county": "rockwall-tx",
+          "place": "4845804",
+          "community": "McLendon-Chisholm",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0209",
+          "county": "johnson-tx",
+          "place": "4846452",
+          "community": "Mansfield",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0210",
+          "county": "tarrant-tx",
+          "place": "4846452",
+          "community": "Mansfield",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0211",
+          "county": "mclennan-tx",
+          "place": "4846824",
+          "community": "Mart",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0213",
+          "county": "dallas-tx",
+          "place": "4847892",
+          "community": "Mesquite",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0214",
+          "county": "starr-tx",
+          "place": "4847898",
+          "community": "Mesquite",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0219",
+          "county": "midland-tx",
+          "place": "4848072",
+          "community": "Midland",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0220",
+          "county": "parker-tx",
+          "place": "4848684",
+          "community": "Mineral Wells",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0221",
+          "county": "fort-bend-tx",
+          "place": "4848772",
+          "community": "Mission Bend",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0222",
+          "county": "fort-bend-tx",
+          "place": "4848804",
+          "community": "Missouri City",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0223",
+          "county": "winkler-tx",
+          "place": "4848936",
+          "community": "Monahans",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0224",
+          "county": "liberty-tx",
+          "place": "4849068",
+          "community": "Mont Belvieu",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0225",
+          "county": "harris-tx",
+          "place": "4849380",
+          "community": "Morgan's Point",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0226",
+          "county": "caldwell-tx",
+          "place": "4850200",
+          "community": "Mustang Ridge",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0227",
+          "county": "travis-tx",
+          "place": "4850200",
+          "community": "Mustang Ridge",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0228",
+          "county": "grimes-tx",
+          "place": "4850472",
+          "community": "Navasota",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0229",
+          "county": "wise-tx",
+          "place": "4850772",
+          "community": "Newark",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0230",
+          "county": "guadalupe-tx",
+          "place": "4850820",
+          "community": "New Braunfels",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0231",
+          "county": "denton-tx",
+          "place": "4850920",
+          "community": "New Fairview",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0232",
+          "county": "hays-tx",
+          "place": "4851492",
+          "community": "Niederwald",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0233",
+          "county": "wilson-tx",
+          "place": "4851588",
+          "community": "Nixon",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0234",
+          "county": "madison-tx",
+          "place": "4851840",
+          "community": "Normangee",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0235",
+          "county": "kaufman-tx",
+          "place": "4853160",
+          "community": "Oak Ridge",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0241",
+          "county": "leon-tx",
+          "place": "4853232",
+          "community": "Oakwood",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0242",
+          "county": "midland-tx",
+          "place": "4853388",
+          "community": "Odessa",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0243",
+          "county": "lynn-tx",
+          "place": "4853436",
+          "community": "O'Donnell",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0244",
+          "county": "chambers-tx",
+          "place": "4853824",
+          "community": "Old River-Winfree",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0245",
+          "county": "rusk-tx",
+          "place": "4854432",
+          "community": "Overton",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0246",
+          "county": "dallas-tx",
+          "place": "4854444",
+          "community": "Ovilla",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0247",
+          "county": "cameron-tx",
+          "place": "4854748",
+          "community": "Palmer",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0252",
+          "county": "brazoria-tx",
+          "place": "4856348",
+          "community": "Pearland",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0253",
+          "county": "fort-bend-tx",
+          "place": "4856348",
+          "community": "Pearland",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0254",
+          "county": "wise-tx",
+          "place": "4856462",
+          "community": "Pecan Acres",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0255",
+          "county": "fannin-tx",
+          "place": "4856468",
+          "community": "Pecan Gap",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0256",
+          "county": "johnson-tx",
+          "place": "4856498",
+          "community": "Pecan Plantation",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0257",
+          "county": "williamson-tx",
+          "place": "4857176",
+          "community": "Pflugerville",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0258",
+          "county": "denton-tx",
+          "place": "4857476",
+          "community": "Pilot Point",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0259",
+          "county": "grayson-tx",
+          "place": "4857476",
+          "community": "Pilot Point",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0260",
+          "county": "orange-tx",
+          "place": "4857608",
+          "community": "Pinehurst",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0265",
+          "county": "denton-tx",
+          "place": "4858016",
+          "community": "Plano",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0266",
+          "county": "kaufman-tx",
+          "place": "4858502",
+          "community": "Poetry",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0267",
+          "county": "orange-tx",
+          "place": "4858820",
+          "community": "Port Arthur",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0268",
+          "county": "san-patricio-tx",
+          "place": "4858904",
+          "community": "Portland",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0269",
+          "county": "denton-tx",
+          "place": "4859696",
+          "community": "Prosper",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0270",
+          "county": "cameron-tx",
+          "place": "4860544",
+          "community": "Rancho Viejo",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0275",
+          "county": "rusk-tx",
+          "place": "4861508",
+          "community": "Reklaw",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0276",
+          "county": "parker-tx",
+          "place": "4861604",
+          "community": "Reno",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0279",
+          "county": "tarrant-tx",
+          "place": "4861604",
+          "community": "Reno",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0282",
+          "county": "dallas-tx",
+          "place": "4861796",
+          "community": "Richardson",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0284",
+          "county": "denton-tx",
+          "place": "4862504",
+          "community": "Roanoke",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0286",
+          "county": "williamson-tx",
+          "place": "4863500",
+          "community": "Round Rock",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0287",
+          "county": "dallas-tx",
+          "place": "4863572",
+          "community": "Rowlett",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0288",
+          "county": "hunt-tx",
+          "place": "4863668",
+          "community": "Royse City",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0289",
+          "county": "rockwall-tx",
+          "place": "4863668",
+          "community": "Royse City",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0290",
+          "county": "dallas-tx",
+          "place": "4864064",
+          "community": "Sachse",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0292",
+          "county": "san-patricio-tx",
+          "place": "4864244",
+          "community": "St. Paul",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0299",
+          "county": "comal-tx",
+          "place": "4865000",
+          "community": "San Antonio",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0300",
+          "county": "medina-tx",
+          "place": "4865000",
+          "community": "San Antonio",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0301",
+          "county": "jim-wells-tx",
+          "place": "4865180",
+          "community": "San Diego",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0302",
+          "county": "denton-tx",
+          "place": "4865408",
+          "community": "Sanger",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0303",
+          "county": "starr-tx",
+          "place": "4865532",
+          "community": "San Juan",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0308",
+          "county": "guadalupe-tx",
+          "place": "4865600",
+          "community": "San Marcos",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0309",
+          "county": "hays-tx",
+          "place": "4865600",
+          "community": "San Marcos",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0310",
+          "county": "starr-tx",
+          "place": "4865678",
+          "community": "Santa Anna",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0315",
+          "county": "cameron-tx",
+          "place": "4865768",
+          "community": "Santa Rosa",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0320",
+          "county": "comal-tx",
+          "place": "4866128",
+          "community": "Schertz",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0321",
+          "county": "guadalupe-tx",
+          "place": "4866128",
+          "community": "Schertz",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0322",
+          "county": "harris-tx",
+          "place": "4866392",
+          "community": "Seabrook",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0323",
+          "county": "dallas-tx",
+          "place": "4866428",
+          "community": "Seagoville",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0324",
+          "county": "comal-tx",
+          "place": "4866704",
+          "community": "Selma",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0325",
+          "county": "guadalupe-tx",
+          "place": "4866704",
+          "community": "Selma",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0326",
+          "county": "kaufman-tx",
+          "place": "4866908",
+          "community": "Seven Points",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0327",
+          "county": "harris-tx",
+          "place": "4867688",
+          "community": "Shoreacres",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0328",
+          "county": "denton-tx",
+          "place": "4869032",
+          "community": "Southlake",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0330",
+          "county": "comal-tx",
+          "place": "4869608",
+          "community": "Spring Branch",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0333",
+          "county": "wise-tx",
+          "place": "4869800",
+          "community": "Springtown",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0334",
+          "county": "fort-bend-tx",
+          "place": "4869908",
+          "community": "Stafford",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0335",
+          "county": "jones-tx",
+          "place": "4869980",
+          "community": "Stamford",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0336",
+          "county": "navarro-tx",
+          "place": "4870604",
+          "community": "Streetman",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0337",
+          "county": "starr-tx",
+          "place": "4871274",
+          "community": "Sunset",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0342",
+          "county": "rusk-tx",
+          "place": "4871924",
+          "community": "Tatum",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0343",
+          "county": "galveston-tx",
+          "place": "4872392",
+          "community": "Texas City",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0344",
+          "county": "harris-tx",
+          "place": "4872656",
+          "community": "The Woodlands",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0345",
+          "county": "williamson-tx",
+          "place": "4872776",
+          "community": "Thorndale",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0346",
+          "county": "harris-tx",
+          "place": "4873316",
+          "community": "Tomball",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0347",
+          "county": "fannin-tx",
+          "place": "4873592",
+          "community": "Trenton",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0348",
+          "county": "grayson-tx",
+          "place": "4873592",
+          "community": "Trenton",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0349",
+          "county": "denton-tx",
+          "place": "4873710",
+          "community": "Trophy Club",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0350",
+          "county": "cherokee-tx",
+          "place": "4873724",
+          "community": "Troup",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0351",
+          "county": "hays-tx",
+          "place": "4874216",
+          "community": "Uhland",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0352",
+          "county": "guadalupe-tx",
+          "place": "4874408",
+          "community": "Universal City",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0354",
+          "county": "mclennan-tx",
+          "place": "4874732",
+          "community": "Valley Mills",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0356",
+          "county": "grayson-tx",
+          "place": "4874924",
+          "community": "Van Alstyne",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0357",
+          "county": "johnson-tx",
+          "place": "4875236",
+          "community": "Venus",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0358",
+          "county": "waller-tx",
+          "place": "4876228",
+          "community": "Waller",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0359",
+          "county": "upshur-tx",
+          "place": "4876576",
+          "community": "Warren City",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0360",
+          "county": "denton-tx",
+          "place": "4877620",
+          "community": "Westlake",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0362",
+          "county": "grayson-tx",
+          "place": "4878628",
+          "community": "Whitewright",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0363",
+          "county": "wichita-tx",
+          "place": "4879000",
+          "community": "Wichita Falls",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0364",
+          "county": "tyler-tx",
+          "place": "4879204",
+          "community": "Wildwood",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0365",
+          "county": "clay-tx",
+          "place": "4879696",
+          "community": "Windthorst",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0366",
+          "county": "wood-tx",
+          "place": "4879816",
+          "community": "Winnsboro",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0367",
+          "county": "dallas-tx",
+          "place": "4880356",
+          "community": "Wylie",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0368",
+          "county": "rockwall-tx",
+          "place": "4880356",
+          "community": "Wylie",
+          "consumer": "home_county_query_binding"
+        },
+        {
+          "originalFailureId": "LP24449-0369",
+          "county": "dewitt-tx",
+          "place": "4880560",
+          "community": "Yoakum",
+          "consumer": "home_county_query_binding"
+        }
+      ]
+    },
+    "HOME_MEMBERSHIP_WRONG_CONTEXT": {
+      "count": 65,
+      "identities": [
+        {
+          "originalFailureId": "LP24449-0038",
+          "county": "nueces-tx",
+          "place": "4801396",
+          "community": "Agua Dulce",
+          "consumer": "home_only_identity"
+        },
+        {
+          "originalFailureId": "LP24449-0040",
+          "county": "nueces-tx",
+          "place": "4801396",
+          "community": "Agua Dulce",
+          "consumer": "visible_home_county_choice"
+        },
+        {
+          "originalFailureId": "LP24449-0041",
+          "county": "nueces-tx",
+          "place": "4801396",
+          "community": "Agua Dulce",
+          "consumer": "visible_home_county_reload"
+        },
+        {
+          "originalFailureId": "LP24449-0072",
+          "county": "cameron-tx",
+          "place": "4814880",
+          "community": "Chula Vista",
+          "consumer": "home_only_identity"
+        },
+        {
+          "originalFailureId": "LP24449-0074",
+          "county": "cameron-tx",
+          "place": "4814880",
+          "community": "Chula Vista",
+          "consumer": "visible_home_county_choice"
+        },
+        {
+          "originalFailureId": "LP24449-0075",
+          "county": "cameron-tx",
+          "place": "4814880",
+          "community": "Chula Vista",
+          "consumer": "visible_home_county_reload"
+        },
+        {
+          "originalFailureId": "LP24449-0077",
+          "county": "zavala-tx",
+          "place": "4814882",
+          "community": "Chula Vista",
+          "consumer": "home_only_identity"
+        },
+        {
+          "originalFailureId": "LP24449-0079",
+          "county": "zavala-tx",
+          "place": "4814882",
+          "community": "Chula Vista",
+          "consumer": "visible_home_county_choice"
+        },
+        {
+          "originalFailureId": "LP24449-0080",
+          "county": "zavala-tx",
+          "place": "4814882",
+          "community": "Chula Vista",
+          "consumer": "visible_home_county_reload"
+        },
+        {
+          "originalFailureId": "LP24449-0111",
+          "county": "webb-tx",
+          "place": "4822905",
+          "community": "El Cenizo",
+          "consumer": "home_only_identity"
+        },
+        {
+          "originalFailureId": "LP24449-0113",
+          "county": "webb-tx",
+          "place": "4822905",
+          "community": "El Cenizo",
+          "consumer": "visible_home_county_choice"
+        },
+        {
+          "originalFailureId": "LP24449-0114",
+          "county": "webb-tx",
+          "place": "4822905",
+          "community": "El Cenizo",
+          "consumer": "visible_home_county_reload"
+        },
+        {
+          "originalFailureId": "LP24449-0150",
+          "county": "starr-tx",
+          "place": "4834133",
+          "community": "Hilltop",
+          "consumer": "home_only_identity"
+        },
+        {
+          "originalFailureId": "LP24449-0152",
+          "county": "starr-tx",
+          "place": "4834133",
+          "community": "Hilltop",
+          "consumer": "visible_home_county_choice"
+        },
+        {
+          "originalFailureId": "LP24449-0153",
+          "county": "starr-tx",
+          "place": "4834133",
+          "community": "Hilltop",
+          "consumer": "visible_home_county_reload"
+        },
+        {
+          "originalFailureId": "LP24449-0165",
+          "county": "travis-tx",
+          "place": "4840264",
+          "community": "Lago Vista",
+          "consumer": "home_only_identity"
+        },
+        {
+          "originalFailureId": "LP24449-0167",
+          "county": "travis-tx",
+          "place": "4840264",
+          "community": "Lago Vista",
+          "consumer": "visible_home_county_choice"
+        },
+        {
+          "originalFailureId": "LP24449-0168",
+          "county": "travis-tx",
+          "place": "4840264",
+          "community": "Lago Vista",
+          "consumer": "visible_home_county_reload"
+        },
+        {
+          "originalFailureId": "LP24449-0172",
+          "county": "tarrant-tx",
+          "place": "4840744",
+          "community": "Lakeside",
+          "consumer": "home_only_identity"
+        },
+        {
+          "originalFailureId": "LP24449-0174",
+          "county": "tarrant-tx",
+          "place": "4840744",
+          "community": "Lakeside",
+          "consumer": "visible_home_county_choice"
+        },
+        {
+          "originalFailureId": "LP24449-0175",
+          "county": "tarrant-tx",
+          "place": "4840744",
+          "community": "Lakeside",
+          "consumer": "visible_home_county_reload"
+        },
+        {
+          "originalFailureId": "LP24449-0180",
+          "county": "reeves-tx",
+          "place": "4842874",
+          "community": "Lindsay",
+          "consumer": "home_only_identity"
+        },
+        {
+          "originalFailureId": "LP24449-0182",
+          "county": "reeves-tx",
+          "place": "4842874",
+          "community": "Lindsay",
+          "consumer": "visible_home_county_choice"
+        },
+        {
+          "originalFailureId": "LP24449-0183",
+          "county": "reeves-tx",
+          "place": "4842874",
+          "community": "Lindsay",
+          "consumer": "visible_home_county_reload"
+        },
+        {
+          "originalFailureId": "LP24449-0185",
+          "county": "starr-tx",
+          "place": "4843463",
+          "community": "Loma Linda East",
+          "consumer": "home_only_identity"
+        },
+        {
+          "originalFailureId": "LP24449-0187",
+          "county": "starr-tx",
+          "place": "4843463",
+          "community": "Loma Linda East",
+          "consumer": "visible_home_county_choice"
+        },
+        {
+          "originalFailureId": "LP24449-0188",
+          "county": "starr-tx",
+          "place": "4843463",
+          "community": "Loma Linda East",
+          "consumer": "visible_home_county_reload"
+        },
+        {
+          "originalFailureId": "LP24449-0192",
+          "county": "starr-tx",
+          "place": "4844110",
+          "community": "Los Ebanos",
+          "consumer": "home_only_identity"
+        },
+        {
+          "originalFailureId": "LP24449-0194",
+          "county": "starr-tx",
+          "place": "4844110",
+          "community": "Los Ebanos",
+          "consumer": "visible_home_county_choice"
+        },
+        {
+          "originalFailureId": "LP24449-0195",
+          "county": "starr-tx",
+          "place": "4844110",
+          "community": "Los Ebanos",
+          "consumer": "visible_home_county_reload"
+        },
+        {
+          "originalFailureId": "LP24449-0197",
+          "county": "cameron-tx",
+          "place": "4844116",
+          "community": "Los Fresnos",
+          "consumer": "home_only_identity"
+        },
+        {
+          "originalFailureId": "LP24449-0199",
+          "county": "cameron-tx",
+          "place": "4844116",
+          "community": "Los Fresnos",
+          "consumer": "visible_home_county_choice"
+        },
+        {
+          "originalFailureId": "LP24449-0200",
+          "county": "cameron-tx",
+          "place": "4844116",
+          "community": "Los Fresnos",
+          "consumer": "visible_home_county_reload"
+        },
+        {
+          "originalFailureId": "LP24449-0215",
+          "county": "starr-tx",
+          "place": "4847898",
+          "community": "Mesquite",
+          "consumer": "home_only_identity"
+        },
+        {
+          "originalFailureId": "LP24449-0217",
+          "county": "starr-tx",
+          "place": "4847898",
+          "community": "Mesquite",
+          "consumer": "visible_home_county_choice"
+        },
+        {
+          "originalFailureId": "LP24449-0218",
+          "county": "starr-tx",
+          "place": "4847898",
+          "community": "Mesquite",
+          "consumer": "visible_home_county_reload"
+        },
+        {
+          "originalFailureId": "LP24449-0236",
+          "county": "kaufman-tx",
+          "place": "4853160",
+          "community": "Oak Ridge",
+          "consumer": "home_only_identity"
+        },
+        {
+          "originalFailureId": "LP24449-0238",
+          "county": "kaufman-tx",
+          "place": "4853160",
+          "community": "Oak Ridge",
+          "consumer": "visible_home_county_choice"
+        },
+        {
+          "originalFailureId": "LP24449-0239",
+          "county": "kaufman-tx",
+          "place": "4853160",
+          "community": "Oak Ridge",
+          "consumer": "visible_home_county_reload"
+        },
+        {
+          "originalFailureId": "LP24449-0248",
+          "county": "cameron-tx",
+          "place": "4854748",
+          "community": "Palmer",
+          "consumer": "home_only_identity"
+        },
+        {
+          "originalFailureId": "LP24449-0250",
+          "county": "cameron-tx",
+          "place": "4854748",
+          "community": "Palmer",
+          "consumer": "visible_home_county_choice"
+        },
+        {
+          "originalFailureId": "LP24449-0251",
+          "county": "cameron-tx",
+          "place": "4854748",
+          "community": "Palmer",
+          "consumer": "visible_home_county_reload"
+        },
+        {
+          "originalFailureId": "LP24449-0261",
+          "county": "orange-tx",
+          "place": "4857608",
+          "community": "Pinehurst",
+          "consumer": "home_only_identity"
+        },
+        {
+          "originalFailureId": "LP24449-0263",
+          "county": "orange-tx",
+          "place": "4857608",
+          "community": "Pinehurst",
+          "consumer": "visible_home_county_choice"
+        },
+        {
+          "originalFailureId": "LP24449-0264",
+          "county": "orange-tx",
+          "place": "4857608",
+          "community": "Pinehurst",
+          "consumer": "visible_home_county_reload"
+        },
+        {
+          "originalFailureId": "LP24449-0271",
+          "county": "cameron-tx",
+          "place": "4860544",
+          "community": "Rancho Viejo",
+          "consumer": "home_only_identity"
+        },
+        {
+          "originalFailureId": "LP24449-0273",
+          "county": "cameron-tx",
+          "place": "4860544",
+          "community": "Rancho Viejo",
+          "consumer": "visible_home_county_choice"
+        },
+        {
+          "originalFailureId": "LP24449-0274",
+          "county": "cameron-tx",
+          "place": "4860544",
+          "community": "Rancho Viejo",
+          "consumer": "visible_home_county_reload"
+        },
+        {
+          "originalFailureId": "LP24449-0293",
+          "county": "san-patricio-tx",
+          "place": "4864244",
+          "community": "St. Paul",
+          "consumer": "home_only_identity"
+        },
+        {
+          "originalFailureId": "LP24449-0295",
+          "county": "san-patricio-tx",
+          "place": "4864244",
+          "community": "St. Paul",
+          "consumer": "visible_home_county_choice"
+        },
+        {
+          "originalFailureId": "LP24449-0296",
+          "county": "san-patricio-tx",
+          "place": "4864244",
+          "community": "St. Paul",
+          "consumer": "visible_home_county_reload"
+        },
+        {
+          "originalFailureId": "LP24449-0304",
+          "county": "starr-tx",
+          "place": "4865532",
+          "community": "San Juan",
+          "consumer": "home_only_identity"
+        },
+        {
+          "originalFailureId": "LP24449-0306",
+          "county": "starr-tx",
+          "place": "4865532",
+          "community": "San Juan",
+          "consumer": "visible_home_county_choice"
+        },
+        {
+          "originalFailureId": "LP24449-0307",
+          "county": "starr-tx",
+          "place": "4865532",
+          "community": "San Juan",
+          "consumer": "visible_home_county_reload"
+        },
+        {
+          "originalFailureId": "LP24449-0311",
+          "county": "starr-tx",
+          "place": "4865678",
+          "community": "Santa Anna",
+          "consumer": "home_only_identity"
+        },
+        {
+          "originalFailureId": "LP24449-0313",
+          "county": "starr-tx",
+          "place": "4865678",
+          "community": "Santa Anna",
+          "consumer": "visible_home_county_choice"
+        },
+        {
+          "originalFailureId": "LP24449-0314",
+          "county": "starr-tx",
+          "place": "4865678",
+          "community": "Santa Anna",
+          "consumer": "visible_home_county_reload"
+        },
+        {
+          "originalFailureId": "LP24449-0316",
+          "county": "cameron-tx",
+          "place": "4865768",
+          "community": "Santa Rosa",
+          "consumer": "home_only_identity"
+        },
+        {
+          "originalFailureId": "LP24449-0318",
+          "county": "cameron-tx",
+          "place": "4865768",
+          "community": "Santa Rosa",
+          "consumer": "visible_home_county_choice"
+        },
+        {
+          "originalFailureId": "LP24449-0319",
+          "county": "cameron-tx",
+          "place": "4865768",
+          "community": "Santa Rosa",
+          "consumer": "visible_home_county_reload"
+        },
+        {
+          "originalFailureId": "LP24449-0331",
+          "county": "comal-tx",
+          "place": "4869608",
+          "community": "Spring Branch",
+          "consumer": "visible_home_county_choice"
+        },
+        {
+          "originalFailureId": "LP24449-0332",
+          "county": "comal-tx",
+          "place": "4869608",
+          "community": "Spring Branch",
+          "consumer": "visible_home_county_reload"
+        },
+        {
+          "originalFailureId": "LP24449-0338",
+          "county": "starr-tx",
+          "place": "4871274",
+          "community": "Sunset",
+          "consumer": "home_only_identity"
+        },
+        {
+          "originalFailureId": "LP24449-0340",
+          "county": "starr-tx",
+          "place": "4871274",
+          "community": "Sunset",
+          "consumer": "visible_home_county_choice"
+        },
+        {
+          "originalFailureId": "LP24449-0341",
+          "county": "starr-tx",
+          "place": "4871274",
+          "community": "Sunset",
+          "consumer": "visible_home_county_reload"
+        }
+      ]
+    },
+    "WEATHER_WRONG_LOCALITY": {
+      "count": 21,
+      "identities": [
+        {
+          "originalFailureId": "LP24449-0039",
+          "county": "nueces-tx",
+          "place": "4801396",
+          "community": "Agua Dulce",
+          "consumer": "home_only_weather_contract"
+        },
+        {
+          "originalFailureId": "LP24449-0073",
+          "county": "cameron-tx",
+          "place": "4814880",
+          "community": "Chula Vista",
+          "consumer": "home_only_weather_contract"
+        },
+        {
+          "originalFailureId": "LP24449-0078",
+          "county": "zavala-tx",
+          "place": "4814882",
+          "community": "Chula Vista",
+          "consumer": "home_only_weather_contract"
+        },
+        {
+          "originalFailureId": "LP24449-0112",
+          "county": "webb-tx",
+          "place": "4822905",
+          "community": "El Cenizo",
+          "consumer": "home_only_weather_contract"
+        },
+        {
+          "originalFailureId": "LP24449-0151",
+          "county": "starr-tx",
+          "place": "4834133",
+          "community": "Hilltop",
+          "consumer": "home_only_weather_contract"
+        },
+        {
+          "originalFailureId": "LP24449-0166",
+          "county": "travis-tx",
+          "place": "4840264",
+          "community": "Lago Vista",
+          "consumer": "home_only_weather_contract"
+        },
+        {
+          "originalFailureId": "LP24449-0173",
+          "county": "tarrant-tx",
+          "place": "4840744",
+          "community": "Lakeside",
+          "consumer": "home_only_weather_contract"
+        },
+        {
+          "originalFailureId": "LP24449-0181",
+          "county": "reeves-tx",
+          "place": "4842874",
+          "community": "Lindsay",
+          "consumer": "home_only_weather_contract"
+        },
+        {
+          "originalFailureId": "LP24449-0186",
+          "county": "starr-tx",
+          "place": "4843463",
+          "community": "Loma Linda East",
+          "consumer": "home_only_weather_contract"
+        },
+        {
+          "originalFailureId": "LP24449-0193",
+          "county": "starr-tx",
+          "place": "4844110",
+          "community": "Los Ebanos",
+          "consumer": "home_only_weather_contract"
+        },
+        {
+          "originalFailureId": "LP24449-0198",
+          "county": "cameron-tx",
+          "place": "4844116",
+          "community": "Los Fresnos",
+          "consumer": "home_only_weather_contract"
+        },
+        {
+          "originalFailureId": "LP24449-0216",
+          "county": "starr-tx",
+          "place": "4847898",
+          "community": "Mesquite",
+          "consumer": "home_only_weather_contract"
+        },
+        {
+          "originalFailureId": "LP24449-0237",
+          "county": "kaufman-tx",
+          "place": "4853160",
+          "community": "Oak Ridge",
+          "consumer": "home_only_weather_contract"
+        },
+        {
+          "originalFailureId": "LP24449-0249",
+          "county": "cameron-tx",
+          "place": "4854748",
+          "community": "Palmer",
+          "consumer": "home_only_weather_contract"
+        },
+        {
+          "originalFailureId": "LP24449-0262",
+          "county": "orange-tx",
+          "place": "4857608",
+          "community": "Pinehurst",
+          "consumer": "home_only_weather_contract"
+        },
+        {
+          "originalFailureId": "LP24449-0272",
+          "county": "cameron-tx",
+          "place": "4860544",
+          "community": "Rancho Viejo",
+          "consumer": "home_only_weather_contract"
+        },
+        {
+          "originalFailureId": "LP24449-0294",
+          "county": "san-patricio-tx",
+          "place": "4864244",
+          "community": "St. Paul",
+          "consumer": "home_only_weather_contract"
+        },
+        {
+          "originalFailureId": "LP24449-0305",
+          "county": "starr-tx",
+          "place": "4865532",
+          "community": "San Juan",
+          "consumer": "home_only_weather_contract"
+        },
+        {
+          "originalFailureId": "LP24449-0312",
+          "county": "starr-tx",
+          "place": "4865678",
+          "community": "Santa Anna",
+          "consumer": "home_only_weather_contract"
+        },
+        {
+          "originalFailureId": "LP24449-0317",
+          "county": "cameron-tx",
+          "place": "4865768",
+          "community": "Santa Rosa",
+          "consumer": "home_only_weather_contract"
+        },
+        {
+          "originalFailureId": "LP24449-0339",
+          "county": "starr-tx",
+          "place": "4871274",
+          "community": "Sunset",
+          "consumer": "home_only_weather_contract"
+        }
+      ]
+    },
+    "SEARCH_PUBLICATION_FAILED": {
+      "count": 22,
+      "identities": [
+        {
+          "originalFailureId": "LP24449-0042",
+          "county": "brooks-tx",
+          "place": "4801514",
+          "community": "Airport Road Addition",
+          "consumer": "search_case_publication"
+        },
+        {
+          "originalFailureId": "LP24449-0056",
+          "county": "palo-pinto-tx",
+          "place": "4810084",
+          "community": "Brazos",
+          "consumer": "search_case_publication"
+        },
+        {
+          "originalFailureId": "LP24449-0063",
+          "county": "cameron-tx",
+          "place": "4812045",
+          "community": "Cameron Park",
+          "consumer": "search_case_publication"
+        },
+        {
+          "originalFailureId": "LP24449-0066",
+          "county": "wichita-tx",
+          "place": "4813198",
+          "community": "Cashion Community",
+          "consumer": "search_case_publication"
+        },
+        {
+          "originalFailureId": "LP24449-0070",
+          "county": "hidalgo-tx",
+          "place": "4814038",
+          "community": "CÃ©sar ChÃ¡vez",
+          "consumer": "search_case_publication"
+        },
+        {
+          "originalFailureId": "LP24449-0082",
+          "county": "val-verde-tx",
+          "place": "4814927",
+          "community": "Cienegas Terrace",
+          "consumer": "search_case_publication"
+        },
+        {
+          "originalFailureId": "LP24449-0084",
+          "county": "bastrop-tx",
+          "place": "4814986",
+          "community": "Circle D-KC Estates",
+          "consumer": "search_case_publication"
+        },
+        {
+          "originalFailureId": "LP24449-0088",
+          "county": "brazos-tx",
+          "place": "4815976",
+          "community": "College Station",
+          "consumer": "search_case_publication"
+        },
+        {
+          "originalFailureId": "LP24449-0109",
+          "county": "maverick-tx",
+          "place": "4822810",
+          "community": "Eidson Road",
+          "consumer": "search_case_publication"
+        },
+        {
+          "originalFailureId": "LP24449-0121",
+          "county": "fort-bend-tx",
+          "place": "4825795",
+          "community": "Fifth Street",
+          "consumer": "search_case_publication"
+        },
+        {
+          "originalFailureId": "LP24449-0190",
+          "county": "zapata-tx",
+          "place": "4843960",
+          "community": "LopeÃ±o",
+          "consumer": "search_case_publication"
+        },
+        {
+          "originalFailureId": "LP24449-0212",
+          "county": "fort-bend-tx",
+          "place": "4847337",
+          "community": "Meadows Place",
+          "consumer": "search_case_publication"
+        },
+        {
+          "originalFailureId": "LP24449-0240",
+          "county": "hood-tx",
+          "place": "4853212",
+          "community": "Oak Trail Shores",
+          "consumer": "search_case_publication"
+        },
+        {
+          "originalFailureId": "LP24449-0283",
+          "county": "cooke-tx",
+          "place": "4862486",
+          "community": "Road Runner",
+          "consumer": "search_case_publication"
+        },
+        {
+          "originalFailureId": "LP24449-0285",
+          "county": "randall-tx",
+          "place": "4862834",
+          "community": "Rockwell Place",
+          "consumer": "search_case_publication"
+        },
+        {
+          "originalFailureId": "LP24449-0291",
+          "county": "bexar-tx",
+          "place": "4864172",
+          "community": "St. Hedwig",
+          "consumer": "search_case_publication"
+        },
+        {
+          "originalFailureId": "LP24449-0297",
+          "county": "starr-tx",
+          "place": "4864316",
+          "community": "SalineÃ±o",
+          "consumer": "search_case_publication"
+        },
+        {
+          "originalFailureId": "LP24449-0298",
+          "county": "starr-tx",
+          "place": "4864322",
+          "community": "SalineÃ±o North",
+          "consumer": "search_case_publication"
+        },
+        {
+          "originalFailureId": "LP24449-0329",
+          "county": "harris-tx",
+          "place": "4869272",
+          "community": "Southside Place",
+          "consumer": "search_case_publication"
+        },
+        {
+          "originalFailureId": "LP24449-0353",
+          "county": "dallas-tx",
+          "place": "4874492",
+          "community": "University Park",
+          "consumer": "search_case_publication"
+        },
+        {
+          "originalFailureId": "LP24449-0355",
+          "county": "val-verde-tx",
+          "place": "4874895",
+          "community": "Val Verde Park",
+          "consumer": "search_case_publication"
+        },
+        {
+          "originalFailureId": "LP24449-0361",
+          "county": "harris-tx",
+          "place": "4877956",
+          "community": "West University Place",
+          "consumer": "search_case_publication"
+        }
+      ]
+    },
+    "MULTICOUNTY_WRONG_MEMBERSHIP": {
+      "count": 6,
+      "identities": [
+        {
+          "originalFailureId": "LP24449-0129",
+          "county": "henderson-tx",
+          "place": "4827300",
+          "community": "Frankston",
+          "consumer": "visible_home_county_choice"
+        },
+        {
+          "originalFailureId": "LP24449-0130",
+          "county": "henderson-tx",
+          "place": "4827300",
+          "community": "Frankston",
+          "consumer": "visible_home_county_reload"
+        },
+        {
+          "originalFailureId": "LP24449-0277",
+          "county": "parker-tx",
+          "place": "4861604",
+          "community": "Reno",
+          "consumer": "visible_home_county_choice"
+        },
+        {
+          "originalFailureId": "LP24449-0278",
+          "county": "parker-tx",
+          "place": "4861604",
+          "community": "Reno",
+          "consumer": "visible_home_county_reload"
+        },
+        {
+          "originalFailureId": "LP24449-0280",
+          "county": "tarrant-tx",
+          "place": "4861604",
+          "community": "Reno",
+          "consumer": "visible_home_county_choice"
+        },
+        {
+          "originalFailureId": "LP24449-0281",
+          "county": "tarrant-tx",
+          "place": "4861604",
+          "community": "Reno",
+          "consumer": "visible_home_county_reload"
+        }
+      ]
+    }
+  },
+  "deferred": [
+    "PROVIDER_HEALTH_FALSE",
+    "CROSSING_ELIGIBLE_PACKAGE_MISSING",
+    "PULSE_PUBLISHED_COUNT_STALE_AFTER_CLEAR",
+    "FILTER_COUNTY_WRONG_SCOPE"
+  ]
+}

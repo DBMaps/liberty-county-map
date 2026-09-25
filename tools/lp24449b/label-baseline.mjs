@@ -1,0 +1,10 @@
+import fs from 'node:fs';
+import vm from 'node:vm';
+import crypto from 'node:crypto';
+import {root,out,artifacts,loadInventory,write} from './inventory.mjs';
+const baseline=fs.readFileSync(`${artifacts}/baseline-app.js`,'utf8'),current=fs.readFileSync(`${root}/js/app.js`,'utf8');
+const extract=source=>{const start=source.indexOf('function cleanupGridlyDisplayEncodingArtifacts(');if(start<0)throw Error('Display cleanup missing');return source.slice(start,source.indexOf('\n}',start)+2);};
+const before=extract(baseline),after=extract(current),context={};vm.createContext(context);vm.runInContext(before,context);
+const records=loadInventory().rows.map(row=>({...row,expectedDisplayLabel:context.cleanupGridlyDisplayEncodingArtifacts(row.community_name)}));
+write(`${out}/label-baseline.json`,{purpose:'Use the unchanged starting-source display cleanup as the label oracle, while checking PLACE/county/coordinates independently. Encoding defects remain disclosed and are not repaired in this identity milestone.',formatterUnchanged:before===after,formatterSha256:crypto.createHash('sha256').update(before).digest('hex'),baselineSourceHash:crypto.createHash('sha256').update(baseline).digest('hex'),sourceHash:crypto.createHash('sha256').update(current).digest('hex'),alteredLabels:records.filter(row=>row.expectedDisplayLabel!==row.community_name),records});
+console.log(JSON.stringify({formatterUnchanged:before===after,alteredLabels:records.filter(row=>row.expectedDisplayLabel!==row.community_name).map(row=>({place:row.place_geoid,raw:row.community_name,display:row.expectedDisplayLabel}))}));

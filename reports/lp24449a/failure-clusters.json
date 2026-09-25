@@ -1,0 +1,1342 @@
+{
+  "generatedAt": "2026-09-24T09:52:30.078Z",
+  "assertionCount": 369,
+  "families": {
+    "SEARCH_NOT_FOUND": {
+      "assertions": 16,
+      "multi": 0,
+      "single": 16,
+      "counties": [
+        "bastrop-tx",
+        "bexar-tx",
+        "brooks-tx",
+        "cooke-tx",
+        "fort-bend-tx",
+        "harris-tx",
+        "hidalgo-tx",
+        "hood-tx",
+        "maverick-tx",
+        "randall-tx",
+        "starr-tx",
+        "val-verde-tx",
+        "zapata-tx"
+      ],
+      "places": [
+        "4801514",
+        "4814038",
+        "4814927",
+        "4814986",
+        "4822810",
+        "4825795",
+        "4843960",
+        "4847337",
+        "4853212",
+        "4862486",
+        "4862834",
+        "4864172",
+        "4864316",
+        "4864322",
+        "4869272",
+        "4877956"
+      ],
+      "originalFailureIds": [
+        "LP24449-0001",
+        "LP24449-0005",
+        "LP24449-0006",
+        "LP24449-0007",
+        "LP24449-0010",
+        "LP24449-0011",
+        "LP24449-0014",
+        "LP24449-0015",
+        "LP24449-0017",
+        "LP24449-0022",
+        "LP24449-0024",
+        "LP24449-0025",
+        "LP24449-0026",
+        "LP24449-0027",
+        "LP24449-0029",
+        "LP24449-0033"
+      ]
+    },
+    "HOME_BASELINE_WRONG_CONTEXT": {
+      "assertions": 17,
+      "multi": 4,
+      "single": 13,
+      "counties": [
+        "nueces-tx"
+      ],
+      "places": [
+        "4803600",
+        "4805576",
+        "4808392",
+        "4817000",
+        "4821436",
+        "4836008",
+        "4841422",
+        "4852404",
+        "4857056",
+        "4858808",
+        "4858904",
+        "4860529",
+        "4862600",
+        "4865342",
+        "4869708",
+        "4872952",
+        "4872954"
+      ],
+      "originalFailureIds": [
+        "LP24449-0002",
+        "LP24449-0003",
+        "LP24449-0004",
+        "LP24449-0008",
+        "LP24449-0009",
+        "LP24449-0012",
+        "LP24449-0013",
+        "LP24449-0016",
+        "LP24449-0018",
+        "LP24449-0019",
+        "LP24449-0020",
+        "LP24449-0021",
+        "LP24449-0023",
+        "LP24449-0028",
+        "LP24449-0030",
+        "LP24449-0031",
+        "LP24449-0032"
+      ]
+    },
+    "HOME_CHOICE_IDENTITY_BINDING_LOSS": {
+      "assertions": 222,
+      "multi": 200,
+      "single": 22,
+      "counties": [
+        "bexar-tx",
+        "brazoria-tx",
+        "caldwell-tx",
+        "cameron-tx",
+        "chambers-tx",
+        "cherokee-tx",
+        "clay-tx",
+        "comal-tx",
+        "coryell-tx",
+        "dallas-tx",
+        "denton-tx",
+        "dewitt-tx",
+        "fannin-tx",
+        "fort-bend-tx",
+        "galveston-tx",
+        "grayson-tx",
+        "grimes-tx",
+        "guadalupe-tx",
+        "hamilton-tx",
+        "harris-tx",
+        "harrison-tx",
+        "hartley-tx",
+        "hays-tx",
+        "henderson-tx",
+        "hunt-tx",
+        "jim-wells-tx",
+        "johnson-tx",
+        "jones-tx",
+        "kaufman-tx",
+        "kendall-tx",
+        "kleberg-tx",
+        "lampasas-tx",
+        "leon-tx",
+        "liberty-tx",
+        "llano-tx",
+        "lubbock-tx",
+        "lynn-tx",
+        "madison-tx",
+        "martin-tx",
+        "mclennan-tx",
+        "medina-tx",
+        "midland-tx",
+        "montgomery-tx",
+        "moore-tx",
+        "morris-tx",
+        "navarro-tx",
+        "nolan-tx",
+        "nueces-tx",
+        "ochiltree-tx",
+        "orange-tx",
+        "parker-tx",
+        "polk-tx",
+        "randall-tx",
+        "red-river-tx",
+        "reeves-tx",
+        "rockwall-tx",
+        "rusk-tx",
+        "san-jacinto-tx",
+        "san-patricio-tx",
+        "shackelford-tx",
+        "starr-tx",
+        "swisher-tx",
+        "tarrant-tx",
+        "taylor-tx",
+        "travis-tx",
+        "tyler-tx",
+        "upshur-tx",
+        "van-zandt-tx",
+        "waller-tx",
+        "webb-tx",
+        "wichita-tx",
+        "williamson-tx",
+        "wilson-tx",
+        "winkler-tx",
+        "wise-tx",
+        "wood-tx",
+        "yoakum-tx",
+        "zavala-tx"
+      ],
+      "places": [
+        "4800160",
+        "4801000",
+        "4801108",
+        "4801396",
+        "4801636",
+        "4803000",
+        "4803600",
+        "4805000",
+        "4805168",
+        "4805732",
+        "4806128",
+        "4808240",
+        "4808488",
+        "4809448",
+        "4810192",
+        "4810828",
+        "4811212",
+        "4811428",
+        "4811572",
+        "4813024",
+        "4813492",
+        "4813552",
+        "4813684",
+        "4814880",
+        "4814882",
+        "4814920",
+        "4814929",
+        "4815172",
+        "4815436",
+        "4816216",
+        "4816612",
+        "4816624",
+        "4817000",
+        "4817612",
+        "4817648",
+        "4817960",
+        "4818524",
+        "4819000",
+        "4819984",
+        "4820020",
+        "4822168",
+        "4822192",
+        "4822905",
+        "4823044",
+        "4823272",
+        "4824864",
+        "4825168",
+        "4825752",
+        "4826232",
+        "4826666",
+        "4827000",
+        "4827300",
+        "4827648",
+        "4827684",
+        "4827696",
+        "4829000",
+        "4829660",
+        "4829840",
+        "4830092",
+        "4830464",
+        "4830644",
+        "4831964",
+        "4832156",
+        "4832720",
+        "4832984",
+        "4833020",
+        "4833548",
+        "4834133",
+        "4834862",
+        "4835000",
+        "4835300",
+        "4836008",
+        "4838068",
+        "4838476",
+        "4839124",
+        "4840264",
+        "4840468",
+        "4840674",
+        "4840744",
+        "4841980",
+        "4842016",
+        "4842508",
+        "4842874",
+        "4843463",
+        "4843888",
+        "4844110",
+        "4844116",
+        "4845048",
+        "4845096",
+        "4845288",
+        "4845324",
+        "4845672",
+        "4845804",
+        "4846452",
+        "4846824",
+        "4847892",
+        "4847898",
+        "4848072",
+        "4848684",
+        "4848772",
+        "4848804",
+        "4848936",
+        "4849068",
+        "4849380",
+        "4850200",
+        "4850472",
+        "4850772",
+        "4850820",
+        "4850920",
+        "4851492",
+        "4851588",
+        "4851840",
+        "4853160",
+        "4853232",
+        "4853388",
+        "4853436",
+        "4853824",
+        "4854432",
+        "4854444",
+        "4854748",
+        "4856348",
+        "4856462",
+        "4856468",
+        "4856498",
+        "4857176",
+        "4857476",
+        "4857608",
+        "4858016",
+        "4858502",
+        "4858820",
+        "4858904",
+        "4859696",
+        "4860544",
+        "4861508",
+        "4861604",
+        "4861796",
+        "4862504",
+        "4863500",
+        "4863572",
+        "4863668",
+        "4864064",
+        "4864244",
+        "4865000",
+        "4865180",
+        "4865408",
+        "4865532",
+        "4865600",
+        "4865678",
+        "4865768",
+        "4866128",
+        "4866392",
+        "4866428",
+        "4866704",
+        "4866908",
+        "4867688",
+        "4869032",
+        "4869608",
+        "4869800",
+        "4869908",
+        "4869980",
+        "4870604",
+        "4871274",
+        "4871924",
+        "4872392",
+        "4872656",
+        "4872776",
+        "4873316",
+        "4873592",
+        "4873710",
+        "4873724",
+        "4874216",
+        "4874408",
+        "4874732",
+        "4874924",
+        "4875236",
+        "4876228",
+        "4876576",
+        "4877620",
+        "4878628",
+        "4879000",
+        "4879204",
+        "4879696",
+        "4879816",
+        "4880356",
+        "4880560"
+      ],
+      "originalFailureIds": [
+        "LP24449-0034",
+        "LP24449-0035",
+        "LP24449-0036",
+        "LP24449-0037",
+        "LP24449-0043",
+        "LP24449-0044",
+        "LP24449-0045",
+        "LP24449-0046",
+        "LP24449-0047",
+        "LP24449-0048",
+        "LP24449-0049",
+        "LP24449-0050",
+        "LP24449-0051",
+        "LP24449-0052",
+        "LP24449-0053",
+        "LP24449-0054",
+        "LP24449-0055",
+        "LP24449-0057",
+        "LP24449-0058",
+        "LP24449-0059",
+        "LP24449-0060",
+        "LP24449-0061",
+        "LP24449-0062",
+        "LP24449-0064",
+        "LP24449-0065",
+        "LP24449-0067",
+        "LP24449-0068",
+        "LP24449-0069",
+        "LP24449-0071",
+        "LP24449-0076",
+        "LP24449-0081",
+        "LP24449-0083",
+        "LP24449-0085",
+        "LP24449-0086",
+        "LP24449-0087",
+        "LP24449-0089",
+        "LP24449-0090",
+        "LP24449-0091",
+        "LP24449-0092",
+        "LP24449-0093",
+        "LP24449-0094",
+        "LP24449-0095",
+        "LP24449-0096",
+        "LP24449-0097",
+        "LP24449-0098",
+        "LP24449-0099",
+        "LP24449-0100",
+        "LP24449-0101",
+        "LP24449-0102",
+        "LP24449-0103",
+        "LP24449-0104",
+        "LP24449-0105",
+        "LP24449-0106",
+        "LP24449-0107",
+        "LP24449-0108",
+        "LP24449-0110",
+        "LP24449-0115",
+        "LP24449-0116",
+        "LP24449-0117",
+        "LP24449-0118",
+        "LP24449-0119",
+        "LP24449-0120",
+        "LP24449-0122",
+        "LP24449-0123",
+        "LP24449-0124",
+        "LP24449-0125",
+        "LP24449-0126",
+        "LP24449-0127",
+        "LP24449-0128",
+        "LP24449-0131",
+        "LP24449-0132",
+        "LP24449-0133",
+        "LP24449-0134",
+        "LP24449-0135",
+        "LP24449-0136",
+        "LP24449-0137",
+        "LP24449-0138",
+        "LP24449-0139",
+        "LP24449-0140",
+        "LP24449-0141",
+        "LP24449-0142",
+        "LP24449-0143",
+        "LP24449-0144",
+        "LP24449-0145",
+        "LP24449-0146",
+        "LP24449-0147",
+        "LP24449-0148",
+        "LP24449-0149",
+        "LP24449-0154",
+        "LP24449-0155",
+        "LP24449-0156",
+        "LP24449-0157",
+        "LP24449-0158",
+        "LP24449-0159",
+        "LP24449-0160",
+        "LP24449-0161",
+        "LP24449-0162",
+        "LP24449-0163",
+        "LP24449-0164",
+        "LP24449-0169",
+        "LP24449-0170",
+        "LP24449-0171",
+        "LP24449-0176",
+        "LP24449-0177",
+        "LP24449-0178",
+        "LP24449-0179",
+        "LP24449-0184",
+        "LP24449-0189",
+        "LP24449-0191",
+        "LP24449-0196",
+        "LP24449-0201",
+        "LP24449-0202",
+        "LP24449-0203",
+        "LP24449-0204",
+        "LP24449-0205",
+        "LP24449-0206",
+        "LP24449-0207",
+        "LP24449-0208",
+        "LP24449-0209",
+        "LP24449-0210",
+        "LP24449-0211",
+        "LP24449-0213",
+        "LP24449-0214",
+        "LP24449-0219",
+        "LP24449-0220",
+        "LP24449-0221",
+        "LP24449-0222",
+        "LP24449-0223",
+        "LP24449-0224",
+        "LP24449-0225",
+        "LP24449-0226",
+        "LP24449-0227",
+        "LP24449-0228",
+        "LP24449-0229",
+        "LP24449-0230",
+        "LP24449-0231",
+        "LP24449-0232",
+        "LP24449-0233",
+        "LP24449-0234",
+        "LP24449-0235",
+        "LP24449-0241",
+        "LP24449-0242",
+        "LP24449-0243",
+        "LP24449-0244",
+        "LP24449-0245",
+        "LP24449-0246",
+        "LP24449-0247",
+        "LP24449-0252",
+        "LP24449-0253",
+        "LP24449-0254",
+        "LP24449-0255",
+        "LP24449-0256",
+        "LP24449-0257",
+        "LP24449-0258",
+        "LP24449-0259",
+        "LP24449-0260",
+        "LP24449-0265",
+        "LP24449-0266",
+        "LP24449-0267",
+        "LP24449-0268",
+        "LP24449-0269",
+        "LP24449-0270",
+        "LP24449-0275",
+        "LP24449-0276",
+        "LP24449-0279",
+        "LP24449-0282",
+        "LP24449-0284",
+        "LP24449-0286",
+        "LP24449-0287",
+        "LP24449-0288",
+        "LP24449-0289",
+        "LP24449-0290",
+        "LP24449-0292",
+        "LP24449-0299",
+        "LP24449-0300",
+        "LP24449-0301",
+        "LP24449-0302",
+        "LP24449-0303",
+        "LP24449-0308",
+        "LP24449-0309",
+        "LP24449-0310",
+        "LP24449-0315",
+        "LP24449-0320",
+        "LP24449-0321",
+        "LP24449-0322",
+        "LP24449-0323",
+        "LP24449-0324",
+        "LP24449-0325",
+        "LP24449-0326",
+        "LP24449-0327",
+        "LP24449-0328",
+        "LP24449-0330",
+        "LP24449-0333",
+        "LP24449-0334",
+        "LP24449-0335",
+        "LP24449-0336",
+        "LP24449-0337",
+        "LP24449-0342",
+        "LP24449-0343",
+        "LP24449-0344",
+        "LP24449-0345",
+        "LP24449-0346",
+        "LP24449-0347",
+        "LP24449-0348",
+        "LP24449-0349",
+        "LP24449-0350",
+        "LP24449-0351",
+        "LP24449-0352",
+        "LP24449-0354",
+        "LP24449-0356",
+        "LP24449-0357",
+        "LP24449-0358",
+        "LP24449-0359",
+        "LP24449-0360",
+        "LP24449-0362",
+        "LP24449-0363",
+        "LP24449-0364",
+        "LP24449-0365",
+        "LP24449-0366",
+        "LP24449-0367",
+        "LP24449-0368",
+        "LP24449-0369"
+      ]
+    },
+    "HOME_MEMBERSHIP_WRONG_CONTEXT": {
+      "assertions": 65,
+      "multi": 0,
+      "single": 65,
+      "counties": [
+        "cameron-tx",
+        "comal-tx",
+        "kaufman-tx",
+        "nueces-tx",
+        "orange-tx",
+        "reeves-tx",
+        "san-patricio-tx",
+        "starr-tx",
+        "tarrant-tx",
+        "travis-tx",
+        "webb-tx",
+        "zavala-tx"
+      ],
+      "places": [
+        "4801396",
+        "4814880",
+        "4814882",
+        "4822905",
+        "4834133",
+        "4840264",
+        "4840744",
+        "4842874",
+        "4843463",
+        "4844110",
+        "4844116",
+        "4847898",
+        "4853160",
+        "4854748",
+        "4857608",
+        "4860544",
+        "4864244",
+        "4865532",
+        "4865678",
+        "4865768",
+        "4869608",
+        "4871274"
+      ],
+      "originalFailureIds": [
+        "LP24449-0038",
+        "LP24449-0040",
+        "LP24449-0041",
+        "LP24449-0072",
+        "LP24449-0074",
+        "LP24449-0075",
+        "LP24449-0077",
+        "LP24449-0079",
+        "LP24449-0080",
+        "LP24449-0111",
+        "LP24449-0113",
+        "LP24449-0114",
+        "LP24449-0150",
+        "LP24449-0152",
+        "LP24449-0153",
+        "LP24449-0165",
+        "LP24449-0167",
+        "LP24449-0168",
+        "LP24449-0172",
+        "LP24449-0174",
+        "LP24449-0175",
+        "LP24449-0180",
+        "LP24449-0182",
+        "LP24449-0183",
+        "LP24449-0185",
+        "LP24449-0187",
+        "LP24449-0188",
+        "LP24449-0192",
+        "LP24449-0194",
+        "LP24449-0195",
+        "LP24449-0197",
+        "LP24449-0199",
+        "LP24449-0200",
+        "LP24449-0215",
+        "LP24449-0217",
+        "LP24449-0218",
+        "LP24449-0236",
+        "LP24449-0238",
+        "LP24449-0239",
+        "LP24449-0248",
+        "LP24449-0250",
+        "LP24449-0251",
+        "LP24449-0261",
+        "LP24449-0263",
+        "LP24449-0264",
+        "LP24449-0271",
+        "LP24449-0273",
+        "LP24449-0274",
+        "LP24449-0293",
+        "LP24449-0295",
+        "LP24449-0296",
+        "LP24449-0304",
+        "LP24449-0306",
+        "LP24449-0307",
+        "LP24449-0311",
+        "LP24449-0313",
+        "LP24449-0314",
+        "LP24449-0316",
+        "LP24449-0318",
+        "LP24449-0319",
+        "LP24449-0331",
+        "LP24449-0332",
+        "LP24449-0338",
+        "LP24449-0340",
+        "LP24449-0341"
+      ]
+    },
+    "WEATHER_WRONG_LOCALITY": {
+      "assertions": 21,
+      "multi": 0,
+      "single": 21,
+      "counties": [
+        "cameron-tx",
+        "kaufman-tx",
+        "nueces-tx",
+        "orange-tx",
+        "reeves-tx",
+        "san-patricio-tx",
+        "starr-tx",
+        "tarrant-tx",
+        "travis-tx",
+        "webb-tx",
+        "zavala-tx"
+      ],
+      "places": [
+        "4801396",
+        "4814880",
+        "4814882",
+        "4822905",
+        "4834133",
+        "4840264",
+        "4840744",
+        "4842874",
+        "4843463",
+        "4844110",
+        "4844116",
+        "4847898",
+        "4853160",
+        "4854748",
+        "4857608",
+        "4860544",
+        "4864244",
+        "4865532",
+        "4865678",
+        "4865768",
+        "4871274"
+      ],
+      "originalFailureIds": [
+        "LP24449-0039",
+        "LP24449-0073",
+        "LP24449-0078",
+        "LP24449-0112",
+        "LP24449-0151",
+        "LP24449-0166",
+        "LP24449-0173",
+        "LP24449-0181",
+        "LP24449-0186",
+        "LP24449-0193",
+        "LP24449-0198",
+        "LP24449-0216",
+        "LP24449-0237",
+        "LP24449-0249",
+        "LP24449-0262",
+        "LP24449-0272",
+        "LP24449-0294",
+        "LP24449-0305",
+        "LP24449-0312",
+        "LP24449-0317",
+        "LP24449-0339"
+      ]
+    },
+    "SEARCH_PUBLICATION_FAILED": {
+      "assertions": 22,
+      "multi": 0,
+      "single": 22,
+      "counties": [
+        "bastrop-tx",
+        "bexar-tx",
+        "brazos-tx",
+        "brooks-tx",
+        "cameron-tx",
+        "cooke-tx",
+        "dallas-tx",
+        "fort-bend-tx",
+        "harris-tx",
+        "hidalgo-tx",
+        "hood-tx",
+        "maverick-tx",
+        "palo-pinto-tx",
+        "randall-tx",
+        "starr-tx",
+        "val-verde-tx",
+        "wichita-tx",
+        "zapata-tx"
+      ],
+      "places": [
+        "4801514",
+        "4810084",
+        "4812045",
+        "4813198",
+        "4814038",
+        "4814927",
+        "4814986",
+        "4815976",
+        "4822810",
+        "4825795",
+        "4843960",
+        "4847337",
+        "4853212",
+        "4862486",
+        "4862834",
+        "4864172",
+        "4864316",
+        "4864322",
+        "4869272",
+        "4874492",
+        "4874895",
+        "4877956"
+      ],
+      "originalFailureIds": [
+        "LP24449-0042",
+        "LP24449-0056",
+        "LP24449-0063",
+        "LP24449-0066",
+        "LP24449-0070",
+        "LP24449-0082",
+        "LP24449-0084",
+        "LP24449-0088",
+        "LP24449-0109",
+        "LP24449-0121",
+        "LP24449-0190",
+        "LP24449-0212",
+        "LP24449-0240",
+        "LP24449-0283",
+        "LP24449-0285",
+        "LP24449-0291",
+        "LP24449-0297",
+        "LP24449-0298",
+        "LP24449-0329",
+        "LP24449-0353",
+        "LP24449-0355",
+        "LP24449-0361"
+      ]
+    },
+    "MULTICOUNTY_WRONG_MEMBERSHIP": {
+      "assertions": 6,
+      "multi": 6,
+      "single": 0,
+      "counties": [
+        "henderson-tx",
+        "parker-tx",
+        "tarrant-tx"
+      ],
+      "places": [
+        "4827300",
+        "4861604"
+      ],
+      "originalFailureIds": [
+        "LP24449-0129",
+        "LP24449-0130",
+        "LP24449-0277",
+        "LP24449-0278",
+        "LP24449-0280",
+        "LP24449-0281"
+      ]
+    }
+  },
+  "collisionGroups": [
+    [
+      {
+        "placeGeoid": "4801390",
+        "displayName": "Agua Dulce",
+        "governedType": "CENSUS_DESIGNATED_PLACE",
+        "consumerEligible": true,
+        "countyMemberships": [
+          "48141"
+        ]
+      },
+      {
+        "placeGeoid": "4801396",
+        "displayName": "Agua Dulce",
+        "governedType": "INCORPORATED_PLACE",
+        "consumerEligible": true,
+        "countyMemberships": [
+          "48355"
+        ]
+      }
+    ],
+    [
+      {
+        "placeGeoid": "4814880",
+        "displayName": "Chula Vista",
+        "governedType": "CENSUS_DESIGNATED_PLACE",
+        "consumerEligible": true,
+        "countyMemberships": [
+          "48061"
+        ]
+      },
+      {
+        "placeGeoid": "4814881",
+        "displayName": "Chula Vista",
+        "governedType": "CENSUS_DESIGNATED_PLACE",
+        "consumerEligible": true,
+        "countyMemberships": [
+          "48323"
+        ]
+      },
+      {
+        "placeGeoid": "4814882",
+        "displayName": "Chula Vista",
+        "governedType": "CENSUS_DESIGNATED_PLACE",
+        "consumerEligible": true,
+        "countyMemberships": [
+          "48507"
+        ]
+      }
+    ],
+    [
+      {
+        "placeGeoid": "4822898",
+        "displayName": "El Cenizo",
+        "governedType": "CENSUS_DESIGNATED_PLACE",
+        "consumerEligible": true,
+        "countyMemberships": [
+          "48427"
+        ]
+      },
+      {
+        "placeGeoid": "4822905",
+        "displayName": "El Cenizo",
+        "governedType": "INCORPORATED_PLACE",
+        "consumerEligible": true,
+        "countyMemberships": [
+          "48479"
+        ]
+      }
+    ],
+    [
+      {
+        "placeGeoid": "4834130",
+        "displayName": "Hilltop",
+        "governedType": "CENSUS_DESIGNATED_PLACE",
+        "consumerEligible": true,
+        "countyMemberships": [
+          "48163"
+        ]
+      },
+      {
+        "placeGeoid": "4834133",
+        "displayName": "Hilltop",
+        "governedType": "CENSUS_DESIGNATED_PLACE",
+        "consumerEligible": true,
+        "countyMemberships": [
+          "48427"
+        ]
+      }
+    ],
+    [
+      {
+        "placeGeoid": "4840262",
+        "displayName": "Lago Vista",
+        "governedType": "CENSUS_DESIGNATED_PLACE",
+        "consumerEligible": true,
+        "countyMemberships": [
+          "48427"
+        ]
+      },
+      {
+        "placeGeoid": "4840264",
+        "displayName": "Lago Vista",
+        "governedType": "INCORPORATED_PLACE",
+        "consumerEligible": true,
+        "countyMemberships": [
+          "48453"
+        ]
+      }
+    ],
+    [
+      {
+        "placeGeoid": "4840738",
+        "displayName": "Lakeside",
+        "governedType": "INCORPORATED_PLACE",
+        "consumerEligible": true,
+        "countyMemberships": [
+          "48409"
+        ]
+      },
+      {
+        "placeGeoid": "4840744",
+        "displayName": "Lakeside",
+        "governedType": "INCORPORATED_PLACE",
+        "consumerEligible": true,
+        "countyMemberships": [
+          "48439"
+        ]
+      }
+    ],
+    [
+      {
+        "placeGeoid": "4840888",
+        "displayName": "Lakeview",
+        "governedType": "INCORPORATED_PLACE",
+        "consumerEligible": true,
+        "countyMemberships": [
+          "48191"
+        ]
+      },
+      {
+        "placeGeoid": "4840966",
+        "displayName": "Lake View",
+        "governedType": "CENSUS_DESIGNATED_PLACE",
+        "consumerEligible": true,
+        "countyMemberships": [
+          "48465"
+        ]
+      }
+    ],
+    [
+      {
+        "placeGeoid": "4842868",
+        "displayName": "Lindsay",
+        "governedType": "INCORPORATED_PLACE",
+        "consumerEligible": true,
+        "countyMemberships": [
+          "48097"
+        ]
+      },
+      {
+        "placeGeoid": "4842874",
+        "displayName": "Lindsay",
+        "governedType": "CENSUS_DESIGNATED_PLACE",
+        "consumerEligible": true,
+        "countyMemberships": [
+          "48389"
+        ]
+      }
+    ],
+    [
+      {
+        "placeGeoid": "4843462",
+        "displayName": "Loma Linda East",
+        "governedType": "CENSUS_DESIGNATED_PLACE",
+        "consumerEligible": true,
+        "countyMemberships": [
+          "48249"
+        ]
+      },
+      {
+        "placeGeoid": "4843463",
+        "displayName": "Loma Linda East",
+        "governedType": "CENSUS_DESIGNATED_PLACE",
+        "consumerEligible": true,
+        "countyMemberships": [
+          "48427"
+        ]
+      }
+    ],
+    [
+      {
+        "placeGeoid": "4844104",
+        "displayName": "Los Ebanos",
+        "governedType": "CENSUS_DESIGNATED_PLACE",
+        "consumerEligible": true,
+        "countyMemberships": [
+          "48215"
+        ]
+      },
+      {
+        "placeGeoid": "4844110",
+        "displayName": "Los Ebanos",
+        "governedType": "CENSUS_DESIGNATED_PLACE",
+        "consumerEligible": true,
+        "countyMemberships": [
+          "48427"
+        ]
+      }
+    ],
+    [
+      {
+        "placeGeoid": "4844116",
+        "displayName": "Los Fresnos",
+        "governedType": "INCORPORATED_PLACE",
+        "consumerEligible": true,
+        "countyMemberships": [
+          "48061"
+        ]
+      },
+      {
+        "placeGeoid": "4844120",
+        "displayName": "Los Fresnos",
+        "governedType": "CENSUS_DESIGNATED_PLACE",
+        "consumerEligible": true,
+        "countyMemberships": [
+          "48479"
+        ]
+      }
+    ],
+    [
+      {
+        "placeGeoid": "4847892",
+        "displayName": "Mesquite",
+        "governedType": "INCORPORATED_PLACE",
+        "consumerEligible": true,
+        "countyMemberships": [
+          "48113",
+          "48257"
+        ]
+      },
+      {
+        "placeGeoid": "4847898",
+        "displayName": "Mesquite",
+        "governedType": "CENSUS_DESIGNATED_PLACE",
+        "consumerEligible": true,
+        "countyMemberships": [
+          "48427"
+        ]
+      }
+    ],
+    [
+      {
+        "placeGeoid": "4853154",
+        "displayName": "Oak Ridge",
+        "governedType": "INCORPORATED_PLACE",
+        "consumerEligible": true,
+        "countyMemberships": [
+          "48097"
+        ]
+      },
+      {
+        "placeGeoid": "4853160",
+        "displayName": "Oak Ridge",
+        "governedType": "INCORPORATED_PLACE",
+        "consumerEligible": true,
+        "countyMemberships": [
+          "48257"
+        ]
+      }
+    ],
+    [
+      {
+        "placeGeoid": "4854744",
+        "displayName": "Palmer",
+        "governedType": "INCORPORATED_PLACE",
+        "consumerEligible": true,
+        "countyMemberships": [
+          "48139"
+        ]
+      },
+      {
+        "placeGeoid": "4854748",
+        "displayName": "Palmer",
+        "governedType": "CENSUS_DESIGNATED_PLACE",
+        "consumerEligible": true,
+        "countyMemberships": [
+          "48061"
+        ]
+      }
+    ],
+    [
+      {
+        "placeGeoid": "4857596",
+        "displayName": "Pinehurst",
+        "governedType": "CENSUS_DESIGNATED_PLACE",
+        "consumerEligible": true,
+        "countyMemberships": [
+          "48339"
+        ]
+      },
+      {
+        "placeGeoid": "4857608",
+        "displayName": "Pinehurst",
+        "governedType": "INCORPORATED_PLACE",
+        "consumerEligible": true,
+        "countyMemberships": [
+          "48361"
+        ]
+      }
+    ],
+    [
+      {
+        "placeGeoid": "4860544",
+        "displayName": "Rancho Viejo",
+        "governedType": "INCORPORATED_PLACE",
+        "consumerEligible": true,
+        "countyMemberships": [
+          "48061"
+        ]
+      },
+      {
+        "placeGeoid": "4860554",
+        "displayName": "Rancho Viejo",
+        "governedType": "CENSUS_DESIGNATED_PLACE",
+        "consumerEligible": true,
+        "countyMemberships": [
+          "48427"
+        ]
+      }
+    ],
+    [
+      {
+        "placeGeoid": "4861592",
+        "displayName": "Reno",
+        "governedType": "INCORPORATED_PLACE",
+        "consumerEligible": true,
+        "countyMemberships": [
+          "48277"
+        ]
+      },
+      {
+        "placeGeoid": "4861604",
+        "displayName": "Reno",
+        "governedType": "INCORPORATED_PLACE",
+        "consumerEligible": true,
+        "countyMemberships": [
+          "48367",
+          "48439"
+        ]
+      }
+    ],
+    [
+      {
+        "placeGeoid": "4864220",
+        "displayName": "St. Paul",
+        "governedType": "INCORPORATED_PLACE",
+        "consumerEligible": true,
+        "countyMemberships": [
+          "48085"
+        ]
+      },
+      {
+        "placeGeoid": "4864244",
+        "displayName": "St. Paul",
+        "governedType": "CENSUS_DESIGNATED_PLACE",
+        "consumerEligible": true,
+        "countyMemberships": [
+          "48409"
+        ]
+      }
+    ],
+    [
+      {
+        "placeGeoid": "4865516",
+        "displayName": "San Juan",
+        "governedType": "INCORPORATED_PLACE",
+        "consumerEligible": true,
+        "countyMemberships": [
+          "48215"
+        ]
+      },
+      {
+        "placeGeoid": "4865532",
+        "displayName": "San Juan",
+        "governedType": "CENSUS_DESIGNATED_PLACE",
+        "consumerEligible": true,
+        "countyMemberships": [
+          "48427"
+        ]
+      }
+    ],
+    [
+      {
+        "placeGeoid": "4865672",
+        "displayName": "Santa Anna",
+        "governedType": "INCORPORATED_PLACE",
+        "consumerEligible": true,
+        "countyMemberships": [
+          "48083"
+        ]
+      },
+      {
+        "placeGeoid": "4865678",
+        "displayName": "Santa Anna",
+        "governedType": "CENSUS_DESIGNATED_PLACE",
+        "consumerEligible": true,
+        "countyMemberships": [
+          "48427"
+        ]
+      }
+    ],
+    [
+      {
+        "placeGeoid": "4865768",
+        "displayName": "Santa Rosa",
+        "governedType": "INCORPORATED_PLACE",
+        "consumerEligible": true,
+        "countyMemberships": [
+          "48061"
+        ]
+      },
+      {
+        "placeGeoid": "4865774",
+        "displayName": "Santa Rosa",
+        "governedType": "CENSUS_DESIGNATED_PLACE",
+        "consumerEligible": true,
+        "countyMemberships": [
+          "48427"
+        ]
+      }
+    ],
+    [
+      {
+        "placeGeoid": "4871264",
+        "displayName": "Sunset",
+        "governedType": "CENSUS_DESIGNATED_PLACE",
+        "consumerEligible": true,
+        "countyMemberships": [
+          "48337"
+        ]
+      },
+      {
+        "placeGeoid": "4871274",
+        "displayName": "Sunset",
+        "governedType": "CENSUS_DESIGNATED_PLACE",
+        "consumerEligible": true,
+        "countyMemberships": [
+          "48427"
+        ]
+      }
+    ]
+  ],
+  "additionalRepairFindings": [
+    {
+      "root": "Legacy chooser aliases",
+      "count": 27,
+      "proof": "home-identity-summary.json",
+      "repair": "Resolve the existing county-specific alias against exactly one eligible governed registry PLACE, retaining the existing control and county."
+    },
+    {
+      "root": "Home context cached before canonical coordinates loaded",
+      "repair": "Include resolved canonical coordinates in the Home context signature and use the same presentation authority in restored canonical records; no persisted coordinates or county centroids."
+    },
+    {
+      "root": "Ambiguous legacy name with no explicit county",
+      "repair": "Reject a name spanning multiple counties unless a stable county occurrence key or explicit persisted county supplies authority."
+    }
+  ]
+}

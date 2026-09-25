@@ -1,0 +1,36 @@
+{
+  "decision": "CONDITIONAL",
+  "blockers": [],
+  "remainingOriginalFailures": [],
+  "statewideFailures": [],
+  "preExistingTestFailures": {
+    "newFailures": [],
+    "baselineFailureCount": 10,
+    "repairedFailureCount": 10
+  },
+  "diagnosticAdjustments": [
+    {
+      "case": "Combined popup clear",
+      "evidence": "combined-clear-diagnostic.json",
+      "description": "The harness clicked a detached button before popup completion. Existing popup readiness and atomic attached DOM selection correct the interaction; failed attempts are retained without product changes."
+    },
+    {
+      "case": "Aldine Home completion wait",
+      "evidence": "attempt-summary.json",
+      "description": "One original 30-second weather-completion deadline expired. The unchanged product passed a passive diagnostic retry and the required predecessor replay; the original failed attempt remains preserved. A retry alone does not establish the exact original timeout cause."
+    },
+    {
+      "case": "Aransas Pass / Aransas County control placement",
+      "evidence": "publication-race-controls.json",
+      "description": "The shared PLACE presentation point is geographically in another county membership. The production fixture guard correctly rejected it. The same accepted Aransas County context was then tested using the nearest governed in-county public-crossing coordinate; prior successful control records and the rejected setup log were retained."
+    }
+  ],
+  "liveLimitations": [
+    "External provider acquisition/availability not live-certified.",
+    "Physical Android/iOS and native WebViews not device-tested."
+  ],
+  "presentationLimitations": [
+    "Existing 320 px Large Text Size label clipping and 38 px button height match the starting source; no B1 presentation repair."
+  ],
+  "productionWrites": 0
+}

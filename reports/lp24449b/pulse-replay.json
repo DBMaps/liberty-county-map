@@ -1,0 +1,599 @@
+{
+  "original": 10,
+  "records": [
+    {
+      "originalFailureId": "LP24449-ledger-02031",
+      "code": "PULSE_PUBLISHED_COUNT_STALE_AFTER_CLEAR",
+      "county_id": "mills-tx",
+      "place_geoid": "4830056",
+      "community": "Goldthwaite",
+      "consumer": "synthetic_road",
+      "status": "STILL_FAIL",
+      "reason": "Original isolated baseline/current witnesses converge, but family closure remains blocked by independently reproduced stale publication counts in statewide sequences. See pulse-blocker-analysis.json; this is not certified as a timing artifact.",
+      "proof": [
+        ".artifacts/lp24449b/baseline-pulse.json",
+        ".artifacts/lp24449b/current-pulse.json",
+        "pulse-statewide.json",
+        "pulse-blocker-analysis.json"
+      ]
+    },
+    {
+      "originalFailureId": "LP24449-ledger-02032",
+      "code": "PULSE_PUBLISHED_COUNT_STALE_AFTER_CLEAR",
+      "county_id": "mills-tx",
+      "place_geoid": "4830056",
+      "community": "Goldthwaite",
+      "consumer": "synthetic_delay",
+      "status": "STILL_FAIL",
+      "reason": "Original isolated baseline/current witnesses converge, but family closure remains blocked by independently reproduced stale publication counts in statewide sequences. See pulse-blocker-analysis.json; this is not certified as a timing artifact.",
+      "proof": [
+        ".artifacts/lp24449b/baseline-pulse.json",
+        ".artifacts/lp24449b/current-pulse.json",
+        "pulse-statewide.json",
+        "pulse-blocker-analysis.json"
+      ]
+    },
+    {
+      "originalFailureId": "LP24449-ledger-02033",
+      "code": "PULSE_PUBLISHED_COUNT_STALE_AFTER_CLEAR",
+      "county_id": "mitchell-tx",
+      "place_geoid": "4816120",
+      "community": "Colorado City",
+      "consumer": "synthetic_road",
+      "status": "STILL_FAIL",
+      "reason": "Original isolated baseline/current witnesses converge, but family closure remains blocked by independently reproduced stale publication counts in statewide sequences. See pulse-blocker-analysis.json; this is not certified as a timing artifact.",
+      "proof": [
+        ".artifacts/lp24449b/baseline-pulse.json",
+        ".artifacts/lp24449b/current-pulse.json",
+        "pulse-statewide.json",
+        "pulse-blocker-analysis.json"
+      ]
+    },
+    {
+      "originalFailureId": "LP24449-ledger-02034",
+      "code": "PULSE_PUBLISHED_COUNT_STALE_AFTER_CLEAR",
+      "county_id": "mitchell-tx",
+      "place_geoid": "4816120",
+      "community": "Colorado City",
+      "consumer": "synthetic_delay",
+      "status": "STILL_FAIL",
+      "reason": "Original isolated baseline/current witnesses converge, but family closure remains blocked by independently reproduced stale publication counts in statewide sequences. See pulse-blocker-analysis.json; this is not certified as a timing artifact.",
+      "proof": [
+        ".artifacts/lp24449b/baseline-pulse.json",
+        ".artifacts/lp24449b/current-pulse.json",
+        "pulse-statewide.json",
+        "pulse-blocker-analysis.json"
+      ]
+    },
+    {
+      "originalFailureId": "LP24449-ledger-02035",
+      "code": "PULSE_PUBLISHED_COUNT_STALE_AFTER_CLEAR",
+      "county_id": "montgomery-tx",
+      "place_geoid": "4818260",
+      "community": "Cut and Shoot",
+      "consumer": "synthetic_road",
+      "status": "STILL_FAIL",
+      "reason": "Original isolated baseline/current witnesses converge, but family closure remains blocked by independently reproduced stale publication counts in statewide sequences. See pulse-blocker-analysis.json; this is not certified as a timing artifact.",
+      "proof": [
+        ".artifacts/lp24449b/baseline-pulse.json",
+        ".artifacts/lp24449b/current-pulse.json",
+        "pulse-statewide.json",
+        "pulse-blocker-analysis.json"
+      ]
+    },
+    {
+      "originalFailureId": "LP24449-ledger-02036",
+      "code": "PULSE_PUBLISHED_COUNT_STALE_AFTER_CLEAR",
+      "county_id": "montgomery-tx",
+      "place_geoid": "4818260",
+      "community": "Cut and Shoot",
+      "consumer": "synthetic_delay",
+      "status": "STILL_FAIL",
+      "reason": "Original isolated baseline/current witnesses converge, but family closure remains blocked by independently reproduced stale publication counts in statewide sequences. See pulse-blocker-analysis.json; this is not certified as a timing artifact.",
+      "proof": [
+        ".artifacts/lp24449b/baseline-pulse.json",
+        ".artifacts/lp24449b/current-pulse.json",
+        "pulse-statewide.json",
+        "pulse-blocker-analysis.json"
+      ]
+    },
+    {
+      "originalFailureId": "LP24449-ledger-02037",
+      "code": "PULSE_PUBLISHED_COUNT_STALE_AFTER_CLEAR",
+      "county_id": "presidio-tx",
+      "place_geoid": "4846620",
+      "community": "Marfa",
+      "consumer": "synthetic_road",
+      "status": "STILL_FAIL",
+      "reason": "Original isolated baseline/current witnesses converge, but family closure remains blocked by independently reproduced stale publication counts in statewide sequences. See pulse-blocker-analysis.json; this is not certified as a timing artifact.",
+      "proof": [
+        ".artifacts/lp24449b/baseline-pulse.json",
+        ".artifacts/lp24449b/current-pulse.json",
+        "pulse-statewide.json",
+        "pulse-blocker-analysis.json"
+      ]
+    },
+    {
+      "originalFailureId": "LP24449-ledger-02038",
+      "code": "PULSE_PUBLISHED_COUNT_STALE_AFTER_CLEAR",
+      "county_id": "presidio-tx",
+      "place_geoid": "4846620",
+      "community": "Marfa",
+      "consumer": "synthetic_delay",
+      "status": "STILL_FAIL",
+      "reason": "Original isolated baseline/current witnesses converge, but family closure remains blocked by independently reproduced stale publication counts in statewide sequences. See pulse-blocker-analysis.json; this is not certified as a timing artifact.",
+      "proof": [
+        ".artifacts/lp24449b/baseline-pulse.json",
+        ".artifacts/lp24449b/current-pulse.json",
+        "pulse-statewide.json",
+        "pulse-blocker-analysis.json"
+      ]
+    },
+    {
+      "originalFailureId": "LP24449-ledger-02039",
+      "code": "PULSE_PUBLISHED_COUNT_STALE_AFTER_CLEAR",
+      "county_id": "wharton-tx",
+      "place_geoid": "4809232",
+      "community": "Boling",
+      "consumer": "synthetic_road",
+      "status": "STILL_FAIL",
+      "reason": "Original isolated baseline/current witnesses converge, but family closure remains blocked by independently reproduced stale publication counts in statewide sequences. See pulse-blocker-analysis.json; this is not certified as a timing artifact.",
+      "proof": [
+        ".artifacts/lp24449b/baseline-pulse.json",
+        ".artifacts/lp24449b/current-pulse.json",
+        "pulse-statewide.json",
+        "pulse-blocker-analysis.json"
+      ]
+    },
+    {
+      "originalFailureId": "LP24449-ledger-02040",
+      "code": "PULSE_PUBLISHED_COUNT_STALE_AFTER_CLEAR",
+      "county_id": "wharton-tx",
+      "place_geoid": "4809232",
+      "community": "Boling",
+      "consumer": "synthetic_delay",
+      "status": "STILL_FAIL",
+      "reason": "Original isolated baseline/current witnesses converge, but family closure remains blocked by independently reproduced stale publication counts in statewide sequences. See pulse-blocker-analysis.json; this is not certified as a timing artifact.",
+      "proof": [
+        ".artifacts/lp24449b/baseline-pulse.json",
+        ".artifacts/lp24449b/current-pulse.json",
+        "pulse-statewide.json",
+        "pulse-blocker-analysis.json"
+      ]
+    }
+  ],
+  "stateManagementRepair": false,
+  "presentationCopyRepair": true,
+  "classification": "E/H candidate: stale retained candidate/shared publication defect; upstream candidate origin and safe repair are not yet unambiguously established.",
+  "originalTimedReplaysConverge": true,
+  "currentFindings": [
+    {
+      "code": "PULSE_PUBLISHED_COUNT_STALE_AFTER_CLEAR",
+      "county_id": "montgomery-tx",
+      "place_geoid": "4816432",
+      "community": "Conroe",
+      "evidence": "pulse-statewide.json",
+      "checks": {
+        "active": true,
+        "activeRows": true,
+        "clearPublication": false,
+        "clearRows": true,
+        "clearMarkers": true,
+        "truthful": true
+      },
+      "immediateCount": 1,
+      "settledCount": 1,
+      "visible": {
+        "headline": "Stay aware while traveling.",
+        "subline": "No active issues currently shown. Some sources are currently unavailable · Checked just now.",
+        "location": "No active issues currently shown"
+      },
+      "groupedCount": 0,
+      "markerCount": 0,
+      "governedConsumerRows": {
+        "locationContext": 0,
+        "communityPulse": 0,
+        "alerts": 0,
+        "kbygCommunity": 0,
+        "kbygOfficialRoadways": 0,
+        "map": 0,
+        "popup": 0,
+        "history": 0
+      },
+      "writerDiagnostic": null
+    },
+    {
+      "code": "PULSE_PUBLISHED_COUNT_STALE_AFTER_CLEAR",
+      "county_id": "montague-tx",
+      "place_geoid": "4809640",
+      "community": "Bowie",
+      "evidence": "pulse-sequence-diagnostic.json",
+      "checks": {
+        "active": true,
+        "activeRows": true,
+        "clearPublication": false,
+        "clearRows": true,
+        "clearMarkers": true,
+        "truthful": true
+      },
+      "immediateCount": 1,
+      "settledCount": 1,
+      "visible": {
+        "headline": "Stay aware while traveling.",
+        "subline": "No active issues currently shown. Some sources are currently unavailable · Checked just now.",
+        "location": "No active issues currently shown"
+      },
+      "groupedCount": 0,
+      "markerCount": 0,
+      "governedConsumerRows": {
+        "locationContext": 0,
+        "communityPulse": 0,
+        "alerts": 0,
+        "kbygCommunity": 0,
+        "kbygOfficialRoadways": 0,
+        "map": 0,
+        "popup": 0,
+        "history": 0
+      },
+      "timing": [
+        {
+          "ms": 100,
+          "count": 1
+        },
+        {
+          "ms": 250,
+          "count": 1
+        },
+        {
+          "ms": 500,
+          "count": 1
+        },
+        {
+          "ms": 1000,
+          "count": 1
+        },
+        {
+          "ms": 2000,
+          "count": 1
+        }
+      ],
+      "writerDiagnostic": null
+    },
+    {
+      "code": "PULSE_PUBLISHED_COUNT_STALE_AFTER_CLEAR",
+      "county_id": "bexar-tx",
+      "place_geoid": "4801600",
+      "community": "Alamo Heights",
+      "evidence": "pulse-writer-diagnostic.json",
+      "checks": {
+        "active": true,
+        "activeRows": true,
+        "clearPublication": false,
+        "clearRows": true,
+        "clearMarkers": true,
+        "truthful": true
+      },
+      "immediateCount": 1,
+      "settledCount": 1,
+      "visible": {
+        "headline": "Stay aware while traveling.",
+        "subline": "No active issues currently shown. Some sources are currently unavailable · Checked just now.",
+        "location": "No active issues currently shown"
+      },
+      "groupedCount": 0,
+      "markerCount": 0,
+      "governedConsumerRows": {
+        "locationContext": 0,
+        "communityPulse": 0,
+        "alerts": 0,
+        "kbygCommunity": 0,
+        "kbygOfficialRoadways": 0,
+        "map": 0,
+        "popup": 0,
+        "history": 0
+      },
+      "writerDiagnostic": {
+        "trace": [
+          {
+            "count": 1,
+            "resultCount": 1,
+            "summaryCount": 1,
+            "summaryContract": 1,
+            "resultSummary": 1,
+            "resultContract": 1,
+            "hazards": 0,
+            "grouped": 0,
+            "reused": false,
+            "stack": "Error\n    at publishGridlyCommunityPulseAuditState (eval at evaluate (:291:30), <anonymous>:1:817)\n    at refreshGridlyCommunityPulseSharedModel (http://127.0.0.1:57714/js/app.js?v=lp24448-awareness:67643:3)\n    at http://127.0.0.1:57714/js/app.js?v=lp24448-awareness:56643:70\n    at timeRefreshChild (http://127.0.0.1:57714/js/app.js?v=lp24448-awareness:56636:7)\n    at refreshReportHazardViews (http://127.0.0.1:57714/js/app.js?v=lp24448-awareness:56643:5)\n    at publish (http://127.0.0.1:57714/js/app.js?v=lp24448-awareness:130714:5)\n    at Object.clearOne (http://127.0.0.1:57714/js/app.js?v=lp24448-awareness:130776:5)\n    at eval (eval at evaluate (:291:30), <anonymous>:1:1363)\n    at async <anonymous>:317:30"
+          },
+          {
+            "count": 1,
+            "resultCount": 1,
+            "summaryCount": 1,
+            "summaryContract": 1,
+            "resultSummary": 1,
+            "resultContract": 1,
+            "hazards": 0,
+            "grouped": 0,
+            "reused": true,
+            "stack": "Error\n    at publishGridlyCommunityPulseAuditState (eval at evaluate (:291:30), <anonymous>:1:817)\n    at refreshGridlyCommunityPulseSharedModel (http://127.0.0.1:57714/js/app.js?v=lp24448-awareness:67643:3)\n    at refreshPortraitV2LocalizedIntelligence (http://127.0.0.1:57714/js/app.js?v=lp24448-awareness:115589:73)\n    at http://127.0.0.1:57714/js/app.js?v=lp24448-awareness:56644:70\n    at timeRefreshChild (http://127.0.0.1:57714/js/app.js?v=lp24448-awareness:56636:7)\n    at refreshReportHazardViews (http://127.0.0.1:57714/js/app.js?v=lp24448-awareness:56644:5)\n    at publish (http://127.0.0.1:57714/js/app.js?v=lp24448-awareness:130714:5)\n    at Object.clearOne (http://127.0.0.1:57714/js/app.js?v=lp24448-awareness:130776:5)\n    at eval (eval at evaluate (:291:30), <anonymous>:1:1363)\n    at async <anonymous>:317:30"
+          },
+          {
+            "count": 1,
+            "resultCount": 1,
+            "summaryCount": 1,
+            "summaryContract": 1,
+            "resultSummary": 1,
+            "resultContract": 1,
+            "hazards": 0,
+            "grouped": 0,
+            "reused": true,
+            "stack": "Error\n    at publishGridlyCommunityPulseAuditState (eval at evaluate (:291:30), <anonymous>:1:817)\n    at http://127.0.0.1:57714/js/app.js?v=lp24448-awareness:115680:5\n    at timeGridlyAuditSection (http://127.0.0.1:57714/js/app.js?v=lp24448-awareness:27105:18)\n    at refreshPortraitV2LocalizedIntelligence (http://127.0.0.1:57714/js/app.js?v=lp24448-awareness:115647:3)\n    at http://127.0.0.1:57714/js/app.js?v=lp24448-awareness:56644:70\n    at timeRefreshChild (http://127.0.0.1:57714/js/app.js?v=lp24448-awareness:56636:7)\n    at refreshReportHazardViews (http://127.0.0.1:57714/js/app.js?v=lp24448-awareness:56644:5)\n    at publish (http://127.0.0.1:57714/js/app.js?v=lp24448-awareness:130714:5)\n    at Object.clearOne (http://127.0.0.1:57714/js/app.js?v=lp24448-awareness:130776:5)\n    at eval (eval at evaluate (:291:30), <anonymous>:1:1363)"
+          }
+        ],
+        "freshCount": 1,
+        "freshSummary": 1,
+        "freshContract": 1,
+        "cacheCount": 1,
+        "lightweight": 1
+      }
+    }
+  ],
+  "blockerEvidence": "pulse-blocker-analysis.json",
+  "timingTargetsMs": [
+    0,
+    100,
+    250,
+    500,
+    1000,
+    2000
+  ],
+  "baseline": [
+    {
+      "id": "LP24449-ledger-02031",
+      "counts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "LP24449-ledger-02032",
+      "counts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "LP24449-ledger-02033",
+      "counts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "LP24449-ledger-02034",
+      "counts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "LP24449-ledger-02035",
+      "counts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "LP24449-ledger-02036",
+      "counts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "LP24449-ledger-02037",
+      "counts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "LP24449-ledger-02038",
+      "counts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "LP24449-ledger-02039",
+      "counts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "LP24449-ledger-02040",
+      "counts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "current": [
+    {
+      "id": "LP24449-ledger-02031",
+      "counts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "returned": 0,
+      "transition": 0
+    },
+    {
+      "id": "LP24449-ledger-02032",
+      "counts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "returned": 0,
+      "transition": 0
+    },
+    {
+      "id": "LP24449-ledger-02033",
+      "counts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "returned": 0,
+      "transition": 0
+    },
+    {
+      "id": "LP24449-ledger-02034",
+      "counts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "returned": 0,
+      "transition": 0
+    },
+    {
+      "id": "LP24449-ledger-02035",
+      "counts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "returned": 0,
+      "transition": 0
+    },
+    {
+      "id": "LP24449-ledger-02036",
+      "counts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "returned": 0,
+      "transition": 0
+    },
+    {
+      "id": "LP24449-ledger-02037",
+      "counts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "returned": 0,
+      "transition": 0
+    },
+    {
+      "id": "LP24449-ledger-02038",
+      "counts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "returned": 0,
+      "transition": 0
+    },
+    {
+      "id": "LP24449-ledger-02039",
+      "counts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "returned": 0,
+      "transition": 0
+    },
+    {
+      "id": "LP24449-ledger-02040",
+      "counts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "returned": 0,
+      "transition": 0
+    }
+  ],
+  "statewide": {
+    "count": 254,
+    "passed": false
+  }
+}

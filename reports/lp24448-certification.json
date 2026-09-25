@@ -1,0 +1,405 @@
+{
+  "phase": "LP244.48 targeted Search Around Me discovery repair",
+  "branch": "LP244.48-destination-quick-check-around-me",
+  "startingHead": "7eeadc23394fb9dbcf6f8c455482e8ac1179eb5a",
+  "focused": {
+    "passed": 113,
+    "failed": 0
+  },
+  "broader": {
+    "passed": 82,
+    "failed": 0
+  },
+  "rca": "Search lacked a visible Around Me action; existing foreground activation was wired to an icon-only map rail control. The reused chip style also fell to 40px at width 440; a button-scoped min-height preserves a 44px target.",
+  "browser": {
+    "command": "node tools/lp24448/verify-browser.mjs --quick",
+    "widths": [
+      390,
+      320,
+      360,
+      440
+    ],
+    "snapshots": 15,
+    "filterChecks": 36,
+    "searchActionProof": [
+      {
+        "width": 390,
+        "text": "Around Me",
+        "name": "Around Me",
+        "rect": {
+          "x": 16,
+          "y": 311.859375,
+          "width": 358,
+          "height": 44,
+          "bottom": 355.859375
+        },
+        "viewportHeight": 844,
+        "nearby": true,
+        "searchFields": 1
+      },
+      {
+        "width": 390,
+        "text": "Around Me",
+        "name": "Around Me",
+        "rect": {
+          "x": 16,
+          "y": 311.859375,
+          "width": 358,
+          "height": 44,
+          "bottom": 355.859375
+        },
+        "viewportHeight": 844,
+        "nearby": true,
+        "searchFields": 1
+      },
+      {
+        "width": 320,
+        "text": "Around Me",
+        "name": "Around Me",
+        "rect": {
+          "x": 16,
+          "y": 334.046875,
+          "width": 288,
+          "height": 44,
+          "bottom": 378.046875
+        },
+        "viewportHeight": 844,
+        "nearby": true,
+        "searchFields": 1
+      },
+      {
+        "width": 320,
+        "text": "Around Me",
+        "name": "Around Me",
+        "rect": {
+          "x": 16,
+          "y": 334.046875,
+          "width": 288,
+          "height": 44,
+          "bottom": 378.046875
+        },
+        "viewportHeight": 844,
+        "nearby": true,
+        "searchFields": 1
+      },
+      {
+        "width": 360,
+        "text": "Around Me",
+        "name": "Around Me",
+        "rect": {
+          "x": 16,
+          "y": 311.859375,
+          "width": 328,
+          "height": 44,
+          "bottom": 355.859375
+        },
+        "viewportHeight": 844,
+        "nearby": true,
+        "searchFields": 1
+      },
+      {
+        "width": 360,
+        "text": "Around Me",
+        "name": "Around Me",
+        "rect": {
+          "x": 16,
+          "y": 311.859375,
+          "width": 328,
+          "height": 44,
+          "bottom": 355.859375
+        },
+        "viewportHeight": 844,
+        "nearby": true,
+        "searchFields": 1
+      },
+      {
+        "width": 440,
+        "text": "Around Me",
+        "name": "Around Me",
+        "rect": {
+          "x": 16,
+          "y": 311.859375,
+          "width": 408,
+          "height": 44,
+          "bottom": 355.859375
+        },
+        "viewportHeight": 844,
+        "nearby": true,
+        "searchFields": 1
+      },
+      {
+        "width": 440,
+        "text": "Around Me",
+        "name": "Around Me",
+        "rect": {
+          "x": 16,
+          "y": 311.859375,
+          "width": 408,
+          "height": 44,
+          "bottom": 355.859375
+        },
+        "viewportHeight": 844,
+        "nearby": true,
+        "searchFields": 1
+      },
+      {
+        "width": 390,
+        "text": "Around Me",
+        "name": "Around Me",
+        "rect": {
+          "x": 16,
+          "y": 311.859375,
+          "width": 358,
+          "height": 44,
+          "bottom": 355.859375
+        },
+        "viewportHeight": 844,
+        "nearby": true,
+        "searchFields": 1
+      },
+      {
+        "width": 390,
+        "text": "Around Me",
+        "name": "Around Me",
+        "rect": {
+          "x": 16,
+          "y": 311.859375,
+          "width": 358,
+          "height": 44,
+          "bottom": 355.859375
+        },
+        "viewportHeight": 844,
+        "nearby": true,
+        "searchFields": 1
+      },
+      {
+        "width": 390,
+        "text": "Around Me",
+        "name": "Around Me",
+        "rect": {
+          "x": 16,
+          "y": 311.859375,
+          "width": 358,
+          "height": 44,
+          "bottom": 355.859375
+        },
+        "viewportHeight": 844,
+        "nearby": true,
+        "searchFields": 1
+      }
+    ],
+    "errors": [],
+    "homeStorageUnchanged": true,
+    "route": {
+      "kind": "ROUTE_WATCH",
+      "locationBlocked": false,
+      "result": null,
+      "unchanged": true,
+      "endpoints": [
+        {
+          "html": "<img class=\"gridly-navigation-marker-img\" src=\"assets/markers/approved/navigation/trip-start.png\" alt=\"\" aria-hidden=\"true\">",
+          "anchor": [
+            24,
+            47.04
+          ]
+        },
+        {
+          "html": "<img class=\"gridly-navigation-marker-img\" src=\"assets/markers/approved/navigation/trip-destination.png\" alt=\"\" aria-hidden=\"true\">",
+          "anchor": [
+            24,
+            47.04
+          ]
+        }
+      ],
+      "after": "HOME"
+    },
+    "evidence": "reports/lp24448-browser.json",
+    "screenshots": ".artifacts/lp24448/search-around-me-{320,360,390,440}.png"
+  },
+  "markers": [
+    {
+      "path": "assets/markers/approved/01-icy-road.png",
+      "sha256": "7d3aa411b33bf6c94130da85e088040de4969553e629aaf25d3e9e9a154db9c6",
+      "unchanged": true
+    },
+    {
+      "path": "assets/markers/approved/02-possible-black-ice.png",
+      "sha256": "9d68698aaa8d9a8118dbb41029ada0697ac4847321b6c5e33f5189ca4df01949",
+      "unchanged": true
+    },
+    {
+      "path": "assets/markers/approved/03-bridge-overpass-icing.png",
+      "sha256": "8507b570e6905708c33a4a70c565e5a7a45f915ee19a5489588c4d4a5344e5c9",
+      "unchanged": true
+    },
+    {
+      "path": "assets/markers/approved/04-snow-covered-road.png",
+      "sha256": "1b1ef14997e1e85a2f821672573dff340d948401f05c8674e5d82d6624d6d013",
+      "unchanged": true
+    },
+    {
+      "path": "assets/markers/approved/05-sleet-freezing-rain.png",
+      "sha256": "d687b751cd10728443def3ec9b246ed497734136ccb827e48628a344e7448443",
+      "unchanged": true
+    },
+    {
+      "path": "assets/markers/approved/06-reduced-visibility.png",
+      "sha256": "e4f8bf2dc6becfc93dfff39d8d055e40e72421fcd4a673d9786284272d3a68c9",
+      "unchanged": true
+    },
+    {
+      "path": "assets/markers/approved/07-other-winter-road-hazard.png",
+      "sha256": "d5b99b8586dbc9cfd679a0ccbf39751261965f0ae92f1df3fca2fa5f31c2fe8d",
+      "unchanged": true
+    },
+    {
+      "path": "assets/markers/approved/08-flooding-high-water.png",
+      "sha256": "95865cb30a50919e362e320548dd9ba140b6dee5c2a0b336931fe838494aa99c",
+      "unchanged": true
+    },
+    {
+      "path": "assets/markers/approved/09-crash-wreck.png",
+      "sha256": "a912a7d475c4eaa73098ab36da2da1bcb3eb31fed343affe16ebcf62d6ff0d37",
+      "unchanged": true
+    },
+    {
+      "path": "assets/markers/approved/10-disabled-vehicle.png",
+      "sha256": "acd105f612e5e611c04eea54239f12a0933454b53212e0aa31860c1854251bf7",
+      "unchanged": true
+    },
+    {
+      "path": "assets/markers/approved/11-debris-in-road.png",
+      "sha256": "e81f53d97dbb355a70bd07647efdb2f8e0fd60f6ca3283fd7a69e3ec664dffa6",
+      "unchanged": true
+    },
+    {
+      "path": "assets/markers/approved/12-road-appears-blocked.png",
+      "sha256": "87875bbde5de071ce0b7911f24085ed66c06df692240c78ea6c3fd21dbab8eda",
+      "unchanged": true
+    },
+    {
+      "path": "assets/markers/approved/13-construction.png",
+      "sha256": "4f332561f26f7897575248b2b8f7fbc18391e61e7d2fbe8aa7611f3627fa91bd",
+      "unchanged": true
+    },
+    {
+      "path": "assets/markers/approved/14-planned-work.png",
+      "sha256": "497818823cab459330e28f337790c13e0fbb05bef0a9a74d815bdbd8becdf317",
+      "unchanged": true
+    },
+    {
+      "path": "assets/markers/approved/15-traffic-backup-heavy-delay.png",
+      "sha256": "c0d3587c68314586ec24b16c8d573b6adc5f88f19b560135437a3831b904ba8c",
+      "unchanged": true
+    },
+    {
+      "path": "assets/markers/approved/16-other-hazard.png",
+      "sha256": "756e9fb17ce132ec355c3a6a577a137df8c5d4f4d007e2e3980ab8586033bd8d",
+      "unchanged": true
+    },
+    {
+      "path": "assets/markers/approved/17-official-road-closed.png",
+      "sha256": "1e900560d2cdcdc7661a8c20b0791f27734689a28414a8d2609787526d8346f1",
+      "unchanged": true
+    },
+    {
+      "path": "assets/markers/approved/18-downed-power-line.png",
+      "sha256": "35f78162fd3b4bb7081fd83b33b4a5631f123b61e91db4a49e02ebac5b77b535",
+      "unchanged": true
+    },
+    {
+      "path": "assets/markers/approved/19-utility-work.png",
+      "sha256": "7525ce7d52883557cc68ef4bfbde3515f19e55ba714ce67e8d1a4adcfdee9d1e",
+      "unchanged": true
+    },
+    {
+      "path": "assets/markers/approved/20-emergency-response-activity.png",
+      "sha256": "2cda15832549510f40e944cc8634e75a3afa636c68809e1d71968273a1dbc97c",
+      "unchanged": true
+    },
+    {
+      "path": "assets/markers/approved/21-livestock-on-road.png",
+      "sha256": "64d7d695b666f4bdb9e7a36c4ac3cda207115574efac88bf956101d31e4a8752",
+      "unchanged": true
+    },
+    {
+      "path": "assets/markers/approved/22-traffic-signal-issue.png",
+      "sha256": "fafbc983754b813ceb57d9b6912f6c890dc337f6f747690bdaf28c0a3eba587b",
+      "unchanged": true
+    },
+    {
+      "path": "assets/markers/approved/23-reported-crossing-delay.png",
+      "sha256": "47bda7eda308c346e0a3be5ad8d63d21b1140d3cfff190083d6feb22e2ea89eb",
+      "unchanged": true
+    },
+    {
+      "path": "assets/markers/approved/24-blocked-crossing.png",
+      "sha256": "d5c4ba76a1637cbb48c2b2296428277cfb442725c4a561ffd8f56fbc4976a6d1",
+      "unchanged": true
+    },
+    {
+      "path": "assets/markers/approved/25-crossing-location.png",
+      "sha256": "7aaf91a9d9c5575602759a8aab8d41f092b7f0b5ecc78ff5a1f795dbdf11e6a7",
+      "unchanged": true
+    },
+    {
+      "path": "assets/markers/approved/26-road-damage.png",
+      "sha256": "f3a8e30faf79b5c01d8facc826f46241dd1de604dd206ce5bc5ec8f50296caf3",
+      "unchanged": true
+    },
+    {
+      "path": "assets/markers/approved/27-bridge-restriction.png",
+      "sha256": "09afcdc1a6299aa5652c106e52deef6bb660ed262898c8d0193ee6a67750ad99",
+      "unchanged": true
+    },
+    {
+      "path": "assets/markers/approved/28-travel-advisory.png",
+      "sha256": "90bd8c7369fa00f6c616ed8cf9cc60249570f985e3354bad6e982a179a46eed5",
+      "unchanged": true
+    },
+    {
+      "path": "assets/markers/approved/navigation/current-location.png",
+      "sha256": "b4476f48535f9aa2e1dd39eced8c6d624a43949b76a10d129c567f7a1845cf1b",
+      "unchanged": true
+    },
+    {
+      "path": "assets/markers/approved/navigation/trip-destination.png",
+      "sha256": "608e370e0aae5235fdf6788adaee27a951b13a9afee67cace4d9cad2a11b0c5e",
+      "unchanged": true
+    },
+    {
+      "path": "assets/markers/approved/navigation/trip-start.png",
+      "sha256": "3540830157c934303816f695ad4816d6d53752361a2d68bd4f14ec8497c17843",
+      "unchanged": true
+    }
+  ],
+  "changedFiles": [
+    "css/styles.css",
+    "docs/launch/LP24448-DESTINATION-QUICK-CHECK-AROUND-ME.md",
+    "index.html",
+    "js/app.js",
+    "reports/lp24448-broader-tests.txt",
+    "reports/lp24448-browser.json",
+    "reports/lp24448-certification.json",
+    "reports/lp24448-focused-tests.txt",
+    "tests/lp24445-unified-awareness-context.test.cjs",
+    "tools/lp24448/verify-browser.mjs"
+  ],
+  "limitations": [
+    "Foreground location and routing use local deterministic fixtures; no physical device GPS or routing-service certification.",
+    "Keyboard occlusion approximated using reduced viewport; native button supplies keyboard semantics.",
+    "Console warnings are not exhaustively captured; pre-existing Alerts focus and long-frame warnings are outside scope."
+  ],
+  "protected": {
+    "home": true,
+    "routeWatch": true,
+    "areaFilter": true,
+    "backendWrites": false,
+    "reportingChanges": false,
+    "approvedArtworkChanged": false,
+    "nativeBuild": false,
+    "push": false,
+    "merge": false,
+    "deployment": false
+  }
+}

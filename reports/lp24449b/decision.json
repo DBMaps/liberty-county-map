@@ -1,0 +1,19 @@
+{
+  "decision": "HOLD",
+  "sourceHash": "857dc05e8f12786ace4ccded59e7ed582e3438da3f76d65f2fb4d579af6ceb91",
+  "weatherHash": "f890f7bb5bf18a5012f2da719e18562ce9a48af106202152ed232f6e98e10d07",
+  "blockers": [
+    "All 2020 original residual closure assertions pass",
+    "254 Pulse representative active/clear cases",
+    "Exact statewide inclusion and local acceptance"
+  ],
+  "original": 2020,
+  "fixed": 1998,
+  "reclassified": 12,
+  "remainingRealFail": 3,
+  "remainingOriginalClosureAssertions": 10,
+  "blockingGateCount": 3,
+  "failureCountScope": "remainingRealFail counts unique currently failing memberships, including Pulse diagnostic witnesses. Ten original Pulse assertions remain unclosed (remainingOriginalClosureAssertions), not ten additional observed failures. Independent acceptance blockers also force HOLD.",
+  "generatedAt": "2026-09-24T19:14:55.000Z",
+  "liveProviderStatus": "NEEDS_LIVE_PROVIDER_CONFIRMATION"
+}

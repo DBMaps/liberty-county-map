@@ -1,0 +1,663 @@
+{
+  "scenarios": [
+    {
+      "name": "Dayton flooded roadway",
+      "first": {
+        "id": "gridly-test-lp24448a-1790180370236-1",
+        "preset": "flooded-roadway",
+        "state": "active",
+        "countyId": "liberty-tx",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "ageMinutes": 5,
+        "reportCount": 1,
+        "crossingId": null
+      },
+      "snapshot": {
+        "context": "SEARCH",
+        "center": {
+          "lat": 30.0473202,
+          "lng": -94.8873913
+        },
+        "fixtures": [
+          {
+            "id": "gridly-test-lp24448a-1790180370236-1",
+            "preset": "flooded-roadway",
+            "state": "active",
+            "countyId": "liberty-tx",
+            "lat": 30.0473202,
+            "lng": -94.8873913,
+            "ageMinutes": 5,
+            "reportCount": 1,
+            "crossingId": null
+          }
+        ],
+        "incidentIds": [
+          "road-flooding-30.0473--94.8874"
+        ],
+        "activeHazards": [
+          "gridly-test-lp24448a-1790180370236-1"
+        ],
+        "activeReports": [],
+        "canonicalHazards": [
+          "gridly-test-lp24448a-1790180370236-1"
+        ],
+        "markerCount": 2,
+        "markerAssets": [
+          "assets/markers/approved/08-flooding-high-water.png",
+          "assets/markers/approved/08-flooding-high-water.png"
+        ],
+        "alerts": "highFlooded Roadway5mDayton · Active community reportWhat changedFlooding on Liberty Countyliveflooding report • single report • fresh • near your awareness area",
+        "kbyg": "Dayton, TX"
+      },
+      "popupAsset": "08-flooding-high-water.png"
+    },
+    {
+      "name": "Multiple hazards",
+      "multi": [
+        {
+          "id": "gridly-test-lp24448a-1790180373006-2",
+          "preset": "debris-in-road",
+          "state": "active",
+          "countyId": "liberty-tx",
+          "lat": 30.0493202,
+          "lng": -94.88539130000001,
+          "ageMinutes": 0,
+          "reportCount": 1,
+          "crossingId": null
+        },
+        {
+          "id": "gridly-test-lp24448a-1790180376617-3",
+          "preset": "downed-power-line",
+          "state": "active",
+          "countyId": "liberty-tx",
+          "lat": 30.045320200000003,
+          "lng": -94.8893913,
+          "ageMinutes": 0,
+          "reportCount": 1,
+          "crossingId": null
+        }
+      ],
+      "snapshot": {
+        "context": "SEARCH",
+        "center": {
+          "lat": 30.0473202,
+          "lng": -94.8873913
+        },
+        "fixtures": [
+          {
+            "id": "gridly-test-lp24448a-1790180370236-1",
+            "preset": "flooded-roadway",
+            "state": "active",
+            "countyId": "liberty-tx",
+            "lat": 30.0473202,
+            "lng": -94.8873913,
+            "ageMinutes": 5,
+            "reportCount": 1,
+            "crossingId": null
+          },
+          {
+            "id": "gridly-test-lp24448a-1790180373006-2",
+            "preset": "debris-in-road",
+            "state": "active",
+            "countyId": "liberty-tx",
+            "lat": 30.0493202,
+            "lng": -94.88539130000001,
+            "ageMinutes": 0,
+            "reportCount": 1,
+            "crossingId": null
+          },
+          {
+            "id": "gridly-test-lp24448a-1790180376617-3",
+            "preset": "downed-power-line",
+            "state": "active",
+            "countyId": "liberty-tx",
+            "lat": 30.045320200000003,
+            "lng": -94.8893913,
+            "ageMinutes": 0,
+            "reportCount": 1,
+            "crossingId": null
+          }
+        ],
+        "incidentIds": [
+          "road-other_hazard-30.0453--94.8894",
+          "road-debris-30.0493--94.8854",
+          "road-flooding-30.0473--94.8874"
+        ],
+        "activeHazards": [
+          "gridly-test-lp24448a-1790180370236-1",
+          "gridly-test-lp24448a-1790180373006-2",
+          "gridly-test-lp24448a-1790180376617-3"
+        ],
+        "activeReports": [],
+        "canonicalHazards": [
+          "gridly-test-lp24448a-1790180370236-1",
+          "gridly-test-lp24448a-1790180373006-2",
+          "gridly-test-lp24448a-1790180376617-3"
+        ],
+        "markerCount": 6,
+        "markerAssets": [
+          "assets/markers/approved/18-downed-power-line.png",
+          "assets/markers/approved/11-debris-in-road.png",
+          "assets/markers/approved/08-flooding-high-water.png",
+          "assets/markers/approved/08-flooding-high-water.png",
+          "assets/markers/approved/11-debris-in-road.png",
+          "assets/markers/approved/18-downed-power-line.png"
+        ],
+        "alerts": "moderateDowned Power Line0mDayton · Active community reportmoderateDebris in Road0mDayton · Active community reporthighFlooded Roadway5mDayton · Active community reportWhat changedTravel Conditions Slowing near Libertyliveflooding report • single report • fresh • near your awareness area",
+        "kbyg": "Dayton, TX"
+      }
+    },
+    {
+      "name": "Active fixtures survive Search county round trip",
+      "snapshot": {
+        "context": "SEARCH",
+        "center": {
+          "lat": 30.0473202,
+          "lng": -94.8873913
+        },
+        "fixtures": [
+          {
+            "id": "gridly-test-lp24448a-1790180370236-1",
+            "preset": "flooded-roadway",
+            "state": "active",
+            "countyId": "liberty-tx",
+            "lat": 30.0473202,
+            "lng": -94.8873913,
+            "ageMinutes": 5,
+            "reportCount": 1,
+            "crossingId": null
+          },
+          {
+            "id": "gridly-test-lp24448a-1790180373006-2",
+            "preset": "debris-in-road",
+            "state": "active",
+            "countyId": "liberty-tx",
+            "lat": 30.0493202,
+            "lng": -94.88539130000001,
+            "ageMinutes": 0,
+            "reportCount": 1,
+            "crossingId": null
+          },
+          {
+            "id": "gridly-test-lp24448a-1790180376617-3",
+            "preset": "downed-power-line",
+            "state": "active",
+            "countyId": "liberty-tx",
+            "lat": 30.045320200000003,
+            "lng": -94.8893913,
+            "ageMinutes": 0,
+            "reportCount": 1,
+            "crossingId": null
+          }
+        ],
+        "incidentIds": [
+          "road-other_hazard-30.0453--94.8894",
+          "road-debris-30.0493--94.8854",
+          "road-flooding-30.0473--94.8874"
+        ],
+        "activeHazards": [
+          "gridly-test-lp24448a-1790180370236-1",
+          "gridly-test-lp24448a-1790180373006-2",
+          "gridly-test-lp24448a-1790180376617-3"
+        ],
+        "activeReports": [],
+        "canonicalHazards": [
+          "gridly-test-lp24448a-1790180370236-1",
+          "gridly-test-lp24448a-1790180373006-2",
+          "gridly-test-lp24448a-1790180376617-3"
+        ],
+        "markerCount": 6,
+        "markerAssets": [
+          "assets/markers/approved/18-downed-power-line.png",
+          "assets/markers/approved/11-debris-in-road.png",
+          "assets/markers/approved/08-flooding-high-water.png",
+          "assets/markers/approved/08-flooding-high-water.png",
+          "assets/markers/approved/11-debris-in-road.png",
+          "assets/markers/approved/18-downed-power-line.png"
+        ],
+        "alerts": "Community AwarenessNothing new nearby. Gridly is still watching your area.",
+        "kbyg": "Dayton, TX"
+      }
+    },
+    {
+      "name": "Confirm and clear",
+      "confirmed": {
+        "id": "gridly-test-lp24448a-1790180370236-1",
+        "preset": "flooded-roadway",
+        "state": "confirmed active",
+        "countyId": "liberty-tx",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "ageMinutes": 5,
+        "reportCount": 2,
+        "crossingId": null
+      },
+      "cleared": {
+        "id": "gridly-test-lp24448a-1790180370236-1",
+        "preset": "flooded-roadway",
+        "state": "cleared",
+        "countyId": "liberty-tx",
+        "lat": 30.0473202,
+        "lng": -94.8873913,
+        "ageMinutes": 5,
+        "reportCount": 2,
+        "crossingId": null
+      },
+      "snapshot": {
+        "context": "SEARCH",
+        "center": {
+          "lat": 30.0473202,
+          "lng": -94.8873913
+        },
+        "fixtures": [
+          {
+            "id": "gridly-test-lp24448a-1790180370236-1",
+            "preset": "flooded-roadway",
+            "state": "cleared",
+            "countyId": "liberty-tx",
+            "lat": 30.0473202,
+            "lng": -94.8873913,
+            "ageMinutes": 5,
+            "reportCount": 2,
+            "crossingId": null
+          },
+          {
+            "id": "gridly-test-lp24448a-1790180373006-2",
+            "preset": "debris-in-road",
+            "state": "active",
+            "countyId": "liberty-tx",
+            "lat": 30.0493202,
+            "lng": -94.88539130000001,
+            "ageMinutes": 0,
+            "reportCount": 1,
+            "crossingId": null
+          },
+          {
+            "id": "gridly-test-lp24448a-1790180376617-3",
+            "preset": "downed-power-line",
+            "state": "active",
+            "countyId": "liberty-tx",
+            "lat": 30.045320200000003,
+            "lng": -94.8893913,
+            "ageMinutes": 0,
+            "reportCount": 1,
+            "crossingId": null
+          }
+        ],
+        "incidentIds": [
+          "road-other_hazard-30.0453--94.8894",
+          "road-debris-30.0493--94.8854"
+        ],
+        "activeHazards": [
+          "gridly-test-lp24448a-1790180373006-2",
+          "gridly-test-lp24448a-1790180376617-3"
+        ],
+        "activeReports": [],
+        "canonicalHazards": [
+          "gridly-test-lp24448a-1790180373006-2",
+          "gridly-test-lp24448a-1790180376617-3"
+        ],
+        "markerCount": 4,
+        "markerAssets": [
+          "assets/markers/approved/18-downed-power-line.png",
+          "assets/markers/approved/11-debris-in-road.png",
+          "assets/markers/approved/11-debris-in-road.png",
+          "assets/markers/approved/18-downed-power-line.png"
+        ],
+        "alerts": "moderateDowned Power Line0mDayton · Active community reportmoderateDebris in Road0mDayton · Active community reportWhat changedTraffic Slowing on Liberty Countylivesingle active hazard report • single report • fresh • near your awareness area",
+        "kbyg": "Dayton, TX"
+      }
+    },
+    {
+      "name": "Governed crossing active and cleared",
+      "crossing": {
+        "id": "FRA-762785P",
+        "lat": 30.0482671001437,
+        "lng": -94.8874153001269
+      },
+      "train": {
+        "id": "gridly-test-lp24448a-1790180427461-4",
+        "preset": "train-blocking-crossing",
+        "state": "active",
+        "countyId": "liberty-tx",
+        "lat": 30.0482671001437,
+        "lng": -94.8874153001269,
+        "ageMinutes": 0,
+        "reportCount": 1,
+        "crossingId": "FRA-762785P"
+      },
+      "trainConfirmed": {
+        "id": "gridly-test-lp24448a-1790180427461-4",
+        "preset": "train-blocking-crossing",
+        "state": "confirmed active",
+        "countyId": "liberty-tx",
+        "lat": 30.0482671001437,
+        "lng": -94.8874153001269,
+        "ageMinutes": 0,
+        "reportCount": 2,
+        "crossingId": "FRA-762785P"
+      },
+      "trainCleared": {
+        "id": "gridly-test-lp24448a-1790180427461-4",
+        "preset": "train-blocking-crossing",
+        "state": "cleared",
+        "countyId": "liberty-tx",
+        "lat": 30.0482671001437,
+        "lng": -94.8874153001269,
+        "ageMinutes": 0,
+        "reportCount": 2,
+        "crossingId": "FRA-762785P"
+      },
+      "crossingActive": {
+        "asset": "assets/markers/approved/24-blocked-crossing.png",
+        "popupIsConsumer": true,
+        "hasConfirm": true
+      },
+      "crossingNeutral": {
+        "asset": "assets/markers/approved/25-crossing-location.png",
+        "latest": null
+      },
+      "snapshot": {
+        "context": "SEARCH",
+        "center": {
+          "lat": 30.0473202,
+          "lng": -94.8873913
+        },
+        "fixtures": [
+          {
+            "id": "gridly-test-lp24448a-1790180370236-1",
+            "preset": "flooded-roadway",
+            "state": "cleared",
+            "countyId": "liberty-tx",
+            "lat": 30.0473202,
+            "lng": -94.8873913,
+            "ageMinutes": 5,
+            "reportCount": 2,
+            "crossingId": null
+          },
+          {
+            "id": "gridly-test-lp24448a-1790180373006-2",
+            "preset": "debris-in-road",
+            "state": "active",
+            "countyId": "liberty-tx",
+            "lat": 30.0493202,
+            "lng": -94.88539130000001,
+            "ageMinutes": 0,
+            "reportCount": 1,
+            "crossingId": null
+          },
+          {
+            "id": "gridly-test-lp24448a-1790180376617-3",
+            "preset": "downed-power-line",
+            "state": "active",
+            "countyId": "liberty-tx",
+            "lat": 30.045320200000003,
+            "lng": -94.8893913,
+            "ageMinutes": 0,
+            "reportCount": 1,
+            "crossingId": null
+          },
+          {
+            "id": "gridly-test-lp24448a-1790180427461-4",
+            "preset": "train-blocking-crossing",
+            "state": "cleared",
+            "countyId": "liberty-tx",
+            "lat": 30.0482671001437,
+            "lng": -94.8874153001269,
+            "ageMinutes": 0,
+            "reportCount": 2,
+            "crossingId": "FRA-762785P"
+          }
+        ],
+        "incidentIds": [
+          "road-other_hazard-30.0453--94.8894",
+          "road-debris-30.0493--94.8854"
+        ],
+        "activeHazards": [
+          "gridly-test-lp24448a-1790180373006-2",
+          "gridly-test-lp24448a-1790180376617-3"
+        ],
+        "activeReports": [],
+        "canonicalHazards": [
+          "gridly-test-lp24448a-1790180373006-2",
+          "gridly-test-lp24448a-1790180376617-3"
+        ],
+        "markerCount": 4,
+        "markerAssets": [
+          "assets/markers/approved/18-downed-power-line.png",
+          "assets/markers/approved/11-debris-in-road.png",
+          "assets/markers/approved/11-debris-in-road.png",
+          "assets/markers/approved/18-downed-power-line.png"
+        ],
+        "alerts": "moderateDowned Power Line0mDayton · Active community reportmoderateDebris in Road0mDayton · Active community reportWhat changedTraffic Slowing on Liberty Countylivesingle active hazard report • single report • fresh • near your awareness area",
+        "kbyg": "Dayton, TX"
+      }
+    },
+    {
+      "name": "Governed crossing delay",
+      "delay": {
+        "id": "gridly-test-lp24448a-1790180437575-5",
+        "preset": "reported-crossing-delay",
+        "state": "active",
+        "countyId": "liberty-tx",
+        "lat": 30.0482671001437,
+        "lng": -94.8874153001269,
+        "ageMinutes": 0,
+        "reportCount": 1,
+        "crossingId": "FRA-762785P"
+      },
+      "delayAsset": "assets/markers/approved/23-reported-crossing-delay.png"
+    },
+    {
+      "name": "Clear all",
+      "beforeClear": {
+        "context": "SEARCH",
+        "center": {
+          "lat": 30.0473202,
+          "lng": -94.8873913
+        },
+        "fixtures": [
+          {
+            "id": "gridly-test-lp24448a-1790180370236-1",
+            "preset": "flooded-roadway",
+            "state": "cleared",
+            "countyId": "liberty-tx",
+            "lat": 30.0473202,
+            "lng": -94.8873913,
+            "ageMinutes": 5,
+            "reportCount": 2,
+            "crossingId": null
+          },
+          {
+            "id": "gridly-test-lp24448a-1790180373006-2",
+            "preset": "debris-in-road",
+            "state": "active",
+            "countyId": "liberty-tx",
+            "lat": 30.0493202,
+            "lng": -94.88539130000001,
+            "ageMinutes": 0,
+            "reportCount": 1,
+            "crossingId": null
+          },
+          {
+            "id": "gridly-test-lp24448a-1790180376617-3",
+            "preset": "downed-power-line",
+            "state": "active",
+            "countyId": "liberty-tx",
+            "lat": 30.045320200000003,
+            "lng": -94.8893913,
+            "ageMinutes": 0,
+            "reportCount": 1,
+            "crossingId": null
+          },
+          {
+            "id": "gridly-test-lp24448a-1790180427461-4",
+            "preset": "train-blocking-crossing",
+            "state": "cleared",
+            "countyId": "liberty-tx",
+            "lat": 30.0482671001437,
+            "lng": -94.8874153001269,
+            "ageMinutes": 0,
+            "reportCount": 2,
+            "crossingId": "FRA-762785P"
+          },
+          {
+            "id": "gridly-test-lp24448a-1790180437575-5",
+            "preset": "reported-crossing-delay",
+            "state": "cleared",
+            "countyId": "liberty-tx",
+            "lat": 30.0482671001437,
+            "lng": -94.8874153001269,
+            "ageMinutes": 0,
+            "reportCount": 1,
+            "crossingId": "FRA-762785P"
+          }
+        ],
+        "incidentIds": [
+          "road-other_hazard-30.0453--94.8894",
+          "road-debris-30.0493--94.8854"
+        ],
+        "activeHazards": [
+          "gridly-test-lp24448a-1790180373006-2",
+          "gridly-test-lp24448a-1790180376617-3"
+        ],
+        "activeReports": [],
+        "canonicalHazards": [
+          "gridly-test-lp24448a-1790180373006-2",
+          "gridly-test-lp24448a-1790180376617-3"
+        ],
+        "markerCount": 4,
+        "markerAssets": [
+          "assets/markers/approved/18-downed-power-line.png",
+          "assets/markers/approved/11-debris-in-road.png",
+          "assets/markers/approved/11-debris-in-road.png",
+          "assets/markers/approved/18-downed-power-line.png"
+        ],
+        "alerts": "moderateDowned Power Line0mDayton · Active community reportmoderateDebris in Road0mDayton · Active community reportWhat changedTraffic Slowing on Liberty Countylivesingle active hazard report • single report • fresh • near your awareness area",
+        "kbyg": "Dayton, TX"
+      },
+      "clearAll": {
+        "removed": 5,
+        "remaining": 0
+      },
+      "after": {
+        "context": "SEARCH",
+        "center": {
+          "lat": 30.0473202,
+          "lng": -94.8873913
+        },
+        "fixtures": [],
+        "incidentIds": [],
+        "activeHazards": [],
+        "activeReports": [],
+        "canonicalHazards": [],
+        "markerCount": 0,
+        "markerAssets": [],
+        "alerts": "Community AwarenessNothing new nearby. Gridly is still watching your area.",
+        "kbyg": "Dayton, TX"
+      }
+    },
+    {
+      "name": "Search context preserved",
+      "searchFixture": {
+        "id": "gridly-test-lp24448a-1790180453455-6",
+        "preset": "road-blocked",
+        "state": "active",
+        "countyId": "harris-tx",
+        "lat": 29.91154,
+        "lng": -95.0632549,
+        "ageMinutes": 0,
+        "reportCount": 1,
+        "crossingId": null
+      },
+      "context": "SEARCH"
+    },
+    {
+      "name": "Around Me and Return Home preserved",
+      "aroundFixture": {
+        "id": "gridly-test-lp24448a-1790180483102-7",
+        "preset": "disabled-vehicle",
+        "state": "active",
+        "countyId": "harris-tx",
+        "lat": 29.911495738488924,
+        "lng": -95.06332397460939,
+        "ageMinutes": 0,
+        "reportCount": 1,
+        "crossingId": null
+      },
+      "context": "HOME"
+    },
+    {
+      "name": "Route Watch geometry and source preserved",
+      "routeProof": {
+        "routeWatchActivated": true,
+        "geometryUnchanged": true,
+        "sourceUnchanged": true,
+        "fixture": {
+          "id": "gridly-test-lp24448a-1790180502584-8",
+          "preset": "debris-in-road",
+          "state": "active",
+          "countyId": "liberty-tx",
+          "lat": 30.3414794,
+          "lng": -95.0900115,
+          "ageMinutes": 0,
+          "reportCount": 1,
+          "crossingId": null
+        }
+      }
+    }
+  ],
+  "portraits": [
+    {
+      "width": 320,
+      "scrollWidth": 320,
+      "markers": 13,
+      "alertsOverflow": false
+    },
+    {
+      "width": 360,
+      "scrollWidth": 360,
+      "markers": 11,
+      "alertsOverflow": false
+    },
+    {
+      "width": 390,
+      "scrollWidth": 390,
+      "markers": 13,
+      "alertsOverflow": false
+    },
+    {
+      "width": 440,
+      "scrollWidth": 440,
+      "markers": 13,
+      "alertsOverflow": false
+    }
+  ],
+  "mutationRequests": [
+    {
+      "phase": "startup",
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "phase": "reload",
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    }
+  ],
+  "errors": [],
+  "warnings": [
+    "Service Worker registration blocked by Playwright",
+    "Service Worker registration blocked by Playwright"
+  ],
+  "historicalIsolation": {
+    "sourcesContainFixture": false,
+    "projectionContainsFixture": false
+  },
+  "persistence": {
+    "localStorageContainsFixture": false,
+    "sessionStorageContainsFixture": false,
+    "historicalProjectionContainsFixture": false
+  }
+}

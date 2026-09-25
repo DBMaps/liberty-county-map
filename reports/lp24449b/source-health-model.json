@@ -1,0 +1,64 @@
+{
+  "scope": "Existing runtime states, passive presentation gate; no provider activation or new persistence system",
+  "communityReports": {
+    "owner": "gridlyCurrentReportReadState / gridlyReadAlertsFamilyAuthority",
+    "actualReadStates": [
+      "not_started",
+      "loading",
+      "succeeded",
+      "failed",
+      "stale"
+    ],
+    "mapping": {
+      "succeeded": "checked/available=true; selected-area projection owns active count",
+      "loading": "LOADING",
+      "stale": "STALE",
+      "failedWithPriorSuccess": "STALE",
+      "failedWithoutSuccessOrNotStarted": "UNAVAILABLE"
+    }
+  },
+  "officialRoadway": {
+    "owner": "gridlyStoryTransportationSourceStatusEnvelope plus gridlyDriveTexasConnectorRuntimeAudit",
+    "mapping": {
+      "HEALTHY_WITH_DATA+currentSuccessfulRequest": "ACTIVE",
+      "HEALTHY_EMPTY+quietEligible+currentSuccessfulRequest": "QUIET",
+      "requestInFlight": "LOADING",
+      "SOURCE_FAILED_WITH_RETAINED_DATAOrExpiredPriorSuccess": "STALE",
+      "missingConfigurationOrUnownedUncheckedFailedSource": "UNAVAILABLE"
+    }
+  },
+  "weatherAndOfficialNwsAlerts": {
+    "owner": "gridlyGetWeatherRuntimeAuthorityEnvelope / gridlyLP240ClassifyWeatherAuthority",
+    "actualFamilyStates": [
+      "ACTIVE",
+      "QUIET",
+      "LOADING",
+      "STALE",
+      "UNAVAILABLE"
+    ],
+    "acquisition": "Governed PLACE coordinate -> NWS points -> governed forecast -> active point alerts",
+    "forecastSuccess": "forecastRequestSucceeded; required in shared completeness gate",
+    "conditionsCapability": "No separate current-observation provider is invented or certified. Existing forecast and alert acquisition states describe the implemented weather path.",
+    "newlyProvenDefect": "Failed recheck left a prior healthy cache entry; refreshAwarenessView could publish that success again. Failure now supersedes the same-identity cache entry only when its request generation remains current.",
+    "proof": "targeted-tests.json records the regression failing against captured starting source and passing against repaired source",
+    "obsoleteResponseDefect": "Late successful A response after A-B-A transitions could replace the newer A failure in cache. Successful cache publication now checks the same generation and current identity as failure/UI publication.",
+    "testFixtureCorrection": "The initial race fixture let the connector retry recover; the final fixture holds both attempts unavailable before releasing the old success. Both baseline failures and all four current passes are retained in targeted-tests.json."
+  },
+  "crossings": {
+    "owner": "getGridlyAwarenessCoverageState",
+    "actualStates": [
+      "AVAILABLE_WITH_CROSSINGS",
+      "AVAILABLE_NO_LOCAL_CROSSINGS",
+      "AVAILABLE_NO_GOVERNED_CROSSINGS",
+      "LOADING",
+      "TEMPORARILY_UNAVAILABLE",
+      "UNAVAILABLE"
+    ],
+    "empty": "ACTIVE_EMPTY is valid governed availability; zero records do not constitute missing coverage"
+  },
+  "legacyCompleteness": "gridlyGetAwarenessEvidenceCompleteness also reads presentation-state globals whose production writers are absent. Their conservative defaults are retained for existing source-specific claims; the new passive global-quiet gate reads current family authorities instead.",
+  "newStatusTaxonomy": false,
+  "globalQuietRule": "Zero known active conditions permits global quiet wording only when all existing family authorities are available, the governed weather forecast request succeeded, and crossing coverage is available. Known active conditions remain visible when completeness is false.",
+  "liveProviderStatus": "NEEDS_LIVE_PROVIDER_CONFIRMATION",
+  "nativeStatus": "NOT_DEVICE_TESTED"
+}

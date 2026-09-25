@@ -1,0 +1,13 @@
+import fs from 'node:fs';import crypto from 'node:crypto';import {execFileSync} from 'node:child_process';
+const git=(...args)=>execFileSync('git',args,{encoding:'utf8'}),branch=git('branch','--show-current').trim(),head=git('rev-parse','HEAD').trim();
+if(branch!=='LP244.48-destination-quick-check-around-me'||head!=='5538432be3bfe12c6dc0d3f34dcc9fd97c6edc3c')throw Error('Unauthorized baseline');
+const target='reports/lp24449b1/starting-baseline.json';if(fs.existsSync(target))throw Error('Baseline exists; never overwrite');
+const hash=file=>({file,bytes:fs.statSync(file).size,sha256:crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex')});
+const tracked=git('ls-files','-z').split('\0').filter(Boolean),untracked=git('ls-files','--others','--exclude-standard','-z').split('\0').filter(Boolean);
+const prior=untracked.filter(file=>!file.includes('lp24449b1/')&&!file.includes('LP24449B1-'));
+const record={capturedAt:new Date().toISOString(),branch,head,status:git('status','--short'),diffStat:git('diff','--stat'),changedProduct:git('diff','--name-only').trim().split('\n').filter(Boolean).map(hash),priorUntracked:prior.map(hash),tracked:tracked.filter(file=>fs.existsSync(file)).map(hash)};
+fs.writeFileSync(target,JSON.stringify(record,null,2)+'\n');
+fs.writeFileSync('.artifacts/lp24449b1/starting-product.diff',git('diff','--','js/app.js','js/gridlyWeatherLiveConnector.js'));
+fs.copyFileSync('js/app.js','.artifacts/lp24449b1/baseline-app.js');fs.copyFileSync('js/gridlyWeatherLiveConnector.js','.artifacts/lp24449b1/baseline-weather.js');
+for(const name of ['inventory.mjs','session.cjs','runtime-probe.js'])fs.writeFileSync(`tools/lp24449b1/${name}`,fs.readFileSync(`tools/lp24449b/${name}`,'utf8').replaceAll('lp24449b','lp24449b1'));
+console.log(JSON.stringify({branch,head,changed:record.changedProduct,priorUntracked:prior.length,tracked:record.tracked.length}));

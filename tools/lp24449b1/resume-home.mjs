@@ -1,0 +1,5 @@
+import fs from 'node:fs';import {spawn} from 'node:child_process';
+const slot=Number(process.argv[2]),dir='.artifacts/lp24449b1';
+for(;;){const file=`${dir}/queue-${slot}.jsonl`,rows=fs.existsSync(file)?fs.readFileSync(file,'utf8').trim().split('\n').filter(Boolean).map(JSON.parse):[];if(rows.at(-1)?.status==='complete')break;if(rows.some(r=>r.status==='finished'&&r.code!==0))throw Error('Preceding queue failed; inspect before continuing');await new Promise(r=>setTimeout(r,5000));}
+const log=fs.openSync(`${dir}/home-resume-${slot}.log`,'a');const startedAt=new Date().toISOString();
+const code=await new Promise((resolve,reject)=>{const child=spawn(process.execPath,['tools/lp24449b1/home-browser.mjs',`--shard=${slot}/2`,'--await-weather','--diagnostic-weather'],{stdio:['ignore',log,log]});child.on('error',reject);child.on('exit',resolve);});fs.closeSync(log);fs.writeFileSync(`${dir}/home-resume-${slot}.json`,JSON.stringify({startedAt,finishedAt:new Date().toISOString(),code})+'\n');process.exitCode=code||0;

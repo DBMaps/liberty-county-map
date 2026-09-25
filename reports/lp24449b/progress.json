@@ -1,0 +1,117 @@
+{
+  "updatedAt": "2026-09-24T18:38:26.639Z",
+  "sourceHash": "857dc05e8f12786ace4ccded59e7ed582e3438da3f76d65f2fb4d579af6ceb91",
+  "home": {
+    "target": 793,
+    "completed": 793,
+    "passed": 793,
+    "remaining": 0,
+    "failed": []
+  },
+  "search": {
+    "target": 2058,
+    "completed": 842,
+    "passed": 842
+  },
+  "crossCounty": {
+    "target": 254,
+    "completed": 127,
+    "passed": 127
+  },
+  "queues": [
+    {
+      "shard": 0,
+      "waitingForHome": false,
+      "firstQueuedSuitePendingResult": true
+    },
+    {
+      "shard": 1,
+      "runs": [
+        {
+          "job": [
+            "transitions.mjs",
+            "--shard=1/2"
+          ],
+          "startedAt": "2026-09-24T17:57:52.228Z",
+          "finishedAt": "2026-09-24T18:04:55.489Z",
+          "exitCode": 0
+        },
+        {
+          "job": [
+            "contracts.mjs"
+          ],
+          "startedAt": "2026-09-24T18:04:55.492Z",
+          "finishedAt": "2026-09-24T18:05:05.009Z",
+          "exitCode": 0
+        },
+        {
+          "job": [
+            "provider-matrix.mjs"
+          ],
+          "startedAt": "2026-09-24T18:05:05.012Z",
+          "finishedAt": "2026-09-24T18:05:51.594Z",
+          "exitCode": 0
+        },
+        {
+          "job": [
+            "baseline-replay.mjs",
+            "--current",
+            "--pulse"
+          ],
+          "startedAt": "2026-09-24T18:05:51.596Z",
+          "finishedAt": "2026-09-24T18:14:08.757Z",
+          "exitCode": 0
+        },
+        {
+          "job": [
+            "freeze-three-hazards.mjs"
+          ],
+          "startedAt": "2026-09-24T18:14:08.758Z",
+          "finishedAt": "2026-09-24T18:16:07.078Z",
+          "exitCode": 0
+        },
+        {
+          "job": [
+            "freeze-verify-settings.cjs"
+          ],
+          "startedAt": "2026-09-24T18:16:07.082Z",
+          "finishedAt": "2026-09-24T18:17:33.755Z",
+          "exitCode": 0
+        },
+        {
+          "job": [
+            "freeze-geometry.cjs"
+          ],
+          "startedAt": "2026-09-24T18:17:33.756Z",
+          "finishedAt": "2026-09-24T18:19:20.228Z",
+          "exitCode": 0
+        },
+        {
+          "job": [
+            "freeze-saved-places.mjs"
+          ],
+          "startedAt": "2026-09-24T18:19:20.229Z",
+          "finishedAt": "2026-09-24T18:19:29.617Z",
+          "exitCode": 0
+        },
+        {
+          "job": [
+            "freeze-clear-compare.cjs"
+          ],
+          "startedAt": "2026-09-24T18:19:29.618Z",
+          "finishedAt": "2026-09-24T18:20:06.105Z",
+          "exitCode": 0
+        },
+        {
+          "job": [
+            "text-size-baseline.mjs"
+          ],
+          "startedAt": "2026-09-24T18:20:06.108Z",
+          "finishedAt": "2026-09-24T18:20:21.455Z",
+          "exitCode": 0
+        }
+      ],
+      "completed": true
+    }
+  ]
+}

@@ -1,0 +1,143 @@
+{
+  "states": [],
+  "officialRetention": {
+    "before": {
+      "published": 1,
+      "fresh": 1,
+      "official": [
+        "official_roadway:LP24449B-ROAD"
+      ],
+      "community": [],
+      "alerts": [
+        "official_roadway:LP24449B-ROAD"
+      ]
+    },
+    "active": {
+      "published": 2,
+      "fresh": 2,
+      "official": [
+        "official_roadway:LP24449B-ROAD"
+      ],
+      "community": [
+        "active_hazard:hazard-gridly-test-lp24448a-1790293133208-1"
+      ],
+      "alerts": [
+        "active_hazard:hazard-gridly-test-lp24448a-1790293133208-1",
+        "official_roadway:LP24449B-ROAD"
+      ]
+    },
+    "cleared": {
+      "published": 1,
+      "fresh": 1,
+      "official": [
+        "official_roadway:LP24449B-ROAD"
+      ],
+      "community": [],
+      "alerts": [
+        "official_roadway:LP24449B-ROAD"
+      ]
+    },
+    "refreshed": {
+      "published": 1,
+      "fresh": 1,
+      "official": [
+        "official_roadway:LP24449B-ROAD"
+      ],
+      "community": [],
+      "alerts": [
+        "official_roadway:LP24449B-ROAD"
+      ]
+    },
+    "fixture": {
+      "id": "gridly-test-lp24448a-1790293133208-1",
+      "preset": "debris-in-road",
+      "state": "active",
+      "countyId": "liberty-tx",
+      "lat": 30.05725,
+      "lng": -94.87737,
+      "ageMinutes": 0,
+      "reportCount": 1,
+      "crossingId": null
+    },
+    "pass": true
+  },
+  "network": {
+    "errors": [],
+    "warnings": [
+      "Service Worker registration blocked by Playwright"
+    ],
+    "blockedWrites": [
+      {
+        "method": "POST",
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+      }
+    ],
+    "providerRequests": [
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&expires_at=gt.2026-09-24T23%3A38%3A50.060Z&order=created_at.desc%2Cid.desc&limit=300",
+        "method": "GET",
+        "result": "CONTROLLED_EMPTY_REPORT_FIXTURE"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&report_type=eq.hazard_cleared&created_at=gte.2026-09-24T20%3A38%3A50.060Z&order=created_at.desc%2Cid.desc&limit=100",
+        "method": "GET",
+        "result": "CONTROLLED_EMPTY_REPORT_FIXTURE"
+      },
+      {
+        "url": "https://api.weather.gov/points/30.0473202,-94.8873913",
+        "fixture": {
+          "road": "empty",
+          "weather": "empty",
+          "alerts": "empty"
+        },
+        "method": "GET"
+      },
+      {
+        "url": "http://127.0.0.1:53776/lp24449b1-road",
+        "fixture": {
+          "road": "active",
+          "weather": "empty",
+          "alerts": "empty"
+        },
+        "method": "GET"
+      },
+      {
+        "url": "https://api.weather.gov/gridpoints/TEST/1,1/forecast",
+        "fixture": {
+          "road": "active",
+          "weather": "empty",
+          "alerts": "empty"
+        },
+        "method": "GET"
+      },
+      {
+        "url": "https://api.weather.gov/alerts/active?point=30.0473202,-94.8873913",
+        "fixture": {
+          "road": "active",
+          "weather": "empty",
+          "alerts": "empty"
+        },
+        "method": "GET"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&expires_at=gt.2026-09-24T23%3A38%3A53.115Z&order=created_at.desc%2Cid.desc&limit=300",
+        "method": "GET",
+        "result": "CONTROLLED_EMPTY_REPORT_FIXTURE"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&report_type=eq.hazard_cleared&created_at=gte.2026-09-24T20%3A38%3A53.115Z&order=created_at.desc%2Cid.desc&limit=100",
+        "method": "GET",
+        "result": "CONTROLLED_EMPTY_REPORT_FIXTURE"
+      }
+    ],
+    "localRequests": [
+      "/data/runtime/canonical-crossing-memberships-v1.json",
+      "/data/runtime/canonical-crossing-records-v1.json",
+      "/data/generated/gridly-statewide-place-presentation-v1.json",
+      "/Crossing-Packages/liberty/package-manifest.json",
+      "/Crossing-Packages/production-crossing-manifest.json",
+      "/Crossing-Packages/liberty/Production/liberty-production-crossings.geojson"
+    ]
+  },
+  "passed": true
+}

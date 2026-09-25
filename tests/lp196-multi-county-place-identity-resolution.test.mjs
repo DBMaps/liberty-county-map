@@ -305,7 +305,7 @@ test('Austin exact precedence does not expose Austin County or Bellville, while 
 });
 
 test('canonical manual apply requires and routes the explicit governed county', () => {
-  assert.match(source, /canonicalResolution\?\.status === "RESOLVED_CANONICAL_MULTI_COUNTY_PLACE"/);
+  assert.match(source, /canonicalResolution\?\.canonicalIdentity === "PLACE_GEOID"/);
   assert.match(source, /gridlySaveCanonicalMultiCountyPlaceHome\(canonicalResolution/);
   assert.match(source, /gridlySaveCanonicalMultiCountyPlaceHome\(canonicalResolution, "settings_manual_awareness_area", requestedOperationalCountyId\)/);
   assert.match(source, /countyId: requestedCountyId, countyName: requestedCounty\.name, countyMemberships:/);

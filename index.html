@@ -311,6 +311,7 @@
         </button>
         <button id="gridlyRemoteSearchBtn" class="gridly-search-clear-btn" type="button" aria-label="Search addresses and places">Search</button>
       </div>
+      <button id="gridlySearchAroundMeBtn" class="secondary-btn destination-chip" type="button">Around Me</button>
       <div id="gridlySearchResults" class="gridly-search-results" aria-live="polite"></div>
       <section id="gridlyDestinationConfirmation" class="gridly-destination-confirmation" role="group" aria-labelledby="gridlyDestinationConfirmationTitle" hidden>
         <div class="gridly-destination-confirmation-copy">
@@ -699,7 +700,7 @@
       </section>
 
       <aside class="side-panel desktop-command-panel" id="alertsSection">
-        <button class="gridly-surface-close portrait-alerts-close" type="button" id="portraitAlertsCloseBtn" aria-label="Close alerts panel">X</button>
+        <button class="gridly-surface-close portrait-alerts-close" type="button" id="portraitAlertsCloseBtn" aria-label="Close alerts panel">×</button>
         <details class="panel-card drawer-panel" id="railPulseDrawer" open>
           <summary class="drawer-summary"><span class="eyebrow">Rail Pulse</span></summary>
           <div class="drawer-body">
@@ -886,7 +887,7 @@
     </div>
     <div class="gridly-v2-control-rail" aria-label="Map controls">
       <button type="button" data-v2-control="layers" aria-label="Layers" aria-haspopup="dialog" aria-controls="gridlyPortraitV2Sheet" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.6 20 8.5 12 12.4 4 8.5 12 4.6Z"/><path d="M6.2 11.9 12 14.8l5.8-2.9"/><path d="M6.2 15.6 12 18.5l5.8-2.9"/></svg></button>
-      <button type="button" data-v2-control="use-location" aria-label="Use my location" title="Use my location"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.8 19.2 20.2 12 16.9 4.8 20.2 12 3.8Z"/><path d="M12 3.8v13.1"/></svg></button>
+      <button type="button" data-v2-control="use-location" aria-label="Around Me — use my location" title="Around Me"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.8 19.2 20.2 12 16.9 4.8 20.2 12 3.8Z"/><path d="M12 3.8v13.1"/></svg></button>
       <button type="button" data-v2-control="zoom-in" aria-label="Zoom in"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
       <button type="button" data-v2-control="zoom-out" aria-label="Zoom out"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/></svg></button>
     </div>
@@ -901,7 +902,7 @@
     </div>
     <div id="gridlyPortraitV2SheetBackdrop" class="gridly-v2-sheet-backdrop" hidden></div>
     <section id="gridlyPortraitV2Sheet" class="gridly-v2-sheet" hidden aria-live="polite" role="dialog" aria-modal="true" aria-labelledby="gridlyPortraitV2SheetTitle">
-      <header><h3 id="gridlyPortraitV2SheetTitle" tabindex="-1">Panel</h3><button id="gridlyPortraitV2SheetClose" type="button" aria-label="Close panel">X</button></header>
+      <header><h3 id="gridlyPortraitV2SheetTitle" tabindex="-1">Panel</h3><button id="gridlyPortraitV2SheetClose" type="button" aria-label="Close panel">×</button></header>
       <div id="gridlyPortraitV2SheetBody"></div>
     </section>
   </section>
@@ -923,7 +924,7 @@
           <p class="eyebrow">Destination intelligence</p>
           <h2 id="gridlyDestinationImpactPaneTitle" data-gridly-destination-decision-role="interpretation">Check local conditions before you go.</h2>
         </div>
-        <button type="button" class="gridly-surface-close" id="gridlyDestinationImpactPaneClose" aria-label="Close Route Awareness details">X</button>
+        <button type="button" class="gridly-surface-close" id="gridlyDestinationImpactPaneClose" aria-label="Close Route Awareness details">×</button>
       </header>
       <p class="gridly-destination-impact-subtitle" id="gridlyDestinationImpactPaneSubtitle" data-gridly-destination-decision-role="reason">Monitoring nearby conditions</p>
       <div class="gridly-current-route-details" id="gridlyCurrentRouteDetailsBlock" aria-label="Current route summary">
@@ -956,7 +957,7 @@
     <div class="route-setup-modal-card" role="dialog" aria-modal="true" aria-labelledby="routeSetupTitle">
       <div class="route-setup-modal-head">
         <span class="eyebrow">Daily Route</span>
-        <button type="button" class="gridly-surface-close route-modal-close" id="closeRouteSetupModalBtn" aria-label="Close Save Route modal">X</button>
+        <button type="button" class="gridly-surface-close route-modal-close" id="closeRouteSetupModalBtn" aria-label="Close saved places editor">×</button>
       </div>
       <h2 id="routeSetupTitle">Manage Places</h2>
       <p class="smart-alerts-subtitle">Your saved places at a glance.</p>
@@ -1043,7 +1044,7 @@
     <div class="smart-alerts-modal-card" role="dialog" aria-modal="true" aria-labelledby="smartAlertsStatus">
       <div class="smart-alerts-modal-head">
         <span class="eyebrow">Gridly Premium</span>
-        <button type="button" class="gridly-surface-close" id="closeSmartAlertsModalBtn" aria-label="Close alert preferences">X</button>
+        <button type="button" class="gridly-surface-close" id="closeSmartAlertsModalBtn" aria-label="Close alert preferences">×</button>
       </div>
       <h2 id="smartAlertsStatus">Alert preferences</h2>
       <p class="smart-alerts-subtitle">Choose what Gridly should watch for you.</p>
@@ -1064,7 +1065,7 @@
     <div class="settings-modal-card" role="dialog" aria-modal="true" aria-labelledby="settingsModalTitle">
       <div class="settings-modal-head">
         <h2 id="settingsModalTitle">Settings</h2>
-        <button type="button" class="gridly-surface-close settings-modal-close" id="closeSettingsModalBtn" aria-label="Close Settings">X</button>
+        <button type="button" class="gridly-surface-close settings-modal-close" id="closeSettingsModalBtn" aria-label="Close Settings">×</button>
       </div>
       <p class="settings-modal-subtitle">Choose what Gridly watches and how it looks on this device.</p>
       <div class="settings-list-experience" data-gridly-settings-list-experience="true">
@@ -1448,7 +1449,7 @@
     <section class="mobile-native-surface-sheet" role="dialog" aria-modal="true" aria-labelledby="mobileNativeSurfaceTitle">
       <header class="mobile-native-surface-header">
         <strong id="mobileNativeSurfaceTitle">Mobile Surface</strong>
-        <button class="gridly-surface-close" type="button" id="mobileNativeSurfaceCloseBtn" aria-label="Close mobile surface">X</button>
+        <button class="gridly-surface-close" type="button" id="mobileNativeSurfaceCloseBtn" aria-label="Close mobile surface">×</button>
       </header>
       <div class="mobile-native-surface-body" id="mobileNativeSurfaceBody"></div>
     </section>
@@ -1642,7 +1643,8 @@
   <script src="js/gridlyAlertsWeatherAuthorityHandoff.js?v=2401g3"></script>
   <script src="js/gridly-report-protocol.js?v=lp244.33-google-play-compliance"></script>
   <script src="js/gridly-ugc-compliance.js?v=lp244.33-google-play-compliance"></script>
-  <script src="js/app.js?v=lp24447-approved-png"></script>
+  <script src="js/gridly-map-visibility.js?v=lp24448f2"></script>
+  <script src="js/app.js?v=lp24448-awareness"></script>
   <script src="js/gridlyDriveTexasGeometryAuthority.js?v=044"></script>
   <script src="js/gridlyDriveTexasAuthoritySourceIntegration.js?v=03921"></script>
   <script src="js/gridlyEndToEndPerformanceAudit.js?v=919"></script>

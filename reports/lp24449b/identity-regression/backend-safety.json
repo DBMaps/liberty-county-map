@@ -1,0 +1,1698 @@
+{
+  "allowedProductionWrites": 0,
+  "policy": "Every page starts behind a GET/HEAD/OPTIONS allowlist; mutation requests abort before any network continuation, external reads are blocked or fulfilled locally, service workers are blocked and WebSockets closed.",
+  "routes": [
+    {
+      "file": "tools/lp24449b/session.cjs",
+      "sha256": "2b0042b8159bb4c6ada116c851bcc293cacac4757865597d3b06206ce03dc1b4",
+      "methodAllowlist": true,
+      "serviceWorkersBlocked": true,
+      "webSocketsClosed": true
+    },
+    {
+      "file": "tools/lp24449b/freeze-verify-browser.cjs",
+      "sha256": "8d9c968834e0e00083247e037524cfd578baa64ae59e7cd326a4f9457a57ff42",
+      "methodAllowlist": true,
+      "serviceWorkersBlocked": true,
+      "webSocketsClosed": true
+    },
+    {
+      "file": "tools/lp24449b/freeze-verify-settings.cjs",
+      "sha256": "dfcc8c0476f925559d81c458addc62e19523605652b47a3f95fb4896ddfc9da5",
+      "methodAllowlist": true,
+      "serviceWorkersBlocked": true,
+      "webSocketsClosed": true
+    },
+    {
+      "file": "tools/lp24449b/freeze-geometry.cjs",
+      "sha256": "1a2a0ba672d380435c7c7fb26f6ec065b8e0608d522417a66c5a5be7aca83ba6",
+      "methodAllowlist": true,
+      "serviceWorkersBlocked": true,
+      "webSocketsClosed": true
+    }
+  ],
+  "blockedMutationRequests": [
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    },
+    {
+      "method": "POST",
+      "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+    }
+  ],
+  "passed": true,
+  "observationScope": "Retained request records are examples from completed runs; interrupted runs and startup profiles may lack complete request logs. The same pre-navigation route policy blocks all mutation methods in every run."
+}

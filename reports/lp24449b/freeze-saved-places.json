@@ -1,0 +1,174 @@
+{
+  "sourceHash": "857dc05e8f12786ace4ccded59e7ed582e3438da3f76d65f2fb4d579af6ceb91",
+  "viewports": [
+    {
+      "viewport": 320,
+      "documentWidth": 320,
+      "rows": [
+        {
+          "role": "home",
+          "text": "Certification saved Home\nHome",
+          "rect": {
+            "x": 16,
+            "y": 449.53125,
+            "width": 286,
+            "height": 67.578125,
+            "top": 449.53125,
+            "right": 302,
+            "bottom": 517.109375,
+            "left": 16
+          }
+        },
+        {
+          "role": "work",
+          "text": "Certification saved Work\nWork",
+          "rect": {
+            "x": 16,
+            "y": 517.109375,
+            "width": 286,
+            "height": 67.578125,
+            "top": 517.109375,
+            "right": 302,
+            "bottom": 584.6875,
+            "left": 16
+          }
+        }
+      ]
+    },
+    {
+      "viewport": 360,
+      "documentWidth": 360,
+      "rows": [
+        {
+          "role": "home",
+          "text": "Certification saved Home\nHome",
+          "rect": {
+            "x": 16,
+            "y": 402.859375,
+            "width": 326,
+            "height": 67.578125,
+            "top": 402.859375,
+            "right": 342,
+            "bottom": 470.4375,
+            "left": 16
+          }
+        },
+        {
+          "role": "work",
+          "text": "Certification saved Work\nWork",
+          "rect": {
+            "x": 16,
+            "y": 470.4375,
+            "width": 326,
+            "height": 67.578125,
+            "top": 470.4375,
+            "right": 342,
+            "bottom": 538.015625,
+            "left": 16
+          }
+        }
+      ]
+    },
+    {
+      "viewport": 390,
+      "documentWidth": 390,
+      "rows": [
+        {
+          "role": "home",
+          "text": "Certification saved Home\nHome",
+          "rect": {
+            "x": 16,
+            "y": 402.859375,
+            "width": 356,
+            "height": 67.578125,
+            "top": 402.859375,
+            "right": 372,
+            "bottom": 470.4375,
+            "left": 16
+          }
+        },
+        {
+          "role": "work",
+          "text": "Certification saved Work\nWork",
+          "rect": {
+            "x": 16,
+            "y": 470.4375,
+            "width": 356,
+            "height": 67.578125,
+            "top": 470.4375,
+            "right": 372,
+            "bottom": 538.015625,
+            "left": 16
+          }
+        }
+      ]
+    },
+    {
+      "viewport": 440,
+      "documentWidth": 440,
+      "rows": [
+        {
+          "role": "home",
+          "text": "Certification saved Home\nHome",
+          "rect": {
+            "x": 16,
+            "y": 402.859375,
+            "width": 406,
+            "height": 67.578125,
+            "top": 402.859375,
+            "right": 422,
+            "bottom": 470.4375,
+            "left": 16
+          }
+        },
+        {
+          "role": "work",
+          "text": "Certification saved Work\nWork",
+          "rect": {
+            "x": 16,
+            "y": 470.4375,
+            "width": 406,
+            "height": 67.578125,
+            "top": 470.4375,
+            "right": 422,
+            "bottom": 538.015625,
+            "left": 16
+          }
+        }
+      ]
+    }
+  ],
+  "network": {
+    "errors": [],
+    "warnings": [
+      "Service Worker registration blocked by Playwright"
+    ],
+    "blockedWrites": [
+      {
+        "method": "POST",
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+      }
+    ],
+    "providerRequests": [
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&expires_at=gt.2026-09-24T18%3A19%3A26.087Z&order=created_at.desc%2Cid.desc&limit=300",
+        "method": "GET",
+        "result": "CONTROLLED_EMPTY_REPORT_FIXTURE"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&report_type=eq.hazard_cleared&created_at=gte.2026-09-24T15%3A19%3A26.087Z&order=created_at.desc%2Cid.desc&limit=100",
+        "method": "GET",
+        "result": "CONTROLLED_EMPTY_REPORT_FIXTURE"
+      }
+    ],
+    "localRequests": [
+      "/data/runtime/canonical-crossing-memberships-v1.json",
+      "/data/runtime/canonical-crossing-records-v1.json",
+      "/data/generated/gridly-statewide-place-presentation-v1.json",
+      "/Crossing-Packages/liberty/package-manifest.json",
+      "/Crossing-Packages/production-crossing-manifest.json",
+      "/Crossing-Packages/liberty/Production/liberty-production-crossings.geojson"
+    ]
+  },
+  "passed": true
+}

@@ -1,0 +1,14 @@
+{
+  "membership": "harris-tx|4877956",
+  "reason": "Original Return Home snapshot recorded correct-place requestInFlight=true and pointsRequestAttempted=true, but requestAttempted=false before acquisition completed; full transaction repeated with explicit controlled-weather completion wait.",
+  "startedAt": "2026-09-24T18:32:40.808Z",
+  "finishedAt": "2026-09-24T18:35:49.611Z",
+  "exitCode": 0,
+  "args": [
+    "tools/lp24449b/home-browser.mjs",
+    "--shard=0/2",
+    "--only=harris-tx|4877956",
+    "--force",
+    "--await-weather"
+  ]
+}

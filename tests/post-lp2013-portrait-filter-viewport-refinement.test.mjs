@@ -19,6 +19,7 @@ function functionSource(name) {
 }
 
 const viewportFunctions = [
+  'gridlyGetTemporaryAreaFilterTarget',
   'gridlyReissueActiveAreaPresentation',
   'gridlyApplyZeroCrossingViewportContract',
   'fitMapToCrossingsForActiveFilter'
@@ -29,6 +30,8 @@ function viewportHarness(filter, visible = []) {
   const countyBounds = { isValid: () => true, owner: 'mclennan-tx' };
   const context = {
     activeGeoFilter: filter,
+    gridlyGetCurrentAwarenessContext: () => ({ type: 'HOME' }),
+    gridlyActiveGeographicPresentation: null,
     map: {
       setView: (...args) => { calls.push(['setView', ...args]); return true; },
       fitBounds: (...args) => calls.push(['fitBounds', ...args])

@@ -1,0 +1,315 @@
+{
+  "records": [
+    {
+      "county": "montgomery-tx",
+      "place": "4816432",
+      "community": "Conroe",
+      "publishBeforeClear": false,
+      "fixture": "gridly-test-lp24448a-1790281865350-1",
+      "candidate": {
+        "object": null,
+        "recordObject": "object-234",
+        "rawObject": "object-235"
+      },
+      "cacheOwner": "gridlyLastAuthoritativeCommunityAwarenessSummary.activeHazardsInArea",
+      "before": {
+        "immediate": 0,
+        "timed": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "fresh": 0,
+        "refreshes": [
+          0,
+          0
+        ]
+      },
+      "after": {
+        "immediate": 0,
+        "timed": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "fresh": 0,
+        "refreshes": [
+          0,
+          0
+        ],
+        "pass": true
+      }
+    },
+    {
+      "county": "montgomery-tx",
+      "place": "4816432",
+      "community": "Conroe",
+      "publishBeforeClear": true,
+      "fixture": "gridly-test-lp24448a-1790281936568-1",
+      "candidate": {
+        "object": "object-247",
+        "recordObject": "object-39",
+        "rawObject": "object-292",
+        "id": "gridly-test-lp24448a-1790281936568-1",
+        "source": "user",
+        "type": "flooding",
+        "state": "TX",
+        "local": true,
+        "lat": 30.3118769,
+        "lng": -95.4560512,
+        "county": "montgomery-tx",
+        "place": "4816432",
+        "evidenceId": "active_hazard:hazard-gridly-test-lp24448a-1790281936568-1",
+        "expired": false
+      },
+      "cacheOwner": "gridlyLastAuthoritativeCommunityAwarenessSummary.activeHazardsInArea",
+      "before": {
+        "immediate": 1,
+        "timed": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "fresh": 1,
+        "refreshes": [
+          1,
+          1
+        ]
+      },
+      "after": {
+        "immediate": 0,
+        "timed": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "fresh": 0,
+        "refreshes": [
+          0,
+          0
+        ],
+        "pass": true
+      }
+    },
+    {
+      "county": "montague-tx",
+      "place": "4809640",
+      "community": "Bowie",
+      "publishBeforeClear": false,
+      "fixture": "gridly-test-lp24448a-1790281999994-1",
+      "candidate": {
+        "object": null,
+        "recordObject": "object-218",
+        "rawObject": "object-219"
+      },
+      "cacheOwner": "gridlyLastAuthoritativeCommunityAwarenessSummary.activeHazardsInArea",
+      "before": {
+        "immediate": 0,
+        "timed": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "fresh": 0,
+        "refreshes": [
+          0,
+          0
+        ]
+      },
+      "after": {
+        "immediate": 0,
+        "timed": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "fresh": 0,
+        "refreshes": [
+          0,
+          0
+        ],
+        "pass": true
+      }
+    },
+    {
+      "county": "montague-tx",
+      "place": "4809640",
+      "community": "Bowie",
+      "publishBeforeClear": true,
+      "fixture": "gridly-test-lp24448a-1790282006977-1",
+      "candidate": {
+        "object": "object-221",
+        "recordObject": "object-41",
+        "rawObject": "object-266",
+        "id": "gridly-test-lp24448a-1790282006977-1",
+        "source": "user",
+        "type": "flooding",
+        "state": "TX",
+        "local": true,
+        "lat": 33.558993,
+        "lng": -97.8484719,
+        "county": "montague-tx",
+        "place": "4809640",
+        "evidenceId": "active_hazard:hazard-gridly-test-lp24448a-1790282006977-1",
+        "expired": false
+      },
+      "cacheOwner": "gridlyLastAuthoritativeCommunityAwarenessSummary.activeHazardsInArea",
+      "before": {
+        "immediate": 1,
+        "timed": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "fresh": 1,
+        "refreshes": [
+          1,
+          1
+        ]
+      },
+      "after": {
+        "immediate": 0,
+        "timed": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "fresh": 0,
+        "refreshes": [
+          0,
+          0
+        ],
+        "pass": true
+      }
+    },
+    {
+      "county": "bexar-tx",
+      "place": "4801600",
+      "community": "Alamo Heights",
+      "publishBeforeClear": false,
+      "fixture": "gridly-test-lp24448a-1790282014222-1",
+      "candidate": {
+        "object": null,
+        "recordObject": "object-250",
+        "rawObject": "object-251"
+      },
+      "cacheOwner": "gridlyLastAuthoritativeCommunityAwarenessSummary.activeHazardsInArea",
+      "before": {
+        "immediate": 0,
+        "timed": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "fresh": 0,
+        "refreshes": [
+          0,
+          0
+        ]
+      },
+      "after": {
+        "immediate": 0,
+        "timed": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "fresh": 0,
+        "refreshes": [
+          0,
+          0
+        ],
+        "pass": true
+      }
+    },
+    {
+      "county": "bexar-tx",
+      "place": "4801600",
+      "community": "Alamo Heights",
+      "publishBeforeClear": true,
+      "fixture": "gridly-test-lp24448a-1790282021922-1",
+      "candidate": {
+        "object": "object-253",
+        "recordObject": "object-41",
+        "rawObject": "object-298",
+        "id": "gridly-test-lp24448a-1790282021922-1",
+        "source": "user",
+        "type": "flooding",
+        "state": "TX",
+        "local": true,
+        "lat": 29.4832264,
+        "lng": -98.468455,
+        "county": "bexar-tx",
+        "place": "4801600",
+        "evidenceId": "active_hazard:hazard-gridly-test-lp24448a-1790282021922-1",
+        "expired": false
+      },
+      "cacheOwner": "gridlyLastAuthoritativeCommunityAwarenessSummary.activeHazardsInArea",
+      "before": {
+        "immediate": 1,
+        "timed": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "fresh": 1,
+        "refreshes": [
+          1,
+          1
+        ]
+      },
+      "after": {
+        "immediate": 0,
+        "timed": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "fresh": 0,
+        "refreshes": [
+          0,
+          0
+        ],
+        "pass": true
+      }
+    }
+  ],
+  "passed": true,
+  "commonality": "Same published-summary fallback and normalized community-report shape; the place/county changes are not the causal discriminator. Provider publication before clear is. Passing controls acquire the defect under the same pre-repair publication ordering."
+}

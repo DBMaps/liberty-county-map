@@ -1,0 +1,221 @@
+{
+  "provenAt": "2026-09-24T20:36:30.138Z",
+  "productPatched": false,
+  "rootCause": "Same-area published community summaries are reusable without the existing canonical community revision. A DriveTexas consumer publication while a local report is active captures that normalized report in activeHazardsInArea. After clear removes the current authoritative rows, getGridlyAlertsSurfaceActiveCommunityReportRows falls back to the still-area-valid published summary; its original report object re-enters the lightweight Pulse model. Shared-model caching then republishes the wrong count.",
+  "exactCandidate": {
+    "id": "gridly-test-lp24448a-1790281876622-145",
+    "county": "leon-tx",
+    "place": "4811116",
+    "object": "object-18221",
+    "source": "published summary activeHazardsInArea",
+    "firstRetainer": "gridlyGetPublishedAwarenessAlertRecordsForCurrentArea",
+    "downstream": [
+      "getGridlyAlertsSurfaceActiveCommunityReportRows",
+      "getGridlyUserFacingActiveRoadHazardIncidents",
+      "buildGridlyLightweightActiveAwareness",
+      "buildGridlyCommunityPulseModel",
+      "refreshGridlyCommunityPulseSharedModel"
+    ]
+  },
+  "evidence": {
+    "sequence": "provenance-statewide.json",
+    "pairedRace": "publication-race-before.json",
+    "pairedCases": [
+      {
+        "county": "montgomery-tx",
+        "place": "4816432",
+        "publishBeforeClear": false,
+        "immediate": 0,
+        "at2000": 0,
+        "afterRefreshes": [
+          0,
+          0
+        ]
+      },
+      {
+        "county": "montgomery-tx",
+        "place": "4816432",
+        "publishBeforeClear": true,
+        "immediate": 1,
+        "at2000": 1,
+        "afterRefreshes": [
+          1,
+          1
+        ]
+      },
+      {
+        "county": "montague-tx",
+        "place": "4809640",
+        "publishBeforeClear": false,
+        "immediate": 0,
+        "at2000": 0,
+        "afterRefreshes": [
+          0,
+          0
+        ]
+      },
+      {
+        "county": "montague-tx",
+        "place": "4809640",
+        "publishBeforeClear": true,
+        "immediate": 1,
+        "at2000": 1,
+        "afterRefreshes": [
+          1,
+          1
+        ]
+      },
+      {
+        "county": "bexar-tx",
+        "place": "4801600",
+        "publishBeforeClear": false,
+        "immediate": 0,
+        "at2000": 0,
+        "afterRefreshes": [
+          0,
+          0
+        ]
+      },
+      {
+        "county": "bexar-tx",
+        "place": "4801600",
+        "publishBeforeClear": true,
+        "immediate": 1,
+        "at2000": 1,
+        "afterRefreshes": [
+          1,
+          1
+        ]
+      },
+      {
+        "county": "dallas-tx",
+        "place": "4801240",
+        "publishBeforeClear": false,
+        "immediate": 0,
+        "at2000": 0,
+        "afterRefreshes": [
+          0,
+          0
+        ]
+      },
+      {
+        "county": "dallas-tx",
+        "place": "4801240",
+        "publishBeforeClear": true,
+        "immediate": 1,
+        "at2000": 1,
+        "afterRefreshes": [
+          1,
+          1
+        ]
+      },
+      {
+        "county": "mills-tx",
+        "place": "4830056",
+        "publishBeforeClear": false,
+        "immediate": 0,
+        "at2000": 0,
+        "afterRefreshes": [
+          0,
+          0
+        ]
+      },
+      {
+        "county": "mills-tx",
+        "place": "4830056",
+        "publishBeforeClear": true,
+        "immediate": 1,
+        "at2000": 1,
+        "afterRefreshes": [
+          1,
+          1
+        ]
+      }
+    ]
+  },
+  "visibleDifference": "Visible consumers read the governed projection, which is empty. The legacy active-awareness branch additionally trusts the old same-area publication.",
+  "sequenceSensitivity": "A provider/periodic publication must occur in the active interval. Five paired witnesses/controls clear without it and fail deterministically with it; county identity is not causal.",
+  "repairPlan": "Bind existing community-summary caches to gridlyGetCanonicalActiveCommunityState().revision at construction. Reject stale revisions at reuse/publication, rebuilding only a stale incoming summary when required. Preserve the existing official source envelope and retention contract; no timer, count override, fixture special case or blanket purge.",
+  "hypotheses": [
+    {
+      "id": 1,
+      "result": "RULED_OUT",
+      "evidence": "raw activeHazards and normalized activeReports empty"
+    },
+    {
+      "id": 2,
+      "result": "RULED_OUT",
+      "evidence": "grouped current incident arrays empty"
+    },
+    {
+      "id": 3,
+      "result": "RULED_OUT",
+      "evidence": "marker layers/DOM empty after clear; retained object originates in publication"
+    },
+    {
+      "id": 4,
+      "result": "RULED_IN",
+      "evidence": "same-area cached summary retains obsolete community candidate"
+    },
+    {
+      "id": 5,
+      "result": "RULED_OUT",
+      "evidence": "new candidate collections inherit publication fallback; no persistent Set/Map removal failure"
+    },
+    {
+      "id": 6,
+      "result": "RULED_OUT",
+      "evidence": "same normalized object identity followed through fallback; raw removal succeeds"
+    },
+    {
+      "id": 7,
+      "result": "PROVEN",
+      "evidence": "published activeHazardsInArea retains original normalized report"
+    },
+    {
+      "id": 8,
+      "result": "PROVEN",
+      "evidence": "community clear revision missing from summary validity"
+    },
+    {
+      "id": 9,
+      "result": "RULED_OUT",
+      "evidence": "accepted context generation remains identical across clear; data revision changes"
+    },
+    {
+      "id": 10,
+      "result": "PROVEN",
+      "evidence": "provider publication before clear is causal; absence is paired passing control"
+    },
+    {
+      "id": 11,
+      "result": "PROVEN",
+      "evidence": "provider publication captures active model; later refreshes reuse old candidate"
+    },
+    {
+      "id": 12,
+      "result": "RULED_OUT",
+      "evidence": "fresh contexts in all three witnesses and two controls reproduce"
+    },
+    {
+      "id": 13,
+      "result": "RULED_OUT",
+      "evidence": "retained identity is exact flood fixture, not a crossing"
+    },
+    {
+      "id": 14,
+      "result": "PROVEN",
+      "evidence": "fixture/raw overlay removed; published normalized object remains"
+    },
+    {
+      "id": 15,
+      "result": "PROVEN",
+      "evidence": "cache keyed by area without canonical clear revision"
+    },
+    {
+      "id": 16,
+      "result": "RULED_OUT",
+      "evidence": "production provider consumer publication reproduces on fresh contexts with passive timed reads"
+    }
+  ]
+}

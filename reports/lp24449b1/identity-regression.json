@@ -1,0 +1,431 @@
+{
+  "decision": "APPROVE",
+  "sourceHash": "f57fac7440ad6ad9bf230e1f41cffeefb7f22405c0a58b696e48bba3ce0ed0cd",
+  "blockers": [],
+  "originalFailures": 369,
+  "fixed": 369,
+  "residualFamiliesEvaluatedByParentReport": {
+    "PROVIDER_HEALTH_FALSE": 1997,
+    "CROSSING_ELIGIBLE_PACKAGE_MISSING": 12,
+    "PULSE_PUBLISHED_COUNT_STALE_AFTER_CLEAR": 10,
+    "FILTER_COUNTY_WRONG_SCOPE": 1
+  },
+  "generatedAt": "2026-09-24T23:50:23.483Z",
+  "coverage": {
+    "sourceHash": "f57fac7440ad6ad9bf230e1f41cffeefb7f22405c0a58b696e48bba3ce0ed0cd",
+    "home": {
+      "tested": 793,
+      "required": 793,
+      "passed": 793,
+      "counties": 254,
+      "multiMemberships": 362
+    },
+    "search": {
+      "tested": 2058,
+      "passed": 2058,
+      "sourceHash": "f57fac7440ad6ad9bf230e1f41cffeefb7f22405c0a58b696e48bba3ce0ed0cd"
+    },
+    "visibleSearch": {
+      "tested": 67,
+      "required": 67,
+      "passed": 67,
+      "collisionGroups": 22,
+      "collisionIdentities": 45
+    },
+    "profiles": {
+      "tested": 19,
+      "passed": 19
+    },
+    "returnHome": {
+      "tested": 793,
+      "passed": 793
+    },
+    "sameCounty": {
+      "tested": 763,
+      "counties": 224,
+      "passed": 763
+    },
+    "crossCounty": {
+      "tested": 254,
+      "passed": 254
+    },
+    "freeze": {
+      "combined": true,
+      "settings": true,
+      "geometry": true,
+      "threeHazards": true,
+      "streetProof": [
+        {
+          "type": "flooding",
+          "expected": "Cook Street and Church Street",
+          "actual": "Cook Street and Church Street",
+          "freshness": "Updated just now",
+          "pass": true
+        },
+        {
+          "type": "debris",
+          "expected": "Winfree Street and Flowers Street",
+          "actual": "Winfree Street and Flowers Street",
+          "freshness": "Updated 6 minutes ago",
+          "pass": true
+        },
+        {
+          "type": "other_hazard",
+          "expected": "Hope Street and Nancy Street",
+          "actual": "Hope Street and Nancy Street",
+          "freshness": "Updated 12 minutes ago",
+          "pass": true
+        }
+      ],
+      "savedPlaces": true,
+      "historicalClearComparison": {
+        "purpose": "Compare the historical crossing-clear timeout on starting and repaired source; no LP244.49B repair or live-provider certification.",
+        "runs": [
+          {
+            "baseline": true,
+            "exitCode": 0,
+            "sourceHash": "857dc05e8f12786ace4ccded59e7ed582e3438da3f76d65f2fb4d579af6ceb91",
+            "passed": true,
+            "completedStates": [
+              "A-quiet",
+              "B-blocked",
+              "F-blocked-cleared"
+            ]
+          },
+          {
+            "baseline": false,
+            "exitCode": 0,
+            "sourceHash": "f57fac7440ad6ad9bf230e1f41cffeefb7f22405c0a58b696e48bba3ce0ed0cd",
+            "passed": true,
+            "completedStates": [
+              "A-quiet",
+              "B-blocked",
+              "F-blocked-cleared"
+            ]
+          }
+        ],
+        "newFailure": false,
+        "sameFailure": false,
+        "classification": "BOTH_PASS_ON_REPLAY",
+        "comparisonPass": true
+      },
+      "textSizeBaseline": {
+        "scope": "Compare observed 320 px large-text control clipping with exact starting source; no presentation repair.",
+        "runs": [
+          {
+            "baseline": true,
+            "sourceHash": "857dc05e8f12786ace4ccded59e7ed582e3438da3f76d65f2fb4d579af6ceb91",
+            "controls": [
+              {
+                "label": "Standard",
+                "width": 66,
+                "height": 38,
+                "textWidth": 65.125,
+                "font": "780 15.088px / 17.3512px Inter, system-ui, sans-serif",
+                "overflow": "visible",
+                "scrollWidth": 72,
+                "clientWidth": 64
+              },
+              {
+                "label": "Large",
+                "width": 66,
+                "height": 38,
+                "textWidth": 40.015625,
+                "font": "780 15.088px / 17.3512px Inter, system-ui, sans-serif",
+                "overflow": "visible",
+                "scrollWidth": 64,
+                "clientWidth": 64
+              },
+              {
+                "label": "Compact",
+                "width": 66,
+                "height": 38,
+                "textWidth": 63.9375,
+                "font": "780 15.088px / 17.3512px Inter, system-ui, sans-serif",
+                "overflow": "visible",
+                "scrollWidth": 71,
+                "clientWidth": 64
+              }
+            ],
+            "screenshot": "C:\\GitHub\\liberty-county-map\\.artifacts\\lp24449b1/text-size-baseline-320-large.png"
+          },
+          {
+            "baseline": false,
+            "sourceHash": "f57fac7440ad6ad9bf230e1f41cffeefb7f22405c0a58b696e48bba3ce0ed0cd",
+            "controls": [
+              {
+                "label": "Standard",
+                "width": 66,
+                "height": 38,
+                "textWidth": 65.125,
+                "font": "780 15.088px / 17.3512px Inter, system-ui, sans-serif",
+                "overflow": "visible",
+                "scrollWidth": 72,
+                "clientWidth": 64
+              },
+              {
+                "label": "Large",
+                "width": 66,
+                "height": 38,
+                "textWidth": 40.015625,
+                "font": "780 15.088px / 17.3512px Inter, system-ui, sans-serif",
+                "overflow": "visible",
+                "scrollWidth": 64,
+                "clientWidth": 64
+              },
+              {
+                "label": "Compact",
+                "width": 66,
+                "height": 38,
+                "textWidth": 63.9375,
+                "font": "780 15.088px / 17.3512px Inter, system-ui, sans-serif",
+                "overflow": "visible",
+                "scrollWidth": 71,
+                "clientWidth": 64
+              }
+            ],
+            "screenshot": "C:\\GitHub\\liberty-county-map\\.artifacts\\lp24449b1/text-size-repaired-320-large.png"
+          }
+        ],
+        "sameControlMetrics": true
+      }
+    },
+    "tests": {
+      "newFailures": [],
+      "baselineFailureCount": 10,
+      "repairedFailureCount": 10
+    },
+    "runtime": {
+      "homeTotalMs": 13585152,
+      "searchTotalMs": 3369498,
+      "slowHome": [
+        {
+          "county": "harris-tx",
+          "place": "4814929",
+          "ms": 250872
+        },
+        {
+          "county": "harris-tx",
+          "place": "4848772",
+          "ms": 230720
+        },
+        {
+          "county": "harris-tx",
+          "place": "4867688",
+          "ms": 222318
+        },
+        {
+          "county": "harris-tx",
+          "place": "4869908",
+          "ms": 221527
+        },
+        {
+          "county": "harris-tx",
+          "place": "4877956",
+          "ms": 219510
+        },
+        {
+          "county": "harris-tx",
+          "place": "4817756",
+          "ms": 217037
+        },
+        {
+          "county": "harris-tx",
+          "place": "4873316",
+          "ms": 213428
+        },
+        {
+          "county": "harris-tx",
+          "place": "4801696",
+          "ms": 211238
+        },
+        {
+          "county": "harris-tx",
+          "place": "4872656",
+          "ms": 211195
+        },
+        {
+          "county": "harris-tx",
+          "place": "4838476",
+          "ms": 209834
+        }
+      ],
+      "slowSearch": [
+        {
+          "county": "harris-tx",
+          "place": "4866392",
+          "ms": 56970
+        },
+        {
+          "county": "harris-tx",
+          "place": "4872656",
+          "ms": 54736
+        },
+        {
+          "county": "harris-tx",
+          "place": "4849380",
+          "ms": 51189
+        },
+        {
+          "county": "harris-tx",
+          "place": "4838476",
+          "ms": 50859
+        },
+        {
+          "county": "harris-tx",
+          "place": "4867688",
+          "ms": 49467
+        },
+        {
+          "county": "harris-tx",
+          "place": "4848804",
+          "ms": 48945
+        },
+        {
+          "county": "harris-tx",
+          "place": "4869908",
+          "ms": 48673
+        },
+        {
+          "county": "harris-tx",
+          "place": "4857800",
+          "ms": 46605
+        },
+        {
+          "county": "harris-tx",
+          "place": "4869272",
+          "ms": 46118
+        },
+        {
+          "county": "harris-tx",
+          "place": "4871960",
+          "ms": 45748
+        }
+      ],
+      "interpretation": "Headless deterministic harness timings include map rendering, settlement and reload; not human interaction latency.",
+      "homeReadPerformance": [
+        {
+          "baseline": true,
+          "sourceHash": "857dc05e8f12786ace4ccded59e7ed582e3438da3f76d65f2fb4d579af6ceb91",
+          "setup": {
+            "saved": "Houston",
+            "elapsedMs": 10305.60000000149,
+            "context": {
+              "probeVersion": 3,
+              "type": "HOME",
+              "place": "4835000",
+              "name": "Houston",
+              "county": "harris-tx",
+              "lat": 29.7589382,
+              "lng": -95.3676974,
+              "generation": 1,
+              "health": "FRESH",
+              "expiresAt": null,
+              "startupProviderFocus": null
+            },
+            "getterCalls": 22705
+          },
+          "sample": {
+            "count": 1000,
+            "elapsedMs": 12.700000002980232,
+            "area": {
+              "key": "place-4835000",
+              "county": "harris-tx",
+              "place": "4835000"
+            },
+            "context": {
+              "probeVersion": 3,
+              "type": "HOME",
+              "place": "4835000",
+              "name": "Houston",
+              "county": "harris-tx",
+              "lat": 29.7589382,
+              "lng": -95.3676974,
+              "generation": 1,
+              "health": "FRESH",
+              "expiresAt": null,
+              "startupProviderFocus": null
+            }
+          },
+          "canonicalResolverSamples": 3,
+          "totalSamples": 34,
+          "errors": []
+        },
+        {
+          "baseline": false,
+          "sourceHash": "f57fac7440ad6ad9bf230e1f41cffeefb7f22405c0a58b696e48bba3ce0ed0cd",
+          "setup": {
+            "saved": true,
+            "elapsedMs": 17076.89999999851,
+            "context": {
+              "probeVersion": 3,
+              "type": "HOME",
+              "place": "4835000",
+              "name": "Houston",
+              "county": "harris-tx",
+              "lat": 29.7589382,
+              "lng": -95.3676974,
+              "generation": 1,
+              "health": "FRESH",
+              "expiresAt": null,
+              "startupProviderFocus": null
+            },
+            "getterCalls": 21868
+          },
+          "sample": {
+            "count": 1000,
+            "elapsedMs": 12.100000001490116,
+            "area": {
+              "key": "place-4835000",
+              "county": "harris-tx",
+              "place": "4835000"
+            },
+            "context": {
+              "probeVersion": 3,
+              "type": "HOME",
+              "place": "4835000",
+              "name": "Houston",
+              "county": "harris-tx",
+              "lat": 29.7589382,
+              "lng": -95.3676974,
+              "generation": 1,
+              "health": "FRESH",
+              "expiresAt": null,
+              "startupProviderFocus": null
+            }
+          },
+          "canonicalResolverSamples": 2,
+          "totalSamples": 30,
+          "errors": []
+        }
+      ]
+    },
+    "consumers": {
+      "weatherRequest": {
+        "tested": 793,
+        "passed": 793
+      },
+      "locationLabel": {
+        "tested": 793,
+        "passed": 793
+      },
+      "kbygLabel": {
+        "tested": 793,
+        "passed": 793
+      },
+      "alertsOwner": {
+        "tested": 793,
+        "passed": 793
+      },
+      "driveOwner": {
+        "tested": 793,
+        "passed": 793
+      },
+      "crossingOwner": {
+        "tested": 793,
+        "passed": 793
+      }
+    }
+  },
+  "evidence": "identity-regression/decision.json"
+}

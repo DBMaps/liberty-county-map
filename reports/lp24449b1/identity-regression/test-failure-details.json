@@ -1,0 +1,87 @@
+{
+  "repaired": [
+    {
+      "title": "✖ all nine governed San Antonio consumer regions save and restore without PLACE identity",
+      "reason": "ReferenceError: gridlyCompleteConfirmedCameraTransaction is not defined"
+    },
+    {
+      "title": "✖ San Antonio region governance fails closed and legacy blanket identity requires reselection",
+      "reason": "ReferenceError: gridlyCompleteConfirmedCameraTransaction is not defined"
+    },
+    {
+      "title": "✖ explicit apply accepts every representative governed statewide PLACE identity",
+      "reason": "ReferenceError: gridlyCompleteConfirmedCameraTransaction is not defined"
+    },
+    {
+      "title": "✖ governed manual identity validation remains fail closed and transactional",
+      "reason": "ReferenceError: gridlyCompleteConfirmedCameraTransaction is not defined"
+    },
+    {
+      "title": "✖ countywide manual apply retains FIPS-backed county identity without a fabricated PLACE",
+      "reason": "ReferenceError: gridlyCompleteConfirmedCameraTransaction is not defined"
+    },
+    {
+      "title": "✖ native startup inventory includes approved marker dependencies in index order",
+      "reason": "Error: Consumer startup scripts differ from the governed manifest or order."
+    },
+    {
+      "title": "✖ bare PLACE resolution precedes acquisition without changing qualified-query behavior",
+      "reason": "AssertionError [ERR_ASSERTION]: current application asset identity is bound"
+    },
+    {
+      "title": "✖ Baytown preserves PLACE 4806128 and explicitly establishes Chambers ownership",
+      "reason": "ReferenceError: gridlyBeginCommunityTransitionTrace is not defined"
+    },
+    {
+      "title": "✖ a second control selects a non-first membership and never retains the prior county",
+      "reason": "ReferenceError: gridlyBeginCommunityTransitionTrace is not defined"
+    },
+    {
+      "title": "✖ missing, unknown, ungoverned, and ambiguous canonical requests fail closed",
+      "reason": "ReferenceError: gridlyBeginCommunityTransitionTrace is not defined"
+    }
+  ],
+  "baseline": [
+    {
+      "title": "✖ all nine governed San Antonio consumer regions save and restore without PLACE identity",
+      "reason": "ReferenceError: gridlyCompleteConfirmedCameraTransaction is not defined"
+    },
+    {
+      "title": "✖ San Antonio region governance fails closed and legacy blanket identity requires reselection",
+      "reason": "ReferenceError: gridlyCompleteConfirmedCameraTransaction is not defined"
+    },
+    {
+      "title": "✖ explicit apply accepts every representative governed statewide PLACE identity",
+      "reason": "ReferenceError: gridlyCompleteConfirmedCameraTransaction is not defined"
+    },
+    {
+      "title": "✖ governed manual identity validation remains fail closed and transactional",
+      "reason": "ReferenceError: gridlyCompleteConfirmedCameraTransaction is not defined"
+    },
+    {
+      "title": "✖ countywide manual apply retains FIPS-backed county identity without a fabricated PLACE",
+      "reason": "ReferenceError: gridlyCompleteConfirmedCameraTransaction is not defined"
+    },
+    {
+      "title": "✖ native startup inventory includes approved marker dependencies in index order",
+      "reason": "Error: Consumer startup scripts differ from the governed manifest or order."
+    },
+    {
+      "title": "✖ bare PLACE resolution precedes acquisition without changing qualified-query behavior",
+      "reason": "AssertionError [ERR_ASSERTION]: current application asset identity is bound"
+    },
+    {
+      "title": "✖ Baytown preserves PLACE 4806128 and explicitly establishes Chambers ownership",
+      "reason": "ReferenceError: gridlyBeginCommunityTransitionTrace is not defined"
+    },
+    {
+      "title": "✖ a second control selects a non-first membership and never retains the prior county",
+      "reason": "ReferenceError: gridlyBeginCommunityTransitionTrace is not defined"
+    },
+    {
+      "title": "✖ missing, unknown, ungoverned, and ambiguous canonical requests fail closed",
+      "reason": "ReferenceError: gridlyBeginCommunityTransitionTrace is not defined"
+    }
+  ],
+  "changedReasons": []
+}

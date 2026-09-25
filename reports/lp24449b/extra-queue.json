@@ -1,0 +1,29 @@
+{
+  "runs": [
+    {
+      "job": "filter-lifecycle.mjs",
+      "startedAt": "2026-09-24T18:20:21.761Z",
+      "finishedAt": "2026-09-24T18:21:27.565Z",
+      "exitCode": 0
+    },
+    {
+      "job": "rail-lifecycle.mjs",
+      "startedAt": "2026-09-24T18:21:27.568Z",
+      "finishedAt": "2026-09-24T18:21:51.590Z",
+      "exitCode": 0
+    },
+    {
+      "job": "nueces-baseline.mjs",
+      "startedAt": "2026-09-24T18:21:51.592Z",
+      "finishedAt": "2026-09-24T18:22:16.935Z",
+      "exitCode": 0
+    },
+    {
+      "job": "pulse-statewide.mjs",
+      "startedAt": "2026-09-24T18:22:16.937Z",
+      "finishedAt": "2026-09-24T18:26:23.869Z",
+      "exitCode": 0
+    }
+  ],
+  "completed": true
+}

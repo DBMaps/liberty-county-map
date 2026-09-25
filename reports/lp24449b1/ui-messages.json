@@ -1,0 +1,490 @@
+{
+  "location": [
+    {
+      "viewportWidth": 320,
+      "outcome": "denied",
+      "text": "Location permission was denied. Your area is unchanged.",
+      "hidden": false,
+      "display": "flex",
+      "live": "polite",
+      "width": 284,
+      "height": 56.625
+    },
+    {
+      "viewportWidth": 320,
+      "outcome": "stale",
+      "text": "A fresh location is unavailable. Your area is unchanged. Try Around Me again.",
+      "hidden": false,
+      "display": "flex",
+      "live": "polite",
+      "width": 284,
+      "height": 75.9375
+    },
+    {
+      "viewportWidth": 320,
+      "outcome": "timeout",
+      "text": "Location timed out. Your area is unchanged. Try Around Me again.",
+      "hidden": false,
+      "display": "flex",
+      "live": "polite",
+      "width": 284,
+      "height": 56.625
+    },
+    {
+      "viewportWidth": 320,
+      "outcome": "error",
+      "text": "A fresh location is unavailable. Your area is unchanged. Try Around Me again.",
+      "hidden": false,
+      "display": "flex",
+      "live": "polite",
+      "width": 284,
+      "height": 75.9375
+    },
+    {
+      "viewportWidth": 320,
+      "outcome": "success",
+      "text": "Around Me uses this location for up to two minutes. Your Home is unchanged.",
+      "hidden": false,
+      "display": "flex",
+      "live": "polite",
+      "width": 284,
+      "height": 75.9375
+    },
+    {
+      "viewportWidth": 360,
+      "outcome": "denied",
+      "text": "Location permission was denied. Your area is unchanged.",
+      "hidden": false,
+      "display": "flex",
+      "live": "polite",
+      "width": 324,
+      "height": 56.625
+    },
+    {
+      "viewportWidth": 360,
+      "outcome": "stale",
+      "text": "A fresh location is unavailable. Your area is unchanged. Try Around Me again.",
+      "hidden": false,
+      "display": "flex",
+      "live": "polite",
+      "width": 324,
+      "height": 56.625
+    },
+    {
+      "viewportWidth": 360,
+      "outcome": "timeout",
+      "text": "Location timed out. Your area is unchanged. Try Around Me again.",
+      "hidden": false,
+      "display": "flex",
+      "live": "polite",
+      "width": 324,
+      "height": 56.625
+    },
+    {
+      "viewportWidth": 360,
+      "outcome": "error",
+      "text": "A fresh location is unavailable. Your area is unchanged. Try Around Me again.",
+      "hidden": false,
+      "display": "flex",
+      "live": "polite",
+      "width": 324,
+      "height": 56.625
+    },
+    {
+      "viewportWidth": 360,
+      "outcome": "success",
+      "text": "Around Me uses this location for up to two minutes. Your Home is unchanged.",
+      "hidden": false,
+      "display": "flex",
+      "live": "polite",
+      "width": 324,
+      "height": 56.625
+    },
+    {
+      "viewportWidth": 390,
+      "outcome": "denied",
+      "text": "Location permission was denied. Your area is unchanged.",
+      "hidden": false,
+      "display": "flex",
+      "live": "polite",
+      "width": 354,
+      "height": 56.625
+    },
+    {
+      "viewportWidth": 390,
+      "outcome": "stale",
+      "text": "A fresh location is unavailable. Your area is unchanged. Try Around Me again.",
+      "hidden": false,
+      "display": "flex",
+      "live": "polite",
+      "width": 354,
+      "height": 56.625
+    },
+    {
+      "viewportWidth": 390,
+      "outcome": "timeout",
+      "text": "Location timed out. Your area is unchanged. Try Around Me again.",
+      "hidden": false,
+      "display": "flex",
+      "live": "polite",
+      "width": 354,
+      "height": 56.625
+    },
+    {
+      "viewportWidth": 390,
+      "outcome": "error",
+      "text": "A fresh location is unavailable. Your area is unchanged. Try Around Me again.",
+      "hidden": false,
+      "display": "flex",
+      "live": "polite",
+      "width": 354,
+      "height": 56.625
+    },
+    {
+      "viewportWidth": 390,
+      "outcome": "success",
+      "text": "Around Me uses this location for up to two minutes. Your Home is unchanged.",
+      "hidden": false,
+      "display": "flex",
+      "live": "polite",
+      "width": 354,
+      "height": 56.625
+    },
+    {
+      "viewportWidth": 440,
+      "outcome": "denied",
+      "text": "Location permission was denied. Your area is unchanged.",
+      "hidden": false,
+      "display": "flex",
+      "live": "polite",
+      "width": 404,
+      "height": 56.625
+    },
+    {
+      "viewportWidth": 440,
+      "outcome": "stale",
+      "text": "A fresh location is unavailable. Your area is unchanged. Try Around Me again.",
+      "hidden": false,
+      "display": "flex",
+      "live": "polite",
+      "width": 404,
+      "height": 56.625
+    },
+    {
+      "viewportWidth": 440,
+      "outcome": "timeout",
+      "text": "Location timed out. Your area is unchanged. Try Around Me again.",
+      "hidden": false,
+      "display": "flex",
+      "live": "polite",
+      "width": 404,
+      "height": 56.625
+    },
+    {
+      "viewportWidth": 440,
+      "outcome": "error",
+      "text": "A fresh location is unavailable. Your area is unchanged. Try Around Me again.",
+      "hidden": false,
+      "display": "flex",
+      "live": "polite",
+      "width": 404,
+      "height": 56.625
+    },
+    {
+      "viewportWidth": 440,
+      "outcome": "success",
+      "text": "Around Me uses this location for up to two minutes. Your Home is unchanged.",
+      "hidden": false,
+      "display": "flex",
+      "live": "polite",
+      "width": 404,
+      "height": 56.625
+    }
+  ],
+  "routeDetails": [
+    {
+      "theme": "light",
+      "colors": [
+        {
+          "selector": "#gridlyCurrentRouteLine",
+          "text": "Not selected → Not selected",
+          "fg": "rgb(13, 27, 42)",
+          "bg": "rgb(227, 237, 243)",
+          "contrast": 14.63909328260259
+        },
+        {
+          "selector": "#gridlyCurrentRouteMeta",
+          "text": "ETA / distance pending",
+          "fg": "rgb(61, 82, 101)",
+          "bg": "rgb(227, 237, 243)",
+          "contrast": 6.815400244931792
+        },
+        {
+          "selector": "#gridlyDestinationImpactPaneSeverity",
+          "text": "Route information unavailable",
+          "fg": "rgb(13, 27, 42)",
+          "bg": "rgb(227, 237, 243)",
+          "contrast": 14.63909328260259
+        },
+        {
+          "selector": ".gridly-destination-impact-subtitle",
+          "text": "A required route or destination source was attempted but is unavailable.",
+          "fg": "rgb(61, 82, 101)",
+          "bg": "rgb(251, 253, 255)",
+          "contrast": 7.9421279301019725
+        },
+        {
+          "selector": ".gridly-destination-impact-quiet-note",
+          "text": "New rail or community reports will appear here.",
+          "fg": "rgb(61, 82, 101)",
+          "bg": "rgb(227, 237, 243)",
+          "contrast": 6.815400244931792
+        }
+      ]
+    },
+    {
+      "theme": "dark",
+      "colors": [
+        {
+          "selector": "#gridlyCurrentRouteLine",
+          "text": "Not selected → Not selected",
+          "fg": "rgb(244, 248, 252)",
+          "bg": "rgb(18, 38, 58)",
+          "contrast": 14.426929442260448
+        },
+        {
+          "selector": "#gridlyCurrentRouteMeta",
+          "text": "ETA / distance pending",
+          "fg": "rgb(197, 211, 224)",
+          "bg": "rgb(18, 38, 58)",
+          "contrast": 10.093476055724874
+        },
+        {
+          "selector": "#gridlyDestinationImpactPaneSeverity",
+          "text": "Route information unavailable",
+          "fg": "rgb(244, 248, 252)",
+          "bg": "rgb(18, 38, 58)",
+          "contrast": 14.426929442260448
+        },
+        {
+          "selector": ".gridly-destination-impact-subtitle",
+          "text": "A required route or destination source was attempted but is unavailable.",
+          "fg": "rgb(197, 211, 224)",
+          "bg": "rgb(11, 25, 41)",
+          "contrast": 11.615728805662332
+        },
+        {
+          "selector": ".gridly-destination-impact-quiet-note",
+          "text": "New rail or community reports will appear here.",
+          "fg": "rgb(197, 211, 224)",
+          "bg": "rgb(18, 38, 58)",
+          "contrast": 10.093476055724874
+        }
+      ]
+    }
+  ],
+  "closeControls": [
+    {
+      "id": "gridlyReportDockButton",
+      "label": "Close Report",
+      "rect": {
+        "x": 321.9997253417969,
+        "y": 128.56649780273438,
+        "width": 43.9998779296875,
+        "height": 43.999908447265625,
+        "top": 128.56649780273438,
+        "right": 365.9996032714844,
+        "bottom": 172.56640625,
+        "left": 321.9997253417969
+      }
+    },
+    {
+      "id": "gridlyHistoryDockButton",
+      "label": "Close History",
+      "rect": {
+        "x": 320.0950012207031,
+        "y": 452.9200134277344,
+        "width": 43.339996337890625,
+        "height": 43.339996337890625,
+        "top": 452.9200134277344,
+        "right": 363.43499755859375,
+        "bottom": 496.260009765625,
+        "left": 320.0950012207031
+      }
+    },
+    {
+      "id": "gridlySettingsDockButton",
+      "label": "Close Settings",
+      "rect": {
+        "x": 320.0950012207031,
+        "y": 256.444091796875,
+        "width": 43.339996337890625,
+        "height": 43.339996337890625,
+        "top": 256.444091796875,
+        "right": 363.43499755859375,
+        "bottom": 299.7840881347656,
+        "left": 320.0950012207031
+      }
+    },
+    {
+      "id": "gridlyAlertsDockButton",
+      "label": "Close Alerts",
+      "rect": {
+        "x": 312.76641845703125,
+        "y": 343.298828125,
+        "width": 43.543914794921875,
+        "height": 43.54388427734375,
+        "top": 343.298828125,
+        "right": 356.3103332519531,
+        "bottom": 386.84271240234375,
+        "left": 312.76641845703125
+      }
+    }
+  ],
+  "network": {
+    "errors": [],
+    "warnings": [
+      "Service Worker registration blocked by Playwright"
+    ],
+    "blockedWrites": [
+      {
+        "method": "POST",
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/get_community_reporting_status"
+      }
+    ],
+    "providerRequests": [
+      {
+        "url": "https://api.weather.gov/points/30.0473202,-94.8873913",
+        "method": "GET",
+        "result": "BLOCKED_LOCAL_UNAVAILABLE_SCENARIO"
+      },
+      {
+        "url": "https://api.weather.gov/points/30.0473202,-94.8873913",
+        "method": "GET",
+        "result": "BLOCKED_LOCAL_UNAVAILABLE_SCENARIO"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&expires_at=gt.2026-09-24T23%3A27%3A47.690Z&order=created_at.desc%2Cid.desc&limit=300",
+        "method": "GET",
+        "result": "BLOCKED_LOCAL_UNAVAILABLE_SCENARIO"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&report_type=eq.hazard_cleared&created_at=gte.2026-09-24T20%3A27%3A47.690Z&order=created_at.desc%2Cid.desc&limit=100",
+        "method": "GET",
+        "result": "BLOCKED_LOCAL_UNAVAILABLE_SCENARIO"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&expires_at=gt.2026-09-24T23%3A27%3A47.690Z&order=created_at.desc%2Cid.desc&limit=300",
+        "method": "GET",
+        "result": "BLOCKED_LOCAL_UNAVAILABLE_SCENARIO"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&report_type=eq.hazard_cleared&created_at=gte.2026-09-24T20%3A27%3A47.690Z&order=created_at.desc%2Cid.desc&limit=100",
+        "method": "GET",
+        "result": "BLOCKED_LOCAL_UNAVAILABLE_SCENARIO"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&expires_at=gt.2026-09-24T23%3A27%3A47.690Z&order=created_at.desc%2Cid.desc&limit=300",
+        "method": "GET",
+        "result": "BLOCKED_LOCAL_UNAVAILABLE_SCENARIO"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&report_type=eq.hazard_cleared&created_at=gte.2026-09-24T20%3A27%3A47.690Z&order=created_at.desc%2Cid.desc&limit=100",
+        "method": "GET",
+        "result": "BLOCKED_LOCAL_UNAVAILABLE_SCENARIO"
+      },
+      {
+        "url": "https://api.weather.gov/points/30.04725,-94.88737",
+        "method": "GET",
+        "result": "BLOCKED_LOCAL_UNAVAILABLE_SCENARIO"
+      },
+      {
+        "url": "https://api.weather.gov/points/30.04725,-94.88737",
+        "method": "GET",
+        "result": "BLOCKED_LOCAL_UNAVAILABLE_SCENARIO"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&expires_at=gt.2026-09-24T23%3A27%3A47.690Z&order=created_at.desc%2Cid.desc&limit=300",
+        "method": "GET",
+        "result": "BLOCKED_LOCAL_UNAVAILABLE_SCENARIO"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&report_type=eq.hazard_cleared&created_at=gte.2026-09-24T20%3A27%3A47.690Z&order=created_at.desc%2Cid.desc&limit=100",
+        "method": "GET",
+        "result": "BLOCKED_LOCAL_UNAVAILABLE_SCENARIO"
+      },
+      {
+        "url": "https://api.weather.gov/points/30.04725,-94.88737",
+        "method": "GET",
+        "result": "BLOCKED_LOCAL_UNAVAILABLE_SCENARIO"
+      },
+      {
+        "url": "https://api.weather.gov/points/30.04725,-94.88737",
+        "method": "GET",
+        "result": "BLOCKED_LOCAL_UNAVAILABLE_SCENARIO"
+      },
+      {
+        "url": "https://api.weather.gov/points/30.04725,-94.88737",
+        "method": "GET",
+        "result": "BLOCKED_LOCAL_UNAVAILABLE_SCENARIO"
+      },
+      {
+        "url": "https://api.weather.gov/points/30.04725,-94.88737",
+        "method": "GET",
+        "result": "BLOCKED_LOCAL_UNAVAILABLE_SCENARIO"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&expires_at=gt.2026-09-24T23%3A28%3A02.966Z&order=created_at.desc%2Cid.desc&limit=300",
+        "method": "GET",
+        "result": "BLOCKED_LOCAL_UNAVAILABLE_SCENARIO"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&report_type=eq.hazard_cleared&created_at=gte.2026-09-24T20%3A28%3A02.966Z&order=created_at.desc%2Cid.desc&limit=100",
+        "method": "GET",
+        "result": "BLOCKED_LOCAL_UNAVAILABLE_SCENARIO"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&expires_at=gt.2026-09-24T23%3A28%3A02.966Z&order=created_at.desc%2Cid.desc&limit=300",
+        "method": "GET",
+        "result": "BLOCKED_LOCAL_UNAVAILABLE_SCENARIO"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&report_type=eq.hazard_cleared&created_at=gte.2026-09-24T20%3A28%3A02.966Z&order=created_at.desc%2Cid.desc&limit=100",
+        "method": "GET",
+        "result": "BLOCKED_LOCAL_UNAVAILABLE_SCENARIO"
+      },
+      {
+        "url": "https://api.weather.gov/points/30.04725,-94.88737",
+        "method": "GET",
+        "result": "BLOCKED_LOCAL_UNAVAILABLE_SCENARIO"
+      },
+      {
+        "url": "https://api.weather.gov/points/30.04725,-94.88737",
+        "method": "GET",
+        "result": "BLOCKED_LOCAL_UNAVAILABLE_SCENARIO"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&expires_at=gt.2026-09-24T23%3A28%3A02.966Z&order=created_at.desc%2Cid.desc&limit=300",
+        "method": "GET",
+        "result": "BLOCKED_LOCAL_UNAVAILABLE_SCENARIO"
+      },
+      {
+        "url": "https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/reports?select=id%2Ccreated_at%2Ccrossing_id%2Ccrossing_name%2Crailroad%2Clat%2Clng%2Creport_type%2Cseverity%2Cdetail%2Csource%2Cconfidence%2Cexpires_at&report_type=eq.hazard_cleared&created_at=gte.2026-09-24T20%3A28%3A02.966Z&order=created_at.desc%2Cid.desc&limit=100",
+        "method": "GET",
+        "result": "BLOCKED_LOCAL_UNAVAILABLE_SCENARIO"
+      }
+    ],
+    "localRequests": [
+      "/data/runtime/canonical-crossing-memberships-v1.json",
+      "/data/runtime/canonical-crossing-records-v1.json",
+      "/data/generated/gridly-statewide-place-presentation-v1.json",
+      "/Crossing-Packages/liberty/package-manifest.json",
+      "/Crossing-Packages/production-crossing-manifest.json",
+      "/Crossing-Packages/liberty/Production/liberty-production-crossings.geojson",
+      "/Crossing-Packages/liberty/package-manifest.json",
+      "/Crossing-Packages/production-crossing-manifest.json",
+      "/Crossing-Packages/liberty/Production/liberty-production-crossings.geojson"
+    ]
+  },
+  "passed": true
+}

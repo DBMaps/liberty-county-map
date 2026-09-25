@@ -1,0 +1,606 @@
+{
+  "classification": "HARNESS_DETACHED_DOM_CLICK",
+  "initialRepairedRun": "AssertionError [ERR_ASSERTION]: combined-cleared-closed locationContext\n\n4 !== 3\n\n    at record (C:\\GitHub\\liberty-county-map\\tools\\lp24449b1\\freeze-verify-browser.cjs:101:95)\n    at runNextTicks (node:internal/process/task_queues:65:5)\n    at process.processImmediate (node:internal/timers:472:9)\n    at async C:\\GitHub\\liberty-county-map\\tools\\lp24449b1\\freeze-verify-browser.cjs:147:52",
+  "startingSource": "AssertionError [ERR_ASSERTION]: combined-cleared-closed locationContext\n\n4 !== 3\n\n    at record (C:\\GitHub\\liberty-county-map\\tools\\lp24449b1\\freeze-verify-browser.cjs:101:95)\n    at async C:\\GitHub\\liberty-county-map\\tools\\lp24449b1\\freeze-verify-browser.cjs:147:52",
+  "diagnostic": [
+    {
+      "before": {
+        "html": "<button class=\"popup-report-btn blue\" type=\"button\" data-unified-action=\"cleared\" data-incident-id=\"rail-FRA-762785P\" data-incident-category=\"rail\" data-report-type=\"blocked\" data-crossing-id=\"FRA-762785P\" data-lat=\"30.0482671001437\" data-lng=\"-94.8874153001269\" data-bound-popup-handler=\"1\">Mark Cleared</button>",
+        "disabled": false,
+        "connected": false,
+        "fixtures": [
+          {
+            "id": "gridly-test-lp24448a-1790292719832-1",
+            "preset": "flooded-roadway",
+            "state": "active",
+            "countyId": "liberty-tx",
+            "lat": 30.047253308692213,
+            "lng": -94.88737106323242,
+            "ageMinutes": 0,
+            "reportCount": 1,
+            "crossingId": null
+          },
+          {
+            "id": "gridly-test-lp24448a-1790292724320-2",
+            "preset": "debris-in-road",
+            "state": "active",
+            "countyId": "liberty-tx",
+            "lat": 30.0505,
+            "lng": -94.889,
+            "ageMinutes": 5,
+            "reportCount": 1,
+            "crossingId": null
+          },
+          {
+            "id": "gridly-test-lp24448a-1790292729469-3",
+            "preset": "downed-power-line",
+            "state": "active",
+            "countyId": "liberty-tx",
+            "lat": 30.0435,
+            "lng": -94.8815,
+            "ageMinutes": 12,
+            "reportCount": 1,
+            "crossingId": null
+          },
+          {
+            "id": "gridly-test-lp24448a-1790292738114-4",
+            "preset": "train-blocking-crossing",
+            "state": "active",
+            "countyId": "liberty-tx",
+            "lat": 30.0482671001437,
+            "lng": -94.8874153001269,
+            "ageMinutes": 0,
+            "reportCount": 1,
+            "crossingId": "FRA-762785P"
+          }
+        ]
+      },
+      "events": [],
+      "after": {
+        "html": "<button class=\"popup-report-btn blue is-submitting\" type=\"button\" data-unified-action=\"cleared\" data-incident-id=\"rail-FRA-762785P\" data-incident-category=\"rail\" data-report-type=\"blocked\" data-crossing-id=\"FRA-762785P\" data-lat=\"30.0482671001437\" data-lng=\"-94.8874153001269\" data-bound-popup-handler=\"1\">Submitting…</button>",
+        "fixtures": [
+          {
+            "id": "gridly-test-lp24448a-1790292719832-1",
+            "preset": "flooded-roadway",
+            "state": "active",
+            "countyId": "liberty-tx",
+            "lat": 30.047253308692213,
+            "lng": -94.88737106323242,
+            "ageMinutes": 0,
+            "reportCount": 1,
+            "crossingId": null
+          },
+          {
+            "id": "gridly-test-lp24448a-1790292724320-2",
+            "preset": "debris-in-road",
+            "state": "active",
+            "countyId": "liberty-tx",
+            "lat": 30.0505,
+            "lng": -94.889,
+            "ageMinutes": 5,
+            "reportCount": 1,
+            "crossingId": null
+          },
+          {
+            "id": "gridly-test-lp24448a-1790292729469-3",
+            "preset": "downed-power-line",
+            "state": "active",
+            "countyId": "liberty-tx",
+            "lat": 30.0435,
+            "lng": -94.8815,
+            "ageMinutes": 12,
+            "reportCount": 1,
+            "crossingId": null
+          },
+          {
+            "id": "gridly-test-lp24448a-1790292738114-4",
+            "preset": "train-blocking-crossing",
+            "state": "active",
+            "countyId": "liberty-tx",
+            "lat": 30.0482671001437,
+            "lng": -94.8874153001269,
+            "ageMinutes": 0,
+            "reportCount": 1,
+            "crossingId": "FRA-762785P"
+          }
+        ]
+      }
+    }
+  ],
+  "correction": "Wait for the existing popup completion/render-ready state, then resolve and click the attached DOM button atomically; no product mutation, fixed sleep or direct handler call.",
+  "replayed": [
+    {
+      "width": 320,
+      "passed": true,
+      "clearActions": [
+        {
+          "before": {
+            "html": "<button class=\"popup-report-btn blue\" type=\"button\" data-unified-action=\"cleared\" data-incident-id=\"rail-FRA-762785P\" data-incident-category=\"rail\" data-report-type=\"blocked\" data-crossing-id=\"FRA-762785P\" data-lat=\"30.0482671001437\" data-lng=\"-94.8874153001269\">Mark Cleared</button>",
+            "disabled": false,
+            "connected": true,
+            "fixtures": [
+              {
+                "id": "gridly-test-lp24448a-1790293018057-1",
+                "preset": "flooded-roadway",
+                "state": "active",
+                "countyId": "liberty-tx",
+                "lat": 30.047253308692213,
+                "lng": -94.88737106323242,
+                "ageMinutes": 0,
+                "reportCount": 1,
+                "crossingId": null
+              },
+              {
+                "id": "gridly-test-lp24448a-1790293021690-2",
+                "preset": "debris-in-road",
+                "state": "active",
+                "countyId": "liberty-tx",
+                "lat": 30.0505,
+                "lng": -94.889,
+                "ageMinutes": 5,
+                "reportCount": 1,
+                "crossingId": null
+              },
+              {
+                "id": "gridly-test-lp24448a-1790293029326-3",
+                "preset": "downed-power-line",
+                "state": "active",
+                "countyId": "liberty-tx",
+                "lat": 30.0435,
+                "lng": -94.8815,
+                "ageMinutes": 12,
+                "reportCount": 1,
+                "crossingId": null
+              },
+              {
+                "id": "gridly-test-lp24448a-1790293038208-4",
+                "preset": "train-blocking-crossing",
+                "state": "active",
+                "countyId": "liberty-tx",
+                "lat": 30.0482671001437,
+                "lng": -94.8874153001269,
+                "ageMinutes": 0,
+                "reportCount": 1,
+                "crossingId": "FRA-762785P"
+              }
+            ]
+          },
+          "events": [
+            {
+              "type": "click",
+              "dataset": {
+                "unifiedAction": "cleared",
+                "incidentId": "rail-FRA-762785P",
+                "incidentCategory": "rail",
+                "reportType": "blocked",
+                "crossingId": "FRA-762785P",
+                "lat": "30.0482671001437",
+                "lng": "-94.8874153001269"
+              },
+              "connected": true
+            }
+          ],
+          "after": {
+            "html": "<button class=\"popup-report-btn blue\" type=\"button\" data-unified-action=\"cleared\" data-incident-id=\"rail-FRA-762785P\" data-incident-category=\"rail\" data-report-type=\"blocked\" data-crossing-id=\"FRA-762785P\" data-lat=\"30.0482671001437\" data-lng=\"-94.8874153001269\" data-gridly-action-pending=\"1\" disabled=\"\">Mark Cleared</button>",
+            "fixtures": [
+              {
+                "id": "gridly-test-lp24448a-1790293018057-1",
+                "preset": "flooded-roadway",
+                "state": "active",
+                "countyId": "liberty-tx",
+                "lat": 30.047253308692213,
+                "lng": -94.88737106323242,
+                "ageMinutes": 0,
+                "reportCount": 1,
+                "crossingId": null
+              },
+              {
+                "id": "gridly-test-lp24448a-1790293021690-2",
+                "preset": "debris-in-road",
+                "state": "active",
+                "countyId": "liberty-tx",
+                "lat": 30.0505,
+                "lng": -94.889,
+                "ageMinutes": 5,
+                "reportCount": 1,
+                "crossingId": null
+              },
+              {
+                "id": "gridly-test-lp24448a-1790293029326-3",
+                "preset": "downed-power-line",
+                "state": "active",
+                "countyId": "liberty-tx",
+                "lat": 30.0435,
+                "lng": -94.8815,
+                "ageMinutes": 12,
+                "reportCount": 1,
+                "crossingId": null
+              },
+              {
+                "id": "gridly-test-lp24448a-1790293038208-4",
+                "preset": "train-blocking-crossing",
+                "state": "cleared",
+                "countyId": "liberty-tx",
+                "lat": 30.0482671001437,
+                "lng": -94.8874153001269,
+                "ageMinutes": 0,
+                "reportCount": 1,
+                "crossingId": "FRA-762785P"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "width": 360,
+      "passed": true,
+      "clearActions": [
+        {
+          "before": {
+            "html": "<button class=\"popup-report-btn blue\" type=\"button\" data-unified-action=\"cleared\" data-incident-id=\"rail-FRA-762785P\" data-incident-category=\"rail\" data-report-type=\"blocked\" data-crossing-id=\"FRA-762785P\" data-lat=\"30.0482671001437\" data-lng=\"-94.8874153001269\">Mark Cleared</button>",
+            "disabled": false,
+            "connected": true,
+            "fixtures": [
+              {
+                "id": "gridly-test-lp24448a-1790293153103-1",
+                "preset": "flooded-roadway",
+                "state": "active",
+                "countyId": "liberty-tx",
+                "lat": 30.047253308692213,
+                "lng": -94.88737106323242,
+                "ageMinutes": 0,
+                "reportCount": 1,
+                "crossingId": null
+              },
+              {
+                "id": "gridly-test-lp24448a-1790293156233-2",
+                "preset": "debris-in-road",
+                "state": "active",
+                "countyId": "liberty-tx",
+                "lat": 30.0505,
+                "lng": -94.889,
+                "ageMinutes": 5,
+                "reportCount": 1,
+                "crossingId": null
+              },
+              {
+                "id": "gridly-test-lp24448a-1790293161457-3",
+                "preset": "downed-power-line",
+                "state": "active",
+                "countyId": "liberty-tx",
+                "lat": 30.0435,
+                "lng": -94.8815,
+                "ageMinutes": 12,
+                "reportCount": 1,
+                "crossingId": null
+              },
+              {
+                "id": "gridly-test-lp24448a-1790293171219-4",
+                "preset": "train-blocking-crossing",
+                "state": "active",
+                "countyId": "liberty-tx",
+                "lat": 30.0482671001437,
+                "lng": -94.8874153001269,
+                "ageMinutes": 0,
+                "reportCount": 1,
+                "crossingId": "FRA-762785P"
+              }
+            ]
+          },
+          "events": [
+            {
+              "type": "click",
+              "dataset": {
+                "unifiedAction": "cleared",
+                "incidentId": "rail-FRA-762785P",
+                "incidentCategory": "rail",
+                "reportType": "blocked",
+                "crossingId": "FRA-762785P",
+                "lat": "30.0482671001437",
+                "lng": "-94.8874153001269"
+              },
+              "connected": true
+            }
+          ],
+          "after": {
+            "html": "<button class=\"popup-report-btn blue\" type=\"button\" data-unified-action=\"cleared\" data-incident-id=\"rail-FRA-762785P\" data-incident-category=\"rail\" data-report-type=\"blocked\" data-crossing-id=\"FRA-762785P\" data-lat=\"30.0482671001437\" data-lng=\"-94.8874153001269\" data-gridly-action-pending=\"1\" disabled=\"\">Mark Cleared</button>",
+            "fixtures": [
+              {
+                "id": "gridly-test-lp24448a-1790293153103-1",
+                "preset": "flooded-roadway",
+                "state": "active",
+                "countyId": "liberty-tx",
+                "lat": 30.047253308692213,
+                "lng": -94.88737106323242,
+                "ageMinutes": 0,
+                "reportCount": 1,
+                "crossingId": null
+              },
+              {
+                "id": "gridly-test-lp24448a-1790293156233-2",
+                "preset": "debris-in-road",
+                "state": "active",
+                "countyId": "liberty-tx",
+                "lat": 30.0505,
+                "lng": -94.889,
+                "ageMinutes": 5,
+                "reportCount": 1,
+                "crossingId": null
+              },
+              {
+                "id": "gridly-test-lp24448a-1790293161457-3",
+                "preset": "downed-power-line",
+                "state": "active",
+                "countyId": "liberty-tx",
+                "lat": 30.0435,
+                "lng": -94.8815,
+                "ageMinutes": 12,
+                "reportCount": 1,
+                "crossingId": null
+              },
+              {
+                "id": "gridly-test-lp24448a-1790293171219-4",
+                "preset": "train-blocking-crossing",
+                "state": "cleared",
+                "countyId": "liberty-tx",
+                "lat": 30.0482671001437,
+                "lng": -94.8874153001269,
+                "ageMinutes": 0,
+                "reportCount": 1,
+                "crossingId": "FRA-762785P"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "passed": true,
+      "clearActions": [
+        {
+          "before": {
+            "html": "<button class=\"popup-report-btn blue\" type=\"button\" data-unified-action=\"cleared\" data-incident-id=\"rail-FRA-762785P\" data-incident-category=\"rail\" data-report-type=\"blocked\" data-crossing-id=\"FRA-762785P\" data-lat=\"30.0482671001437\" data-lng=\"-94.8874153001269\">Mark Cleared</button>",
+            "disabled": false,
+            "connected": true,
+            "fixtures": [
+              {
+                "id": "gridly-test-lp24448a-1790293248250-1",
+                "preset": "flooded-roadway",
+                "state": "active",
+                "countyId": "liberty-tx",
+                "lat": 30.047253308692213,
+                "lng": -94.88737106323242,
+                "ageMinutes": 0,
+                "reportCount": 1,
+                "crossingId": null
+              },
+              {
+                "id": "gridly-test-lp24448a-1790293251533-2",
+                "preset": "debris-in-road",
+                "state": "active",
+                "countyId": "liberty-tx",
+                "lat": 30.0505,
+                "lng": -94.889,
+                "ageMinutes": 5,
+                "reportCount": 1,
+                "crossingId": null
+              },
+              {
+                "id": "gridly-test-lp24448a-1790293256515-3",
+                "preset": "downed-power-line",
+                "state": "active",
+                "countyId": "liberty-tx",
+                "lat": 30.0435,
+                "lng": -94.8815,
+                "ageMinutes": 12,
+                "reportCount": 1,
+                "crossingId": null
+              },
+              {
+                "id": "gridly-test-lp24448a-1790293264753-4",
+                "preset": "train-blocking-crossing",
+                "state": "active",
+                "countyId": "liberty-tx",
+                "lat": 30.0482671001437,
+                "lng": -94.8874153001269,
+                "ageMinutes": 0,
+                "reportCount": 1,
+                "crossingId": "FRA-762785P"
+              }
+            ]
+          },
+          "events": [
+            {
+              "type": "click",
+              "dataset": {
+                "unifiedAction": "cleared",
+                "incidentId": "rail-FRA-762785P",
+                "incidentCategory": "rail",
+                "reportType": "blocked",
+                "crossingId": "FRA-762785P",
+                "lat": "30.0482671001437",
+                "lng": "-94.8874153001269"
+              },
+              "connected": true
+            }
+          ],
+          "after": {
+            "html": "<button class=\"popup-report-btn blue\" type=\"button\" data-unified-action=\"cleared\" data-incident-id=\"rail-FRA-762785P\" data-incident-category=\"rail\" data-report-type=\"blocked\" data-crossing-id=\"FRA-762785P\" data-lat=\"30.0482671001437\" data-lng=\"-94.8874153001269\" data-gridly-action-pending=\"1\" disabled=\"\">Mark Cleared</button>",
+            "fixtures": [
+              {
+                "id": "gridly-test-lp24448a-1790293248250-1",
+                "preset": "flooded-roadway",
+                "state": "active",
+                "countyId": "liberty-tx",
+                "lat": 30.047253308692213,
+                "lng": -94.88737106323242,
+                "ageMinutes": 0,
+                "reportCount": 1,
+                "crossingId": null
+              },
+              {
+                "id": "gridly-test-lp24448a-1790293251533-2",
+                "preset": "debris-in-road",
+                "state": "active",
+                "countyId": "liberty-tx",
+                "lat": 30.0505,
+                "lng": -94.889,
+                "ageMinutes": 5,
+                "reportCount": 1,
+                "crossingId": null
+              },
+              {
+                "id": "gridly-test-lp24448a-1790293256515-3",
+                "preset": "downed-power-line",
+                "state": "active",
+                "countyId": "liberty-tx",
+                "lat": 30.0435,
+                "lng": -94.8815,
+                "ageMinutes": 12,
+                "reportCount": 1,
+                "crossingId": null
+              },
+              {
+                "id": "gridly-test-lp24448a-1790293264753-4",
+                "preset": "train-blocking-crossing",
+                "state": "cleared",
+                "countyId": "liberty-tx",
+                "lat": 30.0482671001437,
+                "lng": -94.8874153001269,
+                "ageMinutes": 0,
+                "reportCount": 1,
+                "crossingId": "FRA-762785P"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "width": 440,
+      "passed": true,
+      "clearActions": [
+        {
+          "before": {
+            "html": "<button class=\"popup-report-btn blue\" type=\"button\" data-unified-action=\"cleared\" data-incident-id=\"rail-FRA-762785P\" data-incident-category=\"rail\" data-report-type=\"blocked\" data-crossing-id=\"FRA-762785P\" data-lat=\"30.0482671001437\" data-lng=\"-94.8874153001269\">Mark Cleared</button>",
+            "disabled": false,
+            "connected": true,
+            "fixtures": [
+              {
+                "id": "gridly-test-lp24448a-1790293349322-1",
+                "preset": "flooded-roadway",
+                "state": "active",
+                "countyId": "liberty-tx",
+                "lat": 30.047253308692213,
+                "lng": -94.88737106323242,
+                "ageMinutes": 0,
+                "reportCount": 1,
+                "crossingId": null
+              },
+              {
+                "id": "gridly-test-lp24448a-1790293353226-2",
+                "preset": "debris-in-road",
+                "state": "active",
+                "countyId": "liberty-tx",
+                "lat": 30.0505,
+                "lng": -94.889,
+                "ageMinutes": 5,
+                "reportCount": 1,
+                "crossingId": null
+              },
+              {
+                "id": "gridly-test-lp24448a-1790293358599-3",
+                "preset": "downed-power-line",
+                "state": "active",
+                "countyId": "liberty-tx",
+                "lat": 30.0435,
+                "lng": -94.8815,
+                "ageMinutes": 12,
+                "reportCount": 1,
+                "crossingId": null
+              },
+              {
+                "id": "gridly-test-lp24448a-1790293366559-4",
+                "preset": "train-blocking-crossing",
+                "state": "active",
+                "countyId": "liberty-tx",
+                "lat": 30.0482671001437,
+                "lng": -94.8874153001269,
+                "ageMinutes": 0,
+                "reportCount": 1,
+                "crossingId": "FRA-762785P"
+              }
+            ]
+          },
+          "events": [
+            {
+              "type": "click",
+              "dataset": {
+                "unifiedAction": "cleared",
+                "incidentId": "rail-FRA-762785P",
+                "incidentCategory": "rail",
+                "reportType": "blocked",
+                "crossingId": "FRA-762785P",
+                "lat": "30.0482671001437",
+                "lng": "-94.8874153001269"
+              },
+              "connected": true
+            }
+          ],
+          "after": {
+            "html": "<button class=\"popup-report-btn blue\" type=\"button\" data-unified-action=\"cleared\" data-incident-id=\"rail-FRA-762785P\" data-incident-category=\"rail\" data-report-type=\"blocked\" data-crossing-id=\"FRA-762785P\" data-lat=\"30.0482671001437\" data-lng=\"-94.8874153001269\" data-gridly-action-pending=\"1\" disabled=\"\">Mark Cleared</button>",
+            "fixtures": [
+              {
+                "id": "gridly-test-lp24448a-1790293349322-1",
+                "preset": "flooded-roadway",
+                "state": "active",
+                "countyId": "liberty-tx",
+                "lat": 30.047253308692213,
+                "lng": -94.88737106323242,
+                "ageMinutes": 0,
+                "reportCount": 1,
+                "crossingId": null
+              },
+              {
+                "id": "gridly-test-lp24448a-1790293353226-2",
+                "preset": "debris-in-road",
+                "state": "active",
+                "countyId": "liberty-tx",
+                "lat": 30.0505,
+                "lng": -94.889,
+                "ageMinutes": 5,
+                "reportCount": 1,
+                "crossingId": null
+              },
+              {
+                "id": "gridly-test-lp24448a-1790293358599-3",
+                "preset": "downed-power-line",
+                "state": "active",
+                "countyId": "liberty-tx",
+                "lat": 30.0435,
+                "lng": -94.8815,
+                "ageMinutes": 12,
+                "reportCount": 1,
+                "crossingId": null
+              },
+              {
+                "id": "gridly-test-lp24448a-1790293366559-4",
+                "preset": "train-blocking-crossing",
+                "state": "cleared",
+                "countyId": "liberty-tx",
+                "lat": 30.0482671001437,
+                "lng": -94.8874153001269,
+                "ageMinutes": 0,
+                "reportCount": 1,
+                "crossingId": "FRA-762785P"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "passed": true
+}
