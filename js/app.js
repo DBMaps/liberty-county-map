@@ -36965,7 +36965,9 @@ async function gridlyOpenAlertsSurfaceAuthoritativeBuildAndApplyAsync(alertsShee
     const html = renderedHtml ?? window.gridlyLP236RenderAlertsPresentation(authoritySnapshot, alerts);
     const authorityAvailable = authoritySnapshot?.activeConditionAuthorityAvailable === true;
     gridlyLP236AlertsOpenAuditState.authorityState = authorityAvailable ? (alerts.length ? "AVAILABLE_NONEMPTY" : "AVAILABLE_EMPTY") : "UNAVAILABLE";
-    const title = authorityAvailable && !alerts.length ? "No Active Alerts" : (authorityAvailable ? "Alerts" : "Alerts unavailable");
+    // A usable projection does not prove complete source coverage.
+    const confirmedQuiet = authorityAvailable && !alerts.length && gridlyGetLocalSourceCoverage().complete === true;
+    const title = confirmedQuiet ? "No Active Alerts" : (authorityAvailable ? "Alerts" : "Alerts unavailable");
     gridlyLP236AlertsOpenAuditState.writerInvoked = true;
     gridlyLP236AlertsOpenAuditState.writerInvocationCount += 1;
     window.gridlyLP236CaptureDisclosureState?.(document);

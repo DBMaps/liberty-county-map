@@ -114,6 +114,8 @@
     try { if (typeof globalScope.gridlyRenderTravelBrief === "function") globalScope.gridlyRenderTravelBrief(); } catch (error) {}
     try { if (typeof globalScope.gridlyBriefInteractionRender === "function") globalScope.gridlyBriefInteractionRender(); } catch (error) {}
     try { if (typeof globalScope.refreshGridlyCommunityPulseSharedModel === "function") globalScope.refreshGridlyCommunityPulseSharedModel({ reason: reason || "official-provider-evidence", topAwarenessMicrolineReadOnly: true }); } catch (error) {}
+    // Reconcile the current final envelope on the same coalesced publication.
+    try { if (typeof globalScope.renderGridlyDriveTexasOfficialMarkers === "function") globalScope.renderGridlyDriveTexasOfficialMarkers(reason || "official-provider-evidence"); } catch (error) {}
     state.lastConsumerRefreshDurationMs = Number((nowMs() - startedAt).toFixed(2));
   }
 
