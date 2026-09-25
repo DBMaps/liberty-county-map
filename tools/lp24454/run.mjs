@@ -50,7 +50,7 @@ async function command(program, argv, { timeout = 60000, allowedFailure = false,
       if (text.length > 64 * 1024 * 1024) { text = text.slice(-64 * 1024 * 1024); child.kill('SIGTERM'); }
       if (!announced && text.includes('HUMAN ACTION REQUIRED:')) {
         announced = true;
-        console.log('HUMAN ACTION REQUIRED: Check the iPhone for a protected permission/security prompt. For location, choose Allow While Using App only if you consent; note Precise Location. Automation waits up to 180 seconds and never presses permission buttons.');
+        console.log('HUMAN ACTION REQUIRED: Automation stops at the native dialog. Inspect the captured prompt labels; no permission choice is automated.');
       }
     };
     child.stdout.on('data', collect); child.stderr.on('data', collect);
@@ -162,7 +162,10 @@ try {
     if (fresh.status !== 'PASS') throw Error(fresh.errors.join('; '));
     if (preservation(before, protectedSnapshot(root, git)).status !== 'PASS') throw Error('Protected state changed before input; stop without restoring');
     const resultPath = path.join(out, 'physical.xcresult');
-    const run = await command('xcodebuild', ['test-without-building', ...common, '-only-testing:' + selection, '-resultBundlePath', resultPath], { label: 'physical-test', timeout: 900000, allowedFailure: true });
+    // Xcode's failure sysdiagnose invokes devicectl -> sudo -- /usr/bin/true,
+    // prompting on /dev/tty after tests have finished. Keep XCTest evidence,
+    // but do not collect privileged host/device failure diagnostics.
+    const run = await command('xcodebuild', ['test-without-building', ...common, '-collect-test-diagnostics', 'never', '-only-testing:' + selection, '-resultBundlePath', resultPath], { label: 'physical-test', timeout: 900000, allowedFailure: true });
     report.testProcess = { code: run.code, timedOut: run.timedOut, resultPath, selectedTest: selection };
     report.status = run.code === 0 && !run.timedOut ? 'UI_RUN_COMPLETED_REVIEW_REQUIRED' : 'UI_RUN_FAILED_OR_BLOCKED';
     if (fs.existsSync(resultPath)) {
@@ -173,9 +176,9 @@ try {
       const summary = await command('xcrun', ['xcresulttool', 'get', 'test-results', 'summary', '--help'], { allowedFailure: true, label: 'xcresult-summary-help' });
       if (summary.code === 0 && summary.text.includes('--path')) await command('xcrun', ['xcresulttool', 'get', 'test-results', 'summary', '--path', resultPath], { allowedFailure: true, label: 'test-summary' });
     }
-    report.analysis = analyzeAttachments(path.join(out, 'attachments'));
+    report.analysis = analyzeAttachments(path.join(out, 'attachments'), phase);
     save('analysis.json', report.analysis);
-    if (phase === 'onboarding' && report.analysis.status !== 'EVIDENCE_EXTRACTED') report.status = 'UI_RUN_FAILED_OR_BLOCKED';
+    if (report.analysis.status !== 'EVIDENCE_EXTRACTED') report.status = 'UI_RUN_FAILED_OR_BLOCKED';
     report.visual = report.analysis.visual;
     report.gates.R1 = phase === 'journey' ? 'INCONCLUSIVE — inspect physical observations and available console; exact GPS/permission/Home bytes not observable by XCTest' : 'NOT_RUN — onboarding-only phase';
     report.gates.R3 = 'INCONCLUSIVE — XCTest screen evidence does not prove WKWebView request origin or provider internals';

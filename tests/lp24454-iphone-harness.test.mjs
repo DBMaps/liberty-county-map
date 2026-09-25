@@ -5,7 +5,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { expected, sourceGate, deviceGate, preservation, contained, redact, projectFiles, classifyVisual, stagedIdentity, critical } from '../tools/lp24454/core.mjs';
-import { measurePage, analyzeAttachments, onboardingFailures } from '../tools/lp24454/analyze.mjs';
+import { measurePage, analyzeAttachments, onboardingFailures, journeyFailures, journeyStates, journeyIdentities, journeyControls, journeyRenderedIdentities } from '../tools/lp24454/analyze.mjs';
 
 function fixtures() {
   const device = {
@@ -318,4 +318,165 @@ test('Swift safety contract uses bounded Back, exact safe replay ID, real Finish
   assert.doesNotMatch(onboarding, /Around Me|testPhysicalJourney\(/);
   assert.match(onboarding, /expectShell\("after-Finish"\)/);
   assert.match(onboarding, /expectShell\("after-Skip"\)/);
+});
+
+test('observed Xcode region suffix preserves measured tour region without accepting arbitrary labels', () => {
+  for (const label of ['Quick Tour cards and setup', 'Quick Tour cards and setup, region', 'Other region']) {
+    const frame = { x: 18, y: 37, width: 406, height: 827 };
+    const page = { page: 1, appFramePoints: { x: 0, y: 0, width: 430, height: 932 }, accessibility: { label, frame } };
+    assert.deepEqual(measurePage(page).observedPagerRegion, label === 'Other region' ? null : frame);
+  }
+});
+test('physical shell inspection accepts observed AX roles without hit-testing hidden app buttons', () => {
+  const swift = fs.readFileSync(new URL('../tools/lp24454/GridlyAcceptance.swift', import.meta.url), 'utf8');
+  const shell = swift.slice(swift.indexOf('private func shellVisible'), swift.indexOf('private func expectShell'));
+  assert.doesNotMatch(shell, /app\.buttons|isHittable/);
+  assert.match(shell, /isTourRegion/);
+  assert.match(shell, /count == 1/);
+  assert.match(swift, /Quick Tour cards and setup, region/);
+  assert.match(swift, /self\.visibleTitle\(\) != nil \|\| self\.shellVisible\(\)/);
+});
+test('failure diagnostics cannot start privileged password collection; XCTest result bundle retained', () => {
+  const source = fs.readFileSync(new URL('../tools/lp24454/run.mjs', import.meta.url), 'utf8');
+  assert.match(source, /'test-without-building', \.\.\.common, '-collect-test-diagnostics', 'never'/);
+  assert.match(source, /'-resultBundlePath', resultPath/);
+});
+test('native permission handling stops rather than resuming after owner dismissal', () => {
+  const swift = fs.readFileSync(new URL('../tools/lp24454/GridlyAcceptance.swift', import.meta.url), 'utf8');
+  const prompt = swift.slice(swift.indexOf('private func waitForHumanIfPrompt'), swift.indexOf('private func onboarding()'));
+  assert.match(prompt, /throw NSError\(domain: "LP24454.HumanAction"/);
+  assert.doesNotMatch(prompt, /poll\(180|after-human-prompt/);
+});
+
+function journeyFixture() {
+  const frame = {x: 0, y: 0, width: 430, height: 932};
+  return {
+    screens: journeyStates.map(name => ({name, appFramePoints: frame, screenPixels: {width: 1290, height: 2796}, accessibility: {label: name, frame, children: (journeyIdentities[name] || []).map(label => ({label, frame, type: 48}))}})),
+    events: [...journeyStates.flatMap(name => [
+      ...(journeyControls[name] ? [{action: 'journey-tap', label: journeyControls[name][0], role: journeyControls[name][1]}] : []),
+      ...(name === 'search-results' ? [{action: 'journey-type', text: 'Austin, Texas'}] : []),
+      ...(['resume', 'relaunch'].includes(name) ? [{action: 'lifecycle', state: name === 'resume' ? 'background' : 'terminated'}] : []),
+      {action: 'settled', evidence: name, stableFrames: 3, required: [name], renderedText: journeyRenderedIdentities[name].join(' '), rawRenderedText: journeyRenderedIdentities[name].join(' '), samples: Array.from({length: 3}, () => ({ready: true, sameAX: true, meanPixelDelta: 0.1, changedChannelFraction: 0}))}
+    ]), {action: 'journey-complete'}],
+    names: [...journeyStates],
+  };
+}
+const journeyErrors = f => journeyFailures(f.events, f.screens, f.names);
+test('complete journey extraction does not require onboarding summary or pages', () => {
+  assert.deepEqual(journeyErrors(journeyFixture()), []);
+});
+for (const name of journeyStates) test('journey fails closed for missing required state: ' + name, () => {
+  const f = journeyFixture(); f.screens = f.screens.filter(s => s.name !== name);
+  assert.ok(journeyErrors(f).length);
+});
+test('journey rejects missing screenshot, unstable pixels, missing AX identity, duplicate state and landscape', () => {
+  for (const change of [f => f.names.pop(), f => f.events[0].stableFrames = 1,
+    f => f.screens[0].accessibility.label = 'wrong', f => f.screens.push(f.screens[0]),
+    f => f.screens[0].screenPixels.height = 430, f => f.events.pop()]) {
+    const f = journeyFixture(); change(f); assert.ok(journeyErrors(f).length);
+  }
+});
+test('journey rejects protected prompt, blocked run and onboarding actions', () => {
+  for (const change of [f => f.screens.push({name: 'permission-or-security-prompt'}),
+    f => f.events.push({status: 'BLOCKED'}), f => f.events.push({action: 'onboarding-complete'})]) {
+    const f = journeyFixture(); change(f); assert.ok(journeyErrors(f).length);
+  }
+});
+test('empty journey export reports journey gaps rather than onboarding requirements', () => {
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'gridly-journey-analysis-'));
+  try {
+    const result = analyzeAttachments(directory, 'journey');
+    assert.equal(result.status, 'INCOMPLETE_EVIDENCE');
+    assert.ok(result.failures.some(e => e.includes('home')));
+    assert.ok(result.failures.every(e => !/onboarding|seven-page|Next|Skip/i.test(e)));
+  } finally { fs.rmdirSync(directory); }
+});
+test('journey uses observed Other roles and cannot enter onboarding', () => {
+  const swift = fs.readFileSync(new URL('../tools/lp24454/GridlyAcceptance.swift', import.meta.url), 'utf8');
+  const journey = swift.slice(swift.indexOf('func testPhysicalJourney()'));
+  assert.match(journey, /journeyTap\("Search", role: \.other\)/);
+  assert.doesNotMatch(journey, /establishPageOne|safeReopen|requiredTap|move\("Next"/);
+  assert.match(swift, /delta <= 1 && changed <= 0.005 && sameAX/);
+  assert.match(swift, /No settled physical rendering/);
+  const run = fs.readFileSync(new URL('../tools/lp24454/run.mjs', import.meta.url), 'utf8');
+  assert.match(run, /analyzeAttachments\(path.join\(out, 'attachments'\), phase\)/);
+  assert.match(run, /if \(report.analysis.status !== 'EVIDENCE_EXTRACTED'\)/);
+});
+
+test('observed type 45 search input uses SearchField, not its placeholder child', () => {
+  const swift = fs.readFileSync(new URL('../tools/lp24454/GridlyAcceptance.swift', import.meta.url), 'utf8');
+  assert.match(swift, /journeyTap\("Where are you going\?", role: \.searchField\)/);
+  assert.match(swift, /let fields = app.searchFields.matching/);
+  assert.doesNotMatch(swift, /journeyTap\("Search address or place"/);
+});
+test('journey rejects unmeasured or excessive rendering change and forged generic identities', () => {
+  for (const change of [f => delete f.events[0].samples,
+    f => f.events[0].samples[2].meanPixelDelta = 2,
+    f => f.events[0].samples[2].changedChannelFraction = 0.01,
+    f => f.screens[0].accessibility.children = []]) {
+    const f = journeyFixture(); change(f); assert.ok(journeyErrors(f).length);
+  }
+});
+
+test('repeated destination search clears through observed control and proves exact query', () => {
+  const swift = fs.readFileSync(new URL('../tools/lp24454/GridlyAcceptance.swift', import.meta.url), 'utf8');
+  const search = swift.slice(swift.indexOf('private func searchDestination'), swift.indexOf('private func weatherScroll'));
+  assert.match(search, /journeyTap\("Clear search", role: \.button\)/);
+  assert.match(search, /field.value as\? String == "Austin, Texas"/);
+  assert.doesNotMatch(search, /XCUIKeyboardKey.delete/);
+});
+
+for (const [name, [label]] of Object.entries(journeyControls)) test('journey rejects absent physical control for ' + name, () => {
+  const f = journeyFixture(); f.events = f.events.filter(e => !(e.action === 'journey-tap' && e.label === label));
+  assert.ok(journeyErrors(f).length);
+});
+test('journey rejects unproven lifecycle or reversed context chronology', () => {
+  for (const change of [f => f.events = f.events.filter(e => e.action !== 'lifecycle'),
+    f => f.events.reverse(), f => f.events = f.events.filter(e => e.action !== 'journey-type')]) {
+    const f = journeyFixture(); change(f); assert.ok(journeyErrors(f).length);
+  }
+});
+test('weather AX outside the panel viewport or duplicated content cannot pass', () => {
+  for (const change of [nodes => nodes.find(n => n.label === 'Weather').frame = {x: 0, y: 900, width: 100, height: 50},
+    nodes => nodes.push({...nodes.find(n => n.label === 'Weather')})]) {
+    const f = journeyFixture(); change(f.screens.find(s => s.name === 'weather').accessibility.children);
+    assert.ok(journeyErrors(f).includes('Weather not uniquely visible inside KBYG viewport'));
+  }
+});
+test('CLI can analyze journey exports without defaulting to onboarding', () => {
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'gridly-journey-cli-'));
+  try {
+    const result = spawnSync(process.execPath, ['tools/lp24454/analyze.mjs', directory, '--phase', 'journey'], {encoding: 'utf8'});
+    assert.equal(result.status, 0); assert.equal(JSON.parse(result.stdout).phase, 'journey');
+  } finally { fs.rmdirSync(directory); }
+});
+
+test('background acceptance requires observed OS lifecycle state and retains evidence', () => {
+  const swift = fs.readFileSync(new URL('../tools/lp24454/GridlyAcceptance.swift', import.meta.url), 'utf8');
+  assert.match(swift, /springboard.activate\(\)/);
+  assert.match(swift, /App background state not observed after OS activation/);
+  assert.match(swift, /background-AX/);
+  assert.match(swift, /app.wait\(for: \.notRunning, timeout: 10\)/);
+});
+
+test('journey rejects AX-only identity when rendered screenshot text is absent or contradicts it', () => {
+  for (const change of [e => delete e.renderedText, e => e.renderedText = 'Checking conditions Coverage incomplete']) {
+    const f = journeyFixture(); change(f.events.find(e => e.evidence === 'alerts-open'));
+    assert.ok(journeyErrors(f).includes('Rendered screenshot identity not proven: alerts-open'));
+  }
+});
+test('settled capture retains measured OCR-verified frame instead of taking an unverified replacement', () => {
+  const swift = fs.readFileSync(new URL('../tools/lp24454/GridlyAcceptance.swift', import.meta.url), 'utf8');
+  const settled = swift.slice(swift.indexOf('private func settled('), swift.indexOf('private func searchDestination'));
+  assert.match(settled, /renderedWords\(screenshot\)/);
+  assert.match(settled, /retainSettled\(name, screenshot: screenshot, snapshot: snapshot\)/);
+  assert.doesNotMatch(settled, /try capture\(name\)/);
+});
+
+test('OCR O/zero count normalization is narrow, retains raw text and still requires exact AX zero', () => {
+  const f = journeyFixture(); const e = f.events.find(e => e.evidence === 'alerts-open');
+  e.rawRenderedText = e.rawRenderedText.replace(' 0 active conditions', ' o active conditions');
+  assert.deepEqual(journeyErrors(f), []);
+  f.screens.find(s => s.name === 'alerts-open').accessibility.children = [];
+  assert.ok(journeyErrors(f).length);
 });

@@ -1,5 +1,6 @@
 import XCTest
 import UIKit
+import Vision
 
 // Runs in a separate signed XCTest runner. No Gridly hooks, launch arguments,
 // storage mutation, synthetic GPS, reporting action, or production target.
@@ -91,9 +92,13 @@ final class GridlyAcceptance: XCTestCase {
 
     private func tourNodes() -> [XCUIElementSnapshot] {
         guard let snapshot = try? app.snapshot() else { return [] }
-        let regions = flatten(snapshot).filter { $0.label == "Quick Tour cards and setup" && onScreen($0.frame) }
+        let regions = flatten(snapshot).filter { isTourRegion($0.label) && onScreen($0.frame) }
         guard regions.count == 1 else { return [] }
         return flatten(regions[0]).filter { onScreen($0.frame) }
+    }
+
+    private func isTourRegion(_ label: String) -> Bool {
+        ["Quick Tour cards and setup", "Quick Tour cards and setup, region"].contains(label)
     }
 
     private func visibleTitle() -> Int? {
@@ -153,11 +158,12 @@ final class GridlyAcceptance: XCTestCase {
 
     private func shellVisible() -> Bool {
         guard app.state == .runningForeground, let snapshot = try? app.snapshot() else { return false }
-        guard !flatten(snapshot).contains(where: { $0.label == "Quick Tour cards and setup" && onScreen($0.frame) }) else { return false }
+        let nodes = flatten(snapshot)
+        guard !nodes.contains(where: { isTourRegion($0.label) && onScreen($0.frame) }) else { return false }
         return ["Open Settings", "Open Alerts", "Around Me — use my location"].allSatisfy { label in
-            app.buttons.matching(NSPredicate(format: "label == %@", label)).allElementsBoundByIndex.filter {
-                $0.exists && self.onScreen($0.frame) && $0.isEnabled
-            }.count == 1
+            // WKWebView exposes the dock actions as Other, not Button.
+            // This is passive state evidence, not proof of tappability.
+            nodes.filter { $0.label == label && self.onScreen($0.frame) && $0.isEnabled }.count == 1
         }
     }
 
@@ -184,6 +190,9 @@ final class GridlyAcceptance: XCTestCase {
     }
 
     private func establishPageOne() throws {
+        guard poll(15, { self.visibleTitle() != nil || self.shellVisible() }) else {
+            try blocked("No known page or proven Gridly shell after bounded readiness wait; no reset allowed")
+        }
         if visibleTitle() == nil {
             guard shellVisible() else { try blocked("No known page or proven Gridly shell; no reset allowed") }
             try safeReopen()
@@ -227,13 +236,8 @@ final class GridlyAcceptance: XCTestCase {
         if location && labels.contains(where: { $0.localizedCaseInsensitiveContains("Always Allow") || $0 == "Always" }) {
             throw NSError(domain: "LP24454.Observation", code: 3, userInfo: [NSLocalizedDescriptionKey: "Always/background location choice observed; preserve evidence and stop."])
         }
-        print(location
-            ? "HUMAN ACTION REQUIRED: On Denise’s iPhone choose Allow While Using App if you consent. Note the Precise Location state. The harness will detect dismissal; it cannot infer your selection."
-            : "HUMAN ACTION REQUIRED: Review the security/permission prompt on Denise’s iPhone. The harness will never press its buttons.")
-        guard poll(180, { self.prompts().isEmpty }) else {
-            throw NSError(domain: "LP24454.HumanAction", code: 4, userInfo: [NSLocalizedDescriptionKey: "Prompt remains after 180 seconds. Evidence retained; no permission was granted by automation."])
-        }
-        try capture("after-human-prompt")
+        print("HUMAN ACTION REQUIRED: Automation stopped. Native prompt: " + labels.joined(separator: " | "))
+        throw NSError(domain: "LP24454.HumanAction", code: 4, userInfo: [NSLocalizedDescriptionKey: "Native dialog requires owner review; evidence retained, no automatic dismissal or continuation."])
     }
 
     private func onboarding() throws {
@@ -276,80 +280,266 @@ final class GridlyAcceptance: XCTestCase {
         // STOP: journey is a separately selected test, never invoked here.
     }
 
-    func testPhysicalJourney() throws {
-        defer { try? attach(events, name: "events") }
-        try capture("journey-initial")
-        if visibleTitle() != nil {
-            try establishPageOne()
-            for index in 0..<(titles.count - 1) {
-                try move("Next", from: index, to: index + 1, name: "journey-next-\(index + 2)")
-            }
-            try requiredTap("Finish", identifier: "gridlyV894C2FirstRunFinishBtn")
-        }
-        try expectShell("journey-start-shell")
-        try waitForHumanIfPrompt(context: "home-before-location", contextualLocation: false)
-        try capture("home-before-around-me")
-        try tap("Around Me — use my location")
-        // No new geolocation request is injected: the actual UI owns the request.
-        var until = Date().addingTimeInterval(25)
-        repeat {
-            let hadPrompt = !prompts().isEmpty
-            try waitForHumanIfPrompt(context: "around-me", contextualLocation: true)
-            if hadPrompt { until = Date().addingTimeInterval(25) }
-            if !visibleButtons("Return Home").isEmpty { break }
-            RunLoop.current.run(until: Date().addingTimeInterval(0.5))
-        } while Date() < until
-        try capture("around-me-terminal")
-        events.append(["gate": "R1-real-geolocation", "status": "INCONCLUSIVE",
-            "returnHomeVisible": !visibleButtons("Return Home").isEmpty,
-            "reason": "UI outcome captured. Exact WKWebView coordinates, location source, permission choice and persisted Home bytes are not exposed by XCTest. Do not equate a visible control with proven GPS success."])
-        if visibleButtons("Return Home").count == 1 { try tap("Return Home"); try capture("return-home") }
-        for label in ["Home", "Search", "Alerts", "Settings"] {
-            if visibleButtons(label).count == 1 {
-                try tap(label)
-                try capture("surface-" + label.lowercased())
-                if label == "Search" { try searchCities() }
-            } else { events.append(["gate": "surface-" + label, "status": "NOT_OBSERVED", "reason": "No unique hittable semantic control; evidence retained, no coordinates."]) }
-        }
-        events.append(["gate": "R3-native-provider-networking", "status": "INCONCLUSIVE",
-            "reason": "Native UI screenshots alone cannot prove capacitor://localhost requests, normalized counts or CORS failures. Inspector/console evidence must be correlated before classification."])
-        try waitForHumanIfPrompt(context: "before-background", contextualLocation: false)
-        XCUIDevice.shared.press(.home)
-        RunLoop.current.run(until: Date().addingTimeInterval(2))
-        app.activate()
-        XCTAssertTrue(app.wait(for: .runningForeground, timeout: 15))
-        try capture("resume")
-        let original = XCUIDevice.shared.orientation
-        XCUIDevice.shared.orientation = .landscapeLeft
-        try capture("landscape-left")
-        XCUIDevice.shared.orientation = .portrait
-        try capture("portrait-return")
-        if original != .unknown { XCUIDevice.shared.orientation = original }
-        app.terminate()
-        app.activate()
-        XCTAssertTrue(app.wait(for: .runningForeground, timeout: 20))
-        try capture("relaunch")
-        events.append(["gate": "network-provider-recovery", "status": "NOT_RUN", "reason": "No OS network switch or endpoint modification performed. Requires an explicitly controlled physical network interruption."])
+    private func journeyBlock(_ reason: String) throws -> Never {
+        events.append(["gate": "journey", "status": "BLOCKED", "reason": reason])
+        try? capture("journey-BLOCKED")
+        throw NSError(domain: "LP24454.Harness", code: 6, userInfo: [NSLocalizedDescriptionKey: reason])
     }
 
-    private func searchCities() throws {
-        let predicate = NSPredicate(format: "placeholderValue == %@ OR label == %@", "Search address or place", "Search address or place")
-        let fields = (app.textFields.matching(predicate).allElementsBoundByIndex + app.searchFields.matching(predicate).allElementsBoundByIndex).filter { $0.exists && $0.isHittable }
-        guard fields.count == 1 else {
-            events.append(["gate": "multi-county-search", "status": "NOT_OBSERVED", "reason": "Search field not uniquely exposed in accessibility."])
+    private func journeyNodes() -> [XCUIElementSnapshot] {
+        guard let snapshot = try? app.snapshot() else { return [] }
+        return flatten(snapshot).filter {
+            let r = $0.frame
+            return [r.minX, r.minY, r.width, r.height].allSatisfy { $0.isFinite } && r.width > 0 && r.height > 0
+                && snapshot.frame.contains(CGPoint(x: r.midX, y: r.midY))
+        }
+    }
+
+    // Types and labels below come from saved physical AX, never a coordinate fallback.
+    private func journeyTap(_ label: String, role: XCUIElement.ElementType) throws {
+        try waitForHumanIfPrompt(context: "before-" + label, contextualLocation: false)
+        let nodes = journeyNodes().filter { $0.label == label && $0.elementType == role && $0.isEnabled }
+        guard nodes.count == 1 else { try journeyBlock("Missing/ambiguous observed AX control: " + label) }
+        try capture("before-tap-" + label)
+        let matches = app.descendants(matching: role).matching(NSPredicate(format: "label == %@", label))
+            .allElementsBoundByIndex.filter { $0.exists && self.onScreen($0.frame) && $0.frame == nodes[0].frame }
+        guard matches.count == 1, matches[0].isEnabled, matches[0].isHittable else {
+            try journeyBlock("Observed AX control is not safely actionable: " + label)
+        }
+        matches[0].tap()
+        events.append(["action": "journey-tap", "label": label, "role": role.rawValue])
+    }
+
+    // Verify rendered identity as well as AX; AX can update ahead of compositing.
+    private func renderedWords(_ screenshot: XCUIScreenshot) throws -> String {
+        let request = VNRecognizeTextRequest()
+        request.recognitionLevel = .accurate
+        request.recognitionLanguages = ["en-US"]
+        request.usesLanguageCorrection = false
+        guard let image = screenshot.image.cgImage else { try journeyBlock("Screenshot pixels unavailable") }
+        try VNImageRequestHandler(cgImage: image).perform([request])
+        return (request.results ?? []).compactMap { $0.topCandidates(1).first?.string }.joined(separator: " ").lowercased()
+    }
+
+    private func visualIdentity(_ name: String) -> [String] {
+        switch name {
+        case "search-open": return ["where are you going", "search"]
+        case "search-results": return ["best matches", "austin", "multi-county"]
+        case "destination-selected": return ["selected destination", "austin", "ready to preview"]
+        case "destination": return ["location context", "austin", "return home"]
+        case "kbyg-expanded", "road-awareness": return ["official roadways", "no active official roadway conditions"]
+        case "weather": return ["weather", "no active weather alerts"]
+        case "alerts-open": return ["no active alerts", "0 active conditions", "no active community reports", "no active weather alerts"]
+        case "layers-open": return ["map layers", "standard", "satellite"]
+        case "around-me": return ["location context", "around me", "return home"]
+        default: return ["location context", "dayton", "search"]
+        }
+    }
+
+    private func retainSettled(_ name: String, screenshot: XCUIScreenshot, snapshot: XCUIElementSnapshot) throws {
+        sequence += 1
+        let prefix = String(format: "%03d-", sequence) + name
+        let attachment = XCTAttachment(screenshot: screenshot)
+        attachment.name = prefix + ".png"; attachment.lifetime = .keepAlways; add(attachment)
+        try attach(["kind": "physical-screen", "name": name,
+            "timestamp": ISO8601DateFormatter().string(from: Date()),
+            "screenPixels": ["width": screenshot.image.cgImage?.width ?? 0, "height": screenshot.image.cgImage?.height ?? 0],
+            "appFramePoints": rect(snapshot.frame), "orientation": XCUIDevice.shared.orientation.rawValue,
+            "safeAreaBounds": NSNull(), "cardBounds": NSNull(), "accessibility": tree(snapshot)], name: prefix)
+    }
+
+    // Require both semantic state and three stable rendered frames. Tile loads,
+    // animations and context transitions reset stability; no fixed long sleep.
+    private func settled(_ name: String, required: [String], contextualLocation: Bool = false) throws {
+        let until = Date().addingTimeInterval(35)
+        var previous: [UInt8]?; var previousAX: Data?; var stable = 0
+        var samples: [[String: Any]] = []
+        repeat {
+            try waitForHumanIfPrompt(context: name, contextualLocation: contextualLocation)
+            let snapshot = try app.snapshot()
+            let nodes = flatten(snapshot).filter { node in
+                let r = node.frame
+                return [r.minX, r.minY, r.width, r.height].allSatisfy { $0.isFinite } && r.width > 0 && r.height > 0
+                    && snapshot.frame.contains(CGPoint(x: r.midX, y: r.midY))
+            }
+            let ready = app.state == .runningForeground && !nodes.contains { self.isTourRegion($0.label) }
+                && required.allSatisfy { label in nodes.contains { $0.label == label } }
+            let screenshot = XCUIScreen.main.screenshot()
+            // Compare decoded pixels, excluding native time/battery chrome. Encoded
+            // PNG containers may differ independently of the rendered content.
+            let image = screenshot.image.cgImage!
+            let crop = image.cropping(to: CGRect(x: 0, y: 60 * screenshot.image.scale,
+                width: CGFloat(image.width), height: CGFloat(image.height) - 60 * screenshot.image.scale))!
+            // Normalize color/stride and downsample for a bounded pixel-difference
+            // measurement. Tiny raster noise is allowed; substantial tile/layout
+            // changes reset stability. Full-resolution screenshots still require review.
+            var pixels = [UInt8](repeating: 0, count: 86 * 174 * 4)
+            pixels.withUnsafeMutableBytes { bytes in
+                let context = CGContext(data: bytes.baseAddress, width: 86, height: 174, bitsPerComponent: 8,
+                    bytesPerRow: 86 * 4, space: CGColorSpaceCreateDeviceRGB(),
+                    bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)!
+                context.draw(crop, in: CGRect(x: 0, y: 0, width: 86, height: 174))
+            }
+            var delta = 255.0; var changed = 1.0
+            if let previous {
+                let differences = zip(pixels, previous).map { abs(Int($0) - Int($1)) }
+                delta = Double(differences.reduce(0, +)) / Double(differences.count)
+                changed = Double(differences.filter { $0 > 16 }.count) / Double(differences.count)
+            }
+            let ax = try JSONSerialization.data(withJSONObject: nodes.map { ["label": $0.label, "frame": rect($0.frame)] }, options: .sortedKeys)
+            let sameAX = ax == previousAX
+            samples.append(["ready": ready, "meanPixelDelta": delta, "changedChannelFraction": changed, "sameAX": sameAX])
+            if ready && delta <= 1 && changed <= 0.005 && sameAX { stable += 1 } else { stable = 0 }
+            previous = ready ? pixels : nil
+            previousAX = ready ? ax : nil
+            if stable >= 2 {
+                let rawWords = try renderedWords(screenshot)
+                // Vision reads the displayed zero as O; AX independently requires 0.
+                let words = rawWords.replacingOccurrences(of: " o active conditions", with: " 0 active conditions")
+                let expectedWords = visualIdentity(name)
+                if expectedWords.allSatisfy({ words.contains($0) }) {
+                    // Retain this measured frame, never take a different screenshot
+                    // after declaring stability. OCR observations remain auditable.
+                    try retainSettled(name, screenshot: screenshot, snapshot: snapshot)
+                    events.append(["action": "settled", "evidence": name, "required": required, "stableFrames": 3,
+                        "samples": samples, "rawRenderedText": rawWords, "renderedText": words, "requiredRenderedText": expectedWords])
+                    return
+                }
+                stable = 0
+            }
+            RunLoop.current.run(until: Date().addingTimeInterval(0.5))
+        } while Date() < until
+        try attach(samples, name: "unsettled-" + name)
+        try journeyBlock("No settled physical rendering for " + name)
+    }
+
+    private func searchDestination() throws {
+        if journeyNodes().contains(where: { $0.label == "Clear search" && $0.elementType == .button }) {
+            try journeyTap("Clear search", role: .button)
+        }
+        try journeyTap("Where are you going?", role: .searchField)
+        let fields = app.searchFields.matching(NSPredicate(format: "label == %@", "Where are you going?"))
+            .allElementsBoundByIndex.filter { $0.exists && self.onScreen($0.frame) }
+        guard fields.count == 1 else { try journeyBlock("Search field not unique") }
+        let field = fields[0]
+        let current = field.value as? String ?? ""
+        guard current.isEmpty || current == field.placeholderValue else { try journeyBlock("Search did not clear; refusing to append query") }
+        field.typeText("Austin, Texas")
+        guard field.value as? String == "Austin, Texas" else { try journeyBlock("Typed search value not proven") }
+        events.append(["action": "journey-type", "label": "Where are you going?", "text": "Austin, Texas"])
+        try journeyTap("Search addresses and places", role: .button)
+        try settled("search-results", required: ["Where are you going?, web dialog", "Austin Multi-county Community · Bastrop County · Hays County · Travis County · Williamson County Place"])
+    }
+
+    private func weatherScroll() throws {
+        try waitForHumanIfPrompt(context: "weather-scroll", contextualLocation: false)
+        let regions = app.otherElements.matching(NSPredicate(format: "label == %@", "Know Before You Go, region"))
+            .allElementsBoundByIndex.filter { $0.exists && self.onScreen($0.frame) }
+        guard regions.count == 1 else { try journeyBlock("KBYG region not unique") }
+        let region = regions[0]
+        let weather = journeyNodes().filter { $0.elementType == .staticText && ["Weather", "No active weather alerts."].contains($0.label) }
+        if weather.count == 2 && weather.allSatisfy({ region.frame.contains($0.frame) }) {
+            try settled("weather", required: ["Know Before You Go, region", "Weather", "No active weather alerts."])
             return
         }
-        let field = fields[0]
-        for city in ["Dayton", "Dallas", "Austin"] {
-            field.tap()
-            let current = field.value as? String ?? ""
-            if current != field.placeholderValue && !current.isEmpty { field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: current.count)) }
-            field.typeText(city)
-            try capture("keyboard-" + city.lowercased())
-            if visibleButtons("Search addresses and places").count == 1 { try tap("Search addresses and places") }
-            RunLoop.current.run(until: Date().addingTimeInterval(5))
-            try capture("search-" + city.lowercased())
-            events.append(["gate": "search-" + city, "status": "OBSERVED_ONLY", "reason": "Typed production search and captured result surface; no inferred provider success or geographic selection."])
+        // Observed semantic endpoints stay inside the panel. XCTest's region
+        // swipe rejects its visible frame; element-to-element drag uses the
+        // proven child activation points without inventing screen coordinates.
+        let starts = region.staticTexts.matching(NSPredicate(format: "label == %@", "No active official roadway conditions."))
+            .allElementsBoundByIndex.filter { $0.exists && region.frame.contains($0.frame) }
+        let ends = region.staticTexts.matching(NSPredicate(format: "label == %@", "No active local issues reported."))
+            .allElementsBoundByIndex.filter { $0.exists && region.frame.contains($0.frame) }
+        guard starts.count == 1, ends.count == 1, starts[0].isHittable, ends[0].isHittable else {
+            try journeyBlock("KBYG semantic scroll endpoints not safely actionable")
         }
+        try capture("before-weather-scroll")
+        starts[0].press(forDuration: 0.1, thenDragTo: ends[0])
+        events.append(["action": "journey-scroll", "label": "Know Before You Go, region", "direction": "up",
+            "from": "No active official roadway conditions.", "to": "No active local issues reported."])
+        try settled("weather", required: ["Know Before You Go, region", "Weather", "No active weather alerts."])
+    }
+
+    func testPhysicalJourney() throws {
+        defer { try? attach(events, name: "events") }
+        XCUIDevice.shared.orientation = .portrait
+        try waitForHumanIfPrompt(context: "journey-launch", contextualLocation: false)
+        guard visibleTitle() == nil else { try journeyBlock("Onboarding is present; journey cannot replay or complete it") }
+        if journeyNodes().contains(where: { $0.label == "Map Layers, web dialog" }) {
+            try journeyTap("Close Layers", role: .button)
+        }
+        if journeyNodes().contains(where: { $0.label == "No Active Alerts, web dialog" }) {
+            try journeyTap("Close Alerts", role: .button)
+        }
+        if journeyNodes().contains(where: { $0.label == "Where are you going?, web dialog" }) {
+            try journeyTap("Close destination search", role: .button)
+        }
+        if journeyNodes().contains(where: { $0.label == "Know Before You Go, region" }) {
+            try journeyTap("Know Before You Go", role: .button)
+        }
+        try settled("home", required: ["LOCATION CONTEXT • DAYTON", "Open Alerts", "Know Before You Go"])
+        try journeyTap("Search", role: .other)
+        try settled("search-open", required: ["Where are you going?, web dialog", "Search addresses and places"])
+        try searchDestination()
+        try journeyTap("Austin Multi-county Community · Bastrop County · Hays County · Travis County · Williamson County Place", role: .button)
+        try settled("destination-selected", required: ["SELECTED DESTINATION", "Austin", "Ready to preview."])
+        try journeyTap("Close destination search", role: .button)
+        try settled("destination", required: ["LOCATION CONTEXT • AUSTIN", "Return Home"])
+        try journeyTap("Return Home", role: .button)
+        try settled("destination-return-home", required: ["LOCATION CONTEXT • DAYTON", "Search"])
+
+        try journeyTap("Know Before You Go", role: .button)
+        try settled("kbyg-expanded", required: ["Know Before You Go, region", "Official Roadways"])
+        try weatherScroll()
+        try settled("road-awareness", required: ["Official Roadways", "No active official roadway conditions."])
+        try journeyTap("Know Before You Go", role: .button)
+        try settled("kbyg-collapsed", required: ["LOCATION CONTEXT • DAYTON"])
+        try journeyTap("Open Alerts", role: .other)
+        try settled("alerts-open", required: ["No Active Alerts, web dialog", "Close Alerts", "0 active conditions"])
+        try journeyTap("Close Alerts", role: .button)
+        try settled("alerts-closed", required: ["LOCATION CONTEXT • DAYTON", "Search"])
+
+        try journeyTap("Zoom in", role: .button)
+        try settled("map-zoom-in", required: ["Interactive travel conditions map. Use arrow keys to pan., region", "LOCATION CONTEXT • DAYTON"])
+        try journeyTap("Zoom out", role: .button)
+        try settled("map-zoom-restored", required: ["Interactive travel conditions map. Use arrow keys to pan., region", "LOCATION CONTEXT • DAYTON"])
+        try journeyTap("Layers", role: .other)
+        try settled("layers-open", required: ["Map Layers, web dialog", "Standard", "Satellite", "Close Layers"])
+        try journeyTap("Close Layers", role: .button)
+        try settled("layers-closed", required: ["LOCATION CONTEXT • DAYTON"])
+
+        try journeyTap("Around Me — use my location", role: .button)
+        try capture("around-me-request")
+        try settled("around-me", required: ["LOCATION CONTEXT • AROUND ME", "Return Home"], contextualLocation: true)
+        events.append(["gate": "R1-real-geolocation", "status": "INCONCLUSIVE",
+            "reason": "Physical UI context activation is proven separately. Exact coordinates, GPS source, permission choice and persisted Home bytes are not exposed by XCTest."])
+        try journeyTap("Return Home", role: .button)
+        try settled("return-home", required: ["LOCATION CONTEXT • DAYTON", "Search"])
+        guard !journeyNodes().contains(where: { $0.label == "Return Home" }) else { try journeyBlock("Temporary context did not clear") }
+
+        try waitForHumanIfPrompt(context: "before-background", contextualLocation: false)
+        XCUIDevice.shared.press(.home)
+        if !poll(3, { self.app.state == .runningBackground || self.app.state == .runningBackgroundSuspended }) {
+            events.append(["action": "home-button-unconfirmed", "appState": app.state.rawValue])
+            // Public OS activation; no app data reset or permission interaction.
+            springboard.activate()
+        }
+        guard poll(10, { self.app.state == .runningBackground || self.app.state == .runningBackgroundSuspended }) else {
+            try journeyBlock("App background state not observed after OS activation; raw state " + String(app.state.rawValue))
+        }
+        let background = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
+        background.name = "background.png"; background.lifetime = .keepAlways; add(background)
+        try attach(["kind": "background", "appState": app.state.rawValue, "springboard": tree(try springboard.snapshot())], name: "background-AX")
+        events.append(["action": "lifecycle", "state": "background", "appState": app.state.rawValue])
+        app.activate()
+        try settled("resume", required: ["LOCATION CONTEXT • DAYTON", "Search", "Know Before You Go"])
+        try waitForHumanIfPrompt(context: "before-relaunch", contextualLocation: false)
+        app.terminate()
+        guard app.wait(for: .notRunning, timeout: 10) else { try journeyBlock("Termination not observed") }
+        events.append(["action": "lifecycle", "state": "terminated"])
+        app.activate()
+        try settled("relaunch", required: ["LOCATION CONTEXT • DAYTON", "Search", "Know Before You Go"])
+        events.append(["gate": "R3-native-provider-networking", "status": "INCONCLUSIVE",
+            "reason": "Visible roadway/weather states do not establish provider request origin, CORS or network recovery internals."])
+        events.append(["action": "journey-complete", "onboardingRun": false, "visualReview": "REQUIRED"])
     }
 }
