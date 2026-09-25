@@ -40,17 +40,38 @@ export function sourceGate({ head, branch, changed }) {
 }
 // Explicit CoreDevice JSON paths; missing or new schemas fail closed. Refine only
 // against saved output from the installed Xcode, never infer readiness from a name.
+function deviceFacts(device) {
+  // An existing current dictionary is authoritative, even if incomplete or
+  // malformed. Deprecated fields must never mask a failed current observation.
+  if (device && Object.hasOwn(device, 'properties')) {
+    const p = device.properties;
+    const mode = p?.state?.developerModeStatus;
+    return {
+      hardware: p?.hardware || {},
+      properties: {
+        osVersionNumber: p?.software?.osVersionNumber?.stringValue,
+        osBuildUpdate: p?.software?.osBuildVersions?.buildVersion?.name,
+        bootState: p?.state?.bootState,
+        developerModeStatus: mode && Object.keys(mode).length === 1 && mode.enabled?.mode === 1 ? 'enabled' : 'UNKNOWN',
+      },
+      connection: { ...p?.connection, tunnelState: p?.connection?.state },
+    };
+  }
+  return { hardware: device?.hardwareProperties || {}, properties: device?.deviceProperties || {}, connection: device?.connectionProperties || {} };
+}
 export function deviceGate(list, details, apps, destinations) {
   const errors = [];
   const records = list?.result?.devices;
-  const matches = Array.isArray(records) ? records.filter(d => d.hardwareProperties?.udid === expected.udid) : [];
+  const matches = Array.isArray(records) ? records.filter(d => deviceFacts(d).hardware.udid === expected.udid) : [];
   if (matches.length !== 1) errors.push('Expected exactly one matching physical UDID in device list');
-  const d = details?.result?.device;
-  const hardware = d?.hardwareProperties || {}, properties = d?.deviceProperties || {}, connection = d?.connectionProperties || {};
+  const result = details?.result;
+  const d = result && Object.hasOwn(result, 'device') ? result.device : result;
+  const { hardware, properties, connection } = deviceFacts(d);
   const requireValue = (label, actual, wanted) => { if (actual !== wanted) errors.push(`${label}: expected ${wanted}; observed ${actual ?? 'UNKNOWN'}`); };
   requireValue('UDID', hardware.udid, expected.udid);
   requireValue('physical product type', hardware.productType, expected.productType);
   requireValue('model', hardware.marketingName, expected.model);
+  requireValue('device reality', hardware.reality, 'physical');
   requireValue('iOS', properties.osVersionNumber, expected.os);
   requireValue('OS build', properties.osBuildUpdate, expected.osBuild);
   requireValue('boot state', properties.bootState, 'booted');

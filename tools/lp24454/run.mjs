@@ -16,7 +16,7 @@ const usage = `LP244.54 — installed physical iPhone only
   node tools/lp24454/run.mjs relaunch
   node tools/lp24454/run.mjs console
 All commands validate the pinned physical device and source before interaction.
-onboarding captures through page 7 and stops before choosing setup/location.
+onboarding verifies seven pages, Back, Finish and safe-replay Skip; stops before journey.
 journey finishes optional setup without selecting Home, then invokes real Around Me.
 Only the separate XCTest runner is built/installed; Gridly is never built or installed.
 console deliberately relaunches Gridly and captures up to 30 seconds of console output.
@@ -175,6 +175,7 @@ try {
     }
     report.analysis = analyzeAttachments(path.join(out, 'attachments'));
     save('analysis.json', report.analysis);
+    if (phase === 'onboarding' && report.analysis.status !== 'EVIDENCE_EXTRACTED') report.status = 'UI_RUN_FAILED_OR_BLOCKED';
     report.visual = report.analysis.visual;
     report.gates.R1 = phase === 'journey' ? 'INCONCLUSIVE — inspect physical observations and available console; exact GPS/permission/Home bytes not observable by XCTest' : 'NOT_RUN — onboarding-only phase';
     report.gates.R3 = 'INCONCLUSIVE — XCTest screen evidence does not prove WKWebView request origin or provider internals';

@@ -44,8 +44,28 @@ export function measurePage(page) {
     limitation: 'Metrics compare accessible copy/images with an observed named pager region, not true card/safe-area bounds. Hidden AX nodes and omitted decorative content require screenshot corroboration.' };
 }
 
+export function onboardingFailures(pages, events, screens, screenshotCount) {
+  const errors = [];
+  const evidence = name => screens.some(s => s.name === name && s.accessibility && s.screenPixels?.width > 0 && s.screenPixels?.height > 0);
+  if (pages.length !== 7 || pages.some((p, i) => p.page !== i + 1 || !p.accessibility || !evidence('onboarding-' + (i + 1)))) errors.push('Missing ordered seven-page screenshot/accessibility coverage');
+  if (screenshotCount < screens.length || !screens.length) errors.push('Missing physical screenshot attachments');
+  if (!events.some(e => e.action === 'page-1-start' && evidence(e.evidence))) errors.push('Page-1 start not proven');
+  const transition = (control, from, to) => events.some(e => e.action === 'transition' && e.control === control && e.from === from && e.to === to && evidence(e.evidence));
+  for (let from = 1; from < 7; from++) if (!transition('Next', from, from + 1)) errors.push('Missing Next transition ' + from);
+  if (!transition('Back', 2, 1) || !events.some(e => e.action === 'transition' && e.control === 'Next' && e.from === 1 && e.to === 2 && e.evidence === 'forward-restored-page-2' && evidence(e.evidence))) errors.push('Back/forward restoration not proven');
+  for (const [label, identifier, state] of [['Finish', 'gridlyV894C2FirstRunFinishBtn', 'after-Finish'], ['Skip walkthrough', 'gridlyV894CFirstRunSkipBtn', 'after-Skip']]) {
+    const tap = events.findIndex(e => e.action === 'required-tap' && e.label === label && e.identifier === identifier);
+    const result = events.findIndex(e => e.action === 'post-onboarding' && e.control === state && evidence(e.evidence));
+    if (tap < 0 || result <= tap) errors.push('Missing actionable control/result: ' + label);
+  }
+  if (!events.some(e => e.action === 'onboarding-complete' && e.journeyStarted === false) || events.some(e => e.status === 'BLOCKED')) errors.push('Onboarding incomplete or blocked');
+  if (events.some(e => e.gate === 'R1-real-geolocation' || e.label === 'Around Me — use my location')) errors.push('Journey must be separate');
+  return errors;
+}
+
 export function analyzeAttachments(directory) {
-  const summaries = [], events = [], failures = [];
+  const summaries = [], events = [], failures = [], screens = [];
+  let screenshotCount = 0;
   function visit(current) {
     if (!fs.existsSync(current)) return;
     for (const entry of fs.readdirSync(current, { withFileTypes: true })) {
@@ -56,8 +76,10 @@ export function analyzeAttachments(directory) {
       // by content, not by a guessed export naming convention.
       if (fs.statSync(file).size > 25 * 1024 * 1024) continue;
       const bytes = fs.readFileSync(file);
+      if (bytes.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]))) screenshotCount++;
       if (![91, 123].includes(bytes[0])) continue;
       let value; try { value = JSON.parse(bytes.toString()); } catch { continue; }
+      if (value?.kind === 'physical-screen') screens.push(value);
       if (value?.kind === 'onboarding' && Array.isArray(value.pages)) summaries.push({ file: path.relative(directory, file), pages: value.pages });
       if (Array.isArray(value) && value.some(row => row?.gate || row?.action)) events.push(...value);
     }
@@ -65,6 +87,7 @@ export function analyzeAttachments(directory) {
   visit(directory);
   if (summaries.length !== 1) failures.push(`Expected one onboarding summary, observed ${summaries.length}; do not combine separate runs or infer missing pages.`);
   const pages = summaries.length === 1 ? summaries[0].pages : [];
+  failures.push(...onboardingFailures(pages, events, screens, screenshotCount));
   return { status: failures.length ? 'INCOMPLETE_EVIDENCE' : 'EVIDENCE_EXTRACTED', failures,
     pages: pages.map(measurePage), visual: classifyVisual(pages), events,
     R1: 'INCONCLUSIVE', R3: 'INCONCLUSIVE', productionDefects: [],
