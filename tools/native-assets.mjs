@@ -7,7 +7,7 @@ const repository = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 export const sources = Object.freeze({
   androidLegacyIcon: 'assets/icon-192.png',
   androidAdaptiveMark: 'assets/icons/incoming/gridly-icon-master-167.png',
-  iosIcon: 'assets/store/icons/gridly-icon-master-1024.png',
+  iosIcon: 'assets/store/icons/gridly-ios-appicon-1024.png',
   splash: 'assets/store/branding/Splash/gridly-splash-portrait.png'
 });
 export const outputs = Object.freeze({
