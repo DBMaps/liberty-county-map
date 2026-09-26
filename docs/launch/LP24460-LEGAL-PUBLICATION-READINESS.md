@@ -147,3 +147,37 @@ Confirm Apple/Google subscription products, $2.99 monthly price, purchase disclo
 ### Approval-recording checks
 
 25/25 existing bounded public-site/legal/compliance tests PASS. Additional subscription-copy, card-data, conditional-metadata, 18+, disclaimer-date and reporting-disabled source assertions PASS. Route/assets/source parity are covered by the public-site suite. Only this readiness report changed during approval recording; approved policy texts, public pages, runtime, retention and native behavior unchanged. `git diff --check` required before commit. No deployment, email send, production mutation, reporting activation, native/device tests, push or merge.
+## Owner-observed live pages and deployment boundary — September 26, 2026
+
+Owner independently checked the five public routes in a browser. This supersedes the earlier absence of live observations, without claiming a new independent Codex retrieval or full byte/text comparison:
+
+| Route | Current owner-observed result |
+|---|---|
+| `/privacy` | OUTDATED: still says the current application does not provide payment/subscription checkout. |
+| `/terms` | OUTDATED: still has “Future paid offerings” and no subscription purchase flow. |
+| `/community-guidelines` | PASS as currently served, per owner. |
+| `/delete-data` | PASS as currently served, per owner. |
+| `/support` | PASS as currently served, per owner. |
+
+Approved corrected files are `public-site/privacy/index.html` and `public-site/terms/index.html`, matching the complete approved policy sources. Their subscription language is already correct; no new content repair is needed. Privacy must replace the stale checkout assertion with store processing, no full-card custody and conditional entitlement/status/transaction metadata. Terms must replace future-paid/no-purchase wording with $2.99/month store subscription, start-at-subscription, renewal/cancellation/access/refund/store-law terms. The three good routes must remain content-identical through any shared publication.
+
+### Deployment mechanism findings
+
+- Existing public host target `gridly-public` and `gridlygo.com` are owner-confirmed in LP244.59/services inventory; exact hosting product mode, production branch, build/output mapping and deployed artifact identity are not established in tracked production evidence.
+- `public-site/_redirects` maps the existing legal clean routes to their static index files. No new route or infrastructure is needed.
+- `.github/workflows/` contains Capacitor validation, not a public website publisher. `package.json` does not supply a proven `gridly-public` deployment command.
+- LP244.38 records source readiness and expressly says no deployment was performed. LP183 Direct Upload commands/configuration target `gridly-preview`; they do not authorize or establish `gridly-public` deployment behavior. The cleanup Worker Wrangler configuration is unrelated.
+- Therefore automatic deployment from main/this branch versus explicit upload/workflow is **NOT ESTABLISHED**. A full branch or directory upload cannot be assumed to preserve every other currently served file. No deployment command was run, no artifact uploaded, no credentials requested and no website/runtime/production change made.
+
+**STOP at the owner/dashboard boundary required by this task.** Do not guess a Pages upload command, push/merge the branch, use preview settings or redeploy the whole site without proving scope.
+
+### Exact owner action needed
+
+1. Open Cloudflare dashboard → **Workers & Pages** → the existing **gridly-public** resource. Confirm its custom domain is `gridlygo.com` and its actual product/deployment type. Inspect **Settings / Builds & deployments** (if present) and the current production deployment. Report non-secret configuration only: Git integration versus Direct Upload, linked repository if any, production branch, root directory, build command, output directory and active deployment identifier. Do not paste credentials.
+2. If Git-connected, establish whether deploying a reviewed commit will publish only the approved legal change or unrelated changes. Do not change branch mappings or trigger/push/merge until that scope is reviewed. If Direct Upload, identify the existing owner upload workflow and retain its current full deployed artifact; partial-directory upload must not be assumed to patch only two files.
+3. Supply/confirm the existing deployment method and preservation evidence. The safe publication candidate must replace only `privacy/index.html` and `terms/index.html` within that established artifact, preserving other site content, assets, headers and routes. A shared publication is acceptable only after no-content-change parity of the other served files is proven. If the existing workflow cannot provide this preservation, report it rather than improvising.
+4. After publication through the established reviewed workflow, open the five exact canonical URLs in the earlier table anonymously. For Privacy/Terms compare complete served text and September 17 date against approved source, not keywords alone. Confirm stale phrases gone, $2.99/month and Apple/Google handling present, and all three previously-good routes still correct. Record UTC/deployment evidence and mobile readability. Root reporting-disabled truthfulness remains required; do not enable reporting.
+
+### Current result
+
+Legal text and publication approval remain CLOSED/PASS. Live served-page verification remains PENDING with two known stale pages; the three good routes have owner-observed PASS. Mailbox/operator and store subscription/entitlement verification remain PENDING. LP244.60 remains OPEN / NO-GO. Reporting remains expected disabled by authorization boundary and latest recorded state; no Supabase status query or write was performed. No app-store subscription configuration changed. Only this report changes; no files published. This update records bounded source/workflow inspection and owner observations, not a successful deployment certification.
