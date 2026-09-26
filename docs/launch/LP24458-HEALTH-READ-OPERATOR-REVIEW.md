@@ -1,37 +1,81 @@
-# LP244.58 proposed health-only production access — OWNER APPROVAL REQUIRED
+# LP244.58 health-read access security review — NOT APPROVED
 
-**Do not execute this proposal yet.** The owner authorized local Worker/Resend implementation and an exact database-access design, but explicitly withheld authorization for production SQL, account setup, secrets, DNS, and deployment. This document is the reviewable boundary for a later owner decision. No password or database URL belongs in Codex or this repository.
+**Decision (2026-09-26 UTC): direct production database LOGIN is NO-GO.** This review withdraws the earlier gridly_cleanup_alert_login / report_retention.cleanup_alert_health proposal. No SQL below was executed. No role, view, function, grant, Edge Function, Cloudflare resource, Resend resource, password, secret, or deployment was created. Reporting remains disabled. The SQL below is a new proposal for separate owner review, not an instruction to run it.
 
-## Why a production change is needed
+## 1. Fresh production catalog evidence and effective PUBLIC authority
 
-The proposed Cloudflare Worker can connect through Hyperdrive only with a dedicated database login. Production has no such login or health-only Cron projection. The existing `gridly_retention_monitor` is deliberately `NOLOGIN` and its original migration rejects added non-owner membership. It can read `report_retention.health` but has no `USAGE` on `cron`; it cannot supply compliance status to an external monitor. Giving a Worker the `postgres` or Supabase service-role credential would expose broad production authority and is rejected.
+Read-only catalog queries were run against the existing Gridly production project (reference nhwhkbkludzkuyxmkkcj), PostgreSQL 17.6. The proposed login does **not** exist. A CREATE ROLE with no membership clause would add no role memberships; the only shared grant source for that new role would be PUBLIC, plus any grants explicitly added later. NOINHERIT does not subtract PUBLIC privileges. The prior design would have added USAGE on report_retention and SELECT on one view.
 
-At `2026-09-26 01:06 UTC`, the exact **SELECT-only** projection below was executed through the connected owner SQL tool without creating the view. It returned exactly two rows, both `active`/`succeeded`, with current UTC run/success timestamps and zero overdue/breached counts. The projection uses the existing `cron.job_run_details(runid)` primary key and examines at most the recent 129 run IDs for either job; if a success falls outside that window, it reports no recent success and the Worker fails stale. The production role and view proposed here did not exist. The monitor source and this projection contain no report rows, IDs, coordinates, device/user identifiers, tokens, or free text.
-
-## Exact returned fields
-
-| Field | Type / values | Exposure limit |
+| Scope | Current PUBLIC finding | Consequence for the proposed login |
 | --- | --- | --- |
-| `subsystem` | `report_retention` or `compliance_cleanup` | Fixed two names |
-| `job_state` | `active`, `missing`, `inactive`, `misconfigured` | Internally compares only two named Cron jobs; command text is not returned |
-| `latest_run_state` | `succeeded`, `running`, `failed`, `none` | Raw Cron error/return message is not returned |
-| `latest_run_at` | UTC `timestamptz` or null | Latest named-job start time |
-| `last_success_at` | UTC `timestamptz` or null | Retention health success or latest successful compliance Cron end time |
-| `retention_state` | `succeeded`, `failed`, `none` | `none` for compliance; no SQL error text |
-| `overdue_count`, `breached_count` | integers capped at 1,000,000 | Report retention aggregate only; zero means **not applicable** for compliance, not a compliance backlog assessment |
+| Database postgres | CONNECT and TEMPORARY; no CREATE | It could connect and create temporary tables. TEMPORARY is beyond the health view. |
+| Schemas | Only public has PUBLIC USAGE; no non-system schema has PUBLIC CREATE. report_retention, cron, extensions, moderation, privacy_ops, auth, storage, realtime, and other checked schemas have no PUBLIC USAGE. | The prior explicit report_retention USAGE would add that schema. The other schemas remain inaccessible through PUBLIC. |
+| Tables/views | cron.job and cron.job_run_details have PUBLIC SELECT; cron.job_run_details also has PUBLIC DELETE. In extensions, four metadata views and spatial_ref_sys have PUBLIC SELECT. No PUBLIC relation privilege was found in public, report_retention, moderation, or privacy_ops. | The cron and extensions ACLs are **not effective** without schema USAGE. The prior design did not grant those schemas. Their latent PUBLIC ACLs are not a reason to broaden or revoke production grants in this phase. |
+| Columns | No non-system column-level PUBLIC grant was found in pg_attribute.attacl. | No column grant bypasses the absent table/view grants in the accessible public or proposed report_retention schema. |
+| Sequences | No non-system PUBLIC sequence privilege found. | No sequence access through PUBLIC was found. |
+| Routines | PUBLIC EXECUTE ACLs exist on 4 auth, 5 cron, 798 extensions, 1 graphql_public, 15 realtime, and 19 storage routines (842 total). No PUBLIC EXECUTE ACL exists on a public or report_retention routine. No non-builtin routine was found in pg_catalog. | All 842 ACL-only routines are blocked by absent schema USAGE. Adding report_retention USAGE would expose **zero** existing routines through PUBLIC. |
+| Memberships | The proposed role is absent; therefore it has zero current membership edges. The proposed CREATE ROLE did not specify membership. | A new role would receive no named-role membership at creation. Later grants would require a fresh audit. |
+| Default privileges | All 27 explicit pg_default_acl entries inspected contained no PUBLIC privilege. PostgreSQL's inherent default can still give PUBLIC EXECUTE to future routines created by an owner without a restrictive default ACL. | Current proof is point-in-time. Future owner/schema changes could expand a login's authority, especially because public already has PUBLIC USAGE. |
 
-The Worker adds the constant `Gridly production` environment label and classifies healthy, stale, failed, overdue, or monitor-error. Only an allowlisted subset enters email. If the SQL result differs from exactly these two named rows or has malformed values, the Worker sends a `monitor_error` category instead of copying database output.
+**Complete current non-system routine inventory callable by the proposed login via PUBLIC, after the prior report_retention USAGE grant: empty (zero functions, zero procedures).** Accordingly, the callable non-system classification set is empty: harmless/read-only 0; bounded health-only 0; potentially data-reading 0; mutating 0; SECURITY DEFINER 0; unknown/risky 0. The 842 PUBLIC-EXECUTE routines above are *not callable* because their schemas lack PUBLIC USAGE. In the Gridly schemas, live catalog inspection found the security-definer report writers, reporting-status function, moderation/deletion submitters, cleanup functions, and geocoding functions all lack PUBLIC EXECUTE. None would become callable through the proposed login. No RLS bypass or named-role grant is implied by NOINHERIT.
 
-The retention success threshold is **five minutes**, matching the existing report-admission health gate. The compliance success threshold is **three minutes** for a once-per-minute job. Either job's latest run becoming three minutes old also triggers `stale`; a missing, inactive, misconfigured, or explicitly failed job triggers `failed`. Any positive report overdue or linkage-breach count triggers `overdue` unless a failure state takes precedence. These thresholds are local monitor logic, not changes to retention deadlines or Cron schedules.
+The non-system inventory does not make a database login health-only. PostgreSQL core routines remain executable in pg_catalog: live ACL inspection confirmed PUBLIC EXECUTE on pg_notify(text,text), pg_advisory_lock(bigint), pg_sleep(double precision), and set_config(text,text,boolean). Notifications, session advisory locks, sleep/resource use, and session setting changes are operational effects outside the health view; the database-level TEMPORARY privilege also allows temporary writes. The proposed default_transaction_read_only=on can be changed by the session and is not an authorization boundary. A compromised credential could consume database resources or generate notifications even while private report tables and Gridly routines remain inaccessible. [PostgreSQL documents PUBLIC database TEMPORARY and default function EXECUTE](https://www.postgresql.org/docs/17/ddl-priv.html). **Direct DB login: NO-GO under the owner's health-only authority requirement.** No broad PUBLIC revoke is proposed.
 
-## Exact proposed SQL — NOT AUTHORIZED FOR EXECUTION
+## 2. Compliance backlog is available as a private aggregate
 
-Run only after separate owner approval, from a trusted owner/operator `psql` session against the verified Gridly production target. The transaction fails closed if the ledger, admission, guard, job inventory, or retention health differs. It neither invokes cleanup nor enables reporting. It adds one private view, one login with no password initially, one schema `USAGE`, and one view `SELECT`. No existing grant, RLS policy, cleanup schedule, deadline, or migration ledger entry is modified.
+Current production metadata confirms four private tables and the same columns/defaults used by the source migration: moderation.source_suppressions.expires_at; moderation.complaints.retain_until and nullable target/device linkage; moderation.action_log.retain_until; privacy_ops.deletion_requests.retain_until and nullable target/device linkage. The live moderation.run_compliance_cleanup() definition MD5 is ebfa0b470548a5314fe1569092a740c7, matching the LP244.57 reviewed definition. The [current migration](../../supabase/migrations/20260916183911_google_play_compliance_closure.sql) and [deletion runbook](GRIDLY-DATA-DELETION-RUNBOOK.md) define six cleanup predicates:
 
-```sql
+| Work category | Existing cleanup deadline / condition |
+| --- | --- |
+| Source suppression | expires_at; delete expired row |
+| Complaint linkage | retain_until; clear target report and reporter digest when present |
+| Action evidence | retain_until; delete expired row |
+| Complaint row | retain_until plus 31 days; delete expired row |
+| Deletion request linkage | retain_until; clear target report and requester digest when present |
+| Deletion request row | retain_until; delete expired row |
+
+A SELECT-only query counted each category at its actual deadline and one minute before it. All six returned due=0 and overdue=0 in the category check; a separate aggregate-only check at 2026-09-26 01:31:48 UTC again returned compliance_due_count=0 and compliance_overdue_count=0. No private row, identifier, digest, free text, or token was returned. The one-minute **due** lookahead reflects the existing every-minute cleanup cadence; it changes no retention deadline. **Overdue** means the existing predicate's deadline has arrived and matching cleanup work remains. These are counts of cleanup predicates, not distinct people or cases; a row can contribute to more than one category. The proposed output caps each total at 1,000,000. A positive overdue total must trigger an alert even if Cron reports success.
+
+## 3. Safer architecture and returned-field contract
+
+The smallest safer route under this stricter authority rule is:
+
+~~~text
+Cloudflare Worker (one-minute independent schedule)
+  -> authenticated, response-allowlisted Supabase Edge Function
+  -> one fixed no-argument, read-only SQL SECURITY DEFINER projection
+  -> two safe subsystem rows
+  -> Worker classifier -> Resend owner email
+~~~
+
+The Worker would hold only a dedicated high-entropy token for **that one health endpoint**, not a database login, Hyperdrive URL, postgres credential, or Supabase service/secret key. The Edge Function must reject missing/invalid authorization before database access, accept no SQL or object name from the request, rate-limit calls, return only the fields below, suppress raw errors, and use its Supabase-managed backend secret only to invoke the fixed RPC. A leaked Worker token could obtain only bounded health data through this endpoint, subject to rate limits. The backend secret remains high privilege and its Edge Function code needs separate owner review. [Supabase documents Edge Function secrets](https://supabase.com/docs/guides/functions/secrets) and [function authorization](https://supabase.com/docs/guides/functions/auth). **No Edge Function or secret is authorized or implemented here.** The current local Worker/Hyperdrive code is dormant and must be revised and retested before any deployment.
+
+The proposed RPC returns exactly two rows, one per subsystem, with these fields only:
+
+| Field | Type / meaning |
+| --- | --- |
+| subsystem | Fixed report_retention or compliance_cleanup |
+| job_state | active, missing, inactive, misconfigured |
+| latest_run_state | succeeded, running, failed, none; no raw Cron message |
+| latest_run_at | UTC timestamp or null |
+| last_success_at | UTC timestamp or null |
+| retention_state | succeeded, failed, none; none for compliance |
+| report_overdue_count | Integer 0–1,000,000; zero/not applicable on compliance row |
+| report_breached_count | Integer 0–1,000,000; zero/not applicable on compliance row |
+| compliance_due_count | Integer 0–1,000,000; zero/not applicable on report row |
+| compliance_overdue_count | Integer 0–1,000,000; zero/not applicable on report row |
+
+The Worker may use compliance_due_count internally, but the Resend payload remains the existing allowlist: environment, subsystem, health state, UTC timestamps, bounded overdue/breach counts, and safe error category. The compliance overdue total maps to the outbound overdue_count. No due count, raw database error, row content, identifier, coordinate, token, or customer datum enters email. The Worker must treat any wrong row count, unknown enum, null/negative/unbounded count, or inconsistent subsystem fields as monitor_error. The report five-minute and compliance three-minute success thresholds remain local alert rules; the new aggregate changes no deadline.
+
+## 4. Revised exact SQL proposal — DO NOT EXECUTE
+
+This replaces, rather than amends, the rejected login/view SQL. It creates **one no-argument, fixed-return function** in the already API-exposed public schema, owned by postgres, with SECURITY DEFINER and an empty search path. PUBLIC, anon, and authenticated receive no EXECUTE; only the already existing service_role is granted EXECUTE for the future Edge Function. CREATE and REVOKE are in one transaction, so there is no separately committed PUBLIC-executable window. The function contains SELECTs only and returns no source rows. Its body was tested as a SELECT-only projection at 01:27 UTC and returned exactly two healthy rows with zero aggregate counts; the CREATE FUNCTION and grants have **not** been tested or executed.
+
+~~~sql
 BEGIN;
 SET LOCAL lock_timeout = '3s';
 SET LOCAL statement_timeout = '15s';
+SET LOCAL search_path = pg_catalog;
 
 DO $check$
 BEGIN
@@ -62,109 +106,159 @@ BEGIN
          WHERE last_status = 'succeeded'
            AND last_success_at > statement_timestamp() - interval '5 minutes'
            AND overdue_cleanup_count = 0 AND breached_deadline_count = 0)
+     OR to_regprocedure('public.gridly_cleanup_alert_health()') IS NOT NULL
      OR to_regclass('report_retention.cleanup_alert_health') IS NOT NULL
      OR EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'gridly_cleanup_alert_login')
-  THEN RAISE EXCEPTION 'LP244.58 health-read preflight changed; no access created';
+  THEN RAISE EXCEPTION 'LP244.58 health projection preflight changed; no object created';
   END IF;
 END $check$;
 
-CREATE ROLE gridly_cleanup_alert_login
-  LOGIN NOINHERIT NOSUPERUSER NOCREATEDB NOCREATEROLE
-  NOREPLICATION NOBYPASSRLS CONNECTION LIMIT 2 PASSWORD NULL;
-ALTER ROLE gridly_cleanup_alert_login SET default_transaction_read_only = on;
-
-CREATE VIEW report_retention.cleanup_alert_health
-  WITH (security_barrier = true) AS
-WITH expected(subsystem, jobname, expected_command) AS (
+CREATE FUNCTION public.gridly_cleanup_alert_health()
+RETURNS TABLE (
+  subsystem text, job_state text, latest_run_state text,
+  latest_run_at timestamptz, last_success_at timestamptz,
+  retention_state text, report_overdue_count bigint,
+  report_breached_count bigint, compliance_due_count bigint,
+  compliance_overdue_count bigint
+)
+LANGUAGE sql STABLE SECURITY DEFINER
+SET search_path = ''
+AS $health$
+WITH t AS (SELECT statement_timestamp() AS now_utc),
+expected(subsystem,jobname,expected_command) AS (
   VALUES
-    ('report_retention'::text, 'gridly-community-report-retention'::text,
+    ('report_retention'::text,'gridly-community-report-retention'::text,
       'select report_retention.run_cleanup()'::text),
-    ('compliance_cleanup'::text, 'gridly-community-compliance-cleanup'::text,
+    ('compliance_cleanup'::text,'gridly-community-compliance-cleanup'::text,
       'select moderation.run_compliance_cleanup()'::text)
 ), run_floor AS (
-  SELECT greatest(coalesce(max(runid), 0) - 128, 0) AS minimum_runid
+  SELECT greatest(coalesce(max(runid),0)-128,0) AS minimum_runid
   FROM cron.job_run_details
+), compliance_work AS (
+  SELECT least(sum(work.due_count),1000000)::bigint AS due_count,
+         least(sum(work.overdue_count),1000000)::bigint AS overdue_count
+  FROM (
+    SELECT count(*) FILTER (WHERE expires_at<=t.now_utc+interval '1 minute') AS due_count,
+           count(*) FILTER (WHERE expires_at<=t.now_utc) AS overdue_count
+    FROM moderation.source_suppressions CROSS JOIN t
+    UNION ALL
+    SELECT count(*) FILTER (WHERE retain_until<=t.now_utc+interval '1 minute'
+             AND (target_report_id IS NOT NULL OR reporter_device_digest IS NOT NULL)),
+           count(*) FILTER (WHERE retain_until<=t.now_utc
+             AND (target_report_id IS NOT NULL OR reporter_device_digest IS NOT NULL))
+    FROM moderation.complaints CROSS JOIN t
+    UNION ALL
+    SELECT count(*) FILTER (WHERE retain_until<=t.now_utc+interval '1 minute'),
+           count(*) FILTER (WHERE retain_until<=t.now_utc)
+    FROM moderation.action_log CROSS JOIN t
+    UNION ALL
+    SELECT count(*) FILTER (WHERE retain_until+interval '31 days'<=t.now_utc+interval '1 minute'),
+           count(*) FILTER (WHERE retain_until+interval '31 days'<=t.now_utc)
+    FROM moderation.complaints CROSS JOIN t
+    UNION ALL
+    SELECT count(*) FILTER (WHERE retain_until<=t.now_utc+interval '1 minute'
+             AND (target_report_id IS NOT NULL OR requester_device_digest IS NOT NULL)),
+           count(*) FILTER (WHERE retain_until<=t.now_utc
+             AND (target_report_id IS NOT NULL OR requester_device_digest IS NOT NULL))
+    FROM privacy_ops.deletion_requests CROSS JOIN t
+    UNION ALL
+    SELECT count(*) FILTER (WHERE retain_until<=t.now_utc+interval '1 minute'),
+           count(*) FILTER (WHERE retain_until<=t.now_utc)
+    FROM privacy_ops.deletion_requests CROSS JOIN t
+  ) work
 )
 SELECT e.subsystem,
   CASE WHEN j.jobid IS NULL THEN 'missing'
        WHEN NOT j.active THEN 'inactive'
-       WHEN j.schedule <> '* * * * *' OR j.username <> 'postgres'
-         OR j.database <> current_database() OR j.command <> e.expected_command
+       WHEN j.schedule<>'* * * * *' OR j.username<>'postgres'
+         OR j.database<>current_database() OR j.command<>e.expected_command
          THEN 'misconfigured'
        ELSE 'active' END::text AS job_state,
   CASE WHEN d.status IS NULL THEN 'none'
        WHEN d.status IN ('succeeded','running') THEN d.status
        ELSE 'failed' END::text AS latest_run_state,
   d.start_time AS latest_run_at,
-  CASE WHEN e.subsystem = 'report_retention' THEN h.last_success_at
+  CASE WHEN e.subsystem='report_retention' THEN h.last_success_at
        ELSE (SELECT x.end_time FROM cron.job_run_details x
-             WHERE x.jobid = j.jobid AND x.status = 'succeeded'
-               AND x.runid >= f.minimum_runid
-             ORDER BY x.runid DESC LIMIT 1)
-       END AS last_success_at,
-  CASE WHEN e.subsystem = 'report_retention'
+             WHERE x.jobid=j.jobid AND x.status='succeeded'
+               AND x.runid>=f.minimum_runid
+             ORDER BY x.runid DESC LIMIT 1) END AS last_success_at,
+  CASE WHEN e.subsystem='report_retention'
        THEN CASE WHEN h.last_status IN ('succeeded','failed')
                  THEN h.last_status ELSE 'none' END
        ELSE 'none' END::text AS retention_state,
-  CASE WHEN e.subsystem = 'report_retention'
-       THEN least(h.overdue_cleanup_count, 1000000)::bigint
-       ELSE 0::bigint END AS overdue_count,
-  CASE WHEN e.subsystem = 'report_retention'
-       THEN least(h.breached_deadline_count, 1000000)::bigint
-       ELSE 0::bigint END AS breached_count
+  CASE WHEN e.subsystem='report_retention'
+       THEN least(h.overdue_cleanup_count,1000000)::bigint
+       ELSE 0::bigint END AS report_overdue_count,
+  CASE WHEN e.subsystem='report_retention'
+       THEN least(h.breached_deadline_count,1000000)::bigint
+       ELSE 0::bigint END AS report_breached_count,
+  CASE WHEN e.subsystem='compliance_cleanup'
+       THEN cw.due_count ELSE 0::bigint END AS compliance_due_count,
+  CASE WHEN e.subsystem='compliance_cleanup'
+       THEN cw.overdue_count ELSE 0::bigint END AS compliance_overdue_count
 FROM expected e
 CROSS JOIN run_floor f
-LEFT JOIN cron.job j ON j.jobname = e.jobname
+CROSS JOIN report_retention.health h
+CROSS JOIN compliance_work cw
+LEFT JOIN cron.job j ON j.jobname=e.jobname
 LEFT JOIN LATERAL (
-  SELECT status, start_time FROM cron.job_run_details
-  WHERE jobid = j.jobid AND runid >= f.minimum_runid
+  SELECT status,start_time FROM cron.job_run_details
+  WHERE jobid=j.jobid AND runid>=f.minimum_runid
   ORDER BY runid DESC LIMIT 1
 ) d ON true
-CROSS JOIN report_retention.health h;
+ORDER BY e.subsystem
+$health$;
 
-REVOKE ALL ON report_retention.cleanup_alert_health
-  FROM PUBLIC, anon, authenticated, service_role;
-GRANT USAGE ON SCHEMA report_retention TO gridly_cleanup_alert_login;
-GRANT SELECT ON report_retention.cleanup_alert_health TO gridly_cleanup_alert_login;
+REVOKE ALL ON FUNCTION public.gridly_cleanup_alert_health()
+  FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.gridly_cleanup_alert_health()
+  TO service_role;
 
 DO $check$
+DECLARE p record;
 BEGIN
-  IF (SELECT count(*) FROM report_retention.cleanup_alert_health) <> 2
-     OR NOT has_database_privilege('gridly_cleanup_alert_login',current_database(),'CONNECT')
-     OR NOT has_schema_privilege('gridly_cleanup_alert_login','report_retention','USAGE')
-     OR NOT has_table_privilege('gridly_cleanup_alert_login',
-                               'report_retention.cleanup_alert_health','SELECT')
-     OR has_schema_privilege('gridly_cleanup_alert_login','cron','USAGE')
-     OR has_schema_privilege('gridly_cleanup_alert_login','public','CREATE')
-     OR has_table_privilege('gridly_cleanup_alert_login','public.reports',
-                            'SELECT,INSERT,UPDATE,DELETE')
-     OR has_function_privilege('gridly_cleanup_alert_login',
-                               'report_retention.run_cleanup()','EXECUTE')
-     OR has_function_privilege('gridly_cleanup_alert_login',
-                               'moderation.run_compliance_cleanup()','EXECUTE')
-     OR has_function_privilege('gridly_cleanup_alert_login',
-                               'public.submit_community_observation(text,jsonb,text)','EXECUTE')
-     OR has_function_privilege('gridly_cleanup_alert_login',
-                               'public.mutate_community_observation(text,uuid,text,jsonb,text)','EXECUTE')
-     OR has_function_privilege('gridly_cleanup_alert_login',
-                               'public.cancel_community_operation(text)','EXECUTE')
-     OR has_table_privilege('anon','report_retention.cleanup_alert_health','SELECT')
-     OR has_table_privilege('authenticated','report_retention.cleanup_alert_health','SELECT')
-  THEN RAISE EXCEPTION 'LP244.58 health-read privilege/shape postcheck failed';
+  SELECT proowner,prosecdef,provolatile,proconfig,proacl INTO p
+  FROM pg_proc WHERE oid='public.gridly_cleanup_alert_health()'::regprocedure;
+  IF p.proowner IS DISTINCT FROM 'postgres'::regrole
+     OR p.prosecdef IS DISTINCT FROM true
+     OR p.provolatile IS DISTINCT FROM 's'
+     OR p.proconfig IS DISTINCT FROM ARRAY['search_path=""']::text[]
+     OR EXISTS (SELECT 1 FROM aclexplode(p.proacl) a
+                WHERE a.grantee=0 AND a.privilege_type='EXECUTE')
+     OR has_function_privilege('anon','public.gridly_cleanup_alert_health()','EXECUTE')
+     OR has_function_privilege('authenticated','public.gridly_cleanup_alert_health()','EXECUTE')
+     OR NOT has_function_privilege('service_role','public.gridly_cleanup_alert_health()','EXECUTE')
+     OR (SELECT count(*) FROM public.gridly_cleanup_alert_health()) <> 2
+     OR (SELECT count(DISTINCT subsystem) FROM public.gridly_cleanup_alert_health()) <> 2
+     OR EXISTS (SELECT 1 FROM public.gridly_cleanup_alert_health()
+                WHERE subsystem NOT IN ('report_retention','compliance_cleanup')
+                   OR job_state IS NULL OR job_state NOT IN ('active','missing','inactive','misconfigured')
+                   OR latest_run_state IS NULL OR latest_run_state NOT IN ('succeeded','running','failed','none')
+                   OR retention_state IS NULL OR retention_state NOT IN ('succeeded','failed','none')
+                   OR report_overdue_count IS NULL OR report_overdue_count NOT BETWEEN 0 AND 1000000
+                   OR report_breached_count IS NULL OR report_breached_count NOT BETWEEN 0 AND 1000000
+                   OR compliance_due_count IS NULL OR compliance_due_count NOT BETWEEN 0 AND 1000000
+                   OR compliance_overdue_count IS NULL OR compliance_overdue_count NOT BETWEEN 0 AND 1000000)
+     OR EXISTS (SELECT 1 FROM pg_roles WHERE rolname='gridly_cleanup_alert_login')
+     OR to_regclass('report_retention.cleanup_alert_health') IS NOT NULL
+     OR (SELECT count(*) FROM cron.job) <> 2
+     OR (SELECT count(*) FROM report_retention.admission_state
+         WHERE singleton AND protocol_version=2 AND NOT reporting_enabled) <> 1
+  THEN RAISE EXCEPTION 'LP244.58 health projection postcheck failed';
   END IF;
 END $check$;
 COMMIT;
-```
+~~~
 
-**Password boundary:** `PASSWORD NULL` prevents login until the owner sets a strong password in a trusted terminal outside Codex using `psql`'s interactive `\password gridly_cleanup_alert_login`. Do not put a password literal in SQL Editor history, command arguments, this document, or chat. The owner enters the resulting direct-connection URL only in Cloudflare Hyperdrive's secret configuration UI, using TLS certificate verification. This password step itself is a production role mutation and also needs the separate owner approval before use.
+This proposed function is itself a new SECURITY DEFINER boundary. Its code and the future Edge Function must receive owner review before any production write. The live SELECT-only projection proof does not certify deployment behavior, service-role API exposure, timeout, or load at production scale.
 
-Before and after any approved execution, repeat the LP244.58 read-only checks for project identity, exact 16-version ledger, protocol 2 with `reporting_enabled=false`, consumed/unlaunched guard, exactly two active cleanup jobs, fresh retention success with zero overdue/breached counts, and latest compliance success. Verify `SELECT` on the new view returns exactly the two safe rows as the new login and cannot read `public.reports`, `cron.job`, private tables, or invoke writer/cleanup functions. Stop on any difference; do not auto-repair.
+## 5. Before/after security assertions and approval recommendation
 
-## External owner setup boundary — NOT AUTHORIZED YET
+**Before any separately approved operation:** reconfirm project identity; exact 16-version ledger; protocol 2 and reporting_enabled=false; consumed/unlaunched guard; exactly two active matching Cron jobs; fresh report retention health; six compliance aggregates; no new login/view/RPC; unchanged public ACL and role memberships. The SELECT-only checks in sections 1–2 are current evidence, not a substitute for the immediate preflight.
 
-1. **Resend:** Owner creates or selects an account and reviews current Free/Paid terms. In the Resend Dashboard, open **Domains**, add a Gridly-controlled sending domain, add only the displayed verification records in the owner's DNS console, and wait for verification. DNS changes need separate approval. Open **API Keys → Create API Key**, choose **Sending access**, restrict it to that domain, and retain the key in an owner secret manager. [Resend documents the domain-scoped sending permission](https://resend.com/changelog/new-api-key-permissions). Choose a verified `ALERT_FROM` and an owner `ALERT_TO` inbox. No paid plan is selected here.
-2. **Cloudflare:** Owner creates or selects an account, reviews Worker Free CPU and Hyperdrive/KV limits and any paid-plan need. In the Cloudflare Dashboard, create a **Hyperdrive** configuration with Supabase's **direct** connection endpoint and the dedicated login above; configure certificate-verified TLS. Under **Workers KV → Create instance**, create one namespace for alert deduplication. Cloudflare's [Supabase/Hyperdrive guide](https://developers.cloudflare.com/hyperdrive/examples/connect-to-postgres/postgres-database-providers/supabase/) specifies the direct database connection and `pg`; the [KV guide](https://developers.cloudflare.com/kv/get-started/) gives the binding steps. Insert only the Hyperdrive and KV binding IDs into `tools/retention/cleanup-alert-worker/wrangler.jsonc`; these resource IDs are not passwords. The file already specifies the [one-minute Cron trigger](https://developers.cloudflare.com/workers/configuration/cron-triggers/). Deployment still needs separate authorization.
-3. **Cloudflare secrets:** After the Worker exists under approved deployment, use **Workers & Pages → Worker → Settings → Variables and Secrets → Add → Secret** for `RESEND_API_KEY`, `ALERT_FROM`, and `ALERT_TO`; values must be entered by the owner, never sent through Codex. [Cloudflare's secret guide](https://developers.cloudflare.com/workers/configuration/secrets/) confirms secret values are hidden after entry. Do not put them in `wrangler.jsonc`, `.dev.vars`, the repository, or a shell command line.
-4. **Proof after approval:** In an owner-controlled terminal with Resend secrets injected from a secret manager, run `node tools/retention/cleanup-alert-worker/send-synthetic.mjs`. This sends one labeled synthetic email without reading production. Record the UTC timestamp, Resend accepted/delivered event, and owner inbox receipt; an API acceptance alone is insufficient. Deploy and observe the Worker only after separate review, then rerun the read-only production checkpoint.
+**After any approved SQL:** assert exactly the fixed two RPC rows and field types; owner postgres; SECURITY DEFINER with empty search path; no EXECUTE for PUBLIC/anon/authenticated; EXECUTE only for service_role among application roles; no new login/view; no raw rows or identifiers in the response. Re-run the 16-version, disabled admission, guard, two-job, retention, and compliance checks. Then separately review and implement the authenticated Edge Function, revise the dormant Worker away from Hyperdrive, test redaction and failure handling, prove a missed-monitor alert, and obtain a dated owner-inbox Resend receipt. No part of this sequence is approved merely by this document.
 
-The Worker has no public HTTP handler. It queries only the proposed view, maps malformed/query failures to `monitor_error`, uses KV to suppress repeat emails for one hour while allowing a new alert after recovery, and reconstructs email text from an allowlist. Its current missed-Worker-invocation strategy remains **unproven and a launch blocker**: Cloudflare Cron history is inspectable, but no independent dead-man notification is deployed. Do not mark LP244.58 alert delivery GO until the owner receives the synthetic email and a missed-monitor mechanism is proven.
+**Recommendation:** Do **not** approve the prior direct-login SQL. The owner may consider the fixed RPC plus Edge Function design only after reviewing the new SECURITY DEFINER function, backend key handling, endpoint authentication/rate limiting, aggregate-query cost, and Worker redesign. Reporting activation and LP244.58 alerting remain **NO-GO**. LP244.54 remains CLOSED/PASS; the historical LP244.22 reset/repair was not replayed.
+
+At 2026-09-26 01:34:11 UTC, a final SELECT-only postcheck still found the exact 16 migration rows/versions, protocol 2, reporting_enabled=false, consumed/unlaunched guard, two matching active one-minute jobs with latest runs succeeded at 01:34 UTC, and fresh report-retention success with zero overdue/breached counts. The rejected login/view and proposed RPC were all absent. This is a point-in-time observation, not approval to execute the proposal.
