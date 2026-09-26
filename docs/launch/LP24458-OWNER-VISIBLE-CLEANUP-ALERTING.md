@@ -1,0 +1,247 @@
+# LP244.58 owner-visible cleanup alerting closure
+
+**Latest status: local compliance-health migration certification PASS; production application remains NOT AUTHORIZED.** Section 11 supersedes the stopped attempt in section 10. The direct-login and compliance-rescanning proposals remain withdrawn. LP244.58 remains NO-GO pending real delivery and missed-monitor proof.
+
+**Decision, September 25, 2026 (America/Chicago): alert detection is partial; owner-visible delivery is NO-GO.** The owner selected Resend as the email provider and confirmed there is no existing always-on runner. No provider account, secret, deployment, runner, database object, grant, Cron job, email, or production write was created in this phase. Reporting remains disabled. This document is the bounded architecture and authorization checkpoint; it is not a claim that an alert reached the owner.
+
+## 1. Starting proof and inherited baseline
+
+The local checkout was clean before work. `git branch --show-current` returned `LP244.58-owner-visible-cleanup-alerting`; `git rev-parse HEAD` and `git rev-parse origin/main` separately returned `00c444d6f405c1aa35b1f950e90f01899fbad310`; `git status --short` returned no entries. This task did not fetch, reset, merge, or push.
+
+[LP244.55](LP24455-PRODUCTION-LAUNCH-ACTIVATION-READINESS.md) recorded the launch gates. [LP244.56](LP24456-PRODUCTION-READ-ONLY-CHECKPOINT.md) established a fresh read-only production baseline. [LP244.57](LP24457-CLEANUP-RETENTION-HEALTH-CLOSURE.md) records the separately authorized installation of `pg_cron` 1.6.4 and two once-per-minute cleanup schedules, subsequent healthy retention, and the absence of independent owner-visible alert delivery. The [retention specification](../LEGAL/LP24421-REPORT-RETENTION.md) requires an external monitor; the [recovery runbook](../LEGAL/LP24421-RECOVERY-RUNBOOK.md) does not authorize replay of the old reset. These records are historical; the observations below are new.
+
+## 2. Fresh read-only production checkpoint before any alert work
+
+The connected Supabase project list identified one active, healthy project, `Gridly Platform`, reference `nhwhkbkludzkuyxmkkcj`, region `us-east-1`. At **2026-09-26 00:31:25 UTC**, SELECT-only SQL returned:
+
+| Contract | Fresh result |
+| --- | --- |
+| Migration ledger | 16 rows, 16 distinct versions. The migration listing contained the exact 16 LP244.56 versions, with none missing, duplicate, or newer. |
+| Admission and guard | Protocol 2; `reporting_enabled=false`; guard `consumed`, `consumed_at` present, `launched_at` absent. |
+| Cleanup jobs | Exactly two active jobs on `* * * * *`, run as `postgres` in `postgres`. The report and compliance names and command texts matched LP244.57. Both latest runs at 00:31 UTC were `succeeded`. |
+| Retention health | `last_status=succeeded`, `last_success_at=00:31:00 UTC`, overdue count 0, breached deadline count 0: **HEALTHY** under the five-minute rule. |
+| Bounded data counts | Reports 0; complaints 0; deletion requests 0. No row content, IDs, coordinates, device data, or tokens were read. |
+
+At **00:32:30 UTC**, a separate SELECT-only access check found the existing `gridly_retention_monitor` role is `NOLOGIN`, has zero non-`postgres` login members, and can SELECT `report_retention.health`. It has no `USAGE` on the `cron` schema, so it cannot itself inspect compliance Cron history despite catalog-level table privileges. There is no deployed login/poller. `pg_net` and Vault are not installed. The production SQL and project-list tools were used only for metadata, counts, status, and catalog facts; no function that writes reports or runs cleanup was called. These separate observations are not an atomic snapshot.
+
+A second SELECT-only checkpoint at **00:39:08 UTC** found the same 16 distinct migrations, protocol 2, disabled reporting, consumed/unlaunched guard, exactly two active every-minute jobs with latest `succeeded` runs at 00:39 UTC, and retention success at 00:39 UTC with zero overdue/breached counts. No production mutation occurred between checks.
+
+## 3. Alert capability audit
+
+| Option found | Capability and decision |
+| --- | --- |
+| `tools/retention/check-report-retention.mjs` | Existing read-only `psql` monitor uses `PGSSLMODE=verify-full`, a five-minute health predicate, safe JSON output, and exit 1 for unhealthy, missing config, query failure, or invalid result. It has no delivery adapter or installed scheduler. |
+| Compliance cleanup | No dedicated health ledger or external checker. `cron.job_run_details` has status/time evidence, but the existing monitor role cannot access the `cron` schema. Independent compliance failure/staleness detection is **not implemented**. |
+| Repository notification tooling | No operational email/webhook/Slack/Teams/SMS sender, owner destination, operational GitHub Actions workflow, or provider secret/config convention was found. `.github/workflows/capacitor-validation.yml` is native validation, not monitoring. Product weather/roadway alerts are unrelated. |
+| Supabase Cron/Dashboard | [Cron records job runs and provides Dashboard history](https://supabase.com/docs/guides/cron). This exposes health to an operator; it does not prove direct email delivery or independent notification. Adding an alert as another database Cron job would depend on the scheduler being monitored. |
+| Supabase Metrics/Grafana | [Metrics API](https://supabase.com/docs/guides/observability/metrics) is a metrics source; [Grafana Cloud integration](https://supabase.com/docs/guides/observability/metrics/grafana-cloud) requires another account/key and alert configuration and does not by itself expose these two application cleanup contracts. Not selected. |
+| GitHub Actions schedule | Native workflow notifications depend on a scheduled workflow, which has a [minimum five-minute interval and may be delayed or dropped](https://docs.github.com/en/actions/how-tos/troubleshoot-workflows). It cannot be the sole one-minute operational monitor for the five-minute retention gate. |
+| Owner-selected Resend | Email transport, not a database monitor or runner. An owner account, verified sending domain, API key, and recipient must be configured outside Codex. No Resend account or credential is currently configured for this task. |
+
+The unchanged local monitor was exercised with injected `psql` results: healthy, failed, stale, overdue, and query-error cases all returned the expected safe status/exit behavior. It suppresses `psql` stderr. Its SQL predicate also checks breached-deadline count. This proves only local retention detection logic, not production alert delivery or compliance detection.
+
+## 4. Selected route and architecture for separate approval
+
+**Selected destination:** owner-controlled Resend email. With no existing always-on host, the smallest plausible independent runner is a scheduled Cloudflare Worker at one-minute cadence, using Hyperdrive to connect to Supabase through a **new dedicated, read-only database login**. Cloudflare documents [one-minute Cron triggers](https://developers.cloudflare.com/workers/configuration/cron-triggers/), [Supabase/Hyperdrive connectivity](https://developers.cloudflare.com/hyperdrive/examples/connect-to-postgres/postgres-database-providers/supabase/), and [Free/Paid limits](https://developers.cloudflare.com/workers/platform/pricing/). The Free plan appears to include Worker Cron and Hyperdrive, but its 10 ms CPU limit must be measured; any upgrade or charge requires a further owner decision. This is a proposal, not a deployed or cost-certified service.
+
+```text
+Supabase read-only aggregate health + two bounded Cron statuses
+  -> dedicated monitor login / verified TLS / Hyperdrive
+  -> independent one-minute Cloudflare Worker classifier
+  -> Resend API -> owner email
+```
+
+The Worker must not hold a Supabase service-role key, `postgres` login, report-row access, or writer permission. Before deployment, an owner-reviewed database projection must expose only the aggregate retention fields and the **two named** job statuses/times to a dedicated monitor role. The proposed projection does not measure separate compliance overdue counts; the compliance count fields are fixed to zero and mean **not applicable**, not proof that no moderation or deletion item is overdue. The current monitor role has no login or Cron schema usage; production cannot support this runner as-is. Any new role, projection, narrow grant, Hyperdrive binding, Worker, or secret is a **separate owner-authorized change**. No `anon` or `authenticated` grant or RLS change is proposed. Keep the 16-version ledger and existing cleanup schedules unchanged unless a later approved change explicitly revises that gate.
+
+The Worker should alert on report cleanup failure, last-success age >=5 minutes, overdue/breached counts >0, missing/inactive/misconfigured cleanup job, non-success or stale latest Cron run for either job, and any query/parse/connection failure (`monitor_error`). It must inspect compliance cleanup directly, not infer success from report retention. A failed report function can leave Cron's job status `succeeded`; the retention health row remains authoritative for its result. On each healthy run, it should maintain a **Resend scheduled fallback email** for a bounded future time; if the Worker stops running, that pre-armed email is sent. [Resend supports schedule, update, and cancel](https://resend.com/blog/introducing-the-schedule-email-api). This missing-run mechanism needs a small durable ID store, a cold-start/re-arm procedure, and a staging proof before launch; it is not implemented. If schedule updates cannot be proven reliable, use an independently configured dead-man monitor under separate owner approval. Do not claim alert delivery GO from a Worker deployment alone.
+
+## 5. Payload, security, and delivery proof contract
+
+Only `environment=Gridly production`, `alert_type`, UTC observation time, cleanup system (`report retention` or `compliance cleanup`), state (`stale`, `failed`, `overdue`, `monitor_error`), last successful run time, bounded overdue/breached counts, and a safe SQLSTATE/category if available may leave the monitor. A synthetic test is explicitly labeled `TEST`. The email subject identifies Gridly production, system, and state. No report body or ID, coordinates, user/device ID, token, customer email, private database identifier, raw SQL, DB URL, API key, error text, or stack trace may be in the payload or logs. Destination address and API key live only in the approved provider/runner secret store and are never pasted into Codex.
+
+Delivery must be deduplicated by state and use bounded reminders so a continuing outage cannot exhaust provider quota. The monitor must treat Resend non-2xx/invalid acceptance as delivery failure, preserve the pending fallback, and surface that failure through the independent watchdog. A Resend API acceptance or dashboard `sent` event is not proof of owner receipt. The owner must confirm a dated synthetic email in the intended inbox, with provider event evidence (accepted/delivered where available); no production cleanup state should be changed to generate it.
+
+The safe test sequence after **separate approval and setup** is: fresh read-only baseline; inject `stale`, `failed`, `overdue`, and `monitor_error` fixtures into the monitor classifier only; send one labeled synthetic alert through Resend; verify owner inbox and provider event/time; prove the fallback by withholding a synthetic monitor tick in a nonproduction configuration; then repeat the production read-only admission, guard, two-job, ledger, retention, and compliance checks. Never disable or fail a production cleanup job for a test.
+
+## 6. Authorization and changes made
+
+The owner selected Resend and confirmed no existing always-on runner. The owner explicitly instructed this task to **stop before** creating any paid service, secret, deployment, Edge Function, scheduled external runner, or other production infrastructure without separate authorization. No credential value was requested or entered. The proposed next operation requires owner approval for: a Resend account/domain/sender and verified owner recipient; a Cloudflare Worker/Cron/Hyperdrive account and capacity tier; a dedicated database login and safe aggregate projection with narrowly reviewed monitor-only access; provider/runner secret entry **by the owner outside Codex**; and a real synthetic delivery test. Cloudflare would receive bounded operational status through the read-only connection; Resend would receive only the allowlisted email payload. Neither receives customer/report rows.
+
+No production mutation or external send was performed. No service account, charge, SQL DDL, grant, function, Cron job, Edge Function, external schedule, or email exists as a result of LP244.58. The absence of a safe deployed monitor and credential path makes an actual owner-visible delivery test impossible in this phase. Do not treat this document as permission to create that infrastructure.
+
+## 7. Before/after state, gates, and next evidence
+
+| Gate | Before | After this task | Decision |
+| --- | --- | --- | --- |
+| Retention health | LP244.57 HEALTHY; 00:31 UTC HEALTHY | 00:39 UTC HEALTHY; no production write | Cleanup retention **GO** at observation time; keep monitoring |
+| Compliance cleanup | LP244.57 scheduled/succeeding; 00:31 UTC succeeded | 00:39 UTC latest run `succeeded`; no independent alert checker | Cleanup operation **GO** at observation time; detection **NO-GO** |
+| Reporting | Disabled at 00:31 UTC | `reporting_enabled=false` at 00:39 UTC; untouched | Activation **NO-GO** |
+| Launch guard | Consumed/unlaunched at 00:31 UTC | Consumed/unlaunched at 00:39 UTC; untouched | No reset/release |
+| Cron | Two active one-minute jobs at 00:31 UTC | Exactly two, both successful at 00:39 UTC; untouched | Scheduling **GO** |
+| Migration ledger | 16 exact versions at 00:31 UTC | 16 unique, exact list at 00:39 UTC; untouched | No migration drift observed |
+| Alert detection | Local retention monitor | Five local fixtures pass; compliance and missed-run path remain design-only | **NO-GO** for complete coverage |
+| Owner-visible delivery | Absent | No account/runner/secret/send or receipt | **NO-GO** |
+| Next launch phase | Operational/legal gates open | Resend/runner authorization and real delivery proof still required; LP244.55 backup/PITR, controlled-copy, staffing, legal/publication and distribution evidence remain | **NO-GO** |
+
+The next owner checkpoint is a separately reviewed Resend and runner setup, least-privilege production access design, bounded implementation, and one dated synthetic owner-inbox proof. Recheck project identity, the 16-version ledger, disabled admission, consumed/unlaunched guard, exactly two active cleanup jobs, retention health, and compliance results immediately before and after any approved change. If any invariant changes, stop; do not repair in this phase.
+
+LP244.54 physical iPhone acceptance remains **CLOSED/PASS** and was not reopened. The historical LP244.22 reset/repair/push sequence **was not replayed**. No reporting release was run or authorized.
+
+## 8. Owner-authorized local implementation follow-up
+
+The owner subsequently authorized **local** Cloudflare Worker and Resend code and a health-only access design, while explicitly requiring a stop before production SQL, provider account/secret/DNS setup, paid-plan selection, or deployment. The implementation is in `tools/retention/cleanup-alert-worker/`; its exact **unexecuted** production view, role, grants, returned fields, and operator setup boundary are in [the health-read operator review](LP24458-HEALTH-READ-OPERATOR-REVIEW.md). The Worker uses Hyperdrive and a private fixed-field view, classifies both cleanup jobs and retention counts, converts query/malformed results to safe `monitor_error`, and sends only allowlisted text through Resend. A KV binding deduplicates repeat alerts. A separate owner-run synthetic sender can generate a labeled email without reading production. No key, password, email address, database URL, or binding ID is committed.
+
+At **2026-09-26 00:50:51 UTC**, another SELECT-only production checkpoint still found 16 distinct migrations, protocol 2, `reporting_enabled=false`, consumed/unlaunched guard, two active successful cleanup jobs, and healthy retention with zero overdue/breached counts. At **01:06 UTC**, a SELECT-only execution of the bounded proposed view query returned exactly two safe healthy rows. The role and view were not created. Ten focused local tests and a Wrangler `--dry-run` bundle validated code structure without authenticating to Cloudflare or Resend. No actual email was sent, and missed-monitor-run notification is not yet proven. **Complete alert detection, alert delivery, and LP244.58 closure remain NO-GO** pending the separate owner approvals and live evidence named in the operator review. The later local implementation changed no production state or LP244.54/LP244.22 decision.
+
+At **01:15:01 UTC**, a final SELECT-only postcheck found 16 migration rows and 16 distinct versions, protocol 2, `reporting_enabled=false`, guard consumed/unlaunched, exactly two active one-minute cleanup jobs, and retention `succeeded` at 01:15 UTC with zero overdue/breached counts. A separate bounded Cron status query found both latest runs `succeeded` at 01:15 UTC. These are observations at that time, not a claim of future health or an atomic snapshot.
+
+## 9. Health-read access security review supersedes the direct-login proposal
+
+A subsequent owner-requested read-only privilege audit found the proposed login would inherit production database `TEMPORARY` authority and executable PostgreSQL operational functions through `PUBLIC`. The direct-login/Hyperdrive route in section 4 and its original SQL are **withdrawn and NO-GO**; the local Worker code that uses Hyperdrive remains dormant. The [revised operator review](LP24458-HEALTH-READ-OPERATOR-REVIEW.md) records the complete current non-system routine inventory, the security decision, a six-category private compliance backlog aggregate, and a new unexecuted fixed-RPC/Edge-Function proposal. No role, view, function, grant, Edge Function, secret, or deployment was created. Separate owner approval and a Worker redesign remain required before any production action or alert-delivery claim.
+
+## 10. Cleanup-produced health design and stopped local certification
+
+The owner accepted the replacement architecture: `report_retention.health` plus private compliance cleanup health evidence and bounded Cron state → fixed two-row RPC → authenticated Supabase Edge Function → independent Cloudflare Worker → Resend. The monitor makes **zero compliance source-table scans per minute**, and no monitoring-driven index is proposed. The direct LOGIN remains permanently rejected. The old Hyperdrive Worker remains dormant and requires later revision; no Edge Function, Worker, provider, key, deployment, or email was configured here.
+
+Local-only draft migration: [20260926021558_lp24458_compliance_cleanup_health.sql](../../supabase/migrations/20260926021558_lp24458_compliance_cleanup_health.sql). It adds one private singleton; aggregates processed/late-processed counts from the six unchanged cleanup DML operations; writes a success heartbeat with normal cleanup; and exposes only two safe rows through the fixed SQL/STABLE/SECURITY DEFINER RPC. Cleanup DML errors still propagate and roll back. A contained health-write error leaves completed cleanup intact but does not advance the heartbeat. Cron failure and stale/missing heartbeat supply failure observability. Late-event counts are historical processed work, not current outstanding backlog. The RPC has empty search path, postgres ownership, no PUBLIC/anon/authenticated EXECUTE, and one non-delegable service_role grant; its explicit ACL assertion rejects unexpected grantees and direct memberships.
+
+The isolated PostgreSQL 17.10 test cluster used only loopback and synthetic fixtures. The first test failed before migration application: the raw `pg_get_functiondef()` MD5 expected CRLF stored body text while local PostgreSQL stored LF. A local probe reproduced the production hash by changing only body newlines. The [operator review](LP24458-HEALTH-READ-OPERATOR-REVIEW.md#5-local-implementation-attempt--stopped-no-commit) records exact hashes and the smallest **unimplemented** normalized-identity revision. Per owner instruction, implementation stopped without patching around the gate and without a commit. The six-test run had 0 pass; five failures were dependent missing-object failures, so cleanup, failure, RPC, and ACL behavior remain uncertified.
+
+Production was **not accessed or changed** in this local phase. Its last observed 16-version baseline is historical, not a new live check. Reporting, guard, and two production Cron jobs were untouched. The production preflight/postflight is drafted but not execution-ready; it needs the gate revision, passing isolated tests, and separate owner authorization before application. No production migration, reset, repair, push, or release was run. LP244.54 remains CLOSED/PASS. LP244.58 remains NO-GO until an actual owner-visible email and missed-monitor proof exist.
+
+## 11. Approved normalized identity gate and local certification PASS
+
+The owner authorized the smallest identity fix and continuation of isolated certification, with production off limits. Migration `20260926021558_lp24458_compliance_cleanup_health.sql` now normalizes **only** CRLF to LF before MD5 and compares against `f5385ff3208f62d333563254ea4b6903`. The historical raw CRLF-body hash remains `ebfa0b470548a5314fe1569092a740c7`. No trimming, whitespace folding, tab/case/comment change, reindentation, or SQL rewrite is tolerated. Server-side identity tests use exact UTF-8 bytes; LF and CRLF pass, and eight non-equivalent mutations reject. The migration applies to both disposable LF and stored-CRLF fixtures.
+
+The complete focused suite `node --test tests/lp24458-compliance-health-db.test.cjs` passed **9/9, no skips**, on disposable PostgreSQL 17.10. It proves safe initial singleton, zero-row success, six-operation nonzero cleanup, unchanged future-row and complaint 31-day boundaries, atomic rollback on cleanup DML error, privacy cleanup preservation when the health write fails, stale/missing evidence without a false new heartbeat, two-row allowlisted RPC, count bounds, no compliance source-table reference in the RPC, and exact ACL enforcement. Injected PUBLIC/extra-role/grant-option/direct-membership authority is rejected. No monitoring index, Cron change, admission activation, or guard/release write is introduced. Test databases were removed and the local server was stopped.
+
+Cron history is simulated in the local fixture; the suite does not run a scheduler, prove production load, or deliver an email. The private singleton records successfully processed late work rather than independently scanning live backlog. The dormant Hyperdrive Worker remains incompatible with the accepted Edge/RPC route and is not deployed. The [operator review](LP24458-HEALTH-READ-OPERATOR-REVIEW.md#6-owner-approved-identity-revision-and-completed-isolated-certification) contains the complete SQL, local results, known limits, and exact **unexecuted** preflight/postflight plan.
+
+Production was not connected to or changed in this phase. Its last observed 16-version baseline remains historical. The next owner authorization is a separate bounded decision about applying the locally certified tracked migration, which would add the expected 17th ledger version, followed by read-only postflight. Edge/Worker/Resend setup, secrets and deployments remain unauthorized. Reporting remains untouched and must stay disabled. A local migration PASS is not LP244.58 GO: real owner-inbox synthetic delivery and missed-monitor proof remain blockers. LP244.54 remains CLOSED/PASS; old LP244.22 reset/repair was not replayed.
+
+## Production migration certification — 2026-09-26 UTC
+
+This section supersedes earlier production-not-authorized / 16-version statements for this bounded migration only. Separate owner authorization approved the pinned CLI exact-one application; external alert infrastructure remains unauthorized.
+
+- Source branch: `LP244.58-owner-visible-cleanup-alerting`; starting HEAD `fbb9f24aa64184d0e436d3917a3bbd1aa8341b81`; initial working tree clean. Migration Git blob `a7e853a6b8aefca698f2847da0ed225b21efed24` matched the certified commit and was not edited.
+- Fresh production preflight: **2026-09-26 15:54:48.252958 UTC**, project `nhwhkbkludzkuyxmkkcj`. Exactly the prior 16 versions, each once; new version absent; proposed health/RPC and rejected login/view absent. Canonical function MD5 `f5385ff3208f62d333563254ea4b6903` passed using only CRLF -> LF replacement. Reports RLS enabled, anon/authenticated direct INSERT denied, private exposed relation count zero; both cleanup functions postgres-owned with owner-only EXECUTE.
+- CLI **2.117.0**, existing cached executable `C:\Users\gulfi\AppData\Local\npm-cache\_npx\b96a6bd565c470ce\node_modules\@supabase\cli-windows-x64\bin\supabase.exe`. Existing authentication/link worked without exposing credentials. Immediately repeated `db push --dry-run --linked --skip-vault`: exactly `20260926021558_lp24458_compliance_cleanup_health.sql`; no seeds or roles.
+- Applied that executable with **`db push --linked --skip-vault`**, exit 0, exactly one migration. Completion occurred between the preflight and **15:55:55.175306 UTC** immediate postflight; CLI does not emit an exact commit timestamp, so none is invented. No include-all, seed, repair, reset, or direct SQL substitution.
+- Immediate postflight: exact prior 16 plus **20260926021558 once** (17 rows/17 distinct). Protocol **2 -> 2**, reporting_enabled **false -> false**. Guard **consumed/unlaunched -> consumed/unlaunched**, consumed_at unchanged `2026-09-09T16:13:47.849122Z`, launched_at null.
+- Same two active `* * * * *` jobs remained: `gridly-community-report-retention` / `select report_retention.run_cleanup()` and `gridly-community-compliance-cleanup` / `select moderation.run_compliance_cleanup()`. No Cron changes or manual cleanup calls.
+- Report health succeeded/current before and after, overdue and breach counts zero. Before success timestamp `15:54:00.030772Z`; after scheduled success `15:56:00.078039Z`.
+- Compliance singleton created in its safe initial state (null run/success, processed 0, late count 0, late timestamp null). Normal scheduled cleanup then set last_run_at `15:56:00.074193Z`, last_success_at `15:56:00.077975Z`, processed 0, late count 0, late timestamp null. Cron start `15:56:00.070055Z`, end `15:56:00.082328Z`, status **succeeded**. No heartbeat fabrication.
+- RPC returns exactly **report_retention** and **compliance_cleanup**, with 11 approved fields: subsystem, job_state, latest_run_state, latest_run_at, last_success_at, retention_state, compliance_health_state, report_overdue_count, report_breached_count, compliance_late_processed_count, compliance_late_processed_at. Both jobs active/latest success; compliance changed pending -> succeeded after scheduled cleanup. Counts zero and timestamps valid. No rows/IDs/coordinates/digests/tokens/free text/raw Cron errors returned.
+- RPC metadata: postgres owner, SQL, STABLE, SECURITY DEFINER, zero arguments, empty search_path. Expanded ACL has exactly postgres and service_role EXECUTE, both non-grantable; PUBLIC/anon/authenticated denied. Direct service_role members only authenticator/postgres. No unexpected EXECUTE grantees. Private health table postgres-owned, RLS enabled, zero policies, owner-only ACL.
+- RPC body contains zero direct references to moderation.source_suppressions, moderation.complaints, moderation.action_log, privacy_ops.deletion_requests: **zero compliance source scans per monitor call**. Index inventory changed only by the required singleton primary key `cleanup_health_pkey`; no monitoring-specific source index created.
+- Bounded count-only postflight: reports, historical_events, complaints, action_log, source_suppressions, deletion_requests all **0**. These match the preceding read-only baseline; no unexpected deletion is evidenced.
+- Rejected gridly_cleanup_alert_login and report_retention.cleanup_alert_health remain absent. No external infrastructure, Edge Function, Cloudflare Worker, Resend configuration, external account, or secret was created/deployed. No native/runtime/policy changes. LP244.54 remains CLOSED/PASS. Old LP244.22 reset/repair was NOT replayed.
+
+**Production migration/postflight: PASS. Production reporting activation: NO-GO. LP244.58: NO-GO.** Next gate is separately authorized Edge/Worker/Resend implementation/setup and actual owner-visible dated synthetic email plus missed-monitor/heartbeat proof. This migration does not establish email delivery or end-to-end alerting closure.
+
+Final safety snapshot **2026-09-26 15:57:52.764911 UTC**: protocol 2, reporting disabled, consumed/unlaunched guard unchanged, ledger 17 rows/17 distinct, same two successful active minute jobs. Second ordinary compliance run advanced last_run_at to 15:57:00.061299Z and last_success_at to 15:57:00.065480Z; Cron ended succeeded at 15:57:00.066330Z. Processed/late counts remain zero; RPC compliance state succeeded. Report health succeeded at 15:57:00.066781Z with zero overdue/breach. This proves scheduled heartbeat advancement across two post-migration minutes.
+
+## External delivery local implementation — 2026-09-26
+
+Edge custom bearer auth/fixed health RPC and Worker Edge-only redesign are implemented locally. Focused tests pass 17/17. No deployment, secret, DNS/account/resource creation or production schema change. Real synthetic email and independent dead-man proof remain unperformed. Review [external delivery operator review](LP24458-ALERT-DELIVERY-OPERATOR-REVIEW.md) for exact auth model, source, owner UI actions, quota/consistency limits and proposed independent Healthchecks.io approval boundary. LP244.58 remains NO-GO; reporting stays disabled. No local commit in this phase.
+
+## Health Edge deployment — 2026-09-26 (partial live certification)
+
+Owner confirmed monitor token stored. Metadata-only check confirmed GRIDLY_MONITOR_TOKEN exists; no secret value or backend key was retrieved. Source branch LP244.58-owner-visible-cleanup-alerting, HEAD 946dc25243b9e2a56c109c473229631a128c1b9a, initial clean tree. Reviewed index.ts/handler.mjs/contract.mjs and dedicated verify_jwt=false config were unchanged.
+
+Pinned CLI 2.117.0 deployed ONLY gridly-cleanup-health using `functions deploy gridly-cleanup-health --project-ref nhwhkbkludzkuyxmkkcj --use-api`. Deployed ACTIVE version 1 at **2026-09-26 16:20:30.536 UTC**, bundle SHA256 `27bef5da2c692501384ae2d1485aebbdc45c7b3bae8de8a875b3270c4348bd6f`. gridly-geocode remains version33; no other function deployed. Dedicated bearer check precedes backend access; backend credentials remain inside Supabase.
+
+Live POST tests: missing auth, malformed auth and deliberately wrong token each returned **HTTP401**, **Cache-Control: no-store**, exactly the safe unauthorized error body. Local 17/17 tests passed again, proving invalid auth has zero mocked RPC calls, fixed RPC route, rate/cache behavior, malformed/backend error redaction. Live negative HTTP tests alone cannot independently instrument DB-call absence; deployed source plus local call-counter test support that boundary. No live backend failure was deliberately injected.
+
+Correct-token live request is **PENDING OWNER LOCAL TEST**: Supabase secret storage does not return token values, and no credentials are authorized in Codex. Owner-only output helper LP24458-VERIFY-EDGE-OWNER.ps1 prompts hidden input locally and emits only pass/fail contract summary, never secret/header/body. Successful repeated requests test the response path; they do not prove a distributed/global rate limit. Cache and rate limiting remain per isolate. No final Edge certification PASS or complete live response proof is claimed yet.
+
+Read-only production snapshot **2026-09-26 16:21:00.400438 UTC**: same exact17 versions; protocol2/reporting_enabled=false; guard consumed/launched_at null; exactly two unchanged active minute jobs; both latest runs succeeded, compliance success16:21:00.149856Z/report success16:21:00.151800Z. RPC safe counts allzero; compliance health succeeded. RPC EXECUTE only postgres/service_role non-grantable; service_role members only authenticator/postgres. No database migration/schema/grant action performed. No Cloudflare/Resend/Healthchecks.io setup. Reporting unchanged/disabled; LP244.54 CLOSED; LP244.22 reset/repair not replayed.
+
+Next gate: owner runs hidden-token local authorized-response test and returns only its safe PASS/FAIL lines. Documentation certification commit is deferred until this missing live evidence is available. LP244.58 remains NO-GO pending authenticated Edge proof, external delivery and independent dead-man proof.
+
+## Live request-contract repair — 2026-09-26
+
+RCA confirmed locally: valid old Authorization credential + body empty string/Content-Length0 produced a non-null Fetch stream and HTTP400 with zero backend calls. The stream-presence test incorrectly treated empty content as parameters.
+
+Current contract supersedes all earlier bearer-header instructions: **X-Gridly-Monitor-Token**, exactly64 lowercase hex characters, existing constant-time SHA256 comparison. Authorization is not a fallback. Token secret was neither retrieved nor rotated. Auth precedes body/backend access. Null body and completed zero-byte streams pass; any bytes reject400. Stream validation stops at first nonzero chunk, with maximum8 reads/2second timeout; stalled/pathological streams fail closed. Fixed RPC/no-argument semantics and existing safe response/error/rate behavior remain unchanged.
+
+All19 alert tests PASS, including missing/malformed/wrong header, null/zero-byte bodies reaching RPC, nonempty rejection, Authorization-only rejection, zero DB/body accesses on failed auth. Worker sends only the dedicated header but was NOT deployed. Owner-only output script updated for hidden-token dedicated-header empty POST, plus correct-token nonempty-body HTTP400 probe; emits no secret/body.
+
+Deployed ONLY gridly-cleanup-health using pinned CLI2.117.0 functions deploy with --use-api. Owner evidence mentioned version2; actual immediate predeploy metadata was version3. Repaired deployment **ACTIVE version4**, bundle SHA256 ca8e2bb6da47f3985f6f7022890e060ba5277f2751799628a140fd53f780f5db. gridly-geocode stayed version35 during this repair. Live missing/malformed/wrong dedicated headers each returned401/no-store/exact safe unauthorized error. **Live correct-header empty/nonempty tests remain pending owner execution**; no token was obtained to perform them here.
+
+Safety snapshot2026-09-26 17:09:10.870392UTC: migration count17; protocol2; reporting false; consumed/unlaunched guard; same2 active minute cleanup jobs/commands; both latest scheduled runs succeeded/current, zero overdue/breach/late counts. No DB schema/grant/RPC/Cron mutation; no Cloudflare/Resend/Healthchecks.io changes. No commit until owner correct-token proof. LP244.58 remainsNO-GO; LP244.54 remainsCLOSED; old LP244.22 reset/repair not replayed.
+
+## Owner response verifier RCA — Windows PowerShell 5.1
+
+Owner logs establish that version4 accepted correct dedicated header/empty POST with HTTP200 and rejected authorized nonempty body with HTTP400. The actual HTTP response body/headers have NOT been obtained in Codex. No Edge redeploy/code change or secret access is justified.
+
+RCA reproduced on Windows PowerShell5.1.26100.9444: `@($json | ConvertFrom-Json)` emits ONE element of type System.Object[] for a two-element JSON array. Therefore the old `$monitorRows.Count -ne 2` assertion incorrectly throws Contract failed. PowerShell7 enumerates it differently. Fix assigns `ConvertFrom-Json -InputObject` first, verifies top-level Array and explicitly enumerates with ForEach-Object. No row-count requirement relaxed.
+
+Updated owner script checks JSON media type, no-store, exact two subsystems/11 properties, strict enum case, Int32/Int64 bounded counts, nulls, subsystem-specific constraints and invariant-culture UTC timestamp parsing. RFC3339 T timestamps with Z/+00:00 and up to7 fractional digits pass. SQL display `2026-09-26 17:12:00.047351+00` is not the Edge HTTP JSON format accepted by contract.mjs; no space/+00 relaxation made. This display does not prove the actual Edge serialization. Canonical T/+00:00 fixture uses prior bounded RPC observations, not captured owner HTTP content.
+
+18 focused fixtures PASS in Windows PowerShell5.1: healthy/null/microsecond/Int64 array, Z form, media charset; missing/extra rows and fields/private field, malformed JSON/calendar/timestamp, nonUTC, wrong enum/type/range/cache/media fail. Exact live shape still needs owner verification. Safe diagnostic categories replace generic details-suppressed failure without echoing response/headers/secrets. Owner script retains hidden-token dedicated header, authorized nonempty400 and empty200 probes. Output and tracked helper are synchronized; test script committed nowhere yet.
+
+No DB schema/reporting/external-service change; no Edge redeployment; no push/merge/commit. Next action: owner runs updated LP24458-VERIFY-EDGE-OWNER.ps1 locally and shares only safe PASS/FAIL summaries. Any remaining failure category will guide further bounded inspection. LP244.58 remainsNO-GO.
+
+## Cloudflare fetch RCA and repaired live proof — 2026-09-26
+
+First failing statement was fetch/Request option construction with redirect:'error'. Local workerd (same compatibility_date2026-09-25) reproduced TypeError: redirect must be follow or manual; error is unsupported. Failure occurs before network access. AbortSignal.timeout10000 constructed successfully. Changing ONLY redirect to manual makes the same request construct successfully. Node mock fetch had concealed this runtime incompatibility.
+
+Worker uses env.EDGE_URL with exact equality to https://nhwhkbkludzkuyxmkkcj.supabase.co/functions/v1/gridly-cleanup-health, POST, sole custom X-Gridly-Monitor-Token header, no body, 10second AbortSignal timeout. Redirect now manual; existing !response.ok rejects3xx without following/forwarding secrets. Same evidenced incompatibility corrected in Resend and optional heartbeat fetches (10/8second respective timeouts). No Supabase Edge/schema/secret changes. Query errors remain safe generic categories; no raw exception/response/header is transmitted.
+
+Temporary live config diagnostics proved EDGE_URL exists, length75, exact allowed scheme/host/path, trimmed, no embedded quotes; all six approved binding names present. Tokens/keys were never printed or retrieved. Temporary diagnostic deployment version10 de048ad0-dd11-44f1-aa9a-c4ecd4fec5ab observed normal Cron18:33:50UTC: EdgeHTTP200, both health_states healthy, both delivery outcomes healthy (no Resend call). Old unsent monitor-error record cleared through existing logic; no recovery email for unsent incident. KV inventory empty.
+
+All diagnostics removed before final deployment. Final Worker **version11**, id737c2d4e-a03d-4f80-8751-ff78bf0d6a1b, only gridly-cleanup-alert-production deployed. One-minute schedule unchanged; six binding names ALERT_FROM/ALERT_STATE/ALERT_TO/EDGE_URL/GRIDLY_MONITOR_TOKEN/RESEND_API_KEY preserved. No Hyperdrive/direct DB. Final normal Cron18:34:50UTC completed Ok. Supabase read-only log aggregate18:33:40..18:35:10UTC confirms2 POST requests at exact function path, Edgeversion4, both status200. Final KV keys empty. Live no-email proof is safe delivery outcome plus final healthy path/source and no pending state; owner inbox audit was not performed.
+
+23/23 testsPASS including rejecting302 without credential forwarding for all three adapters; existing classification/auth/redaction/dedup/recovery/deadman optional-phase tests preserved. Same Cloudflare runtime reproduction proves old request fails and repaired request constructs; local probe used fake credential only and server/tail were stopped. Supabase log checks selected only path/method/status/version/count, never secret-bearing headers.
+
+Final read-only production snapshot: migration count17, protocol2, reporting false, consumed/unlaunched guard, two jobs, report/compliance scheduled success18:35:00UTC, all bounded overdue/breach/late counts0. No productionDB/schema mutation, Edge redeploy, token rotation, Healthchecks configuration or syntheticResend test. No push/merge/commit. LP244.58 remainsNO-GO pending explicitly authorized real synthetic owner email, Healthchecks setup, normal heartbeat and missed-monitor notification proof.
+
+## FINAL OWNER ACCEPTANCE — LP244.58 CLOSED / PASS
+
+This closure supersedes earlier NO-GO/pending/not-authorized statements for LP244.58 alerting. Those sections remain dated historical chronology, not current blockers. Production reporting activation remains STILL NO-GO; LP244.54 remains CLOSED/PASS.
+
+### Evidence provenance and chronology
+
+1. Production compliance health migration20260926021558 was applied alone by pinned CLI2.117.0 and certified; ledger increased16->17. Guard/admission/two cleanup jobs and retention deadlines were preserved. Scheduled zero-row cleanup advances private health evidence; RPC has exactly2 bounded11-field rows and no compliance source scans.
+2. Supabase cleanup-health Edge was deployed; owner auth request RCA repaired empty non-null body streams and moved credential to X-Gridly-Monitor-Token. Owner correct-token HTTP200 proof is confirmed by the owner in the final closure instruction. PowerShell5.1 array enumeration was repaired without relaxing row/field/UTC constraints. Edge remains ACTIVE version4.
+3. Owner confirms Resend domain alerts.gridlygo.com verified and one real dated synthetic Gridly alert received by developer@gridlygo.com, from Gridly Alerts <monitor@alerts.gridlygo.com>. Actual send/message timestamps/IDs are not supplied in this closure evidence; none are invented. API acceptance alone was not used as receipt proof. Owner inbox receipt is the closure authority.
+4. Cloudflare Worker deployment version9 exposed redirect:'error' incompatibility before network access. Workerd reproduction proved the first failing statement; manual redirects plus non-2xx rejection repaired it in all external adapters without forwarding credentials. Diagnostic version10 showed HTTP200/healthy+healthy/no-email; final diagnostic-free version11 completed ordinary scheduled execution. Configured EDGE_URL is exact allowlisted, optional dead-man phase behavior preserved, and correct existing KV namespace resolved.
+5. Owner created Healthchecks.io **Gridly Cleanup Alert Worker**, corrected heartbeat routing, configured DEADMAN_PING_URL privately and confirmed active received heartbeats. Cloudflare version12 added the secret; version13 updated it. Current live version13, id7a35ea32-f086-4b1d-a635-3a0628e87217, rollout100%, is the intended owner change rather than unexpected drift. No secret URL/value was retrieved. Normal scheduled run2026-09-26 19:16:50UTC completed Ok with configured heartbeat; the handler validates the Healthchecks host and requires success. Correct named-check routing is owner-confirmed, not inferred from a secret value.
+6. Owner confirms Healthchecks accepted an explicit /fail signal, transitioned the named check to DOWN and delivered a failure notification email to developer@gridlygo.com. Owner explicitly accepts this independent notification proof as sufficient for launch. No additional signal, pause, timeout, resend or infrastructure mutation was performed in final verification.
+
+**Missed-heartbeat timeout was not separately induced by disabling the Worker schedule. Independent failure notification was proven through Healthchecks.io’s accepted `/fail` signal and successful owner email delivery.**
+
+This owner-accepted limitation does NOT keep LP244.58 open. It proves independent failure notification, not a separately induced schedule-outage timeout. No schedule was deliberately disabled, and no timeout delivery claim is made.
+
+### Fresh bounded final verification
+
+Read-only production snapshot2026-09-26 19:16:28.649748UTC: exact17 tracked versions, each once, including20260926021558. Protocol2, reporting_enabled=false; changed_at remains2026-09-09T16:13:48.113011Z. Guard consumed, consumed_at2026-09-09T16:13:47.849122Z, launched_atnull. Same exactly2 active * * * * * cleanup jobs and commands. Report success19:16:00.021103Z, compliance success19:16:00.022245Z; latest runs succeeded/current; all overdue/breach/late counts0; RPC exact2 approved bounded rows.
+
+Live Edge metadata ACTIVE version4. Cloudflare active version13 retains scheduled handler and seven expected bindings: ALERT_FROM, ALERT_TO, EDGE_URL, ALERT_STATE (namespace b09eb7275e614d1bb44783f11f51125a), GRIDLY_MONITOR_TOKEN, RESEND_API_KEY, DEADMAN_PING_URL. Existing one-minute schedule was observed executing normally. No Hyperdrive/directDB binding or runtime usage. KV inventory empty. Current healthy path sends no alert; existing mock/local healthy proof plus earlier live diagnostic delivery outcomes establish behavior. Final ordinary successful execution with configured heartbeat also confirms no heartbeat failure.
+
+No authenticated external dashboard session was exposed to this task. Resend verification, correct named Healthchecks routing, synthetic receipt and independent failure email are explicitly **OWNER-CONFIRMED EVIDENCE**, supplied in the closure request. They are not presented as fresh independent dashboard observations. Fresh API/CLI/runtime observations cover production health, Edge, Worker/bindings, scheduled success and KV. No observed invariant drift.
+
+Only safe health payloads are generated; local redaction/field tests pass. Owner confirms no customer/report data transmitted through proof. No credentials, heartbeat URLs, customer identifiers or report rows were exposed. Reporting was never enabled by LP244.58 work; owner confirms it remained false throughout, consistent with unchanged admission changed_at and final false state. Final verification made no production/schema/grant/Edge/Worker/provider mutation.
+
+### Final decisions
+
+| Gate | Decision |
+|---|---|
+| Supabase health Edge | GO |
+| Cloudflare Worker | GO |
+| Worker -> Edge | GO |
+| Healthy no-email | GO |
+| Resend synthetic owner email | GO (owner-confirmed receipt) |
+| Healthchecks heartbeat | GO (owner-confirmed named-check routing; scheduled success observed) |
+| Independent owner-visible failure notification | GO (owner-confirmed /fail DOWN/email) |
+| Missed-monitor/dead-man launch requirement | GO WITH DOCUMENTED LIMITATION |
+| Cleanup operations | GO |
+| Production reporting activation | STILL NO-GO |
+| LP244.58 | CLOSED / PASS |
+| LP244.54 | remains CLOSED / PASS |
+| Old LP244.22 reset/repair | NOT replayed |
+
+Bounded closure tests:23/23 Node Worker/Edge/auth/alert testsPASS;18/18 owner-response fixturesPASS in Windows PowerShell5.1. No native/device/broad unrelated tests. Existing valid uncommitted LP244.58 config/runtime/tests/evidence repairs preserved and reconciled in one local closure commit. No push/merge.
+
+Remaining launch gates outside LP244.58: owner legal/live-policy approval and publication evidence; backup/PITR/recovery/log-expiry/operator readiness and privacy/moderation decisions; final configured candidate/store declarations/review access; fresh pre-release checkpoint and separately authorized owner-only reporting release. LP244.55 is historical context for those gates, not new evidence that they have closed. Do not replay historical reset/repair or reopen LP244.54.

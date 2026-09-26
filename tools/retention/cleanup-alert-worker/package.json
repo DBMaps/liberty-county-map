@@ -1,0 +1,11 @@
+{
+  "name": "gridly-cleanup-alert-worker",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "pg": "8.20.0"
+  },
+  "devDependencies": {
+    "wrangler": "4.141.0"
+  }
+}

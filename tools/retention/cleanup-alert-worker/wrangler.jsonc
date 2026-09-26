@@ -1,0 +1,8 @@
+{
+ "name":"gridly-cleanup-alert-production",
+ "main":"worker.mjs",
+ "compatibility_date":"2026-09-25",
+ "workers_dev":false,
+ "triggers":{"crons":["* * * * *"]},
+ "kv_namespaces":[{"binding":"ALERT_STATE","id":"b09eb7275e614d1bb44783f11f51125a"}]
+}
