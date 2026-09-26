@@ -6,7 +6,7 @@
 
 Gridly is operated by DJ Burns Collective LLC, doing business as Gridly App ("Gridly," "we," "us"). Our domain is gridlygo.com. This policy covers information handled through the Gridly application and communications with us. Gridly 1.0 will initially be offered in the United States, with travel and community-condition coverage focused on Texas. Coverage varies by location and source; United States availability does not mean nationwide condition coverage.
 
-The current application does not provide consumer account registration or a payment or subscription checkout. Local profiles and preferences are not consumer accounts. External websites, operating systems, email services, and app stores also handle information under their own policies.
+The application does not provide consumer account registration. At public launch, Gridly subscriptions are purchased through Apple App Store or Google Play as part of initial download/setup. The applicable app store processes subscription purchases; Gridly does not receive or store your full payment-card details. Gridly may receive purchase or subscription metadata necessary to verify entitlement, subscription status or transaction state, or support subscription access; this does not mean Gridly receives every field held by the store. Apple and Google independently process payment and account information under their own policies. No direct Gridly web checkout is planned for launch. Local profiles and preferences are not consumer accounts. External websites, operating systems, email services, and app stores also handle information under their own policies.
 
 ## 2. Information handled by Gridly
 

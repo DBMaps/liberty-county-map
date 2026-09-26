@@ -60,9 +60,9 @@ To the extent permitted by applicable law, Gridly and its information are provid
 
 You are responsible for your own conduct and travel decisions. To the extent permitted by applicable law, Gridly is not responsible for losses caused by your unlawful or unsafe use of the service or your disregard of official instructions. Nothing in these Terms excludes or limits liability to the extent it cannot lawfully be excluded or limited, including liability arising from conduct for which such a limitation is prohibited. These Terms do not impose a monetary liability cap, an indemnification obligation, or a waiver of statutory remedies.
 
-## 9. Future paid offerings
+## 9. Launch subscription
 
-The current app does not offer a subscription purchase flow. These Terms do not start a subscription, authorize a charge, or promise that a future offering will be free. If a paid offering is introduced, applicable purchase terms will be presented before purchase. No price, billing interval, renewal, cancellation, trial, refund, or platform-specific purchase terms are established by this section.
+Gridly is offered at public launch for $2.99 per month through Apple App Store or Google Play. Your subscription begins when you subscribe through the applicable app store as part of initial download/setup. The store handles billing and renewal; subscriptions may automatically renew according to the applicable store terms and purchase disclosures. Cancel through your Apple or Google subscription settings. Cancellation does not necessarily produce an immediate refund; continued access and refund eligibility remain subject to the applicable store rules and applicable law. Taxes or other applicable charges may be handled by the store. Future pricing changes will follow applicable notice requirements and the store process. Gridly does not independently establish refund rights contrary to store policy or limit rights provided by applicable law. No direct Gridly web checkout is planned for launch. Any alternative billing, free tier, trial, annual plan or promotional model requires a separate owner decision and applicable purchase disclosures; none is offered or promised by these Terms.
 
 ## 10. Governing law and disputes
 
