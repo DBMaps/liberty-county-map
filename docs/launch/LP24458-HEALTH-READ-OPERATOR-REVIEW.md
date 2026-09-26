@@ -1,6 +1,6 @@
 # LP244.58 cleanup health evidence — operator design review
 
-**Decision: APPROVE DESIGN for a separately authorized, tracked migration; DO NOT EXECUTE THIS SQL.** This replaces the earlier per-minute compliance aggregate proposal. The direct database login remains permanently rejected. The proposed Cloudflare Worker → authenticated Supabase Edge Function → fixed no-argument RPC → Resend path remains undeployed. No SQL mutation, secret, account setup, deployment, or reporting activation was performed in this review.
+**Current decision: LOCALLY CERTIFIED; PRODUCTION APPLICATION IS NOT AUTHORIZED.** The owner approved only the CRLF-to-LF identity revision and continuation of isolated certification. All nine isolated PostgreSQL test groups now pass. The direct database login remains permanently rejected. The proposed Cloudflare Worker → authenticated Supabase Edge Function → fixed no-argument RPC → Resend path remains undeployed. Production was not accessed or changed during local certification. Section 6 supersedes the stopped attempt in section 5.
 
 ## 1. Current production and source RCA
 
@@ -50,7 +50,7 @@ The earlier complete PUBLIC review remains relevant: the hypothetical new login 
 
 ## 4. Exact proposed tracked migration SQL — **DO NOT EXECUTE**
 
-This is a review artifact, not an operational script. It requires **one new tracked migration** after separate owner authorization. The current production migration ledger remains exactly 16 because no migration was created or applied here; an authorized future schema migration would necessarily add a 17th version and must be reconciled with the owner's 16-version baseline before execution. The earlier applied compliance migration must never be edited or replayed. The SQL below intentionally has no `cron.schedule`, report admission change, guard change, retention-deadline change, or direct-login creation.
+This SQL is now implemented in **one locally certified tracked migration**, `20260926021558_lp24458_compliance_cleanup_health.sql`. It has not been applied to production. The last observed production ledger is the historical 16-version baseline; a separately authorized future application would add the expected 17th version. The earlier applied compliance migration must never be edited or replayed. The SQL below intentionally has no `cron.schedule`, report admission change, guard change, retention-deadline change, or direct-login creation.
 
 ~~~sql
 BEGIN;
@@ -67,8 +67,9 @@ BEGIN
        '202606170410','202606170411','202606170425','202606170426',
        '202607280100','202607290100','202607290200','202609080001',
        '202609080002','20260908200554','202609160001','20260916183911']::text[]
-     OR md5(pg_get_functiondef('moderation.run_compliance_cleanup()'::regprocedure))
-          <> 'ebfa0b470548a5314fe1569092a740c7'
+     OR md5(replace(pg_get_functiondef('moderation.run_compliance_cleanup()'::regprocedure),
+                    chr(13)||chr(10),chr(10)))
+          <> 'f5385ff3208f62d333563254ea4b6903'
      OR (SELECT count(*) FROM report_retention.admission_state
          WHERE singleton AND protocol_version=2 AND NOT reporting_enabled) <> 1
      OR (SELECT count(*) FROM gridly_control.prelaunch_reset_authorization
@@ -336,4 +337,107 @@ COMMIT;
 
 **Review gates before any future execution:** test this exact migration on an isolated database with seeded due and late rows, injected failure/rollback, action-log trigger behavior, missing health, ACL expansion, and the two-row RPC shape; inspect EXPLAIN on a representative data volume. Recheck the project, 16-version source baseline, original function MD5, admission/guard, two Cron jobs, and current report health immediately before owner-approved application. Afterward wait for an ordinary Cron run and verify a committed fresh compliance heartbeat, retained failure observability, exact function ACL, unchanged two jobs and report admission, and the expected new migration version. Do not call cleanup manually for proof without separate authorization.
 
-**Recommendation: APPROVE DESIGN only.** The next decision is owner approval to create and test a new tracked migration, followed by separate authorization for any production application. No production SQL, Edge Function, Worker, Resend, credentials, or reporting activation is approved by this document. LP244.54 remains CLOSED/PASS. The old LP244.22 reset/repair/push sequence was not replayed.
+**Current recommendation:** isolated certification PASS as recorded in section 6; seek separate owner authorization before any production application. No production SQL, Edge Function, Worker, Resend, credentials, or reporting activation is approved by this document. LP244.54 remains CLOSED/PASS. The old LP244.22 reset/repair/push sequence was not replayed.
+
+## 5. Historical local implementation attempt — stopped before owner revision approval
+
+The owner subsequently authorized local/isolated migration implementation and certification. Starting branch was `LP244.58-owner-visible-cleanup-alerting`, clean at `76a85d22436d73cca62100d214ee22f4ce808f4f`. Draft migration: [20260926021558_lp24458_compliance_cleanup_health.sql](../../supabase/migrations/20260926021558_lp24458_compliance_cleanup_health.sql). The existing Supabase CLI was unavailable; `npx --no-install supabase migration new` did not complete and was terminated. No package was installed. The draft filename uses the current UTC timestamp and the repository's ordered migration convention.
+
+The draft contains the singleton, revised cleanup function, fixed RPC, private-table revokes/RLS, and EXECUTE assertion shown above; no schedule, deadline, guard, reporting activation, native, provider, or secret change is included. Focused tests are in [lp24458-compliance-health-db.test.cjs](../../tests/lp24458-compliance-health-db.test.cjs). PostgreSQL **17.10** was started as a disposable cluster in the task's work directory, bound only to `127.0.0.1:55458`, with synthetic fixtures and a simulated Cron catalog. Production credentials and connections were not used. Test databases were dropped; the disposable server was stopped after the identity probe.
+
+### Exact RCA and evidence
+
+The first test compared `pg_get_functiondef()` against the raw production MD5 required by the draft migration and failed **before migration application**. Its local LF definition hash was `f5385ff3208f62d333563254ea4b6903`, while the draft requires `ebfa0b470548a5314fe1569092a740c7`. A separate isolated definition-only probe found zero CR characters in local `prosrc`; changing only that body from LF to CRLF reproduced **exactly** `ebfa0b470548a5314fe1569092a740c7`. Thus this is a newline-representation defect in the proposed identity gate, not evidence that the cleanup predicates drifted. The normalized LF definition hash is `f5385ff3208f62d333563254ea4b6903`.
+
+**Smallest proposed revision, not implemented:** replace the raw gate with
+
+~~~sql
+md5(replace(pg_get_functiondef('moderation.run_compliance_cleanup()'::regprocedure),
+            chr(13)||chr(10),chr(10)))
+  <> 'f5385ff3208f62d333563254ea4b6903'
+~~~
+
+Make the corresponding local test compare that same newline-normalized identity. This preserves full-definition identity while accepting the LF/CRLF storage difference established by the previous launch reviews. Then rerun the isolated suite; do not weaken the gate to accept arbitrary definitions, skip it, or apply the current draft to production.
+
+`node --test tests/lp24458-compliance-health-db.test.cjs` reported 0 pass / 6 fail. The first was the identity blocker; the other five were dependent failures because the new objects never existed, **not independently discovered cleanup/RPC defects**. Zero-row, nonzero, cleanup-failure, health-write-failure, RPC, and ACL behavior therefore remain **UNCERTIFIED**. No certification commit was made, as the owner's commit rule requires all isolated tests to pass.
+
+### Production plan status
+
+The proposal above contains the expected 16-version preflight, project-bound consumed/unlaunched guard, disabled protocol-2 admission, two unchanged Cron jobs, and the ACL/row-shape postcheck. It is **not execution-ready** until the identity revision and full local certification pass. Before a separately approved production application, additionally read-only confirm fresh report health and compliance Cron success, that the new version/objects are absent, and exact project identity. After authorized application through the normal migration runner, verify the 17th version exactly once, unchanged admission/guard/job definitions, an ordinary scheduled compliance heartbeat, report health, two safe RPC rows, table/function ACLs, and the source-scan invariant. No production preflight, migration, cleanup call, or postflight was executed in this phase.
+
+**Next owner action:** review/authorize the smallest newline-normalization revision and continuation of isolated certification. Production application remains separately unauthorized. LP244.58 remains NO-GO for live email delivery and missed-monitor proof.
+
+## 6. Owner-approved identity revision and completed isolated certification
+
+The owner authorized only CRLF → LF normalization, with no trimming, whitespace folding, tab conversion, reindentation, case changes, comment removal, or SQL rewriting. The migration now computes exactly `md5(replace(pg_get_functiondef(...),chr(13)||chr(10),chr(10)))` and compares it with `f5385ff3208f62d333563254ea4b6903`. The historical production/raw CRLF-body identity is `ebfa0b470548a5314fe1569092a740c7`; a server-side local conversion of only the stored body to CRLF reproduces it. These production observations remain historical; no fresh production query was made in this phase.
+
+The existing draft migration filename is unchanged: `20260926021558_lp24458_compliance_cleanup_health.sql`. Its only change from the reviewed schema/function SQL is the approved identity gate. The test uses hex-encoded UTF-8 text to prevent psql stdin normalization from obscuring the identity proof. Current LF and equivalent CRLF definitions pass; eight mutations fail: changed non-line-ending character, appended space, added space, removed space, tab substitution, bare CR substitution, altered initial counter logic, and changed 31-day predicate. The migration itself applies to separate disposable LF and server-stored CRLF fixtures.
+
+### Final local test result
+
+Command: `node --test tests/lp24458-compliance-health-db.test.cjs` against disposable PostgreSQL 17.10 at `127.0.0.1:55458`, UTC. **9 tests passed; 0 failed; 0 skipped.** Test databases were dropped and the disposable server was stopped. No dependency, native application, provider account, secret, deployment, push, merge, or production change occurred.
+
+| Certification | Evidence |
+| --- | --- |
+| Identity | LF/CRLF pass; all eight non-equivalent mutations reject; canonical hash remains exactly the owner-approved value |
+| Migration model | Clean apply against LF and CRLF fixtures; second application fails closed without changing installed function or singleton; runner-mode ledger recording is simulated separately |
+| Initial singleton | One private row; null run/success/event timestamps; counts zero; RLS enabled and owner-only table ACL |
+| Zero-row cleanup | Returns 0; advances success heartbeat; bounded zero counts; reporting remains false |
+| Nonzero cleanup | Six affected operations across all six original predicates; returns 6; records 6 processed/late operations; expired synthetic rows removed |
+| Retention boundaries | Unexpired suppression/action/request rows and request linkage survive; recently expired complaint linkage is scrubbed while its row remains inside the 31-day window; outer rollback reverses both cleanup and its success heartbeat |
+| Cleanup DML failure | Injected final-stage DELETE failure rolls back an earlier suppression DELETE and leaves success heartbeat unchanged; simulated Cron failed row projects as failed |
+| Health-write failure | Injected health UPDATE failure leaves cleanup committed and old stale heartbeat unchanged; missing singleton does not block cleanup and projects as missing |
+| RPC | Exactly two fixed subsystem rows, explicit safe field allowlist, bounded counts, zero compliance source-table references, no raw Cron messages |
+| ACL | anon/authenticated execution fails; service_role executes two rows but cannot read health table; no unexpected EXECUTE grantee; postcheck rejects PUBLIC, extra named role, service_role grant option, and unexpected direct membership |
+| Bounds and side effects | Negative and >1,000,000 stored counts reject; RPC accepts cap; no explicit monitoring index, Cron scheduling/alteration, reporting activation, or guard/release write added |
+
+Two intermediate failures were test-fixture issues and did not require migration changes: the local Supabase fixture lacked the existing `authenticator` role, and the cloned CRLF fixture retained the source database name in its synthetic Cron rows. A test-only concatenation needed an explicit PostgreSQL `"char"` → text cast. All were corrected in the isolated test setup/query. No new schema/function design defect appeared after the approved identity fix.
+
+**Limits:** Cron catalog/history is a synthetic local fixture, not a running pg_cron daemon. Tests prove real PostgreSQL cleanup transaction/error behavior and RPC interpretation of failed history; they do not certify production scheduling, performance at Texas-wide volume, Edge authentication, Worker delivery, or Resend receipt. Counter saturation is enforced by storage constraints and the existing `LEAST` expressions; the suite does not generate a million-row backlog. `last_late_processed_count` is persisted evidence of processed late work, not a live outstanding-backlog count. No monitoring-specific deadline index is required; cleanup DML scaling remains an independent later assessment.
+
+### Exact unexecuted production preflight/postflight plan
+
+**Separate owner authorization is required before production application.** First verify the Dashboard/connection target is Gridly Platform, project `nhwhkbkludzkuyxmkkcj`. Run the following SELECT-only checks immediately before an approved application. Compare the returned version array exactly with the 16-version array in the migration's `$pre$` block; require no duplicates, no new version, and absent new objects. Require protocol 2/false admission, consumed/unlaunched project-bound guard, two exact active postgres one-minute job commands, fresh healthy report retention (<5 minutes and zero overdue/breached), and the latest compliance Cron run succeeded and fresh (<3 minutes). Stop on any mismatch; no repair is authorized.
+
+~~~sql
+SELECT array_agg(version::text ORDER BY version) AS versions,
+       count(*) AS ledger_rows, count(DISTINCT version) AS distinct_versions,
+       count(*) FILTER (WHERE version='20260926021558') AS new_version_rows
+FROM supabase_migrations.schema_migrations;
+SELECT protocol_version,reporting_enabled,changed_at
+FROM report_retention.admission_state WHERE singleton;
+SELECT project_ref,migration_id,status,consumed_at,launched_at
+FROM gridly_control.prelaunch_reset_authorization WHERE singleton;
+SELECT last_success_at,last_status,overdue_cleanup_count,breached_deadline_count
+FROM report_retention.health;
+SELECT j.jobname,j.active,j.schedule,j.username,j.database,j.command,
+       d.status,d.start_time,d.end_time
+FROM cron.job j LEFT JOIN LATERAL (
+  SELECT status,start_time,end_time FROM cron.job_run_details
+  WHERE jobid=j.jobid ORDER BY runid DESC LIMIT 1
+) d ON true ORDER BY j.jobname;
+SELECT md5(replace(pg_get_functiondef('moderation.run_compliance_cleanup()'::regprocedure),
+                   chr(13)||chr(10),chr(10))) AS canonical_identity,
+       to_regclass('moderation.cleanup_health') IS NULL AS health_absent,
+       to_regprocedure('public.gridly_cleanup_alert_health()') IS NULL AS rpc_absent;
+~~~
+
+Only after a separate approved application through the normal tracked-migration runner, require exactly the same baseline versions plus `20260926021558` once (17 rows/17 distinct), and repeat the admission, guard, job and report-health SELECTs unchanged. Wait for an **ordinary scheduled** compliance run; do not manually run cleanup for proof. Read the following bounded health and fixed RPC fields and require a fresh committed success, safe counts, and two rows. Reapply the exact `$post$` security assertions from the migration as read-only catalog predicates; require owner postgres, SQL/STABLE/SECURITY DEFINER/empty search path, private table with RLS and no other grantee, and only owner/service_role function ACL with one non-grantable service_role EXECUTE. Compare `pg_get_functiondef()` of the RPC to the tracked body and reject the four compliance source-table references. Preserve the prior guard timestamps and exact two job definitions. No production SQL was run here.
+
+~~~sql
+SELECT last_run_at,last_success_at,last_processed_count,
+       last_late_processed_at,last_late_processed_count
+FROM moderation.cleanup_health WHERE singleton;
+SELECT subsystem,job_state,latest_run_state,latest_run_at,last_success_at,
+       retention_state,compliance_health_state,report_overdue_count,
+       report_breached_count,compliance_late_processed_count,compliance_late_processed_at
+FROM public.gridly_cleanup_alert_health() ORDER BY subsystem;
+SELECT p.proowner::regrole AS owner,l.lanname,p.provolatile,p.prosecdef,p.proconfig,
+       CASE WHEN a.grantee=0 THEN 'PUBLIC' ELSE a.grantee::regrole::text END AS grantee,
+       a.privilege_type,a.is_grantable
+FROM pg_proc p JOIN pg_language l ON l.oid=p.prolang
+CROSS JOIN LATERAL aclexplode(coalesce(p.proacl,acldefault('f',p.proowner))) a
+WHERE p.oid='public.gridly_cleanup_alert_health()'::regprocedure;
+~~~
+
+**Decision:** local migration certification PASS; production application remains NOT AUTHORIZED. A later owner decision may authorize only the guarded tracked migration and its read-only postflight. Edge/Worker/Resend setup requires its own review/authorization, and LP244.58 remains NO-GO until owner-visible dated email delivery and missed-monitor proof.
