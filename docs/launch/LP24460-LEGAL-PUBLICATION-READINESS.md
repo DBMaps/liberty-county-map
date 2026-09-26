@@ -6,7 +6,7 @@ Date: 2026-09-26. Branch: `LP244.60-legal-publication-readiness`. Starting/main 
 
 ## Decision
 
-**Legal text and owner publication approval CLOSED / PASS; LP244.60 overall remains OPEN / NO-GO pending live served-page, mailbox/operator and store configuration evidence.** Existing static website routes provide the publication path; no new infrastructure is needed. This audit prepares publication and repairs a misleading omission in homepage copy. It does not publish, activate reporting, certify legal compliance or establish that live services are down.
+**LP244.60 CLOSED / PASS.** Legal text, owner approval, live served-page verification and mailbox/operator handling are CLOSED / PASS on the owner evidence recorded in the final closure below. Apple subscription preconfiguration is prepared; Google configuration and actual billing/entitlement implementation are downstream work, not legal-publication blockers. Earlier pending statements below are dated chronology superseded by final closure. Existing static website routes provide the publication path; no new infrastructure is needed. This audit prepares publication and repairs a misleading omission in homepage copy. It does not publish, activate reporting, certify legal compliance or establish that live services are down.
 
 Production reporting remains OFF by task requirement and the latest recorded LP244.58 observation (`reporting_enabled=false`, protocol 2, guard consumed/unlaunched). This expected disabled state is not the reason for legal/publication NO-GO. LP244.60 did not query or change production admission. LP244.58 cleanup alerting and LP244.54 physical acceptance remain CLOSED/PASS; historical LP244.22 reset/repair must not be replayed.
 
@@ -181,3 +181,76 @@ Approved corrected files are `public-site/privacy/index.html` and `public-site/t
 ### Current result
 
 Legal text and publication approval remain CLOSED/PASS. Live served-page verification remains PENDING with two known stale pages; the three good routes have owner-observed PASS. Mailbox/operator and store subscription/entitlement verification remain PENDING. LP244.60 remains OPEN / NO-GO. Reporting remains expected disabled by authorization boundary and latest recorded state; no Supabase status query or write was performed. No app-store subscription configuration changed. Only this report changes; no files published. This update records bounded source/workflow inspection and owner observations, not a successful deployment certification.
+## FINAL OWNER-VERIFIED CLOSURE — LP244.60 CLOSED / PASS
+
+Recorded September 26, 2026. Starting closure branch `LP244.60-legal-publication-readiness`; exact starting HEAD `f2827c6e8039734d486f9dabb8e37bcb22a18625`; initial working tree clean. Evidence was supplied by the owner after the preceding commit. This task records that evidence; it did not independently deploy, send messages, inspect authenticated store dashboards or change production. The owner did not supply exact deployment/test timestamps; none are invented. This closure supersedes earlier OPEN/NO-GO/pending statements for the gates explicitly closed below. Historical observations remain intact.
+
+### Live website publication
+
+Owner confirms successful manual Wrangler static-assets deployment to existing Cloudflare Worker **gridly-public**, production domain **gridlygo.com**, using:
+
+```powershell
+npx wrangler deploy --name gridly-public --compatibility-date 2026-09-18 --assets ./public-site/
+```
+
+Cloudflare version ID: `ecfe22d1-65e9-49a4-b727-956a949e9cf8`. Owner reports exactly three changed assets uploaded: `/index.html`, `/privacy/index.html`, `/terms/index.html`. This matches the bounded pre-deploy repository diff from `093d79316a54cd2030648cc119fb4931ab32af49` to the approved closure starting HEAD. Previously good Guidelines, Delete Data, Support and other website content were preserved. This is owner-confirmed live evidence, not inferred publication from source files.
+
+| Live route | Owner verification |
+|---|---|
+| https://gridlygo.com/privacy | PASS after deployment: approved app-store subscription handling present; old no-payment/no-subscription statement gone. |
+| https://gridlygo.com/terms | PASS after deployment: $2.99/month and Apple App Store / Google Play billing present; “Future paid offerings” and old no-subscription-flow statement removed. |
+| https://gridlygo.com/community-guidelines | Previously owner-verified PASS; unchanged. |
+| https://gridlygo.com/delete-data | Previously owner-verified PASS; unchanged. |
+| https://gridlygo.com/support | Previously owner-verified PASS; unchanged. |
+
+Owner manually verified the live pages after publication. Combined with approved source/public mirror parity tests and the exact bounded uploaded changes, the owner-provided evidence closes served-page verification. No independent live byte-for-byte hash or new device acceptance claim is made. September 17, 2026 remains the approved policy effective date; current recording does not invent a new policy date.
+
+### Mailbox/operator verification
+
+Owner sent and received successful routing tests for **privacy@gridlygo.com**, **support@gridlygo.com** and **legal@gridlygo.com**. All three routed to the owner-monitored inbox. Mailbox/operator handling is CLOSED / PASS for this gate on that owner evidence. Codex sent no test messages. This confirms monitored channels; it does not claim that a real deletion request was processed or reopen separate retention/recovery/privacy operational gates.
+
+### Apple subscription preconfiguration
+
+Owner inspected App Store Connect and confirms:
+
+| Setting | Owner-verified value |
+|---|---|
+| Subscription group | Gridly Subscription |
+| Subscription | Gridly Monthly |
+| Product ID | `com.gridlygo.gridly.monthly` |
+| Duration | 1 month |
+| Availability | United States only |
+| Price | $2.99/month |
+| Trial / annual plan | None / none |
+| Billing grace period | None |
+| Family Sharing | Off |
+| Status | Prepare for Submission |
+
+**PASS / PREPARED FOR IMPLEMENTATION.** This is preconfiguration, not a functioning purchase/entitlement flow, store approval or a live subscription offering. The first Apple subscription must later be submitted with a new app version after the actual in-app purchase/entitlement flow exists. No store product was modified during this closure task.
+
+### Google Play precheck
+
+Owner confirms Google Play Console currently has no subscriptions and requires an uploaded app artifact before configuration can proceed. No placeholder/random APK was uploaded. **DEFERRED TO BILLING/ENTITLEMENT IMPLEMENTATION**, not an LP244.60 legal-publication blocker. Use the real billing-capable final release artifact; do not manufacture a placeholder solely to unlock the console.
+
+### Final classification
+
+| Gate | Final status |
+|---|---|
+| Legal text content | CLOSED / PASS |
+| Owner publication approval | CLOSED / PASS |
+| Live served-page verification | CLOSED / PASS |
+| Mailbox/operator handling | CLOSED / PASS |
+| Apple subscription preconfiguration | PASS / PREPARED FOR IMPLEMENTATION |
+| Google subscription preconfiguration | DEFERRED TO BILLING/ENTITLEMENT IMPLEMENTATION; not an LP244.60 blocker |
+| LP244.60 | CLOSED / PASS |
+| Production reporting | REMAINS DISABLED; separate owner authorization required before public launch |
+| LP244.54 | REMAINS CLOSED / PASS |
+| Old LP244.22 reset/repair | DO NOT REPLAY |
+
+Approved 18+, US/Texas scope, paid $2.99/month app-store model, authority disclaimers, day-149 cleanup/180-day linkage ceiling and privacy/moderation safeguards remain unchanged. Reporting is required for public launch but intentionally disabled during preparation. No Supabase query/write or reporting activation occurred in this task; disabled admission is the owner-stated required state and latest recorded production baseline, not a newly queried observation.
+
+### Downstream work and bounded checks
+
+Remaining billing work: implement and verify actual Apple/Google purchase and entitlement handling, reconcile actual subscription metadata with privacy disclosures, prepare the real billing-capable release artifact, complete Google subscription configuration, submit the first Apple subscription with the new app version, and complete applicable store/candidate review. Existing remaining operator/recovery gates and separately authorized production reporting release remain separate from this closed legal-publication phase. No billing, native build, device acceptance, store change or additional deployment performed here.
+
+Bounded LP244.60 checks: **25/25 PASS** across existing public legal-site, homepage readiness and Google Play compliance UI/acceptance contracts. Covers approved full-source/public parity, 18+, retention/deletion copy, contacts, static routes/assets, reporting-disabled truthfulness and acceptance safeguards. Final whitespace/staged scope checks precede local commit. Only this readiness report changed. Local closure commit: `Close legal publication readiness`. No push or merge.
