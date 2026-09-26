@@ -43,6 +43,10 @@ Gridly is an awareness platform, not a turn-by-turn navigation app. Reports are 
 
 Use Gridly before you travel, not while driving. If you need to interact with the app, do so only when it is safe and lawful.
 
+## Launch subscription authority
+
+Gridly public launch is $2.99 per month through Apple App Store or Google Play, with subscription during initial download/setup. The applicable store handles billing, renewal, cancellation and refund eligibility under its rules and applicable law. No direct Gridly web checkout is planned. No free tier, trial, annual plan or alternative billing model is authorized. Store configuration and entitlement implementation must be verified before launch; this owner decision is not proof of implementation or store approval.
+
 ## Keywords
 
 Draft keyword pool:

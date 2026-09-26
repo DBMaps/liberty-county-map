@@ -1,5 +1,7 @@
 # Gridly Community Reporting Disclaimer
 
+**Effective date:** September 17, 2026
+
 ## Purpose
 
 Gridly uses community participation to improve local awareness. Reports help users understand what others have observed, but they are not guarantees about current conditions.
