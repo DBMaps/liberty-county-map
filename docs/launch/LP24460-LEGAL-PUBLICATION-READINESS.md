@@ -6,7 +6,7 @@ Date: 2026-09-26. Branch: `LP244.60-legal-publication-readiness`. Starting/main 
 
 ## Decision
 
-**Legal/publication NO-GO pending owner approval and verifiable public publication.** Existing static website routes provide the publication path; no new infrastructure is needed. This audit prepares publication and repairs a misleading omission in homepage copy. It does not publish, activate reporting, certify legal compliance or establish that live services are down.
+**Legal text and owner publication approval CLOSED / PASS; LP244.60 overall remains OPEN / NO-GO pending live served-page, mailbox/operator and store configuration evidence.** Existing static website routes provide the publication path; no new infrastructure is needed. This audit prepares publication and repairs a misleading omission in homepage copy. It does not publish, activate reporting, certify legal compliance or establish that live services are down.
 
 Production reporting remains OFF by task requirement and the latest recorded LP244.58 observation (`reporting_enabled=false`, protocol 2, guard consumed/unlaunched). This expected disabled state is not the reason for legal/publication NO-GO. LP244.60 did not query or change production admission. LP244.58 cleanup alerting and LP244.54 physical acceptance remain CLOSED/PASS; historical LP244.22 reset/repair must not be replayed.
 
@@ -97,3 +97,53 @@ These are launch publication candidates; monetization implementation, entitlemen
 Store-rule cross-checks: [Apple cancellation](https://support.apple.com/en-us/118428), [Apple refunds](https://support.apple.com/en-us/118223), [Google Play refunds](https://support.google.com/googleplay/answer/15574908?hl=en). No platform-specific refund or cancellation timing is promised.
 
 Subscription correction verification: 25/25 bounded legal/public-site/compliance tests PASS; additional in-memory assertions PASS for price/store/cancellation wording in all Terms copies, card-data boundary and conditional metadata in all Privacy copies, disclaimer date and unchanged reporting-disabled notice. Targeted current/normative contradiction search returned no matches. Exact full-policy replacement comparison proved all unrelated text unchanged. git diff --check PASS. No runtime/native/billing/production file changed.
+
+## Owner legal publication approval — September 26, 2026
+
+This current decision supersedes earlier approval-pending statements in this report. Earlier audit observations remain chronology; historical records and approved policy bodies were not rewritten. Approved repository versions are those at `01cea4bc2ad2c50d1552e19b916fc13ea6a111f0`, with September 17, 2026 effective dates. Approval recording does not backdate evidence of actual publication or acceptance.
+
+### Exact owner approval statement
+
+> I approve the September 17, 2026 Gridly Privacy Policy, Terms of Use, Community Guidelines, and Community Reporting Disclaimer as the launch publication texts, including the current 18+ policy and the $2.99/month App Store / Google Play subscription model.
+>
+> Community reporting is intentionally disabled during launch preparation and is required to be enabled through a separately authorized production release before public launch.
+>
+> These texts are approved for publication and app-store use, subject to verification that the served public pages match the approved repository versions.
+
+Approved document set: `docs/LEGAL/GRIDLY-PRIVACY-POLICY.md`, `docs/LEGAL/GRIDLY-TERMS-OF-USE.md`, `docs/LEGAL/GRIDLY-COMMUNITY-GUIDELINES.md`, `docs/LEGAL/GRIDLY-COMMUNITY-REPORTING-DISCLAIMER.md`.
+
+Approved positions: **18+**; initial US offering with Texas-focused coverage; awareness rather than government/emergency/railroad/law-enforcement/transportation/authoritative safety service; reporting required at launch but intentionally disabled during preparation; day-149 cleanup target and maximum 180-day original-submission device-linkage ceiling; documented deletion/privacy rights and moderation safeguards; **$2.99/month through Apple App Store or Google Play**. No free tier, trial, annual plan, direct web checkout or alternative billing model approved. Apple/Google process payments; Gridly does not receive/store full payment-card details.
+
+### Current gate classification
+
+| Gate | Status |
+|---|---|
+| Legal text content | CLOSED / PASS |
+| Owner publication approval | CLOSED / PASS |
+| Live served-page verification | PENDING |
+| Mailbox/operator handling | PENDING |
+| Store subscription/entitlement configuration | PENDING |
+| LP244.60 overall | OPEN / NO-GO; not CLOSED |
+| Production reporting | REMAINS DISABLED; separate authorization required before public launch |
+| LP244.54 | REMAINS CLOSED / PASS |
+| LP244.22 historical reset/repair | DO NOT REPLAY |
+
+### Exact remaining verification plan
+
+| Public URL | Required evidence |
+|---|---|
+| https://gridlygo.com/privacy | Anonymous HTTPS availability, mobile readability and served complete text/effective date matching approved `docs/LEGAL/GRIDLY-PRIVACY-POLICY.md` and `public-site/privacy/index.html`. |
+| https://gridlygo.com/terms | Same verification against approved `docs/LEGAL/GRIDLY-TERMS-OF-USE.md` and `public-site/terms/index.html`, including subscription section. |
+| https://gridlygo.com/community-guidelines | Same verification against approved `docs/LEGAL/GRIDLY-COMMUNITY-GUIDELINES.md` and `public-site/community-guidelines/index.html`, including acceptance version. |
+| https://gridlygo.com/delete-data | Anonymous HTTPS availability, mobile readability and current deletion/contact/action instructions. |
+| https://gridlygo.com/support | Anonymous HTTPS availability, mobile readability and current contact/action instructions. |
+
+Record UTC observation, deployment identity/final URL and served-text comparison. Confirm root/footer legal links and the current reporting-disabled notice. Use the existing public website workflow if approved pages are not yet served; this approval-recording task performs no deployment. Failed retrieval tools are not proof of an unpublished/down site. No new live verification success is claimed here.
+
+Owner-operational verification remains required for **privacy@gridlygo.com**, **support@gridlygo.com** and **legal@gridlygo.com**: establish routing to an owner-monitored inbox, assigned responsibility and ability to act on privacy/deletion/appeal/support/legal correspondence. No test messages sent; any message-based test requires separate owner authorization.
+
+Confirm Apple/Google subscription products, $2.99 monthly price, purchase disclosures, entitlement/status processing, applicable cancellation/refund configuration and actual legal/support/deletion store fields. Approval of the model is not evidence that billing/entitlement implementation is complete. Preserve sequence: legal/publication closure → remaining operator/candidate/store gates → separately authorized production reporting activation → launch.
+
+### Approval-recording checks
+
+25/25 existing bounded public-site/legal/compliance tests PASS. Additional subscription-copy, card-data, conditional-metadata, 18+, disclaimer-date and reporting-disabled source assertions PASS. Route/assets/source parity are covered by the public-site suite. Only this readiness report changed during approval recording; approved policy texts, public pages, runtime, retention and native behavior unchanged. `git diff --check` required before commit. No deployment, email send, production mutation, reporting activation, native/device tests, push or merge.
