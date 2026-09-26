@@ -121,6 +121,7 @@ test('payload and Resend request reconstruct only allowed fields', async () => {
   assert.equal(body.text.includes('private-report-id'), false);
   assert.equal(body.text.includes('password=private'), false);
   assert.equal(request.headers['Idempotency-Key'], CONFIG.idempotencyKey);
+  assert.equal(request.redirect,'manual');
 });
 
 test('Resend error responses are suppressed without leaking content', async () => {
@@ -191,7 +192,7 @@ test('Edge rate limit blocks repeated failed backend queries',async()=>{
  assert.equal((await h(req())).status,502);assert.equal((await h(req())).status,429);assert.equal(calls,1);
 });
 test('Worker sends dedicated token only to fixed Edge URL, no database credential',async()=>{
- const out=await edgeHealth({GRIDLY_MONITOR_TOKEN:TOKEN},async(url,opts)=>{assert.match(url,/functions\/v1\/gridly-cleanup-health$/);assert.deepEqual(opts.headers,{'X-Gridly-Monitor-Token':TOKEN});assert.equal(opts.body,undefined);return Response.json(rows());});assert.deepEqual(out,rows());
+ const out=await edgeHealth({GRIDLY_MONITOR_TOKEN:TOKEN,EDGE_URL:'https://nhwhkbkludzkuyxmkkcj.supabase.co/functions/v1/gridly-cleanup-health'},async(url,opts)=>{assert.match(url,/functions\/v1\/gridly-cleanup-health$/);assert.deepEqual(opts.headers,{'X-Gridly-Monitor-Token':TOKEN});assert.equal(opts.body,undefined);assert.equal(opts.redirect,'manual');return Response.json(rows());});assert.deepEqual(out,rows());
 });
 test('compliance missing heartbeat, pending and recent processed-late evidence classify',()=>{
  for(const [state,expected] of [['missing','failed'],['pending','stale']]){const r=rows();r[1].compliance_health_state=state;assert.equal(classifyHealth(r,NOW)[1].health_state,expected);}
@@ -220,4 +221,34 @@ test('Authorization alone is never accepted and invalid dedicated token never re
  assert.equal((await h(new Request('https://test.invalid',{method:'POST',headers:{Authorization:'Bearer '+TOKEN}}))).status,401);
  const req={method:'POST',url:'https://test.invalid',headers:new Headers({'X-Gridly-Monitor-Token':'b'.repeat(64)}),get body(){throw Error('body accessed before authentication');}};
  assert.equal((await h(req)).status,401);assert.equal(calls,0);
+});
+
+test('EDGE_URL missing/unexpected fails before network',async()=>{
+ for(const url of [undefined,'','https://evil.invalid','https://nhwhkbkludzkuyxmkkcj.supabase.co/functions/v1/other']){
+ let calls=0;await assert.rejects(edgeHealth({GRIDLY_MONITOR_TOKEN:TOKEN,EDGE_URL:url},async()=>{calls++;}),{message:'monitor_configuration_missing'});assert.equal(calls,0);
+ }
+});
+import workerEntry from '../tools/retention/cleanup-alert-worker/worker.mjs';
+import { readFileSync } from 'node:fs';
+test('scheduled healthy phase: no deadman succeeds, configured ping works/fails visibly, zero emails/writes',async()=>{
+ const original=globalThis.fetch;
+ try{for(const mode of ['absent','present','failed']){
+ let edgeCalls=0,pings=0,emails=0,writes=0;
+ const live=rows();for(const r of live){r.latest_run_at=new Date().toISOString();r.last_success_at=r.latest_run_at;}
+ globalThis.fetch=async url=>{if(url.includes('/functions/')){edgeCalls++;return Response.json(live);}if(url.startsWith('https://hc-ping.com/')){pings++;return new Response('',{status:mode==='failed'?500:200});}emails++;throw Error('unexpected_email');};
+ const env={EDGE_URL:'https://nhwhkbkludzkuyxmkkcj.supabase.co/functions/v1/gridly-cleanup-health',GRIDLY_MONITOR_TOKEN:TOKEN,RESEND_API_KEY:'test-only',ALERT_FROM:CONFIG.from,ALERT_TO:CONFIG.to,ALERT_STATE:{get:async()=>null,put:async()=>{writes++;},delete:async()=>{writes++;}},...(mode==='absent'?{}:{DEADMAN_PING_URL:'https://hc-ping.com/'+EMAIL_ID})};
+ if(mode==='failed')await assert.rejects(workerEntry.scheduled({},env),{message:'gridly_cleanup_alert_run_failed'});else await workerEntry.scheduled({},env);
+ assert.equal(edgeCalls,1);assert.equal(pings,mode==='absent'?0:1);assert.equal(emails,0);assert.equal(writes,0);
+ }}finally{globalThis.fetch=original;}
+});
+test('deployment config preserves exact name/cadence/KV and contains no Hyperdrive',()=>{
+ const config=JSON.parse(readFileSync(new URL('../tools/retention/cleanup-alert-worker/wrangler.jsonc',import.meta.url),'utf8'));
+ assert.equal(config.name,'gridly-cleanup-alert-production');assert.deepEqual(config.triggers.crons,['* * * * *']);assert.deepEqual(config.kv_namespaces,[{binding:'ALERT_STATE',id:'b09eb7275e614d1bb44783f11f51125a'}]);assert.equal(config.hyperdrive,undefined);
+ const source=readFileSync(new URL('../tools/retention/cleanup-alert-worker/worker.mjs',import.meta.url),'utf8');assert.equal(/HYPERDRIVE|connectionString|DATABASE_URL|import pg/.test(source),false);
+});
+
+test('redirect responses never follow credential-bearing calls',async()=>{
+ let calls=0;await assert.rejects(edgeHealth({GRIDLY_MONITOR_TOKEN:TOKEN,EDGE_URL:'https://nhwhkbkludzkuyxmkkcj.supabase.co/functions/v1/gridly-cleanup-health'},async(_,opts)=>{calls++;assert.equal(opts.redirect,'manual');return new Response(null,{status:302,headers:{Location:'https://evil.invalid'}});}),{message:'query_failed'});assert.equal(calls,1);
+ await assert.rejects(sendAlert(monitorError(NOW),{...CONFIG,fetchImpl:async(_,opts)=>{assert.equal(opts.redirect,'manual');return new Response(null,{status:302});}}),{message:'delivery_failed'});
+ await assert.rejects(heartbeat({DEADMAN_PING_URL:'https://hc-ping.com/'+EMAIL_ID},async(_,opts)=>{assert.equal(opts.redirect,'manual');return new Response(null,{status:302});}),{message:'deadman_failed'});
 });

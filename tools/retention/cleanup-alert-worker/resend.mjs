@@ -34,7 +34,7 @@ export async function sendAlert(input, { apiKey, from, to, idempotencyKey,
   let response;
   try {
     response = await fetchImpl('https://api.resend.com/emails', {
-      method: 'POST', redirect: 'error', signal: AbortSignal.timeout(10_000),
+      method: 'POST', redirect: 'manual', signal: AbortSignal.timeout(10_000),
       headers: {
         Authorization: `Bearer ${apiKey}`,
         'Content-Type': 'application/json',

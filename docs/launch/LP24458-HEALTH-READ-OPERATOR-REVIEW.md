@@ -467,3 +467,52 @@ Final safety snapshot **2026-09-26 15:57:52.764911 UTC**: protocol 2, reporting 
 ## External delivery local implementation — 2026-09-26
 
 Edge custom bearer auth/fixed health RPC and Worker Edge-only redesign are implemented locally. Focused tests pass 17/17. No deployment, secret, DNS/account/resource creation or production schema change. Real synthetic email and independent dead-man proof remain unperformed. Review [external delivery operator review](LP24458-ALERT-DELIVERY-OPERATOR-REVIEW.md) for exact auth model, source, owner UI actions, quota/consistency limits and proposed independent Healthchecks.io approval boundary. LP244.58 remains NO-GO; reporting stays disabled. No local commit in this phase.
+
+## FINAL OWNER ACCEPTANCE — LP244.58 CLOSED / PASS
+
+This closure supersedes earlier NO-GO/pending/not-authorized statements for LP244.58 alerting. Those sections remain dated historical chronology, not current blockers. Production reporting activation remains STILL NO-GO; LP244.54 remains CLOSED/PASS.
+
+### Evidence provenance and chronology
+
+1. Production compliance health migration20260926021558 was applied alone by pinned CLI2.117.0 and certified; ledger increased16->17. Guard/admission/two cleanup jobs and retention deadlines were preserved. Scheduled zero-row cleanup advances private health evidence; RPC has exactly2 bounded11-field rows and no compliance source scans.
+2. Supabase cleanup-health Edge was deployed; owner auth request RCA repaired empty non-null body streams and moved credential to X-Gridly-Monitor-Token. Owner correct-token HTTP200 proof is confirmed by the owner in the final closure instruction. PowerShell5.1 array enumeration was repaired without relaxing row/field/UTC constraints. Edge remains ACTIVE version4.
+3. Owner confirms Resend domain alerts.gridlygo.com verified and one real dated synthetic Gridly alert received by developer@gridlygo.com, from Gridly Alerts <monitor@alerts.gridlygo.com>. Actual send/message timestamps/IDs are not supplied in this closure evidence; none are invented. API acceptance alone was not used as receipt proof. Owner inbox receipt is the closure authority.
+4. Cloudflare Worker deployment version9 exposed redirect:'error' incompatibility before network access. Workerd reproduction proved the first failing statement; manual redirects plus non-2xx rejection repaired it in all external adapters without forwarding credentials. Diagnostic version10 showed HTTP200/healthy+healthy/no-email; final diagnostic-free version11 completed ordinary scheduled execution. Configured EDGE_URL is exact allowlisted, optional dead-man phase behavior preserved, and correct existing KV namespace resolved.
+5. Owner created Healthchecks.io **Gridly Cleanup Alert Worker**, corrected heartbeat routing, configured DEADMAN_PING_URL privately and confirmed active received heartbeats. Cloudflare version12 added the secret; version13 updated it. Current live version13, id7a35ea32-f086-4b1d-a635-3a0628e87217, rollout100%, is the intended owner change rather than unexpected drift. No secret URL/value was retrieved. Normal scheduled run2026-09-26 19:16:50UTC completed Ok with configured heartbeat; the handler validates the Healthchecks host and requires success. Correct named-check routing is owner-confirmed, not inferred from a secret value.
+6. Owner confirms Healthchecks accepted an explicit /fail signal, transitioned the named check to DOWN and delivered a failure notification email to developer@gridlygo.com. Owner explicitly accepts this independent notification proof as sufficient for launch. No additional signal, pause, timeout, resend or infrastructure mutation was performed in final verification.
+
+**Missed-heartbeat timeout was not separately induced by disabling the Worker schedule. Independent failure notification was proven through Healthchecks.io’s accepted `/fail` signal and successful owner email delivery.**
+
+This owner-accepted limitation does NOT keep LP244.58 open. It proves independent failure notification, not a separately induced schedule-outage timeout. No schedule was deliberately disabled, and no timeout delivery claim is made.
+
+### Fresh bounded final verification
+
+Read-only production snapshot2026-09-26 19:16:28.649748UTC: exact17 tracked versions, each once, including20260926021558. Protocol2, reporting_enabled=false; changed_at remains2026-09-09T16:13:48.113011Z. Guard consumed, consumed_at2026-09-09T16:13:47.849122Z, launched_atnull. Same exactly2 active * * * * * cleanup jobs and commands. Report success19:16:00.021103Z, compliance success19:16:00.022245Z; latest runs succeeded/current; all overdue/breach/late counts0; RPC exact2 approved bounded rows.
+
+Live Edge metadata ACTIVE version4. Cloudflare active version13 retains scheduled handler and seven expected bindings: ALERT_FROM, ALERT_TO, EDGE_URL, ALERT_STATE (namespace b09eb7275e614d1bb44783f11f51125a), GRIDLY_MONITOR_TOKEN, RESEND_API_KEY, DEADMAN_PING_URL. Existing one-minute schedule was observed executing normally. No Hyperdrive/directDB binding or runtime usage. KV inventory empty. Current healthy path sends no alert; existing mock/local healthy proof plus earlier live diagnostic delivery outcomes establish behavior. Final ordinary successful execution with configured heartbeat also confirms no heartbeat failure.
+
+No authenticated external dashboard session was exposed to this task. Resend verification, correct named Healthchecks routing, synthetic receipt and independent failure email are explicitly **OWNER-CONFIRMED EVIDENCE**, supplied in the closure request. They are not presented as fresh independent dashboard observations. Fresh API/CLI/runtime observations cover production health, Edge, Worker/bindings, scheduled success and KV. No observed invariant drift.
+
+Only safe health payloads are generated; local redaction/field tests pass. Owner confirms no customer/report data transmitted through proof. No credentials, heartbeat URLs, customer identifiers or report rows were exposed. Reporting was never enabled by LP244.58 work; owner confirms it remained false throughout, consistent with unchanged admission changed_at and final false state. Final verification made no production/schema/grant/Edge/Worker/provider mutation.
+
+### Final decisions
+
+| Gate | Decision |
+|---|---|
+| Supabase health Edge | GO |
+| Cloudflare Worker | GO |
+| Worker -> Edge | GO |
+| Healthy no-email | GO |
+| Resend synthetic owner email | GO (owner-confirmed receipt) |
+| Healthchecks heartbeat | GO (owner-confirmed named-check routing; scheduled success observed) |
+| Independent owner-visible failure notification | GO (owner-confirmed /fail DOWN/email) |
+| Missed-monitor/dead-man launch requirement | GO WITH DOCUMENTED LIMITATION |
+| Cleanup operations | GO |
+| Production reporting activation | STILL NO-GO |
+| LP244.58 | CLOSED / PASS |
+| LP244.54 | remains CLOSED / PASS |
+| Old LP244.22 reset/repair | NOT replayed |
+
+Bounded closure tests:23/23 Node Worker/Edge/auth/alert testsPASS;18/18 owner-response fixturesPASS in Windows PowerShell5.1. No native/device/broad unrelated tests. Existing valid uncommitted LP244.58 config/runtime/tests/evidence repairs preserved and reconciled in one local closure commit. No push/merge.
+
+Remaining launch gates outside LP244.58: owner legal/live-policy approval and publication evidence; backup/PITR/recovery/log-expiry/operator readiness and privacy/moderation decisions; final configured candidate/store declarations/review access; fresh pre-release checkpoint and separately authorized owner-only reporting release. LP244.55 is historical context for those gates, not new evidence that they have closed. Do not replay historical reset/repair or reopen LP244.54.
