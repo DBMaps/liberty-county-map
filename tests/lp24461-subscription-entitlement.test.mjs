@@ -59,9 +59,9 @@ test('all enumerated legal/privacy/support/deletion/emergency surfaces remain op
 function ports(overrides={}) {
  const calls=[];
  const bridge={lookupProduct:async options=>({ ...options,displayPrice:'$2.99',currency:'USD',priceMicros:2990000,billingPeriod:'P1M',storefront:'US',hasOffer:false }),
- queryPurchases:async options=>{calls.push(['query',options]);return {privateProof:'sensitive-fixture'};},
- restore:async options=>{calls.push(['restore',options]);return {privateProof:'sensitive-fixture'};},
- purchase:async options=>{calls.push(['purchase',options]);return {privateProof:'sensitive-fixture'};},
+ queryPurchases:async options=>{calls.push(['query',options]);return options.productId===LAUNCH.appleProductId ? {signedTransactions:['synthetic.payload.signature']} : {purchaseTokens:['synthetic-google-token']};},
+ restore:async options=>{calls.push(['restore',options]);return options.productId===LAUNCH.appleProductId ? {signedTransactions:['synthetic.payload.signature']} : {purchaseTokens:['synthetic-google-token']};},
+ purchase:async options=>{calls.push(['purchase',options]);return options.productId===LAUNCH.appleProductId ? {signedTransactions:['synthetic.payload.signature']} : {purchaseTokens:['synthetic-google-token']};},
  completeVerifiedPurchase:async()=>{calls.push(['complete']);},...overrides};
  const authority={reconcile:async request=>{calls.push(['reconcile']);return sign(row({nonce:request.nonce,platform:request.platform,productId:request.platform==='apple'?LAUNCH.appleProductId:LAUNCH.googleProductId,environment:request.environment}));}};
  return {bridge,authority,calls};
@@ -75,7 +75,7 @@ test('launch/resume/restore/purchase always reconcile; completion only after aut
  assert.deepEqual(google.calls[0][1],{productId:'gridly_monthly',basePlanId:'monthly'});
 });
 test('temporary error does not become confirmed inactive, exposes no raw receipt/error and retry recovers',async()=>{
- let fail=true;const p=ports({queryPurchases:async()=>{if(fail)throw Error('sensitive-fixture');return {};}}),s=session(p);
+ let fail=true;const p=ports({queryPurchases:async()=>{if(fail)throw Error('sensitive-fixture');return {signedTransactions:['synthetic.payload.signature']};}}),s=session(p);
  await s.launch();assert.equal(s.read().entitlementState,'unknown');assert.equal(s.read().errorCategory,'store_unavailable');
  assert.ok(!JSON.stringify(s.read()).includes('sensitive-fixture'));assert.equal(s.allowed('support').allowed,true);
  fail=false;await s.refresh();assert.equal(s.allowed('product').allowed,true);
@@ -86,7 +86,7 @@ test('pending/canceled purchases do not complete or reconcile and cannot unlock'
 });
 test('slow old refresh cannot override current denial; timeout cannot unlock later',async()=>{
  let release;const p=ports({queryPurchases:()=>new Promise(resolve=>{release=resolve;})}),s=session({...p,timeoutMs:5});
- await s.launch();assert.equal(s.allowed('product').allowed,false);release({});await new Promise(r=>setTimeout(r,15));
+ await s.launch();assert.equal(s.allowed('product').allowed,false);release({signedTransactions:['synthetic.payload.signature']});await new Promise(r=>setTimeout(r,15));
  assert.equal(s.allowed('product').allowed,false);assert.ok(!p.calls.some(c=>c[0]==='complete'));
  let unblock;const q=ports();let first=true;q.authority.reconcile=async request=>{if(first){first=false;await new Promise(r=>{unblock=r;});return sign(row({nonce:request.nonce}));}return sign(row({nonce:request.nonce,subscriptionState:'inactive',entitlementState:'not_entitled',currentPeriodEnd:null}));};
  const x=session(q);const old=x.launch();while(!unblock)await new Promise(r=>setTimeout(r,0));await x.resume();unblock();await old;assert.equal(x.read().entitlementState,'not_entitled');

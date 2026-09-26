@@ -1,8 +1,9 @@
+import {STORE_VERIFIERS, storeVerificationRequest} from './gridly-store-verification.mjs';
 // Foundation only: not loaded by the app until native/server authority is certified.
 export const LAUNCH = Object.freeze({
   currency: 'USD', monthlyPrice: '2.99', country: 'US',
-  appleProductId: 'com.gridlygo.gridly.monthly',
-  googleProductId: 'gridly_monthly', googleBasePlanId: 'monthly',
+  appleProductId: STORE_VERIFIERS.apple.productId,
+  googleProductId: STORE_VERIFIERS.google.productId, googleBasePlanId: STORE_VERIFIERS.google.basePlanId,
   freeTier: false, trial: false, annualPlan: false, billingGrace: false, webCheckout: false
 });
 const STATES = new Set(['active', 'inactive', 'expired', 'canceled_pending_expiry', 'unknown']);
@@ -88,7 +89,8 @@ export function createEntitlementSession({platform, environment='production', pu
         if(action==='purchase' && evidence?.canceled === true) return failure('user_canceled');
         category = 'verification_unavailable';
         const nonce = Array.from(crypto.getRandomValues(new Uint8Array(24)), b=>b.toString(16).padStart(2,'0')).join('');
-        const proof = await authority.reconcile({platform,environment,nonce,evidence});
+        const request = storeVerificationRequest({platform,environment,nonce,evidence});
+        const proof = await authority.reconcile(request);
         const verified = await verifyAuthorityProof({proof,publicKey,nonce,platform,environment,now:now(),crypto});
         if(ticket !== generation) return failure();
         if(verified.entitlementState==='entitled') {
