@@ -7,3 +7,7 @@ extra_search_path = ["public", "extensions"]
 
 [functions.gridly-geocode]
 verify_jwt = false
+
+# Dedicated monitor bearer authentication is enforced by the handler.
+[functions.gridly-cleanup-health]
+verify_jwt = false

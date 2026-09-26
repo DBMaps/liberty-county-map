@@ -1,15 +1,12 @@
 import { classifyHealth, monitorError, SUBSYSTEMS } from './logic.mjs';
 import { sendAlert } from './resend.mjs';
 
-export const HEALTH_SQL = `select subsystem, job_state, latest_run_state, latest_run_at,
- last_success_at, retention_state, overdue_count, breached_count
- from report_retention.cleanup_alert_health order by subsystem`;
 
 const REMINDER_MS = 60 * 60_000;
 
 function signature(payload) {
   return JSON.stringify([
-    payload.cleanup_subsystem, payload.health_state, payload.last_success_at,
+    payload.cleanup_subsystem, payload.health_state,
     payload.overdue_count, payload.breached_count, payload.error_category,
   ]);
 }
@@ -18,6 +15,7 @@ async function deliverOnce(payload, { env, now, send }) {
   const key = `gridly-cleanup-alert:${payload.cleanup_subsystem}`;
   const prior = await env.ALERT_STATE.get(key, 'json');
   if (payload.health_state === 'healthy') {
+    if(prior?.sent_at) await send({...payload,error_category:'recovery'}, {apiKey:env.RESEND_API_KEY,from:env.ALERT_FROM,to:env.ALERT_TO,idempotencyKey:'gridly-cleanup-'+prior.recovery_id,recovery:true});
     if (prior !== null) await env.ALERT_STATE.delete(key);
     return 'healthy';
   }
@@ -32,6 +30,7 @@ async function deliverOnce(payload, { env, now, send }) {
     && /^gridly-cleanup-[a-f0-9-]{36}$/.test(prior?.idempotency_key ?? '')
     ? prior : {
       signature: currentSignature,
+      recovery_id: crypto.randomUUID(),
       sent_at: null,
       idempotency_key: `gridly-cleanup-${crypto.randomUUID()}`,
       payload,
@@ -53,7 +52,7 @@ export async function runScheduled({ env, queryHealth, now = new Date(), send = 
   }
   let states;
   try {
-    const rows = await queryHealth(HEALTH_SQL);
+    const rows = await queryHealth();
     states = classifyHealth(rows, now);
   } catch (error) {
     states = [monitorError(now, error?.message === 'invalid_health_projection'
@@ -62,7 +61,7 @@ export async function runScheduled({ env, queryHealth, now = new Date(), send = 
   if (states.length === SUBSYSTEMS.length) {
     const monitorKey = 'gridly-cleanup-alert:cleanup_monitor';
     if (await env.ALERT_STATE.get(monitorKey, 'json') !== null) {
-      await env.ALERT_STATE.delete(monitorKey);
+      await deliverOnce({ ...monitorError(now),health_state:'healthy',error_category:'recovery' },{env,now,send});
     }
   }
   const outcomes = [];

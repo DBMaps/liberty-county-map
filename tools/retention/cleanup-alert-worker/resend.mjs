@@ -11,7 +11,7 @@ export function formatAlert(input, { synthetic = false } = {}) {
     breachedCount: input?.breached_count,
     errorCategory: input?.error_category,
   });
-  const subject = `[Gridly PROD${synthetic ? ' TEST' : ''}] ${payload.cleanup_subsystem}: ${payload.health_state}`;
+  const subject = `[Gridly PROD${synthetic ? ' TEST' : input?.error_category==='recovery' ? ' RECOVERY' : ''}] ${payload.cleanup_subsystem}: ${payload.health_state}`;
   const text = [
     `Environment: ${payload.environment}`,
     `Cleanup subsystem: ${payload.cleanup_subsystem}`,

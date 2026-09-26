@@ -1,11 +1,8 @@
 {
-  // Owner must replace both binding IDs after separate account authorization.
-  "name": "gridly-cleanup-alert-production",
-  "main": "worker.mjs",
-  "compatibility_date": "2026-09-25",
-  "compatibility_flags": ["nodejs_compat"],
-  "workers_dev": false,
-  "triggers": { "crons": ["* * * * *"] },
-  "hyperdrive": [{ "binding": "HYPERDRIVE", "id": "OWNER_CONFIGURED_HYPERDRIVE_ID" }],
-  "kv_namespaces": [{ "binding": "ALERT_STATE", "id": "OWNER_CONFIGURED_KV_ID" }]
+ "name":"gridly-cleanup-alert-production",
+ "main":"worker.mjs",
+ "compatibility_date":"2026-09-25",
+ "workers_dev":false,
+ "triggers":{"crons":["* * * * *"]},
+ "kv_namespaces":[{"binding":"ALERT_STATE","id":"OWNER_CONFIGURED_KV_ID"}]
 }

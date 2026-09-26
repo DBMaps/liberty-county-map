@@ -1,3 +1,4 @@
+import { projectHealth } from './contract.mjs';
 export const SUBSYSTEMS = ['report_retention', 'compliance_cleanup'];
 export const ENVIRONMENT = 'Gridly production';
 const MAX_COUNT = 1_000_000;
@@ -27,7 +28,7 @@ export function safePayload({ subsystem, state, observedAt, lastSuccessAt = null
       || observedAt == null
       || (errorCategory !== null && ![
         'job_missing', 'job_inactive', 'job_misconfigured', 'job_failed',
-        'retention_failed', 'query_failed', 'invalid_status', 'synthetic_test',
+        'compliance_health_missing', 'compliance_late_processed', 'recovery', 'retention_failed', 'query_failed', 'invalid_status', 'synthetic_test',
       ].includes(errorCategory))) throw new Error('invalid_alert_payload');
   return Object.freeze({
     environment: ENVIRONMENT,
@@ -56,8 +57,8 @@ function classifyRow(row, now) {
   const observedAt = utc(now);
   const lastSuccessAt = utc(row.last_success_at);
   const latestRunAt = utc(row.latest_run_at);
-  const overdueCount = count(row.overdue_count);
-  const breachedCount = count(row.breached_count);
+  const overdueCount = count(row.report_overdue_count);
+  const breachedCount = count(row.report_breached_count);
   if (row.subsystem === 'compliance_cleanup'
       && (row.retention_state !== 'none' || overdueCount !== 0 || breachedCount !== 0)) {
     throw new Error('invalid_health_projection');
@@ -82,6 +83,13 @@ function classifyRow(row, now) {
   if (overdueCount > 0 || breachedCount > 0) {
     return safePayload({ ...base, state: 'overdue' });
   }
+  if(row.subsystem==='compliance_cleanup') {
+    if(row.compliance_health_state==='missing') return safePayload({...base,state:'failed',errorCategory:'compliance_health_missing'});
+    if(row.compliance_health_state!=='succeeded') return safePayload({...base,state:'stale'});
+    const late=utc(row.compliance_late_processed_at);
+    if(late && Date.parse(late)>Date.parse(observedAt)+60000) throw Error('invalid_health_projection');
+    if(late && Date.parse(observedAt)-Date.parse(late)<5*60000 && row.compliance_late_processed_count>0) return safePayload({...base,state:'overdue',overdueCount:row.compliance_late_processed_count,errorCategory:'compliance_late_processed'});
+  }
   const maxAgeMs = row.subsystem === 'report_retention' ? 5 * 60_000 : 3 * 60_000;
   if (!lastSuccessAt || !latestRunAt
       || Date.parse(observedAt) - Date.parse(lastSuccessAt) >= maxAgeMs
@@ -99,6 +107,7 @@ export function classifyHealth(rows, now = new Date()) {
       || new Set(rows.map(row => row?.subsystem)).size !== 2) {
     throw new Error('invalid_health_projection');
   }
+  rows=projectHealth(rows);
   const bySubsystem = new Map(rows.map(row => [row.subsystem, row]));
   return SUBSYSTEMS.map(subsystem => classifyRow(bySubsystem.get(subsystem), now));
 }

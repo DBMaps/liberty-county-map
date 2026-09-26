@@ -13,11 +13,11 @@ const CONFIG = { apiKey: 'test-secret', from: 'owner-sender@example.invalid',
 function rows() {
   return [
     { subsystem: 'report_retention', job_state: 'active', latest_run_state: 'succeeded',
-      latest_run_at: SUCCESS, last_success_at: SUCCESS, retention_state: 'succeeded',
-      overdue_count: 0, breached_count: 0 },
+      latest_run_at: SUCCESS, last_success_at: SUCCESS, retention_state: 'succeeded', compliance_health_state:'none', compliance_late_processed_count:0, compliance_late_processed_at:null,
+      report_overdue_count: 0, report_breached_count: 0 },
     { subsystem: 'compliance_cleanup', job_state: 'active', latest_run_state: 'succeeded',
-      latest_run_at: SUCCESS, last_success_at: SUCCESS, retention_state: 'none',
-      overdue_count: 0, breached_count: 0 },
+      latest_run_at: SUCCESS, last_success_at: SUCCESS, retention_state: 'none', compliance_health_state:'succeeded', compliance_late_processed_count:0, compliance_late_processed_at:null,
+      report_overdue_count: 0, report_breached_count: 0 },
   ];
 }
 
@@ -55,20 +55,20 @@ test('retention staleness and bounded overdue/breached counts are classified', (
   stale[0].last_success_at = '2026-09-26T00:54:59Z';
   assert.equal(classifyHealth(stale, NOW)[0].health_state, 'stale');
   const overdue = rows();
-  overdue[0].overdue_count = 1;
+  overdue[0].report_overdue_count = 1;
   assert.equal(classifyHealth(overdue, NOW)[0].health_state, 'overdue');
   const breached = rows();
-  breached[0].breached_count = 1;
+  breached[0].report_breached_count = 1;
   assert.equal(classifyHealth(breached, NOW)[0].health_state, 'overdue');
 });
 
 test('unknown, duplicate, or malformed health rows fail closed', () => {
   assert.throws(() => classifyHealth([rows()[0], rows()[0]], NOW), /invalid_health_projection/);
   const malformed = rows();
-  malformed[0].overdue_count = 'unbounded';
+  malformed[0].report_overdue_count = 'unbounded';
   assert.throws(() => classifyHealth(malformed, NOW), /invalid_health_projection/);
   const nullCount = rows();
-  nullCount[0].breached_count = null;
+  nullCount[0].report_breached_count = null;
   assert.throws(() => classifyHealth(nullCount, NOW), /invalid_health_projection/);
   const unexpected = rows();
   unexpected[1].subsystem = 'private_report';
@@ -94,7 +94,7 @@ test('malformed production projection emits only invalid_status', async () => {
   const result = await runScheduled({
     env: { ALERT_STATE: kv(), RESEND_API_KEY: 'test-secret', ALERT_FROM: CONFIG.from, ALERT_TO: CONFIG.to },
     now: NOW,
-    queryHealth: async () => [{ ...rows()[0], overdue_count: 'report private text' }, rows()[1]],
+    queryHealth: async () => [{ ...rows()[0], report_overdue_count: 'report private text' }, rows()[1]],
     send: async payload => { sent.push(payload); return { accepted: true }; },
   });
   assert.deepEqual(result.health_states, ['monitor_error']);
@@ -148,7 +148,7 @@ test('alert state deduplicates repeat ticks and allows a new alert after recover
   const failedAgain = structuredClone(recovered);
   failedAgain[1].latest_run_state = 'failed';
   await runScheduled({ env, now: new Date(NOW.getTime() + 180_000), queryHealth: async () => failedAgain, send });
-  assert.equal(sent.length, 2);
+  assert.equal(sent.length, 3);
 });
 
 test('failed delivery retries the same bounded payload and idempotency key', async () => {
@@ -167,4 +167,39 @@ test('failed delivery retries the same bounded payload and idempotency key', asy
   await runScheduled({ env, now: new Date(NOW.getTime() + 60_000), queryHealth: async () => failed, send });
   assert.equal(attempts.length, 2);
   assert.deepEqual(attempts[0], attempts[1]);
+});
+
+import { createHandler } from '../supabase/functions/gridly-cleanup-health/handler.mjs';
+import { edgeHealth, heartbeat } from '../tools/retention/cleanup-alert-worker/worker.mjs';
+import { syntheticEmail } from '../tools/retention/cleanup-alert-worker/synthetic.mjs';
+const TOKEN='a'.repeat(64);
+const edgeEnv=k=>({GRIDLY_MONITOR_TOKEN:TOKEN,SUPABASE_URL:'https://nhwhkbkludzkuyxmkkcj.supabase.co',SUPABASE_SERVICE_ROLE_KEY:'fake-backend-secret'})[k];
+test('Edge rejects invalid auth before fixed RPC, validates and caches projection',async()=>{
+ let calls=0; const h=createHandler({env:edgeEnv,fetchImpl:async(url,opts)=>{calls++;assert.equal(url,'https://nhwhkbkludzkuyxmkkcj.supabase.co/rest/v1/rpc/gridly_cleanup_alert_health');assert.equal(opts.body,'{}');return Response.json(rows());}});
+ for(const auth of ['', 'Bearer wrong','Bearer '+TOKEN+'x']){const r=await h(new Request('https://test.invalid',{method:'POST',headers:{Authorization:auth}}));assert.equal(r.status,401);}
+ assert.equal(calls,0);
+ const req=()=>new Request('https://test.invalid',{method:'POST',headers:{Authorization:'Bearer '+TOKEN}});
+ assert.deepEqual(await (await h(req())).json(),rows()); await h(req()); assert.equal(calls,1);
+});
+test('Edge suppresses raw database errors and rejects extra private fields',async()=>{
+ for(const response of [Response.json({message:'private password'}, {status:500}),Response.json([{...rows()[0],report_id:'private'},rows()[1]])]){
+ const h=createHandler({env:edgeEnv,fetchImpl:async()=>response}); const r=await h(new Request('https://test.invalid',{method:'POST',headers:{Authorization:'Bearer '+TOKEN}}));assert.equal(r.status,502);assert.equal((await r.text()).includes('private'),false);
+ }
+});
+test('Edge rate limit blocks repeated failed backend queries',async()=>{
+ let calls=0;const h=createHandler({env:edgeEnv,fetchImpl:async()=>{calls++;throw Error('secret');}});const req=()=>new Request('https://test.invalid',{method:'POST',headers:{Authorization:'Bearer '+TOKEN}});
+ assert.equal((await h(req())).status,502);assert.equal((await h(req())).status,429);assert.equal(calls,1);
+});
+test('Worker sends dedicated token only to fixed Edge URL, no database credential',async()=>{
+ const out=await edgeHealth({GRIDLY_MONITOR_TOKEN:TOKEN},async(url,opts)=>{assert.match(url,/functions\/v1\/gridly-cleanup-health$/);assert.deepEqual(opts.headers,{Authorization:'Bearer '+TOKEN});assert.equal(opts.body,undefined);return Response.json(rows());});assert.deepEqual(out,rows());
+});
+test('compliance missing heartbeat, pending and recent processed-late evidence classify',()=>{
+ for(const [state,expected] of [['missing','failed'],['pending','stale']]){const r=rows();r[1].compliance_health_state=state;assert.equal(classifyHealth(r,NOW)[1].health_state,expected);}
+ const r=rows();r[1].compliance_late_processed_count=1;r[1].compliance_late_processed_at=SUCCESS;assert.equal(classifyHealth(r,NOW)[1].error_category,'compliance_late_processed');
+});
+test('synthetic email uses dated safe payload without a production reader',async()=>{
+ let body;await syntheticEmail({RESEND_API_KEY:'fake',ALERT_FROM:CONFIG.from,ALERT_TO:CONFIG.to},{now:NOW,send:async(p,o)=>{body=formatAlert(p,o);assert.equal(o.synthetic,true);}});assert.match(body.subject,/TEST/);assert.match(body.text,/2026-09-26T01:00:00.000Z/);
+});
+test('deadman ping transmits empty body and rejects alternate hosts',async()=>{
+ let calls=0;await heartbeat({DEADMAN_PING_URL:'https://hc-ping.com/'+EMAIL_ID},async(_,o)=>{calls++;assert.equal(o.body,'');return new Response('OK');});assert.equal(calls,1);await assert.rejects(heartbeat({DEADMAN_PING_URL:'https://evil.invalid/'+EMAIL_ID}));
 });
