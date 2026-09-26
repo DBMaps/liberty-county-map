@@ -27,6 +27,7 @@ test('homepage describes only governed product capabilities and reporting state'
   assert.match(homepage, /Understand local road conditions, weather, and what may affect your trip before you leave/);
   assert.match(homepage, /See community-reported conditions and help keep local information current\./);
   assert.match(homepage, /official alerts, with their sources/);
+  assert.match(homepage, /Community reporting is currently disabled and is not activated for public use\./);
   assert.doesNotMatch(homepage, /Awareness Platform First|Route Intelligence Second|Product position/);
 });
 

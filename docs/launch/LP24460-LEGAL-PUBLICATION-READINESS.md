@@ -1,0 +1,89 @@
+# LP244.60 — Legal / publication readiness
+
+Date: 2026-09-26. Branch: `LP244.60-legal-publication-readiness`. Starting/main reference: `093d79316a54cd2030648cc119fb4931ab32af49`. Initial working tree clean.
+
+**Current owner clarification:** 18+ is authoritative; historical 16+ records are superseded and need not be rewritten. Reporting is required for launch and intentionally disabled now. The launch sequence is legal/publication closure → remaining operator/candidate/store gates → separately authorized production reporting activation → launch. Disabled admission itself is not a legal/publication defect; public availability copy must remain truthful while launch policy covers the future enabled feature.
+
+## Decision
+
+**Legal/publication NO-GO pending owner approval and verifiable public publication.** Existing static website routes provide the publication path; no new infrastructure is needed. This audit prepares publication and repairs a misleading omission in homepage copy. It does not publish, activate reporting, certify legal compliance or establish that live services are down.
+
+Production reporting remains OFF by task requirement and the latest recorded LP244.58 observation (`reporting_enabled=false`, protocol 2, guard consumed/unlaunched). This expected disabled state is not the reason for legal/publication NO-GO. LP244.60 did not query or change production admission. LP244.58 cleanup alerting and LP244.54 physical acceptance remain CLOSED/PASS; historical LP244.22 reset/repair must not be replayed.
+
+## Authoritative files and status
+
+| Document/surface | Authority and publication readiness |
+|---|---|
+| [Privacy Policy](../LEGAL/GRIDLY-PRIVACY-POLICY.md) | Current complete publication candidate; effective date September 17, 2026. Full text mirrored in `public-site/privacy/index.html`; source parity protected by existing tests. Final approval/operative date and live served text remain unverified. |
+| [Terms of Use](../LEGAL/GRIDLY-TERMS-OF-USE.md) | Current complete publication candidate; effective date September 17, 2026; community acceptance version `gridly-ugc-2026-09-17-v2`. Full public mirror under `/terms`. Not proof of final legal approval or publication. |
+| [Community Guidelines](../LEGAL/GRIDLY-COMMUNITY-GUIDELINES.md) | Current reporting terms candidate; same effective date and acceptance version. Full public mirror under `/community-guidelines`; explicit Terms/Guidelines acceptance implemented in `js/gridly-ugc-compliance.js`. |
+| [Community-report disclaimer](../LEGAL/GRIDLY-COMMUNITY-REPORTING-DISCLAIMER.md) | Approved policy position retained. Standalone source has no effective date/version and no standalone public route. Its core safety/authority limitations are incorporated into Terms and Guidelines; do not fabricate a disclaimer URL. Owner must confirm this incorporated placement is sufficient before publication; standalone dated publication would require a separately agreed text/date and route. |
+| `legal/privacy.html`, `legal/terms.html`, `legal/community-guidelines.html` | Current abbreviated bundled in-app documents, dated September 17, 2026 and 18+. They are not the complete canonical public policies. App module links these local files; no native/app behavior changed. Owner must approve abbreviated disclosures alongside full canonical text. |
+| `public-site/delete-data/index.html`, `public-site/support/index.html` | Static request/support pages with working source links and contact instructions. They are not newly established policies needing an invented effective date. Live routes/mailbox handling remain unverified. |
+| `legal/drafts/privacy-policy.md`, `legal/drafts/terms-of-service.md` | Explicitly unapproved historical drafts with deferred dates and stale implementation/payment statements; not publication inputs. Do not copy their claims of absent deletion infrastructure into current policy. |
+| [LP244.21 policy-owner review](../LEGAL/LP24421-POLICY-OWNER-REVIEW.md) | Historical September 8 proposals and copied 16+ text, not current public policy. Does not establish approval of September 17 texts. |
+| Store metadata/checklists under `docs/STORE/` | Planning material, not proof of live legal links or actual store-console entries. Community-report capability descriptions are prospective launch claims, not evidence that reporting is currently enabled. |
+
+No bracketed approval/date placeholder was found in the current complete Privacy/Terms/Guidelines publication candidates. Dates in source are candidate dates, not evidence of when users were actually notified or accepted terms. Do not silently backdate an operative publication.
+
+## Policy reconciliation
+
+### Age
+
+The request's prior 16+ baseline is superseded by tracked evidence: commit `00c89dac4ef699d59a798360fcffc311c2c69bc3` (September 17), **Add Play data deletion page and align 18+ policy**; LP244.36 explicitly records LP244.34A 18+ alignment in certified lineage; LP244.38 records the approved adults-18-and-over launch posture. Current complete policies, bundled pages, public legal pages and homepage consistently use **18+** and the Google-determined-minor restriction. Existing age contract passes. Preserve 18+; changing back to 16+ would require a new owner decision and consistency review. Historical 16+ review snapshots remain historical.
+
+### Geography and product authority
+
+Privacy/Terms state initial United States offering with Texas-focused condition coverage; no nationwide-condition coverage promise. Homepage emphasizes Texas. Community reporting remains required for the eventual launch, while availability before release remains disabled.
+
+Terms section 3 disclaims government, railroad, law-enforcement, emergency-management, transportation and emergency-response authority. Official instructions take priority; U.S. emergencies use 911 when safe. Terms/Guidelines forbid unsafe driving interaction. Route previews and apparent absence of reports do not prove safety, accessibility or completeness. Bundled Terms explicitly disclaim navigation-safety/dispatch service; homepage states awareness, not authority and does not replace navigation services. Store metadata says awareness, not turn-by-turn navigation. No emergency/government/dispatch/safety-authority service claim was identified in these launch policy surfaces.
+
+### Retention, deletion and rights
+
+Current complete policies, public deletion page and bundled summary reconcile day-149 report cleanup with the **180-day original-submission linkage ceiling**, without restarting clocks on edits, confirmations, copies, exports, restores or moderation. Complaint/deletion linkages clear by day 149; completed deletion requests use a no-more-than-90-day completion window; suppressions remain bounded by the source deadline/180 days. Replay digests and permitted monthly aggregate counts are distinguished from reporter linkage; de-linking is not represented as proof of anonymity.
+
+Privacy explains precise foreground location, provider requests, saved coordinates and local pending payload limits. Privacy/deletion pages distinguish local hiding, local data clearing, shared deletion, provider records and backups. No provider erasure schedule is invented. Backups/logs/controlled copies and operator procedures still need owner operational evidence; LP244.58 healthy live cleanup does not certify every retained copy.
+
+There is no consumer account registration portal. Instructions include **Delete mine**, Settings → Support → Privacy & deletion and `privacy@gridlygo.com`; approximate report time/place helps locate records but does not prove ownership. No initial passwords/government ID requested. Appeals and applicable legal rights are not limited by the policy. Support/legal contacts are `support@gridlygo.com` and `legal@gridlygo.com`. Presence of mailto links does not prove mailbox routing, staffing or request processing; owner must verify those.
+
+### Reporting-disabled truthfulness and bounded repair
+
+The homepage previously invited users to see community reports and help keep information current without a disabled-state statement. LP244.38's older readiness text described a notice no longer present in the current redesign. Added adjacent copy: **“Community reporting is currently disabled and is not activated for public use.”** The existing homepage contract now asserts that sentence. No reporting runtime, protocol, retention deadline, policy position or native asset changed. Existing policy descriptions of reporting describe the service contract; this visible availability notice prevents interpreting them as current activation evidence.
+
+## Publication path and canonical store references
+
+The existing `public-site/` static bundle contains the full public policies; `_redirects` maps the clean routes to their `index.html` files. Root canonical is `https://gridlygo.com/`. Source uses no login, JavaScript, form, storage or location runtime. Static metadata, viewport, local assets, responsive stylesheet and reduced-motion handling are tested. These are source readiness facts, not a visual certification of a live mobile deployment.
+
+| Use | Established canonical URL | Source |
+|---|---|---|
+| Privacy Policy | https://gridlygo.com/privacy | `public-site/privacy/index.html` |
+| Terms / proposed terms reference | https://gridlygo.com/terms | `public-site/terms/index.html` |
+| Reporting terms / Guidelines | https://gridlygo.com/community-guidelines | `public-site/community-guidelines/index.html` |
+| Support | https://gridlygo.com/support | `public-site/support/index.html` |
+| Data deletion instructions | https://gridlygo.com/delete-data | `public-site/delete-data/index.html` |
+
+Homepage footer links all five routes; public policies/support link the appropriate related routes and mailboxes. No new `/disclaimer` or account-deletion route is invented. Terms are not represented as an approved custom Apple EULA; standard versus custom EULA selection and actual store-console entries require owner confirmation.
+
+Publication target is the existing Cloudflare public website resource `gridly-public`, identified in [production services inventory](GRIDLY-PRODUCTION-SERVICES-INVENTORY.md). `gridly-preview` and `gridly-cleanup-alert-production` are distinct resources and are not publication targets here. Repository documentation does not establish a currently authorized automatic deploy workflow/account configuration, so **no external deployment was performed**.
+
+## Live reachability evidence and limitations
+
+On September 26, 2026, web-tool HTTPS reads of the five legal/support routes returned “not accessible via this tool.” A second bounded PowerShell HTTPS attempt for root and all five routes returned `HttpRequestException` without retrieved content. No HTTP status/body was available to establish publication, served-text parity, redirects, mobile layout or anonymous access. This is an access limitation, not a proven website outage. File existence and source tests cannot close the live publication gate.
+
+## Exact owner/external actions remaining
+
+1. Approve the complete current Privacy/Terms/Guidelines texts, the 18+ superseding posture, incorporated reporting disclaimer placement and abbreviated in-app copies. Confirm operative date/version treatment; if a new date/text is selected, synchronize source/public copies and obtain required acceptance rather than backdating.
+2. In the existing Cloudflare account, select **gridly-public** and confirm its existing website deployment configuration serves `public-site/` at `gridlygo.com`. Publish the reviewed static bundle through that established workflow after owner approval. Do not change DNS, preview, alert Worker or application infrastructure as part of this step. Exact dashboard deployment mode/permissions must be confirmed by the owner; none is invented here.
+3. From a logged-out browser/network that can reach the site, open root and each URL in the table over HTTPS. Record UTC time, deployment identity, status/final URL and served text/date/version. Confirm no authentication prompt, valid TLS, all footer links, mobile portrait readability and the disabled reporting notice. Compare complete served legal text with the approved source.
+4. Verify support/privacy/legal mailbox routing and named operator handling, including receipt, verification, deletion/appeal procedure and response ownership. This phase does not send email or test a real deletion request.
+5. Enter the verified canonical URLs into the applicable store fields; confirm standard/custom EULA decision, data-deletion URL placement and truthful review notes explaining reporting is currently disabled pending owner release. Do not submit prospective reporting capability copy as a claim of current activation.
+6. Record approval/publication/mailbox/store evidence here. Only then reconsider legal/publication GO. Remaining backup/recovery/operator and final release gates stay separate; enabling reporting requires separate owner authorization and a fresh checkpoint.
+
+## Bounded verification
+
+- Passed **25/25** existing tests: `lp24434-public-legal-site.test.mjs`, `lp24438-apple-organization-website-readiness.test.mjs`, `lp24433-google-play-compliance.test.cjs`. Covers full public policy/source parity, route/assets, contacts, deletion/retention copy, age, static responsive hooks and acceptance/moderation/deletion UI contracts. Rerun after repair includes disabled-notice assertion.
+- Attempted retention and reporting availability suites: `lp24421-report-retention.test.cjs`, `lp24429a-reporting-availability.test.cjs`. Could not execute assertions because disposable PostgreSQL fixture at `127.0.0.1:55441` refused connections. These are fixture prerequisite failures, not reported as passes or proof of a source defect. No production connection used and no DB fixture setup/native build performed.
+- Public anonymous live reachability/served parity: **UNVERIFIED**, as above. No external publication or native/device acceptance test performed.
+- Final `git diff --check` and staged scope check required before the local commit. Intended scope: this report, one homepage notice and its existing regression assertion. No secret values or private account credentials added.
+
+Commit classification: **Prepare legal publication readiness**. Legal/publication NO-GO until the listed owner/external actions are evidenced; reporting remains disabled and not authorized for activation.
