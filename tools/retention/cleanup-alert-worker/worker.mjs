@@ -3,7 +3,7 @@ import { projectHealth } from './contract.mjs';
 export async function edgeHealth(env,fetchImpl=fetch) {
  const url='https://nhwhkbkludzkuyxmkkcj.supabase.co/functions/v1/gridly-cleanup-health';
  if(!/^[a-f0-9]{64}$/.test(env.GRIDLY_MONITOR_TOKEN||'')) throw Error('monitor_configuration_missing');
- const r=await fetchImpl(url,{method:'POST',redirect:'error',signal:AbortSignal.timeout(10000),headers:{Authorization:'Bearer '+env.GRIDLY_MONITOR_TOKEN}});
+ const r=await fetchImpl(url,{method:'POST',redirect:'error',signal:AbortSignal.timeout(10000),headers:{'X-Gridly-Monitor-Token':env.GRIDLY_MONITOR_TOKEN}});
  if(!r.ok) throw Error('query_failed');
  const text=await r.text();if(text.length>8192) throw Error('invalid_health_projection');
  try{return projectHealth(JSON.parse(text));}catch{throw Error('invalid_health_projection');}

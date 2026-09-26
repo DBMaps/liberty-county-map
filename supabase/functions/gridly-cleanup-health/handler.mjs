@@ -7,9 +7,17 @@ export function createHandler({env,fetchImpl=fetch,now=()=>Date.now()}) {
   if(req.method!=='POST'||new URL(req.url).search) return reply(405,'invalid_request');
   const token=env('GRIDLY_MONITOR_TOKEN');
   if(!token||!/^[a-f0-9]{64}$/.test(token)) return reply(503,'configuration');
-  const auth=req.headers.get('Authorization')||'';
-  if(auth.length!==71||!await equal(auth,'Bearer '+token)) return reply(401,'unauthorized');
-  if(req.body!==null) return reply(400,'invalid_request');
+  const auth=req.headers.get('X-Gridly-Monitor-Token')||'';
+  if(!/^[a-f0-9]{64}$/.test(auth)||!await equal(auth,token)) return reply(401,'unauthorized');
+  if(req.body!==null) {
+   const reader=req.body.getReader(); let timer;
+   try {
+    const empty=async()=>{for(let i=0;i<8;i++){const part=await reader.read();if(part.done)return true;if(part.value?.byteLength>0)return false;}return false;};
+    const ok=await Promise.race([empty(),new Promise(resolve=>{timer=setTimeout(()=>resolve(false),2000);})]);
+    if(!ok)return reply(400,'invalid_request');
+   }catch{return reply(400,'invalid_request');}
+   finally{clearTimeout(timer);void reader.cancel().catch(()=>{});}
+  }
   if(cached&&now()<expires) return Response.json(cached,{headers:{'Cache-Control':'no-store'}});
   if(now()<next) return reply(429,'rate_limited');
   next=now()+30000;
