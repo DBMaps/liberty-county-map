@@ -255,3 +255,50 @@ adb -e shell am start -n com.gridlygo.continuitycert/com.gridlygo.gridly.MainAct
 Tap **Check offline admission**: expect `allowed:true`, `temporaryAccess:true`, `protectedInitializations:1`. Continue B–H using the existing case matrix and SAME installed artifact/issuer. If A still fails, stop that certification attempt and report only its bounded category and whether the issuer was reached; do not dump proofs, bindings, attempt tokens or raw storage. No production repair or entitlement bypass is authorized by this rerun.
 
 **Repair preparation PASS; native post-repair A–H proof remains pending.** LP244.54 remains CLOSED/PASS. Production reporting stays at the owner-disabled baseline without a fresh backend query.
+
+## LP244.65E — Bounded seed diagnostics
+
+Starting HEAD: `6c01761af731f1a23647290c74dec18d27a3dca2`. Owner confirms the generated Android HTTP scheme at runtime, ADB reverse, and native begin/revoke/second-begin success. Commit has not been reached. No observed mixed-content, cleartext, net::ERR or SecurityError establishes a transport cause; do not assume one. The owner runtime failure remains unclassified until the new stage output is observed.
+
+Only the synthetic certification frontend, issuer tooling, focused tests and this record change. Production configs/manifests, native vaults, store billing and 24-hour paid-access policy are untouched. Android certification HTTP origin, CSP, loopback allowlist and port 8765 remain unchanged.
+
+### Diagnostic contract
+
+Seed now displays progress before each potentially failing stage. Its catch projects only the fixed scenario/stage/category, bounded HTTP status when present, and protected initialization count, with the existing synthetic marker. No exception messages, stack traces, response bodies, proofs, binding, attempt, signing key, JWT/JWS content or purchase evidence are displayed/logged.
+
+| Stage | Failure category | Meaning |
+| --- | --- | --- |
+| native_reset | native_reset_failed | Stop/reset, first begin or revoke failed |
+| native_context | native_context_failed | Second begin failed or context shape is invalid |
+| issuer_fetch | issuer_fetch_failed | Fetch rejected/threw, including its 10-second abort |
+| issuer_http | issuer_http_error | HTTP response is non-2xx; status is shown |
+| issuer_response | issuer_response_invalid | JSON parsing or exact bounded fixture shape failed |
+| fixture_verification | fixture_verification_failed | Case A verification threw or rejected the fixture |
+| native_commit | native_commit_failed | Commit threw or did not explicitly return saved=true |
+| complete | none | Seed saved=true; this alone is not paid-admission evidence |
+
+The HTTP deadline bounds acquisition of response headers, not JSON-body reading; a pending body read remains visibly at issuer_response. B–E still deliberately seed negative synthetic material for the unchanged runtime to reject; they do not require a positive verifier result. Case A still requires actual signature/bounds verification before native commit. No bypass or authority change is introduced.
+
+### Safe issuer and framework logging
+
+CLI issuer tracing is enabled only in the synthetic tool. It emits fixed-label method, pathname, scenario, platform and HTTP status, for example:
+
+```text
+CERT_ISSUER POST /seed scenario=A platform=google status=200
+```
+
+Methods outside POST/OPTIONS become OTHER; unexpected paths become other; unrecognized scenarios/platforms become '-'. Arbitrary URL paths, JSON bodies, binding, proof and exceptions are never echoed. Response-finish tracing records the issued HTTP status. Tests use an ephemeral loopback port and do not disturb the owner's running 8765 process.
+
+Installed Capacitor Android Bridge.java can log native call methodData at debug level. Generated certification configs now set `loggingBehavior:'none'` to suppress that framework logger for fixture calls; the installed CapConfig.java explicitly sets loggingEnabled=false for none. This is confined to generated separate apps; production native config remains byte-identical. Use the bounded UI and CERT_ISSUER trace instead of capturing raw native bridge logs.
+
+### Verification and owner rerun
+
+Focused C/D/E tests: **29/29 PASS**. Tests execute the actual seed-function source with isolated native/fetch/verifier ports for reset/context/fetch/HTTP/JSON/verification/commit exceptions and negative return values, verify safe output keys and absence of sentinel private values, and preserve B–E semantics. Real HTTP tests retain valid 64-character binding → signature-valid HTTP200 fixture, invalid binding → HTTP400, and HTTP-localhost CORS/WebCrypto checks. Generator/packaging tests retain HTTP scheme, loopback-only binding, native vault byte identity, release guards, generated framework logging disabled, unchanged production config/network policy, and bundle exclusion. Safe trace tests include malicious-looking scenario/platform/path strings and confirm only fixed metadata labels escape. Native post-update execution is not performed here.
+
+Final checks: `node --test tests/lp24465c-native-harness.test.mjs` PASS (29/29); `git diff --check` PASS; changed-file syntax/credential scan PASS (four files); safe-output and sensitive-log regression checks PASS.
+
+For the exact Android commands, use the LP244.65D owner rerun block above: stop the old issuer with Ctrl+C, generate a NEW temporary clone from the updated repository, leave its new issuer running, rebuild Debug using the existing toolchain, and `adb -e install -r` ONLY `com.gridlygo.continuitycert`. Do not sync/prepare consumer assets, uninstall the accepted Gridly app, or reuse an APK/public key from a different issuer generation.
+
+Verify the new temporary native config has server.androidScheme=http AND loggingBehavior=none. Tap A once. Record only the on-screen scenario/stage/errorCategory/httpStatus/protectedInitializations and the corresponding CERT_ISSUER line. A pending stage also identifies where execution is waiting. Do not paste raw logcat native payloads or HTTP bodies. On complete/seeded=true, force-stop/relaunch the SAME artifact and Check offline admission (allowed=true, temporaryAccess=true, canary=1). Otherwise stop and provide the bounded diagnostic; do not invent a cause or alter network/security policy.
+
+Diagnostics preparation PASS; native A–H certification remains pending. Reporting remains at the owner-disabled baseline; no fresh production query or mutation. LP244.54 remains CLOSED/PASS. No deploy, push or merge.

@@ -7,6 +7,7 @@ import {webcrypto} from 'node:crypto';
 import {createIssuer} from '../tools/native-continuity-certification/issuer.mjs';
 import {prepare,listen} from '../tools/native-continuity-certification/prepare.mjs';
 import {once} from 'node:events';
+import {Script} from 'node:vm';
 import {chromium} from '@playwright/test';
 import {verifyContinuity,continuityDecision} from '../js/gridly-continuity.mjs';
 import {runtimePolicy,copyGovernedRuntime,assertNoContinuityCertification} from '../tools/native-web.mjs';
@@ -30,6 +31,7 @@ test('certification generator creates isolated native identities, unmodified vau
    const configPath=platform==='android'?'android/app/src/main/assets/capacitor.config.json':'ios/App/App/capacitor.config.json';
    const nativeConfig=JSON.parse(await read(join(result.output,configPath)));
    assert.equal(nativeConfig.appId,result.bundle);
+   assert.equal(nativeConfig.loggingBehavior,'none');
    if(platform==='android')assert.deepEqual(nativeConfig.server,{androidScheme:'http'});
    else assert.equal(nativeConfig.server,undefined);
    assert.notEqual(nativeConfig.android?.allowMixedContent,true);
@@ -97,4 +99,66 @@ test('real loopback issuer accepts valid binding; HTTP localhost retains WebCryp
   const result=await page.evaluate(()=>({origin:location.origin,secureContext:isSecureContext,webCrypto:!!crypto.subtle}));
   assert.deepEqual(result,{origin:'http://localhost',secureContext:true,webCrypto:true});
  }finally{await browser?.close();await new Promise(resolve=>server.close(resolve));}
+});
+
+// Execute the actual harness seed function with isolated ports, never native/backend authority.
+const harnessSource=await read('tools/native-continuity-certification/continuity-certification.mjs');
+const seedSource=harnessSource.slice(harnessSource.indexOf('async function seed(scenario)'),harnessSource.indexOf('async function check()'));
+assert.ok(seedSource.startsWith('async function seed(scenario)'));
+const sensitive='PRIVATE_FIXTURE_SENTINEL',attempt='PRIVATE_ATTEMPT_SENTINEL';
+async function runSeed(failure,scenario='A') {
+ const output=[];let begins=0,commits=0,verifies=0;
+ const error=()=>Error(sensitive+' '+binding+' '+attempt);
+ const vault={
+  beginVerification:async()=>{begins++;if(failure===(begins===1?'reset_begin':'context_throw'))throw error();return begins===1?{attempt}:{binding:failure==='context_shape'?'invalid':binding,attempt,nowMs:now};},
+  revoke:async()=>{if(failure==='reset_throw')throw error();return {revoked:failure!=='reset_result'};},
+  commit:async()=>{commits++;if(failure==='commit_throw')throw error();return {saved:failure!=='commit_result'};}
+ };
+ const fn=new Script('('+seedSource+')').runInNewContext({
+  coordinator:{stop:async()=>{}},canaryCount:0,platform:'google',vault,key:{},AbortController,setTimeout,clearTimeout,
+  show:value=>output.push(value),
+  fetch:async(url,options)=>{
+   assert.equal(url,'http://127.0.0.1:8765/seed');assert.equal(options.method,'POST');assert.ok(options.signal);
+   if(failure==='fetch_throw')throw error();
+   return {ok:failure!=='http_error',status:failure==='http_error'?400:200,json:async()=>{
+    if(failure==='json_throw')throw error();
+    return failure==='json_shape'?{proof:sensitive,verifiedAt:now,extra:sensitive}:{proof:sensitive,verifiedAt:now-1000};
+   }};
+  },
+  verifyContinuity:async()=>{verifies++;if(failure==='verify_throw')throw error();return failure==='verify_false'?null:{valid:true};}
+ });
+ await fn(scenario);
+ const safeKeys=new Set(['scenario','stage','errorCategory','httpStatus','seeded','protectedInitializations']);
+ for(const row of output){assert.ok(Object.keys(row).every(key=>safeKeys.has(key)));assert.equal(row.protectedInitializations,0);const text=JSON.stringify(row);assert.ok(![sensitive,binding,attempt].some(value=>text.includes(value)));}
+ return {last:JSON.parse(JSON.stringify(output.at(-1))),output,commits,verifies};
+}
+for(const [failure,stage,errorCategory] of [
+ ['reset_begin','native_reset','native_reset_failed'],['reset_throw','native_reset','native_reset_failed'],['reset_result','native_reset','native_reset_failed'],
+ ['context_throw','native_context','native_context_failed'],['context_shape','native_context','native_context_failed'],
+ ['fetch_throw','issuer_fetch','issuer_fetch_failed'],['http_error','issuer_http','issuer_http_error'],
+ ['json_throw','issuer_response','issuer_response_invalid'],['json_shape','issuer_response','issuer_response_invalid'],
+ ['verify_throw','fixture_verification','fixture_verification_failed'],['verify_false','fixture_verification','fixture_verification_failed'],
+ ['commit_throw','native_commit','native_commit_failed'],['commit_result','native_commit','native_commit_failed']
+])test('seed diagnostics: '+failure+' maps to '+errorCategory+' without sensitive material',async()=>{
+ const {last,output,commits}=await runSeed(failure);assert.equal(last.stage,stage);assert.equal(last.errorCategory,errorCategory);
+ assert.ok(output.some(row=>row.stage===stage)||stage==='issuer_http');assert.equal(last.scenario,'A');
+ if(failure==='http_error')assert.equal(last.httpStatus,400);
+ if(!failure.startsWith('commit'))assert.equal(commits,0);
+});
+test('successful and negative-case seeding retain bounded progress and existing synthetic semantics',async()=>{
+ const positive=await runSeed();assert.equal(positive.last.seeded,true);assert.equal(positive.last.stage,'complete');assert.equal(positive.verifies,1);assert.equal(positive.commits,1);
+ for(const scenario of ['B','C','D','E']){const value=await runSeed('verify_throw',scenario);assert.equal(value.last.seeded,true);assert.equal(value.verifies,0);assert.equal(value.commits,1);}
+});
+test('issuer tracing emits only fixed safe labels and status, never arbitrary request data',async()=>{
+ const events=[],server=listen(issuer,{port:0,trace:event=>events.push(event)});await once(server,'listening');
+ try {
+  const endpoint='http://127.0.0.1:'+server.address().port;
+  const valid=await fetch(endpoint+'/seed',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({scenario:'A',platform:'google',binding}),signal:AbortSignal.timeout(5000)});assert.equal(valid.status,200);await valid.json();
+  const invalid=await fetch(endpoint+'/seed',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({scenario:sensitive,platform:sensitive,binding:sensitive}),signal:AbortSignal.timeout(5000)});assert.equal(invalid.status,400);await invalid.text();
+  const path=await fetch(endpoint+'/'+sensitive,{signal:AbortSignal.timeout(5000)});assert.equal(path.status,404);await path.text();
+  assert.equal(events.length,3);assert.deepEqual(events[0],{method:'POST',pathname:'/seed',scenario:'A',platform:'google',httpStatus:200});
+  for(const event of events){assert.deepEqual(Object.keys(event).sort(),['httpStatus','method','pathname','platform','scenario']);assert.ok(![sensitive,binding].some(value=>JSON.stringify(event).includes(value)));}
+  assert.equal(events[1].scenario,'-');assert.equal(events[2].pathname,'other');
+ }finally{await new Promise(resolve=>server.close(resolve));}
+ assert.doesNotMatch(harnessSource,/console\.|catch\s*\(\s*(?:err|error)\s*\)/);
 });
