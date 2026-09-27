@@ -20,9 +20,12 @@ async function seed(scenario) {
   const prior=await vault.beginVerification();if((await vault.revoke({attempt:prior.attempt}))?.revoked!==true)throw Error();
   stage='native_context';progress();const context=await vault.beginVerification();
   if(!context||!/^[a-f0-9]{64}$/.test(context.binding)||typeof context.attempt!=='string'||!context.attempt||!Number.isFinite(context.nowMs))throw Error();
+  // Native iOS can report sub-millisecond precision; fixture ISO timestamps are milliseconds.
+  const nowMs=Math.floor(context.nowMs);
+  if(!Number.isSafeInteger(nowMs)||nowMs<1e12||nowMs>=1e13)throw Error();
   stage='issuer_fetch';progress();let response;
   const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),10000);
-  try {response=await fetch('http://127.0.0.1:8765/seed',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({scenario,platform,binding:context.binding}),signal:controller.signal});}
+  try {response=await fetch('http://127.0.0.1:8765/seed',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({scenario,platform,binding:context.binding,nowMs}),signal:controller.signal});}
   finally {clearTimeout(timer);}
   stage='issuer_http';httpStatus=Number.isInteger(response.status)&&response.status>=100&&response.status<=599?response.status:undefined;
   if(!response.ok)throw Error();

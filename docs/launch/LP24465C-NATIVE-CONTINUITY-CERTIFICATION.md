@@ -302,3 +302,59 @@ For the exact Android commands, use the LP244.65D owner rerun block above: stop 
 Verify the new temporary native config has server.androidScheme=http AND loggingBehavior=none. Tap A once. Record only the on-screen scenario/stage/errorCategory/httpStatus/protectedInitializations and the corresponding CERT_ISSUER line. A pending stage also identifies where execution is waiting. Do not paste raw logcat native payloads or HTTP bodies. On complete/seeded=true, force-stop/relaunch the SAME artifact and Check offline admission (allowed=true, temporaryAccess=true, canary=1). Otherwise stop and provide the bounded diagnostic; do not invent a cause or alter network/security policy.
 
 Diagnostics preparation PASS; native A–H certification remains pending. Reporting remains at the owner-disabled baseline; no fresh production query or mutation. LP244.54 remains CLOSED/PASS. No deploy, push or merge.
+
+## LP244.65F — Synthetic proof clock-domain repair
+
+Starting HEAD: `be092ad1eeafc9b91a0716e9e2f188324b8cb7ab`. Owner reports HTTP204 preflight and HTTP200 POST, followed by fixture_verification_failed before commit. This supersedes the earlier unconfirmed transport explanation: the issuer is reached; do not assume mixed content.
+
+### Exact observed RCA
+
+A bounded local audit requested only a synthetic fixture, read the existing generated public JWK, and read only the public fixture-key asset from the installed `com.gridlygo.continuitycert` APK. No native vault, private app data or production package was read. Emulator wall-clock read was limited to `adb -e shell date +%s`, converted to milliseconds for comparison; no device IDs, raw times, proof, claims body, binding or keys were printed.
+
+Observed flags: issuerHttpStatus=200; signatureMatchesLatestGeneratedKey=true; signatureMatchesInstalledKey=true; validAtHostTime=true; emulatorClockRead=true; verifiedTimeAheadOfEmulator=true; validAtEmulatorTime=false. The future-time comparison allows an extra second for shell timestamp truncation, so this is not a seconds-rounding artifact.
+
+**Mismatch:** old issuer used Windows `Date.now() - 1000` for lastVerifiedAt; the harness evaluated that proof at the native context's earlier `nowMs`. The emulator clock is behind the host. All signature/identity/schema checks pass; `Date.parse(lastVerifiedAt) > native nowMs` is the rejecting production predicate. Even synchronized clocks can reproduce the same defect when the request takes more than the old one-second cushion. Previous fixture tests issued and verified at the same injected time, masking the real two-clock contract.
+
+Production verifier behavior is correct and unchanged. The shared signer and store normalizers are unchanged. No future-time tolerance or clock adjustment is added to production.
+
+### Bounded synthetic repair
+
+The harness sends the native clock sample as `nowMs` only to its loopback POST. The synthetic issuer now requires that sample (no host-clock fallback) and uses it to construct all scenario timestamps. Request schema is exactly binding/nowMs/platform/scenario; old/missing/seconds-valued time requests fail HTTP400 instead of silently minting host-time fixtures. The sample must be a safe integer millisecond epoch in [1e12,1e13); this is a synthetic-input range check, not a new production authority rule.
+
+Native iOS can supply fractional milliseconds. The harness explicitly floors ONLY that clock sample to ISO timestamp millisecond precision before sending it; less than one millisecond is discarded, never converted from seconds. Verification still uses the original native context.nowMs. Android System.currentTimeMillis is already integral. No native clock is changed, no OS time synchronization is performed, and no production server accepts caller-supplied authority time. This request field exists only in the excluded synthetic tool.
+
+Case A uses sample-1000 ms and sample+7 days. B remains sample-25 hours. C is verified two hours earlier with period end one hour earlier. D still changes one signature byte. E remains validly signed sandbox material rejected in production mode. Commit verifiedAt matches the signed lastVerifiedAt; continuity still ends at min(periodEnd, lastVerifiedAt+86400000).
+
+### Full contract audit
+
+| Contract | Actual match / authority |
+| --- | --- |
+| Signature | ES256, ECDSA P-256, SHA-256, WebCrypto signature over the original UTF-8 base64url header.payload; actual verifier checks signature |
+| Key import | Exported public EC/P-256 JWK, imported public CryptoKey with verify usage; no private d field; installed key matches the live fixture signature |
+| Header/version | Exactly alg/typ, typ=gridly-continuity-v1; no extra schema/version field |
+| Payload serialization | Real signResponse builds JSON claims; issuer extracts nested continuityAuthorization; verifier authenticates original encoded bytes, then decodes exact 11-field schema |
+| Binding | Exact native 64-character lower-case hex binding; no installation identity grants ownership |
+| Platform/product | google/gridly_monthly or apple/com.gridlygo.gridly.monthly; exact checks unchanged |
+| Environment/state | production, entitled, active required; sandbox/test rejected |
+| Identity/audience | audience=com.gridlygo.gridly; source=gridly_server_store_api |
+| Google base plan/store | monthly and US, active acknowledged purchase fixture; base plan and package constraints checked by real normalizer, not additional durable claims; packageName omission is permitted by current normalizer |
+| Apple store fixture | Real normalizer checks fixed bundle/product/type, matching synthetic original reference and renewal environment, active status |
+| Last verification | ISO UTC milliseconds; formerly host-clock value could be in native future; repaired synthetic sample aligns that predicate |
+| Period/continuity expiry | ISO UTC milliseconds, end>verified, expiry exactly min(end, verified+24h), now<expiry |
+| iat/exp/nonce/reference | Durable schema contains no iat or exp NumericDate, no nonce/reference/basePlan field. Outer five-minute response uses ISO expiresAt and synthetic nonce; these are not durable authorization fields. Original synthetic references only feed normalizer/signResponse, never diagnostic output |
+
+Time units: Date.now and both native nowMs values are Unix milliseconds. iOS multiplies wall-clock seconds by 1000 and converts mach ticks to milliseconds; Android uses System.currentTimeMillis and elapsedRealtime milliseconds. Date.parse(ISO) yields milliseconds. 24h=86400000 ms; outer freshness=300000 ms; fixture seven-day end=7*86400000 ms. There was no ms/seconds unit mismatch: the defect was mixing independent clocks. HTTP regression tests reject seconds, missing/null/string and fractional request samples instead of silently converting them.
+
+### Verification / boundaries
+
+Focused continuity plus all C/D/E/F harness tests: **63/63 PASS** (31 continuity + 32 harness). New direct flow generates a fresh issuer/public key, random real 64-character synthetic binding, issues Google A using a native sample one hour behind host time, and calls the ACTUAL runtime verifyContinuity successfully. It checks the exact header, payload-field set, signed times, period cap and key shape without printing private material. Real-verifier B/C/D/E results: rejected/rejected/rejected/rejected. HTTP end-to-end A–E uses the native sample and matches the same outcomes. Old issuance at sample+1001 ms and sample+one hour fails at native sample but succeeds at host time, proving the precise predicate. Existing diagnostic tests use isolated ports only to test error categories; the proof acceptance regressions use no mock verifier.
+
+Production policy, signer, verifier, native vaults, store billing, configs/manifests and reporting remain untouched. Loopback/CSP/debug guards, framework logging disabled, safe issuer trace, package exclusion, environment/binding enforcement and no-localStorage authority remain tested. The local audit never commits/revokes native authority; the only emulator action was read-only clock/public-APK inspection. No store request, purchase, production mutation, deploy, push or merge.
+
+Final `git diff --check`, JavaScript syntax, changed-file credential-pattern scan (five files), and sensitive-log/projection regression checks: PASS. Repaired native seed/restart A–H evidence remains pending; Node success does not claim native certification GO. LP244.54 remains CLOSED/PASS.
+
+### Exact owner rerun requirement
+
+Stop the old issuer with Ctrl+C in its own terminal. Generate a NEW clone from this repaired source and leave its new issuer running; rebuild Debug and replace ONLY the certification app with `adb -e install -r`. Use the same LP244.65D Android commands above (and verify HTTP scheme plus loggingBehavior=none). Do not run Capacitor sync or overwrite consumer assets in the clone. The frontend and issuer must both be from LP244.65F because POST now includes nowMs; an older issuer correctly rejects the new shape. Do not reuse an APK/public key from a different issuer generation or change emulator/host clocks to hide the mismatch.
+
+Tap A once: expect trace HTTP204/HTTP200, then stage=complete/seeded=true. Force-stop/relaunch the SAME artifact, then Check offline admission: expect allowed=true, temporaryAccess=true, protectedInitializations=1. Continue B–H only after A passes. If it fails, return only bounded UI fields and safe issuer line; never raw proof, binding, attempt, key or HTTP body. Production reporting remains at the owner-disabled baseline with no fresh production query.

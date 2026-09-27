@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFile,mkdtemp,mkdir,writeFile,rm,readdir} from 'node:fs/promises';
 import {join} from 'node:path';
 import {tmpdir} from 'node:os';
-import {webcrypto} from 'node:crypto';
+import {webcrypto,randomBytes} from 'node:crypto';
 import {createIssuer} from '../tools/native-continuity-certification/issuer.mjs';
 import {prepare,listen} from '../tools/native-continuity-certification/prepare.mjs';
 import {once} from 'node:events';
@@ -87,11 +87,11 @@ test('real loopback issuer accepts valid binding; HTTP localhost retains WebCryp
   const endpoint='http://127.0.0.1:'+server.address().port+'/seed';
   const preflight=await fetch(endpoint,{method:'OPTIONS',headers:{Origin:'http://localhost','Access-Control-Request-Method':'POST','Access-Control-Request-Headers':'content-type'},signal:AbortSignal.timeout(5000)});
   assert.equal(preflight.status,204);assert.equal(preflight.headers.get('access-control-allow-origin'),'http://localhost');assert.match(preflight.headers.get('access-control-allow-headers'),/Content-Type/i);
-  const response=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json',Origin:'http://localhost'},body:JSON.stringify({scenario:'A',platform:'google',binding}),signal:AbortSignal.timeout(5000)});
+  const response=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json',Origin:'http://localhost'},body:JSON.stringify({scenario:'A',platform:'google',binding,nowMs:Date.now()}),signal:AbortSignal.timeout(5000)});
   assert.equal(response.status,200);assert.equal(response.headers.get('access-control-allow-origin'),'http://localhost');
   const fixture=await response.json();assert.ok(Number.isFinite(fixture.verifiedAt));
   assert.ok(await verifyContinuity({proof:fixture.proof,publicKey:key,binding,platform:'google',now:Date.now(),crypto:webcrypto}));
-  const invalid=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({scenario:'A',platform:'google',binding:'test'}),signal:AbortSignal.timeout(5000)});assert.equal(invalid.status,400);
+  const invalid=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({scenario:'A',platform:'google',binding:'test',nowMs:Date.now()}),signal:AbortSignal.timeout(5000)});assert.equal(invalid.status,400);
   browser=await chromium.launch({channel:'msedge',headless:true});const page=await browser.newPage();
   await page.route('http://localhost/',route=>route.fulfill({contentType:'text/html',body:'<!doctype html><title>Synthetic HTTP transport check</title>'}));
   await page.goto('http://localhost/');
@@ -118,7 +118,7 @@ async function runSeed(failure,scenario='A') {
   coordinator:{stop:async()=>{}},canaryCount:0,platform:'google',vault,key:{},AbortController,setTimeout,clearTimeout,
   show:value=>output.push(value),
   fetch:async(url,options)=>{
-   assert.equal(url,'http://127.0.0.1:8765/seed');assert.equal(options.method,'POST');assert.ok(options.signal);
+   assert.equal(url,'http://127.0.0.1:8765/seed');assert.equal(options.method,'POST');assert.ok(options.signal);assert.equal(JSON.parse(options.body).nowMs,now);
    if(failure==='fetch_throw')throw error();
    return {ok:failure!=='http_error',status:failure==='http_error'?400:200,json:async()=>{
     if(failure==='json_throw')throw error();
@@ -153,12 +153,56 @@ test('issuer tracing emits only fixed safe labels and status, never arbitrary re
  const events=[],server=listen(issuer,{port:0,trace:event=>events.push(event)});await once(server,'listening');
  try {
   const endpoint='http://127.0.0.1:'+server.address().port;
-  const valid=await fetch(endpoint+'/seed',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({scenario:'A',platform:'google',binding}),signal:AbortSignal.timeout(5000)});assert.equal(valid.status,200);await valid.json();
-  const invalid=await fetch(endpoint+'/seed',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({scenario:sensitive,platform:sensitive,binding:sensitive}),signal:AbortSignal.timeout(5000)});assert.equal(invalid.status,400);await invalid.text();
+  const valid=await fetch(endpoint+'/seed',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({scenario:'A',platform:'google',binding,nowMs:Date.now()}),signal:AbortSignal.timeout(5000)});assert.equal(valid.status,200);await valid.json();
+  const invalid=await fetch(endpoint+'/seed',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({scenario:sensitive,platform:sensitive,binding:sensitive,nowMs:Date.now()}),signal:AbortSignal.timeout(5000)});assert.equal(invalid.status,400);await invalid.text();
   const path=await fetch(endpoint+'/'+sensitive,{signal:AbortSignal.timeout(5000)});assert.equal(path.status,404);await path.text();
   assert.equal(events.length,3);assert.deepEqual(events[0],{method:'POST',pathname:'/seed',scenario:'A',platform:'google',httpStatus:200});
   for(const event of events){assert.deepEqual(Object.keys(event).sort(),['httpStatus','method','pathname','platform','scenario']);assert.ok(![sensitive,binding].some(value=>JSON.stringify(event).includes(value)));}
   assert.equal(events[1].scenario,'-');assert.equal(events[2].pathname,'other');
  }finally{await new Promise(resolve=>server.close(resolve));}
  assert.doesNotMatch(harnessSource,/console\.|catch\s*\(\s*(?:err|error)\s*\)/);
+});
+
+// LP244.65F: real signer -> real verifier, including the native/host clock separation.
+test('direct Google issuer flow uses native milliseconds and satisfies every durable contract field',async()=>{
+ const direct=await createIssuer(),nativeNow=Date.now()-3600000,nativeBinding=randomBytes(32).toString('hex');
+ const publicKey=await webcrypto.subtle.importKey('jwk',direct.publicJwk,{name:'ECDSA',namedCurve:'P-256'},false,['verify']);
+ const fixture=await direct.seed({scenario:'A',platform:'google',binding:nativeBinding,nowMs:nativeNow});
+ const value=await verifyContinuity({proof:fixture.proof,publicKey,binding:nativeBinding,platform:'google',now:nativeNow,crypto:webcrypto});
+ assert.ok(value);assert.ok(value.binding===nativeBinding);assert.equal(value.platform,'google');assert.equal(value.productId,'gridly_monthly');assert.equal(value.audience,'com.gridlygo.gridly');
+ assert.equal(value.environment,'production');assert.equal(value.entitlementState,'entitled');assert.equal(value.subscriptionState,'active');assert.equal(value.verificationSource,'gridly_server_store_api');
+ assert.equal(Date.parse(value.lastVerifiedAt),nativeNow-1000);assert.equal(fixture.verifiedAt,Date.parse(value.lastVerifiedAt));
+ assert.equal(Date.parse(value.currentPeriodEnd),nativeNow+7*86400000);assert.equal(Date.parse(value.continuityExpiresAt),fixture.verifiedAt+86400000);
+ assert.equal(Object.keys(value).sort().join(','),'audience,binding,continuityExpiresAt,currentPeriodEnd,entitlementState,environment,lastVerifiedAt,platform,productId,subscriptionState,verificationSource');
+ const header=JSON.parse(Buffer.from(fixture.proof.split('.')[0],'base64url'));assert.deepEqual(header,{alg:'ES256',typ:'gridly-continuity-v1'});
+ assert.equal(publicKey.algorithm.namedCurve,'P-256');assert.equal(publicKey.type,'public');assert.ok(!Object.hasOwn(direct.publicJwk,'d'));
+ for(const scenario of ['B','C','D','E']){
+  const negative=await direct.seed({scenario,platform:'google',binding:nativeBinding,nowMs:nativeNow});
+  assert.equal(await verifyContinuity({proof:negative.proof,publicKey,binding:nativeBinding,platform:'google',now:nativeNow,crypto:webcrypto}),null);
+ }
+});
+test('old host-clock issuance is rejected at the native sample; delay alone can reproduce verified-in-future',async()=>{
+ const sample=now,direct=await createIssuer();const publicKey=await webcrypto.subtle.importKey('jwk',direct.publicJwk,{name:'ECDSA',namedCurve:'P-256'},false,['verify']);
+ for(const hostNow of [sample+1001,sample+3600000]){
+  const old=await direct.seed({scenario:'A',platform:'google',binding},hostNow);
+  assert.equal(await verifyContinuity({proof:old.proof,publicKey,binding,platform:'google',now:sample,crypto:webcrypto}),null);
+  assert.ok(await verifyContinuity({proof:old.proof,publicKey,binding,platform:'google',now:hostNow,crypto:webcrypto}));
+ }
+ const fixed=await direct.seed({scenario:'A',platform:'google',binding,nowMs:sample});
+ assert.ok(await verifyContinuity({proof:fixed.proof,publicKey,binding,platform:'google',now:sample,crypto:webcrypto}));
+});
+test('HTTP issuer consumes the native sample, rejects missing/seconds timestamps and preserves all negative cases',async()=>{
+ const direct=await createIssuer(),sample=now,nativeBinding=randomBytes(32).toString('hex');
+ const publicKey=await webcrypto.subtle.importKey('jwk',direct.publicJwk,{name:'ECDSA',namedCurve:'P-256'},false,['verify']);
+ const server=listen(direct,{port:0});await once(server,'listening');
+ try {
+  const endpoint='http://127.0.0.1:'+server.address().port+'/seed';
+  for(const scenario of ['A','B','C','D','E']){
+   const response=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({scenario,platform:'google',binding:nativeBinding,nowMs:sample}),signal:AbortSignal.timeout(5000)});assert.equal(response.status,200);
+   const fixture=await response.json();assert.equal(!!await verifyContinuity({proof:fixture.proof,publicKey,binding:nativeBinding,platform:'google',now:sample,crypto:webcrypto}),scenario==='A');
+  }
+  for(const nowMs of [undefined,Math.floor(sample/1000),null,'invalid',sample+0.5]){
+   const response=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({scenario:'A',platform:'google',binding:nativeBinding,nowMs}),signal:AbortSignal.timeout(5000)});assert.equal(response.status,400);await response.text();
+  }
+ }finally{await new Promise(resolve=>server.close(resolve));}
 });

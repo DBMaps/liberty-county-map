@@ -63,9 +63,9 @@ export function listen(issuer,{port=8765,trace}={}) {
   if(req.method==='OPTIONS'){res.statusCode=204;res.end();return;}
   if(req.method!=='POST'||req.url!=='/seed'){res.statusCode=404;res.end();return;}
   try {let text='';for await(const bytes of req){text+=bytes;if(text.length>2048)throw Error();}
-   const value=JSON.parse(text);if(Object.keys(value).sort().join(',')!=='binding,platform,scenario')throw Error();
+   const value=JSON.parse(text);if(Object.keys(value).sort().join(',')!=='binding,nowMs,platform,scenario')throw Error();
    scenario=['A','B','C','D','E'].includes(value.scenario)?value.scenario:'-';platform=['apple','google'].includes(value.platform)?value.platform:'-';
-   res.setHeader('Content-Type','application/json');res.end(JSON.stringify(await issuer.seed(value)));
+   res.setHeader('Content-Type','application/json');res.end(JSON.stringify(await issuer.seed(value,value.nowMs)));
   }catch{res.statusCode=400;res.end('{"errorCategory":"invalid_fixture"}');}
  });server.listen(port,'127.0.0.1');return server;
 }
