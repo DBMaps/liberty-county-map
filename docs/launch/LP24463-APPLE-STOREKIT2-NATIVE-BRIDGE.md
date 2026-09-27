@@ -123,3 +123,34 @@ Before Apple billing activation, separately authorize and complete:
 Mac/device billing verification is future work; it does not reopen LP244.54 physical iPhone acceptance. Gridly's approved launch remains 18+, $2.99/month in the US through Apple/Google, with no free tier/trial/annual/grace/alternative billing/Family Sharing/direct web checkout.
 
 **LP244.63: prepared, Windows contracts PASS; final Apple certification and production billing NO-GO.**
+
+## LP244.63A — owner-observed Mac compile repair
+
+Starting HEAD: `d674bde2adf181ab8c9d648dfd067d7330f6fb0f`, same branch. Owner-provided Mac results: native preparation PASS; Capacitor sync PASS; Xcode project/scheme resolution PASS; StoreKit framework resolution PASS. Actual Swift compilation failed only in GridlyStoreKitPlugin.swift. This is new owner evidence, not a successful post-repair compile.
+
+RCA: Swift implicitly binds the caught exception as `error`. The helper also named `error(...)` was shadowed in the product/purchase catch blocks, so Swift attempted to call an `any Error` value. Rename the helper to `resultError` and update every helper call, including qualified state calls. Payloads, categories and entitlement/finish decisions are unchanged.
+
+Bounded capture cleanup: startObserving now explicitly captures `[self]` in its short main-actor setup task while the stored transaction signal remains `[weak self]`. The signal's function type explicitly requires MainActor. Replace the block-based foreground observer with [Foundation's selector observer](https://developer.apple.com/documentation/foundation/notificationcenter/addobserver(_:selector:name:object:)); it has no Foundation @Sendable callback capturing the plugin. The selector forwards the same fixed appForeground event through an explicit main-actor weak task. Registration remains idempotent, and stop/deinit remove only this plugin's named foreground observation. No Sendable/unchecked annotation is added to the plugin. Whether Xcode reports any remaining warnings requires the Mac rerun.
+
+Regression: focused source assertion rejects any helper declaration/invocation `error(`, requires the two catch returns to use resultError, and checks explicit/actor-aware captures and the absence of the previous Sendable observer block. This catches the confirmed defect but does not replace Swift compilation.
+
+SwiftPM folder: the owner observed only untracked `ios/App/App.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/` after Xcode resolution. Git tracks IDEWorkspaceChecks.plist in the parent but nothing under that SwiftPM folder; no audited repository rule requires staging it. Classify it as generated Xcode/SPM workspace resolution state for this task. Leave it untracked, do not delete/reset it, and do not stage it. The Windows checkout does not contain that Mac-generated folder. Existing SPM dependency pin remains exact 8.3.4; changing lockfile policy would be a separate decision. LP244.54's preserved stash is untouched.
+
+Windows result: all 13 focused LP244.63 tests passed, including the new regression. Its old-source negative control identifies the original helper/catch pattern. Bounded credential-pattern scan and working-tree/staged diff whitespace checks passed. No unrelated broad suite, sync, preparation, deploy, credentials, reporting activation or App Store change.
+
+### Mac compile rerun
+
+After transferring the repaired tracked file/commit into the existing Mac checkout, run from the repository root (no reset, clean or stash operation):
+
+```bash
+git branch --show-current
+git rev-parse HEAD
+git status --short
+xcodebuild -project ios/App/App.xcodeproj -list
+xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath /tmp/gridly-lp24463a-derived CODE_SIGNING_ALLOWED=NO build
+git status --short
+```
+
+No new sync/preparation is required solely for this Swift repair; the owner already passed those steps. Check the full build result and warnings; do not claim compile PASS until the rerun succeeds. Leave the generated SwiftPM directory out of staging. These commands compile, not Archive or App Store submission.
+
+After compile, StoreKit local/sandbox behavior, real provider/native security composition, delivery-before-finish, restore/reinstall/update behavior, and LP244.65 final runtime gating remain outstanding. LP244.54 remains CLOSED/PASS. Reporting remains disabled by the inherited baseline and is not queried or changed here. This repair is not production billing GO.

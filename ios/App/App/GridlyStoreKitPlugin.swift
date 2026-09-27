@@ -19,41 +19,47 @@ public class GridlyStoreKitPlugin: CAPPlugin, CAPBridgedPlugin {
         CAPPluginMethod(name: "stopObserving", returnType: CAPPluginReturnPromise)
     ]
     private let state = GridlyStoreKitState()
-    private var foregroundObserver: NSObjectProtocol?
+    private var observingForeground = false
     @objc func getProducts(_ call: CAPPluginCall) { Task { @MainActor in call.resolve(await state.products()) } }
     @objc func purchase(_ call: CAPPluginCall) { Task { @MainActor in call.resolve(await state.purchase()) } }
     @objc func getCurrentEntitlement(_ call: CAPPluginCall) { Task { @MainActor in call.resolve(await state.current()) } }
     @objc func refreshEntitlement(_ call: CAPPluginCall) { Task { @MainActor in call.resolve(await state.current()) } }
     @objc func restorePurchases(_ call: CAPPluginCall) {
         Task { @MainActor in
-            guard call.getBool("userInitiated") == true else { call.resolve(state.error("unknown")); return }
+            guard call.getBool("userInitiated") == true else { call.resolve(state.resultError("unknown")); return }
             do { try await AppStore.sync(); call.resolve(await state.current()) }
-            catch { call.resolve(state.error("store_unavailable")) }
+            catch { call.resolve(state.resultError("store_unavailable")) }
         }
     }
     @objc func finishTransaction(_ call: CAPPluginCall) {
         Task { @MainActor in call.resolve(await state.finish(call.getString("completionHandle"))) }
     }
     @objc func startObserving(_ call: CAPPluginCall) {
-        Task { @MainActor in
+        Task { @MainActor [self] in
             state.observe { [weak self] in
                 // Signal only: no transaction ID, signed payload or account data in events.
                 self?.notifyListeners("transactionUpdate", data: ["reason": "store_transaction_update"])
             }
-            if foregroundObserver == nil {
-                foregroundObserver = NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: .main) { [weak self] _ in
-                    self?.notifyListeners("appForeground", data: ["reason": "app_foreground"])
-                }
+            if !observingForeground {
+                NotificationCenter.default.addObserver(self, selector: #selector(appDidBecomeActive(_:)), name: UIApplication.didBecomeActiveNotification, object: nil)
+                observingForeground = true
             }
             call.resolve(["observing": true])
         }
     }
     @objc func stopObserving(_ call: CAPPluginCall) { Task { @MainActor in
         state.stop()
-        if let observer = foregroundObserver { NotificationCenter.default.removeObserver(observer); foregroundObserver = nil }
+        NotificationCenter.default.removeObserver(self, name: UIApplication.didBecomeActiveNotification, object: nil)
+        observingForeground = false
         call.resolve(["observing": false])
     } }
-    deinit { if let observer = foregroundObserver { NotificationCenter.default.removeObserver(observer) } }
+    @objc private func appDidBecomeActive(_ notification: Notification) {
+        // No Notification or non-Sendable plugin enters a Foundation @Sendable block.
+        Task { @MainActor [weak self] in
+            self?.notifyListeners("appForeground", data: ["reason": "app_foreground"])
+        }
+    }
+    deinit { NotificationCenter.default.removeObserver(self, name: UIApplication.didBecomeActiveNotification, object: nil) }
 }
 
 private final class GridlyStoreKitState {
@@ -61,7 +67,7 @@ private final class GridlyStoreKitState {
     private var completions: [String: Transaction] = [:]
     private var observer: Task<Void, Never>?
     private var purchasing = false
-    func error(_ category: String) -> [String: Any] { ["result": "error", "state": "unknown", "errorCategory": category] }
+    func resultError(_ category: String) -> [String: Any] { ["result": "error", "state": "unknown", "errorCategory": category] }
 
     @MainActor private func product() async throws -> Product {
         let items = try await Product.products(for: [Self.productID])
@@ -78,10 +84,10 @@ private final class GridlyStoreKitState {
             return ["result": "available", "productId": item.id, "displayName": item.displayName,
                     "displayPrice": item.displayPrice, "currency": item.priceFormatStyle.currencyCode,
                     "billingPeriod": "P1M", "storefront": "US", "hasOffer": false]
-        } catch { return error("product_unavailable") }
+        } catch { return resultError("product_unavailable") }
     }
     @MainActor func purchase() async -> [String: Any] {
-        guard !purchasing else { return error("store_unavailable") }
+        guard !purchasing else { return resultError("store_unavailable") }
         purchasing = true
         defer { purchasing = false }
         do {
@@ -90,9 +96,9 @@ private final class GridlyStoreKitState {
             case .success(let verified): return await evidence(verified)
             case .userCancelled: return ["result": "user_cancelled", "errorCategory": "user_cancelled"]
             case .pending: return ["result": "purchase_pending", "errorCategory": "purchase_pending"]
-            @unknown default: return error("unknown")
+            @unknown default: return resultError("unknown")
             }
-        } catch { return error("store_unavailable") }
+        } catch { return resultError("store_unavailable") }
     }
     @MainActor func current() async -> [String: Any] {
         var candidate: VerificationResult<Transaction>?
@@ -100,11 +106,11 @@ private final class GridlyStoreKitState {
             switch result {
             case .verified(let transaction):
                 if transaction.productID == Self.productID {
-                    guard candidate == nil else { return error("unknown") }
+                    guard candidate == nil else { return resultError("unknown") }
                     candidate = result
                 }
             case .unverified(let transaction, _):
-                if transaction.productID == Self.productID { return error("verification_failed") }
+                if transaction.productID == Self.productID { return resultError("verification_failed") }
             }
         }
         // Current entitlements omit expired/revoked purchases; latest is evidence, never access.
@@ -115,12 +121,12 @@ private final class GridlyStoreKitState {
     @MainActor private func evidence(_ result: VerificationResult<Transaction>) async -> [String: Any] {
         guard case .verified(let transaction) = result, transaction.productID == Self.productID,
               transaction.productType == .autoRenewable, transaction.ownershipType == .purchased,
-              let expiration = transaction.expirationDate else { return error("verification_failed") }
+              let expiration = transaction.expirationDate else { return resultError("verification_failed") }
         let environment: String
         switch transaction.environment {
         case .production: environment = "production"
         case .sandbox, .xcode: environment = "sandbox/test"
-        default: return error("verification_failed")
+        default: return resultError("verification_failed")
         }
         var hint = "unknown"
         if transaction.revocationDate != nil { hint = "not_entitled" }
@@ -144,7 +150,7 @@ private final class GridlyStoreKitState {
             } catch { hint = "unknown" }
         }
         let existing = completions.first(where: { $0.value.id == transaction.id })?.key
-        guard existing != nil || completions.count < 16 else { return error("store_unavailable") }
+        guard existing != nil || completions.count < 16 else { return resultError("store_unavailable") }
         let handle = existing ?? UUID().uuidString
         completions[handle] = transaction
         let formatter = ISO8601DateFormatter()
@@ -156,12 +162,12 @@ private final class GridlyStoreKitState {
     }
     @MainActor func finish(_ handle: String?) async -> [String: Any] {
         // Trusted coordinator calls only after verifying nonce-bound server proof.
-        guard let handle = handle, let transaction = completions[handle] else { return error("verification_failed") }
+        guard let handle = handle, let transaction = completions[handle] else { return resultError("verification_failed") }
         await transaction.finish()
         completions.removeValue(forKey: handle)
         return ["finished": true]
     }
-    @MainActor func observe(_ signal: @escaping () -> Void) {
+    @MainActor func observe(_ signal: @escaping @MainActor () -> Void) {
         guard observer == nil else { return }
         observer = Task { @MainActor in
             for await result in Transaction.updates {

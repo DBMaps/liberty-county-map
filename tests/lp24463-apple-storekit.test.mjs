@@ -8,6 +8,18 @@ import {createHandler} from '../supabase/functions/_shared/entitlement/handler.m
 import {runtimePolicy} from '../tools/native-web.mjs';
 const now=Date.parse('2026-09-27T01:00:00.000Z');
 const keys=await webcrypto.subtle.generateKey({name:'ECDSA',namedCurve:'P-256'},false,['sign','verify']);
+test('Swift catch binding cannot shadow error-result helper; observer captures stay explicit',()=>{
+ const source=readFileSync('ios/App/App/GridlyStoreKitPlugin.swift','utf8');
+ assert.match(source,/func resultError\(_ category: String\)/);
+ assert.doesNotMatch(source,/\berror\s*\(/,'Swift catch implicitly binds error: do not name/call the helper error');
+ assert.equal((source.match(/catch\s*\{\s*return resultError\(/g)||[]).length,2);
+ assert.match(source,/Task \{ @MainActor \[self\] in\s+state\.observe \{ \[weak self\]/);
+ assert.match(source,/@escaping @MainActor \(\) -> Void/);
+ assert.doesNotMatch(source,/addObserver\(forName:/,'no non-Sendable plugin capture in the Foundation Sendable callback');
+ assert.match(source,/selector: #selector\(appDidBecomeActive\(_:\)\)/);
+ assert.match(source,/Task \{ @MainActor \[weak self\] in\s+self\?\.notifyListeners\("appForeground"/);
+ assert.doesNotMatch(source,/@unchecked Sendable|GridlyStoreKitPlugin[^\n]*Sendable/);
+});
 function fixture({env='production',status=1,cancel=false,end=now+86400000}={}) {
  const events=[],handlers=new Map();
  const native={result:'verified',productId:APPLE_PRODUCT_ID,environment:env,state:'active',expiresAt:new Date(end).toISOString(),revoked:false,completionHandle:'synthetic-handle',signedTransaction:'synthetic.payload.signature'};
