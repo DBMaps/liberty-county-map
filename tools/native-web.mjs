@@ -16,6 +16,8 @@ export const runtimePolicy = Object.freeze({
   trees: [],
   files: [
     'index.html', 'manifest.json', 'service-worker.js', 'consumer-script-manifest.json', 'css/styles.css', 'legal',
+    // Packaged for opt-in Google composition; no startup/paywall activation.
+    'js/gridly-google-play-billing.mjs', 'js/gridly-entitlement.mjs', 'js/gridly-store-verification.mjs',
     'assets/UI', 'assets/desktop-gate', 'assets/icons', 'assets/markers', 'assets/onboarding',
     'assets/walkthrough/gridly-walkthrough-kbyg.png',
     'assets/walkthrough/gridly-walkthrough-nearby.png',

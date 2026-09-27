@@ -6,6 +6,7 @@ import com.getcapacitor.BridgeActivity
 class MainActivity : BridgeActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         registerPlugin(GridlyGeolocationPlugin::class.java)
+        registerPlugin(GridlyPlayBillingPlugin::class.java)
         super.onCreate(savedInstanceState)
 
         // WebView otherwise inherits the Android accessibility font scale as
