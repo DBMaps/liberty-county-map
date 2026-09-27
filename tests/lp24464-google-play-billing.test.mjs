@@ -56,7 +56,7 @@ test('launch/resume/update refresh is opt-in, silent, coalesced and disposable',
 test('server acknowledgment failure denies delivery; recheck retries same purchase without rebuying',async()=>{
  const f=fixture();let attempt=0;
  const handler=createHandler({platform:'google',authorizeNative:async()=>true,provider:{verify:async()=>{f.events.push('provider');return f.record;},acknowledge:async()=>{f.events.push('ack');if(++attempt===1)throw Error('private OAuth token');}},
- cache:{apply:async row=>{f.events.push('cache');assert.ok(!JSON.stringify(row).includes('synthetic-play-token'));return true;}},signingKey:keys.privateKey,fingerprintKey:hmac,crypto:webcrypto});
+ ackQueue:{ensure:async({record})=>{f.events.push('ack');if(++attempt===1)throw Error('private OAuth token');return record;}},cache:{apply:async row=>{f.events.push('cache');assert.ok(!JSON.stringify(row).includes('synthetic-play-token'));return true;}},signingKey:keys.privateKey,fingerprintKey:hmac,crypto:webcrypto});
  f.options.authority=createGoogleVerificationAuthority({invoke:async(name,{body})=>{assert.equal(name,'gridly-verify-google-subscription');const response=await handler(new Request('https://example.invalid',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}));return response.ok?{data:await response.json()}:{error:Error('upstream error')};}});
  const s=f.session();await s.purchase();assert.equal(s.allowed().allowed,false);assert.deepEqual(f.events,['purchase','provider','cache','ack']);await s.restore();assert.ok(s.allowed().allowed);assert.deepEqual(f.events.slice(4),['restore','provider','cache','ack','deliver']);assert.equal(f.events.filter(x=>x==='purchase').length,1);
 });

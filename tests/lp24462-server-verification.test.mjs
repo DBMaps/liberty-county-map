@@ -63,7 +63,7 @@ test('cache keeps only keyed fingerprint/minimal state; shared proof interoperat
 const request=(platform='apple',patch={})=>new Request('https://example.invalid/verify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({platform,environment:'production',nonce,productId:platform==='apple'?'com.gridlygo.gridly.monthly':'gridly_monthly',...(platform==='google'?{basePlanId:'monthly'}:{}),evidence:platform==='apple'?{signedTransactions:['synthetic.payload.signature']}:{purchaseTokens:['synthetic-google-token']},...patch})});
 function setup(platform='apple') {const events=[];return {events,platform,crypto:webcrypto,signingKey:keys.privateKey,fingerprintKey:hmac,
  authorizeNative:async()=>{events.push('auth');return true;},provider:{verify:async()=>{events.push('provider');return platform==='apple'?appleRecord():googleRecord(google({acknowledgementState:'ACKNOWLEDGEMENT_STATE_PENDING'}));},acknowledge:async()=>{events.push('ack');}},
- cache:{apply:async row=>{events.push('cache');assert.ok(!JSON.stringify(row).includes('synthetic'));return true;}}};}
+ ackQueue:{ensure:async({record})=>{events.push('ack');return record;}},cache:{apply:async row=>{events.push('cache');assert.ok(!JSON.stringify(row).includes('synthetic'));return true;}}};}
 test('default Edge skeleton closed; auth before verification; cache before ack; safe signed response',async()=>{
  assert.equal((await createHandler({platform:'apple'})(request())).status,503);
  for(const platform of ['apple','google']){const ports=setup(platform),res=await createHandler(ports)(request(platform));assert.equal(res.status,200);assert.deepEqual(Object.keys(await res.json()),['proof']);
@@ -76,7 +76,7 @@ test('malformed/forged/private errors never grant or expose evidence; no arbitra
  assert.equal((await createHandler(setup())(request('apple',{active:true}))).status,400);
  assert.equal((await createHandler(setup())(request('apple',{evidence:{signedTransactions:[]}}))).status,422);
  for(const value of [null,[],true])assert.equal((await createHandler(setup())(new Request('https://example.invalid/verify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(value)}))).status,400);
- const failedAck=setup('google');failedAck.provider.acknowledge=async()=>{throw Error('private provider response');};const ackRes=await createHandler(failedAck)(request('google'));assert.equal(ackRes.status,502);assert.deepEqual(await ackRes.json(),{error:'verification_unavailable'});
+ const failedAck=setup('google');failedAck.ackQueue.ensure=async()=>{throw Error('private provider response');};const ackRes=await createHandler(failedAck)(request('google'));assert.equal(ackRes.status,502);assert.deepEqual(await ackRes.json(),{error:'verification_unavailable'});
  const stale=setup();stale.cache.apply=async()=>false;assert.equal((await createHandler(stale)(request())).status,409);
 });
 test('reinstall proves from store without old identity; environment mismatch refused',async()=>{
