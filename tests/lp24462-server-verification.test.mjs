@@ -11,7 +11,7 @@ const keys=await webcrypto.subtle.generateKey({name:'ECDSA',namedCurve:'P-256'},
 const hmac=await webcrypto.subtle.generateKey({name:'HMAC',hash:'SHA-256'},false,['sign']);
 const tx=(patch={})=>({bundleId:'com.gridlygo.gridly',productId:'com.gridlygo.gridly.monthly',type:'Auto-Renewable Subscription',environment:'Production',originalTransactionId:'synthetic-chain',expiresDate:end,...patch});
 const renewal=(patch={})=>({originalTransactionId:'synthetic-chain',productId:'com.gridlygo.gridly.monthly',environment:'Production',autoRenewStatus:1,...patch});
-const google=(patch={})=>({regionCode:'US',subscriptionState:'SUBSCRIPTION_STATE_ACTIVE',acknowledgementState:'ACKNOWLEDGEMENT_STATE_ACKNOWLEDGED',lineItems:[{productId:'gridly_monthly',offerDetails:{basePlanId:'monthly'},expiryTime:new Date(end).toISOString(),autoRenewingPlan:{autoRenewEnabled:true}}],...patch});
+const google=(patch={})=>({regionCode:'US',startTime:new Date(now-1000).toISOString(),subscriptionState:'SUBSCRIPTION_STATE_ACTIVE',acknowledgementState:'ACKNOWLEDGEMENT_STATE_ACKNOWLEDGED',lineItems:[{productId:'gridly_monthly',offerDetails:{basePlanId:'monthly'},expiryTime:new Date(end).toISOString(),autoRenewingPlan:{autoRenewEnabled:true}}],...patch});
 const appleRecord=(t=tx(),r=renewal(),status=1)=>normalizeApple(t,r,status,{env:'production',originalReference:'synthetic-chain',now});
 const googleRecord=data=>normalizeGoogle(data,{env:'production',token:'synthetic-google-token',now});
 test('Apple active/canceled/expired/revoked/no-grace normalization',()=>{

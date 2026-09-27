@@ -33,8 +33,11 @@ async function setup(environment,{readSecret,authorizeNative,makeSupabaseClient,
    if(account.type!=='service_account'||typeof account.private_key!=='string'||(account.token_uri!==undefined&&account.token_uri!=='https://oauth2.googleapis.com/token'))throw Error();
    const der=bytes(account.private_key.split(/\r?\n/).filter(line=>line&&!line.startsWith('-----')).join(''));
    const key=await crypto.subtle.importKey('pkcs8',der,{name:'RSASSA-PKCS1-v1_5',hash:'SHA-256'},false,['sign']);
-   const aes=bytes(secret('GRIDLY_GOOGLE_ACK_AES_KEY_B64'));if(aes.length!==32)throw Error();
-   google={accessToken:googleServiceAccessToken({clientEmail:account.client_email,privateKey:key,crypto,fetchImpl}),store:rpc.store,encryptionKey:await crypto.subtle.importKey('raw',aes,'AES-GCM',false,['encrypt','decrypt']),fetchImpl};
+   const aes=bytes(secret('GRIDLY_GOOGLE_ACK_AES_CURRENT_KEY_B64'));if(aes.length!==32)throw Error();
+   const current={version:secret('GRIDLY_GOOGLE_ACK_AES_CURRENT_VERSION'),key:await crypto.subtle.importKey('raw',aes,'AES-GCM',false,['encrypt','decrypt'])};
+   let previous;const pv=readSecret('GRIDLY_GOOGLE_ACK_AES_PREVIOUS_VERSION'),pk=readSecret('GRIDLY_GOOGLE_ACK_AES_PREVIOUS_KEY_B64'),until=readSecret('GRIDLY_GOOGLE_ACK_AES_PREVIOUS_RETIRE_AT');
+   if(pv||pk||until){const old=bytes(pk);if(old.length!==32)throw Error();previous={version:pv,key:await crypto.subtle.importKey('raw',old,'AES-GCM',false,['encrypt','decrypt']),retireAt:until};}
+   google={accessToken:googleServiceAccessToken({clientEmail:account.client_email,privateKey:key,crypto,fetchImpl}),store:rpc.store,encryptionKeys:{current,previous},fetchImpl};
   }catch{google=undefined;}
   return factory({...common,apple,google});
  }catch{return factory();}

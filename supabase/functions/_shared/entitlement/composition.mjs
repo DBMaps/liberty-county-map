@@ -12,10 +12,10 @@ function compose(environment,ports={}) {
   const appleReady=typeof apple?.signedVerifier?.verifyAndDecodeTransaction==='function'&&typeof apple?.signedVerifier?.verifyAndDecodeRenewalInfo==='function'&&typeof apple?.apiClient?.getAllSubscriptionStatuses==='function';
   const appleHandler=appleReady?createHandler({...shared,platform:'apple',provider:appleAdapter({...apple,env:environment})}):closed('apple');
   let googleHandler=closed('google'),retry=null;
-  if(typeof google?.accessToken==='function'&&google?.store&&google?.encryptionKey){
+  if(typeof google?.accessToken==='function'&&google?.store&&google?.encryptionKeys){
    const provider=googleAdapter({...google,env:environment});
-   const queue=acknowledgmentQueue({environment,store:google.store,cipher:tokenCipher({key:google.encryptionKey,crypto}),provider,cache,fingerprintKey,crypto});
-   googleHandler=createHandler({...shared,platform:'google',provider,ackQueue:queue});retry=()=>queue.drain();
+   const queue=acknowledgmentQueue({environment,store:google.store,cipher:tokenCipher({...google.encryptionKeys,crypto}),provider,cache,fingerprintKey,crypto});
+   googleHandler=createHandler({...shared,platform:'google',provider,ackQueue:queue});retry=options=>queue.drain(null,options);
   }
   return Object.freeze({apple:appleHandler,google:googleHandler,retryGoogle:retry});
  }catch{return Object.freeze({apple:closed('apple'),google:closed('google'),retryGoogle:null});}

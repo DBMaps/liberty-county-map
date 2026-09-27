@@ -10,11 +10,11 @@ import {normalizeGoogle,cacheRecord} from '../supabase/functions/_shared/entitle
 const key=await crypto.subtle.generateKey({name:'AES-GCM',length:256},false,['encrypt','decrypt']);
 const hmac=await crypto.subtle.generateKey({name:'HMAC',hash:'SHA-256'},false,['sign']);
 const signing=await crypto.subtle.generateKey({name:'ECDSA',namedCurve:'P-256'},false,['sign','verify']);
-const cipher=tokenCipher({key,crypto}),token='synthetic-google-token',fingerprint='a'.repeat(64),now=Date.now();
-const data=(patch={})=>({regionCode:'US',subscriptionState:'SUBSCRIPTION_STATE_ACTIVE',acknowledgementState:'ACKNOWLEDGEMENT_STATE_PENDING',lineItems:[{productId:'gridly_monthly',offerDetails:{basePlanId:'monthly'},expiryTime:new Date(now+86400000).toISOString(),autoRenewingPlan:{autoRenewEnabled:true}}],...patch});
+const cipher=tokenCipher({current:{version:'test-v1',key},crypto}),token='synthetic-google-token',fingerprint='a'.repeat(64),now=Date.now();
+const data=(patch={})=>({regionCode:'US',startTime:new Date(now-1000).toISOString(),subscriptionState:'SUBSCRIPTION_STATE_ACTIVE',acknowledgementState:'ACKNOWLEDGEMENT_STATE_PENDING',lineItems:[{productId:'gridly_monthly',offerDetails:{basePlanId:'monthly'},expiryTime:new Date(now+86400000).toISOString(),autoRenewingPlan:{autoRenewEnabled:true}}],...patch});
 const row=patch=>normalizeGoogle(data(patch),{env:'production',token,now});
 function setup(){let saved=null,acknowledged=false,fail=false,resolutions=[],events=[];
- const store={enqueue:async value=>{events.push('enqueue');saved??={...value,lease:'synthetic-lease'};return true;},claim:async()=>saved?[saved]:[],resolve:async value=>{resolutions.push(value);if(value.outcome!=='retry')saved=null;return true;}};
+ const store={enqueue:async value=>{events.push('enqueue');saved??={...value,lease:'synthetic-lease',lease_until:new Date(Date.now()+60000).toISOString(),expires_at:new Date(Date.now()+3600000).toISOString()};return true;},claim:async()=>saved?[saved]:[],resolve:async value=>{resolutions.push(value);if(value.outcome!=='retry')saved=null;return true;}};
  const provider={verify:async()=>{events.push('verify');return row(acknowledged?{acknowledgementState:'ACKNOWLEDGEMENT_STATE_ACKNOWLEDGED'}:{});},acknowledge:async()=>{events.push('ack');if(fail)throw Error('private token failure');acknowledged=true;}};
  const cache={apply:async()=>{events.push('cache');return true;}},ports={environment:'production',store,cipher,provider,cache,fingerprintKey:hmac,crypto};
  return {ports,events,resolutions,fail:value=>{fail=value;},acknowledged:value=>{acknowledged=value;},saved:()=>saved};
@@ -23,7 +23,7 @@ test('AES-GCM authenticates environment/fingerprint; tamper and wrong key fail; 
  const sealed=await cipher.seal(token,'production',fingerprint);assert.equal(await cipher.open(sealed),token);assert.ok(!JSON.stringify(sealed).includes(token));
  assert.notEqual((await cipher.seal(token,'production',fingerprint)).iv,sealed.iv);
  for(const patch of [{environment:'sandbox_test'},{chain_fingerprint:'b'.repeat(64)},{ciphertext:sealed.ciphertext.slice(0,-3)+'AAA'},{iv:'invalid'}])await assert.rejects(()=>cipher.open({...sealed,...patch}));
- const other=tokenCipher({key:await crypto.subtle.generateKey({name:'AES-GCM',length:256},false,['encrypt','decrypt']),crypto});await assert.rejects(()=>other.open(sealed));
+ const other=tokenCipher({current:{version:'test-v1',key:await crypto.subtle.generateKey({name:'AES-GCM',length:256},false,['encrypt','decrypt'])},crypto});await assert.rejects(()=>other.open(sealed));
  assert.throws(()=>tokenCipher({key:{},crypto}));
 });
 test('durable enqueue precedes fresh verification/cache/ack/completion; failure survives new process object',async()=>{
@@ -39,9 +39,9 @@ test('crash after Google ACK uses current ACKNOWLEDGED and does not acknowledge 
 test('confirmed denial removes pending ciphertext and never acknowledges',async()=>{
  const s=setup(),cached=await cacheRecord(row(),hmac,crypto);await s.ports.store.enqueue(await cipher.seal(token,'production',cached.chain_fingerprint));
  s.ports.provider.verify=async()=>row({subscriptionState:'SUBSCRIPTION_STATE_EXPIRED',lineItems:[{...data().lineItems[0],expiryTime:new Date(now-1).toISOString()}]});
- assert.equal((await acknowledgmentQueue(s.ports).drain())[0].outcome,'denied');assert.equal(s.saved(),null);assert.ok(!s.events.includes('ack'));
+ assert.equal((await acknowledgmentQueue(s.ports).drain())[0].outcome,'terminal');assert.equal(s.saved(),null);assert.ok(!s.events.includes('ack'));
 });
-test('cipher, provider and reconciliation failures retain retry work; lease completion false denies ensure',async()=>{
+test('terminal cipher removes work; provider/cache retry; false completion denies ensure',async()=>{
  for(const kind of ['cipher','provider','cache','completion']){
   const s=setup(),record=row(),cached=await cacheRecord(record,hmac,crypto);
   if(kind==='cipher')s.ports.cipher={seal:cipher.seal,open:async()=>{throw Error('private');}};
@@ -56,7 +56,7 @@ test('production composition cannot be enabled by input; missing/invalid keys/ad
  for(const ports of [{},{authorizeNative:async()=>true},{signingKey:signing.privateKey}]){
   const composition=productionComposition(ports);assert.equal((await composition.google(request('production'))).status,503);assert.equal(composition.retryGoogle,null);
  }
- const s=setup(),common={authorizeNative:async()=>true,cache:s.ports.cache,signingKey:signing.privateKey,fingerprintKey:hmac,crypto,google:{accessToken:async()=> 'synthetic-oauth',encryptionKey:key,store:s.ports.store,fetchImpl:async()=>Response.json(data({acknowledgementState:'ACKNOWLEDGEMENT_STATE_ACKNOWLEDGED'}))}};
+ const s=setup(),common={authorizeNative:async()=>true,cache:s.ports.cache,signingKey:signing.privateKey,fingerprintKey:hmac,crypto,google:{accessToken:async()=> 'synthetic-oauth',encryptionKeys:{current:{version:'test-v1',key}},store:s.ports.store,fetchImpl:async()=>Response.json(data({acknowledgementState:'ACKNOWLEDGEMENT_STATE_ACKNOWLEDGED'}))}};
  const prod=productionComposition(common);assert.equal((await prod.google(request('sandbox/test'))).status,401);assert.equal((await prod.google(request('production'))).status,200);
  const sandbox=sandboxAcceptanceComposition(common);assert.equal((await sandbox.google(request('production'))).status,401);assert.equal((await sandbox.google(request('sandbox/test'))).status,502); // Production provider data cannot grant sandbox authority.
 });
@@ -77,7 +77,7 @@ test('Google service OAuth uses fixed scope/audience, RS256, bounded cache and n
   return Response.json({access_token:'synthetic-oauth',token_type:'Bearer',expires_in:3600});}});
  assert.deepEqual(await Promise.all([get(),get()]),['synthetic-oauth','synthetic-oauth']);assert.equal(calls,1);time+=3600000;await get();assert.equal(calls,2);
  assert.throws(()=>googleServiceAccessToken({clientEmail:'consumer@example.invalid',privateKey:rsa.privateKey,crypto}));
- const fail=googleServiceAccessToken({clientEmail:'synthetic@synthetic.iam.gserviceaccount.com',privateKey:rsa.privateKey,crypto,fetchImpl:async()=>new Response(token,{status:401})});await assert.rejects(fail,error=>error.message==='provider_unavailable');
+ const fail=googleServiceAccessToken({clientEmail:'synthetic@synthetic.iam.gserviceaccount.com',privateKey:rsa.privateKey,crypto,fetchImpl:async()=>new Response(token,{status:401})});await assert.rejects(fail,error=>error.message==='credential_unavailable');
 });
 test('new modules never log evidence, mutate reporting or enable production config; default routes dormant',()=>{
  for(const file of ['acknowledgment.mjs','composition.mjs','rpc-ports.mjs','google-oauth.mjs','server-setup.mjs','ack-health.mjs']){
@@ -96,8 +96,8 @@ test('post-ack verification, rather than original observation, sets signed autho
 });
 test('health classification redacts work identity, reports failure/stale/expiry and missing runner',async()=>{
  const {acknowledgmentHealth}=await import('../supabase/functions/_shared/entitlement/ack-health.mjs');
- const base={environment:'production',subsystem:'google_ack',last_tick_at:new Date(now).toISOString(),pending_count:0,failed_count:0,stale_count:0,overdue_count:0,expired_count:0};
- for(const [patch,state] of [[{},'healthy'],[{failed_count:1},'failed'],[{stale_count:1},'stale'],[{overdue_count:1},'overdue'],[{expired_count:1},'overdue'],[{last_tick_at:null},'monitor_error'],[{last_tick_at:new Date(now-90001).toISOString()},'monitor_error'],[{pending_count:1000001},'monitor_error']])assert.equal(acknowledgmentHealth({...base,...patch},{now}).health_state,state);
+ const base={environment:'production',subsystem:'google_ack',last_completed_at:new Date(now).toISOString(),last_purge_at:new Date(now).toISOString(),pending_count:0,due_count:0,failed_count:0,stale_count:0,overdue_count:0,expired_count:0,terminal_count:0,oldest_pending_age_seconds:0,error_category:'none'};
+ for(const [patch,state] of [[{},'healthy'],[{failed_count:1},'failed'],[{stale_count:1},'stale'],[{overdue_count:1},'overdue'],[{expired_count:1},'overdue'],[{last_completed_at:null},'monitor_error'],[{last_completed_at:new Date(now-90001).toISOString()},'monitor_error'],[{pending_count:1000001},'monitor_error']])assert.equal(acknowledgmentHealth({...base,...patch},{now}).health_state,state);
  const output=acknowledgmentHealth({...base,token,iv:'private',lease:'private',chain_fingerprint:fingerprint},{now});assert.ok(!JSON.stringify(output).includes('private'));assert.ok(!JSON.stringify(output).includes(token));
 });
 test('secret composition fails closed without owner values/native admission; secrets are never queried on missing admission',async()=>{
@@ -121,7 +121,7 @@ test('operator key imports and official Apple constructor arguments are exact; n
 test('composed HTTP verifier outage denies proof, independent retry completes, restore admits without rebuy',async()=>{
  const s=setup();let acked=false,fail=true,acks=0;
  const ports={authorizeNative:async()=>true,cache:s.ports.cache,signingKey:signing.privateKey,fingerprintKey:hmac,crypto,
- google:{accessToken:async()=> 'synthetic-oauth',encryptionKey:key,store:s.ports.store,fetchImpl:async(url,options)=>{
+ google:{accessToken:async()=> 'synthetic-oauth',encryptionKeys:{current:{version:'test-v1',key}},store:s.ports.store,fetchImpl:async(url,options)=>{
   if(options.method==='POST'){acks++;if(fail)return new Response(null,{status:503});acked=true;return new Response(null,{status:204});}
   return Response.json(data(acked?{acknowledgementState:'ACKNOWLEDGEMENT_STATE_ACKNOWLEDGED'}:{}));}}};
  let server=productionComposition(ports),response=await server.google(request('production'));assert.equal(response.status,502);assert.deepEqual(await response.json(),{error:'verification_unavailable'});assert.ok(s.saved());

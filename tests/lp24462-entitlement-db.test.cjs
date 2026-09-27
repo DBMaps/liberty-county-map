@@ -33,8 +33,8 @@ dbTest('sandbox separation, expiry/cancellation/unknown and bounded privacy prun
  for(const [i,patch] of [{environment:'sandbox_test'}, {subscription_state:'canceled_pending_expiry'},
  {subscription_state:'expired',entitlement_state:'not_entitled',current_period_end:new Date(Date.parse(record.last_verified_at)-1).toISOString()},
  {subscription_state:'unknown',entitlement_state:'unknown',current_period_end:null,error_category:'verification_unavailable'}].entries())assert.equal(apply({...record,chain_fingerprint:String(i+1).repeat(64),...patch}),'t');
- assert.equal(sql("set role service_role;select public.gridly_prune_store_entitlement_cache(500)"),'0');
- sql("update subscription_ops.store_entitlements set last_verified_at=transaction_timestamp()-interval '25 hours',cache_expires_at=transaction_timestamp()-interval '1 hour',current_period_end=transaction_timestamp()+interval '1 day' where chain_fingerprint=repeat('a',64)");
+ assert.equal(sql("set role service_role;select public.gridly_prune_store_entitlement_cache(500)"),'1');
+ sql("update subscription_ops.store_entitlements set last_verified_at=transaction_timestamp()-interval '11 minutes',cache_expires_at=transaction_timestamp()-interval '1 minute',current_period_end=transaction_timestamp()+interval '1 day' where chain_fingerprint=repeat('a',64)");
  assert.equal(sql("set role service_role;select public.gridly_prune_store_entitlement_cache(1)"),'1');
  sql('set role service_role;select public.gridly_prune_store_entitlement_cache(501)',{fail:true});
  assert.equal(sql('select reporting_enabled::text||protocol_version::text from report_retention.admission_state'),'false2');

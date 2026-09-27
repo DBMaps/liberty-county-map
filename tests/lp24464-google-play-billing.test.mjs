@@ -9,7 +9,7 @@ import {runtimePolicy} from '../tools/native-web.mjs';
 const now=Date.parse('2026-09-27T12:00:00.000Z');
 const keys=await webcrypto.subtle.generateKey({name:'ECDSA',namedCurve:'P-256'},false,['sign','verify']);
 const hmac=await webcrypto.subtle.generateKey({name:'HMAC',hash:'SHA-256'},false,['sign']);
-const data=(patch={})=>({regionCode:'US',subscriptionState:'SUBSCRIPTION_STATE_ACTIVE',acknowledgementState:'ACKNOWLEDGEMENT_STATE_PENDING',lineItems:[{productId:'gridly_monthly',offerDetails:{basePlanId:'monthly'},expiryTime:new Date(now+86400000).toISOString(),autoRenewingPlan:{autoRenewEnabled:true}}],...patch});
+const data=(patch={})=>({regionCode:'US',startTime:new Date(now-1000).toISOString(),subscriptionState:'SUBSCRIPTION_STATE_ACTIVE',acknowledgementState:'ACKNOWLEDGEMENT_STATE_PENDING',lineItems:[{productId:'gridly_monthly',offerDetails:{basePlanId:'monthly'},expiryTime:new Date(now+86400000).toISOString(),autoRenewingPlan:{autoRenewEnabled:true}}],...patch});
 function fixture({env='production',providerData=data()}={}) {
  const events=[],handlers=new Map(),native={result:'purchased',productId:'gridly_monthly',basePlanId:'monthly',purchaseToken:'synthetic-play-token',acknowledgementRequired:true};
  const record=normalizeGoogle(providerData,{env,token:native.purchaseToken,now});

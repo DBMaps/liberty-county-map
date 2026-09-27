@@ -13,5 +13,7 @@ export function subscriptionRpcPorts(client) {
  store:Object.freeze({enqueue:record=>boolean('gridly_enqueue_google_ack',{p_record:record}),
  claim:async input=>{const rows=await call('gridly_claim_google_ack',{p_environment:input.environment,p_limit:input.limit,p_fingerprint:input.chain_fingerprint});if(!Array.isArray(rows)||rows.length>input.limit)throw Error('subscription_unavailable');return rows;},
  resolve:input=>boolean('gridly_resolve_google_ack',{p_environment:input.environment,p_fingerprint:input.chain_fingerprint,p_lease:input.lease,p_outcome:input.outcome,p_error_category:input.error_category}),
- health:()=>call('gridly_google_ack_health',{})})});
+ health:()=>call('gridly_google_ack_health',{}),
+ completeRun:input=>boolean('gridly_complete_google_ack_run',{p_environment:input.environment,p_error_category:input.error_category}),
+ housekeeping:()=>call('gridly_subscription_housekeeping',{})})});
 }

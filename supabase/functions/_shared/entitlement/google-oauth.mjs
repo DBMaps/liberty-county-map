@@ -12,7 +12,7 @@ export function googleServiceAccessToken({clientEmail,privateKey,crypto=globalTh
    const issued=Math.floor(now()/1000),head=json({alg:'RS256',typ:'JWT'}),body=json({iss:clientEmail,scope:'https://www.googleapis.com/auth/androidpublisher',aud:'https://oauth2.googleapis.com/token',iat:issued,exp:issued+3600});
    const data=head+'.'+body,signed=await crypto.subtle.sign('RSASSA-PKCS1-v1_5',privateKey,enc.encode(data));
    const response=await fetchImpl('https://oauth2.googleapis.com/token',{method:'POST',redirect:'manual',signal:AbortSignal.timeout(8000),headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({grant_type:'urn:ietf:params:oauth:grant-type:jwt-bearer',assertion:data+'.'+b64(new Uint8Array(signed))})});
-   if(!response.ok)throw Error('provider_unavailable');
+   if(!response.ok)throw Error([401,403].includes(response.status)?'credential_unavailable':'provider_unavailable');
    const reader=response.body?.getReader();if(!reader)throw Error('provider_unavailable');let size=0;const chunks=[];
    try{while(true){const {done,value}=await reader.read();if(done)break;size+=value.length;if(size>8192)throw Error('provider_unavailable');chunks.push(value);}}finally{await reader.cancel().catch(()=>{});}
    const bytes=new Uint8Array(size);let offset=0;for(const chunk of chunks){bytes.set(chunk,offset);offset+=chunk.length;}
@@ -20,6 +20,6 @@ export function googleServiceAccessToken({clientEmail,privateKey,crypto=globalTh
    if(result.token_type!=='Bearer'||typeof result.access_token!=='string'||result.access_token.length<1||result.access_token.length>4096||!Number.isInteger(result.expires_in)||result.expires_in<1||result.expires_in>3600)throw Error('provider_unavailable');
    cached={token:result.access_token,until:now()+result.expires_in*1000};return cached.token;
   })();
-  try{return await inflight;}catch{throw Error('provider_unavailable');}finally{inflight=null;}
+  try{return await inflight;}catch(error){throw Error(error?.message==='credential_unavailable'?'credential_unavailable':'provider_unavailable');}finally{inflight=null;}
  };
 }
