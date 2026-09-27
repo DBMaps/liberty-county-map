@@ -84,8 +84,8 @@ test('legal documents are bundled, reachable from settings and consistent with s
     assert.match(app,new RegExp(`data-document="${name}"`));
   }
   const manifest = JSON.parse(fs.readFileSync(path.join(ROOT,'consumer-script-manifest.json'),'utf8'));
-  const moduleIndex = manifest.startupScripts.findIndex(item => item.startsWith('js/gridly-ugc-compliance.js'));
-  const appIndex = manifest.startupScripts.findIndex(item => item.startsWith('js/app.js'));
+  const moduleIndex = manifest.protectedStartupScripts.findIndex(item => item.startsWith('js/gridly-ugc-compliance.js'));
+  const appIndex = manifest.protectedStartupScripts.findIndex(item => item.startsWith('js/app.js'));
   assert.ok(moduleIndex>0 && moduleIndex<appIndex);
   const nativeTool = fs.readFileSync(path.join(ROOT,'tools/native-web.mjs'),'utf8');
   assert.match(nativeTool,/'legal'/);

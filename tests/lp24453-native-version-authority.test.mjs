@@ -33,7 +33,7 @@ test('current configured native CLI accepts independent script revisions and ver
   assert.notEqual(new URL(contract.scripts[1], 'https://gridly.invalid/').searchParams.get('v'), contract.version);
   assert.deepEqual(await communitySubmissionContract(destination), contract);
   const manifest = await readConsumerScriptManifest(root);
-  assert.ok(manifest.startupScripts.includes('js/gridly-map-visibility.js?v=lp24448f2'));
+  assert.ok(manifest.protectedStartupScripts.includes('js/gridly-map-visibility.js?v=lp24448f2'));
   for (const path of ['consumer-script-manifest.json', 'js/app.js', 'js/gridly-map-visibility.js', 'service-worker.js']) {
     assert.deepEqual(await readFile(join(destination, path)), await read(path), path);
   }
@@ -63,7 +63,7 @@ test('submission guard still rejects changed queries, missing/reordered scripts,
   for (const mutated of [
     index.replace(app, app.replace('lp24448-awareness', contract.version)),
     index.replace(protocol, protocol.replace(contract.version, 'retired')),
-    index.replace(`<script src="${protocol}"></script>`, ''),
+    index.replace(`<script type="application/gridly-protected" data-gridly-source="${protocol}"></script>`, ''),
     index.replace(protocol, '__APP__').replace(app, protocol).replace('__APP__', app)
   ]) {
     await writeFile(join(directory, 'index.html'), mutated);
@@ -89,7 +89,7 @@ test('consumer manifest still rejects URL drift, order drift and omitted map vis
     scripts => [...scripts].reverse(),
     scripts => scripts.filter(src => !src.startsWith('js/gridly-map-visibility.js'))
   ]) {
-    await writeFile(join(directory, 'consumer-script-manifest.json'), JSON.stringify({ ...manifest, startupScripts: transform(manifest.startupScripts) }));
-    await assert.rejects(readConsumerScriptManifest(directory), /Consumer startup scripts differ from the governed manifest or order/);
+    await writeFile(join(directory, 'consumer-script-manifest.json'), JSON.stringify({ ...manifest, protectedStartupScripts: transform(manifest.protectedStartupScripts) }));
+    await assert.rejects(readConsumerScriptManifest(directory), /Protected startup scripts differ from the governed manifest or order/);
   }
 });

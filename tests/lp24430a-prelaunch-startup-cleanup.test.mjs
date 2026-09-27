@@ -9,7 +9,7 @@ import { consumerRuntimeScriptPaths, nativePackagedScriptPaths, stage } from '..
 const text = (path) => readFileSync(path, 'utf8');
 const index = text('index.html');
 const manifest = JSON.parse(text('consumer-script-manifest.json'));
-const indexScripts = [...index.matchAll(/<script\b[^>]*\bsrc=["']([^"']+)["'][^>]*>/gi)].map((match) => match[1]);
+const indexScripts = [...index.matchAll(/<script\b[^>]*\bdata-gridly-source=["']([^"']+)["'][^>]*>/gi)].map((match) => match[1]);
 const pathOf = (source) => source.split(/[?#]/, 1)[0];
 
 const nonconsumerNativeScripts = [
@@ -43,9 +43,11 @@ const nonconsumerNativeScripts = [
   'js/lp1045-txgio-address-runtime.js'
 ];
 
-test('normal consumer startup exactly matches the governed ordered manifest', () => {
+test('paid bootstrap precedes inert protected startup in exact governed order', () => {
   assert.equal(manifest.schemaVersion, 'gridly.consumerScripts.v1');
-  assert.deepEqual(indexScripts, manifest.startupScripts);
+  assert.deepEqual([...index.matchAll(/<script\b[^>]*\bsrc=["']([^"']+)["'][^>]*>/gi)].map(match => match[1]), manifest.startupScripts);
+  assert.deepEqual(manifest.startupScripts, ['js/gridly-paid-bootstrap.js']);
+  assert.deepEqual(indexScripts, manifest.protectedStartupScripts);
   assert.equal(indexScripts.length, 80);
   assert.equal(new Set(indexScripts).size, indexScripts.length);
   assert.equal(manifest.diagnosticScripts.length, 19);
@@ -120,8 +122,8 @@ test('native stage contains only governed consumer JavaScript plus exact vendor 
     const expected = nativePackagedScriptPaths(manifest).sort();
     const staged = expected.filter((path) => existsSync(join(destination, path))).sort();
     assert.deepEqual(staged, expected);
-    assert.equal(runtime.length, 80);
-    assert.equal(expected.length, 81);
+    assert.equal(runtime.length, 81);
+    assert.equal(expected.length, 82);
     for (const entry of manifest.diagnosticScripts) {
       assert.equal(existsSync(join(destination, pathOf(entry.src))), entry.nativeOptIn === true, `${entry.src} packaging must match its governed boundary`);
     }

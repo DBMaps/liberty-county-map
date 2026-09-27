@@ -15,8 +15,9 @@ const output = resolve(root, process.argv.includes('--output') ? process.argv[pr
 export const runtimePolicy = Object.freeze({
   trees: [],
   files: [
-    'index.html', 'manifest.json', 'service-worker.js', 'consumer-script-manifest.json', 'css/styles.css', 'legal',
-    // Apple and Google modules support opt-in subscription composition; no startup/paywall activation.
+    'index.html', 'manifest.json', 'service-worker.js', 'consumer-script-manifest.json', 'css/styles.css', 'css/gridly-paid-access.css', 'legal',
+    // Paid admission precedes the protected stack; both store adapters use shared verification.
+    'js/gridly-paid-access.mjs', 'js/gridly-paid-config.mjs', 'js/gridly-paid-ui.mjs', 'js/gridly-paid-startup.mjs',
     'js/gridly-apple-storekit.mjs', 'js/gridly-google-play-billing.mjs',
     'js/gridly-entitlement.mjs', 'js/gridly-store-verification.mjs',
     'assets/UI', 'assets/desktop-gate', 'assets/icons', 'assets/markers', 'assets/onboarding',
@@ -85,6 +86,7 @@ function localScriptPath(source) {
 export function consumerRuntimeScriptPaths(manifest) {
   return [...new Set([
     ...manifest.startupScripts.map(localScriptPath).filter(Boolean),
+    ...manifest.protectedStartupScripts.map(localScriptPath).filter(Boolean),
     ...manifest.dynamicRuntimeScripts.map(localScriptPath)
   ])];
 }
@@ -99,12 +101,16 @@ export function nativePackagedScriptPaths(manifest) {
 export async function readConsumerScriptManifest(sourceRoot = root) {
   const manifest = JSON.parse(await readFile(join(sourceRoot, consumerScriptManifestPath), 'utf8'));
   if (manifest.schemaVersion !== 'gridly.consumerScripts.v1') throw new Error('Unsupported consumer script manifest schema.');
-  if (!Array.isArray(manifest.startupScripts) || !Array.isArray(manifest.dynamicRuntimeScripts) || !Array.isArray(manifest.diagnosticScripts)) throw new Error('Consumer script manifest boundaries are incomplete.');
+  if (!Array.isArray(manifest.protectedStartupScripts) || !Array.isArray(manifest.startupScripts) || !Array.isArray(manifest.dynamicRuntimeScripts) || !Array.isArray(manifest.diagnosticScripts)) throw new Error('Consumer script manifest boundaries are incomplete.');
   if (manifest.diagnosticScripts.length !== 19) throw new Error(`Expected 19 opt-in diagnostic scripts; found ${manifest.diagnosticScripts.length}.`);
 
   const index = await readFile(join(sourceRoot, 'index.html'), 'utf8');
   const indexScripts = [...index.matchAll(/<script\b[^>]*\bsrc=["']([^"']+)["'][^>]*>/gi)].map((match) => match[1]);
   if (JSON.stringify(indexScripts) !== JSON.stringify(manifest.startupScripts)) throw new Error('Consumer startup scripts differ from the governed manifest or order.');
+
+  const protectedScripts = [...index.matchAll(/<script\b[^>]*\bdata-gridly-source=["']([^"']+)["'][^>]*>/gi)].map((match) => match[1]);
+  if (JSON.stringify(protectedScripts) !== JSON.stringify(manifest.protectedStartupScripts)) throw new Error('Protected startup scripts differ from the governed manifest or order.');
+  if (manifest.startupScripts.length !== 1 || manifest.startupScripts[0] !== 'js/gridly-paid-bootstrap.js') throw new Error('Paid bootstrap must be the only executable external startup script.');
 
   const runtimeScripts = consumerRuntimeScriptPaths(manifest);
   const diagnostics = manifest.diagnosticScripts.map((entry) => localScriptPath(entry.src));
@@ -116,7 +122,7 @@ export async function readConsumerScriptManifest(sourceRoot = root) {
   }
   for (const path of [...runtimeScripts, ...diagnostics]) await stat(join(sourceRoot, path));
 
-  const startupSources = (await Promise.all(manifest.startupScripts.map(localScriptPath).filter(Boolean).map((path) => readFile(join(sourceRoot, path), 'utf8')))).join('\n');
+  const startupSources = (await Promise.all([...manifest.startupScripts, ...manifest.protectedStartupScripts].map(localScriptPath).filter(Boolean).map((path) => readFile(join(sourceRoot, path), 'utf8')))).join('\n');
   for (const source of manifest.dynamicRuntimeScripts) {
     if (!startupSources.includes(source)) throw new Error(`Dynamic runtime script is not loaded by a governed startup module: ${source}`);
   }
@@ -278,7 +284,7 @@ export async function communitySubmissionContract(directory) {
   for (const path of runtime) if (await digest(join(directory,path)) !== await digest(join(root,path))) throw new Error(`Retired or mismatched submission client: ${path}`);
   const index = await readFile(join(directory,'index.html'),'utf8');
   const sourceIndex = await readFile(join(root,'index.html'),'utf8');
-  const scripts = text => Array.from(text.matchAll(/<script[^>]+src="(js\/(?:app|gridly-report-protocol)\.js[^\"]*)"/g),m=>m[1]);
+  const scripts = text => Array.from(text.matchAll(/<script[^>]+data-gridly-source="(js\/(?:app|gridly-report-protocol)\.js[^\"]*)"/g),m=>m[1]);
   if (JSON.stringify(scripts(index)) !== JSON.stringify(scripts(sourceIndex)) || scripts(index).length !== 2 || !scripts(index)[0].startsWith('js/gridly-report-protocol.js')) throw new Error('Submission protocol must precede the current app bundle');
   const sw = await readFile(join(directory,'service-worker.js'),'utf8');
   const version = sw.match(/const GRIDLY_SW_VERSION = "([^"]+)"/)?.[1];

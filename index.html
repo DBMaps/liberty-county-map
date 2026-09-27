@@ -1,5 +1,5 @@
-﻿<!DOCTYPE html>
-<html lang="en" class="gridly-prepaint-lock">
+<!DOCTYPE html>
+<html lang="en" class="gridly-prepaint-lock gridly-paid-locked">
 <head>
 
   <script id="gridly-early-theme">
@@ -33,7 +33,7 @@
     })();
   </script>
 
-  <script>
+  <script type="application/gridly-protected">
     (function gridlyHostnameGate() {
       var hostname = String(window.location.hostname || "").toLowerCase();
       var isLocalHost =
@@ -152,7 +152,7 @@
       object-fit: fill;
     }
   </style>
-  <script>
+  <script type="application/gridly-protected">
     document.documentElement.classList.add("gridly-prepaint-lock");
     document.documentElement.classList.add("gridly-v2-startup-containment");
     (function gridlyReleasePrepaintLock() {
@@ -234,9 +234,29 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Gridly">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="stylesheet" href="css/gridly-paid-access.css" />
 </head>
 
 <body class="gridly-startup-guard">
+  <section id="gridlyPaidAccess" role="region" aria-labelledby="gridlyPaidTitle">
+    <div class="gridly-paid-card">
+      <img src="assets/store/branding/Logos/gridly-logo-vertical.png" alt="Gridly" />
+      <h1 id="gridlyPaidTitle">Gridly</h1><p class="gridly-paid-tagline">Know Before You Go</p>
+      <div id="gridlyPaidOffer" hidden><strong id="gridlyPaidPrice">$2.99/month</strong><p>Monthly subscription</p>
+      <p id="gridlyPaidBilling">App-store subscription • U.S. launch</p>
+      <p>Automatically renews subject to store terms. Cancel anytime through store settings.</p>
+      </div><p id="gridlyPaidStatus" role="status" aria-live="polite">Checking your subscription…</p>
+      <button id="gridlyPaidPurchase" type="button" disabled hidden>Subscribe</button>
+      <button id="gridlyPaidRestore" type="button" disabled hidden>Restore Purchases</button>
+      <button id="gridlyPaidRetry" type="button" disabled hidden>Retry verification</button>
+      <nav class="gridly-paid-links" aria-label="Legal and support">
+        <a href="legal/privacy.html">Privacy Policy</a><a href="legal/terms.html">Terms</a>
+        <a href="legal/community-guidelines.html">Community Guidelines</a>
+        <a href="https://gridlygo.com/support">Support</a><a href="https://gridlygo.com/delete-data">Delete Data</a>
+      </nav>
+      <noscript>Subscription verification requires JavaScript. Legal and support links remain available.</noscript>
+    </div>
+  </section>
   <header class="app-header">
     <div class="brand-wrap">
       <div class="brand-logo-frame">
@@ -1455,10 +1475,10 @@
     </section>
   </div>
 
-  <script src="js/gridlyStartupDiagnostics.js?v=929"></script>
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script>
+  <script type="application/gridly-protected" data-gridly-source="js/gridlyStartupDiagnostics.js?v=929"></script>
+  <script type="application/gridly-protected" data-gridly-source="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script type="application/gridly-protected" data-gridly-source="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="application/gridly-protected">
     (function loadGridlyLocalOverrides() {
       var enabled = false;
       var readiness = window.gridlyConfigurationReadiness = {
@@ -1509,7 +1529,7 @@
       document.head.appendChild(script);
     })();
   </script>
-  <script>
+  <script type="application/gridly-protected">
     (function installGridlyCertificationDiagnosticLoader(globalScope) {
       "use strict";
       var manifestUrl = "consumer-script-manifest.json";
@@ -1572,85 +1592,86 @@
       };
     })(window);
   </script>
-  <script src="js/gridlyPackageRegistry.js?v=lp244.23d-protocol-v2-readiness"></script>
-  <script src="js/gridlyHazardNormalization.js?v=24447-png"></script>
-  <script src="js/gridlyMarkerRegistry.js?v=24447-png"></script>
-  <script src="js/gridlyDriveTexasProvider.js?v=831"></script>
-  <script src="js/gridlyWeatherProvider.js?v=2401g"></script>
-  <script src="js/gridlyWeatherAuthorityFoundation.js?v=0381"></script>
-  <script src="js/gridlyUnifiedIntelligence.js?v=833"></script>
-  <script src="js/gridlyDriveTexasLiveConnector.js?v=840"></script>
-  <script src="js/gridlyWeatherLiveConnector.js?v=2401g"></script>
-  <script src="js/gridlyWeatherAuthoritySourceIntegration.js?v=2401h"></script>
-  <script src="js/gridlyOfficialProviderActivation.js?v=003"></script>
-  <script src="js/gridlyUnifiedIntelligencePrototype.js?v=853"></script>
-  <script src="js/gridlyTxdotService.js?v=1710"></script>
-  <script src="js/gridlyTxdotGeometryRetentionPrototype.js?v=296"></script>
-  <script src="js/gridlyRouteWatchGeometryRuntimeShadowAudit.js?v=3083"></script>
-  <script src="js/gridlyDirectionalRuntimeCandidatePrototype.js?v=695"></script>
-  <script src="js/gridlyDirectionalServiceLayer.js?v=697"></script>
-  <script src="js/gridlyDirectionalServiceConsumer.js?v=698"></script>
-  <script src="js/history-capture/historyCaptureFlags.js?v=415"></script>
-  <script src="js/history-capture/historyIdentity.js?v=415"></script>
-  <script src="js/history-capture/historyCaptureEnvelope.js?v=415"></script>
-  <script src="js/history-capture/historyCaptureIdempotency.js?v=415"></script>
-  <script src="js/history-capture/historyCaptureMonitoring.js?v=415"></script>
-  <script src="js/history-capture/historyCaptureWriter.js?v=415"></script>
-  <script src="js/history-capture/historyCapturePhase1A.js?v=415"></script>
-  <script src="js/history-capture/historyEpisodeResolver.js?v=534"></script>
-  <script src="js/history-capture/historyEpisodeRuntimeBridge.js?v=541"></script>
-  <script src="js/history-capture/historyAggregationEngine.js?v=535"></script>
-  <script src="js/history-capture/historyPatternQualificationEngine.js?v=536"></script>
-  <script src="js/history-capture/historyPatternRegistry.js?v=537"></script>
-  <script src="js/history-capture/historyEvidenceInterpretationAdapter.js?v=538"></script>
-  <script src="js/history-capture/historyIntelligenceReadinessIndex.js?v=539"></script>
-  <script src="js/history-capture/historyIntelligenceRuntimeIntegration.js?v=540"></script>
-  <script src="js/history-capture/historyIntelligenceEngine.js?v=430"></script>
-  <script src="js/history-capture/historyAwarenessAdapter.js?v=439"></script>  <script src="js/gridlyPackageDiscovery.js"></script>
-<script src="js/gridlyPackageLoader.js"></script>
-    <script src="js/gridlyRuntimeSourceRegistryBridge.js"></script>
-    <script src="js/gridlyCrossingCoverageAuthority.js"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/gridlyPackageRegistry.js?v=lp244.23d-protocol-v2-readiness"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/gridlyHazardNormalization.js?v=24447-png"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/gridlyMarkerRegistry.js?v=24447-png"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/gridlyDriveTexasProvider.js?v=831"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/gridlyWeatherProvider.js?v=2401g"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/gridlyWeatherAuthorityFoundation.js?v=0381"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/gridlyUnifiedIntelligence.js?v=833"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/gridlyDriveTexasLiveConnector.js?v=840"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/gridlyWeatherLiveConnector.js?v=2401g"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/gridlyWeatherAuthoritySourceIntegration.js?v=2401h"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/gridlyOfficialProviderActivation.js?v=003"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/gridlyUnifiedIntelligencePrototype.js?v=853"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/gridlyTxdotService.js?v=1710"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/gridlyTxdotGeometryRetentionPrototype.js?v=296"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/gridlyRouteWatchGeometryRuntimeShadowAudit.js?v=3083"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/gridlyDirectionalRuntimeCandidatePrototype.js?v=695"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/gridlyDirectionalServiceLayer.js?v=697"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/gridlyDirectionalServiceConsumer.js?v=698"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/history-capture/historyCaptureFlags.js?v=415"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/history-capture/historyIdentity.js?v=415"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/history-capture/historyCaptureEnvelope.js?v=415"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/history-capture/historyCaptureIdempotency.js?v=415"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/history-capture/historyCaptureMonitoring.js?v=415"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/history-capture/historyCaptureWriter.js?v=415"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/history-capture/historyCapturePhase1A.js?v=415"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/history-capture/historyEpisodeResolver.js?v=534"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/history-capture/historyEpisodeRuntimeBridge.js?v=541"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/history-capture/historyAggregationEngine.js?v=535"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/history-capture/historyPatternQualificationEngine.js?v=536"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/history-capture/historyPatternRegistry.js?v=537"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/history-capture/historyEvidenceInterpretationAdapter.js?v=538"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/history-capture/historyIntelligenceReadinessIndex.js?v=539"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/history-capture/historyIntelligenceRuntimeIntegration.js?v=540"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/history-capture/historyIntelligenceEngine.js?v=430"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/history-capture/historyAwarenessAdapter.js?v=439"></script>  <script type="application/gridly-protected" data-gridly-source="js/gridlyPackageDiscovery.js"></script>
+<script type="application/gridly-protected" data-gridly-source="js/gridlyPackageLoader.js"></script>
+    <script type="application/gridly-protected" data-gridly-source="js/gridlyRuntimeSourceRegistryBridge.js"></script>
+    <script type="application/gridly-protected" data-gridly-source="js/gridlyCrossingCoverageAuthority.js"></script>
     <!-- The V783 crossing provider must exist before app.js registers its
          DOMContentLoaded production inventory load. Keep the consumer stack
          in dependency order: adapter -> provider. -->
-    <script src="js/gridlyCrossingPackageAdapter.js"></script>
-    <script src="js/gridlyCrossingProvider.js"></script>
+    <script type="application/gridly-protected" data-gridly-source="js/gridlyCrossingPackageAdapter.js"></script>
+    <script type="application/gridly-protected" data-gridly-source="js/gridlyCrossingProvider.js"></script>
 
-  <script src="js/gridlyRuntimeEnvironmentConfig.js?v=243i21s2-arcgis-static-basemap-contract"></script>
-  <script src="js/gridlyLp0361cRuntimeCountyGeometryPackageAudit.js"></script>
-  <script src="js/lp097-curated-destinations.js?v=097"></script>
-  <script src="js/lp098-curated-destinations.js?v=098"></script>
-  <script src="js/lp097-search-governance.js?v=0972"></script>
-  <script src="js/lp099-business-search.js?v=099"></script>
-  <script src="js/lp101-search-quality.js?v=1012"></script>
-  <script src="js/lp24110-poi-search-certification.js?v=24110"></script>
-  <script src="js/gridlyPoiBrowserProvider.js?v=24119"></script>
-  <script src="js/gridly-geocoding-client.js?v=1023"></script>
-  <script src="js/gridly-saved-address-integrity.js?v=2445-legacy-revalidation"></script>
-  <script src="js/gridly-saved-place-revalidation-ownership.js?v=2447"></script>
-  <script src="js/gridly-route-publication-ownership.js?v=2448"></script>
-  <script src="js/gridly-saved-address-ui-state.js?v=2446-live-map-confirmation"></script>
-  <script src="js/gridlyIncidentLocationIdentity.js?v=1854000000"></script>
-  <script src="js/gridly-statewide-zip-resolver.js?v=1"></script>
-  <script src="js/gridlyAlertSemanticContract.js?v=214"></script>
-  <script src="js/gridlyConditionDisplayLabel.js?v=2403a"></script>
-  <script src="js/gridlyGovernedActiveConditionParity.js?v=2445-live-writer"></script>
-  <script src="js/gridlyOfficialRoadwayMarkerPublication.js?v=2142"></script>
-  <script src="js/governed-awareness.js?v=243d"></script>
-  <script src="js/gridlyCanonicalCrossingRuntime.js?v=235"></script>
-  <script src="js/gridlyRuntimeCountyIdentity.js?v=2393"></script>
-  <script src="js/gridlyLP240WeatherAuthorityAudit.js?v=2401h4"></script>
-  <script src="js/gridlyAlertsWeatherAuthorityHandoff.js?v=2401g3"></script>
-  <script src="js/gridly-report-protocol.js?v=lp244.33-google-play-compliance"></script>
-  <script src="js/gridly-ugc-compliance.js?v=lp244.33-google-play-compliance"></script>
-  <script src="js/gridly-map-visibility.js?v=lp24448f2"></script>
-  <script src="js/app.js?v=lp24448-awareness"></script>
-  <script src="js/gridlyDriveTexasGeometryAuthority.js?v=044"></script>
-  <script src="js/gridlyDriveTexasAuthoritySourceIntegration.js?v=03921"></script>
-  <script src="js/gridlyEndToEndPerformanceAudit.js?v=919"></script>
-  <script src="js/gridlyRuntimePerformanceAudit.js?v=2243"></script>
-  <script src="js/gridlyDirectionalAwarenessLayer.js?v=704"></script>
-    <script src="js/gridlyRuntimeSourceBridgeActivation.js"></script>
-  <script src="js/gridlyCrossingProviderActivationAudit.js"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/gridlyRuntimeEnvironmentConfig.js?v=243i21s2-arcgis-static-basemap-contract"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/gridlyLp0361cRuntimeCountyGeometryPackageAudit.js"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/lp097-curated-destinations.js?v=097"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/lp098-curated-destinations.js?v=098"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/lp097-search-governance.js?v=0972"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/lp099-business-search.js?v=099"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/lp101-search-quality.js?v=1012"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/lp24110-poi-search-certification.js?v=24110"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/gridlyPoiBrowserProvider.js?v=24119"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/gridly-geocoding-client.js?v=1023"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/gridly-saved-address-integrity.js?v=2445-legacy-revalidation"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/gridly-saved-place-revalidation-ownership.js?v=2447"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/gridly-route-publication-ownership.js?v=2448"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/gridly-saved-address-ui-state.js?v=2446-live-map-confirmation"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/gridlyIncidentLocationIdentity.js?v=1854000000"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/gridly-statewide-zip-resolver.js?v=1"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/gridlyAlertSemanticContract.js?v=214"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/gridlyConditionDisplayLabel.js?v=2403a"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/gridlyGovernedActiveConditionParity.js?v=2445-live-writer"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/gridlyOfficialRoadwayMarkerPublication.js?v=2142"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/governed-awareness.js?v=243d"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/gridlyCanonicalCrossingRuntime.js?v=235"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/gridlyRuntimeCountyIdentity.js?v=2393"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/gridlyLP240WeatherAuthorityAudit.js?v=2401h4"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/gridlyAlertsWeatherAuthorityHandoff.js?v=2401g3"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/gridly-report-protocol.js?v=lp244.33-google-play-compliance"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/gridly-ugc-compliance.js?v=lp244.33-google-play-compliance"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/gridly-map-visibility.js?v=lp24448f2"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/app.js?v=lp24448-awareness"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/gridlyDriveTexasGeometryAuthority.js?v=044"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/gridlyDriveTexasAuthoritySourceIntegration.js?v=03921"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/gridlyEndToEndPerformanceAudit.js?v=919"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/gridlyRuntimePerformanceAudit.js?v=2243"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/gridlyDirectionalAwarenessLayer.js?v=704"></script>
+    <script type="application/gridly-protected" data-gridly-source="js/gridlyRuntimeSourceBridgeActivation.js"></script>
+  <script type="application/gridly-protected" data-gridly-source="js/gridlyCrossingProviderActivationAudit.js"></script>
+  <script src="js/gridly-paid-bootstrap.js"></script>
 </body>
 </html>

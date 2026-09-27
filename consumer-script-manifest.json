@@ -2,6 +2,131 @@
   "schemaVersion": "gridly.consumerScripts.v1",
   "description": "Ordered browser startup, dynamic runtime, and opt-in certification diagnostic boundaries.",
   "startupScripts": [
+    "js/gridly-paid-bootstrap.js"
+  ],
+  "dynamicRuntimeScripts": [
+    "js/gridlyAwarenessOfficialRoadwayPublisherRepair.js?v=6",
+    "js/gridlyAlertsPublishedAwareness.js?v=4"
+  ],
+  "diagnosticScripts": [
+    {
+      "src": "js/gridlyIntelligenceActivationReadiness.js?v=834",
+      "globals": [
+        "gridlyIntelligenceActivationReadinessAudit"
+      ]
+    },
+    {
+      "src": "js/gridlyUnifiedIntelligenceSimulation.js?v=835",
+      "globals": [
+        "gridlyUnifiedIntelligenceSimulation",
+        "gridlyUnifiedSimulationAudit"
+      ]
+    },
+    {
+      "src": "js/gridlyOfficialProviderSourceEvaluation.js?v=836",
+      "globals": [
+        "gridlyOfficialProviderSourceAudit"
+      ]
+    },
+    {
+      "src": "js/gridlyDriveTexasConnectorEndpointAudit.js?v=837",
+      "globals": [
+        "gridlyDriveTexasConnectorEndpointAudit"
+      ]
+    },
+    {
+      "src": "js/gridlyWeatherConnectorEndpointAudit.js?v=838",
+      "globals": [
+        "gridlyWeatherConnectorEndpointAudit"
+      ]
+    },
+    {
+      "src": "js/gridlyLiveConnectorDesignReadinessAudit.js?v=839",
+      "globals": [
+        "gridlyLiveConnectorDesignReadinessAudit"
+      ]
+    },
+    {
+      "src": "js/gridlyCrossProviderEvaluationAudit.js?v=845",
+      "globals": [
+        "gridlyCrossProviderEvaluationAudit"
+      ]
+    },
+    {
+      "src": "js/gridlyUnifiedIntelligenceReadinessAudit.js?v=847",
+      "globals": [
+        "gridlyUnifiedIntelligenceReadinessAudit"
+      ]
+    },
+    {
+      "src": "js/gridlyUnifiedIntelligenceObservationAudit.js?v=849",
+      "globals": [
+        "gridlyUnifiedIntelligenceObservationAudit"
+      ]
+    },
+    {
+      "src": "js/gridlyCrossingPackageValidationAudit.js",
+      "globals": [
+        "gridlyCrossingPackageValidationAudit"
+      ]
+    },
+    {
+      "src": "js/lp102-rural-address-cases.js?v=1021",
+      "globals": [
+        "GRIDLY_LP102_RURAL_CASES"
+      ]
+    },
+    {
+      "src": "js/lp104-regional-rural-address-audit.js?v=104",
+      "globals": [
+        "gridlyLp104RegionalRuralAddressAudit"
+      ]
+    },
+    {
+      "src": "js/gridlyLp044DriveTexasCommunityAuthorityInventory.js?v=044",
+      "globals": [
+        "gridlyLp044DriveTexasCommunityAuthorityInventory"
+      ]
+    },
+    {
+      "src": "js/gridlyLp0371ConsumerCrossingCountAuthorityAudit.js?v=0371",
+      "globals": [
+        "gridlyLp0371ConsumerCrossingCountAuthorityAudit"
+      ]
+    },
+    {
+      "src": "js/gridlyNativeProviderOriginAudit.js?v=native-provider-origin-v1",
+      "globals": [
+        "gridlyNativeProviderOriginAudit"
+      ],
+      "nativeOptIn": true
+    },
+    {
+      "src": "js/gridlyRuntimeSourceComparisonAudit.js",
+      "globals": [
+        "gridlyRuntimeSourceComparisonAudit"
+      ]
+    },
+    {
+      "src": "js/gridlyLp0941LaunchSurfaceAudit.js",
+      "globals": [
+        "gridlyLp0941LaunchSurfaceAudit"
+      ]
+    },
+    {
+      "src": "js/gridlyLp095UnifiedPresentationAudit.js",
+      "globals": [
+        "gridlyLp095UnifiedPresentationAudit"
+      ]
+    },
+    {
+      "src": "js/gridlyLp0952CrossingAlertInteractionAudit.js",
+      "globals": [
+        "gridlyLp0952CrossingAlertInteractionAudit"
+      ]
+    }
+  ],
+  "protectedStartupScripts": [
     "js/gridlyStartupDiagnostics.js?v=929",
     "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js",
     "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2",
@@ -82,30 +207,5 @@
     "js/gridlyDirectionalAwarenessLayer.js?v=704",
     "js/gridlyRuntimeSourceBridgeActivation.js",
     "js/gridlyCrossingProviderActivationAudit.js"
-  ],
-  "dynamicRuntimeScripts": [
-    "js/gridlyAwarenessOfficialRoadwayPublisherRepair.js?v=6",
-    "js/gridlyAlertsPublishedAwareness.js?v=4"
-  ],
-  "diagnosticScripts": [
-    { "src": "js/gridlyIntelligenceActivationReadiness.js?v=834", "globals": ["gridlyIntelligenceActivationReadinessAudit"] },
-    { "src": "js/gridlyUnifiedIntelligenceSimulation.js?v=835", "globals": ["gridlyUnifiedIntelligenceSimulation", "gridlyUnifiedSimulationAudit"] },
-    { "src": "js/gridlyOfficialProviderSourceEvaluation.js?v=836", "globals": ["gridlyOfficialProviderSourceAudit"] },
-    { "src": "js/gridlyDriveTexasConnectorEndpointAudit.js?v=837", "globals": ["gridlyDriveTexasConnectorEndpointAudit"] },
-    { "src": "js/gridlyWeatherConnectorEndpointAudit.js?v=838", "globals": ["gridlyWeatherConnectorEndpointAudit"] },
-    { "src": "js/gridlyLiveConnectorDesignReadinessAudit.js?v=839", "globals": ["gridlyLiveConnectorDesignReadinessAudit"] },
-    { "src": "js/gridlyCrossProviderEvaluationAudit.js?v=845", "globals": ["gridlyCrossProviderEvaluationAudit"] },
-    { "src": "js/gridlyUnifiedIntelligenceReadinessAudit.js?v=847", "globals": ["gridlyUnifiedIntelligenceReadinessAudit"] },
-    { "src": "js/gridlyUnifiedIntelligenceObservationAudit.js?v=849", "globals": ["gridlyUnifiedIntelligenceObservationAudit"] },
-    { "src": "js/gridlyCrossingPackageValidationAudit.js", "globals": ["gridlyCrossingPackageValidationAudit"] },
-    { "src": "js/lp102-rural-address-cases.js?v=1021", "globals": ["GRIDLY_LP102_RURAL_CASES"] },
-    { "src": "js/lp104-regional-rural-address-audit.js?v=104", "globals": ["gridlyLp104RegionalRuralAddressAudit"] },
-    { "src": "js/gridlyLp044DriveTexasCommunityAuthorityInventory.js?v=044", "globals": ["gridlyLp044DriveTexasCommunityAuthorityInventory"] },
-    { "src": "js/gridlyLp0371ConsumerCrossingCountAuthorityAudit.js?v=0371", "globals": ["gridlyLp0371ConsumerCrossingCountAuthorityAudit"] },
-    { "src": "js/gridlyNativeProviderOriginAudit.js?v=native-provider-origin-v1", "globals": ["gridlyNativeProviderOriginAudit"], "nativeOptIn": true },
-    { "src": "js/gridlyRuntimeSourceComparisonAudit.js", "globals": ["gridlyRuntimeSourceComparisonAudit"] },
-    { "src": "js/gridlyLp0941LaunchSurfaceAudit.js", "globals": ["gridlyLp0941LaunchSurfaceAudit"] },
-    { "src": "js/gridlyLp095UnifiedPresentationAudit.js", "globals": ["gridlyLp095UnifiedPresentationAudit"] },
-    { "src": "js/gridlyLp0952CrossingAlertInteractionAudit.js", "globals": ["gridlyLp0952CrossingAlertInteractionAudit"] }
   ]
 }

@@ -1,0 +1,20 @@
+html.gridly-paid-locked body { visibility: visible !important; overflow: hidden; }
+html.gridly-paid-locked body::before { display: none !important; }
+html.gridly-paid-locked body > :not(#gridlyPaidAccess):not(script):not(style):not(link) { display: none !important; }
+#gridlyPaidAccess[hidden] { display: none !important; }
+#gridlyPaidAccess { position:fixed; inset:0; z-index:2147483647; display:flex; flex-direction:column; align-items:center;
+  overflow:auto; padding:max(22px,env(safe-area-inset-top)) 20px max(22px,env(safe-area-inset-bottom));
+  box-sizing:border-box; color:#ecf5f2; background:radial-gradient(ellipse at top,#173b3b,#081a22 75%); font:16px/1.5 system-ui,sans-serif; }
+.gridly-paid-card { width:min(100%,390px); padding:26px; margin-block:auto; flex-shrink:0; border:1px solid #4a716d;
+  border-radius:24px; box-sizing:border-box; background:#10282eea; box-shadow:0 18px 65px #0006; }
+.gridly-paid-card img { display:block; width:100px; height:100px; object-fit:contain; margin:auto; }
+.gridly-paid-card h1 { text-align:center; font-size:32px; margin:10px 0 0; }
+.gridly-paid-tagline { text-align:center; color:#9de4d1; margin:0 0 25px; }
+#gridlyPaidPrice { display:block; font-size:29px; font-weight:700; }
+.gridly-paid-card button { width:100%; min-height:48px; border-radius:12px; margin:6px 0;
+  font:inherit; font-weight:600; color:#09252b; background:#9de4d1; border:1px solid #9de4d1; }
+.gridly-paid-card button:disabled { opacity:.5; }
+.gridly-paid-card a { color:#b0ece0; text-decoration:underline; }
+.gridly-paid-links { display:flex; flex-wrap:wrap; gap:10px 16px; margin-top:18px; font-size:14px; }
+#gridlyPaidStatus { min-height:3em; }
+.gridly-paid-card :focus-visible { outline:3px solid #fff; outline-offset:3px; }

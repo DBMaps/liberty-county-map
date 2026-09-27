@@ -92,5 +92,5 @@ test('D2: native copy uses derivative; Android and splash mappings/output stay b
 
 test('consumer manifest consistency remains valid without staging', async () => {
   const manifest = await readConsumerScriptManifest(process.cwd());
-  assert(manifest.startupScripts.includes('js/gridly-map-visibility.js?v=lp24448f2'));
+  assert(manifest.protectedStartupScripts.includes('js/gridly-map-visibility.js?v=lp24448f2'));
 });

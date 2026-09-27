@@ -1,8 +1,18 @@
 const GRIDLY_SW_VERSION = "lp244.33-google-play-compliance";
-const GRIDLY_CLOSURE_CACHE_NAME = "gridly-pwa-shell-lp24433-v1";
+const GRIDLY_CLOSURE_CACHE_NAME = "gridly-pwa-shell-lp24465-v1";
 const GRIDLY_CLOSURE_URLS = [
   "./",
   "./index.html",
+  "./css/gridly-paid-access.css",
+  "./js/gridly-paid-bootstrap.js",
+  "./js/gridly-paid-ui.mjs",
+  "./js/gridly-paid-access.mjs",
+  "./js/gridly-paid-config.mjs",
+  "./js/gridly-paid-startup.mjs",
+  "./js/gridly-entitlement.mjs",
+  "./js/gridly-store-verification.mjs",
+  "./js/gridly-apple-storekit.mjs",
+  "./js/gridly-google-play-billing.mjs",
   "./beta-closed.html",
   "./beta-closure.html",
   "./manifest.json",
