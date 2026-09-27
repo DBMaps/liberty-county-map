@@ -4,7 +4,7 @@
 
 2026-09-27. Branch `LP244.65-paid-access-entitlement-runtime`; starting HEAD `01254630ff6cb10d2791502c153b1d036681ca0c`; initial working tree clean. Owner evidence: Xcode 27 / Device Hub simulated iPhone 17 Pro / iOS 26.4, separate `com.gridlygo.continuitycert` app builds/installs/launches successfully. First A tap reports native_reset_failed, protectedInitializations=0, no issuer request.
 
-**Bounded diagnostic preparation PASS; exact LIVE reset substep/root cause NOT YET VERIFIED. iOS native continuity certification remains PENDING / NO-GO. Android A–H remains CLOSED/PASS.** No production native defect is proven or repaired in this phase. No Mac/simulator execution is available from this Windows environment; source/category tests cannot prove live Keychain status. Do not label unsigned signing, Keychain, sentinel or sysctl as the cause without the new bounded result.
+**LP244.65J superseding result: certification reset RCA CLOSED / PASS.** Owner diagnosed initial_begin / sentinel_delete / missing_entitlement in the unsigned simulator build; normal simulator signing of the same source resolved it. No production iOS defect proven. iOS A–F/H PASS; G not separately runtime-induced (Mac host reboot qualification). Android A–H remains CLOSED/PASS. The original audit below records the earlier unresolved LP244.65I phase; [the authoritative closure](LP24465C-NATIVE-CONTINUITY-CERTIFICATION.md#lp24465j--paid-access-continuity-foundation-closure) supersedes its pending statements.
 
 ## Exact seed reset path
 
@@ -56,9 +56,9 @@ Focused tests: **102/102 PASS, zero failures/skips** (48 iOS reset/harness tests
 
 No production native plugin/config/manifest, policy/24-hour/period cap, billing, backend, reporting, Android closure or accepted app data changed. No real purchase, production request, deployment, push or merge. LP244.54 physical acceptance and its Mac stash are untouched. Old LP244.22 reset/repair is not replayed. iOS A–H remains pending, LP244.65 not fully closed, paid production NO-GO.
 
-## Exact owner Mac rerun
+## Historical LP244.65I diagnostic rerun (superseded)
 
-Use the existing Mac checkout containing this new reviewed commit, on `LP244.65-paid-access-entitlement-runtime`. Do not apply/pop/drop the LP244.54 stash, reset unrelated files, run native prepare/Capacitor sync, touch the accepted phone, or install tooling. Generated SwiftPM workspace state remains untracked. Stop the OLD synthetic issuer with Ctrl+C; use a NEW clone/APK-equivalent artifact and its matching public key. Leave the new issuer running.
+These unsigned commands reproduced the earlier diagnostic failure; they are not current acceptance instructions. LP244.65J acceptance used normal simulator signing. For historical reproduction, use the existing Mac checkout containing this reviewed commit, on `LP244.65-paid-access-entitlement-runtime`. Do not apply/pop/drop the LP244.54 stash, reset unrelated files, run native prepare/Capacitor sync, touch the accepted phone, or install tooling. Generated SwiftPM workspace state remains untracked. Stop the OLD synthetic issuer with Ctrl+C; use a NEW clone/APK-equivalent artifact and its matching public key. Leave the new issuer running.
 
 Terminal 1, FROM the reviewed repository root:
 

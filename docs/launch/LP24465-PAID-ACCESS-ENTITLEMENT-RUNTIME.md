@@ -1,10 +1,10 @@
 # LP244.65 — Paid access / entitlement runtime integration
 
-Date: September 27, 2026. **PREPARED / locally certified; paid production launch NO-GO.**
+Date: September 27, 2026. **LP244.65 paid-access continuity foundation CLOSED / PASS (LP244.65J); paid production launch NO-GO.**
 
 ## LP244.65A superseding decision
 
-The September 27 owner correction supersedes the original tour ordering and offline-policy claim below. See [LP244.65A](LP24465A-PAID-ACCESS-LAUNCH-FLOW-CORRECTION.md). First installs now complete the accepted seven pages before any paywall or protected runtime. The owner subsequently approved OPTION 2: durable continuity across ordinary app restart for at most 24 hours from successful verification, capped by verified period end. It is now implemented locally; native vault compilation/platform security certification and production verifier/store gates remain. Five-minute response freshness remains separate.
+The September 27 owner correction supersedes the original tour ordering and offline-policy claim below. See [LP244.65A](LP24465A-PAID-ACCESS-LAUNCH-FLOW-CORRECTION.md). First installs now complete the accepted seven pages before any paywall or protected runtime. The owner subsequently approved OPTION 2: durable continuity across ordinary app restart for at most 24 hours from successful verification, capped by verified period end. It is implemented and continuity-certified under LP244.65J; the iOS G host-boot qualification and separate production verifier/store gates remain. Five-minute response freshness remains separate.
 
 ## Source and scope
 
@@ -166,12 +166,16 @@ Browser tests use installed Edge and loopback fixture authority; native tests us
 
 ## Remaining launch/merge gates
 
-Owner continuity policy is now resolved and implemented locally. Paid production remains **NO-GO**: production composition still has no pinned public key or authority transport; default verifier entrypoints remain unavailable. LP244.62 provider/native admission/cache composition and operational approval, durable Google acknowledgment/replacement handling, store products, native vault compilation and real platform security/restart/reinstall/clock certification, real subscription/candidate acceptance and app/PWA deployment checks remain.
+LP244.65 paid-access continuity foundation is now CLOSED / PASS under LP244.65J owner-observed Android/iOS evidence, with the explicit iOS G host-reboot qualification. Paid production remains **NO-GO**: production composition still has no pinned public key or authority transport; default verifier entrypoints remain unavailable. Remaining separate gates: LP244.62 provider/native admission/cache composition and operational approval, durable Google acknowledgment/replacement handling, store products/provider credentials, real purchase/live-store restore and subscription/candidate acceptance, store review and app/PWA deployment/release checks.
 
-No production activation is implied by this local commit: `Finalize paid access continuity policy`. Merge recommendation: **NO-GO until the new native vaults are compiled/certified and remaining composition gates are reviewed.**
+No production activation is implied by this local commit: `Finalize paid access continuity policy`. Merge remains a separate owner action after review of remaining composition/release gates; it is not authorized by this certification closure.
 
 ## LP244.65H — Android native continuity certification status
 
 2026-09-27 owner-provided runtime evidence: **ANDROID NATIVE CONTINUITY CERTIFICATION A-H: PASS** in the separate synthetic `com.gridlygo.continuitycert` API 36 emulator app. A/F prove encrypted persistence/reload and temporary admission after ordinary process restarts; B–E deny stale, expired-period, tampered and sandbox authority with zero protected initializations; G denies pre-reboot continuity; H denies after uninstall/reinstall of the same APK without seeding. The production Android numeric-reader repair at `5f4fe58c8942b3da9c3e34f0cdc168216a1fcbde` is runtime-certified for this bounded path.
 
 iOS native continuity certification remains **PENDING**. LP244.65 is **not fully closed** and paid production remains **NO-GO**. See [the authoritative native certification record](LP24465C-NATIVE-CONTINUITY-CERTIFICATION.md#lp24465h--owner-observed-android-native-continuity-closure) for exact observations, scope and earlier harness repairs. Android-pending statements above describe earlier certification stages and are superseded by this result; iOS runtime, real store purchases, production verifier deployment/credentials/composition and launch acceptance remain separate gates. No runtime/policy/configuration change in this documentation phase. Reporting remains disabled by the repository contract and owner baseline; no fresh production query or mutation. LP244.54 remains CLOSED/PASS; old LP244.22 reset/repair must not be replayed.
+
+## LP244.65J — Current continuity closure
+
+**LP244.65 paid-access continuity foundation: CLOSED / PASS.** Android A–H PASS; signed iOS simulator A–F/H PASS. iOS Case G was not separately runtime-induced because that would require a Mac host reboot; implementation and focused contract coverage remain in place. See [the authoritative combined runtime evidence and signing RCA](LP24465C-NATIVE-CONTINUITY-CERTIFICATION.md#lp24465j--paid-access-continuity-foundation-closure). Earlier native-continuity pending/compilation requirements above describe prior phases and are superseded by this closure. iOS unsigned Keychain failure was certification-only; no production iOS defect proven. Android numeric repair is runtime-certified. Real store purchase/restore, production verifier/provider credentials/composition/Google acknowledgment, store review and release/activation remain separate gates. No merge, production subscription/reporting activation or deploy. LP244.54 remains CLOSED/PASS; preserved Mac stash untouched.

@@ -4,7 +4,7 @@
 
 2026-09-27. Branch: `LP244.65-paid-access-entitlement-runtime`. Starting HEAD: `0f8e5997f7001f62b62127b1956bbd7de708ecb0`; initial tree clean.
 
-**ANDROID NATIVE CONTINUITY CERTIFICATION A-H: PASS (LP244.65H owner-observed API 36 emulator evidence). iOS native continuity certification: PENDING. LP244.65 is not fully closed; paid production remains NO-GO.** The LP244.65H evidence below supersedes earlier Android execution-pending statements. Native runtime results come from the owner observations, not JavaScript mocks, source assertions or compile success.
+**LP244.65 paid-access continuity foundation: CLOSED / PASS (LP244.65J owner-observed results). Android native continuity A–H: PASS. iOS A–F/H: PASS; G: NOT SEPARATELY RUNTIME-INDUCED. Paid production launch remains NO-GO.** iOS Case G was not separately runtime-induced because that would require a Mac host reboot; implementation and focused contract coverage remain in place. The LP244.65J evidence below supersedes earlier pending continuity statements; native results come from owner observations, not mocks/source assertions or compile success.
 
 Owner-provided preceding evidence: Android prepare/sync/assembleDebug PASS; iOS StoreKit and continuity simulator compile PASS following the helper-collision repair. Those results concern the preceding production source, not compilation/execution of this new certification clone.
 
@@ -20,10 +20,10 @@ Both real plugins expose exactly `beginVerification`, `commit`, `retain`, `revok
 
 | Evidence | Pure local tests | Native execution still needed | Physical device required in this phase |
 | --- | --- | --- | --- |
-| Signature, 24-hour/period caps, denial, environment, binding | PASS | Android A–E PASS; iOS pending | No |
-| Restart/barrier policy | PASS with isolated vault fixtures | Android A/F process restart PASS; iOS pending | No; emulator/simulator |
-| Clock/boot checks | PASS source and isolated vault fixtures | Android G reboot PASS; separate wall-clock rollback not newly observed; iOS pending | No; hardware guarantees not claimed |
-| Reinstall ownership boundary | PASS policy/source fixtures | Android H uninstall/reinstall PASS; iOS pending | No; simulator/emulator only |
+| Signature, 24-hour/period caps, denial, environment, binding | PASS | Android A–E PASS; iOS A–E PASS | No |
+| Restart/barrier policy | PASS with isolated vault fixtures | Android A/F and iOS A/F process restart PASS | No; emulator/simulator |
+| Clock/boot checks | PASS source and isolated vault fixtures | Android G reboot PASS; iOS G not separately runtime-induced (host reboot qualification below) | No; hardware guarantees not claimed |
+| Reinstall ownership boundary | PASS policy/source fixtures | Android H and iOS H uninstall/reinstall PASS | No; simulator/emulator only |
 | Public routes / protected initialization | PASS real Edge browser and source tests | Check links and gated canary in cert app | No |
 
 A native compile alone does not exercise Keystore/Keychain lifecycle. Android physical-device work adds no required unique evidence to these bounded checks; use one emulator. Simulator results do not certify hardware-backed key properties or physical iPhone behavior.
@@ -124,7 +124,7 @@ adb -e shell am start -n com.gridlygo.continuitycert/com.gridlygo.gridly.MainAct
 
 ## Exact Mac / iOS simulator commands
 
-Use the existing repository checkout on Mac, same reviewed commit, and existing Node/Xcode environment. Boot one intended simulator via Xcode; no phone commands. No native prepare/sync command: those would overwrite the certification assets/registration.
+Use the existing repository checkout on Mac, same reviewed commit, and existing Node/Xcode environment with normal simulator signing enabled (LP244.65J). An unsigned CODE_SIGNING_ALLOWED=NO build failed the certification Keychain sentinel delete; do not use it for acceptance. Boot one intended simulator via Xcode; no phone commands. No native prepare/sync command: those would overwrite the certification assets/registration.
 
 Terminal 1, from repository root:
 
@@ -138,7 +138,7 @@ Terminal 2, replace the nonsecret output path; exactly one intended simulator mu
 ```sh
 cert_root='COPY-EXACT-OUTPUT-PATH-FROM-TERMINAL-1'
 xcrun simctl list devices booted
-xcodebuild -project "$cert_root/ios/App/App.xcodeproj" -scheme App -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath "$cert_root/derived" CODE_SIGNING_ALLOWED=NO build
+xcodebuild -project "$cert_root/ios/App/App.xcodeproj" -scheme App -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath "$cert_root/derived" build
 ```
 
 Proceed ONLY if xcodebuild exits zero. If package resolution/compile fails, record that blocker rather than syncing or changing production source.
@@ -495,3 +495,69 @@ Focused LP244.65 tests: **87/87 PASS, zero failures, zero skipped** (continuity,
 ## LP244.65I — iOS reset diagnostics status
 
 Owner simulator compile/install/launch PASS, but first A tap failed at native_reset before the issuer. **iOS runtime certification remains PENDING; exact live substep/root cause is not yet verified. Android A–H remains CLOSED/PASS.** See [the bounded iOS reset diagnosis and exact Mac rerun](LP24465I-IOS-NATIVE-RESET-DIAGNOSIS.md). This phase adds fixed reset categories/substeps and status labels only in the excluded synthetic harness/generated debug iOS copy, plus a certification-only Keychain service name. Production Swift, Android plugin/instrumentation, store logic, configs, policy and reporting remain unchanged. Earlier statements that iOS copy is byte-identical are superseded: source is verified before transformation, both source/generated hashes recorded, and tests prove exact source restoration. No iOS runtime PASS, production defect, signing RCA or numeric defect is claimed without live evidence. LP244.54 physical acceptance/stash remain untouched.
+
+## LP244.65J — Paid-access continuity foundation closure
+
+2026-09-27. Branch `LP244.65-paid-access-entitlement-runtime`; starting HEAD `0921077cda6fa33bdb44e838820b2ad241847293`; initial tree clean. Authority: owner's completed LP244.65J Android/iOS runtime report. These are owner-observed emulator/simulator results; this documentation phase did not execute native apps.
+
+**LP244.65 paid-access continuity foundation: CLOSED / PASS.**
+
+**Android native continuity A–H: PASS. iOS A–F/H: PASS. iOS G: NOT SEPARATELY RUNTIME-INDUCED.**
+
+Qualification: **iOS Case G was not separately runtime-induced because that would require a Mac host reboot; implementation and focused contract coverage remain in place.** Owner elected not to reboot the Mac during launch closure. This closes the bounded continuity foundation with that explicit coverage qualification; paid production launch and merge remain separately gated and are not authorized here.
+
+### Owner-observed environment / evidence
+
+Android: API 36 emulator, separate `com.gridlygo.continuitycert`, real Android native vault path, synthetic local issuer, no real purchase/backend. Previously closed A–H results remain unchanged.
+
+iOS: Xcode 27 / Device Hub / iPhone 17 Pro simulator / iOS 26.4, separate `com.gridlygo.continuitycert`, production-shaped Keychain implementation, synthetic issuer only, no real purchase/backend. Owner rebuilt the SAME certification source with normal simulator signing enabled after the bounded Keychain diagnostic identified the unsigned build failure.
+
+| Case | Android | iOS | Observed protected admission |
+| --- | --- | --- | --- |
+| A: valid, seed + ordinary restart | PASS | PASS | allowed=true, temporaryAccess=true, state=entitled, protectedInitializations=1 |
+| B: 25-hour-old/stale | PASS | PASS | allowed=false, temporaryAccess=false, protectedInitializations=0 |
+| C: current period expired | PASS | PASS | allowed=false, temporaryAccess=false, protectedInitializations=0 |
+| D: tampered authority | PASS | PASS | allowed=false, temporaryAccess=false, protectedInitializations=0 |
+| E: sandbox against production policy | PASS | PASS | allowed=false, temporaryAccess=false, protectedInitializations=0 |
+| F: second ordinary process restart | PASS | PASS | allowed=true, temporaryAccess=true, state=entitled, protectedInitializations=1 |
+| G: boot identity/clock invalidation | PASS: actual emulator reboot, clockTrusted=false before reseeding; access denied, count=0 | NOT SEPARATELY RUNTIME-INDUCED | No iOS runtime G PASS is claimed |
+| H: uninstall/reinstall same artifact, no seeding | PASS | PASS | allowed=false, temporaryAccess=false, protectedInitializations=0 |
+
+Owner iOS A seed returned stage=complete, seeded=true, httpStatus=200, protectedInitializations=0. Terminate/relaunch of the SAME signed artifact then returned the A admission above. iOS B–E/H after restart returned state=temporarily_unavailable. F again returned entitled. H uninstalled only certification app, reinstalled SAME signed artifact and performed no seeding; prior Keychain authority was not trusted after reinstall, consistent with the sandbox sentinel design.
+
+A/F certify native persistence/reload and revalidation across ordinary restart within the observed bounds. All observed denied cases kept protected initialization at zero. The protected canary is exercised through the actual coordinator; this does not certify every consumer screen or real-store operation.
+
+### Exact iOS reset RCA and resolution
+
+Owner's bounded diagnostic identified:
+
+- nativeResetCategory: sentinel_failed
+- nativeResetStep: initial_begin
+- nativeResetOperation: sentinel_delete
+- nativeResetStatus: missing_entitlement
+
+The first failing Security call was SecItemDelete during first begin/loadRecord sentinel setup, BEFORE issuer/network/proof/commit. The certification app had been built with CODE_SIGNING_ALLOWED=NO and lacked the entitlement context needed by Keychain. Rebuilding the same certification source with normal simulator signing resolved the certification-only failure and permitted A/F persistence/reload. This paired owner observation establishes the signing RCA for THIS certification build. No production iOS Keychain defect was proven; production Swift/query/accessibility/sentinel checks were not weakened or changed.
+
+Normal simulator signing is the current certification build instruction. Earlier unsigned commands in the LP244.65I report are historical diagnostic reproduction only; do not reuse them as the acceptance build. LP244.54 physical app/acceptance and its preserved Mac stash remain untouched. No signing keys, Keychain contents, proof, binding, attempts, private fixture material or raw errors are recorded.
+
+### iOS G coverage qualification
+
+Production iOS source derives boot identity from KERN_BOOTTIME, uses mach_continuous_time including sleep, and checks wall/uptime monotonicity before trusting retained authority. Simulator shutdown/reboot does not independently establish a Mac host boot-identity transition. A true host transition would require Mac reboot, which owner declined.
+
+Implementation/source assertions and focused trust-contract tests remain; Android actual G independently demonstrated fail-closed reboot behavior under the shared policy. iOS B–E/H independently proved denied authority never initializes protected runtime. These support closure with the explicit qualification; none substitutes for a separately induced iOS host-boot runtime result. Do not label G either runtime PASS or entirely untested. No new physical-device acceptance is required by this owner closure.
+
+### Numeric parsing and policy conclusion
+
+Android production commit repair at `5f4fe58c8942b3da9c3e34f0cdc168216a1fcbde`: epoch-millisecond JSON became Long, excluded by Capacitor getDouble; minimal Number.toDouble read retained the validation predicates. Owner A/F runtime-certified repaired persistence/recovery.
+
+iOS: no Android-style numeric defect was proven. Swift/Capacitor NSNumber bridging handled verifiedAt in the successful signed simulator commit path. iOS getter remains unchanged; no parity rewrite is needed. This is evidence from successful native commits, not a claim that the separate CLI numeric probe was executed.
+
+Combined runtime evidence supports ordinary restart continuity, the 24-hour maximum, the verified period-end ceiling, stale/expired/tampered/sandbox denial, reinstall non-reuse and protected inertness on denial. Repository contracts additionally preserve no localStorage authority, no installation-ID ownership, no consumer Gridly account dependency, native AndroidKeyStore/noBackup and iOS Keychain/sentinel protections. Fresh reinstall requires fresh store/server verification. The 24-hour continuity bound is not a subscription expiration date; confirmed revocation/denial still overrides cached authority.
+
+### Remaining launch gates and preserved boundaries
+
+Not certified by this closure: real Apple/Google purchase or live-store restore, production verifier deployment/provider credentials/composition, Google acknowledgment operations, App Store/Play Store review acceptance, production subscription activation or reporting activation. Remaining work includes configured authority/pinned verification key, approved provider/native admission/cache transport and operations, durable Google acknowledgment/replacement handling, store configuration, real subscription/candidate acceptance and final app/PWA/release gates. Merge remains a separate owner action; no merge recommendation bypasses those gates.
+
+Production reporting remains disabled under the repository contract and owner baseline; this phase makes no fresh production query or activation. No runtime/config/billing change, native build, real purchase, backend mutation, deploy, push or merge. LP244.54 remains CLOSED/PASS; old LP244.22 reset/repair must not be replayed.
+
+Focused LP244.65 continuity/certification tests: **102/102 PASS, zero failures/skips**. Existing tests cover policy caps, denial/revocation, restart/reinstall/clock trust, real synthetic signer/verifier, native source contracts, redaction, release isolation, public bypass and protected gating. Changed-file credential/syntax scan and sensitive-output/source tests PASS; git diff --check PASS. This phase changed only five documentation/status files; no production reporting activation change. These local checks support the owner runtime evidence and do not manufacture iOS G runtime coverage. Android H closure and iOS I diagnostic history remain as historical evidence; this LP244.65J result supersedes their pending continuity-status statements.
