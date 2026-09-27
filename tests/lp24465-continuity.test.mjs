@@ -148,3 +148,14 @@ test('native persistence source contracts: scoped Keychain, non-backed-up reinst
  assert.match(readFileSync('android/app/src/main/java/com/gridlygo/gridly/MainActivity.kt','utf8'),/registerPlugin\(GridlyContinuityPlugin::class.java\)/);
  const project=readFileSync('ios/App/App.xcodeproj/project.pbxproj','utf8');assert.equal((project.match(/A24465010000000000000001/g)||[]).length,2);assert.equal((project.match(/A24465010000000000000002/g)||[]).length,3);
 });
+
+// CAPPlugin already has ObjC load(); a private zero-argument helper collides in Swift.
+test('iOS continuity helper cannot collide with CAPPlugin load lifecycle selector',()=>{
+ const source=readFileSync('ios/App/App/GridlyContinuityPlugin.swift','utf8');
+ assert.doesNotMatch(source,/\bfunc\s+load\s*\(\s*\)/);
+ assert.doesNotMatch(source,/\btry[!?]?\s+(?:self\.)?load\s*\(\s*\)/);
+ assert.match(source,/private func loadRecord\(\) throws -> Record/);
+ assert.equal((source.match(/\btry loadRecord\(\)/g)||[]).length,4);
+ assert.deepEqual([...source.matchAll(/CAPPluginMethod\(name: "([^"]+)"/g)].map(match=>match[1]),['beginVerification','commit','retain','revoke']);
+ for(const method of ['beginVerification','commit','retain','revoke'])assert.match(source,new RegExp('@objc func '+method+'\\('));
+});

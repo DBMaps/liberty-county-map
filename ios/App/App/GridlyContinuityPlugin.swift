@@ -47,7 +47,7 @@ public class GridlyContinuityPlugin: CAPPlugin, CAPBridgedPlugin {
             guard SecItemAdd(item as CFDictionary, nil) == errSecSuccess else { throw VaultFailure.unavailable }
         } else if status != errSecSuccess { throw VaultFailure.unavailable }
     }
-    private func load() throws -> Record {
+    private func loadRecord() throws -> Record {
         // Keychain may survive uninstall. A non-backed-up sandbox sentinel must
         // exist before any retained item is trusted; reinstall deletes that item.
         var directory = try FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
@@ -90,7 +90,7 @@ public class GridlyContinuityPlugin: CAPPlugin, CAPBridgedPlugin {
     }
     @objc func beginVerification(_ call: CAPPluginCall) {
         operate(call) {
-            var record = try load(); let time = try clock(record)
+            var record = try loadRecord(); let time = try clock(record)
             let ready = !record.blocked && time.4
             let proof = ready ? record.proof : ""
             record.recoverable = ready; record.blocked = true; record.attempt = try random()
@@ -100,7 +100,7 @@ public class GridlyContinuityPlugin: CAPPlugin, CAPBridgedPlugin {
     }
     @objc func commit(_ call: CAPPluginCall) {
         operate(call) {
-            var record = try load()
+            var record = try loadRecord()
             guard record.blocked, call.getString("attempt") == record.attempt,
                   let proof = call.getString("proof"), proof.count <= 4096, !proof.isEmpty,
                   let verified = call.getDouble("verifiedAt"), verified.isFinite, verified >= record.verifiedAt else { throw VaultFailure.unavailable }
@@ -113,7 +113,7 @@ public class GridlyContinuityPlugin: CAPPlugin, CAPBridgedPlugin {
     }
     @objc func retain(_ call: CAPPluginCall) {
         operate(call) {
-            var record = try load()
+            var record = try loadRecord()
             guard record.blocked, call.getString("attempt") == record.attempt else { throw VaultFailure.unavailable }
             let time = try clock(record)
             if record.recoverable && time.4 {
@@ -126,7 +126,7 @@ public class GridlyContinuityPlugin: CAPPlugin, CAPBridgedPlugin {
     }
     @objc func revoke(_ call: CAPPluginCall) {
         operate(call) {
-            let record = try load()
+            let record = try loadRecord()
             guard record.blocked, call.getString("attempt") == record.attempt else { throw VaultFailure.unavailable }
             let denied = Record(binding: try random()) // old signed records cannot match
             try save(denied); return ["revoked": true]
