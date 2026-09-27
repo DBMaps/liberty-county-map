@@ -1,6 +1,6 @@
 html.gridly-paid-locked body { visibility: visible !important; overflow: hidden; }
 html.gridly-paid-locked body::before { display: none !important; }
-html.gridly-paid-locked body > :not(#gridlyPaidAccess):not(script):not(style):not(link) { display: none !important; }
+html.gridly-paid-locked body > :where(:not(#gridlyPaidAccess):not(#gridlyPaidLegalAccess):not(script):not(style):not(link)) { display: none !important; }
 #gridlyPaidAccess[hidden] { display: none !important; }
 #gridlyPaidAccess { position:fixed; inset:0; z-index:2147483647; display:flex; flex-direction:column; align-items:center;
   overflow:auto; padding:max(22px,env(safe-area-inset-top)) 20px max(22px,env(safe-area-inset-bottom));
@@ -18,3 +18,9 @@ html.gridly-paid-locked body > :not(#gridlyPaidAccess):not(script):not(style):no
 .gridly-paid-links { display:flex; flex-wrap:wrap; gap:10px 16px; margin-top:18px; font-size:14px; }
 #gridlyPaidStatus { min-height:3em; }
 .gridly-paid-card :focus-visible { outline:3px solid #fff; outline-offset:3px; }
+
+html.gridly-paid-locked.gridly-paid-onboarding body > #gridlyWelcomeOnboarding:not([hidden]) { display:grid !important; }
+
+#gridlyPaidLegalAccess { position:fixed; z-index:2147483647; top:max(8px,env(safe-area-inset-top)); right:12px; padding:8px; max-width:245px; border-radius:10px; background:#10282e; color:#ecf5f2; font:13px/1.5 system-ui; }
+#gridlyPaidLegalAccess[hidden] { display:none !important; }
+#gridlyPaidLegalAccess a { color:#b0ece0; }

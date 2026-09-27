@@ -1,4 +1,5 @@
-import {createPaidAccess} from './gridly-paid-access.mjs';
+import {createPaidAccess,nativeStore} from './gridly-paid-access.mjs';
+import {createPaidOnboarding,onboardingComplete} from './gridly-paid-onboarding.mjs';
 import {productionPaidComposition} from './gridly-paid-config.mjs';
 import {loadPaidRuntime} from './gridly-paid-startup.mjs';
 
@@ -15,10 +16,14 @@ export async function bootPaidAccess() {
   const restore=document.getElementById('gridlyPaidRestore'), retry=document.getElementById('gridlyPaidRetry');
   const coordinator=createPaidAccess(productionPaidComposition(window.Capacitor));
   let loading=false, started=false, wasVisible=false, loadFailed=false, closing=false;
+  let tourComplete=onboardingComplete(), onboarding;
+  const legal=document.createElement('details');legal.id='gridlyPaidLegalAccess';legal.hidden=true;
+  const summary=document.createElement('summary');summary.textContent='Help & legal';legal.append(summary,gate.querySelector('nav').cloneNode(true));
+  document.body.append(legal);
   const previousInert=new Map();
   const lock=()=>{
     root.classList.add('gridly-paid-locked');gate.hidden=false;
-    for(const child of document.body.children) if(child!==gate&&child.tagName!=='SCRIPT') {
+    for(const child of document.body.children) if(child!==gate&&child!==legal&&child.tagName!=='SCRIPT') {
       if(!previousInert.has(child)) previousInert.set(child,child.inert);
       child.inert=true;
     }
@@ -31,8 +36,24 @@ export async function bootPaidAccess() {
     wasVisible=true;
   };
   lock();root.classList.remove('gridly-prepaint-lock');
-  coordinator.subscribe(async value=>{
+  if(nativeStore(window.Capacitor)) {
+    if(!tourComplete) root.classList.add('gridly-paid-onboarding');
+    legal.hidden=tourComplete;
+    onboarding=await createPaidOnboarding({onComplete:()=>{
+      tourComplete=true;root.classList.remove('gridly-paid-onboarding');
+      legal.hidden=true;
+      void render(coordinator.read());
+    }});
+    window.gridlyApplyPreAccessSetup=ports=>{onboarding.applyRuntimeSetup(ports);return {completed:tourComplete};};
+    if(!tourComplete) onboarding.open();
+  }
+  const render=async value=>{
     if(closing) return;
+    if(nativeStore(window.Capacitor) && !tourComplete) {
+      lock();gate.hidden=true;
+      const tour=document.getElementById('gridlyWelcomeOnboarding');tour.inert=false;
+      return; // Even a valid store subscriber completes the first-install tour.
+    }
     if(!value.allowed) {
       lock();
       // Destroy protected timers/feeds after failed re-verification. Fresh launch
@@ -64,11 +85,12 @@ export async function bootPaidAccess() {
       } catch {loadFailed=true;lock();status.textContent='Gridly could not start. Reopen the app or contact Support.';retry.disabled=false;retry.textContent='Reopen Gridly';}
       finally {loading=false;}
     } else if(value.allowed && started) unlock();
-  });
+  };
+  coordinator.subscribe(render);
   purchase.addEventListener('click',()=>{void coordinator.purchase();});
   restore.addEventListener('click',()=>{void coordinator.restore();});
   retry.addEventListener('click',()=>{if(loadFailed) window.location.reload();else void coordinator.refresh();});
-  window.addEventListener('pagehide',()=>{closing=true;lock();void coordinator.stop();},{once:true});
+  window.addEventListener('pagehide',()=>{closing=true;onboarding?.dispose();lock();void coordinator.stop();},{once:true});
   window.addEventListener('pageshow',event=>{if(event.persisted) window.location.reload();});
   await coordinator.start();
 }

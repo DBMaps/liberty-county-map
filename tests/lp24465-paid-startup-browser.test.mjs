@@ -46,6 +46,7 @@ test('real browser: unsupported/native-unconfigured gate, portrait/legal access,
     await page.waitForURL('**/legal/privacy.html');assert.equal(await page.locator('body').isVisible(),true);
     await page.addInitScript(()=>{
       localStorage.setItem('gridlyEntitled','true');
+      localStorage.setItem('gridlyBetaFirstRunWalkthroughCompleteV894C','yes');
       window.Capacitor={isNativePlatform:()=>true,getPlatform:()=> 'ios',Plugins:{GridlyStoreKit:{
         addListener:async()=>({remove:async()=>{}}),startObserving:async()=>{},stopObserving:async()=>{},
         getProducts:async()=>({result:'available',productId:'com.gridlygo.gridly.monthly',displayPrice:'$3.49',displayName:'Gridly Monthly',currency:'USD',billingPeriod:'P1M',storefront:'US',hasOffer:false})}}};

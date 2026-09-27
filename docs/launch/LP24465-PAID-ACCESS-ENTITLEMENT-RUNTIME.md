@@ -2,6 +2,10 @@
 
 Date: September 27, 2026. **PREPARED / locally certified; paid production launch NO-GO.**
 
+## LP244.65A superseding decision
+
+The September 27 owner correction supersedes the original tour ordering and offline-policy claim below. See [LP244.65A](LP24465A-PAID-ACCESS-LAUNCH-FLOW-CORRECTION.md). First installs now complete the accepted seven pages before any paywall or protected runtime. Five-minute proof freshness is NOT owner-approved launch continuity. No replacement duration is selected; paid launch and merge remain NO-GO pending that decision and verifier/store gates.
+
 ## Source and scope
 
 - Branch: `LP244.65-paid-access-entitlement-runtime`.
@@ -42,9 +46,9 @@ UI state excludes proof, nonce, receipts, purchase tokens, transaction handles, 
 
 ## Accepted onboarding and paywall
 
-The accepted seven-page tour remains byte-for-byte in unchanged `js/app.js`: welcome, awareness, map, alerts, report, settings, setup. Existing completion preferences, ZIP/town resolution, optional location, orientation and Skip/Finish behavior remain unchanged. These preferences do not grant paid access.
+The accepted seven-page renderer and resolver bodies are copied without changes into an isolated presentation/preferences module, with public geography generated from the accepted source. The original app tour remains for replay; only its bootstrap gains a preference handoff to prevent duplicate first-run presentation.
 
-**Implemented sequence:** silent store verification → admission sheet if verification/purchase is required → authoritative entitlement → existing first-run tour when not previously completed → normal Home flow. The preferred tour-before-paywall order is not implemented: its watch-area resolver and setup callbacks depend on protected services. Preserving that accepted implementation avoids a second tour with altered location/setup semantics. Returning installs with a current entitlement skip the purchase sheet; reinstall recovery uses fresh store evidence, and a new install retains the normal first-run tour behavior. This source preservation does not reopen LP244.54 or constitute new physical-device acceptance.
+**Current sequence:** first install → accepted tour → paywall if needed → authoritative entitlement → Home. Existing store entitlement can be looked up silently but never interrupts the first-install tour. Returning completed subscribers verify into Home without purchasing; returning non-entitled users see the paywall. Preferences cannot establish entitlement. See LP244.65A four-case tests. LP244.54 remains CLOSED / PASS.
 
 Portrait admission uses Gridly branding and Know Before You Go, a monthly subscription, store-returned localized price when available and $2.99/month canonical fallback. It names the relevant store, automatic renewal subject to store terms and cancellation through store settings. Restore/Check Purchase and Retry are obvious. No refund/trial/annual/direct-billing promises are added. Unsupported web hides purchase controls and pricing; the public website does not acquire a paywall. Short portrait views scroll with legal/deletion links reachable.
 
@@ -58,9 +62,9 @@ There is no Gridly consumer login, account ownership table or old installation-I
 
 ## Offline and temporary failures
 
-The existing launch policy remains strict: no offline unlock and no durable client proof cache. Launch and foreground reconciliation clear admission while checking. Proof authority is limited to five minutes and never past the verified subscription period. Lease expiry means **verification required**, not subscription expired; only a signed provider decision establishes expiry/revocation. A lease deadline schedules one recheck; unavailable verification stays blocked without polling. Purchase interaction retains the existing two-minute budget; other bridge/provider operations retain 15 seconds. A late store purchase can still complete at the store and is recovered by a fresh query/restore.
+The original implementation clears admission on refresh/failure and limits proof freshness to five minutes. This was incorrectly described as approved launch policy. **That claim is withdrawn.** Freshness expiry means verification required, never subscription expired; only a verified provider decision establishes expiration/revocation. No replacement duration is implemented. The present strict behavior does not satisfy the owner-required transient continuity and remains an unreleased blocker.
 
-The LP244.62 proposed 24-hour private cache retention is not client offline access and is not changed or approved here. No long-lived offline policy is introduced.
+Verified period end supplies a hard ceiling, but early revocation makes maximum staleness and restart persistence an owner decision. See LP244.65A for memory-only bounded continuity, durable bounded continuity and full-period risk options. The LP244.62 proposed 24-hour backend cache retention is not client access authority. Existing operational timeouts are unchanged.
 
 ## Public routes and PWA
 

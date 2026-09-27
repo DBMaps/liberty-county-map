@@ -1,11 +1,13 @@
 const GRIDLY_SW_VERSION = "lp244.33-google-play-compliance";
-const GRIDLY_CLOSURE_CACHE_NAME = "gridly-pwa-shell-lp24465-v1";
+const GRIDLY_CLOSURE_CACHE_NAME = "gridly-pwa-shell-lp24465a-v1";
 const GRIDLY_CLOSURE_URLS = [
   "./",
   "./index.html",
   "./css/gridly-paid-access.css",
   "./js/gridly-paid-bootstrap.js",
   "./js/gridly-paid-ui.mjs",
+  "./js/gridly-paid-onboarding.mjs",
+  "./assets/onboarding/paid-onboarding-model.json",
   "./js/gridly-paid-access.mjs",
   "./js/gridly-paid-config.mjs",
   "./js/gridly-paid-startup.mjs",

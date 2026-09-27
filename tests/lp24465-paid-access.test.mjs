@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {webcrypto} from 'node:crypto';
 import {createPaidAccess,nativeStore} from '../js/gridly-paid-access.mjs';
+import {verifyAuthorityProof,accessDecision} from '../js/gridly-entitlement.mjs';
 import {productionPaidComposition} from '../js/gridly-paid-config.mjs';
 import {normalizeApple,normalizeGoogle,signResponse} from '../supabase/functions/_shared/entitlement/core.mjs';
 import {readConsumerScriptManifest,runtimePolicy,communitySubmissionContract} from '../tools/native-web.mjs';
@@ -86,7 +87,7 @@ test('all protected scripts and inline startup stay inert; governed order preser
   for(const file of ['js/gridly-paid-access.mjs','js/gridly-paid-ui.mjs','js/gridly-paid-startup.mjs','js/gridly-paid-config.mjs','css/gridly-paid-access.css'])assert.ok(runtimePolicy.files.includes(file));
   const contract=await communitySubmissionContract(process.cwd());assert.equal(contract.protocol_version,2);assert.equal(contract.scripts.length,2);
 });
-test('accepted seven-page onboarding retained after admission; no second tour or store checks in app',()=>{
+test('accepted seven-page source and completion preferences preserved; no store checks in app',()=>{
   const app=readFileSync('js/app.js','utf8');const section=app.slice(app.indexOf('function renderGridlyV858FirstRunExperience('));
   assert.deepEqual([...section.slice(0,section.indexOf('const pageTrack')).matchAll(/data-gridly-onboarding-page="([^"]+)"/g)].map(m=>m[1]),['welcome','awareness','map','alerts','report','settings','setup']);
   assert.match(app,/gridlyWelcomeSeenV1/);assert.doesNotMatch(app,/createPaidAccess|createAppleStoreKit|createGooglePlayBilling/);
@@ -131,4 +132,25 @@ test('release composition has no debug, storage, sandbox, evidence logs, free of
   const gate=readFileSync('index.html','utf8').split('<section id="gridlyPaidAccess"')[1].split('</section>')[0];
   assert.doesNotMatch(gate,/free tier|free trial|annual plan|refund guarantee|direct billing/i);
   assert.match(gate,/Cancel anytime through store settings/);assert.match(gate,/Automatically renews/);
+});
+
+// No replacement continuity window is selected by these tests.
+test('proof freshness is independent of provider period end; signed revocation overrides future period',async()=>{
+ const nonce='n'.repeat(40),end=initial+86400000;
+ const transaction={bundleId:'com.gridlygo.gridly',productId:'com.gridlygo.gridly.monthly',type:'Auto-Renewable Subscription',environment:'Production',originalTransactionId:'fixture-chain',expiresDate:end};
+ const renewal={originalTransactionId:'fixture-chain',productId:transaction.productId,environment:'Production',autoRenewStatus:1};
+ const verify=async record=>verifyAuthorityProof({proof:await signResponse(record,nonce,keys.privateKey,webcrypto),publicKey:keys.publicKey,nonce,platform:'apple',now:initial,crypto:webcrypto});
+ const current=await verify(normalizeApple(transaction,renewal,1,{env:'production',originalReference:'fixture-chain',now:initial}));
+ assert.equal(current.subscriptionState,'active');assert.equal(Date.parse(current.currentPeriodEnd),end);
+ assert.equal(accessDecision(current,{platform:'apple',now:initial+300000}).reason,'verification_required');
+ assert.equal(current.subscriptionState,'active'); // proof staleness did not change the subscription
+ const revoked=await verify(normalizeApple({...transaction,revocationDate:initial},renewal,5,{env:'production',originalReference:'fixture-chain',now:initial}));
+ assert.equal(Date.parse(revoked.currentPeriodEnd),end);assert.equal(revoked.entitlementState,'not_entitled');
+ assert.equal(accessDecision(revoked,{platform:'apple',now:initial}).allowed,false);
+});
+test('transient verification failure stays unavailable rather than claiming subscription expiry',async()=>{
+ for(const platform of ['apple','google']) {
+  const f=fixture(platform),c=f.create();await c.start();f.reject();const result=await c.refresh();
+  assert.equal(result.state,'temporarily_unavailable');assert.notEqual(result.state,'not_entitled');await c.stop();
+ }
 });

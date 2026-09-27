@@ -47317,7 +47317,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   initDailyDestinationHero();
   updateMobileWatchHeader();
   updateProfileUI();
-  maybeOpenFirstRunSetup();
+  const preAccessSetup = window.gridlyApplyPreAccessSetup?.({ complete: completeGridlyV858FirstRunSetup, setLocation: setGridlyUserLocation });
+  if (!preAccessSetup?.completed) maybeOpenFirstRunSetup();
 
   startupDiagnostics?.markRoadwayReportDependencyEvent?.("crossingsStarted");
   await runStartupStage("crossing package loading and initial marker rendering", () => startupDiagnostics?.measurePostPaintPhase ? startupDiagnostics.measurePostPaintPhase("crossing package loading and initial marker rendering", "loadCrossings", () => loadCrossings()) : loadCrossings(), { blocking: true, network: true, dependency: "curated/FRA crossing package", timeoutMs: 20000, degradeOnFailure: true, cachedOrFallbackUsed: true });
