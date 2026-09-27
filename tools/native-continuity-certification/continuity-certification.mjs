@@ -12,12 +12,28 @@ const syntheticStore={addListener:async()=>({remove:async()=>{}}),startObserving
 async function seed(scenario) {
  const categories={native_reset:'native_reset_failed',native_context:'native_context_failed',issuer_fetch:'issuer_fetch_failed',issuer_http:'issuer_http_error',issuer_response:'issuer_response_invalid',fixture_verification:'fixture_verification_failed',native_commit:'native_commit_failed'};
  const safeScenario=['A','B','C','D','E'].includes(scenario)?scenario:'unknown';
- let stage='native_reset',httpStatus,nativeCommitCategory;canaryCount=0;
- const progress=()=>show({scenario:safeScenario,stage,...(httpStatus===undefined?{}:{httpStatus}),protectedInitializations:canaryCount});
+ let stage='native_reset',httpStatus,nativeCommitCategory,nativeResetCategory='unknown_native_reset_failure',nativeResetStep='coordinator_stop',nativeResetOperation='unknown',nativeResetStatus='unknown';canaryCount=0;
+ const progress=()=>show({scenario:safeScenario,stage,...(stage==='native_reset'?{nativeResetStep}:{}),...(httpStatus===undefined?{}:{httpStatus}),protectedInitializations:canaryCount});
  try {
+  const resetFailure=reply=>{
+   const categories=['plugin_unavailable','initial_load_failed','sentinel_failed','keychain_read_failed','keychain_write_failed','random_failed','clock_failed','begin_attempt_failed','revoke_attempt_mismatch','revoke_storage_failed','unknown_native_reset_failure'];
+   const operations=['unknown','application_support','sentinel_directory','sentinel_backup_exclusion','sentinel_delete','sentinel_write','keychain_copy','record_decode','random','record_encode','keychain_update','keychain_add','boot_identity','timebase','begin_attempt','barrier_write','revoke_attempt','revoke_write'];
+   const statuses=['unknown','success','item_not_found','missing_entitlement','interaction_not_allowed','not_available','auth_failed','duplicate_item','invalid_parameter','other'];
+   if(categories.includes(reply?.nativeResetCategory))nativeResetCategory=reply.nativeResetCategory;
+   if(operations.includes(reply?.nativeResetOperation))nativeResetOperation=reply.nativeResetOperation;
+   if(statuses.includes(reply?.nativeResetStatus))nativeResetStatus=reply.nativeResetStatus;
+  };
   progress();await coordinator?.stop();
-  if(safeScenario==='unknown'||!platform||!vault)throw Error();
-  const prior=await vault.beginVerification();if((await vault.revoke({attempt:prior.attempt}))?.revoked!==true)throw Error();
+  nativeResetStep='plugin_check';nativeResetCategory='plugin_unavailable';progress();
+  if(safeScenario==='unknown'||!platform||!vault||typeof vault.beginVerification!=='function'||typeof vault.revoke!=='function')throw Error();
+  nativeResetStep='initial_begin';nativeResetCategory='unknown_native_reset_failure';progress();
+  const prior=await vault.beginVerification();
+  if(prior?.nativeResetFailed===true){resetFailure(prior);throw Error();}
+  nativeResetStep='initial_context';
+  if(typeof prior?.attempt!=='string'||!prior.attempt||prior.attempt.length>128){nativeResetCategory='begin_attempt_failed';throw Error();}
+  nativeResetStep='revoke';progress();const revoked=await vault.revoke({attempt:prior.attempt});
+  if(revoked?.nativeResetFailed===true){resetFailure(revoked);throw Error();}
+  if(revoked?.revoked!==true)throw Error();
   stage='native_context';progress();const context=await vault.beginVerification();
   if(!context||!/^[a-f0-9]{64}$/.test(context.binding)||typeof context.attempt!=='string'||!context.attempt||!Number.isFinite(context.nowMs))throw Error();
   // Native iOS can report sub-millisecond precision; fixture ISO timestamps are milliseconds.
@@ -44,7 +60,7 @@ async function seed(scenario) {
   }
   show({scenario:safeScenario,stage:'complete',seeded:true,httpStatus,protectedInitializations:canaryCount});
  }catch {
-  show({scenario:safeScenario,stage,errorCategory:categories[stage],...(stage==='native_commit'?{nativeCommitCategory}:{}),...(httpStatus===undefined?{}:{httpStatus}),protectedInitializations:canaryCount});
+  show({scenario:safeScenario,stage,errorCategory:categories[stage],...(stage==='native_reset'?{nativeResetCategory,nativeResetStep,nativeResetOperation,nativeResetStatus}:{}),...(stage==='native_commit'?{nativeCommitCategory}:{}),...(httpStatus===undefined?{}:{httpStatus}),protectedInitializations:canaryCount});
  }
 }
 async function check() {

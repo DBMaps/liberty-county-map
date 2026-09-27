@@ -5,6 +5,7 @@ import {join} from 'node:path';
 import {tmpdir} from 'node:os';
 import {webcrypto,randomBytes} from 'node:crypto';
 import {createIssuer} from '../tools/native-continuity-certification/issuer.mjs';
+import {instrumentIosReset} from '../tools/native-continuity-certification/ios-reset-diagnostics.mjs';
 import {instrumentAndroidCommit} from '../tools/native-continuity-certification/android-commit-diagnostics.mjs';
 import {prepare,listen} from '../tools/native-continuity-certification/prepare.mjs';
 import {once} from 'node:events';
@@ -40,8 +41,8 @@ test('certification generator creates isolated native identities, attested vault
    assert.equal((await read(join(result.web,'continuity-fixture-config.json'))).includes('"d":'),false);
    await assert.rejects(assertNoContinuityCertification(result.web),/cannot enter a release bundle/);
    const path=platform==='ios'?'ios/App/App/GridlyContinuityPlugin.swift':'android/app/src/main/java/com/gridlygo/gridly/GridlyContinuityPlugin.kt';
-   assert.equal(await read(join(result.output,path)),platform==='android'?instrumentAndroidCommit(await read(path)):await read(path));
-   assert.equal(manifest.certificationCommitDiagnostics,platform==='android');
+   assert.equal(await read(join(result.output,path)),platform==='android'?instrumentAndroidCommit(await read(path)):instrumentIosReset(await read(path)));
+   assert.equal(manifest.certificationCommitDiagnostics,platform==='android');assert.equal(manifest.certificationResetDiagnostics,platform==='ios');
    if(platform==='ios') {
     const project=await read(join(result.output,'ios/App/App.xcodeproj/project.pbxproj'));assert.ok(!project.includes('PRODUCT_BUNDLE_IDENTIFIER = com.gridlygo.gridly;'));assert.ok(!project.includes('GridlyStoreKitPlugin.swift'));
     assert.match(await read(join(result.output,'ios/App/App/GridlyBridgeViewController.swift')),/#if !DEBUG[\s\S]*#error/);
@@ -130,7 +131,7 @@ async function runSeed(failure,scenario='A') {
   verifyContinuity:async()=>{verifies++;if(failure==='verify_throw')throw error();return failure==='verify_false'?null:{valid:true};}
  });
  await fn(scenario);
- const safeKeys=new Set(['scenario','stage','errorCategory','httpStatus','nativeCommitCategory','seeded','protectedInitializations']);
+ const safeKeys=new Set(['scenario','stage','errorCategory','httpStatus','nativeCommitCategory','nativeResetCategory','nativeResetStep','nativeResetOperation','nativeResetStatus','seeded','protectedInitializations']);
  for(const row of output){assert.ok(Object.keys(row).every(key=>safeKeys.has(key)));assert.equal(row.protectedInitializations,0);const text=JSON.stringify(row);assert.ok(![sensitive,binding,attempt].some(value=>text.includes(value)));}
  return {last:JSON.parse(JSON.stringify(output.at(-1))),output,commits,verifies};
 }
