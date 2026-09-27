@@ -4,7 +4,7 @@
 
 2026-09-27. Branch: `LP244.65-paid-access-entitlement-runtime`. Starting HEAD: `0f8e5997f7001f62b62127b1956bbd7de708ecb0`; initial tree clean.
 
-**Harness preparation PASS. Native lifecycle certification NO-GO / owner execution pending. Paid production remains NO-GO.** No actual native runtime result is inferred from JavaScript mocks, source assertions or compile success.
+**ANDROID NATIVE CONTINUITY CERTIFICATION A-H: PASS (LP244.65H owner-observed API 36 emulator evidence). iOS native continuity certification: PENDING. LP244.65 is not fully closed; paid production remains NO-GO.** The LP244.65H evidence below supersedes earlier Android execution-pending statements. Native runtime results come from the owner observations, not JavaScript mocks, source assertions or compile success.
 
 Owner-provided preceding evidence: Android prepare/sync/assembleDebug PASS; iOS StoreKit and continuity simulator compile PASS following the helper-collision repair. Those results concern the preceding production source, not compilation/execution of this new certification clone.
 
@@ -20,10 +20,10 @@ Both real plugins expose exactly `beginVerification`, `commit`, `retain`, `revok
 
 | Evidence | Pure local tests | Native execution still needed | Physical device required in this phase |
 | --- | --- | --- | --- |
-| Signature, 24-hour/period caps, denial, environment, binding | PASS | Native integration cases A–E | No |
-| Restart/barrier policy | PASS with isolated vault fixtures | F: actual process restart | No; emulator/simulator |
-| Clock/boot checks | PASS source and isolated vault fixtures | G: actual emulator reboot; iOS host reboot | No; hardware guarantees not claimed |
-| Reinstall ownership boundary | PASS policy/source fixtures | H: cert-app uninstall/reinstall | No; simulator/emulator only |
+| Signature, 24-hour/period caps, denial, environment, binding | PASS | Android A–E PASS; iOS pending | No |
+| Restart/barrier policy | PASS with isolated vault fixtures | Android A/F process restart PASS; iOS pending | No; emulator/simulator |
+| Clock/boot checks | PASS source and isolated vault fixtures | Android G reboot PASS; separate wall-clock rollback not newly observed; iOS pending | No; hardware guarantees not claimed |
+| Reinstall ownership boundary | PASS policy/source fixtures | Android H uninstall/reinstall PASS; iOS pending | No; simulator/emulator only |
 | Public routes / protected initialization | PASS real Edge browser and source tests | Check links and gated canary in cert app | No |
 
 A native compile alone does not exercise Keystore/Keychain lifecycle. Android physical-device work adds no required unique evidence to these bounded checks; use one emulator. Simulator results do not certify hardware-backed key properties or physical iPhone behavior.
@@ -442,3 +442,52 @@ adb -e shell am start -n com.gridlygo.continuitycert/com.gridlygo.gridly.MainAct
 ```
 
 Expect allowed=true, temporaryAccess=true, protectedInitializations=1. Continue B–H from the existing case matrix only after A succeeds. Never uninstall accepted Gridly or change its config; do not touch the LP244.54 stash, reuse a mismatched issuer key/APK, deploy, push, merge or enable reporting.
+
+## LP244.65H — Owner-observed Android native continuity closure
+
+2026-09-27. Source branch `LP244.65-paid-access-entitlement-runtime`; starting HEAD `5f4fe58c8942b3da9c3e34f0cdc168216a1fcbde`; initial working tree clean. Evidence source: owner's LP244.65H certification report supplied to this task. These are completed owner observations, not new agent device executions.
+
+**ANDROID NATIVE CONTINUITY CERTIFICATION A-H: PASS.**
+
+**iOS native continuity certification: PENDING. LP244.65 is not fully closed. Paid production remains NO-GO.**
+
+### Environment and exact observed results
+
+Separate synthetic certification app `com.gridlygo.continuitycert`, Android emulator API 36, real production-shaped GridlyContinuity native vault with the previously committed numeric parsing repair. Issuer remained synthetic and loopback-only. No real purchases or production backend were used; the accepted Gridly app was not the certification target. Generated commit diagnostics do not modify encryption/storage or continuity validation.
+
+| Case | Owner action | allowed | temporaryAccess | state | protectedInitializations | Verdict |
+| --- | --- | --- | --- | --- | --- | --- |
+| A | Seed valid signed continuity, force-stop/relaunch SAME artifact, Check | true | true | entitled | 1 | PASS |
+| B | Seed 25-hour-old proof, force-stop/relaunch, Check | false | false | temporarily_unavailable | 0 | PASS: 24-hour ceiling |
+| C | Seed expired-period proof, force-stop/relaunch, Check | false | false | temporarily_unavailable | 0 | PASS: period-end cap |
+| D | Seed tampered proof, force-stop/relaunch, Check | false | false | temporarily_unavailable | 0 | PASS: signature denial |
+| E | Seed sandbox/test proof, force-stop/relaunch, Check against production policy | false | false | temporarily_unavailable | 0 | PASS: environment denial |
+| F | Seed/admit A, force-stop/relaunch SAME artifact again, Check | true | true | entitled | 1 | PASS: second ordinary restart |
+| G | Valid proof present; reboot emulator; Inspect/Check BEFORE reseeding | false | false | temporarily_unavailable | 0 | PASS: boot/clock trust denial |
+| H | Uninstall ONLY certification ID; reinstall exact SAME APK; no seeding; Check | false | false | temporarily_unavailable | 0 | PASS: reinstall cannot recover old authority |
+
+G Inspect additionally returned clockTrusted=false, recordPresent=false, signatureAndBoundsValid=false, protectedInitializations=0. This is the bounded context returned by beginVerification: an untrusted record's proof is withheld. recordPresent=false is not evidence that the encrypted file was erased. Observed reboot denial supports the boot-identity/clock protection and need for fresh verification; it does not independently certify a separate wall-clock rollback/sleep test or hardware-backed key properties.
+
+A/F establish that the real Android repaired commit path accepted the previously verified signed authorization, encrypted/persisted it, recovered it after process restart, reverified it and admitted temporary protected initialization exactly once in each observed fresh process. B–E/G/H kept the protected canary at zero. The canary uses the actual coordinator's initializeRuntime; these runs do not execute or certify the complete consumer Home/Search/Route Watch UI.
+
+### Production defect and supporting history
+
+The real Android numeric parsing defect was reported before repair and committed as **Fix Android continuity commit numeric parsing**, `5f4fe58c8942b3da9c3e34f0cdc168216a1fcbde`. Integral epoch-millisecond JSON becomes Long; Capacitor getDouble excluded Long and returned null, rejecting before encryption/storage. The minimal Number.toDouble numeric read preserved all finite/nondecreasing time, proof-size and current-attempt checks. Successful owner-observed A/F now runtime-certify the repaired persistence/recovery path within this synthetic emulator scope. No further runtime repair is required or performed here.
+
+Earlier supporting certification history:
+
+1. Generated Android certification origin was changed from HTTPS to HTTP (`server.androidScheme="http"`) to match the loopback HTTP issuer. This was isolated to the separate certification configuration; it is not evidence that mixed content caused every later failure.
+2. The synthetic issuer originally used host Date.now, which could be ahead of native emulator time. The production verifier correctly rejected future lastVerifiedAt. Issuance was repaired to use the supplied native millisecond sample; the production verifier was not weakened.
+3. Bounded seed/commit diagnostics were added with fixed stages/categories only. No proof, signing key, binding, attempt, ciphertext, purchase token or raw exception was exposed. Native commit diagnostics exist only in the generated debug Android certification copy; framework logging remains disabled.
+
+The first two repairs and diagnostics were certification-only. The Android numeric-reader repair was a separately identified production plugin defect. This closure changes documentation only.
+
+### Policy/security conclusion and limits
+
+Owner runtime evidence supports the 24-hour maximum, the verified current-period end cap, tampered/sandbox denial, reboot requiring fresh verification, ordinary restart continuity and no reinstall reuse. Repository implementation/tests separately establish that signed server authority, native binding and secure persistence are required: localStorage and installation ID cannot grant ownership, and no consumer Gridly account is required. Android storage remains AndroidKeyStore-backed AES/GCM in noBackupFilesDir; successful emulator persistence does not prove hardware-backed security.
+
+Not certified by this closure: production Apple runtime, iOS simulator continuity lifecycle, real Google/Apple purchases, production verifier deployment, production store credentials or live paid-access composition. These remain separate gates. iOS simulator execution of the separate synthetic app and its A–H evidence remains required; prior compile success alone is insufficient. No new source/tooling blocker for that run is identified here. Use the existing Mac/iOS commands in this document with the reviewed source, existing Node/Xcode toolchain and one intended simulator; no device acceptance or store/backend setup is added by this task.
+
+### Verification and preserved boundaries
+
+Focused LP244.65 tests: **87/87 PASS, zero failures, zero skipped** (continuity, C–G harness/native commit regression, paid-access, launch-flow and startup browser). Existing tests verify protected denial, policy deadlines, reinstall/clock safeguards, no sensitive logging and no reporting activation. Changed-file credential/syntax scan and sensitive-output/source tests PASS. git diff --check PASS. Only this certification record and the paid-access status document changed. Repository reporting evidence: atomic-transition admission defaults false and its baseline transition sets reporting_enabled=false; current app reads the protocol-v2 admission status, and paid-access source-contract tests exclude activation. This establishes preserved repository behavior, not a fresh live production value. Reporting remains disabled under the existing release repository contract and owner baseline; no production status query is made. No reporting activation, runtime/config change, store action, purchase, native build, deployment, production mutation, push or merge. LP244.54 remains CLOSED/PASS. Old LP244.22 reset/repair must not be replayed.
