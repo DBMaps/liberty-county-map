@@ -30,7 +30,7 @@ A native compile alone does not exercise Keystore/Keychain lifecycle. Android ph
 
 ## Isolation and release exclusion
 
-`tools/native-continuity-certification/prepare.mjs` creates a NEW directory outside the repository, copying a separate **debug-only** app with ID `com.gridlygo.continuitycert` and visible name **Gridly Continuity CERT**. Production app ID `com.gridlygo.gridly` is preserved. Vault source bytes are compared to the originals and SHA-256 recorded in the generated manifest. Only the continuity plugin is registered in the clone; store/location plugin implementations are excluded. Existing JavaScript store adapters are used with an explicit unavailable fixture port, never a real purchase plugin.
+`tools/native-continuity-certification/prepare.mjs` creates a NEW directory outside the repository, copying a separate **debug-only** app with ID `com.gridlygo.continuitycert` and visible name **Gridly Continuity CERT**. Production app ID `com.gridlygo.gridly` is preserved. Vault source bytes are compared before any instrumentation; source and generated SHA-256 are recorded in the manifest (LP244.65G Android commit diagnostics detailed below). Only the continuity plugin is registered in the clone; store/location plugin implementations are excluded. Existing JavaScript store adapters are used with an explicit unavailable fixture port, never a real purchase plugin.
 
 The loopback issuer generates an ephemeral signing key in memory. Only its public JWK goes into the certification bundle. The issuer uses the existing server normalizers/signResponse to create synthetic continuity; private key/proofs/bindings/attempts are never logged or written as diagnostics. The endpoint listens only on `127.0.0.1:8765`, accepts a bounded three-field synthetic seed request, and has no production transport. Keep the issuer process and installed artifact unchanged throughout a case. Rerunning preparation generates another key and invalidates previous evidence.
 
@@ -44,7 +44,7 @@ Release safeguards:
 - No consumer query flag, localStorage authority, runtime-global unlock, production signing key, or release entitlement flag exists.
 - Copying a certification bundle into production staging fails the contract tests. Deliberately modifying/removing these safeguards is outside this claim.
 
-The certification page calls the unchanged native vault directly to seed only this separate app. Negative fixtures intentionally write invalid synthetic records; the real verifier/coordinator must reject them. No hidden native injection method was added.
+The certification page calls the native vault directly to seed only this separate app; LP244.65G adds fixed commit diagnostics only to the generated Android copy, as detailed below. Negative fixtures intentionally write invalid synthetic records; the real verifier/coordinator must reject them. No hidden native injection method was added.
 
 ## Cases and bounded observations
 
@@ -358,3 +358,87 @@ Final `git diff --check`, JavaScript syntax, changed-file credential-pattern sca
 Stop the old issuer with Ctrl+C in its own terminal. Generate a NEW clone from this repaired source and leave its new issuer running; rebuild Debug and replace ONLY the certification app with `adb -e install -r`. Use the same LP244.65D Android commands above (and verify HTTP scheme plus loggingBehavior=none). Do not run Capacitor sync or overwrite consumer assets in the clone. The frontend and issuer must both be from LP244.65F because POST now includes nowMs; an older issuer correctly rejects the new shape. Do not reuse an APK/public key from a different issuer generation or change emulator/host clocks to hide the mismatch.
 
 Tap A once: expect trace HTTP204/HTTP200, then stage=complete/seeded=true. Force-stop/relaunch the SAME artifact, then Check offline admission: expect allowed=true, temporaryAccess=true, protectedInitializations=1. Continue B–H only after A passes. If it fails, return only bounded UI fields and safe issuer line; never raw proof, binding, attempt, key or HTTP body. Production reporting remains at the owner-disabled baseline with no fresh production query.
+
+## LP244.65G — Native commit contract diagnosis and numeric-read repair
+
+Starting branch: `LP244.65-paid-access-entitlement-runtime`. Starting HEAD: `66b648c877ab0e2dd0e515172f7aa75fdb855dda`. Initial working tree was clean. Owner's Android evidence reaches native_commit after actual proof verification and HTTP200. No observed native crash or KeyStore/Cipher exception establishes a storage failure; force-stop DeadObjectException is unrelated.
+
+### Proven first failing statement
+
+Production Android commit used `call.getDouble("verifiedAt") ?: error("unavailable")`. The installed Capacitor PluginCall implementation accepts Double, Float and Integer but returns the default null for Long. An integral epoch-millisecond JSON number exceeds the Integer range and is parsed as Long by Android JSONTokener ([AOSP source](https://android.googlesource.com/platform/libcore/+/master/json/src/main/java/org/json/JSONTokener.java)). The synthetic fixture uses integral milliseconds, as does ordinary server-signed ISO-millisecond verification time. This is a production native argument-reader defect, not a verifier, clock, attempt or encryption defect.
+
+The source-extracted JVM regression reproduces JSON -> Long -> old getter null; the former Kotlin commit body consequently rejects the same otherwise valid arguments. Changing only the numeric read lets the repaired contract save those arguments through an explicitly in-memory test port. The defect was reported to the owner before source repair. No device rerun of this repaired source is claimed.
+
+Smallest repair: `(call.data.opt("verifiedAt") as? Number)?.toDouble() ?: error("unavailable")`. Missing/null/string/boolean values still fail, with no string coercion. Existing finite and monotonically nondecreasing predicates remain intact. No other production line changed.
+
+### Exact contract and failure branches
+
+| Stage | Actual production contract / failure |
+| --- | --- |
+| beginVerification | Load/decrypt record and read clock; ready is !blocked && clock.trusted. Return proof only if ready. Persist recoverable=ready, blocked=true and a new random 64-character attempt before resolving binding/attempt/proof/nowMs/clockTrusted. Any load/clock/random/write exception rejects. |
+| revoke -> fresh begin | Revoke requires blocked and matching attempt; saves empty record with NEW random binding, verifiedAt=0, no proof, cleared barrier/attempt and reset anchors. Fresh begin creates another attempt. Revoke does not leave an unusable state. |
+| Binding | Commit retains the record binding; it does not accept a caller binding. Actual JS verifier checks signed binding/platform/product/environment/signature/deadlines before authoritative commit. Native commit does not independently verify the signed proof. |
+| Arguments / guard | String proof required, length 1..4096 characters; blocked=true and exact current attempt equality required. Numeric verifiedAt must be finite and >= stored verifiedAt. No extra argument is missing from the harness. |
+| Clock | Commit reads wall time, elapsedRealtime and BOOT_COUNT. It does not require a previous clockTrusted=true because fresh authoritative verification can establish new anchors. Existing clock trust checks remain for restoring/retaining old authority. Clock read failure rejects. |
+| Record | Set proof/verifiedAt/utc=max(wall,verified), capture wall/uptime/boot, clear blocked/recoverable and consume attempt by setting it empty. JSON record mutation/serialization failure rejects. |
+| Persistence | Serialize UTF-8 JSON, AES-256/GCM with AndroidKeyStore key and alias AAD; write IV+ciphertext through AtomicFile in noBackupFilesDir. Encryption/key/write failures reject; finishWrite precedes saved=true. Existing failWrite preserves the prior durable file on write failure. |
+| Return | Success resolves only {saved:true}. Production does not resolve saved:false. operate catches Exception and rejects only continuity_unavailable. The original harness therefore collapsed native rejection into native_commit_failed. |
+
+No changes to AES/GCM, key lifecycle, noBackup placement, AtomicFile, read bounds, boot identity, rollback trust, barrier persistence, 24-hour/period ceilings, denial enforcement, billing, iOS, production manifests/config/app IDs or reporting. No store/production call was made. Reporting remains at the owner-disabled baseline, not freshly queried. LP244.54 remains CLOSED/PASS; old LP244.22 reset/repair is not replayed.
+
+### Safe diagnostics in generated certification Android app only
+
+The generator first verifies the copied vault bytes against production, then instruments ONLY commit in the separate debug certification clone. Production plugin has no diagnostic endpoint/logging. Generated native helper requires BuildConfig.DEBUG; existing release task and activity guards and com.gridlygo.continuitycert identity remain. Original storage/clock and begin/retain/revoke source are unchanged in that copy. Manifest now honestly records both productionVaultSha256 and generated vaultSha256 plus certificationCommitDiagnostics=true (Android); iOS remains byte-identical with diagnostics=false. Earlier C/F byte-identity statements describe those prior phases; the Android generated copy is now deliberately instrumented.
+
+On generated commit failure: {saved:false,nativeCommitCategory:<fixed enum>}. Frontend shows it only with stage=native_commit/errorCategory=native_commit_failed, and clips arbitrary native text to unknown_commit_failure. No raw rejection message is read.
+
+Enums: attempt_invalid, attempt_mismatch, verified_at_invalid, proof_invalid, record_read_failed, clock_failed, record_update_failed, persistence_failed, unknown_commit_failure. Categories identify operation stages, not unproven underlying exceptions. persistence_failed covers serialization/encryption/key/AtomicFile failures; it does NOT claim which one occurred. record_read_failed likewise does not identify a KeyStore cause. No invented clock_untrusted rejection is added to commit.
+
+No proof, attempt, binding, ciphertext, key, storage content, raw exception or stack is logged/displayed. Framework loggingBehavior remains none; issuer trace remains only fixed method/path/scenario/platform/status. Loopback-only issuer/CSP/network policy unchanged.
+
+### Verification and remaining runtime boundary
+
+87/87 focused tests PASS, zero skipped: 31 continuity, 16 paid-access, 3 launch-flow, 1 paid-startup browser, 33 C/D/E/F/G harness and 3 G source/JVM tests. Cached JDK 21, Kotlin 2.2 compiler and org.json 20250517 only; no installation, Gradle or native build here. JVM compiles actual source-extracted Kotlin begin/commit/revoke bodies and generated diagnostic commit/helper; uses installed Capacitor getter/JSObject sources. Storage/clock ports are explicitly in-memory/deterministic and never impersonate Android KeyStore.
+
+Covered: begin returns attempt; valid Long milliseconds save; old getter rejects identical input; mismatched/reused attempts reject; missing/null/string/boolean, negative/older and non-finite times reject; empty/overlong proof rejects; revoke -> new attempt -> valid commit succeeds; failed memory write cannot report success/change persisted record; fixed diagnostic output and unknown-text suppression; no sensitive logging. Existing tests preserve 24-hour/period caps, revocation/denial, reinstall, reboot/rollback, public bypass, protected gating, reporting exclusion, loopback, debug-only shipping exclusion and unchanged production config. Real fixture acceptance still runs the real signer/verifier.
+
+Final diff/check and syntax/credential/sensitive-output checks PASS. Actual Android KeyStore commit and restart A–H remain OWNER RUNTIME EVIDENCE REQUIRED. Earlier successful native begin/revoke/fresh-begin already demonstrate some encrypted reads/writes on that device; they do not certify this repaired commit or every storage failure branch. Full native certification GO is not claimed.
+
+### Exact owner Android rerun
+
+Stop the old issuer with Ctrl+C in its own terminal. Terminal 1, keep running:
+
+```powershell
+Set-Location C:\GitHub\liberty-county-map
+$certRoot = Join-Path $env:TEMP ('gridly-continuity-cert-' + [guid]::NewGuid().ToString('N'))
+node tools/native-continuity-certification/prepare.mjs --platform android --output $certRoot
+```
+
+Terminal 2: copy only the printed nonsecret output path. Use existing SDK/JDK; do not sync Capacitor or install dependencies. Stop on any failed command.
+
+```powershell
+$certRoot = 'COPY-EXACT-OUTPUT-PATH-FROM-TERMINAL-1'
+$config = Get-Content -Raw (Join-Path $certRoot 'android\app\src\main\assets\capacitor.config.json') | ConvertFrom-Json
+$manifest = Get-Content -Raw (Join-Path $certRoot 'certification-manifest.json') | ConvertFrom-Json
+if ($config.appId -ne 'com.gridlygo.continuitycert' -or $config.server.androidScheme -ne 'http' -or $config.loggingBehavior -ne 'none' -or $manifest.certificationCommitDiagnostics -ne $true) { throw 'Wrong certification artifact' }
+$env:ANDROID_HOME = Join-Path $env:LOCALAPPDATA 'Android\Sdk'
+if (-not (Test-Path -LiteralPath $env:ANDROID_HOME)) { throw 'Existing Android SDK required' }
+Set-Location (Join-Path $certRoot 'android')
+.\gradlew.bat assembleDebug
+if ($LASTEXITCODE -ne 0) { throw 'Certification compile failed' }
+adb -e reverse tcp:8765 tcp:8765
+if ($LASTEXITCODE -ne 0) { throw 'Reverse failed' }
+adb -e install -r (Join-Path $certRoot 'android\app\build\outputs\apk\debug\app-debug.apk')
+if ($LASTEXITCODE -ne 0) { throw 'Certification install failed' }
+adb -e shell am start -n com.gridlygo.continuitycert/com.gridlygo.gridly.MainActivity
+if ($LASTEXITCODE -ne 0) { throw 'Certification launch failed' }
+```
+
+Tap A once. Expect HTTP204/200 trace, stage=complete, seeded=true, protectedInitializations=0. If failure, stop and report only scenario/stage/errorCategory/nativeCommitCategory/httpStatus/count and safe issuer line. Do not paste native payload logs, proofs, binding, attempt or HTTP bodies. On success, restart SAME artifact then Check:
+
+```powershell
+adb -e shell am force-stop com.gridlygo.continuitycert
+adb -e shell am start -n com.gridlygo.continuitycert/com.gridlygo.gridly.MainActivity
+```
+
+Expect allowed=true, temporaryAccess=true, protectedInitializations=1. Continue B–H from the existing case matrix only after A succeeds. Never uninstall accepted Gridly or change its config; do not touch the LP244.54 stash, reuse a mismatched issuer key/APK, deploy, push, merge or enable reporting.

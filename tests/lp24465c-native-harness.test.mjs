@@ -5,6 +5,7 @@ import {join} from 'node:path';
 import {tmpdir} from 'node:os';
 import {webcrypto,randomBytes} from 'node:crypto';
 import {createIssuer} from '../tools/native-continuity-certification/issuer.mjs';
+import {instrumentAndroidCommit} from '../tools/native-continuity-certification/android-commit-diagnostics.mjs';
 import {prepare,listen} from '../tools/native-continuity-certification/prepare.mjs';
 import {once} from 'node:events';
 import {Script} from 'node:vm';
@@ -20,7 +21,7 @@ for(const platform of ['apple','google'])for(const scenario of ['A','B','C','D',
  assert.equal(!!value,scenario==='A');
  if(value){assert.equal(continuityDecision(value,{platform,now:now+24*3600000}),false);assert.equal(await verifyContinuity({proof:fixture.proof,publicKey:key,binding:'b'.repeat(64),platform,now,crypto:webcrypto}),null);}
 });
-test('certification generator creates isolated native identities, unmodified vaults and debug-only artifacts',async()=>{
+test('certification generator creates isolated native identities, attested vaults and debug-only artifacts',async()=>{
  const productionPaths=['capacitor.config.json','android/capacitor.config.json','android/app/src/main/assets/capacitor.config.json','ios/App/App/capacitor.config.json','android/app/src/main/AndroidManifest.xml','ios/App/App/Info.plist'];
  const original=await Promise.all(productionPaths.map(path=>readFile(path)));
  const base=await mkdtemp(join(tmpdir(),'gridly-continuity-cert-'));
@@ -39,7 +40,8 @@ test('certification generator creates isolated native identities, unmodified vau
    assert.equal((await read(join(result.web,'continuity-fixture-config.json'))).includes('"d":'),false);
    await assert.rejects(assertNoContinuityCertification(result.web),/cannot enter a release bundle/);
    const path=platform==='ios'?'ios/App/App/GridlyContinuityPlugin.swift':'android/app/src/main/java/com/gridlygo/gridly/GridlyContinuityPlugin.kt';
-   assert.equal(await read(join(result.output,path)),await read(path));
+   assert.equal(await read(join(result.output,path)),platform==='android'?instrumentAndroidCommit(await read(path)):await read(path));
+   assert.equal(manifest.certificationCommitDiagnostics,platform==='android');
    if(platform==='ios') {
     const project=await read(join(result.output,'ios/App/App.xcodeproj/project.pbxproj'));assert.ok(!project.includes('PRODUCT_BUNDLE_IDENTIFIER = com.gridlygo.gridly;'));assert.ok(!project.includes('GridlyStoreKitPlugin.swift'));
     assert.match(await read(join(result.output,'ios/App/App/GridlyBridgeViewController.swift')),/#if !DEBUG[\s\S]*#error/);
@@ -112,7 +114,7 @@ async function runSeed(failure,scenario='A') {
  const vault={
   beginVerification:async()=>{begins++;if(failure===(begins===1?'reset_begin':'context_throw'))throw error();return begins===1?{attempt}:{binding:failure==='context_shape'?'invalid':binding,attempt,nowMs:now};},
   revoke:async()=>{if(failure==='reset_throw')throw error();return {revoked:failure!=='reset_result'};},
-  commit:async()=>{commits++;if(failure==='commit_throw')throw error();return {saved:failure!=='commit_result'};}
+  commit:async()=>{commits++;if(failure==='commit_throw')throw error();return {saved:!['commit_result','commit_category','commit_unsafe'].includes(failure),nativeCommitCategory:failure==='commit_category'?'verified_at_invalid':sensitive};}
  };
  const fn=new Script('('+seedSource+')').runInNewContext({
   coordinator:{stop:async()=>{}},canaryCount:0,platform:'google',vault,key:{},AbortController,setTimeout,clearTimeout,
@@ -128,7 +130,7 @@ async function runSeed(failure,scenario='A') {
   verifyContinuity:async()=>{verifies++;if(failure==='verify_throw')throw error();return failure==='verify_false'?null:{valid:true};}
  });
  await fn(scenario);
- const safeKeys=new Set(['scenario','stage','errorCategory','httpStatus','seeded','protectedInitializations']);
+ const safeKeys=new Set(['scenario','stage','errorCategory','httpStatus','nativeCommitCategory','seeded','protectedInitializations']);
  for(const row of output){assert.ok(Object.keys(row).every(key=>safeKeys.has(key)));assert.equal(row.protectedInitializations,0);const text=JSON.stringify(row);assert.ok(![sensitive,binding,attempt].some(value=>text.includes(value)));}
  return {last:JSON.parse(JSON.stringify(output.at(-1))),output,commits,verifies};
 }
@@ -145,6 +147,11 @@ for(const [failure,stage,errorCategory] of [
  if(failure==='http_error')assert.equal(last.httpStatus,400);
  if(!failure.startsWith('commit'))assert.equal(commits,0);
 });
+test('native commit categories are fixed and arbitrary native text is suppressed',async()=>{
+ assert.equal((await runSeed('commit_category')).last.nativeCommitCategory,'verified_at_invalid');
+ for(const failure of ['commit_unsafe','commit_throw','commit_result'])assert.equal((await runSeed(failure)).last.nativeCommitCategory,'unknown_commit_failure');
+});
+
 test('successful and negative-case seeding retain bounded progress and existing synthetic semantics',async()=>{
  const positive=await runSeed();assert.equal(positive.last.seeded,true);assert.equal(positive.last.stage,'complete');assert.equal(positive.verifies,1);assert.equal(positive.commits,1);
  for(const scenario of ['B','C','D','E']){const value=await runSeed('verify_throw',scenario);assert.equal(value.last.seeded,true);assert.equal(value.verifies,0);assert.equal(value.commits,1);}

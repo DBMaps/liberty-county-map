@@ -6,6 +6,7 @@ import {fileURLToPath} from 'node:url';
 import {createServer} from 'node:http';
 import {createHash} from 'node:crypto';
 import {createIssuer} from './issuer.mjs';
+import {instrumentAndroidCommit} from './android-commit-diagnostics.mjs';
 const root=resolve(import.meta.dirname,'../..'),bundle='com.gridlygo.continuitycert';
 export async function prepare({platform,output,publicJwk}) {
  if(!['ios','android'].includes(platform)||!output||!publicJwk||publicJwk.d)throw Error('Invalid certification preparation');
@@ -48,8 +49,10 @@ export async function prepare({platform,output,publicJwk}) {
  const digest=bytes=>createHash('sha256').update(bytes).digest('hex');
  const [original,copied]=await Promise.all([readFile(join(root,nativePath)),readFile(join(output,nativePath))]);
  if(!original.equals(copied))throw Error('Vault source changed during certification preparation');
- await writeFile(join(output,'certification-manifest.json'),JSON.stringify({classification:'SYNTHETIC_CONTINUITY_CERTIFICATION',bundle,platform,vaultSha256:digest(copied),productionBackendConfigured:false},null,2)+'\n');
- return {output,web,bundle,vaultSha256:digest(copied)};
+ const diagnosticCopy=platform==='android'?Buffer.from(instrumentAndroidCommit(original.toString('utf8'))):copied;
+ await writeFile(join(output,nativePath),diagnosticCopy);
+ await writeFile(join(output,'certification-manifest.json'),JSON.stringify({classification:'SYNTHETIC_CONTINUITY_CERTIFICATION',bundle,platform,vaultSha256:digest(diagnosticCopy),productionVaultSha256:digest(original),certificationCommitDiagnostics:platform==='android',productionBackendConfigured:false},null,2)+'\n');
+ return {output,web,bundle,vaultSha256:digest(diagnosticCopy)};
 }
 export function listen(issuer,{port=8765,trace}={}) {
  const server=createServer(async(req,res)=>{

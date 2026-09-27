@@ -79,7 +79,7 @@ class GridlyContinuityPlugin : Plugin() {
     } }
     @PluginMethod fun commit(call: PluginCall) { operate(call) {
         val record = loadRecord(); val proof = call.getString("proof") ?: error("unavailable")
-        val verified = call.getDouble("verifiedAt") ?: error("unavailable")
+        val verified = (call.data.opt("verifiedAt") as? Number)?.toDouble() ?: error("unavailable")
         require(record.getBoolean("blocked") && call.getString("attempt") == record.getString("attempt") && proof.length in 1..4096 && verified.isFinite() && verified >= record.getDouble("verifiedAt"))
         val time = clock(record)
         record.put("proof", proof).put("verifiedAt", verified).put("utc", maxOf(time.wall, verified))

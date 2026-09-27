@@ -12,7 +12,7 @@ const syntheticStore={addListener:async()=>({remove:async()=>{}}),startObserving
 async function seed(scenario) {
  const categories={native_reset:'native_reset_failed',native_context:'native_context_failed',issuer_fetch:'issuer_fetch_failed',issuer_http:'issuer_http_error',issuer_response:'issuer_response_invalid',fixture_verification:'fixture_verification_failed',native_commit:'native_commit_failed'};
  const safeScenario=['A','B','C','D','E'].includes(scenario)?scenario:'unknown';
- let stage='native_reset',httpStatus;canaryCount=0;
+ let stage='native_reset',httpStatus,nativeCommitCategory;canaryCount=0;
  const progress=()=>show({scenario:safeScenario,stage,...(httpStatus===undefined?{}:{httpStatus}),protectedInitializations:canaryCount});
  try {
   progress();await coordinator?.stop();
@@ -35,10 +35,16 @@ async function seed(scenario) {
   stage='fixture_verification';progress();
   if(scenario==='A'&&!await verifyContinuity({proof:fixture.proof,publicKey:key,binding:context.binding,platform,now:context.nowMs}))throw Error();
   stage='native_commit';progress();
-  if((await vault.commit({attempt:context.attempt,proof:fixture.proof,verifiedAt:fixture.verifiedAt}))?.saved!==true)throw Error();
+  nativeCommitCategory='unknown_commit_failure';
+  const committed=await vault.commit({attempt:context.attempt,proof:fixture.proof,verifiedAt:fixture.verifiedAt});
+  if(committed?.saved!==true){
+   const allowed=['attempt_invalid','attempt_mismatch','verified_at_invalid','proof_invalid','record_read_failed','clock_failed','record_update_failed','persistence_failed','unknown_commit_failure'];
+   if(allowed.includes(committed?.nativeCommitCategory))nativeCommitCategory=committed.nativeCommitCategory;
+   throw Error();
+  }
   show({scenario:safeScenario,stage:'complete',seeded:true,httpStatus,protectedInitializations:canaryCount});
  }catch {
-  show({scenario:safeScenario,stage,errorCategory:categories[stage],...(httpStatus===undefined?{}:{httpStatus}),protectedInitializations:canaryCount});
+  show({scenario:safeScenario,stage,errorCategory:categories[stage],...(stage==='native_commit'?{nativeCommitCategory}:{}),...(httpStatus===undefined?{}:{httpStatus}),protectedInitializations:canaryCount});
  }
 }
 async function check() {
