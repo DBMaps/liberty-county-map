@@ -52,6 +52,7 @@ const daytonPhysicalCohort = Object.freeze(['tx-29-095', 'tx-29-096', 'tx-30-095
 const addressManifestPath = 'data/generated/lp104/txgio-addresses/runtime-manifest.json';
 const nativeAddressDirectory = 'data/generated/lp104/txgio-addresses/native';
 export const prohibited = [
+  /(?:^|\/)(?:continuity-certification\.mjs|continuity-protected-canary\.mjs|continuity-fixture-config\.json|\.gridly-continuity-certification)$/,
   /(^|\/)node_modules\//, /(^|\/)(tests|tools|reports|evidence|audit|certification|owner-local)\//,
   /(^|\/)(android|ios)\//, /(^|\/)[^/]*\.local\.js$/,
   /(^|\/)css\/styles\.backup-[^/]+\.css$/,
@@ -278,7 +279,19 @@ export async function stage(destination, { runtimeConfigFile } = {}) {
 }
 
 // Generated from current source, never an independently maintained version list.
+export async function assertNoContinuityCertification(directory) {
+  const names=await readdir(directory);
+  for(const folder of ['js','assets','legal','vendor']) {
+    try {for(const path of await files(join(directory,folder)))names.push(folder+'/'+path);}
+    catch(error){if(error.code!=='ENOENT')throw error;}
+  }
+  if(names.some(path=>/(?:continuity-certification\.mjs|continuity-protected-canary\.mjs|continuity-fixture-config\.json|\.gridly-continuity-certification)$/.test(path)))throw Error('Synthetic continuity certification cannot enter a release bundle');
+  const index=await readFile(join(directory,'index.html'),'utf8');
+  if(index.includes('SYNTHETIC_CONTINUITY_CERTIFICATION'))throw Error('Synthetic continuity certification cannot enter a release bundle');
+}
+// Generated from current source, never an independently maintained version list.
 export async function communitySubmissionContract(directory) {
+  await assertNoContinuityCertification(directory);
   const digest = async path => createHash('sha256').update(await readFile(path)).digest('hex');
   const runtime = ['js/app.js','js/gridly-report-protocol.js','js/gridlyPackageRegistry.js','service-worker.js'];
   for (const path of runtime) if (await digest(join(directory,path)) !== await digest(join(root,path))) throw new Error(`Retired or mismatched submission client: ${path}`);

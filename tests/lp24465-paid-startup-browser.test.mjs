@@ -44,6 +44,17 @@ test('real browser: unsupported/native-unconfigured gate, portrait/legal access,
     await page.screenshot({path:process.env.GRIDLY_LP24465_SCREENSHOT||undefined});
     await page.locator('#gridlyPaidAccess a').filter({hasText:'Privacy Policy'}).click();
     await page.waitForURL('**/legal/privacy.html');assert.equal(await page.locator('body').isVisible(),true);
+    // These two external route responses are navigation fixtures, not a live-publication claim.
+    await page.route('https://gridlygo.com/support',route=>route.fulfill({contentType:'text/html',body:'<h1>Support route fixture</h1>'}));
+    await page.route('https://gridlygo.com/delete-data',route=>route.fulfill({contentType:'text/html',body:'<h1>Delete Data route fixture</h1>'}));
+    for(const label of ['Privacy Policy','Terms','Community Guidelines','Support','Delete Data']) {
+      await page.goto(origin+'/');await page.locator('#gridlyPaidAccess').waitFor();
+      assert.equal(await page.evaluate(()=>typeof window.L),'undefined');
+      await page.locator('#gridlyPaidAccess a').filter({hasText:label}).click();
+      await page.waitForURL(label==='Support'?'https://gridlygo.com/support':label==='Delete Data'?'https://gridlygo.com/delete-data':'**/legal/*.html');
+      assert.equal(await page.locator('body').isVisible(),true);
+      assert.ok(!requests.some(path=>path==='/js/app.js'||path.includes('gridlyPackageRegistry')));
+    }
     await page.addInitScript(()=>{
       localStorage.setItem('gridlyEntitled','true');
       localStorage.setItem('gridlyBetaFirstRunWalkthroughCompleteV894C','yes');
