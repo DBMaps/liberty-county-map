@@ -192,3 +192,66 @@ git status --short
 Final `git diff --check`: PASS. Changed-file JavaScript syntax and credential-pattern scan: PASS (9 changed/new files); scan includes private-key PEM, Supabase/Resend secret shapes, JWT strings and credential-bearing database URLs. No secrets/real store evidence are introduced.
 
 Remaining: owner native certification-clone compile and A–H execution evidence, actual clock/boot branch evidence as specified; LP244.62 real Apple/Google verifier/admission/key/cache/acknowledgment composition and authorization; real store products/purchase/restore/candidate acceptance; later separately authorized reporting activation. No production GO, purchase acceptance, physical acceptance, deploy, push or merge is claimed by the harness preparation commit.
+
+## LP244.65D — Android loopback transport repair
+
+Starting HEAD: `52c3e5cb5f2c7a67aaf8e861242024c8875d7e99`. Owner reports certification compile/install/launch, plugin registration, and real Android Keystore begin/revoke/second-begin PASS; seed then failed before commit. Owner TCP/ADB-reverse evidence passes. This is not full A–H lifecycle certification.
+
+### RCA and evidence limits
+
+Confirmed configuration defect: the generated certification config omitted `server.androidScheme`. Installed Capacitor `CapConfig.java` defaults that field to HTTPS, reads `server.androidScheme`, and accepts HTTP. `Bridge.java` constructs the local URL from that scheme/hostname; broad mixed-content allowance is not enabled by the harness. Thus the prior page origin was `https://localhost`, while `seed()` fetches `http://127.0.0.1:8765/seed` using POST and a JSON body `{scenario,platform,binding}`. Manifest cleartext allowance controls Android transport permission, not the WebView's mixed-content policy.
+
+After the second native begin, the first network statement is that `fetch`. Following statements check status, parse the fixture, validate its signature/bounds, and commit. Owner evidence does not include the actual WebView fetch exception/response or issuer request trace; therefore mixed-content rejection is the leading explanation, NOT a conclusively observed live failure category. Do not claim the original precise browser rejection or post-repair native success until the emulator rerun supplies it.
+
+Repair: set `config.server={androidScheme:'http'}` ONLY inside preparation's Android branch. Generated `com.gridlygo.continuitycert` now uses `http://localhost`; issuer remains `http://127.0.0.1:8765`. Different origins still require CORS: the existing issuer explicitly allows `http://localhost`. No `server.url`, navigation allowlist or `allowMixedContent` bypass is introduced. Production configs/manifests and iOS transport remain unchanged.
+
+A valid synthetic 64-character binding against the actual HTTP issuer returns HTTP200 and a signature-valid Google fixture. `binding:"test"` returns expected HTTP400. HTTP localhost retains a secure context/WebCrypto in installed Edge. An additional desktop-browser fetch probe from a routed test page was denied by Edge's loopback local-network permission policy; that is not Android WebView evidence. Final tests separate real issuer HTTP/CORS validation from desktop WebCrypto availability, without relaxing browser permissions or issuer policy.
+
+### Local verification
+
+Focused LP244.65C/D harness tests: **14/14 PASS**. Generator assertions inspect the actual generated Android asset config (`server` exactly `{androidScheme:'http'}`), the separate bundle identity/debug guards, and absence of broad mixed-content allowance. Four original Capacitor configs, production Android manifest and iOS Info.plist remain byte-identical during generation; production configs contain no HTTP scheme override. Tests preserve real synthetic signatures, production packaging exclusion, unchanged vaults, memory-only fixture signing key, loopback binding and absence of backend/store authority calls. Issuer tests use an ephemeral port so the owner's existing port 8765 process is not touched; normal CLI port remains 8765.
+
+LP244.65D whitespace/syntax/credential-pattern checks: PASS (three changed files). Reporting remains untouched; no production/native deployment, push or merge.
+
+### Exact owner rerun
+
+Close the OLD fixture issuer with Ctrl+C in its own terminal before starting a new one; do not kill unrelated Node processes. Use the existing emulator/SDK/JDK. Do not uninstall `com.gridlygo.gridly`. Do not run native-web preparation or Capacitor sync inside the temporary clone, because those overwrite certification assets.
+
+Terminal 1 from the repaired repository checkout, keep it running:
+
+```powershell
+Set-Location C:\GitHub\liberty-county-map
+$certRoot = Join-Path $env:TEMP ('gridly-continuity-cert-' + [guid]::NewGuid().ToString('N'))
+node tools/native-continuity-certification/prepare.mjs --platform android --output $certRoot
+```
+
+Terminal 2 (copy the nonsecret output path printed above):
+
+```powershell
+$certRoot = 'COPY-EXACT-OUTPUT-PATH-FROM-TERMINAL-1'
+$cfgPath = Join-Path $certRoot 'android\app\src\main\assets\capacitor.config.json'
+$cfg = Get-Content -LiteralPath $cfgPath -Raw | ConvertFrom-Json
+if ($cfg.appId -ne 'com.gridlygo.continuitycert' -or $cfg.server.androidScheme -ne 'http') { throw 'Wrong certification config' }
+if (-not $env:ANDROID_HOME) { $env:ANDROID_HOME = Join-Path $env:LOCALAPPDATA 'Android\Sdk' }
+if (-not (Test-Path -LiteralPath $env:ANDROID_HOME)) { throw 'Existing Android SDK required' }
+Set-Location (Join-Path $certRoot 'android')
+.\gradlew.bat assembleDebug
+if ($LASTEXITCODE -ne 0) { throw 'Certification build failed' }
+adb -e shell am force-stop com.gridlygo.continuitycert
+adb -e reverse tcp:8765 tcp:8765
+if ($LASTEXITCODE -ne 0) { throw 'ADB reverse failed' }
+adb -e install -r (Join-Path $certRoot 'android\app\build\outputs\apk\debug\app-debug.apk')
+if ($LASTEXITCODE -ne 0) { throw 'Certification install failed' }
+adb -e shell am start -n com.gridlygo.continuitycert/com.gridlygo.gridly.MainActivity
+```
+
+Use exactly one emulator (`adb -e`); if ambiguous, stop and select its explicit serial. The `-r` install replaces ONLY the certification app. Preparation creates a new fixture key; old local records are not new ownership proof. Tap **A: valid**, wait for `seeded:true`, then:
+
+```powershell
+adb -e shell am force-stop com.gridlygo.continuitycert
+adb -e shell am start -n com.gridlygo.continuitycert/com.gridlygo.gridly.MainActivity
+```
+
+Tap **Check offline admission**: expect `allowed:true`, `temporaryAccess:true`, `protectedInitializations:1`. Continue B–H using the existing case matrix and SAME installed artifact/issuer. If A still fails, stop that certification attempt and report only its bounded category and whether the issuer was reached; do not dump proofs, bindings, attempt tokens or raw storage. No production repair or entitlement bypass is authorized by this rerun.
+
+**Repair preparation PASS; native post-repair A–H proof remains pending.** LP244.54 remains CLOSED/PASS. Production reporting stays at the owner-disabled baseline without a fresh backend query.

@@ -33,6 +33,8 @@ export async function prepare({platform,output,publicJwk}) {
   const info=join(output,'ios/App/App/Info.plist');source=await readFile(info,'utf8');source=source.replace('<string>Gridly</string>','<string>Gridly Continuity CERT</string>').replace('<key>CAPACITOR_DEBUG</key>','<key>NSAppTransportSecurity</key><dict><key>NSAllowsLocalNetworking</key><true/><key>NSAllowsArbitraryLoads</key><true/><key>NSAllowsArbitraryLoadsInWebContent</key><true/></dict>\n<key>CAPACITOR_DEBUG</key>');await writeFile(info,source);
   await writeFile(join(output,'ios/App/App/capacitor.config.json'),JSON.stringify(config));
  } else {
+  // Certification-only HTTP localhost avoids HTTPS-to-HTTP fixture transport.
+  config.server={androidScheme:'http'};
   nativePath='android/app/src/main/java/com/gridlygo/gridly/GridlyContinuityPlugin.kt';
   await symlink(join(root,'node_modules'),join(output,'node_modules'),process.platform==='win32'?'junction':'dir');
   const gradle=join(output,'android/app/build.gradle');let source=await readFile(gradle,'utf8');
@@ -49,7 +51,7 @@ export async function prepare({platform,output,publicJwk}) {
  await writeFile(join(output,'certification-manifest.json'),JSON.stringify({classification:'SYNTHETIC_CONTINUITY_CERTIFICATION',bundle,platform,vaultSha256:digest(copied),productionBackendConfigured:false},null,2)+'\n');
  return {output,web,bundle,vaultSha256:digest(copied)};
 }
-export function listen(issuer) {
+export function listen(issuer,{port=8765}={}) {
  const server=createServer(async(req,res)=>{
   res.setHeader('Cache-Control','no-store');const origin=req.headers.origin;
   if(origin&&!['capacitor://localhost','http://localhost','https://localhost'].includes(origin)){res.statusCode=403;res.end();return;}
@@ -61,7 +63,7 @@ export function listen(issuer) {
    const value=JSON.parse(text);if(Object.keys(value).sort().join(',')!=='binding,platform,scenario')throw Error();
    res.setHeader('Content-Type','application/json');res.end(JSON.stringify(await issuer.seed(value)));
   }catch{res.statusCode=400;res.end('{"errorCategory":"invalid_fixture"}');}
- });server.listen(8765,'127.0.0.1');return server;
+ });server.listen(port,'127.0.0.1');return server;
 }
 if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url)) {
  const args=process.argv.slice(2);if(args.length!==4||args[0]!=='--platform'||args[2]!=='--output')throw Error('Use --platform ios|android --output NEW-ABSOLUTE-TEMP-DIRECTORY');
