@@ -6,12 +6,13 @@ export function createGoogleVerificationAuthority({invoke}) {
  return Object.freeze({reconcile:async request=>{
   if(!invoke||request?.platform!=='google')throw Error('verification_unavailable');
   const body=storeVerificationRequest(request),result=await invoke('gridly-verify-google-subscription',{body});
+  if([401,403].includes(result?.error?.context?.status))throw Error('authority_denied');
   if(result?.error||!result?.data||Object.keys(result.data).join(',')!=='proof'||typeof result.data.proof!=='string'||result.data.proof.length>8192)throw Error('verification_unavailable');
   return result.data.proof;
  }});
 }
 // Explicit trusted composition only: no startup, credentials, storage or paywall activation.
-export function createGooglePlayBilling({capacitor,plugin,authority,publicKey,deliverEntitlement,environment='production',crypto=globalThis.crypto,now=Date.now,timeoutMs=15000,purchaseTimeoutMs=120000}) {
+export function createGooglePlayBilling({capacitor,plugin,authority,publicKey,deliverEntitlement,onNativeDenial,environment='production',crypto=globalThis.crypto,now=Date.now,timeoutMs=15000,purchaseTimeoutMs=120000}) {
  let state=failure(),tail=Promise.resolve(),stopped=false,startPromise,signalTask;
  const listeners=[];
  const android=()=>capacitor?.isNativePlatform?.()===true&&capacitor?.getPlatform?.()==='android'&&!!plugin;
@@ -36,7 +37,8 @@ export function createGooglePlayBilling({capacitor,plugin,authority,publicKey,de
    let proof;try{proof=await bounded(()=>authority.reconcile(request));}finally{request=null;}
    if(!active||stopped)return failure();
    const verified=await verifyAuthorityProof({proof,publicKey,nonce,platform:'google',environment,now:now(),crypto});
-   if(!active||stopped||verified.entitlementState==='unknown')return failure();
+   if(!active||stopped)return failure('invalid_authority');
+    if(verified.entitlementState==='unknown')return failure(verified.errorCategory==='invalid_authority'?'invalid_authority':'verification_unavailable');
    if(verified.entitlementState==='not_entitled')return verified;
    // LP244.62 sends this proof only after cache reconciliation and required server ack.
    if(!deliverEntitlement||await deliverEntitlement(verified,{isCurrent:()=>active&&!stopped})!==true)return failure();

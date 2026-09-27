@@ -19,7 +19,7 @@ export function createHandler({platform,authorizeNative,provider,cache,signingKe
    const text=await boundedBody(req);
    let raw;try{raw=JSON.parse(text);}catch{return reply(400,'invalid_request');}
    if(!raw||typeof raw!=='object'||Array.isArray(raw))return reply(400,'invalid_request');
-   if(Object.keys(raw).sort().join(',') !== (platform==='google'?['platform','environment','nonce','productId','basePlanId','evidence']:['platform','environment','nonce','productId','evidence']).sort().join(','))return reply(400,'invalid_request');
+   if(Object.keys(raw).filter(key=>key!=='continuityBinding').sort().join(',') !== (platform==='google'?['platform','environment','nonce','productId','basePlanId','evidence']:['platform','environment','nonce','productId','evidence']).sort().join(','))return reply(400,'invalid_request');
    const input=storeVerificationRequest(raw);
    if(input.platform!==platform||raw.productId!==input.productId||(platform==='google'&&raw.basePlanId!==input.basePlanId))return reply(400,'invalid_request');
    if(!await authorizeNative({request:req,body:text,nonce:input.nonce,environment:input.environment}))return reply(401,'unauthorized');
@@ -33,7 +33,7 @@ export function createHandler({platform,authorizeNative,provider,cache,signingKe
    if(!active)return reply(504,'verification_unavailable');
    if(record.acknowledgementRequired)await provider.acknowledge(values[0]);
    if(!active)return reply(504,'verification_unavailable');
-   const proof=await signResponse(record,input.nonce,signingKey,crypto);
+   const proof=await signResponse(record,input.nonce,signingKey,crypto,{continuityBinding:input.continuityBinding});
    return Response.json({proof},{headers:{'Cache-Control':'no-store'}});
   })(),new Promise(resolve=>{timer=setTimeout(()=>{active=false;resolve(reply(504,'verification_unavailable'));},15000);})]);}
   catch{return reply(502,'verification_unavailable');}

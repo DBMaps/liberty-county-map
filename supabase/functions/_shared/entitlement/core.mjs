@@ -62,12 +62,23 @@ export async function cacheRecord(record,key,crypto=globalThis.crypto) {
  subscription_state:record.subscriptionState,entitlement_state:record.entitlementState,current_period_end:record.currentPeriodEnd,
  last_verified_at:record.lastVerifiedAt,verification_source:record.verificationSource,error_category:record.errorCategory});
 }
-export async function signResponse(record,nonce,key,crypto=globalThis.crypto) {
+export async function signResponse(record,nonce,key,crypto=globalThis.crypto,{continuityBinding}={}) {
  if(!trusted.has(record)||!key)throw Error('invalid_evidence');
  const now=epoch(record.lastVerifiedAt),end=record.currentPeriodEnd===null?null:epoch(record.currentPeriodEnd);
  const body={platform:record.platform,productId:record.productId,subscriptionState:record.subscriptionState,entitlementState:record.entitlementState,
  currentPeriodEnd:record.currentPeriodEnd,lastVerifiedAt:record.lastVerifiedAt,verificationSource:record.verificationSource,environment:record.environment,
  restoreAvailable:true,errorCategory:record.errorCategory,nonce,audience:'com.gridlygo.gridly',expiresAt:new Date(record.entitlementState==='entitled'?Math.min(now+300000,end):now+300000).toISOString()};
+ if(continuityBinding!==undefined) {
+  if(!/^[a-f0-9]{64}$/.test(continuityBinding))throw Error('invalid_evidence');
+  // Only current ACTIVE evidence mints durable authority; no hints or old cache.
+  if(record.subscriptionState==='active'&&record.entitlementState==='entitled') {
+   const claims={platform:record.platform,productId:record.productId,entitlementState:'entitled',subscriptionState:'active',lastVerifiedAt:record.lastVerifiedAt,currentPeriodEnd:record.currentPeriodEnd,continuityExpiresAt:new Date(Math.min(now+86400000,end)).toISOString(),environment:record.environment,audience:'com.gridlygo.gridly',binding:continuityBinding,verificationSource:'gridly_server_store_api'};
+   const encode=value=>btoa(String.fromCharCode(...new TextEncoder().encode(JSON.stringify(value)))).replace(/=/g,'').replace(/\+/g,'-').replace(/\//g,'_');
+   const input=encode({alg:'ES256',typ:'gridly-continuity-v1'})+'.'+encode(claims);
+   const signature=new Uint8Array(await crypto.subtle.sign({name:'ECDSA',hash:'SHA-256'},key,new TextEncoder().encode(input)));
+   body.continuityAuthorization=input+'.'+btoa(String.fromCharCode(...signature)).replace(/=/g,'').replace(/\+/g,'-').replace(/\//g,'_');
+  }
+ }
  const b64=value=>btoa(String.fromCharCode(...new TextEncoder().encode(JSON.stringify(value)))).replace(/=/g,'').replace(/\+/g,'-').replace(/\//g,'_');
  const input=b64({alg:'ES256',typ:'gridly-entitlement-v1'})+'.'+b64(body);
  const sig=new Uint8Array(await crypto.subtle.sign({name:'ECDSA',hash:'SHA-256'},key,new TextEncoder().encode(input)));

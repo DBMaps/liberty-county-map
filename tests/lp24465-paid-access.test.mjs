@@ -21,7 +21,7 @@ function fixture(platform='apple') {
     purchase:async()=>{events.push('purchase');return native;},getCurrentEntitlement:async()=>{events.push('current');return native;},
     queryCurrentPurchases:async()=>{events.push('query');return native;},refreshEntitlement:async()=>{events.push('refresh');return native;},
     restorePurchases:async()=>{events.push('restore');return native;},finishTransaction:async()=>{events.push('finish');return {finished:true};}};
-  const options={capacitor:{isNativePlatform:()=>true,getPlatform:()=>platform==='apple'?'ios':'android'},plugin,publicKey:keys.publicKey,crypto:webcrypto,now:()=>now,
+  const options={capacitor:{isNativePlatform:()=>true,getPlatform:()=>platform==='apple'?'ios':'android'},plugin,publicKey:keys.publicKey,crypto:webcrypto,now:()=>now,monotonic:()=>now,
     schedule:(fn,delay)=>{timers.set(++timerId,{fn,delay});return timerId;},cancel:id=>timers.delete(id),
     authority:{reconcile:async request=>{
       events.push('server');if(reject)throw Error('private-provider-message');

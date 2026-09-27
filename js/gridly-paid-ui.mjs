@@ -57,10 +57,10 @@ export async function bootPaidAccess() {
     if(!value.allowed) {
       lock();
       // Destroy protected timers/feeds after failed re-verification. Fresh launch
-      // needs a fresh proof; no durable lease, query flag or subscription storage.
+      // revalidates signed native continuity or obtains fresh authority; no query unlock.
       if(wasVisible && value.state!=='initializing') {window.location.reload();return;}
     }
-    status.textContent=value.errorCategory==='user_canceled'?'Purchase canceled. You can retry or restore.'
+    status.textContent=value.temporaryAccess?'Subscription verified previously. Temporary access; reconnect to refresh.':value.errorCategory==='user_canceled'?'Purchase canceled. You can retry or restore.'
       :value.action==='purchase'?'Completing your store purchase…'
       :value.action==='restore'?'Checking your store purchase…':copy[value.state];
     const native=!!value.platform,busy=value.state==='initializing';
@@ -90,7 +90,9 @@ export async function bootPaidAccess() {
   purchase.addEventListener('click',()=>{void coordinator.purchase();});
   restore.addEventListener('click',()=>{void coordinator.restore();});
   retry.addEventListener('click',()=>{if(loadFailed) window.location.reload();else void coordinator.refresh();});
-  window.addEventListener('pagehide',()=>{closing=true;onboarding?.dispose();lock();void coordinator.stop();},{once:true});
+  const connectivity=()=>{if(!closing)void coordinator.refresh();};
+  window.addEventListener('online',connectivity);
+  window.addEventListener('pagehide',()=>{closing=true;window.removeEventListener('online',connectivity);onboarding?.dispose();lock();void coordinator.stop();},{once:true});
   window.addEventListener('pageshow',event=>{if(event.persisted) window.location.reload();});
   await coordinator.start();
 }

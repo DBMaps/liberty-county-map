@@ -4,5 +4,6 @@ import Capacitor
 class GridlyBridgeViewController: CAPBridgeViewController {
     override func capacitorDidLoad() {
         bridge?.registerPluginInstance(GridlyStoreKitPlugin())
+        bridge?.registerPluginInstance(GridlyContinuityPlugin())
     }
 }

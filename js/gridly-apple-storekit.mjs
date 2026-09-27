@@ -12,13 +12,14 @@ export function createAppleVerificationAuthority({invoke}) {
   if(!invoke||request?.platform!=='apple')throw Error('verification_unavailable');
   const body=storeVerificationRequest(request);
   const result=await invoke('gridly-verify-apple-subscription',{body});
+  if([401,403].includes(result?.error?.context?.status))throw Error('authority_denied');
   if(result?.error||!result?.data||Object.keys(result.data).join(',')!=='proof'||typeof result.data.proof!=='string'||result.data.proof.length>8192)throw Error('verification_unavailable');
   return result.data.proof;
  }});
 }
 // Opt-in application composition. Importing this module starts no native/store/network work.
 // Caller registers GridlyStoreKit through Capacitor's registerPlugin('GridlyStoreKit').
-export function createAppleStoreKit({capacitor,plugin,authority,publicKey,deliverEntitlement,environment='production',crypto=globalThis.crypto,now=Date.now,timeoutMs=15000,purchaseTimeoutMs=120000}) {
+export function createAppleStoreKit({capacitor,plugin,authority,publicKey,deliverEntitlement,onNativeDenial,environment='production',crypto=globalThis.crypto,now=Date.now,timeoutMs=15000,purchaseTimeoutMs=120000}) {
  let state=failure('verification_unavailable'),tail=Promise.resolve(),stopped=false,started=false,startPromise,signalTask;
  const listeners=[];
  const ios=()=>capacitor?.isNativePlatform?.()===true&&capacitor?.getPlatform?.()==='ios'&&!!plugin;
@@ -40,6 +41,7 @@ export function createAppleStoreKit({capacitor,plugin,authority,publicKey,delive
     // No-evidence is a native hint; never issue a backend-confirmed denial from it.
     if(native?.result!=='verified')return failure(native?.errorCategory==='verification_failed'?'invalid_authority':'store_unavailable');
     if(native.productId!==APPLE_PRODUCT_ID||native.environment!==environment||typeof native.completionHandle!=='string'||native.completionHandle.length>64)return failure();
+    if(native.revoked===true && onNativeDenial)await onNativeDenial();
     category='verification_unavailable';
     const nonce=Array.from(crypto.getRandomValues(new Uint8Array(24)),b=>b.toString(16).padStart(2,'0')).join('');
     let request=storeVerificationRequest({platform:'apple',environment,nonce,evidence:{signedTransactions:[native.signedTransaction]}});
@@ -49,7 +51,8 @@ export function createAppleStoreKit({capacitor,plugin,authority,publicKey,delive
     try {proof=await bounded(()=>authority.reconcile(request));}finally{request=null;}
     if(!active||stopped)return failure();
     const verified=await verifyAuthorityProof({proof,publicKey,nonce,platform:'apple',environment,now:now(),crypto});
-    if(!active||stopped||verified.entitlementState==='unknown')return failure();
+    if(!active||stopped)return failure('invalid_authority');
+    if(verified.entitlementState==='unknown')return failure(verified.errorCategory==='invalid_authority'?'invalid_authority':'verification_unavailable');
     if(verified.entitlementState==='not_entitled')return verified;
     // Apple finish means delivery completed, not just receipt validation.
     // No delivery port exists in current runtime: production finishing stays blocked.

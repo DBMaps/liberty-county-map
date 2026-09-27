@@ -1,13 +1,13 @@
 # LP244.65A — Paid access launch flow and continuity decision
 
-September 27, 2026. **Onboarding correction locally certified. Continuity policy awaits owner decision. Paid launch / merge NO-GO.**
+September 27, 2026. **Onboarding correction and owner-approved 24-hour restart continuity locally certified. Paid launch / merge NO-GO pending native/platform and production composition gates.**
 
 ## Authority and scope
 
 Branch: `LP244.65-paid-access-entitlement-runtime`.
 Starting HEAD: `5bf05b9ed895ef105fd2e0cd8a40c9c13621c5b7`; initial tree clean.
 Owner LP244.65A supersedes the earlier entitlement-before-tour sequence and the claim that strict five-minute/offline denial was approved launch policy.
-Only sequencing, public preference extraction, focused tests and analysis change here. No entitlement duration, store adapter, provider normalizer, proof signature/nonce contract or coordinator ownership changes.
+The original sequencing correction is preserved. The subsequent owner decision authorizes durable 24-hour continuity, native secure persistence, adapter denial propagation and server/client signing integration. The five-minute freshness and provider normalizers remain separate and unchanged.
 
 ## Four install cases
 
@@ -26,59 +26,64 @@ The pre-access adapter saves only a public area key, ZIP preference and bounded 
 
 Only early presentation, subscription composition and the isolated onboarding module execute before admission. Maps, feeds, report runtime and the 80 governed classic modules do not load until current authority AND first-run completion are satisfied. Web/PWA remains denied without native store authority. Purchase, restore, localized pricing, transaction finish/server acknowledgment, fixed verifier selection and central lifecycle ownership remain unchanged.
 
-## Evidence versus freshness
+## Subsequent owner decision — resolved
 
-| Fact | Current contract | Meaning |
-| --- | --- | --- |
-| Provider period end | Apple verified `expiresDate`; Google current API `lineItems.expiryTime` → signed `currentPeriodEnd` | Upper bound on the previously verified period, not assurance of no later revocation |
-| Signed authority | Pinned ES256 key; exact environment/product/audience; fresh request nonce; branded immutable result | Prevents native hints/plain objects/preferences becoming ownership authority |
-| Proof freshness | Existing issuer and client contract permit at most 300,000 ms and never past the period end | Reverification deadline; NOT subscription expiration and NOT owner-approved continuity policy |
-| Provider denial | Fresh verified expired/inactive state | Overrides earlier active evidence; no continuity after confirmed expiry/revocation |
-| Transport failure | Unknown/temporarily unavailable, no fresh signed entitlement | Does not establish that the subscription expired |
+OPTION 2 is selected: at most 24 hours from successful authoritative verification, never past verified period end, surviving ordinary app restart. Earlier undecided options and strict-offline fallback are superseded.
 
-**Previous five-minute disposition:** no replacement duration is selected. Existing LP244.61/62 cryptographic freshness mechanics remain intact as an unreleased contract, not an approved offline launch policy. LP244.65's description of that behavior as the launch policy is withdrawn. The present coordinator clears admission on reconciliation/failure and cannot yet satisfy the requested brief-outage continuity. That is explicitly a blocker, not a certified launch behavior. Release composition remains `publicKey:null, authority:null`; no production unlock or purchases are enabled by this work.
+## Implemented contract
 
-A verified period end can bound temporary continuity but is insufficient by itself to establish an acceptable revocation-detection window. A refund/revocation can terminate entitlement earlier. No code can learn a new server/store revocation while fully offline; the remaining interval is a product risk choice. Freshness expiration uses `verification_required`, never an expired-subscription claim. No billing grace promise is introduced.
+The five-minute ES256, nonce-bound verification response remains a freshness/reconciliation contract. It is not subscription expiry. An optional separately signed `gridly-continuity-v1` authorization is included inside that verified response. Durable expiry is exactly:
 
-### Apple
+`min(last authoritative verification + 86,400,000 ms, verified currentPeriodEnd)`.
 
-Current foundation combines provider-verified transaction/renewal and current subscription status, checks exact bundle/product/environment and period end, and treats revocation/status 5 as inactive even when the prior period end is future. User cancellation may remain entitled through the paid period. Native StoreKit evidence is input to server verification, not standalone runtime authority. Apple transaction delivery precedes exact finish and UI admission waits for finish.
+Only freshly provider-verified ACTIVE evidence mints durable authority, after private cache reconciliation and required Google acknowledgment. Successful verification replaces the authorization and resets its window from that verification time. Cached evidence, local/native active hints, transport errors and retry attempts never mint, renew or extend it. Cancellation with paid time remaining retains existing fresh-entitlement semantics but does not mint a new ACTIVE continuity grant.
 
-Apple documents distinct subscription expiration and refund/revocation dates: [expiration](https://developer.apple.com/documentation/appstoreserverapi/expiresdate), [revocation](https://developer.apple.com/documentation/storekit/transaction/revocationdate). Thus an old expiration timestamp cannot prove present non-revocation. This is the technical inference behind the continuity decision.
+Signed fields: platform, exact product, entitlement state, subscription state, lastVerifiedAt, currentPeriodEnd, continuityExpiresAt, environment, audience, verificationSource and vault binding. Client verification pins ES256/P-256 key and exact token type/field set, validates production environment, active/entitled state, fixed product/audience, binding and exact deadline. Malformed, unsigned, wrong-key/type/platform/environment, overlong and tampered proofs fail closed. Public metadata is not enough: validated objects are branded in memory; decoded JSON cannot acquire authority.
 
-### Google
+`continuityBinding` is an optional bounded random native-vault context in the existing fixed verification request. It is covered by the native authorizer's body digest and signed only AFTER actual store ownership verification. It is not an installation ID used as ownership or recovery authority. No provider lookup or purchase grant is derived from it. Fixed Edge responses remain `{proof}`; no new public cache endpoint, database grant, migration or production operation.
 
-Current foundation checks the current subscriptionsv2 state, exact U.S. product/base plan and environment, acknowledgment sequencing and expiry. Active/canceled subscriptions can remain entitled through their verified period; expired/hold/paused states deny. Pending/unknown or configured grace states do not acquire new authority. Linked replacement tokens remain a separately reviewed limitation. A native PURCHASED hint does not override signed denial.
+## Native persistence and replay boundary
 
-Google documents current API status reconciliation, cancellation until expiry and immediate revocation: [lifecycle](https://developer.android.com/google/play/billing/lifecycle/subscriptions), [revocation](https://developer.android.com/google/play/billing/manage-purchases), [expiry field](https://developers.google.com/android-publisher/api-ref/rest/v3/purchases.subscriptionsv2). Store-managed retry/grace behavior is distinct from a Gridly offline window; this phase neither changes store configuration nor promises additional access or billing grace.
+**Apple:** a dedicated `GridlyContinuity` Capacitor plugin stores one scoped generic-password Keychain record, with `AfterFirstUnlockThisDeviceOnly`, synchronization disabled and no shared access group. A non-backed-up Application Support sentinel is required before reading any retained Keychain record. Its absence deletes ONLY this plugin's scoped record and creates new vault binding: Keychain survival across uninstall cannot recover entitlement. The sentinel is not a purchase flag. Apple Keychain accessibility and backup behavior: [Apple documentation](https://developer.apple.com/documentation/security/ksecattraccessibleafterfirstunlockthisdeviceonly), [backup exclusion](https://developer.apple.com/documentation/foundation/optimizing-your-app-s-data-for-icloud-backup).
 
-### Trust, restart and clocks
+**Google:** one AES-256-GCM encrypted/authenticated record under `noBackupFilesDir`, using a non-exported AndroidKeyStore key and authenticated scope data. AtomicFile and a serialized mutex protect updates. Uninstall removes app state; backup/transfer cannot supply the record. Existing `allowBackup=false` remains unchanged. [Android Keystore](https://developer.android.com/privacy-and-security/keystore), [non-backup files](https://developer.android.com/reference/android/content/Context#getNoBackupFilesDir()), [AtomicFile](https://developer.android.com/reference/android/util/AtomicFile).
 
-Current branded proof exists only in memory. LocalStorage flags, stored JSON, decoded receipts and native active hints are never authority. Restart loses the brand and nonce-bound session proof and therefore requires fresh reconciliation under the present code. A nonce-bound five-minute result cannot simply be replayed after restart as a longer offline authorization.
+No new dependency, account, receipt/token cache, customer linkage, coordinates or raw store-evidence logging. Server signing keys are never on the client. The vault holds the bounded server authorization and clock/replay bookkeeping only. This assumes the supported unmodified OS/app sandbox; it does not claim protection against a rooted/jailbroken or modified client.
 
-Any durable continuity design needs a separately reviewed, server-signed continuity contract tied to current store ownership, verification using a pinned key, tamper/replay resistance, safe retention and native storage, and clock rollback/restart behavior. A device wall clock alone is insufficient to enforce an extended signed deadline against rollback; memory-only continuity can use monotonic elapsed time in addition to a verified time anchor. Neither design can detect unseen offline revocations; never extend beyond verified period end, never extend repeatedly on failures, and always supersede old evidence with a fresh confirmed denial.
+Before each verification, native `beginVerification` atomically persists a pending barrier BEFORE any provider/backend request and returns an attempt handle, binding and previously eligible record. A completed unavailable result may retain the previous record without changing last verification or expiry. Success commits the new signed authorization only AFTER adapter delivery/Apple exact finish. Confirmed denial clears the record and rotates binding. Failed/uncertain writes or an interrupted attempt leave the barrier pending; restart cannot resurrect old authority. Old attempt handles cannot commit a new operation. Old proof copied after revocation/reinstall cannot match the new binding. Native persisted verification time cannot move backward. Raw signed records never enter public UI state.
 
-## Owner decision required: YES
+## Clock and restart behavior
 
-Choose scope and acceptable maximum revocation staleness before implementing continuity:
+Ordinary app restart in the same OS boot reloads and re-verifies the signature against the pinned key and current vault binding, then attempts fresh store/server reconciliation. If unavailable, valid continuity may admit Home. Neither preference storage nor an old installation identity participates in ownership recovery.
 
-1. **Memory-only bounded continuity:** while the same verified session remains alive, permit transient failure continuity until `min(verified period end, last verified time + owner-approved maximum staleness)`. Restart requires online verification. Smallest implementation; does not solve offline restart. Owner must choose the staleness limit; none is proposed as approved.
-2. **Bounded continuity across restart:** same cap, backed by the reviewed durable signed/native-storage/clock/replay design above. Supports restart during outages; more implementation and certification. Owner must choose the staleness limit and authorize this persistence scope.
-3. **Entire previously verified paid period:** cap at the verified period end without introducing a new numeric window. Can tolerate long outages, but an early refund/revocation may remain unseen for much of a month. Requires explicit owner acceptance of that risk and a choice of memory-only versus durable scope. Not selected by this implementation.
+Native clocks use a UTC high-water anchor plus sleep-inclusive elapsed time: Android `elapsedRealtime` and boot count; Apple `mach_continuous_time` plus kernel boot-time identity. Accepted continuity advances the clock bookkeeping without advancing signed verification time. In-process checks use a monotonic anchor and wall time; deadlines are scheduled and checked before protected initialization. Clock rollback, changed/unavailable boot identity, missing/corrupt/locked storage or interrupted verification deny continuity. **Offline access after an OS/device reboot is conservatively unavailable until fresh authoritative verification**; this is distinct from ordinary app restart and avoids inventing trusted elapsed time across reboot. Fresh valid verification can establish a new clock anchor. Forward clock anomalies can deny early, never extend authority.
 
-Recommended direction: choose bounded continuity and explicitly decide whether restart must work offline. The evidence cannot select a risk window for the owner. Strict online-only behavior remains an unreleased fallback, and does not meet the owner's brief-outage continuity requirement. No arbitrary duration or 24-hour backend cache TTL is adopted as client authorization.
+OS Keychain/Keystore integration and these clock assumptions still require native compile and real-platform restart/reinstall/sleep/clock checks. Windows fixture/source certification is not physical native acceptance.
 
-## Certification and limits
+## Denial and transient behavior
 
-- All focused LP244.65/65A tests plus Apple/Google bridge tests: **47 PASS, 0 failures**. Includes four browser install cases; seven-page source/model equality; inert tour/no protected requests; restore denial/purchase admission; future-period revocation; freshness versus expiration; transient unavailable; localized price; public bypass; web denial; redacted state and no reporting activation.
-- Browser fixtures use installed Edge, loopback-only mock authority and ephemeral test signing keys. Protected app Home initialization is a controlled fixture: no claim of full native/store/device acceptance or actual live provider verification.
-- Native packaging: **24 PASS**. Total: **71 distinct passing checks** (20 LP244.65/65A, 27 Apple/Google bridge, 24 packaging). JavaScript syntax, credential-pattern scan across all 13 changed files and `git diff --check`: **PASS**. No broad suite or native build/device acceptance runs.
-- New module/model are explicitly packaged and cached. Preferences carry no entitlement; there is no query/debug/persisted ownership bypass.
+Confirmed signed expiration, inactive/revoked provider result or authenticated endpoint 401/403 denial immediately removes current access and invalidates continuity. Apple StoreKit's cryptographically verified revoked transaction flag signals immediate denial even when the backend is unavailable. It cannot grant access. Google signed/API-backed denial overrides the native PURCHASED hint. Invalid authority cannot fall back to old cached authority.
 
-## Remaining gates and invariants
+A brief native/store/backend outage may use only a valid prior durable grant. The central coordinator preserves initialized runtime during such rechecks, publishes temporary-access copy and retries at most once per minute while the authorization remains valid. Foreground/store updates and restored connectivity trigger prompt coalesced refresh. No intentional wait until the 24-hour deadline. At 24 hours or period end, authority stops and the state requests verification; this is NOT a declaration that the subscription itself expired. No valid authorization means no protected access. Retry/Restore and public legal/support/deletion routes remain.
 
-Continuity owner decision and its later implementation/certification remain required. LP244.62 production verifier/key/transport/admission/cache composition, Google durable acknowledgment/replacement handling, configured store products, real candidate/native subscription acceptance and live app/PWA checks remain outstanding as recorded in LP244.65.
+## Launch sequence and invariants
 
-Production reporting remains disabled in the owner baseline; no production query or mutation was performed here. Existing report retention/RLS/guards/Cron and legal texts are unchanged. LP244.54 remains CLOSED / PASS. Old LP244.22 reset/repair must not be replayed. No deploy, push or merge.
+- New install: unchanged accepted seven pages → paywall if needed → purchase/restore → authoritative entitlement → Home. Existing store entitlement never interrupts the first-install tour.
+- Returning completed subscriber: current authoritative verification where available, otherwise valid continuity during temporary unavailability → Home without duplicate purchase.
+- Returning expired/invalid continuity: verification required; signed non-entitlement leads to paywall.
+- Reinstall: new vault binding and no offline recovery; StoreKit/Play evidence → server verification → new authorization. No Gridly account required.
+- Browser/PWA: no native authority/persistence admission; remains denied. Privacy, Terms, Guidelines, Support and Delete Data remain public.
+- Store billing and localized price remain unchanged. No trial, free tier, annual plan, direct billing or billing-grace promise is added.
+- Reporting remains disabled in the owner baseline. No fresh production query/mutation, deployment, store setup, push or merge. LP244.54 remains CLOSED / PASS; old LP244.22 reset/repair must not be replayed.
 
-Local commit subject: `Prepare paid access continuity policy`. **Onboarding correction PASS; paid launch and merge NO-GO pending continuity and remaining verifier/store gates.**
+## Local certification
+
+Focused run: **125 tests PASS, 0 failures**: 30 new continuity checks; 67 entitlement/server/Apple/Google/coordinator checks; four browser/onboarding/source checks; 24 native packaging contracts. Includes both stores' restart/24-hour/period cap/renewal/denial/reinstall, unsigned/tampered/sandbox/overlong/replayed-context denial, interrupted/persistence failures, clock rollback, public bypass, protected gating and reporting invariant.
+
+Browser tests use installed Edge and loopback fixture authority; native tests use explicit isolated vault ports plus source/registration contracts. No real store/provider/production calls. No native build/sync or device acceptance was performed. JavaScript syntax, changed-file credential scan and `git diff --check` are required before commit.
+
+## Remaining launch/merge gates
+
+Owner continuity policy is now resolved and implemented locally. Paid production remains **NO-GO**: production composition still has no pinned public key or authority transport; default verifier entrypoints remain unavailable. LP244.62 provider/native admission/cache composition and operational approval, durable Google acknowledgment/replacement handling, store products, native vault compilation and real platform security/restart/reinstall/clock certification, real subscription/candidate acceptance and app/PWA deployment checks remain.
+
+No production activation is implied by this local commit: `Finalize paid access continuity policy`. Merge recommendation: **NO-GO until the new native vaults are compiled/certified and remaining composition gates are reviewed.**

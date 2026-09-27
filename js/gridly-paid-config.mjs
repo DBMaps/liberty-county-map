@@ -4,5 +4,5 @@
 // admission transport here. Never accept configuration from storage/query/window.
 export function productionPaidComposition(capacitor) {
   const name=capacitor?.getPlatform?.()==='ios' ? 'GridlyStoreKit' : 'GridlyPlayBilling';
-  return {capacitor, plugin:capacitor?.Plugins?.[name], publicKey:null, authority:null};
+  return {capacitor, plugin:capacitor?.Plugins?.[name], publicKey:null, authority:null, continuityVault:capacitor?.Plugins?.GridlyContinuity};
 }
