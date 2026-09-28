@@ -37,7 +37,7 @@ export async function productionEdgeRuntime() {
       googleVerifier=createGoogleIntegrityVerifier({accessToken:googleIntegrityAccessToken({clientEmail:account.client_email,privateKey})});
     } catch {googleVerifier=undefined;}
     const authorizeNative=createNativeAuthorizer({store:nativeStore,appleVerifier,googleVerifier});
-    let roots=[];
+    let roots: Uint8Array[]=[];
     try {const encoded=JSON.parse(readSecret('GRIDLY_APPLE_STORE_ROOTS_B64')||'');
       if(!Array.isArray(encoded)||encoded.length<1||encoded.length>8)throw Error();
       roots=encoded.map((item:string)=>from64(item));}catch{roots=[];}

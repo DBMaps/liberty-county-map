@@ -13,6 +13,7 @@ async function boundedText(request,max) {
   finally {void reader.cancel().catch(()=>{});}
 }
 
+/** @param {{store?: unknown, rateLimit?: unknown, crypto?: Crypto, now?: () => number}} options */
 export function createNativeChallengeHandler({store, rateLimit, crypto=globalThis.crypto, now=Date.now}={}) {
   return async request => {
     if(request.method !== 'POST' || new URL(request.url).search) return json({error:'invalid_request'},405);
@@ -38,6 +39,7 @@ export function createNativeChallengeHandler({store, rateLimit, crypto=globalThi
 
 // Provider verifiers and challenge storage are trusted server-only ports. No
 // client-supplied verdict is interpreted as verification in this module.
+/** @param {{store?: unknown, appleVerifier?: unknown, googleVerifier?: unknown, crypto?: Crypto}} options */
 export function createNativeAuthorizer({store, appleVerifier, googleVerifier, crypto=globalThis.crypto}={}) {
   return async ({body, environment}) => {
     try {

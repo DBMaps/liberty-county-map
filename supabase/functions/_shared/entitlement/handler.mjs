@@ -8,6 +8,8 @@ async function boundedBody(request) {
 }
 // Default entrypoints pass only platform: absent security/provider ports => 503.
 // No configuration flag, test token or client input can enable a missing port.
+/** @param {{platform: string, authorizeNative?: unknown, provider?: unknown, cache?: unknown,
+ *  ackQueue?: unknown, signingKey?: unknown, fingerprintKey?: unknown, crypto?: Crypto}} options */
 export function createHandler({platform,authorizeNative,provider,cache,ackQueue,signingKey,fingerprintKey,crypto=globalThis.crypto}) {
  return async req=>{
   if(req.method!=='POST'||new URL(req.url).search)return reply(405,'invalid_request');

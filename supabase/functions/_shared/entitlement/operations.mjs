@@ -1,7 +1,9 @@
 import {acknowledgmentHealth} from './ack-health.mjs';
 const outcomes=new Set(['success','retry','terminal','denied']);
 const failures=new Set(['provider_unavailable','credential_unavailable','configuration_unavailable','reconciliation_retry']);
-// Trusted server composition only. No Deno entrypoint/deployment is enabled here.
+// Trusted server composition only; the Edge entrypoint also requires its separate operations token.
+/** @param {{token?: string, retryGoogle?: unknown, store?: unknown, environment?: string,
+ *  crypto?: Crypto, now?: () => number}} options */
 export function createSubscriptionOperations({token,retryGoogle,store,environment='production',crypto=globalThis.crypto,now=Date.now}={}) {
  const ready=/^[a-f0-9]{64}$/.test(token||'')&&['production','sandbox_test'].includes(environment)&&typeof retryGoogle==='function'&&typeof store?.completeRun==='function'&&typeof store?.health==='function';
  const json=(value,status=200)=>Response.json(value,{status,headers:{'Cache-Control':'no-store'}});

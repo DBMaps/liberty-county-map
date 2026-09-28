@@ -12,6 +12,7 @@ async function boundedJson(response) {
 }
 
 // Decode occurs only on the server. A Play verdict is never subscriber ownership.
+/** @param {{accessToken?: unknown, fetchImpl?: typeof fetch, now?: () => number}} options */
 export function createGoogleIntegrityVerifier({accessToken,fetchImpl=fetch,now=Date.now}={}) {
   return Object.freeze({verify:async ({authorization,requestHash,environment})=>{
     try {
