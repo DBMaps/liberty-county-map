@@ -26,8 +26,10 @@ async function setup(environment,{readSecret,authorizeNative,makeSupabaseClient,
    const appIdText=readSecret('GRIDLY_APPLE_APP_ID');let appId;
    if(appIdText!==undefined&&appIdText!==''){if(! /^[1-9][0-9]{0,15}$/.test(appIdText)||!Number.isSafeInteger(Number(appIdText)))throw Error();appId=Number(appIdText);}
    if(environment==='production'&&appId===undefined)throw Error();
-   const env=environment==='production'?appleLibrary.Environment.PRODUCTION:appleLibrary.Environment.SANDBOX;
-   apple={apiClient:new appleLibrary.AppStoreServerAPIClient(p8,keyId,issuer,bundle,env),signedVerifier:new appleLibrary.SignedDataVerifier(appleRoots,true,env,bundle,appId)};
+   const make=env=>({apiClient:new appleLibrary.AppStoreServerAPIClient(p8,keyId,issuer,bundle,env),
+     signedVerifier:new appleLibrary.SignedDataVerifier(appleRoots,true,env,bundle,env===appleLibrary.Environment.PRODUCTION?appId:undefined)});
+   apple=environment==='production'?{production:make(appleLibrary.Environment.PRODUCTION),sandbox:make(appleLibrary.Environment.SANDBOX)}:
+     make(appleLibrary.Environment.SANDBOX);
   }catch{apple=undefined;}
   try{
    const account=JSON.parse(secret('GRIDLY_GOOGLE_SERVICE_ACCOUNT_JSON'));

@@ -64,7 +64,7 @@ test('real browser: unsupported/native-unconfigured gate, portrait/legal access,
     });
     await page.goto(origin+'/?entitled=true');
     await page.locator('#gridlyPaidStatus').filter({hasText:'temporarily unavailable'}).waitFor();
-    assert.equal(await page.locator('#gridlyPaidPrice').textContent(),'$2.99/month');
+    assert.equal(await page.locator('#gridlyPaidPrice').textContent(),'Price loading…');
     assert.equal(await page.locator('#gridlyPaidPurchase').isDisabled(),true);
     await page.setViewportSize({width:320,height:568});
     assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);

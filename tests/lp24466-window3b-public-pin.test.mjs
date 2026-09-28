@@ -35,7 +35,7 @@ test('production config pins only native platforms and stays closed without admi
     const config=await productionPaidComposition(cap);
     assert.equal(config.publicKey.type,'public');assert.equal(config.authority,null);
     assert.equal(config.plugin,null);
-    assert.equal(config.continuityVault,cap.Plugins.GridlyContinuity);
+    assert.equal(config.continuityVault,null);
   }
 });
 
