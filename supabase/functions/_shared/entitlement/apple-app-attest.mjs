@@ -95,7 +95,8 @@ function certificateNonce(raw) {
 function parseAuthData(bytes,initial) {
   if(!Buffer.isBuffer(bytes)||bytes.length<(initial?88:37))fail();
   const flags=bytes[32],counter=bytes.readUInt32BE(33);
-  if(!(flags&1) || !!(flags&0x40)!==initial || (!initial&&(flags&0x80)))fail();
+  // App Attest does not use WebAuthn user presence as an authorization signal; genuine Apple data can omit UP.
+  if(!!(flags&0x40)!==initial || (!initial&&(flags&0x80)))fail();
   if(!equal(bytes.subarray(0,32),sha(Buffer.from(APPLE_APP_ID))))fail();
   if(!initial){if(bytes.length!==37 || counter===0)fail();return {counter};}
   const aaguid=bytes.subarray(37,53),size=bytes.readUInt16BE(53);

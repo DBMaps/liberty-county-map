@@ -18,7 +18,10 @@ test('Apple trust anchor is the published App Attestation root and identity incl
 test('App Attest assertion verifies signature, app identity and counter; rejects mutation and replay',async()=>{
   const {privateKey,publicKey}=generateKeyPairSync('ec',{namedCurve:'prime256v1'});
   const id=Buffer.alloc(32,23),keyId=id.toString('base64url'),digest=Buffer.alloc(32,17);
-  const auth=Buffer.alloc(37);hash(Buffer.from(APPLE_APP_ID)).copy(auth);auth[32]=1;auth.writeUInt32BE(1,33);
+  const auth=Buffer.alloc(37);hash(Buffer.from(APPLE_APP_ID)).copy(auth);auth.writeUInt32BE(1,33);
+  assert.equal(auth[32],0); // App Attest assertions need not set WebAuthn UP.
+  const signedObject=bytes=>item(new Map([['signature',sign('sha256',Buffer.concat([bytes,digest]),privateKey)],
+    ['authenticatorData',bytes]])).toString('base64');
   const signature=sign('sha256',Buffer.concat([auth,digest]),privateKey);
   const authorization={type:'apple_assertion',keyId,object:item(new Map([
     ['signature',signature],['authenticatorData',auth]])).toString('base64')};
@@ -26,13 +29,16 @@ test('App Attest assertion verifies signature, app identity and counter; rejects
   const readKey=async keyHash=>{assert.equal(keyHash,hash(id).toString('hex'));return record;};
   const verify=(patch={},d=digest)=>verifier.verify({authorization:{...authorization,...patch},digest:d,environment:'production',readKey});
   assert.deepEqual(await verify(),{verified:true,platform:'apple',kind:'apple_assertion',keyHash:hash(id).toString('hex'),counter:1});
+  for(const flag of [0x40,0x80]){
+    const forbidden=Buffer.from(auth);forbidden[32]=flag;
+    assert.equal(await verify({object:signedObject(forbidden)}),null,`assertion flag 0x${flag.toString(16)} must deny`);
+  }
   assert.equal(await verify({},Buffer.alloc(32,18)),null);
   assert.equal(await verify({keyId:Buffer.alloc(32,24).toString('base64url')}),null);
   assert.equal(await verify({object:'malformed'}),null);
   record.counter=1;assert.equal(await verify(),null);record.counter=0;
   const wrongRp=Buffer.from(auth);hash(Buffer.from('OTHER.com.gridlygo.gridly')).copy(wrongRp);
-  assert.equal(await verify({object:item(new Map([['signature',sign('sha256',Buffer.concat([wrongRp,digest]),privateKey)],
-    ['authenticatorData',wrongRp]])).toString('base64')}),null);
+  assert.equal(await verify({object:signedObject(wrongRp)}),null);
   const wrongSig=Buffer.from(signature);wrongSig[20]^=1;
   assert.equal(await verify({object:item(new Map([['signature',wrongSig],['authenticatorData',auth]])).toString('base64')}),null);
   assert.equal(await verifier.verify({authorization,digest,environment:'sandbox/test',readKey}),null);

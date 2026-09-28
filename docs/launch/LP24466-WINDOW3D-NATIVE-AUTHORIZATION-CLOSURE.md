@@ -10,7 +10,17 @@ The fixed App Attest RP identity is **`2XSH6R7K37.com.gridlygo.gridly`** (owner-
 
 The server stores only a hash of the 32-byte key identifier, public SPKI, production environment, counter and timestamps. It does not treat the key as subscriber ownership. The iOS plugin keeps its key ID in ThisDeviceOnly Keychain and now clears stale Keychain state when its non-backed-up install marker is missing after reinstall. Unsupported App Attest continues to deny new paid authority. Debug uses a development entitlement; Release explicitly uses a production entitlement. Apple says TestFlight and App Store distribution use production regardless of the development entitlement, but final signed entitlements must be inspected on Mac. [Apple validation protocol](https://developer.apple.com/documentation/devicecheck/validating-apps-that-connect-to-your-server); [Apple trust anchor](https://www.apple.com/certificateauthority/private/); [environment behavior](https://developer.apple.com/documentation/bundleresources/entitlements/com.apple.developer.devicecheck.appattest-environment).
 
-**Apple certification gap:** assertion fixtures pass; malformed initial attestation and an arbitrary chain fail. There is no Gridly device-generated, Apple-signed **valid initial attestation fixture** yet, and no Deno/Edge integration run. The verifier therefore cannot be called fully locally certified. The current implementation admits production only; a separate sandbox acceptance path and fixture remain to be tested. The server's StoreKit API library/root bundle is also runtime configured separately from the App Attest trust anchor.
+**Apple certification gap:** assertion fixtures pass; malformed initial attestation and an arbitrary chain fail. A genuine Gridly device-generated, Apple-signed initial attestation now exists privately, but its fixture is not in this repository and has not passed the repaired verifier on Mac. There is no Deno/Edge integration run. The verifier therefore cannot be called fully locally certified. The current implementation admits production only; a separate sandbox acceptance path and fixture remain to be tested. The server's StoreKit API library/root bundle is also runtime configured separately from the App Attest trust anchor.
+
+## LP244.66E — genuine-device App Attest flag repair (local only)
+
+A signed Gridly Release build on a physical iPhone produced a genuine production App Attest initial object with authenticator flags **exactly `0x40`**: AT set, UP clear, ED clear. The owner-provided diagnostic passed the top-level and attestation-statement structure, RP ID hash, zero initial counter, production AAGUID, credential ID/key ID match, COSE structure, and leaf/intermediate chain to the pinned Apple root. The local verifier denied it because `parseAuthData` unconditionally required WebAuthn's UP bit. That bit is not an App Attest authorization signal here.
+
+The repair removes only the UP requirement. The parser still requires AT for an initial object, forbids AT and ED for an assertion, strictly parses an initial ED extension when present, requires an exact 37-byte assertion authenticator data value and a nonzero assertion counter. The existing Apple trust anchor and root hash, Team/App identity and RP hash, production environment and AAGUID, initial zero counter, certificate chain and nonce checks, credential ID/key ID and certificate/COSE public key bindings, P-256 assertion signature and increasing-counter checks remain unchanged. Challenge consumption and replay controls, paid ownership authority, and reporting behavior are unchanged. App Attest remains native app-instance authorization, not subscription ownership evidence.
+
+The synthetic assertion test now accepts authenticator flags `0x00` with a valid signature and denies AT (`0x40`) and ED (`0x80`) even when each altered authenticator value is correctly signed. Existing signature mutation, RP mismatch, replay/counter regression, bad key ID, malformed object, non-production environment, and arbitrary initial certificate-chain rejection checks remain. No synthetic chain is claimed as genuine initial-attestation proof.
+
+Local certification on this repair branch: `node --test tests/lp24466-window3d-apple-attest.test.mjs` passed **3/3**; `node --test tests/lp24466-window3c-native-authorization.test.mjs` passed **6/6**; the 24-file LP244.6 test scope passed **218**, failed **0**, skipped **17**. The 17 skips are opt-in local PostgreSQL tests gated by `GRIDLY_LP24462_LOCAL_DB_TEST` or `GRIDLY_LP24466_LOCAL_DB_TEST`; this repair did not run a database. The genuine private device fixture was **not committed**. Its initial attestation and subsequent assertion must be rerun on Mac against this repaired verifier without a purchase, with the signed production entitlement checked. Window 3D is not fully certified and **Window 4 remains NOT READY** until the remaining Edge/gateway/runtime/native transport gates below are separately closed.
 
 ## Challenge, limiter, binding and replay
 
@@ -49,8 +59,8 @@ After this branch has been reviewed and **eventually pushed under a separate aut
 
 ```bash
 git fetch origin
-git switch LP244.66-production-subscription-verification-admission
-git pull --ff-only origin LP244.66-production-subscription-verification-admission
+git switch LP244.66E-apple-app-attest-genuine-device-flags
+git pull --ff-only origin LP244.66E-apple-app-attest-genuine-device-flags
 npm ci
 npm run build:native-web
 npm run verify:native-web
