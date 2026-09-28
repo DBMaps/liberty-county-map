@@ -74,7 +74,7 @@ function oid(bytes,node) {
     if(!pending){parts.push(value);value=0;}}
   if(pending)fail();return parts.join('.');
 }
-function certificateNonce(raw) {
+export function extractAppleAppAttestCertificateNonce(raw) {
   const outer=der(raw);if(outer.tag!==0x30||outer.end!==raw.length)fail();
   const tbs=children(raw,outer)[0];if(tbs?.tag!==0x30)fail();
   const extensions=children(raw,tbs).find(node=>node.tag===0xa3);if(!extensions)fail();
@@ -87,7 +87,9 @@ function certificateNonce(raw) {
     const value=fields.at(-1);if(value.tag!==4)fail();
     const wrapped=raw.subarray(value.content,value.end),seq=der(wrapped);
     if(seq.tag!==0x30||seq.end!==wrapped.length)fail();
-    const octet=children(wrapped,seq);if(octet.length!==1||octet[0].tag!==4)fail();
+    // Apple's nonce SEQUENCE has exactly one constructed [1] (0xA1) around the 32-byte OCTET STRING.
+    const context=children(wrapped,seq);if(context.length!==1||context[0].tag!==0xa1)fail();
+    const octet=children(wrapped,context[0]);if(octet.length!==1||octet[0].tag!==4)fail();
     found=Buffer.from(wrapped.subarray(octet[0].content,octet[0].end));
   }
   if(found?.length!==32)fail();return found;
@@ -144,7 +146,7 @@ export function createAppleAppAttestVerifier({now=Date.now}={}) {
         const auth=parseAuthData(authData,true);
         if(auth.counter!==0 || !equal(auth.aaguid,Buffer.from([97,112,112,97,116,116,101,115,116,0,0,0,0,0,0,0])) ||
           !equal(auth.credentialId,id) || !equal(sha(auth.point),id) ||
-          !equal(certificateNonce(leaf.raw),sha(Buffer.concat([authData,clientHash]))))return null;
+          !equal(extractAppleAppAttestCertificateNonce(leaf.raw),sha(Buffer.concat([authData,clientHash]))))return null;
         const jwk=leaf.publicKey.export({format:'jwk'});
         if(jwk.kty!=='EC'||jwk.crv!=='P-256'||!equal(Buffer.from(jwk.x,'base64url'),auth.point.subarray(1,33))||
           !equal(Buffer.from(jwk.y,'base64url'),auth.point.subarray(33)))return null;
