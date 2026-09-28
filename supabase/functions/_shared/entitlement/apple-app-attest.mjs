@@ -162,8 +162,10 @@ export function createAppleAppAttestVerifier({now=Date.now}={}) {
         if(record?.environment!=='production'||!Number.isSafeInteger(record.counter)||auth.counter<=record.counter||
           typeof record.publicSpki!=='string')return null;
         const publicKey=createPublicKey({key:decoded64(record.publicSpki,1024),format:'der',type:'spki'});
+        // Genuine App Attest assertion signatures verify over the derived nonce, not the raw composite input.
+        const assertionNonce=sha(Buffer.concat([authData,clientHash]));
         if(publicKey.asymmetricKeyType!=='ec'||publicKey.asymmetricKeyDetails?.namedCurve!=='prime256v1'||
-          !verifySignature('sha256',Buffer.concat([authData,clientHash]),publicKey,signature))return null;
+          !verifySignature(null,assertionNonce,publicKey,signature))return null;
         return {verified:true,platform:'apple',kind:'apple_assertion',keyHash:hash,counter:auth.counter};
       }
       return null;

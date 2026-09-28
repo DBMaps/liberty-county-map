@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {createHash,generateKeyPairSync,sign,X509Certificate} from 'node:crypto';
+import {createHash,generateKeyPairSync,sign,verify as verifySignature,X509Certificate} from 'node:crypto';
 import {APPLE_APP_ATTEST_ROOT_PEM,APPLE_APP_ID,createAppleAppAttestVerifier,
   extractAppleAppAttestCertificateNonce} from '../supabase/functions/_shared/entitlement/apple-app-attest.mjs';
 
@@ -58,15 +58,21 @@ test('App Attest assertion verifies signature, app identity and counter; rejects
   const id=Buffer.alloc(32,23),keyId=id.toString('base64url'),digest=Buffer.alloc(32,17);
   const auth=Buffer.alloc(37);hash(Buffer.from(APPLE_APP_ID)).copy(auth);auth[32]=0x40;auth.writeUInt32BE(1,33);
   assert.equal(auth[32],0x40); // Genuine App Attest assertions can set AT while omitting UP.
-  const signedObject=bytes=>item(new Map([['signature',sign('sha256',Buffer.concat([bytes,digest]),privateKey)],
+  const signedObject=bytes=>item(new Map([['signature',sign(null,hash(Buffer.concat([bytes,digest])),privateKey)],
     ['authenticatorData',bytes]])).toString('base64');
-  const signature=sign('sha256',Buffer.concat([auth,digest]),privateKey);
+  const signature=sign(null,hash(Buffer.concat([auth,digest])),privateKey);
+  assert.equal(verifySignature(null,hash(Buffer.concat([auth,digest])),publicKey,signature),true);
+  assert.equal(verifySignature('sha256',Buffer.concat([auth,digest]),publicKey,signature),false,
+    'verifying the composite directly is not the App Attest assertion contract');
   const authorization={type:'apple_assertion',keyId,object:item(new Map([
     ['signature',signature],['authenticatorData',auth]])).toString('base64')};
   const record={environment:'production',counter:0,publicSpki:publicKey.export({format:'der',type:'spki'}).toString('base64')};
   const readKey=async keyHash=>{assert.equal(keyHash,hash(id).toString('hex'));return record;};
   const verify=(patch={},d=digest)=>verifier.verify({authorization:{...authorization,...patch},digest:d,environment:'production',readKey});
   assert.deepEqual(await verify(),{verified:true,platform:'apple',kind:'apple_assertion',keyHash:hash(id).toString('hex'),counter:1});
+  const compositeSignature=sign('sha256',Buffer.concat([auth,digest]),privateKey);
+  assert.equal(await verify({object:item(new Map([['signature',compositeSignature],['authenticatorData',auth]])).toString('base64')}),
+    null,'the old composite-signing contract must not be accepted');
   const noAt=Buffer.from(auth);noAt[32]=0;
   assert.deepEqual(await verify({object:signedObject(noAt)}),
     {verified:true,platform:'apple',kind:'apple_assertion',keyHash:hash(id).toString('hex'),counter:1});
