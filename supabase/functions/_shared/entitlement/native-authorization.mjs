@@ -47,7 +47,7 @@ export function createNativeAuthorizer({store, appleVerifier, googleVerifier, cr
       const input = JSON.parse(body);
       const challenge = input.nativeChallenge, authorization = input.nativeAuthorization;
       if(!validChallenge(challenge) || !authorization || typeof authorization !== 'object' || Array.isArray(authorization)) return false;
-      if(input.environment !== environment || !['apple','google'].includes(input.platform)) return false;
+      if((input.nativeAuthorizationEnvironment ?? input.environment) !== environment || !['apple','google'].includes(input.platform)) return false;
       const binding = await nativeVerificationBinding({challenge,request:input,crypto});
       const hash = base64url(new Uint8Array(await crypto.subtle.digest('SHA-256',encoder.encode(challenge))));
       let verdict;

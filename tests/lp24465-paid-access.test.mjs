@@ -128,7 +128,7 @@ test('release composition has no debug, storage, sandbox, evidence logs, free of
   const files=['js/gridly-paid-access.mjs','js/gridly-paid-ui.mjs','js/gridly-paid-startup.mjs','js/gridly-paid-config.mjs','js/gridly-paid-bootstrap.js'];
   const source=files.map(file=>readFileSync(file,'utf8')).join('\n');
   assert.doesNotMatch(source,/localStorage|sessionStorage|URLSearchParams|console\.|sandbox\/test|reporting_enabled\s*[:=]\s*true|service_role|sb_secret_|eyJ[A-Za-z0-9_-]{30}/);
-  assert.match(source,/environment:'production'/);assert.match(source,/importProductionEntitlementKey/);assert.match(source,/const authority = null/);
+  assert.match(source,/environment:platform==='apple'\?'auto':'production'/);assert.match(source,/importProductionEntitlementKey/);assert.match(source,/createNativeAttestedInvoke/);
   const gate=readFileSync('index.html','utf8').split('<section id="gridlyPaidAccess"')[1].split('</section>')[0];
   assert.doesNotMatch(gate,/free tier|free trial|annual plan|refund guarantee|direct billing/i);
   assert.match(gate,/Cancel anytime through store settings/);assert.match(gate,/Automatically renews/);

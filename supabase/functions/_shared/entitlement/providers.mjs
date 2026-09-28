@@ -14,6 +14,16 @@ export function appleAdapter({signedVerifier,apiClient,env,now=Date.now}) {
   return normalizeApple(current,renewal,matches[0].status,{env,originalReference:original.originalTransactionId,now:now()});
  }});
 }
+// The request environment selects a strict verifier; Apple's signed transaction,
+// signed status and renewal must independently match that verifier before proof.
+export function appleEnvironmentAdapter({production,sandbox,now=Date.now}) {
+ const adapters={production:appleAdapter({...production,env:'production',now}),
+  'sandbox/test':appleAdapter({...sandbox,env:'sandbox/test',now})};
+ return Object.freeze({verify:(signed,{environment}={})=>{
+  if(!Object.hasOwn(adapters,environment))throw Error('invalid_evidence');
+  return adapters[environment].verify(signed);
+ }});
+}
 async function readBounded(response) {
  if(!response.ok)throw Error('provider_unavailable');
  const reader=response.body?.getReader();if(!reader)throw Error('provider_unavailable');let size=0;const chunks=[];

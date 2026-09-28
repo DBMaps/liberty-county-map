@@ -16,7 +16,8 @@ export async function nativeVerificationBinding({challenge, request, crypto=glob
   const evidenceHash = base64url(new Uint8Array(await crypto.subtle.digest('SHA-256', evidenceBytes)));
   const canonical = JSON.stringify([NATIVE_VERIFICATION_PURPOSE, challenge, input.platform, input.environment,
     input.productId, input.platform === 'google' ? input.basePlanId : '', input.nonce,
-    input.continuityBinding ?? '', evidenceHash]);
+    input.continuityBinding ?? '', evidenceHash,
+    ...(input.nativeAuthorizationEnvironment===undefined?[]:[input.nativeAuthorizationEnvironment])]);
   const digest = new Uint8Array(await crypto.subtle.digest('SHA-256', encoder.encode(canonical)));
   return Object.freeze({purpose:NATIVE_VERIFICATION_PURPOSE, digest, requestHash:base64url(digest), evidenceHash});
 }

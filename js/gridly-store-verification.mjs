@@ -8,11 +8,14 @@ export const STORE_VERIFIERS = Object.freeze({
     evidenceField:'purchaseTokens', verification:'purchases.subscriptionsv2.get', acknowledgement:'purchases.subscriptions.acknowledge',
     accountRequired:false, recovery:'billingclient_query_purchases', launchRestorePrompt:false})
 });
-export function storeVerificationRequest({platform,environment,nonce,evidence,continuityBinding}) {
+export function storeVerificationRequest({platform,environment,nativeAuthorizationEnvironment,nonce,evidence,continuityBinding}) {
   const spec=Object.hasOwn(STORE_VERIFIERS,platform) ? STORE_VERIFIERS[platform] : null;
   if(!spec || !['production','sandbox/test'].includes(environment) || typeof nonce!=='string' || !/^[A-Za-z0-9_-]{32,128}$/.test(nonce) ||
      !evidence || Object.keys(evidence).length!==1 || !Object.hasOwn(evidence,spec.evidenceField)) throw Error('invalid_store_evidence');
   if(continuityBinding!==undefined && !/^[a-f0-9]{64}$/.test(continuityBinding))throw Error('invalid_store_evidence');
+  if(platform==='apple' && (nativeAuthorizationEnvironment===undefined
+    ? environment!=='production' : nativeAuthorizationEnvironment!=='production'))throw Error('invalid_store_evidence');
+  if(platform==='google' && nativeAuthorizationEnvironment!==undefined)throw Error('invalid_store_evidence');
   const entries=evidence[spec.evidenceField];
   if(!Array.isArray(entries) || entries.length>8 || new Set(entries).size!==entries.length) throw Error('invalid_store_evidence');
   for(const entry of entries) {
@@ -21,7 +24,7 @@ export function storeVerificationRequest({platform,environment,nonce,evidence,co
   }
   // No email, profile, Gridly account, old installation ID or report device ID.
   // Empty current store results cannot by themselves prove backend non-entitlement.
-  return Object.freeze({platform,environment,nonce,productId:spec.productId,
+  return Object.freeze({platform,environment,...(nativeAuthorizationEnvironment===undefined?{}:{nativeAuthorizationEnvironment}),nonce,productId:spec.productId,
     ...(platform==='google'?{basePlanId:spec.basePlanId}:{}),
     ...(continuityBinding===undefined?{}:{continuityBinding}),
     evidence:Object.freeze({[spec.evidenceField]:Object.freeze([...entries])})});

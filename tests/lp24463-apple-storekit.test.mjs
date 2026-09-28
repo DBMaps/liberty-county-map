@@ -30,7 +30,7 @@ function fixture({env='production',status=1,cancel=false,end=now+86400000}={}) {
  restorePurchases:async opts=>{assert.deepEqual(opts,{userInitiated:true});events.push('sync');return native;},finishTransaction:async opts=>{assert.deepEqual(opts,{completionHandle:'synthetic-handle'});events.push('finish');return {finished:true};},
  addListener:async(name,fn)=>{handlers.set(name,fn);return {remove:async()=>handlers.delete(name)};},startObserving:async()=>{events.push('observe');},stopObserving:async()=>{events.push('stop');}};
  const options={capacitor:{isNativePlatform:()=>true,getPlatform:()=> 'ios'},plugin,publicKey:keys.publicKey,crypto:webcrypto,now:()=>now,environment:env,
- authority:{reconcile:async request=>{events.push('server');assert.deepEqual(Object.keys(request).sort(),['environment','evidence','nonce','platform','productId']);assert.deepEqual(request.evidence,{signedTransactions:['synthetic.payload.signature']});return signResponse(record,request.nonce,keys.privateKey,webcrypto);}},
+ authority:{reconcile:async request=>{events.push('server');assert.deepEqual(Object.keys(request).sort(),['environment','evidence','nativeAuthorizationEnvironment','nonce','platform','productId']);assert.equal(request.nativeAuthorizationEnvironment,'production');assert.deepEqual(request.evidence,{signedTransactions:['synthetic.payload.signature']});return signResponse(record,request.nonce,keys.privateKey,webcrypto);}},
  deliverEntitlement:async(_,guard)=>{assert.equal(guard.isCurrent(),true);events.push('deliver');return true;}};
  return {options,plugin,native,events,handlers,session:()=>createAppleStoreKit(options)};
 }
@@ -48,7 +48,7 @@ test('no delivery composition means no early finish or runtime entitlement',asyn
  const f=fixture();delete f.options.deliverEntitlement;const s=f.session();await s.purchase();assert.equal(s.allowed().allowed,false);assert.ok(!f.events.includes('finish'));
 });
 test('unverified/cancelled/pending/no-evidence states never contact verifier or finish',async()=>{
- for(const [result,errorCategory,expected] of [['error','verification_failed','invalid_authority'],['user_cancelled','user_cancelled','user_canceled'],['purchase_pending','purchase_pending','purchase_pending'],['no_evidence','not_entitled','store_unavailable']]){
+ for(const [result,errorCategory,expected] of [['error','verification_failed','invalid_authority'],['user_cancelled','user_cancelled','user_canceled'],['purchase_pending','purchase_pending','purchase_pending'],['no_evidence','not_entitled','no_store_evidence']]){
   const f=fixture();f.plugin.purchase=async()=>({result,errorCategory});const s=f.session();assert.equal((await s.purchase()).errorCategory,expected);assert.deepEqual(f.events,[]);assert.equal(s.allowed().allowed,false);
  }
 });

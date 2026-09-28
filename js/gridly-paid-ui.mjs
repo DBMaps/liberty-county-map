@@ -61,15 +61,17 @@ export async function bootPaidAccess() {
       if(wasVisible && value.state!=='initializing') {window.location.reload();return;}
     }
     status.textContent=value.temporaryAccess?'Subscription verified previously. Temporary access; reconnect to refresh.':value.errorCategory==='user_canceled'?'Purchase canceled. You can retry or restore.'
+      :value.product?.errorCategory==='product_unavailable'?'Subscription product is unavailable from the App Store. Retry later.'
+      :value.product?.errorCategory==='store_unavailable'?'The App Store is unavailable. Retry later.'
       :value.action==='purchase'?'Completing your store purchase…'
       :value.action==='restore'?'Checking your store purchase…':copy[value.state];
     const native=!!value.platform,busy=value.state==='initializing';
     purchase.hidden=restore.hidden=retry.hidden=!native;
     document.getElementById('gridlyPaidOffer').hidden=!native;
-    purchase.disabled=busy||value.product?.available!==true;
+    purchase.disabled=busy||value.product?.available!==true||value.verificationReady!==true;
     restore.disabled=retry.disabled=busy;
     restore.textContent=value.platform==='google'?'Check Purchase / Restore':'Restore Purchases';
-    document.getElementById('gridlyPaidPrice').textContent=(value.product?.available?value.product.displayPrice:'$2.99')+'/month';
+    document.getElementById('gridlyPaidPrice').textContent=value.product?.available?value.product.displayPrice+'/month':'Price loading…';
     document.getElementById('gridlyPaidBilling').textContent=value.platform==='google'?'Billed through Google Play.':value.platform==='apple'?'Billed through the Apple App Store.':'App-store subscription • U.S. launch';
     if(value.allowed && !loading && !started && !loadFailed) {
       loading=true;

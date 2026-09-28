@@ -21,13 +21,16 @@ export function createHandler({platform,authorizeNative,provider,cache,ackQueue,
    const text=await boundedBody(req);
    let raw;try{raw=JSON.parse(text);}catch{return reply(400,'invalid_request');}
    if(!raw||typeof raw!=='object'||Array.isArray(raw))return reply(400,'invalid_request');
-   if(Object.keys(raw).filter(key=>!['continuityBinding','nativeChallenge','nativeAuthorization'].includes(key)).sort().join(',') !== (platform==='google'?['platform','environment','nonce','productId','basePlanId','evidence']:['platform','environment','nonce','productId','evidence']).sort().join(','))return reply(400,'invalid_request');
+   const fields=Object.keys(raw).filter(key=>!['continuityBinding','nativeChallenge','nativeAuthorization'].includes(key));
+   const expected=platform==='google'?['platform','environment','nonce','productId','basePlanId','evidence']:['platform','environment','nonce','productId','evidence'];
+   if(platform==='apple'&&raw.nativeAuthorizationEnvironment!==undefined)expected.push('nativeAuthorizationEnvironment');
+   if(fields.sort().join(',')!==expected.sort().join(','))return reply(400,'invalid_request');
    const input=storeVerificationRequest(raw);
    if(input.platform!==platform||raw.productId!==input.productId||(platform==='google'&&raw.basePlanId!==input.basePlanId))return reply(400,'invalid_request');
-   if(!await authorizeNative({request:req,body:text,nonce:input.nonce,environment:input.environment}))return reply(401,'unauthorized');
+   if(!await authorizeNative({request:req,body:text,nonce:input.nonce,environment:input.nativeAuthorizationEnvironment??input.environment}))return reply(401,'unauthorized');
    const values=input.evidence[platform==='apple'?'signedTransactions':'purchaseTokens'];
    if(values.length!==1)return reply(422,'verification_unavailable'); // No public arbitrary cache read or absence claim.
-   let record=await provider.verify(values[0]);
+   let record=await provider.verify(values[0],{environment:input.environment});
    if(record.platform!==platform||record.environment!==input.environment)return reply(422,'invalid_evidence');
    const cached=await cacheRecord(record,fingerprintKey,crypto);
    if(!active)return reply(504,'verification_unavailable');
