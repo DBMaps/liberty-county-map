@@ -1,4 +1,5 @@
-import {X509Certificate,createHash,verify as verifySignature,createPublicKey} from 'node:crypto';
+import {createHash,verify as verifySignature,createPublicKey} from 'node:crypto';
+import {Buffer} from 'node:buffer';
 
 // Published by Apple at https://www.apple.com/certificateauthority/private/
 // This is a public trust anchor, never an app/server signing credential.
@@ -116,13 +117,82 @@ function parseAuthData(bytes,initial) {
   } else if(parsed.bytesRead!==tail.length)fail();
   return {counter,aaguid,credentialId,point:Buffer.concat([Buffer.from([4]),cose.get(-2),cose.get(-3)])};
 }
+function certificateTime(bytes,node) {
+  const value=bytes.subarray(node.content,node.end).toString('ascii');
+  const utc=node.tag===0x17 && /^\d{12}Z$/.test(value);
+  const generalized=node.tag===0x18 && /^\d{14}Z$/.test(value);
+  if(!utc&&!generalized)fail();
+  const year=utc?(Number(value.slice(0,2))<50?2000:1900)+Number(value.slice(0,2)):Number(value.slice(0,4));
+  const at=utc?2:4,month=Number(value.slice(at,at+2)),day=Number(value.slice(at+2,at+4));
+  const hour=Number(value.slice(at+4,at+6)),minute=Number(value.slice(at+6,at+8)),second=Number(value.slice(at+8,at+10));
+  const date=new Date(Date.UTC(year,month-1,day,hour,minute,second));
+  if(date.getUTCFullYear()!==year||date.getUTCMonth()+1!==month||date.getUTCDate()!==day||
+    date.getUTCHours()!==hour||date.getUTCMinutes()!==minute||date.getUTCSeconds()!==second)fail();
+  return date.getTime();
+}
+function certificateParts(raw) {
+  const outer=der(raw);if(outer.tag!==0x30||outer.end!==raw.length)fail();
+  const parts=children(raw,outer);if(parts.length!==3||parts[0].tag!==0x30||
+    parts[1].tag!==0x30||parts[2].tag!==0x03)fail();
+  const fields=children(raw,parts[0]);let at=fields[0]?.tag===0xa0?1:0;
+  const serial=fields[at++],innerAlgorithm=fields[at++],issuer=fields[at++],validity=fields[at++],
+    subject=fields[at++],spki=fields[at++];
+  if(serial?.tag!==0x02||innerAlgorithm?.tag!==0x30||issuer?.tag!==0x30||
+    validity?.tag!==0x30||subject?.tag!==0x30||spki?.tag!==0x30)fail();
+  const algorithm=children(raw,parts[1]);if(algorithm.length!==1||
+    !equal(raw.subarray(innerAlgorithm.start,innerAlgorithm.end),raw.subarray(parts[1].start,parts[1].end)))fail();
+  const hash={'1.2.840.10045.4.3.2':'sha256','1.2.840.10045.4.3.3':'sha384',
+    '1.2.840.10045.4.3.4':'sha512'}[oid(raw,algorithm[0])];if(!hash)fail();
+  const dates=children(raw,validity);if(dates.length!==2)fail();
+  const signature=parts[2];if(signature.end-signature.content<2||raw[signature.content]!==0)fail();
+  let ca=false,found=false;
+  for(const field of fields.slice(at))if(field.tag===0xa3){
+    const wrapped=children(raw,field);if(wrapped.length!==1||wrapped[0].tag!==0x30)fail();
+    for(const extension of children(raw,wrapped[0])){
+      if(extension.tag!==0x30)fail();const items=children(raw,extension);
+      if(oid(raw,items[0])!=='2.5.29.19')continue;
+      if(found||items.length<2||items.length>3||items.at(-1).tag!==0x04)fail();found=true;
+      const value=raw.subarray(items.at(-1).content,items.at(-1).end),basic=der(value);
+      if(basic.tag!==0x30||basic.end!==value.length)fail();
+      const constraints=children(value,basic);
+      if(constraints.length && constraints[0].tag===0x01){
+        const boolean=constraints[0];if(boolean.end-boolean.content!==1||
+          ![0,0xff].includes(value[boolean.content]))fail();ca=value[boolean.content]===0xff;
+      }
+    }
+  }
+  return {raw,issuer:raw.subarray(issuer.start,issuer.end),subject:raw.subarray(subject.start,subject.end),
+    from:certificateTime(raw,dates[0]),to:certificateTime(raw,dates[1]),ca,hash,
+    tbs:raw.subarray(parts[0].start,parts[0].end),
+    signature:raw.subarray(signature.content+1,signature.end),
+    publicKey:createPublicKey({key:raw.subarray(spki.start,spki.end),format:'der',type:'spki'})};
+}
+function signedBy(cert,issuer) {
+  return equal(cert.issuer,issuer.subject)&&verifySignature(cert.hash,cert.tbs,issuer.publicKey,cert.signature);
+}
+function isP256Spki(bytes) {
+  const outer=der(bytes);if(outer.tag!==0x30||outer.end!==bytes.length)return false;
+  const fields=children(bytes,outer);if(fields.length!==2||fields[0].tag!==0x30||fields[1].tag!==0x03)return false;
+  const algorithm=children(bytes,fields[0]);if(algorithm.length!==2||
+    oid(bytes,algorithm[0])!=='1.2.840.10045.2.1'||
+    oid(bytes,algorithm[1])!=='1.2.840.10045.3.1.7')return false;
+  const point=fields[1];return point.end-point.content===66&&bytes[point.content]===0&&bytes[point.content+1]===4;
+}
+export function verifyPinnedAppleAppAttestRoot(now=Date.now()) {
+  const pem=/^-----BEGIN CERTIFICATE-----\n([A-Za-z0-9+/\n]+)\n-----END CERTIFICATE-----$/.exec(APPLE_APP_ATTEST_ROOT_PEM);
+  if(!pem)fail();
+  const rootRaw=decoded64(pem[1].replace(/\n/g,''),4096);
+  if(sha(rootRaw).toString('hex')!==ROOT_SHA256)fail();
+  const root=certificateParts(rootRaw);
+  if(!root.ca||!signedBy(root,root)||now<root.from||now>root.to)fail();
+  return root;
+}
 function trustedCertificates(chain,rootPem,now) {
   if(!Array.isArray(chain)||chain.length!==2||chain.some(value=>!Buffer.isBuffer(value)||value.length>8192))fail();
-  const root=new X509Certificate(rootPem),leaf=new X509Certificate(chain[0]),intermediate=new X509Certificate(chain[1]);
-  if(sha(root.raw).toString('hex')!==ROOT_SHA256)fail();
-  if(!root.ca || !intermediate.ca || leaf.ca || !leaf.checkIssued(intermediate) || !intermediate.checkIssued(root) ||
-    !leaf.verify(intermediate.publicKey) || !intermediate.verify(root.publicKey))fail();
-  for(const cert of [root,intermediate,leaf])if(now<cert.validFromDate.getTime()||now>cert.validToDate.getTime())fail();
+  if(rootPem!==APPLE_APP_ATTEST_ROOT_PEM)fail();
+  const root=verifyPinnedAppleAppAttestRoot(now),intermediate=certificateParts(chain[1]),leaf=certificateParts(chain[0]);
+  if(!intermediate.ca||leaf.ca||!signedBy(intermediate,root)||!signedBy(leaf,intermediate))fail();
+  for(const cert of [root,intermediate,leaf])if(now<cert.from||now>cert.to)fail();
   return leaf;
 }
 function keyHash(id) {return sha(id).toString('hex');}
@@ -161,11 +231,13 @@ export function createAppleAppAttestVerifier({now=Date.now}={}) {
         const auth=parseAuthData(authData,false),record=await readKey(hash);
         if(record?.environment!=='production'||!Number.isSafeInteger(record.counter)||auth.counter<=record.counter||
           typeof record.publicSpki!=='string')return null;
-        const publicKey=createPublicKey({key:decoded64(record.publicSpki,1024),format:'der',type:'spki'});
+        const spki=decoded64(record.publicSpki,1024);
+        if(!isP256Spki(spki))return null;
+        const publicKey=createPublicKey({key:spki,format:'der',type:'spki'});
         // Genuine App Attest assertion signatures verify over the derived nonce, not the raw composite input.
         const assertionNonce=sha(Buffer.concat([authData,clientHash]));
-        if(publicKey.asymmetricKeyType!=='ec'||publicKey.asymmetricKeyDetails?.namedCurve!=='prime256v1'||
-          !verifySignature(null,assertionNonce,publicKey,signature))return null;
+        if(publicKey.asymmetricKeyType!=='ec'||
+          !verifySignature('sha256',assertionNonce,publicKey,signature))return null;
         return {verified:true,platform:'apple',kind:'apple_assertion',keyHash:hash,counter:auth.counter};
       }
       return null;

@@ -1,5 +1,3 @@
-import {CapacitorHttp} from '@capacitor/core';
-
 const SUPABASE_ORIGIN='https://nhwhkbkludzkuyxmkkcj.supabase.co';
 const PUBLISHABLE_KEY='sb_publishable_T33dpOj4M3TioSqFcVxf2Q_YTmhkPdO';
 const CHALLENGE_URL='https://gridlygo.com/subscription-challenge';
@@ -13,12 +11,19 @@ function boundedJson(data,max) {
 }
 // Routing credentials are public and carry no paid authority. The Edge handler
 // must independently verify App Attest/Play Integrity and consume the challenge.
-export function createNativeEdgeTransport({capacitor,http=CapacitorHttp}={}) {
+export function createNativeEdgeTransport({capacitor,http}={}) {
   const platform=capacitor?.isNativePlatform?.()===true?capacitor.getPlatform?.():null;
-  if(!Object.hasOwn(verifier,platform)||typeof http?.request!=='function')return null;
+  if(!Object.hasOwn(verifier,platform))return null;
+  // Native staging copies this module without a JS package resolver. Capacitor's
+  // injected bridge exposes its registered, built-in CapacitorHttp plugin.
+  const nativeRequest=http===undefined
+    ? capacitor?.isPluginAvailable?.('CapacitorHttp')===true&&typeof capacitor.nativePromise==='function'
+      ? options=>capacitor.nativePromise('CapacitorHttp','request',options):null
+    : typeof http?.request==='function'?options=>http.request(options):null;
+  if(!nativeRequest)return null;
   const request=async (url,body,headers,max=8192)=>{
     // Native HTTP avoids WebView CORS while preserving the Edge authorization boundary.
-    const response=await http.request({url,method:'POST',disableRedirects:true,
+    const response=await nativeRequest({url,method:'POST',disableRedirects:true,
       connectTimeout:12000,readTimeout:12000,responseType:'text',
       headers:{'Content-Type':'application/json','Cache-Control':'no-store',...headers},data:JSON.stringify(body)});
     if(!Number.isInteger(response?.status)||response.status<200||response.status>=300)

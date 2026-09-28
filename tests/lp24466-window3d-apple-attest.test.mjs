@@ -2,7 +2,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {createHash,generateKeyPairSync,sign,verify as verifySignature,X509Certificate} from 'node:crypto';
 import {APPLE_APP_ATTEST_ROOT_PEM,APPLE_APP_ID,createAppleAppAttestVerifier,
-  extractAppleAppAttestCertificateNonce} from '../supabase/functions/_shared/entitlement/apple-app-attest.mjs';
+  extractAppleAppAttestCertificateNonce,verifyPinnedAppleAppAttestRoot} from '../supabase/functions/_shared/entitlement/apple-app-attest.mjs';
 
 const hash=bytes=>createHash('sha256').update(bytes).digest();
 const item=value=>{const length=n=>n<24?Buffer.from([n]):n<256?Buffer.from([24,n]):Buffer.from([25,n>>8,n&255]);
@@ -53,6 +53,12 @@ test('Apple trust anchor is the published App Attestation root and identity incl
     '1cb9823ba28ba6ad2d33a006941de2ae4f513ef1d4e831b9f7e0fa7b6242c932');
   assert.equal(APPLE_APP_ID,'2XSH6R7K37.com.gridlygo.gridly');
 });
+test('pinned Apple root DER, signature, CA constraint, and validity verify without X509 compatibility methods',()=>{
+  const root=verifyPinnedAppleAppAttestRoot(Date.parse('2026-09-28T00:00:00Z'));
+  assert.equal(root.ca,true);
+  assert.equal(root.subject.equals(root.issuer),true);
+  assert.throws(()=>verifyPinnedAppleAppAttestRoot(Date.parse('2046-01-01T00:00:00Z')),/attestation_invalid/);
+});
 test('App Attest assertion verifies signature, app identity and counter; rejects mutation and replay',async()=>{
   const {privateKey,publicKey}=generateKeyPairSync('ec',{namedCurve:'prime256v1'});
   const id=Buffer.alloc(32,23),keyId=id.toString('base64url'),digest=Buffer.alloc(32,17);
@@ -62,6 +68,8 @@ test('App Attest assertion verifies signature, app identity and counter; rejects
     ['authenticatorData',bytes]])).toString('base64');
   const signature=sign(null,hash(Buffer.concat([auth,digest])),privateKey);
   assert.equal(verifySignature(null,hash(Buffer.concat([auth,digest])),publicKey,signature),true);
+  assert.equal(verifySignature('sha256',hash(Buffer.concat([auth,digest])),publicKey,signature),true,
+    'the explicit digest is required by the deployed Edge runtime');
   assert.equal(verifySignature('sha256',Buffer.concat([auth,digest]),publicKey,signature),false,
     'verifying the composite directly is not the App Attest assertion contract');
   const authorization={type:'apple_assertion',keyId,object:item(new Map([
@@ -70,6 +78,11 @@ test('App Attest assertion verifies signature, app identity and counter; rejects
   const readKey=async keyHash=>{assert.equal(keyHash,hash(id).toString('hex'));return record;};
   const verify=(patch={},d=digest)=>verifier.verify({authorization:{...authorization,...patch},digest:d,environment:'production',readKey});
   assert.deepEqual(await verify(),{verified:true,platform:'apple',kind:'apple_assertion',keyHash:hash(id).toString('hex'),counter:1});
+  const ambientBuffer=globalThis.Buffer;
+  try {
+    globalThis.Buffer=undefined;
+    assert.equal((await verify())?.verified,true,'Deno Edge modules must not require ambient Buffer');
+  } finally {globalThis.Buffer=ambientBuffer;}
   const compositeSignature=sign('sha256',Buffer.concat([auth,digest]),privateKey);
   assert.equal(await verify({object:item(new Map([['signature',compositeSignature],['authenticatorData',auth]])).toString('base64')}),
     null,'the old composite-signing contract must not be accepted');
@@ -86,6 +99,11 @@ test('App Attest assertion verifies signature, app identity and counter; rejects
   assert.equal(await verify({},Buffer.alloc(32,18)),null);
   assert.equal(await verify({keyId:Buffer.alloc(32,24).toString('base64url')}),null);
   assert.equal(await verify({object:'malformed'}),null);
+  const originalSpki=record.publicSpki;
+  record.publicSpki=generateKeyPairSync('ec',{namedCurve:'secp384r1'}).publicKey
+    .export({format:'der',type:'spki'}).toString('base64');
+  assert.equal(await verify(),null,'only a P-256 registered key is accepted');
+  record.publicSpki=originalSpki;
   record.counter=1;assert.equal(await verify(),null);record.counter=0;
   record.environment='sandbox/test';assert.equal(await verify(),null);record.environment='production';
   const wrongRp=Buffer.from(auth);hash(Buffer.from('OTHER.com.gridlygo.gridly')).copy(wrongRp);
