@@ -2,14 +2,14 @@ const enc=new TextEncoder();
 const b64=bytes=>btoa(String.fromCharCode(...bytes)).replaceAll('+','-').replaceAll('/','_').replaceAll('=','');
 const json=value=>b64(enc.encode(JSON.stringify(value)));
 // No user impersonation, client token input, selectable scope or token endpoint.
-export function googleServiceAccessToken({clientEmail,privateKey,crypto=globalThis.crypto,fetchImpl=fetch,now=Date.now}) {
+function serviceAccessToken({clientEmail,privateKey,crypto=globalThis.crypto,fetchImpl=fetch,now=Date.now},scope) {
  if(typeof clientEmail!=='string'||! /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.iam\.gserviceaccount\.com$/.test(clientEmail)||privateKey?.type!=='private'||privateKey.extractable||privateKey.algorithm?.name!=='RSASSA-PKCS1-v1_5'||privateKey.algorithm.hash?.name!=='SHA-256'||privateKey.algorithm.modulusLength<2048||!privateKey.usages.includes('sign'))throw Error('provider_unavailable');
  let cached=null,inflight=null;
  return async()=>{
   if(cached&&cached.until>now()+60000)return cached.token;
   if(inflight)return inflight;
   inflight=(async()=>{
-   const issued=Math.floor(now()/1000),head=json({alg:'RS256',typ:'JWT'}),body=json({iss:clientEmail,scope:'https://www.googleapis.com/auth/androidpublisher',aud:'https://oauth2.googleapis.com/token',iat:issued,exp:issued+3600});
+   const issued=Math.floor(now()/1000),head=json({alg:'RS256',typ:'JWT'}),body=json({iss:clientEmail,scope,aud:'https://oauth2.googleapis.com/token',iat:issued,exp:issued+3600});
    const data=head+'.'+body,signed=await crypto.subtle.sign('RSASSA-PKCS1-v1_5',privateKey,enc.encode(data));
    const response=await fetchImpl('https://oauth2.googleapis.com/token',{method:'POST',redirect:'manual',signal:AbortSignal.timeout(8000),headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({grant_type:'urn:ietf:params:oauth:grant-type:jwt-bearer',assertion:data+'.'+b64(new Uint8Array(signed))})});
    if(!response.ok)throw Error([401,403].includes(response.status)?'credential_unavailable':'provider_unavailable');
@@ -23,3 +23,5 @@ export function googleServiceAccessToken({clientEmail,privateKey,crypto=globalTh
   try{return await inflight;}catch(error){throw Error(error?.message==='credential_unavailable'?'credential_unavailable':'provider_unavailable');}finally{inflight=null;}
  };
 }
+export const googleServiceAccessToken=ports=>serviceAccessToken(ports,'https://www.googleapis.com/auth/androidpublisher');
+export const googleIntegrityAccessToken=ports=>serviceAccessToken(ports,'https://www.googleapis.com/auth/playintegrity');

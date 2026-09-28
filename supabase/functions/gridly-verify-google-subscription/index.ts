@@ -1,3 +1,3 @@
-// Disabled foundation: real provider/security/cache/signing composition awaits review.
-import {createHandler} from '../_shared/entitlement/handler.mjs';
-Deno.serve(createHandler({platform:'google'}));
+import {productionEdgeRuntime} from '../_shared/entitlement/edge-runtime.ts';
+const runtime=await productionEdgeRuntime();
+Deno.serve(runtime.google);

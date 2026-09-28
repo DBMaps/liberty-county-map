@@ -14,7 +14,7 @@ export async function bootPaidAccess() {
   const root=document.documentElement, gate=document.getElementById('gridlyPaidAccess');
   const status=document.getElementById('gridlyPaidStatus'), purchase=document.getElementById('gridlyPaidPurchase');
   const restore=document.getElementById('gridlyPaidRestore'), retry=document.getElementById('gridlyPaidRetry');
-  const coordinator=createPaidAccess(productionPaidComposition(window.Capacitor));
+  const coordinator=createPaidAccess(await productionPaidComposition(window.Capacitor));
   let loading=false, started=false, wasVisible=false, loadFailed=false, closing=false;
   let tourComplete=onboardingComplete(), onboarding;
   const legal=document.createElement('details');legal.id='gridlyPaidLegalAccess';legal.hidden=true;

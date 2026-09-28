@@ -1,5 +1,5 @@
 const GRIDLY_SW_VERSION = "lp244.33-google-play-compliance";
-const GRIDLY_CLOSURE_CACHE_NAME = "gridly-pwa-shell-lp24465-continuity-v1";
+const GRIDLY_CLOSURE_CACHE_NAME = "gridly-pwa-shell-lp24466-public-pin-v1";
 const GRIDLY_CLOSURE_URLS = [
   "./",
   "./index.html",
@@ -11,6 +11,7 @@ const GRIDLY_CLOSURE_URLS = [
   "./assets/onboarding/paid-onboarding-model.json",
   "./js/gridly-paid-access.mjs",
   "./js/gridly-paid-config.mjs",
+  "./js/gridly-entitlement-public-key.mjs",
   "./js/gridly-paid-startup.mjs",
   "./js/gridly-entitlement.mjs",
   "./js/gridly-store-verification.mjs",
@@ -111,14 +112,14 @@ self.addEventListener("fetch", (event) => {
   if (!closureUrl) return;
 
   event.respondWith(
-    caches.match(request)
-      .then((cachedResponse) => cachedResponse || fetch(request).then((response) => {
+    caches.open(GRIDLY_CLOSURE_CACHE_NAME)
+      .then((cache) => cache.match(request).then((cachedResponse) => cachedResponse || fetch(request).then((response) => {
         if (response && response.ok) {
           const responseCopy = response.clone();
-          caches.open(GRIDLY_CLOSURE_CACHE_NAME).then((cache) => cache.put(request, responseCopy));
+          cache.put(request, responseCopy);
         }
         return response;
-      }))
+      })))
   );
 });
 

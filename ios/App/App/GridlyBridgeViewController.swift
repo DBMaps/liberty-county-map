@@ -5,5 +5,6 @@ class GridlyBridgeViewController: CAPBridgeViewController {
     override func capacitorDidLoad() {
         bridge?.registerPluginInstance(GridlyStoreKitPlugin())
         bridge?.registerPluginInstance(GridlyContinuityPlugin())
+        bridge?.registerPluginInstance(GridlyAppAttestPlugin())
     }
 }

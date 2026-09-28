@@ -1,6 +1,7 @@
 import {productionComposition,sandboxAcceptanceComposition} from './composition.mjs';
 import {subscriptionRpcPorts} from './rpc-ports.mjs';
 import {googleServiceAccessToken} from './google-oauth.mjs';
+import {GOOGLE_PLAY_CLOUD_PROJECT_ID} from './google-integrity.mjs';
 const bundle='com.gridlygo.gridly';
 function bytes(value,max=16384){if(typeof value!=='string'||value.length>max||! /^[A-Za-z0-9+/]+={0,2}$/.test(value))throw Error('configuration_unavailable');return Uint8Array.from(atob(value),c=>c.charCodeAt(0));}
 // Operator supplied secrets, official Apple constructors and DER trust assets;
@@ -30,7 +31,7 @@ async function setup(environment,{readSecret,authorizeNative,makeSupabaseClient,
   }catch{apple=undefined;}
   try{
    const account=JSON.parse(secret('GRIDLY_GOOGLE_SERVICE_ACCOUNT_JSON'));
-   if(account.type!=='service_account'||typeof account.private_key!=='string'||(account.token_uri!==undefined&&account.token_uri!=='https://oauth2.googleapis.com/token'))throw Error();
+   if(account.type!=='service_account'||account.project_id!==GOOGLE_PLAY_CLOUD_PROJECT_ID||typeof account.private_key!=='string'||(account.token_uri!==undefined&&account.token_uri!=='https://oauth2.googleapis.com/token'))throw Error();
    const der=bytes(account.private_key.split(/\r?\n/).filter(line=>line&&!line.startsWith('-----')).join(''));
    const key=await crypto.subtle.importKey('pkcs8',der,{name:'RSASSA-PKCS1-v1_5',hash:'SHA-256'},false,['sign']);
    const aes=bytes(secret('GRIDLY_GOOGLE_ACK_AES_CURRENT_KEY_B64'));if(aes.length!==32)throw Error();

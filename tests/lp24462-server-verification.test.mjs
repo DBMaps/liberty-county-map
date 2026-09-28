@@ -85,5 +85,11 @@ test('reinstall proves from store without old identity; environment mismatch ref
 });
 test('source privacy/security boundary, no reporting writes or production bypass',()=>{
  for(const file of ['core.mjs','providers.mjs','handler.mjs']){const source=readFileSync(new URL('../supabase/functions/_shared/entitlement/'+file,import.meta.url),'utf8');assert.doesNotMatch(source,/console\.|localStorage|sessionStorage|purchases\.subscriptions\.get|reporting_enabled\s*[:=]\s*true/);}
- for(const platform of ['apple','google'])assert.match(readFileSync(new URL('../supabase/functions/gridly-verify-'+platform+'-subscription/index.ts',import.meta.url),'utf8'),new RegExp("createHandler\\(\\{platform:'"+platform+"'\\}\\)"));
+ for(const platform of ['apple','google']){
+  const source=readFileSync(new URL('../supabase/functions/gridly-verify-'+platform+'-subscription/index.ts',import.meta.url),'utf8');
+  assert.match(source,/productionEdgeRuntime/);assert.doesNotMatch(source,/sandboxAcceptanceComposition|console\./);
+ }
+ const runtime=readFileSync(new URL('../supabase/functions/_shared/entitlement/edge-runtime.ts',import.meta.url),'utf8');
+ assert.match(runtime,/createNativeAuthorizer/);assert.match(runtime,/createProductionServer/);
+ assert.match(runtime,/closed\('apple'\)/);assert.match(runtime,/closed\('google'\)/);
 });

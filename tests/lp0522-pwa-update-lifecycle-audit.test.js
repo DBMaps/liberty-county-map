@@ -16,7 +16,7 @@ assert(app.includes('gridlyHandlePwaInstallButtonClick'), 'user-initiated instal
 assert(app.includes('gridlyIsStandaloneMode()'), 'standalone launch detection remains in use');
 
 assert(serviceWorker.includes('const GRIDLY_SW_VERSION = "lp244.33-google-play-compliance";'), 'legacy lifecycle contract follows the governed current service-worker version authority');
-assert(serviceWorker.includes('const GRIDLY_CLOSURE_CACHE_NAME = "gridly-pwa-shell-lp24433-v1";'), 'legacy lifecycle contract follows the governed current cache authority');
+assert(serviceWorker.includes('const GRIDLY_CLOSURE_CACHE_NAME = "gridly-pwa-shell-lp24466-public-pin-v1";'), 'lifecycle contract follows the governed current cache authority');
 assert(serviceWorker.includes('fetch(request, { cache: "no-store" })'), 'navigation network-first strategy remains valid');
 assert(serviceWorker.includes('caches.delete(cacheName)'), 'obsolete cache cleanup remains active');
 assert(serviceWorker.includes('GRIDLY_GET_SW_VERSION'), 'service worker supports passive version inspection');

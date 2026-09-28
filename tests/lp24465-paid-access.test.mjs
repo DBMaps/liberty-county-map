@@ -39,7 +39,7 @@ test('strict native selection: desktop, PWA and native hints alone are not autho
   for(const cap of [undefined,{isNativePlatform:()=>false,getPlatform:()=> 'ios'},{isNativePlatform:()=>true,getPlatform:()=> 'web'}]) {
     assert.equal(nativeStore(cap),null);const c=createPaidAccess({capacitor:cap});assert.equal((await c.start()).state,'unsupported_platform');assert.equal((await c.purchase()).allowed,false);await c.stop();
   }
-  const f=fixture(),c=createPaidAccess({...f.options,...productionPaidComposition(f.options.capacitor)});
+  const f=fixture(),c=createPaidAccess({...f.options,...await productionPaidComposition(f.options.capacitor)});
   assert.equal((await c.start()).allowed,false);assert.equal(c.read().state,'temporarily_unavailable');await c.stop();
 });
 for(const platform of ['apple','google']) {
@@ -84,7 +84,7 @@ test('all protected scripts and inline startup stay inert; governed order preser
     ['id="gridly-early-theme"','src="js/gridly-paid-bootstrap.js"']);
   for(const url of ['legal/privacy.html','legal/terms.html','legal/community-guidelines.html','https://gridlygo.com/support','https://gridlygo.com/delete-data'])assert.ok(html.includes('href="'+url+'"'));
   assert.ok(!readFileSync('public-site/index.html','utf8').includes('gridly-paid-bootstrap'));
-  for(const file of ['js/gridly-paid-access.mjs','js/gridly-paid-ui.mjs','js/gridly-paid-startup.mjs','js/gridly-paid-config.mjs','css/gridly-paid-access.css'])assert.ok(runtimePolicy.files.includes(file));
+  for(const file of ['js/gridly-paid-access.mjs','js/gridly-paid-ui.mjs','js/gridly-paid-startup.mjs','js/gridly-paid-config.mjs','js/gridly-entitlement-public-key.mjs','css/gridly-paid-access.css'])assert.ok(runtimePolicy.files.includes(file));
   const contract=await communitySubmissionContract(process.cwd());assert.equal(contract.protocol_version,2);assert.equal(contract.scripts.length,2);
 });
 test('accepted seven-page source and completion preferences preserved; no store checks in app',()=>{
@@ -128,7 +128,7 @@ test('release composition has no debug, storage, sandbox, evidence logs, free of
   const files=['js/gridly-paid-access.mjs','js/gridly-paid-ui.mjs','js/gridly-paid-startup.mjs','js/gridly-paid-config.mjs','js/gridly-paid-bootstrap.js'];
   const source=files.map(file=>readFileSync(file,'utf8')).join('\n');
   assert.doesNotMatch(source,/localStorage|sessionStorage|URLSearchParams|console\.|sandbox\/test|reporting_enabled\s*[:=]\s*true|service_role|sb_secret_|eyJ[A-Za-z0-9_-]{30}/);
-  assert.match(source,/environment:'production'/);assert.match(source,/publicKey:null, authority:null/);
+  assert.match(source,/environment:'production'/);assert.match(source,/importProductionEntitlementKey/);assert.match(source,/const authority = null/);
   const gate=readFileSync('index.html','utf8').split('<section id="gridlyPaidAccess"')[1].split('</section>')[0];
   assert.doesNotMatch(gate,/free tier|free trial|annual plan|refund guarantee|direct billing/i);
   assert.match(gate,/Cancel anytime through store settings/);assert.match(gate,/Automatically renews/);

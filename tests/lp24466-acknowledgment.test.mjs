@@ -83,7 +83,7 @@ test('new modules never log evidence, mutate reporting or enable production conf
  for(const file of ['acknowledgment.mjs','composition.mjs','rpc-ports.mjs','google-oauth.mjs','server-setup.mjs','ack-health.mjs']){
   const source=readFileSync(new URL('../supabase/functions/_shared/entitlement/'+file,import.meta.url),'utf8');assert.doesNotMatch(source,/console\.|localStorage|sessionStorage|localhost|reporting_enabled\s*[:=]\s*true/);
  }
- const config=readFileSync(new URL('../js/gridly-paid-config.mjs',import.meta.url),'utf8');assert.match(config,/publicKey:null,\s*authority:null/);
+ const config=readFileSync(new URL('../js/gridly-paid-config.mjs',import.meta.url),'utf8');assert.match(config,/importProductionEntitlementKey/);assert.match(config,/const authority = null/);
  for(const platform of ['apple','google'])assert.doesNotMatch(readFileSync(new URL('../supabase/functions/gridly-verify-'+platform+'-subscription/index.ts',import.meta.url),'utf8'),/sandboxAcceptanceComposition/);
 });
 
