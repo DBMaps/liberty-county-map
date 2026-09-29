@@ -2,6 +2,7 @@ import {productionComposition,sandboxAcceptanceComposition} from './composition.
 import {subscriptionRpcPorts} from './rpc-ports.mjs';
 import {googleServiceAccessToken} from './google-oauth.mjs';
 import {GOOGLE_PLAY_CLOUD_PROJECT_ID} from './google-integrity.mjs';
+import {appleNodeAdapter} from './apple-node-provider.mjs';
 const bundle='com.gridlygo.gridly';
 function bytes(value,max=16384){if(typeof value!=='string'||value.length>max||! /^[A-Za-z0-9+/]+={0,2}$/.test(value))throw Error('configuration_unavailable');return Uint8Array.from(atob(value),c=>c.charCodeAt(0));}
 // Operator supplied secrets, official Apple constructors and DER trust assets;
@@ -21,6 +22,12 @@ async function setup(environment,{readSecret,authorizeNative,makeSupabaseClient,
   const common={authorizeNative,cache:rpc.cache,signingKey:privateKey,fingerprintKey,crypto};let apple,google;
   // Platform configuration errors disable that platform independently.
   try{
+   if(environment==='production'){
+    const key=bytes(secret('GRIDLY_APPLE_NODE_RESPONSE_HMAC_KEY'),128);
+    if(key.length!==32)throw Error();
+    const hmacKey=await crypto.subtle.importKey('raw',key,{name:'HMAC',hash:'SHA-256'},false,['verify']);
+    apple=appleNodeAdapter({url:secret('GRIDLY_APPLE_NODE_URL'),token:secret('GRIDLY_APPLE_NODE_INTERNAL_TOKEN'),hmacKey,crypto,fetchImpl});
+   }else{
    const issuer=secret('GRIDLY_APPLE_ISSUER_ID'),keyId=secret('GRIDLY_APPLE_KEY_ID'),p8=secret('GRIDLY_APPLE_PRIVATE_KEY_P8');
    if(! /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(issuer)||! /^[A-Z0-9]{10}$/.test(keyId)||!Array.isArray(appleRoots)||appleRoots.length<1||appleRoots.length>8||appleRoots.some(root=>!(root instanceof Uint8Array)||root.length<100||root.length>8192))throw Error();
    const appIdText=readSecret('GRIDLY_APPLE_APP_ID');let appId;
@@ -30,6 +37,7 @@ async function setup(environment,{readSecret,authorizeNative,makeSupabaseClient,
      signedVerifier:new appleLibrary.SignedDataVerifier(appleRoots,true,env,bundle,env===appleLibrary.Environment.PRODUCTION?appId:undefined)});
    apple=environment==='production'?{production:make(appleLibrary.Environment.PRODUCTION),sandbox:make(appleLibrary.Environment.SANDBOX)}:
      make(appleLibrary.Environment.SANDBOX);
+   }
   }catch{apple=undefined;}
   try{
    const account=JSON.parse(secret('GRIDLY_GOOGLE_SERVICE_ACCOUNT_JSON'));

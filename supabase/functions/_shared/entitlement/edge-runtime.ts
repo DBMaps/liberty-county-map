@@ -1,5 +1,4 @@
 import {createClient} from 'npm:@supabase/supabase-js@2.112.4';
-import * as appleLibrary from 'npm:@apple/app-store-server-library@3.1.0';
 import {createProductionServer} from './server-setup.mjs';
 import {createNativeAuthorizer} from './native-authorization.mjs';
 import {nativeAuthorizationRpcPorts} from './native-rpc-ports.mjs';
@@ -37,11 +36,7 @@ export async function productionEdgeRuntime() {
       googleVerifier=createGoogleIntegrityVerifier({accessToken:googleIntegrityAccessToken({clientEmail:account.client_email,privateKey})});
     } catch {googleVerifier=undefined;}
     const authorizeNative=createNativeAuthorizer({store:nativeStore,appleVerifier,googleVerifier});
-    let roots: Uint8Array[]=[];
-    try {const encoded=JSON.parse(readSecret('GRIDLY_APPLE_STORE_ROOTS_B64')||'');
-      if(!Array.isArray(encoded)||encoded.length<1||encoded.length>8)throw Error();
-      roots=encoded.map((item:string)=>from64(item));}catch{roots=[];}
-    const server=await createProductionServer({readSecret,authorizeNative,makeSupabaseClient,appleLibrary,appleRoots:roots});
+    const server=await createProductionServer({readSecret,authorizeNative,makeSupabaseClient});
     return Object.freeze({apple:server.apple,google:googleVerifier?server.google:closed('google'),
       retryGoogle:googleVerifier?server.retryGoogle:null,store:subscriptionRpcPorts(db).store});
   } catch {return Object.freeze({apple:closed('apple'),google:closed('google'),retryGoogle:null,store:null});}

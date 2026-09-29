@@ -68,11 +68,14 @@ export function createPaidAccess({capacitor,plugin,authority,publicKey,continuit
   },Math.max(1,deadline-current));
  }
  async function run(method) {
-  generation++;cancel(expiryTimer);const wasAllowed=allowed();snapshot=null;denied=false;
-  action=method;errorCategory='none';state=platform?(wasAllowed&&continuityAllowed()?'entitled':'initializing'):'unsupported_platform';publish();
+  generation++;cancel(expiryTimer);const wasAllowed=allowed(),previousSnapshot=wasAllowed?snapshot:null;denied=false;
+  // A current signed proof remains authority while a background recheck runs.
+  // Fresh launches still wait for server verification before admission.
+  if(!wasAllowed)snapshot=null;
+  action=method;errorCategory='none';state=platform?(wasAllowed?'entitled':'initializing'):'unsupported_platform';publish();
   if(stopped||!session){action=null;return publish();}
   await begin();
-  if(wasAllowed){state=continuityAllowed()?'entitled':'initializing';publish();}
+  if(wasAllowed){state=accessDecision(snapshot,{platform,environment:proofEnvironment(),now:effectiveNow()}).allowed||continuityAllowed()?'entitled':'initializing';publish();}
   try {
    const row=await session[method]();if(stopped)return read();
    if(!denied&&row===snapshot&&accessDecision(row,{platform,environment:platform==='apple'?row?.environment:'production',now:now()}).allowed) {
@@ -95,7 +98,9 @@ export function createPaidAccess({capacitor,plugin,authority,publicKey,continuit
     if(context&&temporary&&!denied){
      if((await bounded(()=>continuityVault.retain({attempt:context.attempt})))?.retained!==true)continuity=null;
     }else if(context)await revoke();
-    if(temporary&&!denied&&continuityAllowed()){state='entitled';arm();}else {continuity=null;state=classify(row);}
+    if(temporary&&!denied&&previousSnapshot&&accessDecision(previousSnapshot,{platform,environment:platform==='apple'?previousSnapshot.environment:'production',now:effectiveNow()}).allowed){
+     snapshot=previousSnapshot;state='entitled';arm();
+    }else if(temporary&&!denied&&continuityAllowed()){state='entitled';arm();}else {continuity=null;state=classify(row);}
    }
    errorCategory=['none','store_unavailable','verification_unavailable','invalid_authority','purchase_pending','user_canceled','platform_unavailable','network_unavailable','no_store_evidence'].includes(row?.errorCategory)?row.errorCategory:'verification_unavailable';
   }catch{

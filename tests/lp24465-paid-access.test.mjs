@@ -109,6 +109,22 @@ test('protected initialization requires current proof and serializes lifecycle r
   await new Promise(resolve=>setTimeout(resolve,0));const refresh=c.resume();release();await initialization;await refresh;
   assert.equal(f.events.filter(x=>x==='refresh').length,1);await c.stop();
 });
+test('a still-valid signed proof stays admitted during background refresh, then explicit denial revokes it',async()=>{
+  const f=fixture(),c=f.create(),states=[];c.subscribe(value=>states.push({state:value.state,allowed:value.allowed}));
+  assert.equal((await c.start()).allowed,true);
+  let entered,release;
+  const queried=new Promise(resolve=>{entered=resolve;});
+  f.plugin.refreshEntitlement=async()=>{entered();return new Promise(resolve=>{release=()=>resolve(f.native);});};
+  const check=c.refresh();await queried;
+  assert.equal(c.read().allowed,true);
+  assert.equal(states.at(-1).state,'entitled');
+  release();assert.equal((await check).allowed,true);
+  f.plugin.refreshEntitlement=async()=>f.native;
+  f.reject();assert.equal((await c.refresh()).allowed,true); // transient server failure within the signed proof lifetime
+  f.plugin.refreshEntitlement=async()=>({result:'no_evidence'});
+  const denied=await c.refresh();assert.equal(denied.allowed,false);assert.equal(denied.state,'not_entitled');
+  await c.stop();
+});
 test('signed not-entitled startup and invalid authority expose no protected initialization',async()=>{
   for(const invalid of [false,true]) {
     const f=fixture();if(invalid)f.options.authority.reconcile=async()=> 'forged.payload.signature';else f.expired();
@@ -148,9 +164,11 @@ test('proof freshness is independent of provider period end; signed revocation o
  assert.equal(Date.parse(revoked.currentPeriodEnd),end);assert.equal(revoked.entitlementState,'not_entitled');
  assert.equal(accessDecision(revoked,{platform:'apple',now:initial}).allowed,false);
 });
-test('transient verification failure stays unavailable rather than claiming subscription expiry',async()=>{
+test('transient verification failure retains only an unexpired signed proof, never claims subscription expiry',async()=>{
  for(const platform of ['apple','google']) {
   const f=fixture(platform),c=f.create();await c.start();f.reject();const result=await c.refresh();
-  assert.equal(result.state,'temporarily_unavailable');assert.notEqual(result.state,'not_entitled');await c.stop();
+  assert.equal(result.state,'entitled');assert.equal(result.allowed,true);
+  f.advance(300000);const stale=await c.refresh();
+  assert.equal(stale.state,'temporarily_unavailable');assert.equal(stale.allowed,false);assert.notEqual(stale.state,'not_entitled');await c.stop();
  }
 });

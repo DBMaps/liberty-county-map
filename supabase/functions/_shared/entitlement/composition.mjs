@@ -11,7 +11,8 @@ function compose(environment,ports={}) {
   const shared={authorizeNative:args=>args.environment===environment&&authorizeNative(args),cache,signingKey,fingerprintKey,crypto};
   const ready=port=>typeof port?.signedVerifier?.verifyAndDecodeTransaction==='function'&&typeof port?.signedVerifier?.verifyAndDecodeRenewalInfo==='function'&&typeof port?.apiClient?.getAllSubscriptionStatuses==='function';
   const appleReady=ready(apple),dualReady=environment==='production'&&ready(apple?.production)&&ready(apple?.sandbox);
-  const appleHandler=dualReady?createHandler({...shared,platform:'apple',provider:appleEnvironmentAdapter(apple)}):
+  const appleHandler=typeof apple?.verify==='function'?createHandler({...shared,platform:'apple',provider:apple}):
+    dualReady?createHandler({...shared,platform:'apple',provider:appleEnvironmentAdapter(apple)}):
     appleReady?createHandler({...shared,platform:'apple',provider:appleAdapter({...apple,env:environment})}):closed('apple');
   let googleHandler=closed('google'),retry=null;
   if(typeof google?.accessToken==='function'&&google?.store&&google?.encryptionKeys){

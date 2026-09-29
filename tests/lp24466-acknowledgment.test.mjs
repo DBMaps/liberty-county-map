@@ -107,14 +107,16 @@ test('secret composition fails closed without owner values/native admission; sec
  }
  assert.equal(calls,0);const unavailable=await createProductionServer({authorizeNative:async()=>true,readSecret:()=>undefined,makeSupabaseClient:()=>{throw Error('private');}});assert.equal((await unavailable.apple(new Request('https://example.invalid',{method:'POST'}))).status,503);
 });
-test('operator key imports and official Apple constructor arguments are exact; no credential = closed platform',async()=>{
- const {createProductionServer}=await import('../supabase/functions/_shared/entitlement/server-setup.mjs');
+test('production Apple uses only authenticated Node port; missing bridge secret closes platform',async()=>{
+ const {createProductionServer,createSandboxAcceptanceServer}=await import('../supabase/functions/_shared/entitlement/server-setup.mjs');
  const generated=await crypto.subtle.generateKey({name:'ECDSA',namedCurve:'P-256'},true,['sign','verify']);
- const config={GRIDLY_STORE_ENVIRONMENT:'production',GRIDLY_STORE_BUNDLE_ID:'com.gridlygo.gridly',SUPABASE_URL:'https://synthetic.supabase.co',SUPABASE_SERVICE_ROLE_KEY:'synthetic-server-key',GRIDLY_ENTITLEMENT_SIGNING_PKCS8_B64:Buffer.from(await crypto.subtle.exportKey('pkcs8',generated.privateKey)).toString('base64'),GRIDLY_ENTITLEMENT_FINGERPRINT_KEY_B64:Buffer.alloc(32,1).toString('base64'),GRIDLY_APPLE_ISSUER_ID:'11111111-1111-1111-1111-111111111111',GRIDLY_APPLE_KEY_ID:'SYNTHETIC1',GRIDLY_APPLE_PRIVATE_KEY_P8:'synthetic-not-a-real-key',GRIDLY_APPLE_APP_ID:'123456789'};
+ const config={GRIDLY_STORE_ENVIRONMENT:'production',GRIDLY_STORE_BUNDLE_ID:'com.gridlygo.gridly',SUPABASE_URL:'https://synthetic.supabase.co',SUPABASE_SERVICE_ROLE_KEY:'synthetic-server-key',GRIDLY_ENTITLEMENT_SIGNING_PKCS8_B64:Buffer.from(await crypto.subtle.exportKey('pkcs8',generated.privateKey)).toString('base64'),GRIDLY_ENTITLEMENT_FINGERPRINT_KEY_B64:Buffer.alloc(32,1).toString('base64'),GRIDLY_APPLE_ISSUER_ID:'11111111-1111-1111-1111-111111111111',GRIDLY_APPLE_KEY_ID:'SYNTHETIC1',GRIDLY_APPLE_PRIVATE_KEY_P8:'synthetic-not-a-real-key',GRIDLY_APPLE_APP_ID:'123456789',GRIDLY_APPLE_NODE_URL:'https://abc.lambda-url.us-east-1.on.aws/',GRIDLY_APPLE_NODE_INTERNAL_TOKEN:'A'.repeat(43),GRIDLY_APPLE_NODE_RESPONSE_HMAC_KEY:Buffer.alloc(32,8).toString('base64')};
  const args=[],library={Environment:{PRODUCTION:'Production',SANDBOX:'Sandbox'},AppStoreServerAPIClient:class{constructor(...values){args.push(values);}getAllSubscriptionStatuses(){}},SignedDataVerifier:class{constructor(...values){args.push(values);}verifyAndDecodeTransaction(){}verifyAndDecodeRenewalInfo(){}}};
  const ports={readSecret:name=>config[name],authorizeNative:async()=>false,makeSupabaseClient:()=>({rpc(){}}),appleLibrary:library,appleRoots:[Buffer.alloc(256)],crypto};
- const server=await createProductionServer(ports);assert.equal(args[0][3],'com.gridlygo.gridly');assert.equal(args[0][4],'Production');assert.equal(args[1][1],true);assert.equal(args[1][4],123456789);assert.equal(server.retryGoogle,null);
- delete config.GRIDLY_APPLE_APP_ID;const missing=await createProductionServer(ports);assert.equal((await missing.apple(new Request('https://example.invalid',{method:'POST'}))).status,503);
+ const server=await createProductionServer(ports);assert.equal(args.length,0);assert.equal(server.retryGoogle,null);
+ assert.notEqual((await server.apple(new Request('https://example.invalid',{method:'POST'}))).status,503);
+ delete config.GRIDLY_APPLE_NODE_INTERNAL_TOKEN;const missing=await createProductionServer(ports);assert.equal((await missing.apple(new Request('https://example.invalid',{method:'POST'}))).status,503);
+ config.GRIDLY_STORE_ENVIRONMENT='sandbox/test';const sandbox=await createSandboxAcceptanceServer(ports);assert.equal(args[0][3],'com.gridlygo.gridly');assert.equal(args[0][4],'Sandbox');assert.equal(args[1][1],true);assert.equal(args[1][4],undefined);assert.equal(sandbox.retryGoogle,null);
  config.GRIDLY_STORE_ENVIRONMENT='sandbox/test';const wrong=await createProductionServer(ports);assert.equal((await wrong.google(request('production'))).status,503);
 });
 
