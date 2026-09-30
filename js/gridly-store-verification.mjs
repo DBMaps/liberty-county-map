@@ -4,7 +4,7 @@ export const STORE_VERIFIERS = Object.freeze({
   apple: Object.freeze({endpoint:'/functions/v1/gridly-verify-apple-subscription', productId:'com.gridlygo.gridly.monthly',
     evidenceField:'signedTransactions', verification:'apple_signed_transaction_and_current_subscription_status', accountRequired:false,
     recovery:'storekit_current_entitlements_or_explicit_sync', launchRestorePrompt:false}),
-  google: Object.freeze({endpoint:'/functions/v1/gridly-verify-google-subscription', productId:'gridly_monthly', basePlanId:'monthly',
+  google: Object.freeze({endpoint:'/functions/v1/gridly-verify-google-subscription', productId:'com.gridlygo.gridly.monthly', basePlanId:'monthly',
     evidenceField:'purchaseTokens', verification:'purchases.subscriptionsv2.get', acknowledgement:'purchases.subscriptions.acknowledge',
     accountRequired:false, recovery:'billingclient_query_purchases', launchRestorePrompt:false})
 });

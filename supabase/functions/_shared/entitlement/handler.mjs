@@ -1,4 +1,4 @@
-import {storeVerificationRequest,cacheRecord,signResponse} from './core.mjs';
+import {storeVerificationRequest,cacheRecord,lineageRecords,signResponse} from './core.mjs';
 const reply=(status,error)=>Response.json({error},{status,headers:{'Cache-Control':'no-store'}});
 async function boundedBody(request) {
  if(!request.headers.get('Content-Type')?.startsWith('application/json'))throw Error('invalid_request');
@@ -34,7 +34,7 @@ export function createHandler({platform,authorizeNative,provider,cache,ackQueue,
    if(record.platform!==platform||record.environment!==input.environment)return reply(422,'invalid_evidence');
    const cached=await cacheRecord(record,fingerprintKey,crypto);
    if(!active)return reply(504,'verification_unavailable');
-   if(!await cache.apply(cached))return reply(409,'reconciliation_retry');
+   if(!await cache.apply(cached,platform==='google'?await lineageRecords(record,fingerprintKey,crypto):undefined))return reply(409,'reconciliation_retry');
    if(!active)return reply(504,'verification_unavailable');
    if(record.acknowledgementRequired)record=await ackQueue.ensure({token:values[0],record,cached});
    if(!active)return reply(504,'verification_unavailable');

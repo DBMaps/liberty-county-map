@@ -8,7 +8,7 @@ import {createGoogleIntegrityVerifier} from '../supabase/functions/_shared/entit
 
 const now=Date.parse('2026-09-28T02:00:00.000Z');
 const request=(platform='apple')=>({platform,environment:'production',nonce:'n'.repeat(48),
-  productId:platform==='apple'?'com.gridlygo.gridly.monthly':'gridly_monthly',
+  productId:platform==='apple'?'com.gridlygo.gridly.monthly':'com.gridlygo.gridly.monthly',
   ...(platform==='google'?{basePlanId:'monthly'}:{}),
   evidence:platform==='apple'?{signedTransactions:['local.payload.signature']}:{purchaseTokens:['local-token']}});
 

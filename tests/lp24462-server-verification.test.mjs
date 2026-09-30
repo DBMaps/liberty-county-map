@@ -2,7 +2,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {webcrypto} from 'node:crypto';
 import {readFileSync} from 'node:fs';
-import {normalizeApple,normalizeGoogle,cacheRecord,signResponse} from '../supabase/functions/_shared/entitlement/core.mjs';
+import {normalizeApple,normalizeGoogle,cacheRecord,lineageRecords,signResponse} from '../supabase/functions/_shared/entitlement/core.mjs';
 import {appleAdapter,googleAdapter} from '../supabase/functions/_shared/entitlement/providers.mjs';
 import {createHandler} from '../supabase/functions/_shared/entitlement/handler.mjs';
 import {verifyAuthorityProof,accessDecision} from '../js/gridly-entitlement.mjs';
@@ -11,7 +11,7 @@ const keys=await webcrypto.subtle.generateKey({name:'ECDSA',namedCurve:'P-256'},
 const hmac=await webcrypto.subtle.generateKey({name:'HMAC',hash:'SHA-256'},false,['sign']);
 const tx=(patch={})=>({bundleId:'com.gridlygo.gridly',productId:'com.gridlygo.gridly.monthly',type:'Auto-Renewable Subscription',environment:'Production',originalTransactionId:'synthetic-chain',expiresDate:end,...patch});
 const renewal=(patch={})=>({originalTransactionId:'synthetic-chain',productId:'com.gridlygo.gridly.monthly',environment:'Production',autoRenewStatus:1,...patch});
-const google=(patch={})=>({regionCode:'US',startTime:new Date(now-1000).toISOString(),subscriptionState:'SUBSCRIPTION_STATE_ACTIVE',acknowledgementState:'ACKNOWLEDGEMENT_STATE_ACKNOWLEDGED',lineItems:[{productId:'gridly_monthly',offerDetails:{basePlanId:'monthly'},expiryTime:new Date(end).toISOString(),autoRenewingPlan:{autoRenewEnabled:true}}],...patch});
+const google=(patch={})=>({regionCode:'US',startTime:new Date(now-1000).toISOString(),subscriptionState:'SUBSCRIPTION_STATE_ACTIVE',acknowledgementState:'ACKNOWLEDGEMENT_STATE_ACKNOWLEDGED',lineItems:[{productId:'com.gridlygo.gridly.monthly',offerDetails:{basePlanId:'monthly'},expiryTime:new Date(end).toISOString(),autoRenewingPlan:{autoRenewEnabled:true}}],...patch});
 const appleRecord=(t=tx(),r=renewal(),status=1)=>normalizeApple(t,r,status,{env:'production',originalReference:'synthetic-chain',now});
 const googleRecord=data=>normalizeGoogle(data,{env:'production',token:'synthetic-google-token',now});
 test('Apple active/canceled/expired/revoked/no-grace normalization',()=>{
@@ -31,25 +31,55 @@ test('Apple adapter requires cryptographic verifier and current API status, neve
  assert.equal((await adapter.verify('synthetic.payload.signature')).entitlementState,'entitled');assert.deepEqual(calls,['signed','current-api','signed']);
  await assert.rejects(()=>adapter.verify('forged'));const noVerifier=appleAdapter({env:'production',apiClient:{}});await assert.rejects(()=>noVerifier.verify('unsigned'));
 });
-test('Google canonical product/package/base plan/env/offer/replacement enforcement',()=>{
+test('Google canonical product/package/base plan/env/offer enforcement',()=>{
  assert.equal(googleRecord(google()).entitlementState,'entitled');
  const bad=[{packageName:'other'},{regionCode:'CA'},{testPurchase:{}},{linkedPurchaseToken:'old'},{lineItems:[{...google().lineItems[0],productId:'other'}]},
  {lineItems:[{...google().lineItems[0],offerDetails:{basePlanId:'annual'}}]},{lineItems:[{...google().lineItems[0],offerDetails:{basePlanId:'monthly',offerId:'trial'}}]}];
  for(const patch of bad)assert.throws(()=>googleRecord(google(patch)),/invalid_evidence/);
  const testResult=normalizeGoogle(google({testPurchase:{}}),{env:'sandbox/test',token:'synthetic-google-token',now});assert.equal(testResult.environment,'sandbox/test');
 });
-test('Google expiry, cancellation, paused, pending and grace map without access bypass',()=>{
+test('Google expiry, cancellation, paused, pending and grace map without access bypass',async()=>{
  assert.equal(googleRecord(google({subscriptionState:'SUBSCRIPTION_STATE_CANCELED'})).subscriptionState,'canceled_pending_expiry');
  assert.equal(googleRecord(google({subscriptionState:'SUBSCRIPTION_STATE_EXPIRED',lineItems:[{...google().lineItems[0],expiryTime:new Date(now-1).toISOString()}]})).subscriptionState,'expired');
  for(const state of ['SUBSCRIPTION_STATE_PAUSED','SUBSCRIPTION_STATE_ON_HOLD'])assert.equal(googleRecord(google({subscriptionState:state})).entitlementState,'not_entitled');
- for(const state of ['SUBSCRIPTION_STATE_PENDING','SUBSCRIPTION_STATE_IN_GRACE_PERIOD'])assert.equal(googleRecord(google({subscriptionState:state})).entitlementState,'unknown');
+ assert.equal(googleRecord(google({subscriptionState:'SUBSCRIPTION_STATE_PENDING'})).entitlementState,'unknown');
+ const grace=googleRecord(google({subscriptionState:'SUBSCRIPTION_STATE_IN_GRACE_PERIOD'}));
+ assert.equal(grace.subscriptionState,'grace_period');assert.equal(grace.entitlementState,'entitled');
+ const proof=await signResponse(grace,nonce,keys.privateKey,webcrypto,{continuityBinding:'a'.repeat(64)});
+ const snapshot=await verifyAuthorityProof({proof,publicKey:keys.publicKey,nonce,platform:'google',now,crypto:webcrypto});
+ assert.equal(accessDecision(snapshot,{platform:'google',now}).allowed,true);
+ assert.equal(JSON.parse(Buffer.from(proof.split('.')[1],'base64url')).expiresAt,new Date(now+300000).toISOString());
+ assert.equal(JSON.parse(Buffer.from(proof.split('.')[1],'base64url')).continuityAuthorization,undefined);
+ assert.equal(googleRecord(google({subscriptionState:'SUBSCRIPTION_STATE_IN_GRACE_PERIOD',lineItems:[{...google().lineItems[0],expiryTime:new Date(now-1).toISOString()}]})).entitlementState,'not_entitled');
+ assert.throws(()=>googleRecord(google({subscriptionState:'SUBSCRIPTION_STATE_IN_GRACE_PERIOD',acknowledgementState:'ACKNOWLEDGEMENT_STATE_PENDING'})),/invalid_evidence/);
+ assert.throws(()=>googleRecord(google({subscriptionState:'SUBSCRIPTION_STATE_IN_GRACE_PERIOD',lineItems:[{...google().lineItems[0],autoRenewingPlan:{autoRenewEnabled:false}}]})),/invalid_evidence/);
+});
+test('Google-authoritative linked token chain is bounded, product-bound and detects loops',async()=>{
+ const observations={new:google({linkedPurchaseToken:'middle'}),middle:google({linkedPurchaseToken:'old'}),old:google()};
+ const calls=[];const adapter=googleAdapter({env:'production',now:()=>now,accessToken:async()=> 'synthetic-oauth',fetchImpl:async url=>{
+  const token=decodeURIComponent(url.split('/').at(-1));calls.push(token);return Response.json(observations[token]);}});
+ const row=await adapter.verify('new');assert.deepEqual(calls,['new','middle','old']);
+ assert.equal(row.entitlementState,'entitled');const lineage=await lineageRecords(row,hmac,webcrypto);
+ assert.equal(lineage.length,2);assert.ok(lineage.every(value=>/^[a-f0-9]{64}$/.test(value)));
+ assert.ok(!JSON.stringify(await cacheRecord(row,hmac,webcrypto)).includes('middle'));
+ observations.old=google({linkedPurchaseToken:'new'});
+ await assert.rejects(()=>adapter.verify('new'),/invalid_evidence/);
+ observations.old=google({lineItems:[{...google().lineItems[0],productId:'other'}]});
+ await assert.rejects(()=>adapter.verify('new'),/invalid_evidence/);
+ observations.old=google();observations.middle=google({linkedPurchaseToken:'missing'});
+ const unavailable=googleAdapter({env:'production',now:()=>now,accessToken:async()=> 'synthetic-oauth',fetchImpl:async url=>{
+  const token=decodeURIComponent(url.split('/').at(-1));return observations[token]?Response.json(observations[token]):new Response(null,{status:404});}});
+ await assert.rejects(()=>unavailable.verify('new'),/provider_unavailable/);
+ const deep=Object.fromEntries(['a','b','c','d','e','f'].map((token,i,all)=>[token,google(i<all.length-1?{linkedPurchaseToken:all[i+1]}:{})]));
+ const bounded=googleAdapter({env:'production',now:()=>now,accessToken:async()=> 'synthetic-oauth',fetchImpl:async url=>Response.json(deep[decodeURIComponent(url.split('/').at(-1))])});
+ await assert.rejects(()=>bounded.verify('a'),/invalid_evidence/);
 });
 test('Google real REST construction uses subscriptionsv2.get and distinct acknowledge path',async()=>{
  const calls=[];const adapter=googleAdapter({env:'production',now:()=>now,accessToken:async()=> 'synthetic-oauth',fetchImpl:async(url,options)=>{
  calls.push({url,options});return options.method==='GET'?Response.json(google({acknowledgementState:'ACKNOWLEDGEMENT_STATE_PENDING'})):new Response(null,{status:204});}});
  const row=await adapter.verify('synthetic-google-token');assert.equal(row.acknowledgementRequired,true);await adapter.acknowledge('synthetic-google-token');
  assert.ok(calls[0].url.endsWith('/applications/com.gridlygo.gridly/purchases/subscriptionsv2/tokens/synthetic-google-token'));
- assert.ok(calls[1].url.endsWith('/purchases/subscriptions/gridly_monthly/tokens/synthetic-google-token:acknowledge'));assert.equal(calls[1].options.method,'POST');assert.equal(calls[0].options.redirect,'manual');
+ assert.ok(calls[1].url.endsWith('/purchases/subscriptions/com.gridlygo.gridly.monthly/tokens/synthetic-google-token:acknowledge'));assert.equal(calls[1].options.method,'POST');assert.equal(calls[0].options.redirect,'manual');
  assert.equal(calls[0].options.headers.Authorization,'Bearer synthetic-oauth');
 });
 test('cache keeps only keyed fingerprint/minimal state; shared proof interoperates and rejects copies',async()=>{
@@ -60,7 +90,7 @@ test('cache keeps only keyed fingerprint/minimal state; shared proof interoperat
  assert.equal(accessDecision(snapshot,{platform:record.platform,now}).allowed,true);
  await assert.rejects(()=>cacheRecord({...record},hmac,webcrypto));}
 });
-const request=(platform='apple',patch={})=>new Request('https://example.invalid/verify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({platform,environment:'production',nonce,productId:platform==='apple'?'com.gridlygo.gridly.monthly':'gridly_monthly',...(platform==='google'?{basePlanId:'monthly'}:{}),evidence:platform==='apple'?{signedTransactions:['synthetic.payload.signature']}:{purchaseTokens:['synthetic-google-token']},...patch})});
+const request=(platform='apple',patch={})=>new Request('https://example.invalid/verify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({platform,environment:'production',nonce,productId:platform==='apple'?'com.gridlygo.gridly.monthly':'com.gridlygo.gridly.monthly',...(platform==='google'?{basePlanId:'monthly'}:{}),evidence:platform==='apple'?{signedTransactions:['synthetic.payload.signature']}:{purchaseTokens:['synthetic-google-token']},...patch})});
 function setup(platform='apple') {const events=[];return {events,platform,crypto:webcrypto,signingKey:keys.privateKey,fingerprintKey:hmac,
  authorizeNative:async()=>{events.push('auth');return true;},provider:{verify:async()=>{events.push('provider');return platform==='apple'?appleRecord():googleRecord(google({acknowledgementState:'ACKNOWLEDGEMENT_STATE_PENDING'}));},acknowledge:async()=>{events.push('ack');}},
  ackQueue:{ensure:async({record})=>{events.push('ack');return record;}},cache:{apply:async row=>{events.push('cache');assert.ok(!JSON.stringify(row).includes('synthetic'));return true;}}};}

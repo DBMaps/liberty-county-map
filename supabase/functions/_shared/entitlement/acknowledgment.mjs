@@ -1,4 +1,4 @@
-import {cacheRecord} from './core.mjs';
+import {cacheRecord,lineageRecords} from './core.mjs';
 const enc=new TextEncoder(),dec=new TextDecoder('utf-8',{fatal:true});
 const b64=bytes=>btoa(String.fromCharCode(...bytes)).replaceAll('+','-').replaceAll('/','_').replaceAll('=','');
 const un64=text=>Uint8Array.from(atob(text.replaceAll('-','+').replaceAll('_','/')),c=>c.charCodeAt(0));
@@ -48,7 +48,7 @@ export function acknowledgmentQueue({environment,store,cipher,provider,cache,fin
     const token=await cipher.open(row),record=await provider.verify(token,{signal});
     const cached=await cacheRecord(record,fingerprintKey,crypto);
     if(record.platform!=='google'||record.environment!==environment||cached.chain_fingerprint!==row.chain_fingerprint)throw Error('invalid_purchase');
-    if(!await cache.apply(cached))throw Error('reconciliation_retry');
+    if(!await cache.apply(cached,await lineageRecords(record,fingerprintKey,crypto)))throw Error('reconciliation_retry');
     if(record.terminalCategory){outcome='terminal';category=record.terminalCategory;}
     else if(record.entitlementState==='not_entitled'){outcome='terminal';category='provider_denial';}
     else if(record.entitlementState==='entitled'){
@@ -77,7 +77,7 @@ export function acknowledgmentQueue({environment,store,cipher,provider,cache,fin
   const outcomes=await drain(cached.chain_fingerprint);
   if(outcomes.length!==1||outcomes[0].outcome!=='success'||outcomes[0].completed!==true)throw Error('ack_unavailable');
   const latest=await provider.verify(token),reconciled=await cacheRecord(latest,fingerprintKey,crypto);
-  if(latest.platform!=='google'||latest.environment!==environment||latest.acknowledgementRequired||reconciled.chain_fingerprint!==cached.chain_fingerprint||!await cache.apply(reconciled))throw Error('ack_unavailable');
+  if(latest.platform!=='google'||latest.environment!==environment||latest.acknowledgementRequired||reconciled.chain_fingerprint!==cached.chain_fingerprint||!await cache.apply(reconciled,await lineageRecords(latest,fingerprintKey,crypto)))throw Error('ack_unavailable');
   return latest;
  }});
 }

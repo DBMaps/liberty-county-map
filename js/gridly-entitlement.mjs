@@ -6,7 +6,7 @@ export const LAUNCH = Object.freeze({
   googleProductId: STORE_VERIFIERS.google.productId, googleBasePlanId: STORE_VERIFIERS.google.basePlanId,
   freeTier: false, trial: false, annualPlan: false, billingGrace: false, webCheckout: false
 });
-const STATES = new Set(['active', 'inactive', 'expired', 'canceled_pending_expiry', 'unknown']);
+const STATES = new Set(['active', 'inactive', 'expired', 'canceled_pending_expiry', 'grace_period', 'unknown']);
 const ERRORS = new Set(['none', 'network_unavailable', 'store_unavailable', 'verification_unavailable', 'invalid_authority', 'platform_unavailable', 'purchase_pending', 'user_canceled']);
 const FIELDS = ['platform','productId','subscriptionState','entitlementState','currentPeriodEnd','lastVerifiedAt','verificationSource','environment','restoreAvailable','errorCategory','nonce','audience','expiresAt'];
 const MAX_LEASE_MS = 300_000;
@@ -42,11 +42,11 @@ export async function verifyAuthorityProof({proof, publicKey, nonce, platform, e
        row.platform !== platform || row.productId !== product(platform) || row.environment !== environment ||
        row.audience !== 'com.gridlygo.gridly' || row.nonce !== nonce ||
        row.verificationSource !== 'gridly_server_store_api' || row.restoreAvailable !== true ||
-       !STATES.has(row.subscriptionState) || !ERRORS.has(row.errorCategory)) return failure();
+       !STATES.has(row.subscriptionState) || (platform==='apple'&&row.subscriptionState==='grace_period') || !ERRORS.has(row.errorCategory)) return failure();
     const verified = date(row.lastVerifiedAt), expiry = date(row.expiresAt), period = row.currentPeriodEnd === null ? null : date(row.currentPeriodEnd);
     if(!Number.isFinite(verified) || !Number.isFinite(expiry) || verified > now || expiry <= now ||
        expiry <= verified || expiry-verified > MAX_LEASE_MS || (period !== null && !Number.isFinite(period))) return failure();
-    const enabled = ['active','canceled_pending_expiry'].includes(row.subscriptionState);
+    const enabled = ['active','canceled_pending_expiry','grace_period'].includes(row.subscriptionState);
     const expected = enabled ? 'entitled' : row.subscriptionState === 'unknown' ? 'unknown' : 'not_entitled';
     if(row.entitlementState !== expected || (enabled && (period === null || period <= now || expiry > period || row.errorCategory !== 'none')) ||
        (row.subscriptionState === 'expired' && (period === null || period > now))) return failure();

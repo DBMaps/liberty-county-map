@@ -13,7 +13,7 @@ function fixture(platform='apple') {
   let now=initial,expired=false,env='production',reject=false;
   const events=[],handlers=new Map(),timers=new Map();let timerId=0;
   const native=platform==='apple'?{result:'verified',productId:'com.gridlygo.gridly.monthly',environment:'production',state:'active',completionHandle:'test-handle',signedTransaction:'test.payload.signature'}
-    :{result:'purchased',productId:'gridly_monthly',basePlanId:'monthly',purchaseToken:'test-private-token'};
+    :{result:'purchased',productId:'com.gridlygo.gridly.monthly',basePlanId:'monthly',purchaseToken:'test-private-token'};
   const plugin={getProducts:async()=>({result:'available',productId:native.productId,...(platform==='google'?{basePlanId:'monthly'}:{}),
     displayName:'Gridly Monthly',displayPrice:'$3.49',currency:'USD',billingPeriod:'P1M',storefront:'US',hasOffer:false}),
     addListener:async(name,fn)=>{events.push('listen:'+name);handlers.set(name,fn);return {remove:async()=>handlers.delete(name)};},

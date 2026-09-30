@@ -46,10 +46,21 @@ export function googleAdapter({accessToken,fetchImpl=fetch,env,now=Date.now}) {
  };
  return Object.freeze({verify:async(token,{signal}={})=>{
   if(typeof token!=='string'||token.length>16384||!/^[A-Za-z0-9._~+\/-]+={0,2}$/.test(token))throw Error('invalid_evidence');
-  const data=await readBounded(check(await request('subscriptionsv2/tokens/'+encodeURIComponent(token),'GET',signal)));
-  return normalizeGoogle(data,{env,token,now:now()});
+  const observedAt=now(),seen=new Set(),chain=[];let next=token;
+  while(next!==undefined){
+   if(typeof next!=='string'||next.length>16384||!/^[A-Za-z0-9._~+\/-]+={0,2}$/.test(next)||seen.has(next)||chain.length>=5)throw Error('invalid_evidence');
+   seen.add(next);
+   const data=await readBounded(check(await request('subscriptionsv2/tokens/'+encodeURIComponent(next),'GET',signal)));
+   chain.push({token:next,data});next=data?.linkedPurchaseToken??undefined;
+  }
+  // Validate every predecessor against the same package, product, base plan,
+  // region and environment. Only provider responses supply links.
+  for(let i=chain.length-1;i>=0;i--){
+   normalizeGoogle(chain[i].data,{env,token:chain[i].token,now:observedAt,verifiedLineage:chain.slice(i+1).map(row=>row.token)});
+  }
+  return normalizeGoogle(chain[0].data,{env,token,now:observedAt,verifiedLineage:chain.slice(1).map(row=>row.token)});
  },acknowledge:async(token,{signal}={})=>{
-  const response=await request('subscriptions/gridly_monthly/tokens/'+encodeURIComponent(token)+':acknowledge','POST',signal);
+  const response=await request('subscriptions/com.gridlygo.gridly.monthly/tokens/'+encodeURIComponent(token)+':acknowledge','POST',signal);
   if(!response.ok)throw Error('provider_unavailable');
  }});
 }

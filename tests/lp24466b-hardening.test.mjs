@@ -18,7 +18,7 @@ test('current, previous and new writes; randomized ciphertext/auth tag; bounded 
  for(const retireAt of [new Date(now-1).toISOString(),new Date(now+3600001).toISOString()])assert.throws(()=>tokenCipher({current:{version,key:k},previous:{version:old,key:previousKey,retireAt},crypto,now:()=>now}));
  let clock=now;const rotating=tokenCipher({current:{version,key:k},previous:{version:old,key:previousKey,retireAt:new Date(now+1000).toISOString()},crypto,now:()=>clock});clock+=1001;await assert.rejects(()=>rotating.open(oldRow));
 });
-const data=patch=>({regionCode:'US',startTime:new Date(now-1000).toISOString(),subscriptionState:'SUBSCRIPTION_STATE_ACTIVE',acknowledgementState:'ACKNOWLEDGEMENT_STATE_PENDING',lineItems:[{productId:'gridly_monthly',offerDetails:{basePlanId:'monthly'},expiryTime:new Date(now+86400000).toISOString(),autoRenewingPlan:{autoRenewEnabled:true}}],...patch});
+const data=patch=>({regionCode:'US',startTime:new Date(now-1000).toISOString(),subscriptionState:'SUBSCRIPTION_STATE_ACTIVE',acknowledgementState:'ACKNOWLEDGEMENT_STATE_PENDING',lineItems:[{productId:'com.gridlygo.gridly.monthly',offerDetails:{basePlanId:'monthly'},expiryTime:new Date(now+86400000).toISOString(),autoRenewingPlan:{autoRenewEnabled:true}}],...patch});
 const record=patch=>normalizeGoogle(data(patch),{env:patch?.testPurchase?'sandbox/test':'production',token,now});
 test('stable provider grant deadline caps hour and sandbox; cancellation pending is not expiry',()=>{
  assert.equal(Date.parse(record().ackDeadlineAt),now-1000+3600000);assert.equal(Date.parse(record({testPurchase:{}}).ackDeadlineAt),now-1000+180000);

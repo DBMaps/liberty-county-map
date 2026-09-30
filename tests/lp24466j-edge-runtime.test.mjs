@@ -121,7 +121,7 @@ test('configured Deno handlers enforce independent HTTP tokens and native author
         assert.equal((await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:'not-json'})).status,400,
           `${name} composition must initialize beyond missing-config fallback`);
         const request={platform:name,environment:'production',nonce:'a'.repeat(48),
-          productId:name==='apple'?'com.gridlygo.gridly.monthly':'gridly_monthly',
+          productId:name==='apple'?'com.gridlygo.gridly.monthly':'com.gridlygo.gridly.monthly',
           ...(name==='google'?{basePlanId:'monthly'}:{}),
           evidence:name==='apple'?{signedTransactions:['synthetic.payload.signature']}:{purchaseTokens:['synthetic-token']}};
         assert.equal((await fetch(endpoint,post(request))).status,401,`${name} must require native authorization`);
