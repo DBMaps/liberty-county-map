@@ -53,12 +53,16 @@ export function googleAdapter({accessToken,fetchImpl=fetch,env,now=Date.now}) {
    const data=await readBounded(check(await request('subscriptionsv2/tokens/'+encodeURIComponent(next),'GET',signal)));
    chain.push({token:next,data});next=data?.linkedPurchaseToken??undefined;
   }
+  // RTDN has no trusted environment field. Infer it only from Google's
+  // subscriptionsv2 testPurchase marker; native requests still pin env.
+  if(!chain[0].data||typeof chain[0].data!=='object')throw Error('invalid_evidence');
+  const verifiedEnvironment=env==='auto'?(Object.hasOwn(chain[0].data,'testPurchase')?'sandbox/test':'production'):env;
   // Validate every predecessor against the same package, product, base plan,
   // region and environment. Only provider responses supply links.
   for(let i=chain.length-1;i>=0;i--){
-   normalizeGoogle(chain[i].data,{env,token:chain[i].token,now:observedAt,verifiedLineage:chain.slice(i+1).map(row=>row.token)});
+   normalizeGoogle(chain[i].data,{env:verifiedEnvironment,token:chain[i].token,now:observedAt,verifiedLineage:chain.slice(i+1).map(row=>row.token)});
   }
-  return normalizeGoogle(chain[0].data,{env,token,now:observedAt,verifiedLineage:chain.slice(1).map(row=>row.token)});
+  return normalizeGoogle(chain[0].data,{env:verifiedEnvironment,token,now:observedAt,verifiedLineage:chain.slice(1).map(row=>row.token)});
  },acknowledge:async(token,{signal}={})=>{
   const response=await request('subscriptions/com.gridlygo.gridly.monthly/tokens/'+encodeURIComponent(token)+':acknowledge','POST',signal);
   if(!response.ok)throw Error('provider_unavailable');

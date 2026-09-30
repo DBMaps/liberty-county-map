@@ -26,3 +26,7 @@ verify_jwt = false
 # Separate constant-time operations token in the handler.
 [functions.gridly-subscription-ops]
 verify_jwt = false
+
+# Google Pub/Sub OIDC bearer validation is enforced by the RTDN handler.
+[functions.gridly-google-rtdn]
+verify_jwt = false
