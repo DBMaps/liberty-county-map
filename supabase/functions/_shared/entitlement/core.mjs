@@ -4,13 +4,13 @@ const trusted=new WeakSet();
 const epoch=value=>{const n=typeof value==='number'?value:Date.parse(value);if(!Number.isFinite(n))throw Error('invalid_evidence');return n;};
 const reference=value=>{if(typeof value!=='string'||!value||value.length>16384)throw Error('invalid_evidence');return value;};
 const environment=value=>value==='Production'?'production':value==='Sandbox'?'sandbox/test':null;
-function result(platform,env,state,end,ref,now,error='none',ack=false) {
+function result(platform,env,state,end,ref,now,error='none',ack=false,extra={}) {
  if(!['production','sandbox/test'].includes(env)||!Number.isFinite(now))throw Error('invalid_evidence');
  const record=Object.freeze({platform,environment:env,productId:STORE_VERIFIERS[platform].productId,
  basePlanId:platform==='google'?'monthly':null,subscriptionState:state,
  entitlementState:['active','canceled_pending_expiry'].includes(state)?'entitled':state==='unknown'?'unknown':'not_entitled',
  currentPeriodEnd:end===null?null:new Date(end).toISOString(),lastVerifiedAt:new Date(now).toISOString(),
- verificationSource:'gridly_server_store_api',errorCategory:error,reference:reference(ref),acknowledgementRequired:ack});
+ verificationSource:'gridly_server_store_api',errorCategory:error,reference:reference(ref),acknowledgementRequired:ack,...extra});
  trusted.add(record);return record;
 }
 export function normalizeApple(transaction,renewal,status,{env,originalReference,now}) {
@@ -48,7 +48,16 @@ export function normalizeGoogle(data,{env,token,now}) {
  default:throw Error('invalid_evidence');
  }
  if(!['ACKNOWLEDGEMENT_STATE_PENDING','ACKNOWLEDGEMENT_STATE_ACKNOWLEDGED'].includes(data.acknowledgementState))throw Error('invalid_evidence');
- return result('google',env,state,end,token,now,error,data.acknowledgementState==='ACKNOWLEDGEMENT_STATE_PENDING'&&['active','canceled_pending_expiry'].includes(state));
+ const ack=data.acknowledgementState==='ACKNOWLEDGEMENT_STATE_PENDING'&&['active','canceled_pending_expiry'].includes(state);
+ let purchaseStartedAt=null,ackDeadlineAt=null;
+ if(ack){const start=epoch(data.startTime);if(start>now)throw Error('invalid_evidence');
+  purchaseStartedAt=new Date(start).toISOString();
+  // Stable provider grant time prevents deleted/re-enqueued work resetting TTL.
+  // Production rule is 3 days; license tests use conservative 3 minutes.
+  ackDeadlineAt=new Date(Math.min(start+3600000,start+(env==='production'?259200000:180000),end)).toISOString();
+ }
+ const terminalCategory=state==='expired'?'subscription_expired':state==='inactive'?'provider_denial':data.subscriptionState==='SUBSCRIPTION_STATE_PENDING_PURCHASE_CANCELED'?'purchase_canceled':null;
+ return result('google',env,state,end,token,now,error,ack,{purchaseStartedAt,ackDeadlineAt,terminalCategory});
 }
 export async function fingerprint(record,key,crypto=globalThis.crypto) {
  if(!trusted.has(record)||!key)throw Error('invalid_evidence');

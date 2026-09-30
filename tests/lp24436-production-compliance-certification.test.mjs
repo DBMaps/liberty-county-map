@@ -66,6 +66,6 @@ test("certification records a backend-only deployment and current cache authorit
     "Consumer public launch did not occur."
   ]) assert.ok(report.includes(statement), statement);
   assert.match(report, /A\. PRODUCTION COMPLIANCE DEPLOYED AND CERTIFIED/);
-  assert.match(searchTest, /gridly-pwa-shell-lp24433-v1/);
+  assert.match(searchTest, /gridly-pwa-shell-lp24466-public-pin-v1/);
   assert.doesNotMatch(searchTest, /gridly-pwa-shell-lp24429a-v1/);
 });

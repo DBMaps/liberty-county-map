@@ -9,6 +9,8 @@ def gridlyReleaseStoreFile = project.findProperty('GRIDLY_RELEASE_STORE_FILE')
 def gridlyReleaseStorePassword = project.findProperty('GRIDLY_RELEASE_STORE_PASSWORD')
 def gridlyReleaseKeyAlias = project.findProperty('GRIDLY_RELEASE_KEY_ALIAS')
 def gridlyReleaseKeyPassword = project.findProperty('GRIDLY_RELEASE_KEY_PASSWORD')
+// Owner-confirmed non-secret number of the Play Console-linked Cloud project.
+def gridlyIntegrityProject = '219024907806'
 
 android {
     namespace 'com.gridlygo.gridly'
@@ -35,7 +37,9 @@ android {
         targetSdk 36
         versionCode 1
         versionName '1.0.0'
+        buildConfigField 'long', 'GRIDLY_PLAY_INTEGRITY_PROJECT_NUMBER', "${gridlyIntegrityProject}L"
     }
+    buildFeatures { buildConfig true }
 
     buildTypes {
         release {
@@ -58,6 +62,7 @@ kotlin {
 dependencies {
     implementation project(':capacitor-android')
     implementation 'com.android.billingclient:billing:9.1.0'
+    implementation 'com.google.android.play:integrity:1.6.0'
     implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"
     implementation "androidx.core:core:$androidxCoreVersion"
     implementation "androidx.core:core-splashscreen:$androidxCoreSplashScreenVersion"

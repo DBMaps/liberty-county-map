@@ -17,11 +17,13 @@ export function createPaidAccess({capacitor,plugin,authority,publicKey,continuit
  let clockAnchor=null, generation=0;
  const effectiveNow=()=>clockAnchor===null?now():Math.max(now(),clockAnchor.utc+Math.max(0,monotonic()-clockAnchor.tick));
  const continuityAllowed=()=>clockAnchor!==null&&now()>=clockAnchor.wall&&continuityDecision(continuity,{platform,now:effectiveNow()});
- const allowed=()=>!stopped&&state==='entitled'&&(accessDecision(snapshot,{platform,now:effectiveNow()}).allowed||continuityAllowed());
- const read=()=>Object.freeze({state,action,platform,product,errorCategory,allowed:allowed(),temporaryAccess:allowed()&&!accessDecision(snapshot,{platform,now:effectiveNow()}).allowed});
+ const proofEnvironment=()=>platform==='apple'?snapshot?.environment??'production':'production';
+ const allowed=()=>!stopped&&state==='entitled'&&(accessDecision(snapshot,{platform,environment:proofEnvironment(),now:effectiveNow()}).allowed||continuityAllowed());
+ const read=()=>Object.freeze({state,action,platform,product,errorCategory,verificationReady:!!authority&&!!publicKey,
+  allowed:allowed(),temporaryAccess:allowed()&&!accessDecision(snapshot,{platform,environment:proofEnvironment(),now:effectiveNow()}).allowed});
  const publish=()=>{const value=read();for(const fn of subscribers){try{fn(value);}catch{}}return value;};
  const clear=()=>{cancel(expiryTimer);snapshot=null;};
- const classify=row=>row?.errorCategory==='purchase_pending'?'pending':row?.errorCategory==='user_canceled'?'not_entitled':row?.entitlementState==='not_entitled'?'not_entitled':row?.errorCategory==='invalid_authority'?'unknown':'temporarily_unavailable';
+ const classify=row=>row?.errorCategory==='purchase_pending'?'pending':row?.errorCategory==='user_canceled'||row?.errorCategory==='no_store_evidence'?'not_entitled':row?.entitlementState==='not_entitled'?'not_entitled':row?.errorCategory==='invalid_authority'?'unknown':'temporarily_unavailable';
  const queue=work=>{const next=tail.then(work,work);tail=next.catch(()=>{});return next;};
  async function bounded(work){let timer;try{return await Promise.race([work(),new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('unavailable')),timeoutMs);})]);}finally{clearTimeout(timer);}}
  const discard=handle=>{try{void Promise.resolve(handle.remove()).catch(()=>{});}catch{}};
@@ -38,9 +40,9 @@ export function createPaidAccess({capacitor,plugin,authority,publicKey,continuit
   catch(error){if(error?.message==='authority_denied'&&operation===generation&&!stopped)await revoke();throw Error('verification_unavailable');}
  }}:null;
  if(platform) {
-  session=(platform==='apple'?createAppleStoreKit:createGooglePlayBilling)({capacitor,plugin,authority:boundAuthority,publicKey,now,crypto,timeoutMs,purchaseTimeoutMs,environment:'production',
+  session=(platform==='apple'?createAppleStoreKit:createGooglePlayBilling)({capacitor,plugin,authority:boundAuthority,publicKey,now,crypto,timeoutMs,purchaseTimeoutMs,environment:platform==='apple'?'auto':'production',
    onNativeDenial:revoke,deliverEntitlement:async(row,guard)=>{
-    if(stopped||denied||!guard.isCurrent()||!accessDecision(row,{platform,now:now()}).allowed)return false;
+    if(stopped||denied||!guard.isCurrent()||!accessDecision(row,{platform,environment:platform==='apple'?row?.environment:'production',now:now()}).allowed)return false;
     snapshot=row;return true;
    }});
  }
@@ -61,31 +63,34 @@ export function createPaidAccess({capacitor,plugin,authority,publicKey,continuit
   const current=effectiveNow(),end=continuityAllowed()?Date.parse(continuity.continuityExpiresAt):snapshot?Date.parse(snapshot.expiresAt):current;
   const deadline=fresh&&snapshot?Math.min(end,Date.parse(snapshot.expiresAt)):Math.min(end,current+60000);
   expiryTimer=schedule(()=>{
-   if(!accessDecision(snapshot,{platform,now:effectiveNow()}).allowed&&!continuityAllowed()){clear();state='unknown';errorCategory='verification_unavailable';publish();}
+   if(!accessDecision(snapshot,{platform,environment:proofEnvironment(),now:effectiveNow()}).allowed&&!continuityAllowed()){clear();state='unknown';errorCategory='verification_unavailable';publish();}
    void refresh();
   },Math.max(1,deadline-current));
  }
  async function run(method) {
-  generation++;cancel(expiryTimer);const wasAllowed=allowed();snapshot=null;denied=false;
-  action=method;errorCategory='none';state=platform?(wasAllowed&&continuityAllowed()?'entitled':'initializing'):'unsupported_platform';publish();
+  generation++;cancel(expiryTimer);const wasAllowed=allowed(),previousSnapshot=wasAllowed?snapshot:null;denied=false;
+  // A current signed proof remains authority while a background recheck runs.
+  // Fresh launches still wait for server verification before admission.
+  if(!wasAllowed)snapshot=null;
+  action=method;errorCategory='none';state=platform?(wasAllowed?'entitled':'initializing'):'unsupported_platform';publish();
   if(stopped||!session){action=null;return publish();}
   await begin();
-  if(wasAllowed){state=continuityAllowed()?'entitled':'initializing';publish();}
+  if(wasAllowed){state=accessDecision(snapshot,{platform,environment:proofEnvironment(),now:effectiveNow()}).allowed||continuityAllowed()?'entitled':'initializing';publish();}
   try {
    const row=await session[method]();if(stopped)return read();
-   if(!denied&&row===snapshot&&accessDecision(row,{platform,now:now()}).allowed) {
+   if(!denied&&row===snapshot&&accessDecision(row,{platform,environment:platform==='apple'?row?.environment:'production',now:now()}).allowed) {
     // Only after bridge completion/Apple finish succeeds is durable authority saved.
     clockAnchor={utc:now(),wall:now(),tick:monotonic()};
     continuity=null;
     if(context) {
-     const candidate=await verifyContinuity({proof:row.continuityAuthorization,publicKey,binding:context.binding,platform,now:effectiveNow(),crypto});
+     const candidate=await verifyContinuity({proof:row.continuityAuthorization,publicKey,binding:context.binding,platform,environment:proofEnvironment(),now:effectiveNow(),crypto});
      if(candidate) {
       if((await bounded(()=>continuityVault.commit({attempt:context.attempt,proof:row.continuityAuthorization,verifiedAt:Date.parse(candidate.lastVerifiedAt)})))?.saved!==true)throw Error('continuity_unavailable');
       continuity=candidate;
      }else await bounded(()=>continuityVault.revoke({attempt:context.attempt}));
     }
     state='entitled';arm(true);
-   }else if(row?.entitlementState==='not_entitled'||row?.errorCategory==='invalid_authority'||denied) {
+   }else if(row?.entitlementState==='not_entitled'||row?.errorCategory==='invalid_authority'||row?.errorCategory==='no_store_evidence'||denied) {
     const explicitDenial=denied||row?.entitlementState==='not_entitled';if(!denied)await revoke();state=explicitDenial?'not_entitled':classify(row);
    }else {
     snapshot=null;
@@ -93,9 +98,11 @@ export function createPaidAccess({capacitor,plugin,authority,publicKey,continuit
     if(context&&temporary&&!denied){
      if((await bounded(()=>continuityVault.retain({attempt:context.attempt})))?.retained!==true)continuity=null;
     }else if(context)await revoke();
-    if(temporary&&!denied&&continuityAllowed()){state='entitled';arm();}else {continuity=null;state=classify(row);}
+    if(temporary&&!denied&&previousSnapshot&&accessDecision(previousSnapshot,{platform,environment:platform==='apple'?previousSnapshot.environment:'production',now:effectiveNow()}).allowed){
+     snapshot=previousSnapshot;state='entitled';arm();
+    }else if(temporary&&!denied&&continuityAllowed()){state='entitled';arm();}else {continuity=null;state=classify(row);}
    }
-   errorCategory=['none','store_unavailable','verification_unavailable','invalid_authority','purchase_pending','user_canceled','platform_unavailable','network_unavailable'].includes(row?.errorCategory)?row.errorCategory:'verification_unavailable';
+   errorCategory=['none','store_unavailable','verification_unavailable','invalid_authority','purchase_pending','user_canceled','platform_unavailable','network_unavailable','no_store_evidence'].includes(row?.errorCategory)?row.errorCategory:'verification_unavailable';
   }catch{
    // Never recover from an uncertain native persistence write or denial failure.
    clear();continuity=null;state='temporarily_unavailable';errorCategory='verification_unavailable';

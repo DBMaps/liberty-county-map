@@ -9,7 +9,7 @@ import {runtimePolicy} from '../tools/native-web.mjs';
 const now=Date.parse('2026-09-27T12:00:00.000Z');
 const keys=await webcrypto.subtle.generateKey({name:'ECDSA',namedCurve:'P-256'},false,['sign','verify']);
 const hmac=await webcrypto.subtle.generateKey({name:'HMAC',hash:'SHA-256'},false,['sign']);
-const data=(patch={})=>({regionCode:'US',subscriptionState:'SUBSCRIPTION_STATE_ACTIVE',acknowledgementState:'ACKNOWLEDGEMENT_STATE_PENDING',lineItems:[{productId:'gridly_monthly',offerDetails:{basePlanId:'monthly'},expiryTime:new Date(now+86400000).toISOString(),autoRenewingPlan:{autoRenewEnabled:true}}],...patch});
+const data=(patch={})=>({regionCode:'US',startTime:new Date(now-1000).toISOString(),subscriptionState:'SUBSCRIPTION_STATE_ACTIVE',acknowledgementState:'ACKNOWLEDGEMENT_STATE_PENDING',lineItems:[{productId:'gridly_monthly',offerDetails:{basePlanId:'monthly'},expiryTime:new Date(now+86400000).toISOString(),autoRenewingPlan:{autoRenewEnabled:true}}],...patch});
 function fixture({env='production',providerData=data()}={}) {
  const events=[],handlers=new Map(),native={result:'purchased',productId:'gridly_monthly',basePlanId:'monthly',purchaseToken:'synthetic-play-token',acknowledgementRequired:true};
  const record=normalizeGoogle(providerData,{env,token:native.purchaseToken,now});
@@ -56,7 +56,7 @@ test('launch/resume/update refresh is opt-in, silent, coalesced and disposable',
 test('server acknowledgment failure denies delivery; recheck retries same purchase without rebuying',async()=>{
  const f=fixture();let attempt=0;
  const handler=createHandler({platform:'google',authorizeNative:async()=>true,provider:{verify:async()=>{f.events.push('provider');return f.record;},acknowledge:async()=>{f.events.push('ack');if(++attempt===1)throw Error('private OAuth token');}},
- cache:{apply:async row=>{f.events.push('cache');assert.ok(!JSON.stringify(row).includes('synthetic-play-token'));return true;}},signingKey:keys.privateKey,fingerprintKey:hmac,crypto:webcrypto});
+ ackQueue:{ensure:async({record})=>{f.events.push('ack');if(++attempt===1)throw Error('private OAuth token');return record;}},cache:{apply:async row=>{f.events.push('cache');assert.ok(!JSON.stringify(row).includes('synthetic-play-token'));return true;}},signingKey:keys.privateKey,fingerprintKey:hmac,crypto:webcrypto});
  f.options.authority=createGoogleVerificationAuthority({invoke:async(name,{body})=>{assert.equal(name,'gridly-verify-google-subscription');const response=await handler(new Request('https://example.invalid',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}));return response.ok?{data:await response.json()}:{error:Error('upstream error')};}});
  const s=f.session();await s.purchase();assert.equal(s.allowed().allowed,false);assert.deepEqual(f.events,['purchase','provider','cache','ack']);await s.restore();assert.ok(s.allowed().allowed);assert.deepEqual(f.events.slice(4),['restore','provider','cache','ack','deliver']);assert.equal(f.events.filter(x=>x==='purchase').length,1);
 });

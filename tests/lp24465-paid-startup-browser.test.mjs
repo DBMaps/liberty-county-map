@@ -33,9 +33,20 @@ test('real browser: unsupported/native-unconfigured gate, portrait/legal access,
   const browser=await chromium.launch({channel:'msedge',headless:true});
   try {
     const page=await browser.newPage({viewport:{width:390,height:844},isMobile:true});
-    await page.goto(origin+'/?entitled=true&debug=true');
+    let releaseModule;
+    await page.route('**/js/gridly-paid-ui.mjs',async route=>{
+      await new Promise(resolve=>{releaseModule=resolve;});await route.continue();
+    },{times:1});
+    await page.goto(origin+'/?entitled=true&debug=true',{waitUntil:'domcontentloaded'});
+    while(!releaseModule)await new Promise(resolve=>setTimeout(resolve,0));
+    assert.equal(await page.locator('#gridlyPaidPending').isVisible(),true);
+    assert.equal(await page.locator('#gridlyPaidAccess').isVisible(),false);
+    assert.equal(await page.evaluate(()=>typeof window.L),'undefined');
+    releaseModule();
     await page.locator('#gridlyPaidStatus').filter({hasText:'supported Apple'}).waitFor();
+    assert.equal(await page.locator('#gridlyPaidPending').isVisible(),false);
     assert.equal(await page.locator('#gridlyPaidAccess').isVisible(),true);
+    assert.equal(await page.locator('#gridlySettingsRestore').getAttribute('hidden'),'');
     assert.equal(await page.locator('#gridlyPaidPurchase').isVisible(),false);
     assert.equal(await page.locator('#gridlyPaidAccess a').count(),5);
     assert.equal(await page.evaluate(()=>typeof window.L),'undefined');
@@ -64,13 +75,17 @@ test('real browser: unsupported/native-unconfigured gate, portrait/legal access,
     });
     await page.goto(origin+'/?entitled=true');
     await page.locator('#gridlyPaidStatus').filter({hasText:'temporarily unavailable'}).waitFor();
-    assert.equal(await page.locator('#gridlyPaidPrice').textContent(),'$3.49/month');
+    assert.equal(await page.locator('#gridlyPaidPrice').textContent(),'Price loading…');
+    assert.equal(await page.locator('#gridlyPaidPurchase').isDisabled(),true);
     await page.setViewportSize({width:320,height:568});
     assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
     await page.locator('#gridlyPaidAccess a').filter({hasText:'Delete Data'}).scrollIntoViewIfNeeded();
     assert.equal(await page.locator('#gridlyPaidAccess a').filter({hasText:'Delete Data'}).isVisible(),true);
     await page.locator('#gridlyPaidRestore').click();
     await page.locator('#gridlyPaidStatus').filter({hasText:'temporarily unavailable'}).waitFor();
+    assert.equal(await page.locator('#gridlyPaidAccess').isVisible(),true);
+    assert.equal(await page.locator('#gridlySettingsRestore').getAttribute('hidden'),null);
+    await page.evaluate(()=>document.getElementById('gridlySettingsRestore').click());
     assert.equal(await page.locator('#gridlyPaidAccess').isVisible(),true);
     assert.equal(await page.evaluate(()=>typeof window.L),'undefined');
     // Fixtures exercise the generic admitted loader only, not a release unlock.

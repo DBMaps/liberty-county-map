@@ -17,7 +17,7 @@ export const runtimePolicy = Object.freeze({
   files: [
     'index.html', 'manifest.json', 'service-worker.js', 'consumer-script-manifest.json', 'css/styles.css', 'css/gridly-paid-access.css', 'legal',
     // Paid admission precedes the protected stack; both store adapters use shared verification.
-    'js/gridly-continuity.mjs', 'js/gridly-paid-onboarding.mjs', 'js/gridly-paid-access.mjs', 'js/gridly-paid-config.mjs', 'js/gridly-paid-ui.mjs', 'js/gridly-paid-startup.mjs',
+    'js/gridly-continuity.mjs', 'js/gridly-paid-onboarding.mjs', 'js/gridly-paid-access.mjs', 'js/gridly-paid-config.mjs', 'js/gridly-entitlement-public-key.mjs', 'js/gridly-native-verification-binding.mjs', 'js/gridly-native-attested-invoke.mjs', 'js/gridly-native-edge-transport.mjs', 'js/gridly-paid-ui.mjs', 'js/gridly-paid-startup.mjs',
     'js/gridly-apple-storekit.mjs', 'js/gridly-google-play-billing.mjs',
     'js/gridly-entitlement.mjs', 'js/gridly-store-verification.mjs',
     'assets/UI', 'assets/desktop-gate', 'assets/icons', 'assets/markers', 'assets/onboarding',

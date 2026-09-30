@@ -1,14 +1,23 @@
 html.gridly-paid-locked body { visibility: visible !important; overflow: hidden; }
 html.gridly-paid-locked body::before { display: none !important; }
-html.gridly-paid-locked body > :where(:not(#gridlyPaidAccess):not(#gridlyPaidLegalAccess):not(script):not(style):not(link)) { display: none !important; }
+html.gridly-paid-locked body > :where(:not(#gridlyPaidAccess):not(#gridlyPaidPending):not(#gridlyPaidLegalAccess):not(script):not(style):not(link)) { display: none !important; }
+#gridlyPaidPending { display:none; position:fixed; inset:0; z-index:2147483647; box-sizing:border-box;
+  padding:max(24px,env(safe-area-inset-top)) 20px max(24px,env(safe-area-inset-bottom));
+  place-content:center; justify-items:center; gap:8px; text-align:center; color:#ecf5f2;
+  background:radial-gradient(ellipse at top,#173b3b,#081a22 75%); font:16px/1.5 system-ui,sans-serif; }
+html.gridly-paid-pending #gridlyPaidPending { display:grid; }
+html.gridly-paid-pending #gridlyPaidAccess { display:none !important; }
+#gridlyPaidPending img { display:block; width:128px; height:128px; object-fit:contain; }
+#gridlyPaidPending strong { font-size:34px; line-height:1.1; letter-spacing:.02em; }
+#gridlyPaidPending span { color:#a9d5d0; }
 #gridlyPaidAccess[hidden] { display: none !important; }
 #gridlyPaidAccess { position:fixed; inset:0; z-index:2147483647; display:flex; flex-direction:column; align-items:center;
   overflow:auto; padding:max(22px,env(safe-area-inset-top)) 20px max(22px,env(safe-area-inset-bottom));
   box-sizing:border-box; color:#ecf5f2; background:radial-gradient(ellipse at top,#173b3b,#081a22 75%); font:16px/1.5 system-ui,sans-serif; }
 .gridly-paid-card { width:min(100%,390px); padding:26px; margin-block:auto; flex-shrink:0; border:1px solid #4a716d;
   border-radius:24px; box-sizing:border-box; background:#10282eea; box-shadow:0 18px 65px #0006; }
-.gridly-paid-card img { display:block; width:100px; height:100px; object-fit:contain; margin:auto; }
-.gridly-paid-card h1 { text-align:center; font-size:32px; margin:10px 0 0; }
+.gridly-paid-card img { display:block; width:148px; height:148px; object-fit:contain; margin:-8px auto -10px; }
+.gridly-paid-card h1 { text-align:center; font-size:38px; line-height:1.08; letter-spacing:.02em; margin:0; }
 .gridly-paid-tagline { text-align:center; color:#9de4d1; margin:0 0 25px; }
 #gridlyPaidPrice { display:block; font-size:29px; font-weight:700; }
 .gridly-paid-card button { width:100%; min-height:48px; border-radius:12px; margin:6px 0;
@@ -24,3 +33,9 @@ html.gridly-paid-locked.gridly-paid-onboarding body > #gridlyWelcomeOnboarding:n
 #gridlyPaidLegalAccess { position:fixed; z-index:2147483647; top:max(8px,env(safe-area-inset-top)); right:12px; padding:8px; max-width:245px; border-radius:10px; background:#10282e; color:#ecf5f2; font:13px/1.5 system-ui; }
 #gridlyPaidLegalAccess[hidden] { display:none !important; }
 #gridlyPaidLegalAccess a { color:#b0ece0; }
+
+@media (max-height: 700px) {
+  .gridly-paid-card { padding:18px 22px; }
+  .gridly-paid-card img { width:110px; height:110px; }
+  .gridly-paid-tagline { margin-bottom:14px; }
+}

@@ -8,6 +8,7 @@ class MainActivity : BridgeActivity() {
         registerPlugin(GridlyGeolocationPlugin::class.java)
         registerPlugin(GridlyPlayBillingPlugin::class.java)
         registerPlugin(GridlyContinuityPlugin::class.java)
+        registerPlugin(GridlyPlayIntegrityPlugin::class.java)
         super.onCreate(savedInstanceState)
 
         // WebView otherwise inherits the Android accessibility font scale as

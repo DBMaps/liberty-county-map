@@ -1,0 +1,12 @@
+{
+  "name": "gridly-subscription-challenge-gateway",
+  "main": "worker.mjs",
+  "compatibility_date": "2026-09-27",
+  "workers_dev": false,
+  "routes": [{"pattern": "gridlygo.com/subscription-challenge", "zone_name": "gridlygo.com"}],
+  "ratelimits": [{
+    "name": "CHALLENGE_RATE",
+    "namespace_id": "24466",
+    "simple": {"limit": 10, "period": 60}
+  }]
+}

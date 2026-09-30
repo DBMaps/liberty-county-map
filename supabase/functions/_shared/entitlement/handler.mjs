@@ -8,10 +8,12 @@ async function boundedBody(request) {
 }
 // Default entrypoints pass only platform: absent security/provider ports => 503.
 // No configuration flag, test token or client input can enable a missing port.
-export function createHandler({platform,authorizeNative,provider,cache,signingKey,fingerprintKey,crypto=globalThis.crypto}) {
+/** @param {{platform: string, authorizeNative?: unknown, provider?: unknown, cache?: unknown,
+ *  ackQueue?: unknown, signingKey?: unknown, fingerprintKey?: unknown, crypto?: Crypto}} options */
+export function createHandler({platform,authorizeNative,provider,cache,ackQueue,signingKey,fingerprintKey,crypto=globalThis.crypto}) {
  return async req=>{
   if(req.method!=='POST'||new URL(req.url).search)return reply(405,'invalid_request');
-  if(!authorizeNative||!provider||!cache||!signingKey||!fingerprintKey)return reply(503,'verification_unavailable');
+  if(!authorizeNative||!provider||!cache||!signingKey||!fingerprintKey||(platform==='google'&&!ackQueue))return reply(503,'verification_unavailable');
   let timer,active=true;
   try {return await Promise.race([(async()=>{
    // Authorizer validates rate limit/attestation, fresh nonce and body digest,
@@ -19,19 +21,22 @@ export function createHandler({platform,authorizeNative,provider,cache,signingKe
    const text=await boundedBody(req);
    let raw;try{raw=JSON.parse(text);}catch{return reply(400,'invalid_request');}
    if(!raw||typeof raw!=='object'||Array.isArray(raw))return reply(400,'invalid_request');
-   if(Object.keys(raw).filter(key=>key!=='continuityBinding').sort().join(',') !== (platform==='google'?['platform','environment','nonce','productId','basePlanId','evidence']:['platform','environment','nonce','productId','evidence']).sort().join(','))return reply(400,'invalid_request');
+   const fields=Object.keys(raw).filter(key=>!['continuityBinding','nativeChallenge','nativeAuthorization'].includes(key));
+   const expected=platform==='google'?['platform','environment','nonce','productId','basePlanId','evidence']:['platform','environment','nonce','productId','evidence'];
+   if(platform==='apple'&&raw.nativeAuthorizationEnvironment!==undefined)expected.push('nativeAuthorizationEnvironment');
+   if(fields.sort().join(',')!==expected.sort().join(','))return reply(400,'invalid_request');
    const input=storeVerificationRequest(raw);
    if(input.platform!==platform||raw.productId!==input.productId||(platform==='google'&&raw.basePlanId!==input.basePlanId))return reply(400,'invalid_request');
-   if(!await authorizeNative({request:req,body:text,nonce:input.nonce,environment:input.environment}))return reply(401,'unauthorized');
+   if(!await authorizeNative({request:req,body:text,nonce:input.nonce,environment:input.nativeAuthorizationEnvironment??input.environment}))return reply(401,'unauthorized');
    const values=input.evidence[platform==='apple'?'signedTransactions':'purchaseTokens'];
    if(values.length!==1)return reply(422,'verification_unavailable'); // No public arbitrary cache read or absence claim.
-   const record=await provider.verify(values[0]);
+   let record=await provider.verify(values[0],{environment:input.environment});
    if(record.platform!==platform||record.environment!==input.environment)return reply(422,'invalid_evidence');
    const cached=await cacheRecord(record,fingerprintKey,crypto);
    if(!active)return reply(504,'verification_unavailable');
    if(!await cache.apply(cached))return reply(409,'reconciliation_retry');
    if(!active)return reply(504,'verification_unavailable');
-   if(record.acknowledgementRequired)await provider.acknowledge(values[0]);
+   if(record.acknowledgementRequired)record=await ackQueue.ensure({token:values[0],record,cached});
    if(!active)return reply(504,'verification_unavailable');
    const proof=await signResponse(record,input.nonce,signingKey,crypto,{continuityBinding:input.continuityBinding});
    return Response.json({proof},{headers:{'Cache-Control':'no-store'}});

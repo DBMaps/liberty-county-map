@@ -49,11 +49,13 @@ const patches=[
 ];
 export function instrumentIosReset(source) {
  if(source.includes('certificationResetCategory'))throw Error('Unexpected iOS diagnostic source');
+ const crlf=source.includes('\r\n');if(crlf)source=source.replaceAll('\r\n','\n');
  for(const [from,to] of patches){if(source.split(from).length!==2)throw Error('iOS vault source contract changed');source=source.replace(from,to);}
- return source;
+ return crlf?source.replaceAll('\n','\r\n'):source;
 }
 // Used only by tests to prove exact original source recovery and unchanged guards.
 export function restoreIosResetSource(source) {
+ const crlf=source.includes('\r\n');if(crlf)source=source.replaceAll('\r\n','\n');
  for(const [from,to] of [...patches].reverse()){if(source.split(to).length!==2)throw Error('iOS diagnostic source changed');source=source.replace(to,from);}
- return source;
+ return crlf?source.replaceAll('\n','\r\n'):source;
 }

@@ -5704,11 +5704,10 @@ function gridlyInitBriefInteraction() {
 }
 
 if (typeof document !== "undefined") {
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", gridlyInitBriefInteraction, { once: true });
-  } else {
-    gridlyInitBriefInteraction();
-  }
+  // The paid loader replays callbacks registered while it loads protected scripts.
+  // Calling this synchronously after the real DOMContentLoaded can touch later
+  // app.js const declarations before this classic script finishes evaluating.
+  document.addEventListener("DOMContentLoaded", gridlyInitBriefInteraction, { once: true });
 }
 
 
@@ -51842,7 +51841,7 @@ function renderGridlyV858FirstRunExperience(overlay) {
         </section>
         <div class="gridly-v894c3-tour-scroll gridly-v950-onboarding-pager" data-gridly-quick-tour-scroll data-gridly-quick-tour-scroll-enabled="true" data-gridly-quick-tour-no-clipping="true" tabindex="0" role="region" aria-label="Quick Tour cards and setup">
           <div class="gridly-v894c2-tour-cards gridly-v950-page-track" id="gridlyV894C2TourCards" data-gridly-beta-first-run-walkthrough data-gridly-quick-tour data-gridly-visual-quick-tour data-gridly-onboarding-page-track>
-            <article class="gridly-v894c2-tour-card gridly-v896-visual-tour-card gridly-v950-tour-page gridly-v950-welcome-page" data-gridly-tour-card="welcome" data-gridly-onboarding-page="welcome"><div class="gridly-v950-welcome-logo"><img src="assets/store/branding/Logos/gridly-logo-vertical.png" alt="Gridly logo" loading="eager" decoding="async" /></div><div class="gridly-v950-page-copy"><h2 id="gridlyV858FirstRunTitle">Welcome to Gridly</h2><p class="gridly-v858-first-run-tagline">Know Before You Go.</p><p id="gridlyV858FirstRunCopy">Local conditions, official signals, and community reports in one awareness-first view.</p></div></article>
+            <article class="gridly-v894c2-tour-card gridly-v896-visual-tour-card gridly-v950-tour-page gridly-v950-welcome-page" data-gridly-tour-card="welcome" data-gridly-onboarding-page="welcome"><div class="gridly-v950-welcome-logo"><img src="assets/store/icons/gridly-icon-master-1024.png" alt="" loading="eager" decoding="async" /></div><div class="gridly-v950-page-copy"><h2 id="gridlyV858FirstRunTitle">Welcome to Gridly</h2><p class="gridly-v858-first-run-tagline">Know Before You Go.</p><p id="gridlyV858FirstRunCopy">Local conditions, official signals, and community reports in one awareness-first view.</p></div></article>
             <article class="gridly-v894c2-tour-card gridly-v896-visual-tour-card gridly-v950-tour-page gridly-v950-feature-page" data-gridly-tour-card="awareness" data-gridly-visual-tour-card="awareness" data-gridly-approved-slide="kbyg" data-gridly-onboarding-page="awareness"><div class="gridly-v950-page-copy"><h3>Know Before You Go</h3><p>Current conditions before you leave.</p></div><div class="gridly-v896-shot-frame"><img src="assets/walkthrough/gridly-walkthrough-kbyg.png" alt="Illustration of Gridly's travel brief and current conditions experience" loading="lazy" decoding="async" data-gridly-onboarding-image="awareness" /></div></article>
             <article class="gridly-v894c2-tour-card gridly-v896-visual-tour-card gridly-v950-tour-page gridly-v950-feature-page" data-gridly-tour-card="map" data-gridly-visual-tour-card="map" data-gridly-approved-slide="nearby" data-gridly-onboarding-page="map"><div class="gridly-v950-page-copy"><h3>See what's happening nearby</h3><p>Nearby reports and roadway conditions.</p></div><div class="gridly-v896-shot-frame"><img src="assets/walkthrough/gridly-walkthrough-nearby.png" alt="Illustration of Gridly's nearby map and local roadway context" loading="lazy" decoding="async" data-gridly-onboarding-image="map" /></div></article>
             <article class="gridly-v894c2-tour-card gridly-v896-visual-tour-card gridly-v950-tour-page gridly-v950-feature-page" data-gridly-tour-card="alerts" data-gridly-visual-tour-card="alerts" data-gridly-approved-slide="alerts" data-gridly-onboarding-page="alerts"><div class="gridly-v950-page-copy"><h3>Stay informed with important updates</h3><p>Important changes when conditions shift.</p></div><div class="gridly-v896-shot-frame"><img src="assets/walkthrough/gridly-walkthrough-alerts.png" alt="Illustration of Gridly's important condition and community alerts" loading="lazy" decoding="async" data-gridly-onboarding-image="alerts" /></div></article>
@@ -121020,6 +121019,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
 
   function buildSettingsSurfaceHtml() {
     const buildStartedAt = getGridlySettingsPerfNow();
+    const nativeAppleRestore = window.Capacitor?.isNativePlatform?.() === true && window.Capacitor?.getPlatform?.() === "ios";
     const settings = typeof getGridlySettingsPreferences === "function" ? getGridlySettingsPreferences() : normalizeGridlySettings();
     const places = typeof getSavedPlacesState === "function" ? getSavedPlacesState() : { home: null, work: null, custom: [], favorites: [] };
     const describe = (place, fallback) => (typeof describeGridlySettingsPlace === "function")
@@ -121037,6 +121037,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const html = `
       <div class="gridly-v2-list gridly-settings-sheet settings-list-experience" data-gridly-settings-v2="true" data-gridly-settings-list-experience="true">
         <p class="gridly-v2-sheet-copy" data-v2-precondition-helper hidden></p>
+        ${nativeAppleRestore ? '<button class="gridly-v2-tile gridly-settings-restore" data-gridly-settings-restore type="button">Restore Purchases</button>' : ''}
         <details class="settings-modal-section settings-list-section settings-section-awareness">
           <summary class="settings-list-summary"><span class="settings-list-title">Awareness</span><span class="settings-list-meta">Area · Home community · Location use</span></summary>
           <div class="settings-list-detail">

@@ -23,14 +23,14 @@ export function createAppleStoreKit({capacitor,plugin,authority,publicKey,delive
  let state=failure('verification_unavailable'),tail=Promise.resolve(),stopped=false,started=false,startPromise,signalTask;
  const listeners=[];
  const ios=()=>capacitor?.isNativePlatform?.()===true&&capacitor?.getPlatform?.()==='ios'&&!!plugin;
- const allowed=surface=>accessDecision(state,{platform:ios()?'apple':null,environment,surface,now:now()});
+ const allowed=surface=>accessDecision(state,{platform:ios()?'apple':null,environment:state.environment??environment,surface,now:now()});
  const read=()=>state;
  const queue=work=>{const next=tail.then(work,work);tail=next.catch(()=>{});return next;};
  async function bounded(work,budget=timeoutMs){let timer;try{return await Promise.race([work(),new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('unavailable')),budget);})]);}finally{clearTimeout(timer);}}
  async function run(method,options={}) {
   state=failure('verification_unavailable');
   if(stopped||!ios()){state=failure('platform_unavailable');return state;}
-  if(!['production','sandbox/test'].includes(environment)||!authority||!publicKey){return state;}
+  if(!['production','sandbox/test','auto'].includes(environment)||!authority||!publicKey){return state;}
   let active=true,category='store_unavailable';
   try {
    state=await bounded(async()=>{
@@ -38,19 +38,22 @@ export function createAppleStoreKit({capacitor,plugin,authority,publicKey,delive
     if(!active||stopped)return failure();
     if(native?.result==='user_cancelled')return failure('user_canceled');
     if(native?.result==='purchase_pending')return failure('purchase_pending');
+    if(native?.result==='no_evidence')return failure('no_store_evidence');
     // No-evidence is a native hint; never issue a backend-confirmed denial from it.
     if(native?.result!=='verified')return failure(native?.errorCategory==='verification_failed'?'invalid_authority':'store_unavailable');
-    if(native.productId!==APPLE_PRODUCT_ID||native.environment!==environment||typeof native.completionHandle!=='string'||native.completionHandle.length>64)return failure();
+    const storeEnvironment=environment==='auto'?native.environment:environment;
+    if(native.productId!==APPLE_PRODUCT_ID||native.environment!==storeEnvironment||
+      !['production','sandbox/test'].includes(storeEnvironment)||typeof native.completionHandle!=='string'||native.completionHandle.length>64)return failure();
     if(native.revoked===true && onNativeDenial)await onNativeDenial();
     category='verification_unavailable';
     const nonce=Array.from(crypto.getRandomValues(new Uint8Array(24)),b=>b.toString(16).padStart(2,'0')).join('');
-    let request=storeVerificationRequest({platform:'apple',environment,nonce,evidence:{signedTransactions:[native.signedTransaction]}});
+    let request=storeVerificationRequest({platform:'apple',environment:storeEnvironment,nativeAuthorizationEnvironment:'production',nonce,evidence:{signedTransactions:[native.signedTransaction]}});
     const handle=native.completionHandle;
     native=null; // Do not retain native evidence in session/read/UI state.
     let proof;
     try {proof=await bounded(()=>authority.reconcile(request));}finally{request=null;}
     if(!active||stopped)return failure();
-    const verified=await verifyAuthorityProof({proof,publicKey,nonce,platform:'apple',environment,now:now(),crypto});
+    const verified=await verifyAuthorityProof({proof,publicKey,nonce,platform:'apple',environment:storeEnvironment,now:now(),crypto});
     if(!active||stopped)return failure('invalid_authority');
     if(verified.entitlementState==='unknown')return failure(verified.errorCategory==='invalid_authority'?'invalid_authority':'verification_unavailable');
     if(verified.entitlementState==='not_entitled')return verified;

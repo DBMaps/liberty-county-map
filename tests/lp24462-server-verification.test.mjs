@@ -11,7 +11,7 @@ const keys=await webcrypto.subtle.generateKey({name:'ECDSA',namedCurve:'P-256'},
 const hmac=await webcrypto.subtle.generateKey({name:'HMAC',hash:'SHA-256'},false,['sign']);
 const tx=(patch={})=>({bundleId:'com.gridlygo.gridly',productId:'com.gridlygo.gridly.monthly',type:'Auto-Renewable Subscription',environment:'Production',originalTransactionId:'synthetic-chain',expiresDate:end,...patch});
 const renewal=(patch={})=>({originalTransactionId:'synthetic-chain',productId:'com.gridlygo.gridly.monthly',environment:'Production',autoRenewStatus:1,...patch});
-const google=(patch={})=>({regionCode:'US',subscriptionState:'SUBSCRIPTION_STATE_ACTIVE',acknowledgementState:'ACKNOWLEDGEMENT_STATE_ACKNOWLEDGED',lineItems:[{productId:'gridly_monthly',offerDetails:{basePlanId:'monthly'},expiryTime:new Date(end).toISOString(),autoRenewingPlan:{autoRenewEnabled:true}}],...patch});
+const google=(patch={})=>({regionCode:'US',startTime:new Date(now-1000).toISOString(),subscriptionState:'SUBSCRIPTION_STATE_ACTIVE',acknowledgementState:'ACKNOWLEDGEMENT_STATE_ACKNOWLEDGED',lineItems:[{productId:'gridly_monthly',offerDetails:{basePlanId:'monthly'},expiryTime:new Date(end).toISOString(),autoRenewingPlan:{autoRenewEnabled:true}}],...patch});
 const appleRecord=(t=tx(),r=renewal(),status=1)=>normalizeApple(t,r,status,{env:'production',originalReference:'synthetic-chain',now});
 const googleRecord=data=>normalizeGoogle(data,{env:'production',token:'synthetic-google-token',now});
 test('Apple active/canceled/expired/revoked/no-grace normalization',()=>{
@@ -63,7 +63,7 @@ test('cache keeps only keyed fingerprint/minimal state; shared proof interoperat
 const request=(platform='apple',patch={})=>new Request('https://example.invalid/verify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({platform,environment:'production',nonce,productId:platform==='apple'?'com.gridlygo.gridly.monthly':'gridly_monthly',...(platform==='google'?{basePlanId:'monthly'}:{}),evidence:platform==='apple'?{signedTransactions:['synthetic.payload.signature']}:{purchaseTokens:['synthetic-google-token']},...patch})});
 function setup(platform='apple') {const events=[];return {events,platform,crypto:webcrypto,signingKey:keys.privateKey,fingerprintKey:hmac,
  authorizeNative:async()=>{events.push('auth');return true;},provider:{verify:async()=>{events.push('provider');return platform==='apple'?appleRecord():googleRecord(google({acknowledgementState:'ACKNOWLEDGEMENT_STATE_PENDING'}));},acknowledge:async()=>{events.push('ack');}},
- cache:{apply:async row=>{events.push('cache');assert.ok(!JSON.stringify(row).includes('synthetic'));return true;}}};}
+ ackQueue:{ensure:async({record})=>{events.push('ack');return record;}},cache:{apply:async row=>{events.push('cache');assert.ok(!JSON.stringify(row).includes('synthetic'));return true;}}};}
 test('default Edge skeleton closed; auth before verification; cache before ack; safe signed response',async()=>{
  assert.equal((await createHandler({platform:'apple'})(request())).status,503);
  for(const platform of ['apple','google']){const ports=setup(platform),res=await createHandler(ports)(request(platform));assert.equal(res.status,200);assert.deepEqual(Object.keys(await res.json()),['proof']);
@@ -76,7 +76,7 @@ test('malformed/forged/private errors never grant or expose evidence; no arbitra
  assert.equal((await createHandler(setup())(request('apple',{active:true}))).status,400);
  assert.equal((await createHandler(setup())(request('apple',{evidence:{signedTransactions:[]}}))).status,422);
  for(const value of [null,[],true])assert.equal((await createHandler(setup())(new Request('https://example.invalid/verify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(value)}))).status,400);
- const failedAck=setup('google');failedAck.provider.acknowledge=async()=>{throw Error('private provider response');};const ackRes=await createHandler(failedAck)(request('google'));assert.equal(ackRes.status,502);assert.deepEqual(await ackRes.json(),{error:'verification_unavailable'});
+ const failedAck=setup('google');failedAck.ackQueue.ensure=async()=>{throw Error('private provider response');};const ackRes=await createHandler(failedAck)(request('google'));assert.equal(ackRes.status,502);assert.deepEqual(await ackRes.json(),{error:'verification_unavailable'});
  const stale=setup();stale.cache.apply=async()=>false;assert.equal((await createHandler(stale)(request())).status,409);
 });
 test('reinstall proves from store without old identity; environment mismatch refused',async()=>{
@@ -85,5 +85,11 @@ test('reinstall proves from store without old identity; environment mismatch ref
 });
 test('source privacy/security boundary, no reporting writes or production bypass',()=>{
  for(const file of ['core.mjs','providers.mjs','handler.mjs']){const source=readFileSync(new URL('../supabase/functions/_shared/entitlement/'+file,import.meta.url),'utf8');assert.doesNotMatch(source,/console\.|localStorage|sessionStorage|purchases\.subscriptions\.get|reporting_enabled\s*[:=]\s*true/);}
- for(const platform of ['apple','google'])assert.match(readFileSync(new URL('../supabase/functions/gridly-verify-'+platform+'-subscription/index.ts',import.meta.url),'utf8'),new RegExp("createHandler\\(\\{platform:'"+platform+"'\\}\\)"));
+ for(const platform of ['apple','google']){
+  const source=readFileSync(new URL('../supabase/functions/gridly-verify-'+platform+'-subscription/index.ts',import.meta.url),'utf8');
+  assert.match(source,/productionEdgeRuntime/);assert.doesNotMatch(source,/sandboxAcceptanceComposition|console\./);
+ }
+ const runtime=readFileSync(new URL('../supabase/functions/_shared/entitlement/edge-runtime.ts',import.meta.url),'utf8');
+ assert.match(runtime,/createNativeAuthorizer/);assert.match(runtime,/createProductionServer/);
+ assert.match(runtime,/closed\('apple'\)/);assert.match(runtime,/closed\('google'\)/);
 });

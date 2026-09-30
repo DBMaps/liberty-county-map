@@ -39,7 +39,7 @@ test('strict native selection: desktop, PWA and native hints alone are not autho
   for(const cap of [undefined,{isNativePlatform:()=>false,getPlatform:()=> 'ios'},{isNativePlatform:()=>true,getPlatform:()=> 'web'}]) {
     assert.equal(nativeStore(cap),null);const c=createPaidAccess({capacitor:cap});assert.equal((await c.start()).state,'unsupported_platform');assert.equal((await c.purchase()).allowed,false);await c.stop();
   }
-  const f=fixture(),c=createPaidAccess({...f.options,...productionPaidComposition(f.options.capacitor)});
+  const f=fixture(),c=createPaidAccess({...f.options,...await productionPaidComposition(f.options.capacitor)});
   assert.equal((await c.start()).allowed,false);assert.equal(c.read().state,'temporarily_unavailable');await c.stop();
 });
 for(const platform of ['apple','google']) {
@@ -84,7 +84,7 @@ test('all protected scripts and inline startup stay inert; governed order preser
     ['id="gridly-early-theme"','src="js/gridly-paid-bootstrap.js"']);
   for(const url of ['legal/privacy.html','legal/terms.html','legal/community-guidelines.html','https://gridlygo.com/support','https://gridlygo.com/delete-data'])assert.ok(html.includes('href="'+url+'"'));
   assert.ok(!readFileSync('public-site/index.html','utf8').includes('gridly-paid-bootstrap'));
-  for(const file of ['js/gridly-paid-access.mjs','js/gridly-paid-ui.mjs','js/gridly-paid-startup.mjs','js/gridly-paid-config.mjs','css/gridly-paid-access.css'])assert.ok(runtimePolicy.files.includes(file));
+  for(const file of ['js/gridly-paid-access.mjs','js/gridly-paid-ui.mjs','js/gridly-paid-startup.mjs','js/gridly-paid-config.mjs','js/gridly-entitlement-public-key.mjs','css/gridly-paid-access.css'])assert.ok(runtimePolicy.files.includes(file));
   const contract=await communitySubmissionContract(process.cwd());assert.equal(contract.protocol_version,2);assert.equal(contract.scripts.length,2);
 });
 test('accepted seven-page source and completion preferences preserved; no store checks in app',()=>{
@@ -109,6 +109,22 @@ test('protected initialization requires current proof and serializes lifecycle r
   await new Promise(resolve=>setTimeout(resolve,0));const refresh=c.resume();release();await initialization;await refresh;
   assert.equal(f.events.filter(x=>x==='refresh').length,1);await c.stop();
 });
+test('a still-valid signed proof stays admitted during background refresh, then explicit denial revokes it',async()=>{
+  const f=fixture(),c=f.create(),states=[];c.subscribe(value=>states.push({state:value.state,allowed:value.allowed}));
+  assert.equal((await c.start()).allowed,true);
+  let entered,release;
+  const queried=new Promise(resolve=>{entered=resolve;});
+  f.plugin.refreshEntitlement=async()=>{entered();return new Promise(resolve=>{release=()=>resolve(f.native);});};
+  const check=c.refresh();await queried;
+  assert.equal(c.read().allowed,true);
+  assert.equal(states.at(-1).state,'entitled');
+  release();assert.equal((await check).allowed,true);
+  f.plugin.refreshEntitlement=async()=>f.native;
+  f.reject();assert.equal((await c.refresh()).allowed,true); // transient server failure within the signed proof lifetime
+  f.plugin.refreshEntitlement=async()=>({result:'no_evidence'});
+  const denied=await c.refresh();assert.equal(denied.allowed,false);assert.equal(denied.state,'not_entitled');
+  await c.stop();
+});
 test('signed not-entitled startup and invalid authority expose no protected initialization',async()=>{
   for(const invalid of [false,true]) {
     const f=fixture();if(invalid)f.options.authority.reconcile=async()=> 'forged.payload.signature';else f.expired();
@@ -128,7 +144,7 @@ test('release composition has no debug, storage, sandbox, evidence logs, free of
   const files=['js/gridly-paid-access.mjs','js/gridly-paid-ui.mjs','js/gridly-paid-startup.mjs','js/gridly-paid-config.mjs','js/gridly-paid-bootstrap.js'];
   const source=files.map(file=>readFileSync(file,'utf8')).join('\n');
   assert.doesNotMatch(source,/localStorage|sessionStorage|URLSearchParams|console\.|sandbox\/test|reporting_enabled\s*[:=]\s*true|service_role|sb_secret_|eyJ[A-Za-z0-9_-]{30}/);
-  assert.match(source,/environment:'production'/);assert.match(source,/publicKey:null, authority:null/);
+  assert.match(source,/environment:platform==='apple'\?'auto':'production'/);assert.match(source,/importProductionEntitlementKey/);assert.match(source,/createNativeAttestedInvoke/);
   const gate=readFileSync('index.html','utf8').split('<section id="gridlyPaidAccess"')[1].split('</section>')[0];
   assert.doesNotMatch(gate,/free tier|free trial|annual plan|refund guarantee|direct billing/i);
   assert.match(gate,/Cancel anytime through store settings/);assert.match(gate,/Automatically renews/);
@@ -148,9 +164,11 @@ test('proof freshness is independent of provider period end; signed revocation o
  assert.equal(Date.parse(revoked.currentPeriodEnd),end);assert.equal(revoked.entitlementState,'not_entitled');
  assert.equal(accessDecision(revoked,{platform:'apple',now:initial}).allowed,false);
 });
-test('transient verification failure stays unavailable rather than claiming subscription expiry',async()=>{
+test('transient verification failure retains only an unexpired signed proof, never claims subscription expiry',async()=>{
  for(const platform of ['apple','google']) {
   const f=fixture(platform),c=f.create();await c.start();f.reject();const result=await c.refresh();
-  assert.equal(result.state,'temporarily_unavailable');assert.notEqual(result.state,'not_entitled');await c.stop();
+  assert.equal(result.state,'entitled');assert.equal(result.allowed,true);
+  f.advance(300000);const stale=await c.refresh();
+  assert.equal(stale.state,'temporarily_unavailable');assert.equal(stale.allowed,false);assert.notEqual(stale.state,'not_entitled');await c.stop();
  }
 });

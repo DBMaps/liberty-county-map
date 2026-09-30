@@ -1,4 +1,4 @@
--- LP244.62 LOCAL FOUNDATION ONLY. Production application requires separate approval.
+-- LP244.62 / LP244.66B LOCAL DRAFT ONLY. Production application requires separate approval.
 BEGIN;
 DO $$ BEGIN
  IF current_user <> 'postgres' OR EXISTS(SELECT 1 FROM pg_namespace WHERE nspname='subscription_ops')
@@ -27,7 +27,7 @@ CREATE TABLE subscription_ops.store_entitlements (
   WHEN subscription_state='unknown' THEN 'unknown' ELSE 'not_entitled' END),
  CHECK(entitlement_state<>'entitled' OR (current_period_end IS NOT NULL AND current_period_end>last_verified_at AND error_category='none')),
  CHECK(subscription_state<>'expired' OR (current_period_end IS NOT NULL AND current_period_end<=last_verified_at)),
- CHECK(cache_expires_at=last_verified_at+interval '24 hours')
+ CHECK(cache_expires_at=least(last_verified_at+interval '10 minutes',coalesce(current_period_end,last_verified_at+interval '10 minutes')))
 );
 ALTER TABLE subscription_ops.store_entitlements ENABLE ROW LEVEL SECURITY;
 REVOKE ALL ON subscription_ops.store_entitlements FROM PUBLIC,anon,authenticated,service_role;
@@ -48,7 +48,7 @@ BEGIN
  INSERT INTO subscription_ops.store_entitlements(platform,environment,chain_fingerprint,product_id,base_plan_id,
  subscription_state,entitlement_state,current_period_end,last_verified_at,verification_source,error_category,cache_expires_at)
  VALUES(r.platform,r.environment,r.chain_fingerprint,r.product_id,r.base_plan_id,r.subscription_state,r.entitlement_state,
- r.current_period_end,r.last_verified_at,r.verification_source,r.error_category,r.last_verified_at+interval '24 hours')
+ r.current_period_end,r.last_verified_at,r.verification_source,r.error_category,least(r.last_verified_at+interval '10 minutes',coalesce(r.current_period_end,r.last_verified_at+interval '10 minutes')))
  ON CONFLICT(platform,environment,chain_fingerprint) DO UPDATE SET
  product_id=excluded.product_id,base_plan_id=excluded.base_plan_id,subscription_state=excluded.subscription_state,
  entitlement_state=excluded.entitlement_state,current_period_end=excluded.current_period_end,

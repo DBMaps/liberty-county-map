@@ -26413,6 +26413,44 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet[data-
 
 /* LP066 — Unified consumer experience polish.
    Presentation-only hierarchy, density, motion, and portrait ergonomics. */
+#gridlySettingsRestore:not([hidden]) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  margin: 0 0 16px;
+}
+.gridly-settings-sheet .gridly-settings-restore {
+  width: 100%;
+  min-height: 48px;
+  margin-bottom: 6px;
+  text-align: center;
+}
+
+/* Final iPhone welcome placement. Keep the portrait presentation inside both
+   safe areas while leaving the accepted wider tour layout untouched. */
+@media (max-width: 520px) and (orientation: portrait) {
+  .gridly-welcome-overlay:has([data-gridly-visual-quick-tour]) {
+    place-items: center;
+    box-sizing: border-box;
+    padding: calc(10px + env(safe-area-inset-top, 0px)) 8px calc(10px + env(safe-area-inset-bottom, 0px));
+  }
+  .gridly-v858-first-run-sheet:has([data-gridly-visual-quick-tour]),
+  .gridly-v858-first-run-card:has([data-gridly-visual-quick-tour]) {
+    height: calc(100dvh - 20px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+    max-height: calc(100dvh - 20px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+  }
+  .gridly-v950-welcome-page {
+    grid-template-rows: auto auto;
+    align-content: center;
+    gap: clamp(8px, 1.8vh, 16px);
+  }
+  .gridly-v950-welcome-logo { width: clamp(180px, 53vw, 232px); margin-bottom: 0; }
+  .gridly-v950-welcome-page .gridly-v950-page-copy { gap: clamp(7px, 1.2vh, 12px); }
+  .gridly-v950-welcome-page h2 { font-size: clamp(2.1rem, 8.8vw, 2.85rem); line-height: 1.02; }
+  #gridlySettingsRestore:not([hidden]) { width: 100%; }
+}
+
 :root {
   --gridly-polish-radius: 18px;
   --gridly-polish-divider: rgba(124, 255, 238, 0.12);
@@ -30125,4 +30163,13 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet .sett
 body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet .settings-display-choice .settings-text-size-segment.is-selected {
   color: var(--gridly-accent-foreground) !important; background: var(--gridly-accent) !important;
   border-color: var(--gridly-accent) !important;
+}
+
+/* LP244.66S: native Restore remains readable on the authoritative portrait
+   Settings sheet in both light and dark appearance. */
+body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet[data-active-sheet="settings"] .gridly-settings-sheet .gridly-settings-restore {
+  background: #0b4b5a !important;
+  border-color: #2aa8ae !important;
+  color: #f7fffd !important;
+  font-weight: 700;
 }
