@@ -29,6 +29,7 @@ export function createGooglePlayBilling({capacitor,plugin,authority,publicKey,de
    if(native?.errorCategory==='already_owned'){native=await plugin.queryCurrentPurchases();}
    if(native?.result==='purchase_pending'||native?.errorCategory==='purchase_pending')return failure('purchase_pending');
    if(native?.errorCategory==='user_cancelled')return failure('user_canceled');
+   if(native?.result==='no_evidence')return failure('no_store_evidence');
    if(native?.result!=='purchased'||native.productId!==GOOGLE_PRODUCT_ID||native.basePlanId!==GOOGLE_BASE_PLAN_ID)return failure(native?.errorCategory==='verification_failed'?'invalid_authority':'store_unavailable');
    category='verification_unavailable';
    const nonce=Array.from(crypto.getRandomValues(new Uint8Array(24)),b=>b.toString(16).padStart(2,'0')).join('');

@@ -42,6 +42,18 @@ test('strict native selection: desktop, PWA and native hints alone are not autho
   const f=fixture(),c=createPaidAccess({...f.options,...await productionPaidComposition(f.options.capacitor)});
   assert.equal((await c.start()).allowed,false);assert.equal(c.read().state,'temporarily_unavailable');await c.stop();
 });
+test('Google no-purchase startup is not entitled, while a real store failure stays unavailable',async()=>{
+ const empty=fixture('google');empty.plugin.queryCurrentPurchases=async()=>{empty.events.push('query');return {result:'no_evidence',errorCategory:'not_entitled'};};
+ const fresh=empty.create(),noPurchase=await fresh.start();
+ assert.equal(noPurchase.state,'not_entitled');assert.equal(noPurchase.errorCategory,'no_store_evidence');
+ assert.equal(noPurchase.allowed,false);assert.equal(noPurchase.product?.available,true);
+ assert.equal(noPurchase.verificationReady,true);assert.ok(!empty.events.includes('server'));await fresh.stop();
+
+ const failed=fixture('google');failed.plugin.queryCurrentPurchases=async()=>{failed.events.push('query');return {result:'error',errorCategory:'billing_unavailable'};};
+ const unavailable=failed.create(),storeFailure=await unavailable.start();
+ assert.equal(storeFailure.state,'temporarily_unavailable');assert.equal(storeFailure.errorCategory,'store_unavailable');
+ assert.equal(storeFailure.allowed,false);assert.ok(!failed.events.includes('server'));await unavailable.stop();
+});
 for(const platform of ['apple','google']) {
   test(platform+': silent startup, localized price, finish sequencing, redacted UI and reinstall recovery',async()=>{
     const f=fixture(platform),c=f.create(),states=[];c.subscribe(value=>{states.push(value);if(value.allowed)f.events.push('UI admitted');});

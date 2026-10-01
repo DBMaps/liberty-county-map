@@ -168,5 +168,29 @@ test('Android paid onboarding fits below legal control and keeps Home Area focus
     await failed.locator('#gridlyPaidStatus').filter({hasText:'Subscription product is unavailable from Google Play'}).waitFor();
     assert.equal(await failed.locator('#gridlyPaidPrice').textContent(),'Price unavailable');
     assert.equal(await failed.locator('#gridlyPaidPurchase').isDisabled(),true);
+
+    for(const authorityReady of [true,false]){
+      const fresh=await browser.newPage({viewport:{width:390,height:740},isMobile:true});
+      await fresh.addInitScript(ready=>{
+        localStorage.setItem('gridlyBetaFirstRunWalkthroughCompleteV894C','yes');
+        window.Capacitor={isNativePlatform:()=>true,getPlatform:()=> 'android',
+          isPluginAvailable:name=>['GridlyPlayBilling','GridlyPlayIntegrity'].includes(name)||(ready&&name==='CapacitorHttp'),
+          Plugins:{GridlyPlayBilling:{addListener:async()=>({remove:async()=>{}}),startObserving:async()=>{},stopObserving:async()=>{},
+            getProducts:async()=>({result:'available',productId:'com.gridlygo.gridly.monthly',basePlanId:'monthly',displayName:'Gridly Monthly',displayPrice:'$2.99',currency:'USD',billingPeriod:'P1M',storefront:'US',hasOffer:false}),
+            queryCurrentPurchases:async()=>({result:'no_evidence',errorCategory:'not_entitled'})},
+            GridlyPlayIntegrity:{prepare:async()=>({prepared:true}),authorize:async()=>({type:'google_standard',token:'synthetic'})}},
+          nativePromise:async()=>{throw Error('No purchase evidence should invoke verifier');}};
+      },authorityReady);
+      await fresh.goto('http://127.0.0.1:'+server.address().port+'/',{waitUntil:'domcontentloaded'});
+      await fresh.locator('#gridlyPaidPrice').filter({hasText:'$2.99/month'}).waitFor();
+      if(authorityReady){
+        await fresh.locator('#gridlyPaidStatus').filter({hasText:'Subscribe or restore your store purchase'}).waitFor();
+        assert.equal(await fresh.locator('#gridlyPaidPurchase').isDisabled(),false);
+      }else{
+        await fresh.locator('#gridlyPaidStatus').filter({hasText:'Verification is temporarily unavailable'}).waitFor();
+        assert.equal(await fresh.locator('#gridlyPaidPurchase').isDisabled(),true);
+      }
+      await fresh.close();
+    }
   }finally{await browser.close();await new Promise(resolve=>server.close(resolve));}
 });

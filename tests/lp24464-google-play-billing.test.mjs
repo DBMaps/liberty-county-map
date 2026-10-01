@@ -42,6 +42,14 @@ test('already owned rechecks current purchase without duplicate purchase',async(
 test('fresh install restore uses current store token without old install/account identity',async()=>{
  for(let install=0;install<2;install++){const f=fixture(),s=f.session();await s.restore();assert.deepEqual(f.events,['restore','server','deliver']);assert.ok(s.allowed().allowed);}
  const f=fixture();f.plugin.queryCurrentPurchases=async()=>({result:'no_evidence',errorCategory:'not_entitled'});const s=f.session();await s.launch();assert.equal(s.allowed().allowed,false);assert.equal(s.read().entitlementState,'unknown');
+ assert.equal(s.read().errorCategory,'no_store_evidence');assert.ok(!f.events.includes('server'));
+});
+test('genuine BillingClient query failures remain unavailable without invoking authority',async()=>{
+ for(const category of ['billing_unavailable','billing_disconnected']){
+  const f=fixture();f.plugin.queryCurrentPurchases=async()=>({result:'error',errorCategory:category});
+  const s=f.session();await s.launch();assert.equal(s.read().errorCategory,'store_unavailable');
+  assert.equal(s.allowed().allowed,false);assert.ok(!f.events.includes('server'));
+ }
 });
 test('signed current expiry/cancellation overrides native PURCHASED hint',async()=>{
  const expired=data({subscriptionState:'SUBSCRIPTION_STATE_EXPIRED',lineItems:[{...data().lineItems[0],expiryTime:new Date(now-1).toISOString()}]});
