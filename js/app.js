@@ -89485,6 +89485,19 @@ function gridlyGetCommunityProtocolClient() {
   if (window.gridlyReportProtocol?.protocol_version !== 2) throw new Error("Reporting requires the current Gridly build. Update or reload Gridly.");
   return gridlyCommunityProtocolClient ||= window.gridlyReportProtocol.create();
 }
+function gridlyAuthorizedReportTransport(client) {
+  return Object.freeze({rpc: async (name, args) => {
+    if (name === "get_community_reporting_status") return client.rpc(name, args);
+    if (!["submit_community_observation", "mutate_community_observation", "cancel_community_operation"].includes(name))
+      return { data: null, error: { code: "REPORT_AUTH_REQUIRED" } };
+    try {
+      const proof = await window.gridlyPaidReporting?.getProof();
+      if (typeof proof !== "string" || proof.length > 8192 || !client?.functions?.invoke)
+        return { data: null, error: { code: "REPORT_AUTH_REQUIRED" } };
+      return await client.functions.invoke("gridly-paid-report", { body: { proof, operation: name, args } });
+    } catch (_) { return { data: null, error: { code: "REPORT_AUTH_REQUIRED" } }; }
+  }});
+}
 
 /* LP244.29A REPORTING AVAILABILITY RUNTIME START */
 const GRIDLY_REPORTING_AVAILABILITY_STATES = Object.freeze({ UNKNOWN: "UNKNOWN", ENABLED: "ENABLED", DISABLED: "DISABLED" });
@@ -89596,7 +89609,7 @@ async function gridlySubmitCommunityOperation(kind, payload, client = supabaseCl
     const accepted = await window.gridlyUgcCompliance?.ensureAccepted?.();
     if (!accepted) return Object.freeze({ status: "terms_required", blockedBeforeBegin: true });
   }
-  return gridlyReportingAvailabilityRuntime.submit(kind, payload, gridlyGetCommunityProtocolClient(), client, device);
+  return gridlyReportingAvailabilityRuntime.submit(kind, payload, gridlyGetCommunityProtocolClient(), gridlyAuthorizedReportTransport(client), device);
 }
 window.gridlyUgcComplianceBridge = Object.freeze({
   notify: (message, kind = "success") => setConfirmation(message, kind),
@@ -89637,7 +89650,7 @@ function gridlyRefreshPendingOperationButton() {
     button.onclick = async () => {
       button.disabled = true;
       try {
-        const result = await gridlyGetCommunityProtocolClient().retry(supabaseClient, deviceId);
+        const result = await gridlyGetCommunityProtocolClient().retry(gridlyAuthorizedReportTransport(supabaseClient), deviceId);
         gridlyReportingAvailabilityRuntime.observeResult(result);
         const outcome = window.gridlyReportProtocol.outcome(result.status);
         setConfirmation(outcome.message, outcome.success ? "success" : "error");

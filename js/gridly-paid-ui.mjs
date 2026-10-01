@@ -20,6 +20,9 @@ export async function bootPaidAccess() {
   const restore=document.getElementById('gridlyPaidRestore'), retry=document.getElementById('gridlyPaidRetry');
   const settingsRestore=document.getElementById('gridlySettingsRestore');
   const coordinator=createPaidAccess(await productionPaidComposition(window.Capacitor,{googleLicenseTest:GRIDLY_ANDROID_LICENSE_TEST_CANDIDATE}));
+  // The short-lived signed proof stays in this page's memory. Reporting obtains
+  // a fresh proof through paid access; neither native evidence nor receipts leak.
+  Object.defineProperty(window,'gridlyPaidReporting',{configurable:true,value:Object.freeze({getProof:()=>coordinator.getReportingProof()})});
   let loading=false, started=false, wasVisible=false, loadFailed=false, closing=false;
   let tourComplete=onboardingComplete(), onboarding;
   const legal=document.createElement('details');legal.id='gridlyPaidLegalAccess';legal.hidden=true;
@@ -107,7 +110,7 @@ export async function bootPaidAccess() {
   retry.addEventListener('click',()=>{if(loadFailed) window.location.reload();else void coordinator.refresh();});
   const connectivity=()=>{if(!closing)void coordinator.refresh();};
   window.addEventListener('online',connectivity);
-  window.addEventListener('pagehide',()=>{closing=true;window.removeEventListener('online',connectivity);document.removeEventListener('click',settingsRestoreClick);onboarding?.dispose();lock();void coordinator.stop();},{once:true});
+  window.addEventListener('pagehide',()=>{closing=true;delete window.gridlyPaidReporting;window.removeEventListener('online',connectivity);document.removeEventListener('click',settingsRestoreClick);onboarding?.dispose();lock();void coordinator.stop();},{once:true});
   window.addEventListener('pageshow',event=>{if(event.persisted) window.location.reload();});
   await coordinator.start();
 }

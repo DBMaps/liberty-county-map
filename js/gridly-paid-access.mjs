@@ -12,7 +12,7 @@ export function createPaidAccess({capacitor,plugin,authority,publicKey,continuit
  crypto=globalThis.crypto,timeoutMs=15000,purchaseTimeoutMs=120000,monotonic=()=>globalThis.performance.now(),
  schedule=setTimeout,cancel=clearTimeout}={}) {
  const platform=nativeStore(capacitor),subscribers=new Set(),handles=[];
- let snapshot=null,continuity=null,state='initializing',action=null,product=null,productLoading=false,errorCategory='none';
+ let snapshot=null,reportingProof=null,reportingProofSnapshot=null,pendingProof=null,continuity=null,state='initializing',action=null,product=null,productLoading=false,errorCategory='none';
  let session,tail=Promise.resolve(),signalTask,startTask,expiryTimer,stopped=false,context=null,denied=false;
  let clockAnchor=null, generation=0;
  const effectiveNow=()=>clockAnchor===null?now():Math.max(now(),clockAnchor.utc+Math.max(0,monotonic()-clockAnchor.tick));
@@ -22,7 +22,7 @@ export function createPaidAccess({capacitor,plugin,authority,publicKey,continuit
  const read=()=>Object.freeze({state,action,platform,product,...(platform==='google'?{productLoading}:{}),errorCategory,verificationReady:!!authority&&!!publicKey,
   allowed:allowed(),temporaryAccess:allowed()&&!accessDecision(snapshot,{platform,environment:proofEnvironment(),now:effectiveNow()}).allowed});
  const publish=()=>{const value=read();for(const fn of subscribers){try{fn(value);}catch{}}return value;};
- const clear=()=>{cancel(expiryTimer);snapshot=null;};
+ const clear=()=>{cancel(expiryTimer);snapshot=null;reportingProof=null;reportingProofSnapshot=null;pendingProof=null;};
  const classify=row=>row?.errorCategory==='purchase_pending'?'pending':row?.errorCategory==='user_canceled'||row?.errorCategory==='no_store_evidence'?'not_entitled':row?.entitlementState==='not_entitled'?'not_entitled':row?.errorCategory==='invalid_authority'?'unknown':'temporarily_unavailable';
  const queue=work=>{const next=tail.then(work,work);tail=next.catch(()=>{});return next;};
  async function bounded(work){let timer;try{return await Promise.race([work(),new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('unavailable')),timeoutMs);})]);}finally{clearTimeout(timer);}}
@@ -42,8 +42,8 @@ export function createPaidAccess({capacitor,plugin,authority,publicKey,continuit
  if(platform) {
   session=(platform==='apple'?createAppleStoreKit:createGooglePlayBilling)({capacitor,plugin,authority:boundAuthority,publicKey,now,crypto,timeoutMs,purchaseTimeoutMs,environment:platform==='apple'?'auto':googleEnvironment,
    onNativeDenial:revoke,deliverEntitlement:async(row,guard)=>{
-   if(stopped||denied||!guard.isCurrent()||!accessDecision(row,{platform,environment:platform==='apple'?row?.environment:googleEnvironment,now:now()}).allowed)return false;
-    snapshot=row;return true;
+   if(stopped||denied||!guard.isCurrent()||typeof guard.proof!=='string'||!accessDecision(row,{platform,environment:platform==='apple'?row?.environment:googleEnvironment,now:now()}).allowed)return false;
+    snapshot=row;pendingProof=guard.proof;return true;
    }});
  }
  async function begin() {
@@ -71,7 +71,7 @@ export function createPaidAccess({capacitor,plugin,authority,publicKey,continuit
   generation++;cancel(expiryTimer);const wasAllowed=allowed(),previousSnapshot=wasAllowed?snapshot:null;denied=false;
   // A current signed proof remains authority while a background recheck runs.
   // Fresh launches still wait for server verification before admission.
-  if(!wasAllowed)snapshot=null;
+  if(!wasAllowed){snapshot=null;reportingProof=null;reportingProofSnapshot=null;}
   action=method;errorCategory='none';state=platform?(wasAllowed?'entitled':'initializing'):'unsupported_platform';publish();
   if(stopped||!session){action=null;return publish();}
   await begin();
@@ -95,11 +95,11 @@ export function createPaidAccess({capacitor,plugin,authority,publicKey,continuit
       continuity=candidate;
      }else await bounded(()=>continuityVault.revoke({attempt:context.attempt}));
     }
-    state='entitled';arm(true);
+    reportingProof=pendingProof;reportingProofSnapshot=row;state='entitled';arm(true);
    }else if(row?.entitlementState==='not_entitled'||row?.errorCategory==='invalid_authority'||row?.errorCategory==='no_store_evidence'||denied) {
     const explicitDenial=denied||row?.entitlementState==='not_entitled';if(!denied)await revoke();state=explicitDenial?'not_entitled':classify(row);
    }else {
-    snapshot=null;
+    snapshot=null;reportingProof=null;reportingProofSnapshot=null;
     const temporary=['store_unavailable','verification_unavailable','network_unavailable'].includes(row?.errorCategory);
     if(context&&temporary&&!denied){
      if((await bounded(()=>continuityVault.retain({attempt:context.attempt})))?.retained!==true)continuity=null;
@@ -113,9 +113,16 @@ export function createPaidAccess({capacitor,plugin,authority,publicKey,continuit
    // Never recover from an uncertain native persistence write or denial failure.
    clear();continuity=null;state='temporarily_unavailable';errorCategory='verification_unavailable';
   }
-  action=null;return publish();
+  pendingProof=null;action=null;return publish();
  }
  const refresh=()=>{if(!signalTask)signalTask=queue(()=>run('refresh')).finally(()=>{signalTask=null;});return signalTask;};
+ const currentReportingProof=()=>reportingProof&&reportingProofSnapshot===snapshot&&allowed()&&accessDecision(snapshot,{platform,environment:proofEnvironment(),now:effectiveNow()+30000}).allowed?reportingProof:null;
+ async function getReportingProof(){
+  if(!currentReportingProof())await refresh();
+  const proof=currentReportingProof();
+  if(!proof)throw Error('verification_required');
+  return proof;
+ }
  function start() {
   if(startTask)return startTask;
   startTask=queue(async()=>{
@@ -144,7 +151,7 @@ export function createPaidAccess({capacitor,plugin,authority,publicKey,continuit
   });return startTask;
  }
  async function stop(){stopped=true;clear();continuity=null;state='unknown';action=null;publish();for(const handle of handles.splice(0))discard(handle);try{await bounded(()=>session?.stop());}catch{}subscribers.clear();}
- return Object.freeze({read,allowed,start,refresh,resume:refresh,
+ return Object.freeze({read,allowed,start,refresh,resume:refresh,getReportingProof,
   initializeRuntime:work=>queue(async()=>{if(!allowed())throw Error('verification_required');await work(allowed);if(!allowed())throw Error('verification_required');}),
   purchase:()=>queue(()=>run('purchase')),restore:()=>queue(()=>run('restore')),
   subscribe(fn){subscribers.add(fn);fn(read());return ()=>subscribers.delete(fn);},stop});

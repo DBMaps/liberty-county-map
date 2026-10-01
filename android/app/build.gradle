@@ -35,7 +35,7 @@ android {
         applicationId 'com.gridlygo.gridly'
         minSdk 24
         targetSdk 36
-        versionCode 7
+        versionCode 8
         versionName '1.0.0'
         buildConfigField 'long', 'GRIDLY_PLAY_INTEGRITY_PROJECT_NUMBER', "${gridlyIntegrityProject}L"
     }

@@ -69,7 +69,7 @@ test('new-report gate runs before protocol begin while retry and cancellation se
   assert.ok(gate.indexOf('ensureAccepted') < gate.indexOf('gridlyReportingAvailabilityRuntime.submit'));
   assert.match(gate,/kind === "create"/);
   assert.match(gate,/terms_required/);
-  assert.match(app,/gridlyGetCommunityProtocolClient\(\)\.retry\(supabaseClient, deviceId\)/);
+  assert.match(app,/gridlyGetCommunityProtocolClient\(\)\.retry\(gridlyAuthorizedReportTransport\(supabaseClient\), deviceId\)/);
   assert.match(app,/runtime\.submit\("cancel"|kind === "cancel"|pending\.kind === "cancel"/);
   assert.match(app,/window\.gridlyUgcComplianceBridge/);
   assert.match(app,/submit_community_moderation_report/);

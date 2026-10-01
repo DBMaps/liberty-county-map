@@ -55,6 +55,18 @@ test('Google no-purchase startup is not entitled, while a real store failure sta
  assert.equal(storeFailure.allowed,false);assert.ok(!failed.events.includes('server'));await unavailable.stop();
 });
 for(const platform of ['apple','google']) {
+  test(platform+': reporting receives only a fresh signed proof in memory',async()=>{
+    const f=fixture(platform),c=f.create();
+    await c.start();
+    const proof=await c.getReportingProof();
+    assert.equal(proof.split('.').length,3);
+    assert.doesNotMatch(JSON.stringify(c.read()),/gridly-entitlement|test-private-token|proof/);
+    f.advance(270001);
+    const refreshed=await c.getReportingProof();
+    assert.equal(refreshed.split('.').length,3);
+    assert.ok(f.events.includes('refresh'));
+    await c.stop();await assert.rejects(c.getReportingProof());
+  });
   test(platform+': silent startup, localized price, finish sequencing, redacted UI and reinstall recovery',async()=>{
     const f=fixture(platform),c=f.create(),states=[];c.subscribe(value=>{states.push(value);if(value.allowed)f.events.push('UI admitted');});
     assert.equal((await c.start()).state,'entitled');assert.equal(c.read().product.displayPrice,'$3.49');assert.ok(!f.events.includes('purchase'));

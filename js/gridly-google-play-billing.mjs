@@ -44,7 +44,7 @@ export function createGooglePlayBilling({capacitor,plugin,authority,publicKey,de
     if(verified.entitlementState==='unknown')return failure(verified.errorCategory==='invalid_authority'?'invalid_authority':'verification_unavailable');
    if(verified.entitlementState==='not_entitled')return verified;
    // LP244.62 sends this proof only after cache reconciliation and required server ack.
-   if(!deliverEntitlement||await deliverEntitlement(verified,{isCurrent:()=>active&&!stopped})!==true)return failure();
+   if(!deliverEntitlement||await deliverEntitlement(verified,{isCurrent:()=>active&&!stopped,proof})!==true)return failure();
    return active&&!stopped?verified:failure();
   },method==='purchase'?purchaseTimeoutMs:timeoutMs);}catch{state=failure(category);}finally{active=false;}
   return state;

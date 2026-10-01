@@ -51,6 +51,10 @@ where singleton and protocol_version = 2 and not reporting_enabled
       and owner_authorization_id = :'owner_authorization_id'::uuid
   );
 
+insert into report_retention.admission_events(event_id,action)
+select :'owner_authorization_id'::uuid,'activate'
+where exists (select 1 from report_retention.admission_state where singleton and reporting_enabled);
+
 do $$ begin
   if not exists (
     select 1

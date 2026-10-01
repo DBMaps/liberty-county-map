@@ -28,6 +28,11 @@ verify_jwt = false
 [functions.gridly-verify-google-sandbox-subscription]
 verify_jwt = false
 
+# The handler verifies a short-lived production entitlement proof before its
+# service-role call to the protocol-v2 atomic writer.
+[functions.gridly-paid-report]
+verify_jwt = false
+
 # Separate constant-time operations token in the handler.
 [functions.gridly-subscription-ops]
 verify_jwt = false
