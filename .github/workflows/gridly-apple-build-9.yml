@@ -87,11 +87,12 @@ jobs:
           KEY_PUBLIC_SHA=$(openssl pkey -in "$RUNNER_TEMP/distribution-private.key" -pubout -outform DER | shasum -a 256 | awk '{print $1}')
           CERT_PUBLIC_SHA=$(openssl x509 -in "$RUNNER_TEMP/distribution-cert.pem" -pubkey -noout | openssl pkey -pubin -outform DER | shasum -a 256 | awk '{print $1}')
           test -n "$KEY_PUBLIC_SHA" && test "$KEY_PUBLIC_SHA" = "$CERT_PUBLIC_SHA"
-          TEMP_P12_PASSWORD="$(openssl rand -base64 48)"
+          openssl version
+          TEMP_P12_PASSWORD="$(openssl rand -hex 32)"
           export TEMP_P12_PASSWORD
-          openssl pkcs12 -export -inkey "$RUNNER_TEMP/distribution-private.key" -in "$RUNNER_TEMP/distribution-cert.pem" \
+          openssl pkcs12 -export -legacy -inkey "$RUNNER_TEMP/distribution-private.key" -in "$RUNNER_TEMP/distribution-cert.pem" \
             -out "$RUNNER_TEMP/distribution.p12" -passout env:TEMP_P12_PASSWORD
-          openssl pkcs12 -in "$RUNNER_TEMP/distribution.p12" -passin env:TEMP_P12_PASSWORD -info -noout >/dev/null 2>&1
+          openssl pkcs12 -legacy -in "$RUNNER_TEMP/distribution.p12" -passin env:TEMP_P12_PASSWORD -info -noout >/dev/null 2>&1
           KEYCHAIN_PASSWORD="$(openssl rand -base64 32)"
           security create-keychain -p "$KEYCHAIN_PASSWORD" gridly-build.keychain
           security unlock-keychain -p "$KEYCHAIN_PASSWORD" gridly-build.keychain
