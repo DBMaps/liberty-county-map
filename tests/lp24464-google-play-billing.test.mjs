@@ -9,11 +9,11 @@ import {runtimePolicy} from '../tools/native-web.mjs';
 const now=Date.parse('2026-09-27T12:00:00.000Z');
 const keys=await webcrypto.subtle.generateKey({name:'ECDSA',namedCurve:'P-256'},false,['sign','verify']);
 const hmac=await webcrypto.subtle.generateKey({name:'HMAC',hash:'SHA-256'},false,['sign']);
-const data=(patch={})=>({regionCode:'US',startTime:new Date(now-1000).toISOString(),subscriptionState:'SUBSCRIPTION_STATE_ACTIVE',acknowledgementState:'ACKNOWLEDGEMENT_STATE_PENDING',lineItems:[{productId:'gridly_monthly',offerDetails:{basePlanId:'monthly'},expiryTime:new Date(now+86400000).toISOString(),autoRenewingPlan:{autoRenewEnabled:true}}],...patch});
+const data=(patch={})=>({regionCode:'US',startTime:new Date(now-1000).toISOString(),subscriptionState:'SUBSCRIPTION_STATE_ACTIVE',acknowledgementState:'ACKNOWLEDGEMENT_STATE_PENDING',lineItems:[{productId:'com.gridlygo.gridly.monthly',offerDetails:{basePlanId:'monthly'},expiryTime:new Date(now+86400000).toISOString(),autoRenewingPlan:{autoRenewEnabled:true}}],...patch});
 function fixture({env='production',providerData=data()}={}) {
- const events=[],handlers=new Map(),native={result:'purchased',productId:'gridly_monthly',basePlanId:'monthly',purchaseToken:'synthetic-play-token',acknowledgementRequired:true};
+ const events=[],handlers=new Map(),native={result:'purchased',productId:'com.gridlygo.gridly.monthly',basePlanId:'monthly',purchaseToken:'synthetic-play-token',acknowledgementRequired:true};
  const record=normalizeGoogle(providerData,{env,token:native.purchaseToken,now});
- const plugin={getProducts:async()=>({result:'available',productId:'gridly_monthly',basePlanId:'monthly',displayName:'Gridly Monthly',displayPrice:'$2.99',currency:'USD',billingPeriod:'P1M',storefront:'US',hasOffer:false}),
+ const plugin={getProducts:async()=>({result:'available',productId:'com.gridlygo.gridly.monthly',basePlanId:'monthly',displayName:'Gridly Monthly',displayPrice:'$2.99',currency:'USD',billingPeriod:'P1M',storefront:'US',hasOffer:false}),
  purchase:async()=>{events.push('purchase');return native;},queryCurrentPurchases:async()=>{events.push('query');return native;},refreshEntitlement:async()=>{events.push('refresh');return native;},restorePurchases:async()=>{events.push('restore');return native;},
  addListener:async(name,fn)=>{handlers.set(name,fn);return {remove:async()=>handlers.delete(name)};},startObserving:async()=>{events.push('observe');},stopObserving:async()=>{events.push('stop');}};
  const options={capacitor:{isNativePlatform:()=>true,getPlatform:()=> 'android'},plugin,publicKey:keys.publicKey,crypto:webcrypto,now:()=>now,environment:env,
@@ -22,7 +22,7 @@ function fixture({env='production',providerData=data()}={}) {
  return {options,plugin,native,record,events,handlers,session:()=>createGooglePlayBilling(options)};
 }
 test('canonical product/base plan; localized metadata, no hidden token or invented price',async()=>{
- assert.equal(GOOGLE_PRODUCT_ID,'gridly_monthly');assert.equal(GOOGLE_BASE_PLAN_ID,'monthly');const f=fixture(),s=f.session(),original=f.plugin.getProducts;
+ assert.equal(GOOGLE_PRODUCT_ID,'com.gridlygo.gridly.monthly');assert.equal(GOOGLE_BASE_PLAN_ID,'monthly');const f=fixture(),s=f.session(),original=f.plugin.getProducts;
  assert.equal((await s.lookupProduct()).displayPrice,'$2.99');f.plugin.getProducts=async()=>({...await original(),displayPrice:'$3.49',offerToken:'private'});
  assert.deepEqual(Object.keys(await s.lookupProduct()).sort(),['available','basePlanId','billingPeriod','currency','displayName','displayPrice','productId']);assert.equal((await s.lookupProduct()).displayPrice,'$3.49');
  for(const patch of [{productId:'other'},{basePlanId:'annual'},{billingPeriod:'P1Y'},{hasOffer:true},{storefront:'CA'}]){f.plugin.getProducts=async()=>({...await original(),...patch});assert.equal((await s.lookupProduct()).available,false);}
@@ -42,6 +42,14 @@ test('already owned rechecks current purchase without duplicate purchase',async(
 test('fresh install restore uses current store token without old install/account identity',async()=>{
  for(let install=0;install<2;install++){const f=fixture(),s=f.session();await s.restore();assert.deepEqual(f.events,['restore','server','deliver']);assert.ok(s.allowed().allowed);}
  const f=fixture();f.plugin.queryCurrentPurchases=async()=>({result:'no_evidence',errorCategory:'not_entitled'});const s=f.session();await s.launch();assert.equal(s.allowed().allowed,false);assert.equal(s.read().entitlementState,'unknown');
+ assert.equal(s.read().errorCategory,'no_store_evidence');assert.ok(!f.events.includes('server'));
+});
+test('genuine BillingClient query failures remain unavailable without invoking authority',async()=>{
+ for(const category of ['billing_unavailable','billing_disconnected']){
+  const f=fixture();f.plugin.queryCurrentPurchases=async()=>({result:'error',errorCategory:category});
+  const s=f.session();await s.launch();assert.equal(s.read().errorCategory,'store_unavailable');
+  assert.equal(s.allowed().allowed,false);assert.ok(!f.events.includes('server'));
+ }
 });
 test('signed current expiry/cancellation overrides native PURCHASED hint',async()=>{
  const expired=data({subscriptionState:'SUBSCRIPTION_STATE_EXPIRED',lineItems:[{...data().lineItems[0],expiryTime:new Date(now-1).toISOString()}]});
@@ -77,7 +85,7 @@ test('native registration, exact dependency, strict offer and privacy contracts'
  const path='android/app/src/main/java/com/gridlygo/gridly/',native=readFileSync(path+'GridlyPlayBillingPlugin.kt','utf8'),js=readFileSync('js/gridly-google-play-billing.mjs','utf8');
  assert.match(native,/^package com\.gridlygo\.gridly/m);assert.match(readFileSync('android/app/build.gradle','utf8'),/com.android.billingclient:billing:9\.1\.0/);
  assert.match(readFileSync(path+'MainActivity.kt','utf8'),/registerPlugin\(GridlyPlayBillingPlugin::class.java\)/);
- for(const api of ['queryProductDetailsAsync','launchBillingFlow','queryPurchasesAsync','getBillingConfigAsync','endConnection','Purchase.PurchaseState.PENDING','offer.offerId != null','INFINITE_RECURRING'])assert.ok(native.includes(api),api);
+ for(const api of ['queryProductDetailsAsync','launchBillingFlow','queryPurchasesAsync','includeSuspendedSubscriptions(true)','getBillingConfigAsync','endConnection','Purchase.PurchaseState.PENDING','offer.offerId != null','INFINITE_RECURRING'])assert.ok(native.includes(api),api);
  assert.doesNotMatch(native+'\n'+js,/Log\.|println\(|console\.|SharedPreferences|localStorage|setObfuscatedAccountId|setObfuscatedProfileId|acknowledgePurchase\(|consumeAsync\(|reporting_enabled\s*[:=]\s*true/);
  assert.ok(runtimePolicy.files.includes('js/gridly-google-play-billing.mjs'));assert.doesNotMatch(readFileSync('index.html','utf8'),/gridly-google-play-billing/);
 });

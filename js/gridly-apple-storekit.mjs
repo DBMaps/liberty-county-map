@@ -59,7 +59,7 @@ export function createAppleStoreKit({capacitor,plugin,authority,publicKey,delive
     if(verified.entitlementState==='not_entitled')return verified;
     // Apple finish means delivery completed, not just receipt validation.
     // No delivery port exists in current runtime: production finishing stays blocked.
-    if(!deliverEntitlement||await deliverEntitlement(verified,{isCurrent:()=>active&&!stopped})!==true)return failure('verification_unavailable');
+    if(!deliverEntitlement||await deliverEntitlement(verified,{isCurrent:()=>active&&!stopped,proof})!==true)return failure('verification_unavailable');
     if(!active||stopped)return failure();
     // Finish only this native verified transaction, never all unfinished purchases.
     category='store_unavailable';

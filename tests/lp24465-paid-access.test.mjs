@@ -13,7 +13,7 @@ function fixture(platform='apple') {
   let now=initial,expired=false,env='production',reject=false;
   const events=[],handlers=new Map(),timers=new Map();let timerId=0;
   const native=platform==='apple'?{result:'verified',productId:'com.gridlygo.gridly.monthly',environment:'production',state:'active',completionHandle:'test-handle',signedTransaction:'test.payload.signature'}
-    :{result:'purchased',productId:'gridly_monthly',basePlanId:'monthly',purchaseToken:'test-private-token'};
+    :{result:'purchased',productId:'com.gridlygo.gridly.monthly',basePlanId:'monthly',purchaseToken:'test-private-token'};
   const plugin={getProducts:async()=>({result:'available',productId:native.productId,...(platform==='google'?{basePlanId:'monthly'}:{}),
     displayName:'Gridly Monthly',displayPrice:'$3.49',currency:'USD',billingPeriod:'P1M',storefront:'US',hasOffer:false}),
     addListener:async(name,fn)=>{events.push('listen:'+name);handlers.set(name,fn);return {remove:async()=>handlers.delete(name)};},
@@ -42,7 +42,31 @@ test('strict native selection: desktop, PWA and native hints alone are not autho
   const f=fixture(),c=createPaidAccess({...f.options,...await productionPaidComposition(f.options.capacitor)});
   assert.equal((await c.start()).allowed,false);assert.equal(c.read().state,'temporarily_unavailable');await c.stop();
 });
+test('Google no-purchase startup is not entitled, while a real store failure stays unavailable',async()=>{
+ const empty=fixture('google');empty.plugin.queryCurrentPurchases=async()=>{empty.events.push('query');return {result:'no_evidence',errorCategory:'not_entitled'};};
+ const fresh=empty.create(),noPurchase=await fresh.start();
+ assert.equal(noPurchase.state,'not_entitled');assert.equal(noPurchase.errorCategory,'no_store_evidence');
+ assert.equal(noPurchase.allowed,false);assert.equal(noPurchase.product?.available,true);
+ assert.equal(noPurchase.verificationReady,true);assert.ok(!empty.events.includes('server'));await fresh.stop();
+
+ const failed=fixture('google');failed.plugin.queryCurrentPurchases=async()=>{failed.events.push('query');return {result:'error',errorCategory:'billing_unavailable'};};
+ const unavailable=failed.create(),storeFailure=await unavailable.start();
+ assert.equal(storeFailure.state,'temporarily_unavailable');assert.equal(storeFailure.errorCategory,'store_unavailable');
+ assert.equal(storeFailure.allowed,false);assert.ok(!failed.events.includes('server'));await unavailable.stop();
+});
 for(const platform of ['apple','google']) {
+  test(platform+': reporting receives only a fresh signed proof in memory',async()=>{
+    const f=fixture(platform),c=f.create();
+    await c.start();
+    const proof=await c.getReportingProof();
+    assert.equal(proof.split('.').length,3);
+    assert.doesNotMatch(JSON.stringify(c.read()),/gridly-entitlement|test-private-token|proof/);
+    f.advance(270001);
+    const refreshed=await c.getReportingProof();
+    assert.equal(refreshed.split('.').length,3);
+    assert.ok(f.events.includes('refresh'));
+    await c.stop();await assert.rejects(c.getReportingProof());
+  });
   test(platform+': silent startup, localized price, finish sequencing, redacted UI and reinstall recovery',async()=>{
     const f=fixture(platform),c=f.create(),states=[];c.subscribe(value=>{states.push(value);if(value.allowed)f.events.push('UI admitted');});
     assert.equal((await c.start()).state,'entitled');assert.equal(c.read().product.displayPrice,'$3.49');assert.ok(!f.events.includes('purchase'));
@@ -140,11 +164,12 @@ test('Apple volatile delivery cannot grant access while transaction finish is st
   assert.equal(c.allowed(),false);assert.equal(c.read().allowed,false);finish();
   assert.equal((await purchase).allowed,true);await c.stop();
 });
-test('release composition has no debug, storage, sandbox, evidence logs, free offer or reporting activation',()=>{
+test('default release composition stays production and has no debug, storage, evidence logs, free offer or reporting activation',()=>{
   const files=['js/gridly-paid-access.mjs','js/gridly-paid-ui.mjs','js/gridly-paid-startup.mjs','js/gridly-paid-config.mjs','js/gridly-paid-bootstrap.js'];
   const source=files.map(file=>readFileSync(file,'utf8')).join('\n');
-  assert.doesNotMatch(source,/localStorage|sessionStorage|URLSearchParams|console\.|sandbox\/test|reporting_enabled\s*[:=]\s*true|service_role|sb_secret_|eyJ[A-Za-z0-9_-]{30}/);
-  assert.match(source,/environment:platform==='apple'\?'auto':'production'/);assert.match(source,/importProductionEntitlementKey/);assert.match(source,/createNativeAttestedInvoke/);
+  assert.doesNotMatch(source,/localStorage|sessionStorage|URLSearchParams|console\.|reporting_enabled\s*[:=]\s*true|service_role|sb_secret_|eyJ[A-Za-z0-9_-]{30}/);
+  assert.match(source,/GRIDLY_ANDROID_LICENSE_TEST_CANDIDATE = false/);assert.match(source,/googleLicenseTest=false/);
+  assert.match(source,/environment:platform==='apple'\?'auto':googleEnvironment/);assert.match(source,/importProductionEntitlementKey/);assert.match(source,/createNativeAttestedInvoke/);
   const gate=readFileSync('index.html','utf8').split('<section id="gridlyPaidAccess"')[1].split('</section>')[0];
   assert.doesNotMatch(gate,/free tier|free trial|annual plan|refund guarantee|direct billing/i);
   assert.match(gate,/Cancel anytime through store settings/);assert.match(gate,/Automatically renews/);

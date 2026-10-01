@@ -15,7 +15,7 @@ function row(overrides={}) {return {platform:'apple',productId:LAUNCH.appleProdu
 async function sign(body,header={alg:'ES256',typ:'gridly-entitlement-v1'}) {const input=encode(header)+'.'+encode(body);const sig=await webcrypto.subtle.sign({name:'ECDSA',hash:'SHA-256'},keys.privateKey,Buffer.from(input));return input+'.'+Buffer.from(sig).toString('base64url');}
 const verify=(proof,options={})=>verifyAuthorityProof({proof,publicKey:keys.publicKey,nonce,platform:'apple',now,crypto:webcrypto,...options});
 test('one monthly contract; no free tier/trial/annual/grace/web offer',()=>{
- assert.equal(LAUNCH.appleProductId,'com.gridlygo.gridly.monthly');assert.equal(LAUNCH.googleProductId,'gridly_monthly');assert.equal(LAUNCH.googleBasePlanId,'monthly');
+ assert.equal(LAUNCH.appleProductId,'com.gridlygo.gridly.monthly');assert.equal(LAUNCH.googleProductId,'com.gridlygo.gridly.monthly');assert.equal(LAUNCH.googleBasePlanId,'monthly');
  for(const key of ['freeTier','trial','annualPlan','billingGrace','webCheckout'])assert.equal(LAUNCH[key],false);
  assert.equal(LAUNCH.monthlyPrice,'2.99');assert.equal(LAUNCH.country,'US');
 });
@@ -72,7 +72,7 @@ test('launch/resume/restore/purchase always reconcile; completion only after aut
  for(const method of ['launch','resume','restore','purchase']){await s[method]();assert.equal(s.allowed('product').allowed,true);}
  assert.deepEqual(p.calls.map(c=>c[0]),['query','reconcile','complete','query','reconcile','complete','restore','reconcile','complete','purchase','reconcile','complete']);
  const google=ports();await createEntitlementSession({platform:'google',publicKey:keys.publicKey,now:()=>now,crypto:webcrypto,...google}).restore();
- assert.deepEqual(google.calls[0][1],{productId:'gridly_monthly',basePlanId:'monthly'});
+ assert.deepEqual(google.calls[0][1],{productId:'com.gridlygo.gridly.monthly',basePlanId:'monthly'});
 });
 test('temporary error does not become confirmed inactive, exposes no raw receipt/error and retry recovers',async()=>{
  let fail=true;const p=ports({queryPurchases:async()=>{if(fail)throw Error('sensitive-fixture');return {signedTransactions:['synthetic.payload.signature']};}}),s=session(p);

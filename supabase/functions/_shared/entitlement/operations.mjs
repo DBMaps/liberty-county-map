@@ -5,7 +5,7 @@ const failures=new Set(['provider_unavailable','credential_unavailable','configu
 /** @param {{token?: string, retryGoogle?: unknown, store?: unknown, environment?: string,
  *  crypto?: Crypto, now?: () => number}} options */
 export function createSubscriptionOperations({token,retryGoogle,store,environment='production',crypto=globalThis.crypto,now=Date.now}={}) {
- const ready=/^[a-f0-9]{64}$/.test(token||'')&&['production','sandbox_test'].includes(environment)&&typeof retryGoogle==='function'&&typeof store?.completeRun==='function'&&typeof store?.health==='function';
+ const ready=/^[a-f0-9]{64}$/.test(token||'')&&['production','sandbox_test'].includes(environment)&&typeof retryGoogle==='function'&&typeof store?.completeRun==='function'&&typeof store?.health==='function'&&typeof store?.housekeeping==='function';
  const json=(value,status=200)=>Response.json(value,{status,headers:{'Cache-Control':'no-store'}});
  return async request=>{
   if(!ready)return json({error:'configuration_unavailable'},503);
@@ -21,6 +21,10 @@ export function createSubscriptionOperations({token,retryGoogle,store,environmen
   try{
    const rows=await retryGoogle({signal:controller.signal});
    if(controller.signal.aborted||!Array.isArray(rows)||rows.length>10||rows.some(row=>!outcomes.has(row.outcome)||row.completed!==true))throw Error();
+   const housekeeping=await store.housekeeping();
+   if(controller.signal.aborted||!Array.isArray(housekeeping)||housekeeping.length!==1||
+    !Number.isInteger(housekeeping[0]?.queue_purged)||housekeeping[0].queue_purged<0||housekeeping[0].queue_purged>1000||
+    !Number.isInteger(housekeeping[0]?.cache_purged)||housekeeping[0].cache_purged<0||housekeeping[0].cache_purged>500)throw Error();
    const category=rows.find(row=>row.outcome==='retry'&&failures.has(row.category))?.category||'none';
    if(!await store.completeRun({environment,error_category:category}))throw Error();
    const healthRows=await store.health();if(!Array.isArray(healthRows)||healthRows.length!==2)throw Error();

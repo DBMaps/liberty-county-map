@@ -1,3 +1,4 @@
+import {STORE_VERIFIERS} from './gridly-store-verification.mjs';
 // Durable authorization is separate from the nonce-bound, five-minute response.
 export const CONTINUITY_MS=24*60*60*1000;
 const branded=new WeakSet();
@@ -13,7 +14,7 @@ export async function verifyContinuity({proof,publicKey,binding,platform,environ
   if(!await crypto.subtle.verify({name:'ECDSA',hash:'SHA-256'},publicKey,decode(parts[2]),new TextEncoder().encode(parts[0]+'.'+parts[1])))return null;
   const row=JSON.parse(new TextDecoder().decode(decode(parts[1])));
   const verified=epoch(row.lastVerifiedAt),end=epoch(row.currentPeriodEnd),expiry=epoch(row.continuityExpiresAt);
-  if(Object.keys(row).sort().join(',')!==[...fields].sort().join(',')||row.platform!==platform||row.productId!==(platform==='apple'?'com.gridlygo.gridly.monthly':'gridly_monthly')||row.environment!==environment||row.binding!==binding||row.audience!=='com.gridlygo.gridly'||row.verificationSource!=='gridly_server_store_api'||row.subscriptionState!=='active'||row.entitlementState!=='entitled'||!Number.isFinite(verified)||!Number.isFinite(end)||!Number.isFinite(expiry)||verified>now||end<=verified||expiry!==Math.min(end,verified+CONTINUITY_MS)||now>=expiry)return null;
+  if(Object.keys(row).sort().join(',')!==[...fields].sort().join(',')||row.platform!==platform||row.productId!==STORE_VERIFIERS[platform].productId||row.environment!==environment||row.binding!==binding||row.audience!=='com.gridlygo.gridly'||row.verificationSource!=='gridly_server_store_api'||row.subscriptionState!=='active'||row.entitlementState!=='entitled'||!Number.isFinite(verified)||!Number.isFinite(end)||!Number.isFinite(expiry)||verified>now||end<=verified||expiry!==Math.min(end,verified+CONTINUITY_MS)||now>=expiry)return null;
   const result=Object.freeze(row);branded.add(result);return result;
  } catch {return null;}
 }

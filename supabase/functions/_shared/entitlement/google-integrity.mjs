@@ -12,11 +12,12 @@ async function boundedJson(response) {
 }
 
 // Decode occurs only on the server. A Play verdict is never subscriber ownership.
-/** @param {{accessToken?: unknown, fetchImpl?: typeof fetch, now?: () => number}} options */
-export function createGoogleIntegrityVerifier({accessToken,fetchImpl=fetch,now=Date.now}={}) {
+/** @param {{accessToken?: unknown, fetchImpl?: typeof fetch, now?: () => number, acceptedEnvironment?: string}} options */
+export function createGoogleIntegrityVerifier({accessToken,fetchImpl=fetch,now=Date.now,acceptedEnvironment='production'}={}) {
   return Object.freeze({verify:async ({authorization,requestHash,environment})=>{
     try {
-      if(typeof accessToken !== 'function' || environment !== 'production' || authorization?.type !== 'google_standard' ||
+      if(typeof accessToken !== 'function' || !['production','sandbox/test'].includes(acceptedEnvironment) ||
+        environment !== acceptedEnvironment || authorization?.type !== 'google_standard' ||
         typeof authorization.token !== 'string' || authorization.token.length<1 || authorization.token.length>16384 ||
         !/^[A-Za-z0-9_-]{43}$/.test(requestHash)) return null;
       const response=await fetchImpl(ENDPOINT,{method:'POST',redirect:'manual',signal:AbortSignal.timeout(8000),

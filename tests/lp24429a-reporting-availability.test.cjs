@@ -173,7 +173,8 @@ test('startup/resume refresh, UX copy and all consumer entry paths use the share
   assert.match(app,/document\.addEventListener\("visibilitychange"/);
   assert.match(app,/new Set\(\["create", "confirm", "edit", "clear"\]\)/);
   assert.doesNotMatch(app,/gridlyGetCommunityProtocolClient\(\)\.submit\(/);
-  assert.match(app,/gridlyGetCommunityProtocolClient\(\)\.retry\(supabaseClient, deviceId\)/);
+  assert.match(app,/gridlyGetCommunityProtocolClient\(\)\.retry\(gridlyAuthorizedReportTransport\(supabaseClient\), deviceId\)/);
+  assert.match(app,/client\.functions\.invoke\("gridly-paid-report"/);
   assert.match(app,/async function gridlySubmitCommunityMutation[\s\S]*gridlySubmitCommunityOperation\(action,/);
   assert.equal([...mutationAdapter.matchAll(/gridlyReportingResultMessage\(result\)/g)].length,2);
   assert.doesNotMatch(mutationAdapter,/gridlyReportProtocol\.outcome/);

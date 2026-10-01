@@ -30,12 +30,12 @@ function fixture(platform='apple') {
   revoke:async value=>{events.push('revoke');if(failWrite)throw Error();assert.equal(value.attempt,stored.attempt);stored={binding:(seq%2?'b':'c').repeat(64),proof:'',verifiedAt:0,blocked:false};return {revoked:true};}
  };
  const native=()=>platform==='apple'?{result:'verified',productId:'com.gridlygo.gridly.monthly',environment:'production',completionHandle:'fixture-handle',signedTransaction:'fixture.payload.signature',revoked:nativeRevoked}
-  :{result:'purchased',productId:'gridly_monthly',basePlanId:'monthly',purchaseToken:'fixture-private-token'};
+  :{result:'purchased',productId:'com.gridlygo.gridly.monthly',basePlanId:'monthly',purchaseToken:'fixture-private-token'};
  const plugin={addListener:async()=>({remove:async()=>{}}),startObserving:async()=>{},stopObserving:async()=>{},getProducts:async()=>({result:'error'}),getCurrentEntitlement:async()=>native(),refreshEntitlement:async()=>native(),queryCurrentPurchases:async()=>native(),purchase:async()=>native(),restorePurchases:async()=>native(),finishTransaction:async()=>({finished:true})};
  const authority={reconcile:async request=>{
   events.push('server');if(mode==='outage')throw Error('private-provider-error');if(mode==='denied')throw Error('authority_denied');if(mode==='tampered')return 'forged.payload.signature';
   const record=platform==='apple'?appleRecord({at,end:mode==='expired'?at-1:periodEnd,state:mode})
-   :normalizeGoogle({regionCode:'US',subscriptionState:mode==='expired'?'SUBSCRIPTION_STATE_EXPIRED':mode==='revoked'?'SUBSCRIPTION_STATE_ON_HOLD':'SUBSCRIPTION_STATE_ACTIVE',acknowledgementState:'ACKNOWLEDGEMENT_STATE_ACKNOWLEDGED',lineItems:[{productId:'gridly_monthly',offerDetails:{basePlanId:'monthly'},expiryTime:new Date(mode==='expired'?at-1:periodEnd).toISOString(),autoRenewingPlan:{autoRenewEnabled:true}}]},{env:'production',token:'fixture-private-token',now:at});
+   :normalizeGoogle({regionCode:'US',subscriptionState:mode==='expired'?'SUBSCRIPTION_STATE_EXPIRED':mode==='revoked'?'SUBSCRIPTION_STATE_ON_HOLD':'SUBSCRIPTION_STATE_ACTIVE',acknowledgementState:'ACKNOWLEDGEMENT_STATE_ACKNOWLEDGED',lineItems:[{productId:'com.gridlygo.gridly.monthly',offerDetails:{basePlanId:'monthly'},expiryTime:new Date(mode==='expired'?at-1:periodEnd).toISOString(),autoRenewingPlan:{autoRenewEnabled:true}}]},{env:'production',token:'fixture-private-token',now:at});
   return signResponse(record,request.nonce,keys.privateKey,webcrypto,{continuityBinding:request.continuityBinding});
  }};
  const options={capacitor:{isNativePlatform:()=>true,getPlatform:()=>platform==='apple'?'ios':'android'},plugin,authority,publicKey:keys.publicKey,continuityVault:vault,crypto:webcrypto,now:()=>at,monotonic:()=>tick,schedule:(fn,delay)=>{const id=++seq;timers.set(id,{fn,delay});return id;},cancel:id=>timers.delete(id)};

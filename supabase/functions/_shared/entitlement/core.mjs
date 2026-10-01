@@ -8,7 +8,7 @@ function result(platform,env,state,end,ref,now,error='none',ack=false,extra={}) 
  if(!['production','sandbox/test'].includes(env)||!Number.isFinite(now))throw Error('invalid_evidence');
  const record=Object.freeze({platform,environment:env,productId:STORE_VERIFIERS[platform].productId,
  basePlanId:platform==='google'?'monthly':null,subscriptionState:state,
- entitlementState:['active','canceled_pending_expiry'].includes(state)?'entitled':state==='unknown'?'unknown':'not_entitled',
+ entitlementState:['active','canceled_pending_expiry','grace_period'].includes(state)?'entitled':state==='unknown'?'unknown':'not_entitled',
  currentPeriodEnd:end===null?null:new Date(end).toISOString(),lastVerifiedAt:new Date(now).toISOString(),
  verificationSource:'gridly_server_store_api',errorCategory:error,reference:reference(ref),acknowledgementRequired:ack,...extra});
  trusted.add(record);return record;
@@ -29,11 +29,13 @@ export function normalizeApple(transaction,renewal,status,{env,originalReference
  else state='unknown'; // Unexpected grace is never access: launch has no grace.
  return result('apple',env,state,end,originalReference,now,state==='unknown'?'verification_unavailable':'none');
 }
-export function normalizeGoogle(data,{env,token,now}) {
+export function normalizeGoogle(data,{env,token,now,verifiedLineage=[]}) {
+ if(!Array.isArray(verifiedLineage)||verifiedLineage.length>4||verifiedLineage.some(value=>typeof value!=='string'||!value||value===token)||new Set(verifiedLineage).size!==verifiedLineage.length)throw Error('invalid_evidence');
  if(!data || data.regionCode!=='US' || (Object.hasOwn(data,'testPurchase')?'sandbox/test':'production')!==env ||
  (data.packageName!==undefined&&data.packageName!=='com.gridlygo.gridly')||!Array.isArray(data.lineItems)||data.lineItems.length!==1 ||
- data.lineItems[0].productId!=='gridly_monthly'||data.lineItems[0].offerDetails?.basePlanId!=='monthly'||data.lineItems[0].offerDetails?.offerId!=null||
- data.linkedPurchaseToken!=null)throw Error('invalid_evidence'); // Replacement chains need a later reviewed adapter.
+ data.lineItems[0].productId!=='com.gridlygo.gridly.monthly'||data.lineItems[0].offerDetails?.basePlanId!=='monthly'||data.lineItems[0].offerDetails?.offerId!=null||
+ (data.linkedPurchaseToken!=null&&data.linkedPurchaseToken!==verifiedLineage[0])||
+ (data.linkedPurchaseToken==null&&verifiedLineage.length!==0))throw Error('invalid_evidence');
  const line=data.lineItems[0],end=line.expiryTime?epoch(line.expiryTime):null;
  let state,error='none';
  switch(data.subscriptionState) {
@@ -44,10 +46,14 @@ export function normalizeGoogle(data,{env,token,now}) {
  case 'SUBSCRIPTION_STATE_EXPIRED': state=end!==null&&end<=now?'expired':'inactive';break;
  case 'SUBSCRIPTION_STATE_ON_HOLD': case 'SUBSCRIPTION_STATE_PAUSED':state='inactive';break;
  case 'SUBSCRIPTION_STATE_PENDING':case 'SUBSCRIPTION_STATE_PENDING_PURCHASE_CANCELED':state='unknown';error='purchase_pending';break;
- case 'SUBSCRIPTION_STATE_IN_GRACE_PERIOD':state='unknown';error='verification_unavailable';break;
+ case 'SUBSCRIPTION_STATE_IN_GRACE_PERIOD':
+  if(end===null||line.autoRenewingPlan?.autoRenewEnabled!==true)throw Error('invalid_evidence');
+  state=end<=now?'expired':'grace_period';break;
  default:throw Error('invalid_evidence');
  }
  if(!['ACKNOWLEDGEMENT_STATE_PENDING','ACKNOWLEDGEMENT_STATE_ACKNOWLEDGED'].includes(data.acknowledgementState))throw Error('invalid_evidence');
+ // Grace is a renewal state. Never grant it on an unacknowledged purchase.
+ if(state==='grace_period'&&data.acknowledgementState!=='ACKNOWLEDGEMENT_STATE_ACKNOWLEDGED')throw Error('invalid_evidence');
  const ack=data.acknowledgementState==='ACKNOWLEDGEMENT_STATE_PENDING'&&['active','canceled_pending_expiry'].includes(state);
  let purchaseStartedAt=null,ackDeadlineAt=null;
  if(ack){const start=epoch(data.startTime);if(start>now)throw Error('invalid_evidence');
@@ -57,12 +63,20 @@ export function normalizeGoogle(data,{env,token,now}) {
   ackDeadlineAt=new Date(Math.min(start+3600000,start+(env==='production'?259200000:180000),end)).toISOString();
  }
  const terminalCategory=state==='expired'?'subscription_expired':state==='inactive'?'provider_denial':data.subscriptionState==='SUBSCRIPTION_STATE_PENDING_PURCHASE_CANCELED'?'purchase_canceled':null;
- return result('google',env,state,end,token,now,error,ack,{purchaseStartedAt,ackDeadlineAt,terminalCategory});
+ return result('google',env,state,end,token,now,error,ack,{purchaseStartedAt,ackDeadlineAt,terminalCategory,lineageTokens:Object.freeze([...verifiedLineage])});
 }
 export async function fingerprint(record,key,crypto=globalThis.crypto) {
  if(!trusted.has(record)||!key)throw Error('invalid_evidence');
  const bytes=await crypto.subtle.sign('HMAC',key,new TextEncoder().encode(record.platform+'\0'+record.environment+'\0'+record.reference));
  return Array.from(new Uint8Array(bytes),b=>b.toString(16).padStart(2,'0')).join('');
+}
+export async function lineageRecords(record,key,crypto=globalThis.crypto) {
+ if(!trusted.has(record)||record.platform!=='google'||!key)throw Error('invalid_evidence');
+ const lineage=record.lineageTokens||[];
+ return Promise.all(lineage.map(async token=>{
+  const bytes=await crypto.subtle.sign('HMAC',key,new TextEncoder().encode('google\0'+record.environment+'\0'+token));
+  return Array.from(new Uint8Array(bytes),b=>b.toString(16).padStart(2,'0')).join('');
+ }));
 }
 export async function cacheRecord(record,key,crypto=globalThis.crypto) {
  if(!trusted.has(record))throw Error('invalid_evidence');

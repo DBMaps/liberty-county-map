@@ -4,6 +4,13 @@ const PROFILE='gridlyUserProfileV1', PENDING='gridlyPaidSetupPreferenceV1';
 const legacy=['gridlyWelcomeSeenV1','gridlyWelcomeSeenV126A','gridlyWelcomeSeen','gridlyOnboardingComplete','gridlySetupComplete','gridlyFirstRunComplete','gridlyV858SetupComplete','gridlyV859WelcomeComplete'];
 const get=key=>{try{return localStorage.getItem(key);}catch{return null;}};
 const put=(key,value)=>{try{localStorage.setItem(key,value);}catch{}};
+export function physicalWalkthroughLandscape(view) {
+  const type=view.screen?.orientation?.type;
+  if(typeof type==='string' && /^(portrait|landscape)(?:-|$)/.test(type))return type.startsWith('landscape');
+  const angle=view.orientation;
+  if(Number.isFinite(angle))return Math.abs(Number(angle)%180)===90;
+  return null;
+}
 export function onboardingComplete() {
   if(get(COMPLETE)==='yes')return true;
   try{return JSON.parse(get(PROFILE)||'null')?.setupComplete===true;}catch{return false;}
@@ -37,6 +44,7 @@ export async function createPaidOnboarding({onComplete}) {
   delegatedHandlersAttached: false
 };
   const overlay=document.getElementById('gridlyWelcomeOnboarding');
+  const isAndroid=window.Capacitor?.isNativePlatform?.()===true&&window.Capacitor?.getPlatform?.()==='android';
   const original=overlay.cloneNode(true);original.inert=false;
   const els={gridlyWelcomeOnboarding:overlay};
   let closed=false, completionTimer, pendingPosition;
@@ -50,6 +58,7 @@ export async function createPaidOnboarding({onComplete}) {
     if(closed)return false;
     closed=true;if(persist)markComplete();
     clearTimeout(completionTimer);overlay.__gridlyWalkthroughOrientationCleanup?.();
+    if(isAndroid)document.documentElement.classList.remove('gridly-android-paid-onboarding');
     document.body.classList.remove('modal-open','gridly-welcome-open','gridly-v858-first-run-open');
     // Drop pre-access listeners so the unchanged app can later replay its tour.
     overlay.replaceWith(original);onComplete();return true;
@@ -71,6 +80,7 @@ export async function createPaidOnboarding({onComplete}) {
   };
   function open() {
     renderGridlyV858FirstRunExperience(overlay);
+    if(isAndroid)document.documentElement.classList.add('gridly-android-paid-onboarding');
     overlay.hidden=false;overlay.inert=false;overlay.setAttribute('aria-hidden','false');
     document.body.classList.add('modal-open','gridly-welcome-open','gridly-v858-first-run-open');
     overlay.__gridlySyncWalkthroughOrientationGate?.();
@@ -130,6 +140,8 @@ function renderGridlyV858FirstRunExperience(overlay) {
       </div>
     </section>`;
 
+  // Reporting is OFF at Android launch. Pre-access has no reporting authority to query.
+  if(isAndroid)overlay.querySelector('[data-gridly-onboarding-page="report"]')?.remove();
   const pageTrack = overlay.querySelector("[data-gridly-onboarding-page-track]");
   const onboardingPager = overlay.querySelector("[data-gridly-quick-tour-scroll]");
   const orientationGate = overlay.querySelector("[data-gridly-walkthrough-orientation-gate]");
@@ -142,6 +154,9 @@ function renderGridlyV858FirstRunExperience(overlay) {
   let activePageIndex = 0;
   let orientationGateActive = false;
   let preGateFocus = null;
+  let androidPhysicalLandscape=isAndroid
+    ? physicalWalkthroughLandscape(window) ?? (window.matchMedia?.('(orientation: landscape)')?.matches===true)
+    : false;
   const isNativeApp = () => Boolean(
     window.Capacitor?.isNativePlatform?.()
     || ["android", "ios"].includes(String(window.Capacitor?.getPlatform?.() || "").toLowerCase())
@@ -149,8 +164,9 @@ function renderGridlyV858FirstRunExperience(overlay) {
   const isMobileWalkthroughDevice = () => isNativeApp()
     || window.matchMedia?.("(hover: none) and (pointer: coarse) and (max-width: 1100px)")?.matches === true;
   const syncWalkthroughOrientationGate = () => {
-    const isLandscape = window.matchMedia?.("(orientation: landscape)")?.matches
-      ?? (window.innerWidth > window.innerHeight);
+    const isLandscape = isAndroid
+      ? (physicalWalkthroughLandscape(window) ?? androidPhysicalLandscape)
+      : (window.matchMedia?.("(orientation: landscape)")?.matches ?? (window.innerWidth > window.innerHeight));
     const shouldGate = !overlay.hidden && isLandscape && isMobileWalkthroughDevice();
     if (shouldGate === orientationGateActive) return;
     orientationGateActive = shouldGate;
@@ -171,12 +187,25 @@ function renderGridlyV858FirstRunExperience(overlay) {
   };
   const orientationMedia = window.matchMedia?.("(orientation: landscape)");
   const mobileMedia = window.matchMedia?.("(hover: none) and (pointer: coarse) and (max-width: 1100px)");
+  const physicalOrientationChanged=()=>{
+    if(isAndroid)androidPhysicalLandscape=physicalWalkthroughLandscape(window)
+      ?? (orientationMedia?.matches===true);
+    syncWalkthroughOrientationGate();
+  };
   orientationMedia?.addEventListener?.("change", syncWalkthroughOrientationGate);
   mobileMedia?.addEventListener?.("change", syncWalkthroughOrientationGate);
+  if(isAndroid){
+    window.addEventListener('orientationchange',physicalOrientationChanged);
+    window.screen?.orientation?.addEventListener?.('change',physicalOrientationChanged);
+  }
   window.addEventListener("resize", syncWalkthroughOrientationGate, { passive: true });
   overlay.__gridlyWalkthroughOrientationCleanup = () => {
     orientationMedia?.removeEventListener?.("change", syncWalkthroughOrientationGate);
     mobileMedia?.removeEventListener?.("change", syncWalkthroughOrientationGate);
+    if(isAndroid){
+      window.removeEventListener('orientationchange',physicalOrientationChanged);
+      window.screen?.orientation?.removeEventListener?.('change',physicalOrientationChanged);
+    }
     window.removeEventListener("resize", syncWalkthroughOrientationGate);
   };
   const setActiveOnboardingPage = (index, { scroll = true } = {}) => {

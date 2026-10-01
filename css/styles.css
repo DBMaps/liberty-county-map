@@ -29456,6 +29456,52 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
   pointer-events: none !important;
 }
 
+/* Android paid onboarding: reserve the public legal control and let artwork
+   shrink into the actual card space instead of requiring most of the viewport. */
+html.gridly-android-paid-onboarding .gridly-welcome-overlay {
+  box-sizing: border-box;
+  height: 100dvh;
+  min-height: 0;
+  max-height: 100dvh;
+  padding: calc(env(safe-area-inset-top, 0px) + 56px) 8px calc(env(safe-area-inset-bottom, 0px) + 10px);
+  place-items: stretch center;
+  overflow: hidden;
+}
+html.gridly-android-paid-onboarding .gridly-v858-first-run-sheet:has([data-gridly-visual-quick-tour]),
+html.gridly-android-paid-onboarding .gridly-v858-first-run-card:has([data-gridly-visual-quick-tour]) {
+  box-sizing: border-box;
+  height: 100%;
+  max-height: 100%;
+  min-height: 0;
+}
+html.gridly-android-paid-onboarding .gridly-v950-onboarding-pager,
+html.gridly-android-paid-onboarding .gridly-v950-page-track {
+  min-height: 0;
+  max-height: 100%;
+}
+html.gridly-android-paid-onboarding .gridly-v950-feature-page {
+  min-height: 0;
+  grid-template-rows: auto minmax(0, 1fr);
+  overflow: hidden;
+}
+html.gridly-android-paid-onboarding .gridly-v950-feature-page .gridly-v896-shot-frame {
+  min-height: 0;
+  max-height: 100%;
+  overflow: hidden;
+}
+html.gridly-android-paid-onboarding .gridly-v950-feature-page .gridly-v896-shot-frame img {
+  max-height: 100%;
+}
+html.gridly-android-paid-onboarding .gridly-v950-welcome-page,
+html.gridly-android-paid-onboarding .gridly-v950-setup-page {
+  min-height: 0;
+  max-height: 100%;
+  overflow-y: auto;
+}
+html.gridly-android-paid-onboarding .gridly-v950-setup-page {
+  align-content: start;
+}
+
 /* LP244.5 Task B — physical Android landscape refinement.
    The orientation plus short visual-height gate is intentionally the same
    physical-phone boundary certified by LP244.4. Nothing in this block can
@@ -30172,4 +30218,256 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet[data-active-sheet="sett
   border-color: #2aa8ae !important;
   color: #f7fffd !important;
   font-weight: 700;
+}
+
+/* V6: native Android portrait density. The runtime marker is never set on
+   iOS or the web. Width, rather than the viewport aspect ratio, keeps this
+   portrait contract stable when Android resizes for the keyboard. */
+@media (max-width: 760px) {
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2 {
+    --gridly-v2-awareness-card-top: calc(var(--gridly-v2-header-top) + 34px);
+    --gridly-v2-filter-strip-top: calc(var(--gridly-v2-header-top) + 130px + var(--gridly-brief-interaction-extra, 0px));
+    --gridly-v2-filter-strip-bottom: calc(var(--gridly-v2-header-top) + 174px + var(--gridly-brief-interaction-extra, 0px));
+    --gridly-v2-top-shield-height: calc(var(--gridly-v2-filter-strip-bottom) + 6px);
+  }
+
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2[data-gridly-brief-state="expanded"] {
+    --gridly-v2-top-shield-height: calc(var(--gridly-v2-awareness-card-top) + 200px + min(250px, 36vh) + 4px);
+  }
+
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brief-stack > .gridly-v2-awareness-brief-card {
+    min-height: 84px !important;
+    padding: 8px 12px !important;
+    gap: 3px;
+  }
+
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-topbar {
+    min-height: 34px !important;
+    padding-block: 3px !important;
+  }
+
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-brief-foundation-handle {
+    min-height: 44px;
+    padding-block: 6px;
+  }
+
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments {
+    padding-block: 1px !important;
+  }
+
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments button {
+    min-height: 44px;
+    padding-block: 4px;
+  }
+
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-location-awareness-panel {
+    bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+    gap: 2px;
+    padding: 8px 12px;
+  }
+
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitBottomRegion {
+    gap: 0;
+    padding: 4px 8px calc(4px + env(safe-area-inset-bottom, 0px));
+  }
+
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock {
+    bottom: calc(6px + env(safe-area-inset-bottom, 0px));
+    padding: 3px;
+    gap: 5px;
+  }
+
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock button {
+    min-height: 48px;
+    padding-block: 2px;
+  }
+
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock .dock-icon {
+    height: 30px;
+    min-height: 30px;
+  }
+
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"] {
+    padding: 8px !important;
+    max-height: calc(min(100dvh, var(--gridly-visual-vh, 100dvh)) - 80px) !important;
+  }
+
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"] header {
+    margin-bottom: 5px !important;
+    padding-bottom: 4px !important;
+  }
+
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"] .settings-list-summary {
+    min-height: 50px;
+    padding-block: 7px;
+  }
+
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"] .settings-list-detail {
+    gap: 6px;
+    padding: 0 10px 9px !important;
+  }
+
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"] .settings-awareness-manual-picker {
+    gap: 8px;
+  }
+
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"] :is(.settings-awareness-manual-picker input[type="search"], .settings-awareness-search-row input) {
+    min-height: 44px;
+    padding-inline: 12px;
+    font-size: 16px;
+  }
+
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"] .settings-manual-area-result {
+    min-height: 44px;
+    padding: 8px 11px;
+  }
+
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"] .settings-manual-county-list {
+    max-height: min(34vh, 280px);
+    padding-bottom: 8px;
+  }
+
+  /* Apply keyboard geometry only while the Android viewport is contracted.
+     Android can leave the input focused after Back closes the keyboard. */
+  @media (max-height: 500px) {
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"]:not([hidden]):has(.settings-awareness-manual-picker input[type="search"]:focus) {
+    display: flex;
+    flex-direction: column;
+    top: 34px !important;
+    bottom: 8px !important;
+    height: auto !important;
+    max-height: calc(var(--gridly-visual-vh, 100dvh) - 42px) !important;
+    overflow: hidden !important;
+  }
+
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"]:has(.settings-awareness-manual-picker input[type="search"]:focus) #gridlyPortraitV2SheetBody {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: none !important;
+    overflow-y: auto !important;
+  }
+
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"]:has(.settings-awareness-manual-picker input[type="search"]:focus) .gridly-settings-sheet {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"]:has(.settings-awareness-manual-picker input[type="search"]:focus) .settings-manual-county-list {
+    max-height: min(280px, max(88px, calc(var(--gridly-visual-vh, 100dvh) - 210px)));
+  }
+  }
+}
+
+/* Physical Android V6 acceptance: 320 CSS px is the real phone viewport.
+   Preserve the user's relative Text Size choice while using a smaller portrait
+   base than the 393px iPhone composition. The WebView already has textZoom=100. */
+@media (max-width: 760px) {
+  html[data-gridly-native-platform="android"]:has(body[data-layout-mode="portrait"]) {
+    font-size: calc(14px * var(--gridly-app-font-scale));
+  }
+
+  /* The overlay owns the Android bottom inset. The card and pager previously
+     added it twice more, leaving the actions detached from the bottom edge. */
+  html[data-gridly-native-platform="android"] .gridly-v858-first-run-sheet:has([data-gridly-visual-quick-tour]) {
+    width: calc(100vw - 16px);
+    max-width: calc(100vw - 16px);
+  }
+  html[data-gridly-native-platform="android"] .gridly-v858-first-run-card:has([data-gridly-visual-quick-tour]) {
+    padding-bottom: 8px;
+  }
+  html[data-gridly-native-platform="android"] .gridly-v950-onboarding-pager {
+    padding-bottom: 4px;
+  }
+  html[data-gridly-native-platform="android"] .gridly-v950-welcome-logo {
+    width: min(48vw, 160px);
+  }
+  html[data-gridly-native-platform="android"] .gridly-v950-welcome-page h2 {
+    font-size: clamp(1.8rem, 7vw, 2.2rem);
+  }
+
+  /* A full Settings sheet must leave room for the Android status bar. The
+     runtime's inline max-height accounts for the dock but not the top inset. */
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet:not([hidden]) {
+    max-height: calc(var(--gridly-visual-vh, 100dvh) - var(--gridly-v2-sheet-dock-clearance, 134px) - 42px) !important;
+    min-height: 0 !important;
+  }
+
+  /* The live Home Area chooser needs the dock and sibling Settings content
+     cleared while the keyboard is open so a result remains tappable. */
+  @media (max-height: 500px) {
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"]:has(#gridlyPortraitV2Sheet [data-gridly-manual-awareness-search]:focus) #gridlyPortraitBottomRegion {
+    display: none !important;
+    pointer-events: none !important;
+  }
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"]:has([data-gridly-manual-awareness-search]:focus) {
+    display: flex;
+    flex-direction: column;
+    top: 34px !important;
+    bottom: 8px !important;
+    height: auto !important;
+    max-height: calc(var(--gridly-visual-vh, 100dvh) - 42px) !important;
+    overflow: hidden !important;
+  }
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"]:has([data-gridly-manual-awareness-search]:focus) #gridlyPortraitV2SheetBody {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: none !important;
+    overflow-y: auto !important;
+  }
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"]:has([data-gridly-manual-awareness-search]:focus) .gridly-settings-sheet {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"]:has([data-gridly-manual-awareness-search]:focus) :is(.gridly-v2-sheet-copy, .settings-section-awareness > summary, .settings-section-awareness .settings-placeholder-note, .settings-place-grid, .settings-select-grid, .settings-list-section:not(.settings-section-awareness)) {
+    display: none !important;
+  }
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"]:has([data-gridly-manual-awareness-search]:focus) .settings-awareness-area-chooser {
+    margin: 0;
+    padding: 0;
+  }
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"]:has([data-gridly-manual-awareness-search]:focus) .settings-manual-county-list {
+    max-height: min(140px, calc(var(--gridly-visual-vh, 100dvh) - 154px));
+  }
+  }
+
+  /* Light-mode search text and its surface must use the same palette. */
+  html[data-gridly-native-platform="android"][data-gridly-effective-theme="light"] body[data-layout-mode="portrait"] #gridlySearchShell .gridly-search-card,
+  html[data-gridly-native-platform="android"][data-gridly-effective-theme="light"] body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]):has(.gridly-search-results[data-search-publication="active"]) .gridly-search-card {
+    background: #fbfdff !important;
+    color: #0d1b2a !important;
+  }
+  /* The native status icons are white on this device. Keep them legible when
+     the app uses a light canvas beneath the transparent Android status bar. */
+  html[data-gridly-native-platform="android"][data-gridly-effective-theme="light"]:has(body[data-layout-mode="portrait"])::before {
+    content: "";
+    position: fixed;
+    inset: 0 0 auto;
+    height: var(--safe-area-inset-top, 33px);
+    background: #0b1d2b;
+    pointer-events: none;
+    z-index: 9999;
+  }
+  html[data-gridly-native-platform="android"][data-gridly-effective-theme="light"] body[data-layout-mode="portrait"] #gridlySearchShell .gridly-destination-confirmation {
+    background: #dceef2 !important;
+  }
+  html[data-gridly-native-platform="android"][data-gridly-effective-theme="light"] body[data-layout-mode="portrait"] #gridlySearchShell .gridly-destination-confirmation :is(.gridly-destination-confirmation-title, .gridly-destination-confirmation-context, .gridly-destination-confirmation-status) {
+    color: var(--gridly-text-primary, #0d1b2a) !important;
+  }
+  html[data-gridly-native-platform="android"][data-gridly-effective-theme="light"] body[data-layout-mode="portrait"] #gridlySearchShell .gridly-destination-confirmation-kicker {
+    color: var(--gridly-accent, #08747a) !important;
+  }
+
+  /* The device theme uses gridly-theme-system, so the explicit light-theme
+     saved-place text colors above do not apply to its pale Travel cards. */
+  html[data-gridly-native-platform="android"][data-gridly-effective-theme="light"] body.gridly-theme-system[data-layout-mode="portrait"] .settings-place-card :is(strong, .settings-place-label, .settings-place-action) {
+    color: #12263a !important;
+  }
+
+  /* The legal panel's injected 84vh content box plus its padding exceeded
+     the dialog's 88vh cap on the 320px device and clipped Done. */
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] .gridly-ugc-dialog .gridly-ugc-panel {
+    box-sizing: border-box;
+    max-height: min(80dvh, calc(var(--gridly-visual-vh, 100dvh) - 76px));
+  }
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] .gridly-ugc-dialog .gridly-ugc-legal-frame {
+    height: min(56dvh, 520px);
+  }
 }

@@ -23,6 +23,20 @@ verify_jwt = false
 [functions.gridly-verify-google-subscription]
 verify_jwt = false
 
+# Isolated license-test authority; native Play Integrity and a consumed challenge
+# are required by the handler even though the gateway JWT check is disabled.
+[functions.gridly-verify-google-sandbox-subscription]
+verify_jwt = false
+
+# The handler verifies a short-lived production entitlement proof before its
+# service-role call to the protocol-v2 atomic writer.
+[functions.gridly-paid-report]
+verify_jwt = false
+
 # Separate constant-time operations token in the handler.
 [functions.gridly-subscription-ops]
+verify_jwt = false
+
+# Google Pub/Sub OIDC bearer validation is enforced by the RTDN handler.
+[functions.gridly-google-rtdn]
 verify_jwt = false

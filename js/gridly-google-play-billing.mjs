@@ -2,10 +2,12 @@ import {verifyAuthorityProof,accessDecision} from './gridly-entitlement.mjs';
 import {storeVerificationRequest,STORE_VERIFIERS} from './gridly-store-verification.mjs';
 export const GOOGLE_PRODUCT_ID=STORE_VERIFIERS.google.productId,GOOGLE_BASE_PLAN_ID=STORE_VERIFIERS.google.basePlanId;
 const failure=(errorCategory='verification_unavailable')=>Object.freeze({platform:null,productId:null,environment:null,subscriptionState:'unknown',entitlementState:'unknown',currentPeriodEnd:null,lastVerifiedAt:null,verificationSource:'none',restoreAvailable:true,errorCategory});
-export function createGoogleVerificationAuthority({invoke}) {
+export function createGoogleVerificationAuthority({invoke,environment='production'}) {
  return Object.freeze({reconcile:async request=>{
-  if(!invoke||request?.platform!=='google')throw Error('verification_unavailable');
-  const body=storeVerificationRequest(request),result=await invoke('gridly-verify-google-subscription',{body});
+  if(!invoke||request?.platform!=='google'||request.environment!==environment||!['production','sandbox/test'].includes(environment))throw Error('verification_unavailable');
+  const body=storeVerificationRequest(request);
+  const name=environment==='sandbox/test'?'gridly-verify-google-sandbox-subscription':'gridly-verify-google-subscription';
+  const result=await invoke(name,{body});
   if([401,403].includes(result?.error?.context?.status))throw Error('authority_denied');
   if(result?.error||!result?.data||Object.keys(result.data).join(',')!=='proof'||typeof result.data.proof!=='string'||result.data.proof.length>8192)throw Error('verification_unavailable');
   return result.data.proof;
@@ -29,6 +31,7 @@ export function createGooglePlayBilling({capacitor,plugin,authority,publicKey,de
    if(native?.errorCategory==='already_owned'){native=await plugin.queryCurrentPurchases();}
    if(native?.result==='purchase_pending'||native?.errorCategory==='purchase_pending')return failure('purchase_pending');
    if(native?.errorCategory==='user_cancelled')return failure('user_canceled');
+   if(native?.result==='no_evidence')return failure('no_store_evidence');
    if(native?.result!=='purchased'||native.productId!==GOOGLE_PRODUCT_ID||native.basePlanId!==GOOGLE_BASE_PLAN_ID)return failure(native?.errorCategory==='verification_failed'?'invalid_authority':'store_unavailable');
    category='verification_unavailable';
    const nonce=Array.from(crypto.getRandomValues(new Uint8Array(24)),b=>b.toString(16).padStart(2,'0')).join('');
@@ -41,7 +44,7 @@ export function createGooglePlayBilling({capacitor,plugin,authority,publicKey,de
     if(verified.entitlementState==='unknown')return failure(verified.errorCategory==='invalid_authority'?'invalid_authority':'verification_unavailable');
    if(verified.entitlementState==='not_entitled')return verified;
    // LP244.62 sends this proof only after cache reconciliation and required server ack.
-   if(!deliverEntitlement||await deliverEntitlement(verified,{isCurrent:()=>active&&!stopped})!==true)return failure();
+   if(!deliverEntitlement||await deliverEntitlement(verified,{isCurrent:()=>active&&!stopped,proof})!==true)return failure();
    return active&&!stopped?verified:failure();
   },method==='purchase'?purchaseTimeoutMs:timeoutMs);}catch{state=failure(category);}finally{active=false;}
   return state;

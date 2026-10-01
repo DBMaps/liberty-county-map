@@ -13,7 +13,7 @@ import com.getcapacitor.annotation.CapacitorPlugin
 @CapacitorPlugin(name = "GridlyPlayBilling")
 class GridlyPlayBillingPlugin : Plugin() {
     companion object {
-        const val PRODUCT = "gridly_monthly"
+        const val PRODUCT = "com.gridlygo.gridly.monthly"
         const val BASE_PLAN = "monthly"
         const val PACKAGE = "com.gridlygo.gridly"
     }
@@ -137,7 +137,7 @@ class GridlyPlayBillingPlugin : Plugin() {
         }
     }
     private fun query(call: PluginCall) = withClient(call) { billing ->
-        billing.queryPurchasesAsync(QueryPurchasesParams.newBuilder().setProductType(BillingClient.ProductType.SUBS).build()) { result, purchases -> main.post {
+        billing.queryPurchasesAsync(QueryPurchasesParams.newBuilder().setProductType(BillingClient.ProductType.SUBS).includeSuspendedSubscriptions(true).build()) { result, purchases -> main.post {
             if (!destroyed) call.resolve(if (result.responseCode == BillingClient.BillingResponseCode.OK) evidence(purchases) else error(category(result.responseCode)))
         } }
     }

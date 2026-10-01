@@ -160,7 +160,7 @@ test('injected iOS bridge without registerPlugin starts observation and product 
 
 test('UI never presents a fallback price as StoreKit metadata',()=>{
  const ui=readFileSync('js/gridly-paid-ui.mjs','utf8');
- assert.match(ui,/value\.product\?\.available\?value\.product\.displayPrice\+'\/month':'Price loading…'/);
+ assert.match(ui,/value\.product\?\.available\?value\.product\.displayPrice\+'\/month':value\.platform==='google'&&!value\.productLoading\?'Price unavailable':'Price loading…'/);
  assert.match(ui,/value\.product\?\.available!==true\|\|value\.verificationReady!==true/);
  assert.doesNotMatch(ui,/displayPrice:'\$2\.99'|\?value\.product\.displayPrice:'\$2\.99'/);
 });

@@ -7,12 +7,14 @@ const root=path.resolve(__dirname,'..'),db='gridly_lp24462_'+process.pid;
 const env=Object.fromEntries(Object.entries(process.env).filter(([key])=>!/^PG/i.test(key)));
 function sql(query,{database=db,fail=false}={}) {const r=spawnSync('C:/Program Files/PostgreSQL/17/bin/psql.exe',['-X','-q','-A','-t','-v','ON_ERROR_STOP=1','-h','127.0.0.1','-p','55462','-U','postgres','-d',database],{input:query,encoding:'utf8',env,windowsHide:true,timeout:20000});if(fail){assert.notEqual(r.status,0);return;}assert.equal(r.status,0,r.stderr);return r.stdout.trim();}
 const migration=fs.readFileSync(path.join(root,'supabase/migrations/20260926205345_lp24462_store_entitlement_cache.sql'),'utf8');
+const contractMigration=fs.readFileSync(path.join(root,'supabase/migrations/20260930210000_lp24471_google_subscription_contract.sql'),'utf8');
 let record;
-before(()=>{if(!runDatabase)return;sql('create database '+db,{database:'postgres'});sql("DO $$ BEGIN IF NOT EXISTS(SELECT FROM pg_roles WHERE rolname='anon') THEN CREATE ROLE anon; END IF; IF NOT EXISTS(SELECT FROM pg_roles WHERE rolname='authenticated') THEN CREATE ROLE authenticated; END IF; IF NOT EXISTS(SELECT FROM pg_roles WHERE rolname='service_role') THEN CREATE ROLE service_role; END IF; END $$;create schema report_retention;create table report_retention.admission_state(reporting_enabled boolean,protocol_version integer);insert into report_retention.admission_state values(false,2);");sql(migration);
+before(()=>{if(!runDatabase)return;sql('create database '+db,{database:'postgres'});sql("DO $$ BEGIN IF NOT EXISTS(SELECT FROM pg_roles WHERE rolname='anon') THEN CREATE ROLE anon; END IF; IF NOT EXISTS(SELECT FROM pg_roles WHERE rolname='authenticated') THEN CREATE ROLE authenticated; END IF; IF NOT EXISTS(SELECT FROM pg_roles WHERE rolname='service_role') THEN CREATE ROLE service_role; END IF; END $$;create schema report_retention;create table report_retention.admission_state(reporting_enabled boolean,protocol_version integer);insert into report_retention.admission_state values(false,2);");sql(migration);sql(contractMigration);
  record=JSON.parse(sql("select json_build_object('platform','apple','environment','production','chain_fingerprint',repeat('a',64),'product_id','com.gridlygo.gridly.monthly','base_plan_id',null,'subscription_state','active','entitlement_state','entitled','current_period_end',clock_timestamp()+interval '1 month','last_verified_at',clock_timestamp(),'verification_source','gridly_server_store_api','error_category','none')"));});
 after(()=>{if(runDatabase)sql('drop database if exists '+db+' with(force)',{database:'postgres'});});
 function apply(value,role='service_role',fail=false){return sql("set role "+role+";select public.gridly_reconcile_store_entitlement('"+JSON.stringify(value).replaceAll("'","''")+"'::jsonb)",{fail});}
-dbTest('migration privacy, RLS, exact function grants and no consumer/token tables',()=>{
+function applyGoogle(value,lineage,fail=false){return sql("set role service_role;select public.gridly_reconcile_google_entitlement('"+JSON.stringify(value).replaceAll("'","''")+"'::jsonb,'"+JSON.stringify(lineage).replaceAll("'","''")+"'::jsonb)",{fail});}
+dbTest('migration privacy, RLS, exact function grants and no raw token columns',()=>{
  assert.equal(sql("select relrowsecurity from pg_class where oid='subscription_ops.store_entitlements'::regclass"),'t');
  for(const role of ['anon','authenticated']){apply(record,role,true);sql('set role '+role+';select * from subscription_ops.store_entitlements',{fail:true});}
  sql('set role service_role;select * from subscription_ops.store_entitlements',{fail:true});
@@ -26,7 +28,7 @@ dbTest('active apply idempotence does not extend TTL; stale/conflict rejected',(
  assert.equal(apply({...record,subscription_state:'inactive',entitlement_state:'not_entitled'}),'f');
 });
 dbTest('product/environment/state bounds and NULL-period entitlement fail atomically',()=>{
- for(const patch of [{product_id:'other'},{environment:'other'},{current_period_end:null},{entitlement_state:'not_entitled'},{email:'private'},{chain_fingerprint:'raw'},{platform:'google'},{platform:'google',product_id:'gridly_monthly',base_plan_id:null}])apply({...record,...patch},'service_role',true);
+ for(const [i,patch] of [{product_id:'other'},{environment:'other'},{current_period_end:null},{entitlement_state:'not_entitled'},{email:'private'},{chain_fingerprint:'raw'},{platform:'google'},{platform:'google',product_id:'com.gridlygo.gridly.monthly',base_plan_id:null}].entries())apply({...record,chain_fingerprint:String.fromCharCode(98+i).repeat(64),...patch},'service_role',true);
  assert.equal(sql('select count(*) from subscription_ops.store_entitlements'),'1');
 });
 dbTest('sandbox separation, expiry/cancellation/unknown and bounded privacy pruning',()=>{
@@ -38,4 +40,17 @@ dbTest('sandbox separation, expiry/cancellation/unknown and bounded privacy prun
  assert.equal(sql("set role service_role;select public.gridly_prune_store_entitlement_cache(1)"),'1');
  sql('set role service_role;select public.gridly_prune_store_entitlement_cache(501)',{fail:true});
  assert.equal(sql('select reporting_enabled::text||protocol_version::text from report_retention.admission_state'),'false2');
+});
+dbTest('Google lineage preserves verified successor chain and denies replay, forks and loops',()=>{
+ const fp=letter=>letter.repeat(64),base={...record,platform:'google',product_id:'com.gridlygo.gridly.monthly',base_plan_id:'monthly'};
+ assert.equal(applyGoogle({...base,chain_fingerprint:fp('e')},[]),'t');
+ assert.equal(applyGoogle({...base,chain_fingerprint:fp('f')},[fp('e')]),'t');
+ assert.equal(applyGoogle({...base,chain_fingerprint:fp('1')},[fp('f'),fp('e')]),'t');
+ assert.equal(applyGoogle({...base,chain_fingerprint:fp('e')},[]),'f');
+ assert.equal(applyGoogle({...base,chain_fingerprint:fp('f')},[fp('e')]),'f');
+ assert.equal(applyGoogle({...base,chain_fingerprint:fp('2')},[fp('f'),fp('e')]),'f');
+ applyGoogle({...base,chain_fingerprint:fp('3')},[fp('e'),fp('e')],true);
+ applyGoogle({...base,chain_fingerprint:fp('3')},[fp('3')],true);
+ assert.deepEqual(sql("select predecessor_fingerprint||':'||successor_fingerprint from subscription_ops.google_token_lineage where environment='production' order by predecessor_fingerprint").split(/\r?\n/),[fp('e')+':'+fp('f'),fp('f')+':'+fp('1')]);
+ sql('set role service_role;select * from subscription_ops.google_token_lineage',{fail:true});
 });

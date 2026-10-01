@@ -63,8 +63,8 @@ test("disclosure, fail-open recovery, and rail clearance contracts remain", () =
 });
 
 test("asset identity advances without feature or data authority changes", () => {
-  assert.match(html, /styles\.css\?v=lp244\.24b-owner-review/);
-  assert.match(html, /app\.js\?v=lp244\.24b-owner-review/);
+  assert.match(html, /styles\.css\?v=lp24447-approved-png/);
+  assert.match(html, /app\.js\?v=lp24448-awareness/);
   assert.doesNotMatch(h10i, /Supabase|DriveTexas|Leaflet|setView\(|zoomIn\(|zoomOut\(|provider|ranking/i);
   assert.doesNotMatch(app.slice(app.indexOf("// LP243.H10I"), app.indexOf("function gridlyLandscapeCommandDisclosureAudit")), /Supabase|DriveTexas|Leaflet|search|sheet/i);
 });

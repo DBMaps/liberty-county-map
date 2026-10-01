@@ -14,7 +14,8 @@ test("configured owner staging deterministically copies approved launcher artwor
 });
 
 test("portrait Location Context collapses only absent optional rows and preserves Search target", () => {
-  const closure = css.slice(css.indexOf("/* Android physical-launch closure:"));
+  const start = css.indexOf("/* Android physical-launch closure:");
+  const closure = css.slice(start, css.indexOf("/* LP244.45A", start));
   assert.match(closure, /mobile-destination-command\.is-awareness-panel/);
   assert.match(closure, /min-height: 76px !important/);
   assert.match(closure, /\[hidden\][\s\S]*?display: none !important/);

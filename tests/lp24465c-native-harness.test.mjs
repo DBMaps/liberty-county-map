@@ -177,7 +177,7 @@ test('direct Google issuer flow uses native milliseconds and satisfies every dur
  const publicKey=await webcrypto.subtle.importKey('jwk',direct.publicJwk,{name:'ECDSA',namedCurve:'P-256'},false,['verify']);
  const fixture=await direct.seed({scenario:'A',platform:'google',binding:nativeBinding,nowMs:nativeNow});
  const value=await verifyContinuity({proof:fixture.proof,publicKey,binding:nativeBinding,platform:'google',now:nativeNow,crypto:webcrypto});
- assert.ok(value);assert.ok(value.binding===nativeBinding);assert.equal(value.platform,'google');assert.equal(value.productId,'gridly_monthly');assert.equal(value.audience,'com.gridlygo.gridly');
+ assert.ok(value);assert.ok(value.binding===nativeBinding);assert.equal(value.platform,'google');assert.equal(value.productId,'com.gridlygo.gridly.monthly');assert.equal(value.audience,'com.gridlygo.gridly');
  assert.equal(value.environment,'production');assert.equal(value.entitlementState,'entitled');assert.equal(value.subscriptionState,'active');assert.equal(value.verificationSource,'gridly_server_store_api');
  assert.equal(Date.parse(value.lastVerifiedAt),nativeNow-1000);assert.equal(fixture.verifiedAt,Date.parse(value.lastVerifiedAt));
  assert.equal(Date.parse(value.currentPeriodEnd),nativeNow+7*86400000);assert.equal(Date.parse(value.continuityExpiresAt),fixture.verifiedAt+86400000);

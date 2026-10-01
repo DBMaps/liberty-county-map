@@ -11,7 +11,7 @@ const key=await crypto.subtle.generateKey({name:'AES-GCM',length:256},false,['en
 const hmac=await crypto.subtle.generateKey({name:'HMAC',hash:'SHA-256'},false,['sign']);
 const signing=await crypto.subtle.generateKey({name:'ECDSA',namedCurve:'P-256'},false,['sign','verify']);
 const cipher=tokenCipher({current:{version:'test-v1',key},crypto}),token='synthetic-google-token',fingerprint='a'.repeat(64),now=Date.now();
-const data=(patch={})=>({regionCode:'US',startTime:new Date(now-1000).toISOString(),subscriptionState:'SUBSCRIPTION_STATE_ACTIVE',acknowledgementState:'ACKNOWLEDGEMENT_STATE_PENDING',lineItems:[{productId:'gridly_monthly',offerDetails:{basePlanId:'monthly'},expiryTime:new Date(now+86400000).toISOString(),autoRenewingPlan:{autoRenewEnabled:true}}],...patch});
+const data=(patch={})=>({regionCode:'US',startTime:new Date(now-1000).toISOString(),subscriptionState:'SUBSCRIPTION_STATE_ACTIVE',acknowledgementState:'ACKNOWLEDGEMENT_STATE_PENDING',lineItems:[{productId:'com.gridlygo.gridly.monthly',offerDetails:{basePlanId:'monthly'},expiryTime:new Date(now+86400000).toISOString(),autoRenewingPlan:{autoRenewEnabled:true}}],...patch});
 const row=patch=>normalizeGoogle(data(patch),{env:'production',token,now});
 function setup(){let saved=null,acknowledged=false,fail=false,resolutions=[],events=[];
  const store={enqueue:async value=>{events.push('enqueue');saved??={...value,lease:'synthetic-lease',lease_until:new Date(Date.now()+60000).toISOString(),expires_at:new Date(Date.now()+3600000).toISOString()};return true;},claim:async()=>saved?[saved]:[],resolve:async value=>{resolutions.push(value);if(value.outcome!=='retry')saved=null;return true;}};
@@ -51,7 +51,7 @@ test('terminal cipher removes work; provider/cache retry; false completion denie
   await assert.rejects(()=>acknowledgmentQueue(s.ports).ensure({token,record,cached}));assert.ok(s.saved());
  }
 });
-const request=env=>new Request('https://example.invalid/verify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({platform:'google',environment:env,nonce:'a'.repeat(48),productId:'gridly_monthly',basePlanId:'monthly',evidence:{purchaseTokens:[token]}})});
+const request=env=>new Request('https://example.invalid/verify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({platform:'google',environment:env,nonce:'a'.repeat(48),productId:'com.gridlygo.gridly.monthly',basePlanId:'monthly',evidence:{purchaseTokens:[token]}})});
 test('production composition cannot be enabled by input; missing/invalid keys/admission remain 503',async()=>{
  for(const ports of [{},{authorizeNative:async()=>true},{signingKey:signing.privateKey}]){
   const composition=productionComposition(ports);assert.equal((await composition.google(request('production'))).status,503);assert.equal(composition.retryGoogle,null);
@@ -62,8 +62,8 @@ test('production composition cannot be enabled by input; missing/invalid keys/ad
 });
 test('server RPC adapter uses only fixed names, bounded abort, no error serialization',async()=>{
  const calls=[],client={rpc:(name,args)=>{calls.push([name,args]);return {abortSignal:async signal=>{assert.ok(signal instanceof AbortSignal);return {data:true};}};}};
- const ports=subscriptionRpcPorts(client);assert.equal(await ports.cache.apply({}),true);assert.equal(await ports.store.enqueue({}),true);
- assert.deepEqual(calls.map(x=>x[0]),['gridly_reconcile_store_entitlement','gridly_enqueue_google_ack']);
+ const ports=subscriptionRpcPorts(client);assert.equal(await ports.cache.apply({platform:'google'},[]),true);assert.equal(await ports.cache.apply({platform:'apple'}),true);assert.equal(await ports.store.enqueue({}),true);
+ assert.deepEqual(calls.map(x=>x[0]),['gridly_reconcile_google_entitlement','gridly_reconcile_store_entitlement','gridly_enqueue_google_ack']);
  const thrown=subscriptionRpcPorts({rpc:()=>{throw Error(token);}});await assert.rejects(()=>thrown.store.enqueue({}),error=>error.message==='subscription_unavailable');
  const bad=subscriptionRpcPorts({rpc:()=>({abortSignal:async()=>({error:{message:token}})})});await assert.rejects(()=>bad.store.enqueue({}),error=>error.message==='subscription_unavailable');
 });
