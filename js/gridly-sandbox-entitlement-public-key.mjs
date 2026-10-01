@@ -1,7 +1,7 @@
 // Internal-test Android candidate only. The matching private key belongs only
 // in the sandbox verifier secret; it is never shipped in the app.
-const SPKI_B64 = 'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIer/N+bWl1PB/DZQfpH+v9svKljX0cG1w9uaURX3h6cjpese8KRqxZngOUq1+2i4N5upFkG0XvBoWMaya6TKPQ==';
-const SPKI_SHA256 = '8937106c99ea6378a4497612d0f4bade5e537e79b69fb74ce5dd6b9ad0d0192c';
+const SPKI_B64 = 'MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEs686fE4PNE2hDV9qaDxxxiq9cwD/o6zrdFqQsCiszv/LIQ+WJQSaBQ4QI+k4I3xNNTcLPhzRh3JmP5RO1W08Mw==';
+const SPKI_SHA256 = '307a2533275dc0f071cf190d9710d319c00a07f8a8f860fb159345fdd628b1cd';
 
 export async function importSandboxEntitlementKey(crypto = globalThis.crypto) {
   try {
