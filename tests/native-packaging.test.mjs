@@ -346,13 +346,14 @@ test('native provider origin diagnostic is bounded, credential-safe, and opt-in'
   assert.ok(manifest.diagnosticScripts.some((entry) => entry.src.startsWith('js/gridlyNativeProviderOriginAudit.js')));
 });
 
-test('Android typography normalization is native-only and preserves Gridly density authority', () => {
+test('Android typography keeps native text zoom and scopes portrait density to Android', () => {
   const activity = text('android/app/src/main/java/com/gridlygo/gridly/MainActivity.kt');
   const styles = text('css/styles.css');
   assert.match(activity, /bridge\.webView\.settings\.textZoom\s*=\s*100/);
   assert.match(styles, /:root\s*\{[\s\S]*?font-size:\s*calc\(16px \* var\(--gridly-app-font-scale\)\)/);
   assert.match(styles, /body\.gridly-text-compact\s*\{\s*--gridly-app-font-scale:\s*0\.92/);
-  assert.doesNotMatch(styles, /data-gridly-native|android_webview_text_zoom/);
+  assert.match(styles, /html\[data-gridly-native-platform="android"\]:has\(body\[data-layout-mode="portrait"\]\)\s*\{\s*font-size:\s*calc\(14px \* var\(--gridly-app-font-scale\)\)/);
+  assert.doesNotMatch(styles, /android_webview_text_zoom/);
   assert.doesNotMatch(text('index.html'), /data-gridly-native|android_webview_text_zoom/);
 });
 
