@@ -1,4 +1,4 @@
-name: Gridly Apple Build 9
+name: Gridly Apple Build 10
 
 on:
   workflow_dispatch:
@@ -8,7 +8,7 @@ on:
         required: true
         type: string
       upload_to_app_store_connect:
-        description: Validate and upload the signed Build 9 IPA
+        description: Validate and upload the signed Build 10 IPA
         required: true
         default: false
         type: boolean
@@ -17,8 +17,8 @@ permissions:
   contents: read
 
 jobs:
-  apple-build-9:
-    if: ${{ inputs.upload_to_app_store_connect == true && github.ref == 'refs/heads/codex/reporting-launch-closure' }}
+  apple-build-10:
+    if: ${{ inputs.upload_to_app_store_connect == true && github.ref == 'refs/heads/codex/gridly-build-10-iphone-only' }}
     runs-on: macos-26
     timeout-minutes: 90
     steps:
@@ -69,18 +69,34 @@ jobs:
       - name: Install distribution signing
         shell: bash
         env:
-          APPLE_DIST_P12_BASE64: ${{ secrets.APPLE_DIST_P12_BASE64 }}
-          APPLE_DIST_P12_PASSWORD: ${{ secrets.APPLE_DIST_P12_PASSWORD }}
+          APPLE_DIST_PRIVATE_KEY_PEM_BASE64: ${{ secrets.APPLE_DIST_PRIVATE_KEY_PEM_BASE64 }}
+          APPLE_DIST_CERT_PEM_BASE64: ${{ secrets.APPLE_DIST_CERT_PEM_BASE64 }}
           APPLE_PROVISION_PROFILE_BASE64: ${{ secrets.APPLE_PROVISION_PROFILE_BASE64 }}
         run: |
           set -euo pipefail
-          test -n "$APPLE_DIST_P12_BASE64" && test -n "$APPLE_DIST_P12_PASSWORD" && test -n "$APPLE_PROVISION_PROFILE_BASE64"
-          printf '%s' "$APPLE_DIST_P12_BASE64" | base64 -D > "$RUNNER_TEMP/distribution.p12"
+          umask 077
+          cleanup_signing_material() {
+            rm -f "$RUNNER_TEMP/distribution-private.key" "$RUNNER_TEMP/distribution-cert.pem" "$RUNNER_TEMP/distribution.p12"
+            unset TEMP_P12_PASSWORD KEYCHAIN_PASSWORD
+          }
+          trap cleanup_signing_material EXIT
+          test -n "$APPLE_DIST_PRIVATE_KEY_PEM_BASE64" && test -n "$APPLE_DIST_CERT_PEM_BASE64" && test -n "$APPLE_PROVISION_PROFILE_BASE64"
+          printf '%s' "$APPLE_DIST_PRIVATE_KEY_PEM_BASE64" | base64 -D > "$RUNNER_TEMP/distribution-private.key"
+          printf '%s' "$APPLE_DIST_CERT_PEM_BASE64" | base64 -D > "$RUNNER_TEMP/distribution-cert.pem"
           printf '%s' "$APPLE_PROVISION_PROFILE_BASE64" | base64 -D > "$RUNNER_TEMP/distribution.mobileprovision"
+          KEY_PUBLIC_SHA=$(openssl pkey -in "$RUNNER_TEMP/distribution-private.key" -pubout -outform DER | shasum -a 256 | awk '{print $1}')
+          CERT_PUBLIC_SHA=$(openssl x509 -in "$RUNNER_TEMP/distribution-cert.pem" -pubkey -noout | openssl pkey -pubin -outform DER | shasum -a 256 | awk '{print $1}')
+          test -n "$KEY_PUBLIC_SHA" && test "$KEY_PUBLIC_SHA" = "$CERT_PUBLIC_SHA"
+          openssl version
+          TEMP_P12_PASSWORD="$(openssl rand -hex 32)"
+          export TEMP_P12_PASSWORD
+          openssl pkcs12 -export -legacy -inkey "$RUNNER_TEMP/distribution-private.key" -in "$RUNNER_TEMP/distribution-cert.pem" \
+            -out "$RUNNER_TEMP/distribution.p12" -passout env:TEMP_P12_PASSWORD
+          openssl pkcs12 -legacy -in "$RUNNER_TEMP/distribution.p12" -passin env:TEMP_P12_PASSWORD -info -noout >/dev/null 2>&1
           KEYCHAIN_PASSWORD="$(openssl rand -base64 32)"
           security create-keychain -p "$KEYCHAIN_PASSWORD" gridly-build.keychain
           security unlock-keychain -p "$KEYCHAIN_PASSWORD" gridly-build.keychain
-          security import "$RUNNER_TEMP/distribution.p12" -k gridly-build.keychain -P "$APPLE_DIST_P12_PASSWORD" -T /usr/bin/codesign
+          security import "$RUNNER_TEMP/distribution.p12" -k gridly-build.keychain -P "$TEMP_P12_PASSWORD" -T /usr/bin/codesign
           security set-key-partition-list -S apple-tool:,apple: -s -k "$KEYCHAIN_PASSWORD" gridly-build.keychain >/dev/null
           security list-keychains -d user -s gridly-build.keychain
           security cms -D -i "$RUNNER_TEMP/distribution.mobileprovision" > "$RUNNER_TEMP/profile.plist"
@@ -92,11 +108,24 @@ jobs:
           mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
           cp "$RUNNER_TEMP/distribution.mobileprovision" "$HOME/Library/MobileDevice/Provisioning Profiles/$PROFILE_UUID.mobileprovision"
           { printf 'PROFILE_NAME=%s\n' "$PROFILE_NAME"; printf 'TEAM_ID=%s\n' "$TEAM_ID"; } >> "$GITHUB_ENV"
-          rm -f "$RUNNER_TEMP/distribution.p12" "$RUNNER_TEMP/distribution.mobileprovision" "$RUNNER_TEMP/profile.plist"
-      - name: Archive and export Build 9
+          rm -f "$RUNNER_TEMP/distribution.mobileprovision" "$RUNNER_TEMP/profile.plist"
+      - name: Archive and export Build 10
         shell: bash
         run: |
           set -euo pipefail
+          SIGNING_IDENTITIES="$(security find-identity -v -p codesigning gridly-build.keychain)"
+          printf '%s\n' "$SIGNING_IDENTITIES"
+          printf '%s\n' "$SIGNING_IDENTITIES" | grep -Eq '^[[:space:]]*[0-9]+\) [[:xdigit:]]{40} "Apple Distribution: [^"]+"'
+          xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release -destination 'generic/platform=iOS' \
+            -showBuildSettings CURRENT_PROJECT_VERSION=10 DEVELOPMENT_TEAM="$TEAM_ID" CODE_SIGN_STYLE=Manual \
+            CODE_SIGN_IDENTITY="Apple Distribution" PROVISIONING_PROFILE_SPECIFIER="$PROFILE_NAME" 2>&1 | \
+            awk -F ' = ' '/^Build settings for action .* and target App:$/ { in_app=1; next } /^Build settings for action .* and target / { in_app=0 } in_app && NF >= 2 { key=$1; sub(/^[[:space:]]+/, "", key); if (key ~ /^(CODE_SIGN_IDENTITY|CODE_SIGN_STYLE|DEVELOPMENT_TEAM|PROVISIONING_PROFILE_SPECIFIER|PRODUCT_BUNDLE_IDENTIFIER)$/) print key " = " $2 }' | \
+            tee "$RUNNER_TEMP/effective-signing-settings.txt"
+          grep -Fxq 'CODE_SIGN_IDENTITY = Apple Distribution' "$RUNNER_TEMP/effective-signing-settings.txt"
+          grep -Fxq 'CODE_SIGN_STYLE = Manual' "$RUNNER_TEMP/effective-signing-settings.txt"
+          grep -Fxq 'DEVELOPMENT_TEAM = 2XSH6R7K37' "$RUNNER_TEMP/effective-signing-settings.txt"
+          grep -Fxq 'PROVISIONING_PROFILE_SPECIFIER = Gridly App Store Build 9' "$RUNNER_TEMP/effective-signing-settings.txt"
+          grep -Fxq 'PRODUCT_BUNDLE_IDENTIFIER = com.gridlygo.gridly' "$RUNNER_TEMP/effective-signing-settings.txt"
           cat > "$RUNNER_TEMP/ExportOptions.plist" <<EOF
           <?xml version="1.0" encoding="UTF-8"?>
           <plist version="1.0"><dict>
@@ -107,17 +136,81 @@ jobs:
           </dict></plist>
           EOF
           xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release -destination 'generic/platform=iOS' \
-            -archivePath "$RUNNER_TEMP/Gridly-Build-9.xcarchive" CURRENT_PROJECT_VERSION=9 \
-            DEVELOPMENT_TEAM="$TEAM_ID" CODE_SIGN_STYLE=Manual PROVISIONING_PROFILE_SPECIFIER="$PROFILE_NAME" archive
-          xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/Gridly-Build-9.xcarchive" \
+            -archivePath "$RUNNER_TEMP/Gridly-Build-10.xcarchive" CURRENT_PROJECT_VERSION=10 \
+            DEVELOPMENT_TEAM="$TEAM_ID" CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY="Apple Distribution" \
+            PROVISIONING_PROFILE_SPECIFIER="$PROFILE_NAME" archive
+          xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/Gridly-Build-10.xcarchive" \
             -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" -exportPath "$RUNNER_TEMP/gridly-export"
           IPA=$(find "$RUNNER_TEMP/gridly-export" -maxdepth 1 -name '*.ipa' -print -quit)
           test -n "$IPA" && test -f "$IPA"
           printf 'IPA_PATH=%s\n' "$IPA" >> "$GITHUB_ENV"
           shasum -a 256 "$IPA"
-          /usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$RUNNER_TEMP/Gridly-Build-9.xcarchive/Products/Applications/App.app/Info.plist" | grep -x 9
-          /usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$RUNNER_TEMP/Gridly-Build-9.xcarchive/Products/Applications/App.app/Info.plist" | grep -x 1.0.0
-          /usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$RUNNER_TEMP/Gridly-Build-9.xcarchive/Products/Applications/App.app/Info.plist" | grep -x com.gridlygo.gridly
+          /usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$RUNNER_TEMP/Gridly-Build-10.xcarchive/Products/Applications/App.app/Info.plist" | grep -x 10
+          /usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$RUNNER_TEMP/Gridly-Build-10.xcarchive/Products/Applications/App.app/Info.plist" | grep -x 1.0.0
+          /usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$RUNNER_TEMP/Gridly-Build-10.xcarchive/Products/Applications/App.app/Info.plist" | grep -x com.gridlygo.gridly
+      - name: Certify archived and exported iPhone app
+        shell: bash
+        run: |
+          set -euo pipefail
+          APP="$RUNNER_TEMP/Gridly-Build-10.xcarchive/Products/Applications/App.app"
+          codesign --verify --deep --strict --verbose=2 "$APP"
+          python3 - "$APP" "$IPA_PATH" <<'PY'
+          import json
+          import plistlib
+          import sys
+          import zipfile
+          from pathlib import Path
+
+          app = Path(sys.argv[1])
+          ipa = Path(sys.argv[2])
+          expected = {
+              "CFBundleShortVersionString": "1.0.0",
+              "CFBundleVersion": "10",
+              "CFBundleIdentifier": "com.gridlygo.gridly",
+              "UIDeviceFamily": [1],
+          }
+          with (app / "Info.plist").open("rb") as file:
+              archived = plistlib.load(file)
+          with zipfile.ZipFile(ipa) as package:
+              names = package.namelist()
+              info_paths = [name for name in names if name.startswith("Payload/") and name.endswith(".app/Info.plist")]
+              assert len(info_paths) == 1, info_paths
+              exported = plistlib.loads(package.read(info_paths[0]))
+              for label, info in (("archive", archived), ("IPA", exported)):
+                  actual = {key: info.get(key) for key in expected}
+                  assert actual == expected, (label, actual)
+                  assert 2 not in info["UIDeviceFamily"], (label, info["UIDeviceFamily"])
+                  print(f"{label} identity: {json.dumps(actual, sort_keys=True)}")
+
+              def packaged(path):
+                  matches = [name for name in names if name.endswith("/public/" + path)]
+                  assert len(matches) == 1, (path, matches)
+                  return package.read(matches[0]).decode("utf-8")
+
+              app_js = packaged("js/app.js")
+              paid_files = {
+                  path: packaged(path)
+                  for path in (
+                      "js/gridly-paid-bootstrap.js",
+                      "js/gridly-paid-access.mjs",
+                      "js/gridly-paid-startup.mjs",
+                      "js/gridly-paid-config.mjs",
+                      "js/gridly-paid-ui.mjs",
+                  )
+              }
+              start = app_js.index("function gridlyAuthorizedReportTransport(")
+              end = app_js.index("/* LP244.29A REPORTING AVAILABILITY RUNTIME START */", start)
+              transport = app_js[start:end]
+              assert 'client.functions.invoke("gridly-paid-report"' in transport
+              assert "window.gridlyPaidReporting?.getProof()" in transport
+              assert transport.count("client.rpc(") == 1
+              assert 'if (name === "get_community_reporting_status") return client.rpc(name, args);' in transport
+              assert "GRIDLY_ANDROID_LICENSE_TEST_CANDIDATE = false;" in paid_files["js/gridly-paid-ui.mjs"]
+              assert "GRIDLY_ANDROID_LICENSE_TEST_CANDIDATE = true;" not in "\n".join(paid_files.values())
+              assert "QA_BYPASS" not in "\n".join(paid_files.values())
+              print("paid-report bridge and gridly-paid-report transport packaged")
+              print("raw writer absent from packaged client transport; debug QA bypass absent")
+          PY
       - name: Validate and upload IPA
         shell: bash
         env:
@@ -143,16 +236,16 @@ jobs:
         if: ${{ github.event.repository.private }}
         uses: actions/upload-artifact@v4
         with:
-          name: gridly-apple-build-9
+          name: gridly-apple-build-10
           path: |
             ${{ runner.temp }}/gridly-export/*.ipa
-            ${{ runner.temp }}/Gridly-Build-9.xcarchive
+            ${{ runner.temp }}/Gridly-Build-10.xcarchive
           retention-days: 3
           if-no-files-found: error
       - name: Remove temporary signing material
         if: always()
         shell: bash
         run: |
-          rm -f "$RUNNER_TEMP/native-provider-config.json" "$RUNNER_TEMP/distribution.p12" "$RUNNER_TEMP/distribution.mobileprovision" "$RUNNER_TEMP/profile.plist"
+          rm -f "$RUNNER_TEMP/native-provider-config.json" "$RUNNER_TEMP/distribution-private.key" "$RUNNER_TEMP/distribution-cert.pem" "$RUNNER_TEMP/distribution.p12" "$RUNNER_TEMP/distribution.mobileprovision" "$RUNNER_TEMP/profile.plist"
           rm -f "$HOME/.appstoreconnect/private_keys/AuthKey_"*.p8
           security delete-keychain gridly-build.keychain 2>/dev/null || true
