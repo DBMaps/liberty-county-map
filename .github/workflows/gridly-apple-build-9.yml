@@ -113,6 +113,19 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          SIGNING_IDENTITIES="$(security find-identity -v -p codesigning gridly-build.keychain)"
+          printf '%s\n' "$SIGNING_IDENTITIES"
+          printf '%s\n' "$SIGNING_IDENTITIES" | grep -Eq '^[[:space:]]*[0-9]+\) [[:xdigit:]]{40} "Apple Distribution: [^"]+"'
+          xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release -destination 'generic/platform=iOS' \
+            -showBuildSettings CURRENT_PROJECT_VERSION=9 DEVELOPMENT_TEAM="$TEAM_ID" CODE_SIGN_STYLE=Manual \
+            CODE_SIGN_IDENTITY="Apple Distribution" PROVISIONING_PROFILE_SPECIFIER="$PROFILE_NAME" 2>&1 | \
+            awk -F ' = ' '/^Build settings for action .* and target App:$/ { in_app=1; next } /^Build settings for action .* and target / { in_app=0 } in_app && NF >= 2 { key=$1; sub(/^[[:space:]]+/, "", key); if (key ~ /^(CODE_SIGN_IDENTITY|CODE_SIGN_STYLE|DEVELOPMENT_TEAM|PROVISIONING_PROFILE_SPECIFIER|PRODUCT_BUNDLE_IDENTIFIER)$/) print key " = " $2 }' | \
+            tee "$RUNNER_TEMP/effective-signing-settings.txt"
+          grep -Fxq 'CODE_SIGN_IDENTITY = Apple Distribution' "$RUNNER_TEMP/effective-signing-settings.txt"
+          grep -Fxq 'CODE_SIGN_STYLE = Manual' "$RUNNER_TEMP/effective-signing-settings.txt"
+          grep -Fxq 'DEVELOPMENT_TEAM = 2XSH6R7K37' "$RUNNER_TEMP/effective-signing-settings.txt"
+          grep -Fxq 'PROVISIONING_PROFILE_SPECIFIER = Gridly App Store Build 9' "$RUNNER_TEMP/effective-signing-settings.txt"
+          grep -Fxq 'PRODUCT_BUNDLE_IDENTIFIER = com.gridlygo.gridly' "$RUNNER_TEMP/effective-signing-settings.txt"
           cat > "$RUNNER_TEMP/ExportOptions.plist" <<EOF
           <?xml version="1.0" encoding="UTF-8"?>
           <plist version="1.0"><dict>
@@ -124,7 +137,8 @@ jobs:
           EOF
           xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release -destination 'generic/platform=iOS' \
             -archivePath "$RUNNER_TEMP/Gridly-Build-9.xcarchive" CURRENT_PROJECT_VERSION=9 \
-            DEVELOPMENT_TEAM="$TEAM_ID" CODE_SIGN_STYLE=Manual PROVISIONING_PROFILE_SPECIFIER="$PROFILE_NAME" archive
+            DEVELOPMENT_TEAM="$TEAM_ID" CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY="Apple Distribution" \
+            PROVISIONING_PROFILE_SPECIFIER="$PROFILE_NAME" archive
           xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/Gridly-Build-9.xcarchive" \
             -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" -exportPath "$RUNNER_TEMP/gridly-export"
           IPA=$(find "$RUNNER_TEMP/gridly-export" -maxdepth 1 -name '*.ipa' -print -quit)
