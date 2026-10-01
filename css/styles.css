@@ -29456,6 +29456,52 @@ body[data-layout-mode="portrait"].gridly-v2-presentation-owner-active
   pointer-events: none !important;
 }
 
+/* Android paid onboarding: reserve the public legal control and let artwork
+   shrink into the actual card space instead of requiring most of the viewport. */
+html.gridly-android-paid-onboarding .gridly-welcome-overlay {
+  box-sizing: border-box;
+  height: 100dvh;
+  min-height: 0;
+  max-height: 100dvh;
+  padding: calc(env(safe-area-inset-top, 0px) + 56px) 8px calc(env(safe-area-inset-bottom, 0px) + 10px);
+  place-items: stretch center;
+  overflow: hidden;
+}
+html.gridly-android-paid-onboarding .gridly-v858-first-run-sheet:has([data-gridly-visual-quick-tour]),
+html.gridly-android-paid-onboarding .gridly-v858-first-run-card:has([data-gridly-visual-quick-tour]) {
+  box-sizing: border-box;
+  height: 100%;
+  max-height: 100%;
+  min-height: 0;
+}
+html.gridly-android-paid-onboarding .gridly-v950-onboarding-pager,
+html.gridly-android-paid-onboarding .gridly-v950-page-track {
+  min-height: 0;
+  max-height: 100%;
+}
+html.gridly-android-paid-onboarding .gridly-v950-feature-page {
+  min-height: 0;
+  grid-template-rows: auto minmax(0, 1fr);
+  overflow: hidden;
+}
+html.gridly-android-paid-onboarding .gridly-v950-feature-page .gridly-v896-shot-frame {
+  min-height: 0;
+  max-height: 100%;
+  overflow: hidden;
+}
+html.gridly-android-paid-onboarding .gridly-v950-feature-page .gridly-v896-shot-frame img {
+  max-height: 100%;
+}
+html.gridly-android-paid-onboarding .gridly-v950-welcome-page,
+html.gridly-android-paid-onboarding .gridly-v950-setup-page {
+  min-height: 0;
+  max-height: 100%;
+  overflow-y: auto;
+}
+html.gridly-android-paid-onboarding .gridly-v950-setup-page {
+  align-content: start;
+}
+
 /* LP244.5 Task B — physical Android landscape refinement.
    The orientation plus short visual-height gate is intentionally the same
    physical-phone boundary certified by LP244.4. Nothing in this block can

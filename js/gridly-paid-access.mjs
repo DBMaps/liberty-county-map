@@ -12,14 +12,14 @@ export function createPaidAccess({capacitor,plugin,authority,publicKey,continuit
  crypto=globalThis.crypto,timeoutMs=15000,purchaseTimeoutMs=120000,monotonic=()=>globalThis.performance.now(),
  schedule=setTimeout,cancel=clearTimeout}={}) {
  const platform=nativeStore(capacitor),subscribers=new Set(),handles=[];
- let snapshot=null,continuity=null,state='initializing',action=null,product=null,errorCategory='none';
+ let snapshot=null,continuity=null,state='initializing',action=null,product=null,productLoading=false,errorCategory='none';
  let session,tail=Promise.resolve(),signalTask,startTask,expiryTimer,stopped=false,context=null,denied=false;
  let clockAnchor=null, generation=0;
  const effectiveNow=()=>clockAnchor===null?now():Math.max(now(),clockAnchor.utc+Math.max(0,monotonic()-clockAnchor.tick));
  const continuityAllowed=()=>clockAnchor!==null&&now()>=clockAnchor.wall&&continuityDecision(continuity,{platform,now:effectiveNow()});
  const proofEnvironment=()=>platform==='apple'?snapshot?.environment??'production':'production';
  const allowed=()=>!stopped&&state==='entitled'&&(accessDecision(snapshot,{platform,environment:proofEnvironment(),now:effectiveNow()}).allowed||continuityAllowed());
- const read=()=>Object.freeze({state,action,platform,product,errorCategory,verificationReady:!!authority&&!!publicKey,
+ const read=()=>Object.freeze({state,action,platform,product,...(platform==='google'?{productLoading}:{}),errorCategory,verificationReady:!!authority&&!!publicKey,
   allowed:allowed(),temporaryAccess:allowed()&&!accessDecision(snapshot,{platform,environment:proofEnvironment(),now:effectiveNow()}).allowed});
  const publish=()=>{const value=read();for(const fn of subscribers){try{fn(value);}catch{}}return value;};
  const clear=()=>{cancel(expiryTimer);snapshot=null;};
@@ -76,6 +76,12 @@ export function createPaidAccess({capacitor,plugin,authority,publicKey,continuit
   if(stopped||!session){action=null;return publish();}
   await begin();
   if(wasAllowed){state=accessDecision(snapshot,{platform,environment:proofEnvironment(),now:effectiveNow()}).allowed||continuityAllowed()?'entitled':'initializing';publish();}
+  if(platform==='google'&&method==='refresh'&&plugin&&product?.available!==true){
+   productLoading=true;publish();
+   try{product=await session.lookupProduct();}
+   catch{product=Object.freeze({available:false,errorCategory:'store_unavailable'});}
+   finally{productLoading=false;publish();}
+  }
   try {
    const row=await session[method]();if(stopped)return read();
    if(!denied&&row===snapshot&&accessDecision(row,{platform,environment:platform==='apple'?row?.environment:'production',now:now()}).allowed) {
@@ -124,14 +130,16 @@ export function createPaidAccess({capacitor,plugin,authority,publicKey,continuit
      }
      await plugin.startObserving();if(!active||stopped){try{void Promise.resolve(plugin.stopObserving()).catch(()=>{});}catch{}throw Error();}
     });
+    if(platform==='google'){productLoading=true;publish();}
     product=await session.lookupProduct();
    }catch{
+    if(platform==='google')product=Object.freeze({available:false,errorCategory:'store_unavailable'});
     for(const handle of handles.splice(0))discard(handle);
     try{void Promise.resolve(plugin.stopObserving()).catch(()=>{});}catch{}
     // Native/store observation failure is transient; still attempt the signed vault.
     if(!stopped){await begin();if(context)try{if((await bounded(()=>continuityVault.retain({attempt:context.attempt})))?.retained!==true)continuity=null;}catch{continuity=null;}}
     clear();state=stopped?'unknown':continuityAllowed()?'entitled':'temporarily_unavailable';errorCategory='store_unavailable';if(state==='entitled')arm();return publish();
-   }finally{active=false;}
+   }finally{active=false;if(platform==='google'){productLoading=false;publish();}}
    return run('launch');
   });return startTask;
  }

@@ -9,13 +9,15 @@ import {chromium} from '@playwright/test';
 import {build,functionSource} from '../tools/build-paid-onboarding.mjs';
 import {normalizeApple,signResponse} from '../supabase/functions/_shared/entitlement/core.mjs';
 
-test('accepted renderer/resolution source and complete statewide model remain identical',async()=>{
+test('accepted geography remains identical and Android tour changes are gated',async()=>{
  const app=(await readFile('js/app.js','utf8')).replaceAll('\r\n','\n');
  const module=(await readFile('js/gridly-paid-onboarding.mjs','utf8')).replaceAll('\r\n','\n');
  const expected=await build(app),model=JSON.parse(await readFile('assets/onboarding/paid-onboarding-model.json','utf8'));
  assert.equal(model.sourceHash,expected.hash);assert.deepEqual({...model,sourceHash:undefined},{...JSON.parse(JSON.stringify(expected.model)),sourceHash:undefined});
  assert.ok(model.areas.length>2000);assert.equal(Object.keys(model.registry).length,254);
- for(const name of ['renderGridlyV858FirstRunExperience','bindGridlyV872FirstRunActivation','resolveGridlyAwarenessAreaQuery','resolveGridlyV858FirstRunLocation','resolveGridlyV858NearestAwarenessArea','showGridlyV859FirstRunCompletionMoment'])assert.equal(functionSource(module,name),functionSource(app,name),name);
+ for(const name of ['bindGridlyV872FirstRunActivation','resolveGridlyAwarenessAreaQuery','resolveGridlyV858FirstRunLocation','resolveGridlyV858NearestAwarenessArea','showGridlyV859FirstRunCompletionMoment'])assert.equal(functionSource(module,name),functionSource(app,name),name);
+ assert.match(module,/if\(isAndroid\)overlay\.querySelector\('\[data-gridly-onboarding-page="report"\]'\)\?\.remove\(\)/);
+ assert.match(module,/const isLandscape = isAndroid[\s\S]*?physicalWalkthroughLandscape\(window\)[\s\S]*?: \(window\.matchMedia\?\.\("\(orientation: landscape\)"\)\?\.matches \?\? \(window\.innerWidth > window\.innerHeight\)\)/);
  assert.doesNotMatch(module,/createPaidAccess|signedTransactions|purchaseTokens|console\.|initMap\(|initSupabase\(/);
 });
 

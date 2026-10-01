@@ -2,11 +2,25 @@ import {importProductionEntitlementKey} from './gridly-entitlement-public-key.mj
 import {createNativeEdgeTransport} from './gridly-native-edge-transport.mjs';
 import {createNativeAttestedInvoke} from './gridly-native-attested-invoke.mjs';
 import {createAppleVerificationAuthority} from './gridly-apple-storekit.mjs';
+import {createGoogleVerificationAuthority} from './gridly-google-play-billing.mjs';
 
 export async function productionPaidComposition(capacitor) {
   const platform = capacitor?.isNativePlatform?.() === true ? capacitor.getPlatform?.() : null;
   const publicKey=['ios','android'].includes(platform)?await importProductionEntitlementKey():null;
-  // Apple-only admission. Android remains separately closed pending its own proof.
+  if(platform==='android') {
+    if(capacitor.isPluginAvailable?.('GridlyPlayBilling')!==true||
+      capacitor.isPluginAvailable?.('GridlyPlayIntegrity')!==true)
+      return {capacitor,plugin:null,publicKey,authority:null,continuityVault:null};
+    const plugin=capacitor.Plugins?.GridlyPlayBilling??capacitor.registerPlugin?.('GridlyPlayBilling')??null;
+    const nativeAttestation=capacitor.Plugins?.GridlyPlayIntegrity??capacitor.registerPlugin?.('GridlyPlayIntegrity')??null;
+    if(!plugin||!nativeAttestation)return {capacitor,plugin:null,publicKey,authority:null,continuityVault:null};
+    const transport=createNativeEdgeTransport({capacitor});
+    const invoke=transport&&createNativeAttestedInvoke({platform:'google',invoke:transport.invoke,
+      requestChallenge:transport.requestChallenge,nativeAttestation});
+    const authority=invoke&&publicKey?createGoogleVerificationAuthority({invoke}):null;
+    return {capacitor,plugin,publicKey,authority,continuityVault:null};
+  }
+  // Preserve the independently certified Apple admission path.
   if(platform!=='ios'||capacitor.isPluginAvailable?.('GridlyStoreKit')!==true||
     capacitor.isPluginAvailable?.('GridlyAppAttest')!==true)return {capacitor,plugin:null,publicKey,authority:null,continuityVault:null};
   // The bundled iOS native bridge injects Plugins directly and has no registerPlugin.
