@@ -23,6 +23,11 @@ verify_jwt = false
 [functions.gridly-verify-google-subscription]
 verify_jwt = false
 
+# Isolated license-test authority; native Play Integrity and a consumed challenge
+# are required by the handler even though the gateway JWT check is disabled.
+[functions.gridly-verify-google-sandbox-subscription]
+verify_jwt = false
+
 # Separate constant-time operations token in the handler.
 [functions.gridly-subscription-ops]
 verify_jwt = false

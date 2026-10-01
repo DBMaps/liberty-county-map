@@ -3,6 +3,9 @@ import {createPaidOnboarding,onboardingComplete} from './gridly-paid-onboarding.
 import {productionPaidComposition} from './gridly-paid-config.mjs';
 import {loadPaidRuntime} from './gridly-paid-startup.mjs';
 
+// Native staging changes this exact constant only for the signed V5 license-test AAB.
+const GRIDLY_ANDROID_LICENSE_TEST_CANDIDATE = false;
+
 const copy={initializing:'Checking your subscription…',entitled:'Subscription active.',
   not_entitled:'Subscribe or restore your store purchase to use Gridly.',
   pending:'Your purchase is pending. Check again after the store completes it.',
@@ -16,7 +19,7 @@ export async function bootPaidAccess() {
   const status=document.getElementById('gridlyPaidStatus'), purchase=document.getElementById('gridlyPaidPurchase');
   const restore=document.getElementById('gridlyPaidRestore'), retry=document.getElementById('gridlyPaidRetry');
   const settingsRestore=document.getElementById('gridlySettingsRestore');
-  const coordinator=createPaidAccess(await productionPaidComposition(window.Capacitor));
+  const coordinator=createPaidAccess(await productionPaidComposition(window.Capacitor,{googleLicenseTest:GRIDLY_ANDROID_LICENSE_TEST_CANDIDATE}));
   let loading=false, started=false, wasVisible=false, loadFailed=false, closing=false;
   let tourComplete=onboardingComplete(), onboarding;
   const legal=document.createElement('details');legal.id='gridlyPaidLegalAccess';legal.hidden=true;

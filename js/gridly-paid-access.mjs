@@ -8,7 +8,7 @@ export function nativeStore(capacitor) {
  return ({ios:'apple',android:'google'})[capacitor.getPlatform?.()]||null;
 }
 // Trusted composition only. The native binding is anti-replay context, not ownership.
-export function createPaidAccess({capacitor,plugin,authority,publicKey,continuityVault,now=Date.now,
+export function createPaidAccess({capacitor,plugin,authority,publicKey,continuityVault,googleEnvironment='production',now=Date.now,
  crypto=globalThis.crypto,timeoutMs=15000,purchaseTimeoutMs=120000,monotonic=()=>globalThis.performance.now(),
  schedule=setTimeout,cancel=clearTimeout}={}) {
  const platform=nativeStore(capacitor),subscribers=new Set(),handles=[];
@@ -17,7 +17,7 @@ export function createPaidAccess({capacitor,plugin,authority,publicKey,continuit
  let clockAnchor=null, generation=0;
  const effectiveNow=()=>clockAnchor===null?now():Math.max(now(),clockAnchor.utc+Math.max(0,monotonic()-clockAnchor.tick));
  const continuityAllowed=()=>clockAnchor!==null&&now()>=clockAnchor.wall&&continuityDecision(continuity,{platform,now:effectiveNow()});
- const proofEnvironment=()=>platform==='apple'?snapshot?.environment??'production':'production';
+ const proofEnvironment=()=>platform==='apple'?snapshot?.environment??'production':googleEnvironment;
  const allowed=()=>!stopped&&state==='entitled'&&(accessDecision(snapshot,{platform,environment:proofEnvironment(),now:effectiveNow()}).allowed||continuityAllowed());
  const read=()=>Object.freeze({state,action,platform,product,...(platform==='google'?{productLoading}:{}),errorCategory,verificationReady:!!authority&&!!publicKey,
   allowed:allowed(),temporaryAccess:allowed()&&!accessDecision(snapshot,{platform,environment:proofEnvironment(),now:effectiveNow()}).allowed});
@@ -40,9 +40,9 @@ export function createPaidAccess({capacitor,plugin,authority,publicKey,continuit
   catch(error){if(error?.message==='authority_denied'&&operation===generation&&!stopped)await revoke();throw Error('verification_unavailable');}
  }}:null;
  if(platform) {
-  session=(platform==='apple'?createAppleStoreKit:createGooglePlayBilling)({capacitor,plugin,authority:boundAuthority,publicKey,now,crypto,timeoutMs,purchaseTimeoutMs,environment:platform==='apple'?'auto':'production',
+  session=(platform==='apple'?createAppleStoreKit:createGooglePlayBilling)({capacitor,plugin,authority:boundAuthority,publicKey,now,crypto,timeoutMs,purchaseTimeoutMs,environment:platform==='apple'?'auto':googleEnvironment,
    onNativeDenial:revoke,deliverEntitlement:async(row,guard)=>{
-    if(stopped||denied||!guard.isCurrent()||!accessDecision(row,{platform,environment:platform==='apple'?row?.environment:'production',now:now()}).allowed)return false;
+   if(stopped||denied||!guard.isCurrent()||!accessDecision(row,{platform,environment:platform==='apple'?row?.environment:googleEnvironment,now:now()}).allowed)return false;
     snapshot=row;return true;
    }});
  }
@@ -84,7 +84,7 @@ export function createPaidAccess({capacitor,plugin,authority,publicKey,continuit
   }
   try {
    const row=await session[method]();if(stopped)return read();
-   if(!denied&&row===snapshot&&accessDecision(row,{platform,environment:platform==='apple'?row?.environment:'production',now:now()}).allowed) {
+   if(!denied&&row===snapshot&&accessDecision(row,{platform,environment:platform==='apple'?row?.environment:googleEnvironment,now:now()}).allowed) {
     // Only after bridge completion/Apple finish succeeds is durable authority saved.
     clockAnchor={utc:now(),wall:now(),tick:monotonic()};
     continuity=null;
@@ -104,7 +104,7 @@ export function createPaidAccess({capacitor,plugin,authority,publicKey,continuit
     if(context&&temporary&&!denied){
      if((await bounded(()=>continuityVault.retain({attempt:context.attempt})))?.retained!==true)continuity=null;
     }else if(context)await revoke();
-    if(temporary&&!denied&&previousSnapshot&&accessDecision(previousSnapshot,{platform,environment:platform==='apple'?previousSnapshot.environment:'production',now:effectiveNow()}).allowed){
+    if(temporary&&!denied&&previousSnapshot&&accessDecision(previousSnapshot,{platform,environment:platform==='apple'?previousSnapshot.environment:googleEnvironment,now:effectiveNow()}).allowed){
      snapshot=previousSnapshot;state='entitled';arm();
     }else if(temporary&&!denied&&continuityAllowed()){state='entitled';arm();}else {continuity=null;state=classify(row);}
    }

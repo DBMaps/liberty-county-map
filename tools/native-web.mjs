@@ -17,7 +17,7 @@ export const runtimePolicy = Object.freeze({
   files: [
     'index.html', 'manifest.json', 'service-worker.js', 'consumer-script-manifest.json', 'css/styles.css', 'css/gridly-paid-access.css', 'legal',
     // Paid admission precedes the protected stack; both store adapters use shared verification.
-    'js/gridly-continuity.mjs', 'js/gridly-paid-onboarding.mjs', 'js/gridly-paid-access.mjs', 'js/gridly-paid-config.mjs', 'js/gridly-entitlement-public-key.mjs', 'js/gridly-native-verification-binding.mjs', 'js/gridly-native-attested-invoke.mjs', 'js/gridly-native-edge-transport.mjs', 'js/gridly-paid-ui.mjs', 'js/gridly-paid-startup.mjs',
+    'js/gridly-continuity.mjs', 'js/gridly-paid-onboarding.mjs', 'js/gridly-paid-access.mjs', 'js/gridly-paid-config.mjs', 'js/gridly-entitlement-public-key.mjs', 'js/gridly-sandbox-entitlement-public-key.mjs', 'js/gridly-native-verification-binding.mjs', 'js/gridly-native-attested-invoke.mjs', 'js/gridly-native-edge-transport.mjs', 'js/gridly-paid-ui.mjs', 'js/gridly-paid-startup.mjs',
     'js/gridly-apple-storekit.mjs', 'js/gridly-google-play-billing.mjs',
     'js/gridly-entitlement.mjs', 'js/gridly-store-verification.mjs',
     'assets/UI', 'assets/desktop-gate', 'assets/icons', 'assets/markers', 'assets/onboarding',
@@ -172,7 +172,9 @@ export async function stageNativeAddressRuntime(sourceRoot, destination) {
   await writeFile(join(destination, addressManifestPath), `${JSON.stringify(nativeAddressManifest, null, 2)}\n`);
 }
 
-export async function stage(destination, { runtimeConfigFile } = {}) {
+const licenseTestOff='const GRIDLY_ANDROID_LICENSE_TEST_CANDIDATE = false;';
+const licenseTestOn='const GRIDLY_ANDROID_LICENSE_TEST_CANDIDATE = true;';
+export async function stage(destination, { runtimeConfigFile, googleLicenseTest=false } = {}) {
   const consumerScriptManifest = await readConsumerScriptManifest(root);
   let composedRuntimeConfig = null;
   if (runtimeConfigFile) {
@@ -191,6 +193,12 @@ export async function stage(destination, { runtimeConfigFile } = {}) {
   const copyRuntime = (entry) => copyGovernedRuntime(root, destination, entry);
   for (const entry of [...runtimePolicy.trees, ...runtimePolicy.files]) await copyRuntime(entry);
   for (const entry of nativePackagedScriptPaths(consumerScriptManifest)) await copyRuntime(entry);
+  if(googleLicenseTest){
+    const uiPath=join(destination,'js/gridly-paid-ui.mjs');
+    const source=await readFile(uiPath,'utf8');
+    if(source.split(licenseTestOff).length!==2)throw new Error('Android license-test candidate marker missing or duplicated');
+    await writeFile(uiPath,source.replace(licenseTestOff,licenseTestOn));
+  }
 
   // Computed/data-driven authorities are expanded from their production
   // manifests, rather than approximated with broad directory copies.
@@ -344,7 +352,7 @@ async function identity(directory) {
   return { digest: `sha256:${hash.digest('hex')}`, files: records };
 }
 
-async function verify(directory, { reportFile } = {}) {
+async function verify(directory, { reportFile, googleLicenseTest=false } = {}) {
   await verifyCommunitySubmissionBundle(directory);
   const consumerScriptManifest = await readConsumerScriptManifest(root);
   const required = [
@@ -357,6 +365,8 @@ async function verify(directory, { reportFile } = {}) {
   ];
   for (const item of required) await stat(join(directory, item));
   const paths = await files(directory);
+  const paidUi=await readFile(join(directory,'js/gridly-paid-ui.mjs'),'utf8');
+  if(!paidUi.includes(googleLicenseTest?licenseTestOn:licenseTestOff)||paidUi.includes(googleLicenseTest?licenseTestOff:licenseTestOn))throw new Error('Android license-test candidate mode mismatch');
   const expectedScripts = nativePackagedScriptPaths(consumerScriptManifest).sort();
   const stagedScripts = paths.filter((path) => path.startsWith('js/') && path.endsWith('.js')).sort();
   if (JSON.stringify(stagedScripts) !== JSON.stringify(expectedScripts)) throw new Error('Native JavaScript boundary differs from the governed consumer manifest.');
@@ -408,9 +418,9 @@ async function verify(directory, { reportFile } = {}) {
     const actual = await identity(directory);
     if (reportFile) {
       const report = JSON.parse(await readFile(reportFile, 'utf8'));
-      if (report.bundleDigest !== actual.digest || JSON.stringify(report.files) !== JSON.stringify(actual.files)) throw new Error('Native configured bundle identity report mismatch.');
+      if (report.bundleDigest !== actual.digest || report.googleLicenseTest !== googleLicenseTest || JSON.stringify(report.files) !== JSON.stringify(actual.files)) throw new Error('Native configured bundle identity report mismatch.');
     } else {
-      await stage(temporary);
+      await stage(temporary,{googleLicenseTest});
       const repeated = await identity(temporary);
       if (actual.digest !== repeated.digest) throw new Error(`Staged web identity differs from a clean repeat (${actual.digest} != ${repeated.digest}).`);
     }
@@ -421,8 +431,9 @@ async function verify(directory, { reportFile } = {}) {
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const runtimeConfigFile = option('--runtime-config-file');
   const reportFile = option('--report-file');
-  if (process.argv.includes('--verify')) await verify(output, { reportFile }); else {
-    await stage(output, { runtimeConfigFile });
+  const googleLicenseTest=process.argv.includes('--google-license-test');
+  if (process.argv.includes('--verify')) await verify(output, { reportFile,googleLicenseTest }); else {
+    await stage(output, { runtimeConfigFile,googleLicenseTest });
     if (runtimeConfigFile) {
       if (!reportFile) throw new Error('--report-file is required with --runtime-config-file.');
       const attestation = await identity(output);
@@ -430,6 +441,7 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
       const report = {
         schemaVersion: 'gridly.nativeConfiguredWebBundle.v1',
         candidateGitSha: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim(),
+        googleLicenseTest,
         bundleDigest: attestation.digest,
         runtimeConfig: { path: runtimeConfigPath, bytes: runtimeBytes.length, sha256: createHash('sha256').update(runtimeBytes).digest('hex'), classification: 'OWNER_COMPOSED_BROWSER_PUBLIC_CONFIG' },
         files: attestation.files

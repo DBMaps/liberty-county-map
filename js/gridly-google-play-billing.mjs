@@ -2,10 +2,12 @@ import {verifyAuthorityProof,accessDecision} from './gridly-entitlement.mjs';
 import {storeVerificationRequest,STORE_VERIFIERS} from './gridly-store-verification.mjs';
 export const GOOGLE_PRODUCT_ID=STORE_VERIFIERS.google.productId,GOOGLE_BASE_PLAN_ID=STORE_VERIFIERS.google.basePlanId;
 const failure=(errorCategory='verification_unavailable')=>Object.freeze({platform:null,productId:null,environment:null,subscriptionState:'unknown',entitlementState:'unknown',currentPeriodEnd:null,lastVerifiedAt:null,verificationSource:'none',restoreAvailable:true,errorCategory});
-export function createGoogleVerificationAuthority({invoke}) {
+export function createGoogleVerificationAuthority({invoke,environment='production'}) {
  return Object.freeze({reconcile:async request=>{
-  if(!invoke||request?.platform!=='google')throw Error('verification_unavailable');
-  const body=storeVerificationRequest(request),result=await invoke('gridly-verify-google-subscription',{body});
+  if(!invoke||request?.platform!=='google'||request.environment!==environment||!['production','sandbox/test'].includes(environment))throw Error('verification_unavailable');
+  const body=storeVerificationRequest(request);
+  const name=environment==='sandbox/test'?'gridly-verify-google-sandbox-subscription':'gridly-verify-google-subscription';
+  const result=await invoke(name,{body});
   if([401,403].includes(result?.error?.context?.status))throw Error('authority_denied');
   if(result?.error||!result?.data||Object.keys(result.data).join(',')!=='proof'||typeof result.data.proof!=='string'||result.data.proof.length>8192)throw Error('verification_unavailable');
   return result.data.proof;
