@@ -33,7 +33,7 @@ test('empty query is an instructional state and does not construct or render inv
   assert.match(builder, /Start typing to find an available Gridly area\./);
   assert.match(builder, /resolveGridlyManualAwarenessAreaSearch\(normalizedQuery\)/);
   assert.doesNotMatch(builder, /<details|settings-manual-county-group|<summary/);
-  assert.match(builder, /placeholder="77535, Dayton, or Liberty County"/);
+  assert.match(builder, /placeholder="Dayton or Liberty County"/);
 });
 
 test('search results are flat semantic buttons with pending-only selection and canonical apply', () => {

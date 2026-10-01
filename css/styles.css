@@ -30219,3 +30219,138 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet[data-active-sheet="sett
   color: #f7fffd !important;
   font-weight: 700;
 }
+
+/* V6: native Android portrait density. The runtime marker is never set on
+   iOS or the web. Width, rather than the viewport aspect ratio, keeps this
+   portrait contract stable when Android resizes for the keyboard. */
+@media (max-width: 760px) {
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2 {
+    --gridly-v2-awareness-card-top: calc(var(--gridly-v2-header-top) + 34px);
+    --gridly-v2-filter-strip-top: calc(var(--gridly-v2-header-top) + 130px + var(--gridly-brief-interaction-extra, 0px));
+    --gridly-v2-filter-strip-bottom: calc(var(--gridly-v2-header-top) + 174px + var(--gridly-brief-interaction-extra, 0px));
+    --gridly-v2-top-shield-height: calc(var(--gridly-v2-filter-strip-bottom) + 6px);
+  }
+
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2[data-gridly-brief-state="expanded"] {
+    --gridly-v2-top-shield-height: calc(var(--gridly-v2-awareness-card-top) + 200px + min(250px, 36vh) + 4px);
+  }
+
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brief-stack > .gridly-v2-awareness-brief-card {
+    min-height: 84px !important;
+    padding: 8px 12px !important;
+    gap: 3px;
+  }
+
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-topbar {
+    min-height: 34px !important;
+    padding-block: 3px !important;
+  }
+
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-brief-foundation-handle {
+    min-height: 44px;
+    padding-block: 6px;
+  }
+
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments {
+    padding-block: 1px !important;
+  }
+
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-segments button {
+    min-height: 44px;
+    padding-block: 4px;
+  }
+
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-location-awareness-panel {
+    bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+    gap: 2px;
+    padding: 8px 12px;
+  }
+
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitBottomRegion {
+    gap: 0;
+    padding: 4px 8px calc(4px + env(safe-area-inset-bottom, 0px));
+  }
+
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock {
+    bottom: calc(6px + env(safe-area-inset-bottom, 0px));
+    padding: 3px;
+    gap: 5px;
+  }
+
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock button {
+    min-height: 48px;
+    padding-block: 2px;
+  }
+
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock .dock-icon {
+    height: 30px;
+    min-height: 30px;
+  }
+
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"] {
+    padding: 8px !important;
+    max-height: calc(min(100dvh, var(--gridly-visual-vh, 100dvh)) - 80px) !important;
+  }
+
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"] header {
+    margin-bottom: 5px !important;
+    padding-bottom: 4px !important;
+  }
+
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"] .settings-list-summary {
+    min-height: 50px;
+    padding-block: 7px;
+  }
+
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"] .settings-list-detail {
+    gap: 6px;
+    padding: 0 10px 9px !important;
+  }
+
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"] .settings-awareness-manual-picker {
+    gap: 8px;
+  }
+
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"] :is(.settings-awareness-manual-picker input[type="search"], .settings-awareness-search-row input) {
+    min-height: 44px;
+    padding-inline: 12px;
+    font-size: 16px;
+  }
+
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"] .settings-manual-area-result {
+    min-height: 44px;
+    padding: 8px 11px;
+  }
+
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"] .settings-manual-county-list {
+    max-height: min(34vh, 280px);
+    padding-bottom: 8px;
+  }
+
+  /* Focus retains the same portrait column and scroll owner while the visual
+     viewport contracts. The close button remains outside the scrolling body. */
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"]:not([hidden]):has(.settings-awareness-manual-picker input[type="search"]:focus) {
+    display: flex;
+    flex-direction: column;
+    top: max(8px, env(safe-area-inset-top, 0px)) !important;
+    bottom: auto !important;
+    height: calc(var(--gridly-visual-vh, 100dvh) - max(8px, env(safe-area-inset-top, 0px)) - 8px) !important;
+    max-height: calc(var(--gridly-visual-vh, 100dvh) - max(8px, env(safe-area-inset-top, 0px)) - 8px) !important;
+    overflow: hidden !important;
+  }
+
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"]:has(.settings-awareness-manual-picker input[type="search"]:focus) #gridlyPortraitV2SheetBody {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: none !important;
+    overflow-y: auto !important;
+  }
+
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"]:has(.settings-awareness-manual-picker input[type="search"]:focus) .gridly-settings-sheet {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyPortraitV2Sheet[data-active-sheet="settings"]:has(.settings-awareness-manual-picker input[type="search"]:focus) .settings-manual-county-list {
+    max-height: min(280px, max(88px, calc(var(--gridly-visual-vh, 100dvh) - 210px)));
+  }
+}

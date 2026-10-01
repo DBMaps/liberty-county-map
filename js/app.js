@@ -47357,6 +47357,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 function initVisualViewportHeightVar() {
+  // Presentation marker for native Android density rules. iOS and web keep
+  // their existing portrait geometry.
+  if (window.Capacitor?.isNativePlatform?.() === true && window.Capacitor?.getPlatform?.() === "android") {
+    document.documentElement.dataset.gridlyNativePlatform = "android";
+  }
   const setVisualViewportHeight = () => {
     const viewportHeight = window.visualViewport?.height || window.innerHeight;
     document.documentElement.style.setProperty("--gridly-visual-vh", `${Math.max(0, Math.round(viewportHeight))}px`);
