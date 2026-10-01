@@ -18,7 +18,7 @@ permissions:
 
 jobs:
   apple-build-9:
-    if: ${{ inputs.upload_to_app_store_connect == true && github.ref == 'refs/heads/codex/reporting-launch-closure' }}
+    if: ${{ inputs.upload_to_app_store_connect == true && github.ref == 'refs/heads/main' }}
     runs-on: macos-26
     timeout-minutes: 90
     steps:
@@ -34,7 +34,7 @@ jobs:
         run: |
           set -euo pipefail
           [[ "$EXPECTED_COMMIT_SHA" =~ ^[0-9a-f]{40}$ ]]
-          test "$EXPECTED_COMMIT_SHA" = "$GITHUB_SHA"
+          test "$EXPECTED_COMMIT_SHA" = "fe398ff8ffb38604a4f8f2200b0c9b48469286ea"
           test "$(git rev-parse HEAD)" = "$EXPECTED_COMMIT_SHA"
           xcodebuild -version | grep -E '^Xcode 26([. ]|$)'
           grep -q 'GRIDLY_ANDROID_LICENSE_TEST_CANDIDATE = false' js/gridly-paid-ui.mjs
