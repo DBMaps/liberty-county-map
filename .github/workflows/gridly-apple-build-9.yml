@@ -29,9 +29,13 @@ jobs:
           persist-credentials: false
       - name: Verify source and Xcode
         shell: bash
+        env:
+          EXPECTED_COMMIT_SHA: ${{ inputs.commit_sha }}
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD)" = "${{ inputs.commit_sha }}"
+          [[ "$EXPECTED_COMMIT_SHA" =~ ^[0-9a-f]{40}$ ]]
+          test "$EXPECTED_COMMIT_SHA" = "$GITHUB_SHA"
+          test "$(git rev-parse HEAD)" = "$EXPECTED_COMMIT_SHA"
           xcodebuild -version | grep -E '^Xcode 26([. ]|$)'
           grep -q 'GRIDLY_ANDROID_LICENSE_TEST_CANDIDATE = false' js/gridly-paid-ui.mjs
           grep -q 'gridly-paid-report' js/app.js
