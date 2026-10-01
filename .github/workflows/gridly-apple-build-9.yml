@@ -110,6 +110,7 @@ jobs:
           IPA=$(find "$RUNNER_TEMP/gridly-export" -maxdepth 1 -name '*.ipa' -print -quit)
           test -n "$IPA" && test -f "$IPA"
           printf 'IPA_PATH=%s\n' "$IPA" >> "$GITHUB_ENV"
+          shasum -a 256 "$IPA"
           /usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$RUNNER_TEMP/Gridly-Build-9.xcarchive/Products/Applications/App.app/Info.plist" | grep -x 9
           /usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$RUNNER_TEMP/Gridly-Build-9.xcarchive/Products/Applications/App.app/Info.plist" | grep -x 1.0.0
           /usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$RUNNER_TEMP/Gridly-Build-9.xcarchive/Products/Applications/App.app/Info.plist" | grep -x com.gridlygo.gridly
@@ -135,6 +136,7 @@ jobs:
             xcrun altool --upload-app --type ios --file "$IPA_PATH" --username "$APPLE_ID_USERNAME" --password "$APPLE_APP_SPECIFIC_PASSWORD"
           fi
       - name: Preserve signed artifact for owner review
+        if: ${{ github.event.repository.private }}
         uses: actions/upload-artifact@v4
         with:
           name: gridly-apple-build-9
