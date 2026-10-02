@@ -242,6 +242,19 @@ jobs:
           mkdir -p "$RUNNER_TEMP/gridly-screenshots"
           xcrun simctl io "$DEVICE" screenshot "$RUNNER_TEMP/gridly-screenshots/initial.png"
           sips -g pixelWidth -g pixelHeight "$RUNNER_TEMP/gridly-screenshots/initial.png"
+          java -version
+          curl -fsSL 'https://get.maestro.mobile.dev' | bash
+          export PATH="$HOME/.maestro/bin:$PATH"
+          maestro --version
+          cat > "$RUNNER_TEMP/gridly-skip-onboarding.yaml" <<'FLOW'
+          appId: com.gridlygo.gridly
+          ---
+          - tapOn: Skip
+          FLOW
+          maestro --device "$DEVICE" test "$RUNNER_TEMP/gridly-skip-onboarding.yaml"
+          sleep 45
+          xcrun simctl io "$DEVICE" screenshot "$RUNNER_TEMP/gridly-screenshots/after-skip.png"
+          sips -g pixelWidth -g pixelHeight "$RUNNER_TEMP/gridly-screenshots/after-skip.png"
 
       - name: Preserve simulator screenshot evidence
         if: always()
