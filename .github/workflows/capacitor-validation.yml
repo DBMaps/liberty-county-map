@@ -245,16 +245,23 @@ jobs:
           java -version
           curl -fsSL 'https://get.maestro.mobile.dev' | bash
           export PATH="$HOME/.maestro/bin:$PATH"
+          export MAESTRO_CLI_NO_ANALYTICS=1
           maestro --version
           cat > "$RUNNER_TEMP/gridly-skip-onboarding.yaml" <<'FLOW'
           appId: com.gridlygo.gridly
           ---
-          - tapOn: Skip
+          - launchApp
+          - tapOn:
+              point: "17%,80%"
           FLOW
-          maestro --device "$DEVICE" test "$RUNNER_TEMP/gridly-skip-onboarding.yaml"
+          set +e
+          maestro --device "$DEVICE" test --test-output-dir="$RUNNER_TEMP/gridly-maestro" "$RUNNER_TEMP/gridly-skip-onboarding.yaml"
+          MAESTRO_STATUS=$?
+          set -e
           sleep 45
           xcrun simctl io "$DEVICE" screenshot "$RUNNER_TEMP/gridly-screenshots/after-skip.png"
           sips -g pixelWidth -g pixelHeight "$RUNNER_TEMP/gridly-screenshots/after-skip.png"
+          exit "$MAESTRO_STATUS"
 
       - name: Preserve simulator screenshot evidence
         if: always()
@@ -263,4 +270,13 @@ jobs:
           name: gridly-build10-iphone-simulator-initial
           path: ${{ runner.temp }}/gridly-screenshots/*.png
           if-no-files-found: warn
+          retention-days: 3
+
+      - name: Preserve UI automation diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gridly-build10-iphone-maestro-diagnostics
+          path: ${{ runner.temp }}/gridly-maestro/
+          if-no-files-found: ignore
           retention-days: 3
