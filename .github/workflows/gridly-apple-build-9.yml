@@ -1,4 +1,4 @@
-name: Gridly Apple Build 10
+name: Gridly Apple Build 11
 
 on:
   workflow_dispatch:
@@ -8,7 +8,7 @@ on:
         required: true
         type: string
       upload_to_app_store_connect:
-        description: Validate and upload the signed Build 10 IPA
+        description: Validate and upload the signed Build 11 IPA
         required: true
         default: false
         type: boolean
@@ -17,8 +17,8 @@ permissions:
   contents: read
 
 jobs:
-  apple-build-10:
-    if: ${{ inputs.upload_to_app_store_connect == true && github.ref == 'refs/heads/codex/gridly-build-10-iphone-only' }}
+  apple-build-11:
+    if: ${{ inputs.upload_to_app_store_connect == true && github.ref == 'refs/heads/codex/final-store-builds-correct-lineage' }}
     runs-on: macos-26
     timeout-minutes: 90
     steps:
@@ -39,7 +39,7 @@ jobs:
           xcodebuild -version | grep -E '^Xcode 26([. ]|$)'
           grep -q 'GRIDLY_ANDROID_LICENSE_TEST_CANDIDATE = false' js/gridly-paid-ui.mjs
           grep -q 'gridly-paid-report' js/app.js
-          grep -q 'versionCode 8' android/app/build.gradle
+          grep -q 'versionCode 9' android/app/build.gradle
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
@@ -109,7 +109,7 @@ jobs:
           cp "$RUNNER_TEMP/distribution.mobileprovision" "$HOME/Library/MobileDevice/Provisioning Profiles/$PROFILE_UUID.mobileprovision"
           { printf 'PROFILE_NAME=%s\n' "$PROFILE_NAME"; printf 'TEAM_ID=%s\n' "$TEAM_ID"; } >> "$GITHUB_ENV"
           rm -f "$RUNNER_TEMP/distribution.mobileprovision" "$RUNNER_TEMP/profile.plist"
-      - name: Archive and export Build 10
+      - name: Archive and export Build 11
         shell: bash
         run: |
           set -euo pipefail
@@ -117,7 +117,7 @@ jobs:
           printf '%s\n' "$SIGNING_IDENTITIES"
           printf '%s\n' "$SIGNING_IDENTITIES" | grep -Eq '^[[:space:]]*[0-9]+\) [[:xdigit:]]{40} "Apple Distribution: [^"]+"'
           xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release -destination 'generic/platform=iOS' \
-            -showBuildSettings CURRENT_PROJECT_VERSION=10 DEVELOPMENT_TEAM="$TEAM_ID" CODE_SIGN_STYLE=Manual \
+            -showBuildSettings CURRENT_PROJECT_VERSION=11 DEVELOPMENT_TEAM="$TEAM_ID" CODE_SIGN_STYLE=Manual \
             CODE_SIGN_IDENTITY="Apple Distribution" PROVISIONING_PROFILE_SPECIFIER="$PROFILE_NAME" 2>&1 | \
             awk -F ' = ' '/^Build settings for action .* and target App:$/ { in_app=1; next } /^Build settings for action .* and target / { in_app=0 } in_app && NF >= 2 { key=$1; sub(/^[[:space:]]+/, "", key); if (key ~ /^(CODE_SIGN_IDENTITY|CODE_SIGN_STYLE|DEVELOPMENT_TEAM|PROVISIONING_PROFILE_SPECIFIER|PRODUCT_BUNDLE_IDENTIFIER)$/) print key " = " $2 }' | \
             tee "$RUNNER_TEMP/effective-signing-settings.txt"
@@ -136,23 +136,23 @@ jobs:
           </dict></plist>
           EOF
           xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release -destination 'generic/platform=iOS' \
-            -archivePath "$RUNNER_TEMP/Gridly-Build-10.xcarchive" CURRENT_PROJECT_VERSION=10 \
+            -archivePath "$RUNNER_TEMP/Gridly-Build-11.xcarchive" CURRENT_PROJECT_VERSION=11 \
             DEVELOPMENT_TEAM="$TEAM_ID" CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY="Apple Distribution" \
             PROVISIONING_PROFILE_SPECIFIER="$PROFILE_NAME" archive
-          xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/Gridly-Build-10.xcarchive" \
+          xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/Gridly-Build-11.xcarchive" \
             -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" -exportPath "$RUNNER_TEMP/gridly-export"
           IPA=$(find "$RUNNER_TEMP/gridly-export" -maxdepth 1 -name '*.ipa' -print -quit)
           test -n "$IPA" && test -f "$IPA"
           printf 'IPA_PATH=%s\n' "$IPA" >> "$GITHUB_ENV"
           shasum -a 256 "$IPA"
-          /usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$RUNNER_TEMP/Gridly-Build-10.xcarchive/Products/Applications/App.app/Info.plist" | grep -x 10
-          /usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$RUNNER_TEMP/Gridly-Build-10.xcarchive/Products/Applications/App.app/Info.plist" | grep -x 1.0.0
-          /usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$RUNNER_TEMP/Gridly-Build-10.xcarchive/Products/Applications/App.app/Info.plist" | grep -x com.gridlygo.gridly
+          /usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$RUNNER_TEMP/Gridly-Build-11.xcarchive/Products/Applications/App.app/Info.plist" | grep -x 11
+          /usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$RUNNER_TEMP/Gridly-Build-11.xcarchive/Products/Applications/App.app/Info.plist" | grep -x 1.0.0
+          /usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$RUNNER_TEMP/Gridly-Build-11.xcarchive/Products/Applications/App.app/Info.plist" | grep -x com.gridlygo.gridly
       - name: Certify archived and exported iPhone app
         shell: bash
         run: |
           set -euo pipefail
-          APP="$RUNNER_TEMP/Gridly-Build-10.xcarchive/Products/Applications/App.app"
+          APP="$RUNNER_TEMP/Gridly-Build-11.xcarchive/Products/Applications/App.app"
           codesign --verify --deep --strict --verbose=2 "$APP"
           python3 - "$APP" "$IPA_PATH" <<'PY'
           import json
@@ -165,7 +165,7 @@ jobs:
           ipa = Path(sys.argv[2])
           expected = {
               "CFBundleShortVersionString": "1.0.0",
-              "CFBundleVersion": "10",
+              "CFBundleVersion": "11",
               "CFBundleIdentifier": "com.gridlygo.gridly",
               "UIDeviceFamily": [1],
           }
@@ -236,10 +236,10 @@ jobs:
         if: ${{ github.event.repository.private }}
         uses: actions/upload-artifact@v4
         with:
-          name: gridly-apple-build-10
+          name: gridly-apple-build-11
           path: |
             ${{ runner.temp }}/gridly-export/*.ipa
-            ${{ runner.temp }}/Gridly-Build-10.xcarchive
+            ${{ runner.temp }}/Gridly-Build-11.xcarchive
           retention-days: 3
           if-no-files-found: error
       - name: Remove temporary signing material
