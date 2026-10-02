@@ -121037,7 +121037,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
 
   function buildSettingsSurfaceHtml() {
     const buildStartedAt = getGridlySettingsPerfNow();
-    const nativeAppleRestore = window.Capacitor?.isNativePlatform?.() === true && window.Capacitor?.getPlatform?.() === "ios";
+    const nativeSettingsRestore = window.Capacitor?.isNativePlatform?.() === true && ["ios", "android"].includes(window.Capacitor?.getPlatform?.());
     const settings = typeof getGridlySettingsPreferences === "function" ? getGridlySettingsPreferences() : normalizeGridlySettings();
     const places = typeof getSavedPlacesState === "function" ? getSavedPlacesState() : { home: null, work: null, custom: [], favorites: [] };
     const describe = (place, fallback) => (typeof describeGridlySettingsPlace === "function")
@@ -121055,7 +121055,6 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const html = `
       <div class="gridly-v2-list gridly-settings-sheet settings-list-experience" data-gridly-settings-v2="true" data-gridly-settings-list-experience="true">
         <p class="gridly-v2-sheet-copy" data-v2-precondition-helper hidden></p>
-        ${nativeAppleRestore ? '<button class="gridly-v2-tile gridly-settings-restore" data-gridly-settings-restore type="button">Restore Purchases</button>' : ''}
         <details class="settings-modal-section settings-list-section settings-section-awareness">
           <summary class="settings-list-summary"><span class="settings-list-title">Awareness</span><span class="settings-list-meta">Area · Home community · Location use</span></summary>
           <div class="settings-list-detail">
@@ -121107,7 +121106,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         </details>
         <details class="settings-modal-section settings-list-section settings-section-support" data-gridly-about>
           <summary class="settings-list-summary"><span class="settings-list-title">Support</span><span class="settings-list-meta">Help · About · Privacy · Version</span></summary>
-          <div class="settings-list-detail"><p><strong>About Gridly</strong><br>${GRIDLY_APP_VERSION_LABEL} · ${GRIDLY_APP_BUILD_LABEL}</p><p class="settings-placeholder-note">Find help, installation, feedback, privacy, terms, and product information here.</p>${buildGridlyPwaInstallCardHtml({ v2: true })}${buildGridlyAboutGuidanceHtml()}<button class="gridly-v2-tile" data-v2-action="settings-replay-setup" type="button">Show walkthrough again</button><button class="gridly-v2-tile" data-gridly-ugc-action="legal" data-document="privacy" type="button">Privacy &amp; deletion</button><button class="gridly-v2-tile" data-gridly-ugc-action="legal" data-document="terms" type="button">Terms of Use</button><button class="gridly-v2-tile" data-gridly-ugc-action="legal" data-document="guidelines" type="button">Community Guidelines</button><button class="gridly-v2-tile" data-v2-action="settings-feedback-open" type="button">Send Feedback</button>${buildGridlyFeedbackFlowHtml({ v2: true })}</div>
+          <div class="settings-list-detail"><p><strong>About Gridly</strong><br>${GRIDLY_APP_VERSION_LABEL} · ${GRIDLY_APP_BUILD_LABEL}</p><p class="settings-placeholder-note">Find help, installation, feedback, privacy, terms, and product information here.</p>${buildGridlyPwaInstallCardHtml({ v2: true })}${buildGridlyAboutGuidanceHtml()}${nativeSettingsRestore ? '<button class="gridly-v2-tile gridly-settings-restore" data-gridly-settings-restore type="button">Restore Purchases</button>' : ''}<button class="gridly-v2-tile" data-v2-action="settings-replay-setup" type="button">Show walkthrough again</button><button class="gridly-v2-tile" data-gridly-ugc-action="legal" data-document="privacy" type="button">Privacy &amp; deletion</button><button class="gridly-v2-tile" data-gridly-ugc-action="legal" data-document="terms" type="button">Terms of Use</button><button class="gridly-v2-tile" data-gridly-ugc-action="legal" data-document="guidelines" type="button">Community Guidelines</button><button class="gridly-v2-tile" data-v2-action="settings-feedback-open" type="button">Send Feedback</button>${buildGridlyFeedbackFlowHtml({ v2: true })}</div>
         </details>
       </div>`;
     const buildDuration = Number((getGridlySettingsPerfNow() - buildStartedAt).toFixed(2));
