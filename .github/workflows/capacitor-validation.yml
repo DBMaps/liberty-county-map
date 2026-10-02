@@ -2,10 +2,17 @@ name: Capacitor Validation
 
 on:
   workflow_dispatch:
+    inputs:
+      capture_iphone_screenshots:
+        description: Run screenshot-only iPhone simulator capture from Build 10 source
+        required: false
+        type: boolean
+        default: false
   pull_request:
 
 jobs:
   capacitor-validation:
+    if: ${{ !inputs.capture_iphone_screenshots }}
     name: Validate Capacitor foundation
     runs-on: ubuntu-latest
 
@@ -167,3 +174,80 @@ jobs:
 
       - name: Note future iOS validation
         run: echo "iOS Capacitor sync is deferred to a future macOS workflow because iOS validation typically requires macOS, Xcode, and CocoaPods."
+
+  iphone-screenshot-capture:
+    if: ${{ inputs.capture_iphone_screenshots == true }}
+    name: Capture Build 10 on iPhone simulator
+    runs-on: macos-26
+    timeout-minutes: 90
+    steps:
+      - name: Checkout exact Build 10 app source
+        uses: actions/checkout@v4
+        with:
+          ref: a5c568e161f263388997820d762d50ee743efabd
+          persist-credentials: false
+
+      - name: Verify source and simulator availability
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = a5c568e161f263388997820d762d50ee743efabd
+          xcodebuild -version
+          xcrun simctl list devices available
+          xcrun simctl list devicetypes | grep -E 'iPhone (14 Plus|11 Pro Max)'
+          xcrun simctl list runtimes available
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Stage unchanged Build 10 runtime and build simulator app
+        shell: bash
+        env:
+          GRIDLY_NATIVE_PROVIDER_CONFIG_BASE64: ${{ secrets.GRIDLY_NATIVE_PROVIDER_CONFIG_BASE64 }}
+        run: |
+          set -euo pipefail
+          test -n "$GRIDLY_NATIVE_PROVIDER_CONFIG_BASE64"
+          npm ci
+          printf '%s' "$GRIDLY_NATIVE_PROVIDER_CONFIG_BASE64" | base64 -D > "$RUNNER_TEMP/native-provider-config.json"
+          npm run build:native-assets
+          node tools/native-web.mjs --runtime-config-file "$RUNNER_TEMP/native-provider-config.json" --report-file .artifacts/native-web-identity.json
+          node tools/native-web.mjs --verify --report-file .artifacts/native-web-identity.json
+          rm -f "$RUNNER_TEMP/native-provider-config.json"
+          npx cap sync ios
+          if test -f ios/App/Podfile; then (cd ios/App && pod install); fi
+          xcodebuild -resolvePackageDependencies -project ios/App/App.xcodeproj -scheme App
+          xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Debug -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' -derivedDataPath "$RUNNER_TEMP/gridly-derived" \
+            CODE_SIGNING_ALLOWED=NO CURRENT_PROJECT_VERSION=10 build
+
+      - name: Boot matching iPhone simulator and capture initial UI
+        shell: bash
+        run: |
+          set -euo pipefail
+          DEVICE_TYPE=com.apple.CoreSimulator.SimDeviceType.iPhone-14-Plus
+          xcrun simctl list devicetypes | grep -F "$DEVICE_TYPE"
+          RUNTIME=$(xcrun simctl list runtimes available -j | python3 -c 'import json,sys; r=[x for x in json.load(sys.stdin)["runtimes"] if x["platform"] == "iOS" and x["isAvailable"]]; print(sorted(r,key=lambda x:tuple(map(int,x["version"].split("."))))[-1]["identifier"])')
+          DEVICE=$(xcrun simctl create Gridly-App-Store-65 "$DEVICE_TYPE" "$RUNTIME")
+          echo "Simulator device=$DEVICE runtime=$RUNTIME"
+          xcrun simctl boot "$DEVICE"
+          xcrun simctl bootstatus "$DEVICE" -b
+          APP="$RUNNER_TEMP/gridly-derived/Build/Products/Debug-iphonesimulator/App.app"
+          test -d "$APP"
+          xcrun simctl install "$DEVICE" "$APP"
+          xcrun simctl launch "$DEVICE" com.gridlygo.gridly
+          sleep 20
+          mkdir -p "$RUNNER_TEMP/gridly-screenshots"
+          xcrun simctl io "$DEVICE" screenshot "$RUNNER_TEMP/gridly-screenshots/initial.png"
+          sips -g pixelWidth -g pixelHeight "$RUNNER_TEMP/gridly-screenshots/initial.png"
+
+      - name: Preserve simulator screenshot evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gridly-build10-iphone-simulator-initial
+          path: ${{ runner.temp }}/gridly-screenshots/*.png
+          if-no-files-found: warn
+          retention-days: 3
