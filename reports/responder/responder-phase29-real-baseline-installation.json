@@ -1,0 +1,4768 @@
+{
+  "task": "GRIDLY DISPATCH — REAL BASELINE INSTALLATION POSTFLIGHT + EVIDENCE",
+  "verdict": "PASS",
+  "target": {
+    "name": "Gridly Dispatch",
+    "ref": "cmrrvwgkgjhmdugzhnrh",
+    "organization": "DBMaps",
+    "region": "us-east-1",
+    "compute": "Micro",
+    "status": "ACTIVE_HEALTHY"
+  },
+  "sourceHead": "46ac1b89e263ca7c6c1582318980324c03ffe9d3",
+  "installerSha256": "2130af65786d4df79287d7ac3dfe033a57cc6b8e0f57d9871f4d087c55f655c9",
+  "contractSha256": "0ac80f48d3f6aa663cf3ae5f5ec04543a8b3196daa78188af0bbda295a7e7182",
+  "installationTimestamp": {
+    "value": "2026-10-05T21:39:17.698058+00:00",
+    "basis": "report_contract_versions.created_at within installer transaction; owner-run execution reported successful, exact completion timestamp not supplied"
+  },
+  "verifiedAt": "2026-10-05T21:46:06.003717+00:00",
+  "operatorAction": "Owner-run certified installer; temporary credential variables cleared by owner; installer NOT rerun by agent",
+  "inventory": {
+    "schemaCount": 4,
+    "schemas": [
+      "dispatch_api",
+      "dispatch_audit",
+      "dispatch_private",
+      "dispatch_projection"
+    ],
+    "tables": 65,
+    "views": 5,
+    "materializedViews": 0,
+    "sequences": 0,
+    "roles": [
+      {
+        "name": "dispatch_function_owner",
+        "login": false,
+        "super": false,
+        "bypass": true,
+        "inherit": false,
+        "create_db": false,
+        "create_role": false
+      },
+      {
+        "name": "dispatch_delivery_transport",
+        "login": false,
+        "super": false,
+        "bypass": false,
+        "inherit": false,
+        "create_db": false,
+        "create_role": false
+      },
+      {
+        "name": "dispatch_delivery_connection",
+        "login": true,
+        "super": false,
+        "bypass": false,
+        "inherit": false,
+        "create_db": false,
+        "create_role": false
+      }
+    ],
+    "types": [
+      {
+        "kind": "e",
+        "name": "dispatch_private.profile_status"
+      },
+      {
+        "kind": "e",
+        "name": "dispatch_private.organization_status"
+      },
+      {
+        "kind": "e",
+        "name": "dispatch_private.organization_type"
+      },
+      {
+        "kind": "e",
+        "name": "dispatch_private.verification_level"
+      },
+      {
+        "kind": "e",
+        "name": "dispatch_private.membership_status"
+      },
+      {
+        "kind": "e",
+        "name": "dispatch_private.role_template_key"
+      },
+      {
+        "kind": "e",
+        "name": "dispatch_private.invitation_status"
+      },
+      {
+        "kind": "e",
+        "name": "dispatch_private.permission_scope"
+      },
+      {
+        "kind": "e",
+        "name": "dispatch_private.scope_type"
+      },
+      {
+        "kind": "e",
+        "name": "dispatch_private.scope_status"
+      },
+      {
+        "kind": "e",
+        "name": "dispatch_private.capability_status"
+      },
+      {
+        "kind": "e",
+        "name": "dispatch_private.record_type"
+      },
+      {
+        "kind": "e",
+        "name": "dispatch_private.record_status"
+      },
+      {
+        "kind": "e",
+        "name": "dispatch_private.record_priority"
+      },
+      {
+        "kind": "e",
+        "name": "dispatch_private.assignment_status"
+      },
+      {
+        "kind": "e",
+        "name": "dispatch_private.source_class"
+      },
+      {
+        "kind": "e",
+        "name": "dispatch_private.visibility_class"
+      },
+      {
+        "kind": "e",
+        "name": "dispatch_private.review_state"
+      },
+      {
+        "kind": "e",
+        "name": "dispatch_private.projection_status"
+      },
+      {
+        "kind": "e",
+        "name": "dispatch_private.ownership_transfer_status"
+      },
+      {
+        "kind": "e",
+        "name": "dispatch_private.recovery_status"
+      },
+      {
+        "kind": "e",
+        "name": "dispatch_audit.receipt_status"
+      },
+      {
+        "kind": "e",
+        "name": "dispatch_private.audit_event_type"
+      },
+      {
+        "kind": "e",
+        "name": "dispatch_private.unit_type"
+      },
+      {
+        "kind": "e",
+        "name": "dispatch_private.unit_status"
+      },
+      {
+        "kind": "e",
+        "name": "dispatch_private.internal_share_class"
+      },
+      {
+        "kind": "e",
+        "name": "dispatch_private.onboarding_state"
+      }
+    ],
+    "policies": 22,
+    "triggers": 16,
+    "functions": 135,
+    "rls_exceptions": [],
+    "procedures": 0,
+    "applicationTriggers": 16,
+    "internalConstraintTriggers": 468,
+    "totalTriggers": 484,
+    "enumCount": 27,
+    "relationCompositeTypes": 70
+  },
+  "catalog": {
+    "bridge": [
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "dispatch_function_owner=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "identity": "dispatch_private.has_live_aal2()",
+        "settings": [
+          "search_path=\"\""
+        ]
+      }
+    ],
+    "tables": [
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=arw/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_audit.audit_events",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=arw/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_audit.command_receipts",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=ar/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_audit.command_versions",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=ar/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_audit.content_remediation_events",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=arw/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_audit.invitation_delivery_events",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=arw/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_audit.pilot_events",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=arw/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_audit.record_revisions",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=ard/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.actor_tokens",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=arw/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.approval_proofs",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=ard/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.auth_check_context",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=r/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.capability_catalog",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=arw/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.capability_grant_constraints",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=ar/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.capability_grant_units",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=arw/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.capability_grants",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=r/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.capability_requirements",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=arw/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.content_quarantine",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=ar/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.content_screening_decisions",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=r/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.department_report_policies",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=ard/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.erasure_context",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=arw/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.internal_awareness",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=ard/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.internal_share_recipients",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=arw/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.invitation_delivery_attempts",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=arw/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.invitation_delivery_suppressions",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=arw/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.invitation_provider_events",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=arw/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.operational_records",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=r/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.operational_scope_members",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=r/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.operational_scopes",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=arw/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.organization_invitations",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=arw/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.organization_memberships",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=arw/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.organization_units",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=rw/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.organizations",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=arw/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.ownership_recovery_cases",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=arw/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.ownership_transfers",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=r/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.permissions",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=rw/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.pilot_governance",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=rwd/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.platform_admin_grants",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=rwd/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.profiles",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=arw/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.publication_reviews",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=ar/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.record_assignments",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=ar/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.record_provenance",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=arw/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.recovery_approvals",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=r/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.report_contract_versions",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=arw/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.report_details",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=r/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.report_families",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=ard/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.report_redaction_context",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=r/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.report_scope_segments",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=r/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.report_subtypes",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=ar/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.review_state_snapshots",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=arw/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.reviewer_authorizations",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=ar/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.road_impact_revisions",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=arw/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.road_impacts",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=r/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.role_permissions",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=r/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.role_templates",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=r/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.scope_governance",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=ar/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.shared_awareness_recipients",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=arw/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.shared_awareness_representations",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=ar/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.sharing_agreement_parties",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=ar/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.sharing_agreement_units",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=arw/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.sharing_agreements",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=arw/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.unit_memberships",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=r/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.unit_scope_grants",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=arw/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_private.user_offboarding",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=arw/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_projection.projection_candidates",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=arw/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_projection.public_safe_projections",
+        "forced": true
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "dispatch_function_owner=arw/postgres"
+        ],
+        "rls": true,
+        "name": "dispatch_projection.report_public_projections",
+        "forced": true
+      }
+    ],
+    "functions": [
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.accept_invitation(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.accept_ownership_transfer(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.advance_onboarding(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.approve_ownership_recovery(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.approve_projection(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.approve_report_content(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.approve_sharing_agreement(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.assign_operational_record(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.begin_user_offboarding(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.cancel_ownership_transfer(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.change_member_role(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.close_operational_record(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.complete_user_offboarding(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.create_internal_share(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.create_operational_record(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.create_report(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.create_sharing_agreement(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.create_unit(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.grant_capability(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.grant_report_capability(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.grant_review_authorization(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.initiate_ownership_transfer(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.invite_member(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.issue_dispatch_invitation(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.offboard_organization(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.offboard_unit(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.publish_projection(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.publish_report(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.quarantine_report(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.reactivate_member(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.redact_report(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.reject_projection(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.renew_attestation(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.renew_capability(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.renew_report_capability(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.renew_verification(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.replace_internal_share_recipients(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.review_report_publication(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.revise_report(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.revoke_capability(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.revoke_internal_share(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.revoke_invitation(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.revoke_member(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.revoke_report_share(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.revoke_review_authorization(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.revoke_sharing_agreement(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.set_delivery_suppression(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.set_organization_status(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.set_organization_verification(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.set_road_impact(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.set_unit_membership(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.share_report(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.start_ownership_recovery(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.submit_projection_candidate(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.submit_report_publication(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.suspend_capability(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.suspend_member(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.transition_operational_record(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.update_operational_record(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.withdraw_projection(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_api.withdraw_report(jsonb)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": true,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.accept_invitation_command(jsonb)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": true,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.accept_ownership_transfer_command(jsonb)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": true,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.actor_membership(uuid,text)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": true,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.approve_ownership_recovery_command(jsonb)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": true,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.approve_projection_command(jsonb)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": true,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.assign_operational_record_command(jsonb)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": true,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.cancel_ownership_transfer_command(jsonb)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": true,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.change_member_role_command(jsonb)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": true,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.check_proof(uuid,uuid,text,jsonb,uuid)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": true,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.close_operational_record_command(jsonb)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.command_event(text)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.command_permission(text)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": true,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.create_operational_record_command(jsonb)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner",
+          "authenticated=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.current_actor_id()"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner",
+          "postgres=X/dispatch_function_owner",
+          "authenticated=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.current_claims()"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner",
+          "postgres=X/dispatch_function_owner",
+          "authenticated=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.current_session_id()"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.erase_json(jsonb,uuid,uuid)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": true,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.execute_command(text,jsonb)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.fresh_totp(integer)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": true,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.grant_capability_command(jsonb)"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "dispatch_function_owner=X/postgres",
+          "authenticated=X/postgres"
+        ],
+        "owner": "postgres",
+        "definer": true,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.has_live_aal2()"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": true,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.initiate_ownership_transfer_command(jsonb)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner",
+          "authenticated=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": true,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.internal_access(uuid)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner",
+          "dispatch_delivery_transport=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": true,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.invitation_claim_send(uuid)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner",
+          "authenticated=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": true,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.invitation_issue(jsonb)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner",
+          "authenticated=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": true,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.invitation_suppress(jsonb)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner",
+          "dispatch_delivery_transport=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": true,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.invitation_transport_result(jsonb)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": true,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.invite_member_command(jsonb)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.is_platform_command(text)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.lifecycle_allowed(dispatch_private.record_status,dispatch_private.record_status)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": true,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.phase26_command(text,jsonb)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": true,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.phase28_partial_command(text,jsonb)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": true,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.pilot_candidate_eligible(uuid,uuid)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner",
+          "anon=X/dispatch_function_owner",
+          "authenticated=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": true,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.projection_eligible(uuid)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": true,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.pseudonymize_user(uuid)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": true,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.publish_projection_command(jsonb)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": true,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.reactivate_member_command(jsonb)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner",
+          "authenticated=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": true,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.record_access(uuid,text)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.record_unit_insert()"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.reject_append_only()"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": true,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.reject_projection_command(jsonb)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.report_capture_review_state()"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.report_department(uuid)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner",
+          "authenticated=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": true,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.report_execute(text,jsonb)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": true,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.report_grants_valid(uuid,uuid[])"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.report_impact_guard()"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.report_keys(jsonb,text[])"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner",
+          "anon=X/dispatch_function_owner",
+          "authenticated=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": true,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.report_projection_eligible(uuid)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": true,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.report_public_eligible(uuid)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.report_required_keys(uuid)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": true,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.report_review_attempt_eligible(uuid,uuid,uuid,uuid)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.report_review_authorization_guard()"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": true,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.report_review_prerequisites(uuid)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.report_review_state_valid(uuid)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.report_review_state(uuid)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": true,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.report_reviewer_authorized(uuid,uuid,uuid,uuid)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.report_safe_impacts(uuid)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.report_screen(jsonb)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner",
+          "authenticated=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": true,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.report_shared_eligible(uuid)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.request_hash(jsonb)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": true,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.revoke_capability_command(jsonb)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": true,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.revoke_invitation_command(jsonb)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": true,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.revoke_member_command(jsonb)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": false,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.safe_payload(jsonb)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": true,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.set_organization_status_command(jsonb)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": true,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.set_organization_verification_command(jsonb)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": true,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.start_ownership_recovery_command(jsonb)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": true,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.submit_projection_candidate_command(jsonb)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": true,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.suspend_capability_command(jsonb)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": true,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.suspend_member_command(jsonb)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": true,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.token_for(uuid,uuid)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner",
+          "authenticated=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": true,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.unit_access(uuid,uuid,text)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": true,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.update_operational_record_command(jsonb)"
+      },
+      {
+        "acl": [
+          "dispatch_function_owner=X/dispatch_function_owner"
+        ],
+        "owner": "dispatch_function_owner",
+        "definer": true,
+        "settings": [
+          "search_path=\"\""
+        ],
+        "signature": "dispatch_private.withdraw_projection_command(jsonb)"
+      }
+    ],
+    "delivery_owned": 0
+  },
+  "functionBodies": [
+    {
+      "signature": "dispatch_api.accept_invitation(jsonb)",
+      "body_sha256": "952252de95c3b8831ac4cb8a366a4a13a63c45efdcba67c8acdb000d3788dc91"
+    },
+    {
+      "signature": "dispatch_api.accept_ownership_transfer(jsonb)",
+      "body_sha256": "3de0e621986124ca6cf5ca392e7c20b56f6d8623aa9bbeb33e965f4eec507b6d"
+    },
+    {
+      "signature": "dispatch_api.advance_onboarding(jsonb)",
+      "body_sha256": "981069925ff898247fe7a81257f4af59ce2f8b08e30286c8cc3cc5245fdbf98c"
+    },
+    {
+      "signature": "dispatch_api.approve_ownership_recovery(jsonb)",
+      "body_sha256": "eedb5e60f7a634a9811a9a64caff40be2d027b031fdee532f3f3ca141bbaae0a"
+    },
+    {
+      "signature": "dispatch_api.approve_projection(jsonb)",
+      "body_sha256": "8f944ed49c7b21c7366d19cff09f515019bc07abc953341e1d7715fafd20d592"
+    },
+    {
+      "signature": "dispatch_api.approve_report_content(jsonb)",
+      "body_sha256": "6642d7baea7e49d2682a675ecab507cb9e9fdf06beab9a736d686b9a684c6f57"
+    },
+    {
+      "signature": "dispatch_api.approve_sharing_agreement(jsonb)",
+      "body_sha256": "d6784f0ce8a18beb6d8c99fc9bd4cc6d115f2e208de204b07495627ddc283c54"
+    },
+    {
+      "signature": "dispatch_api.assign_operational_record(jsonb)",
+      "body_sha256": "bfe4730863a93500d1b5b480414460a42e2e0240a99b991b0465e12fc5d13d92"
+    },
+    {
+      "signature": "dispatch_api.begin_user_offboarding(jsonb)",
+      "body_sha256": "d4ebdcbe23630190dfe675d618b9b4baeb41356001b4f8cd79ff0249bc537728"
+    },
+    {
+      "signature": "dispatch_api.cancel_ownership_transfer(jsonb)",
+      "body_sha256": "8ff1ebac15b91690207b0caa39e8f9bc482e2654c5445cc1899de2d356a22292"
+    },
+    {
+      "signature": "dispatch_api.change_member_role(jsonb)",
+      "body_sha256": "7334556386541f72b836894bab5e4039ef67d16c2f0a2818a4a993e4625e1178"
+    },
+    {
+      "signature": "dispatch_api.close_operational_record(jsonb)",
+      "body_sha256": "0492ebd554ef719c9234f28437331f0d7b4b9f50aad45fbfe8022a046cb8ef4e"
+    },
+    {
+      "signature": "dispatch_api.complete_user_offboarding(jsonb)",
+      "body_sha256": "ccbb63da4f8af6294d174aa8bf2413222776e796f4a127dc5488bca86d20b563"
+    },
+    {
+      "signature": "dispatch_api.create_internal_share(jsonb)",
+      "body_sha256": "eebfdc80d5d531e3d794217e27688b8c3bf39bc2998bde240417bccbf149be16"
+    },
+    {
+      "signature": "dispatch_api.create_operational_record(jsonb)",
+      "body_sha256": "0acc5c1cbeffc7e0491537e1e007f74d81f3e4086f22f5a59e6f805899e15e84"
+    },
+    {
+      "signature": "dispatch_api.create_report(jsonb)",
+      "body_sha256": "17d0bda1a3327e111ec8b4f55559ed74f4555063969b7f307f650ce232da32d9"
+    },
+    {
+      "signature": "dispatch_api.create_sharing_agreement(jsonb)",
+      "body_sha256": "56d3797bacad94b481311549c4698ede50327412e5caee930c481e52843b2f7b"
+    },
+    {
+      "signature": "dispatch_api.create_unit(jsonb)",
+      "body_sha256": "72da42e76abf7db26c5362d5287a0a026b8debdf478681e4ed9519ad43a654d2"
+    },
+    {
+      "signature": "dispatch_api.grant_capability(jsonb)",
+      "body_sha256": "7eeda03442d4424f11a872ca812067c274db6d0f089dbbf93e04db107b7338c2"
+    },
+    {
+      "signature": "dispatch_api.grant_report_capability(jsonb)",
+      "body_sha256": "0a773d394ec61a70c868fc108f516e1e2cf68d73178756fcbef9afe51ae44e41"
+    },
+    {
+      "signature": "dispatch_api.grant_review_authorization(jsonb)",
+      "body_sha256": "a810753741f187afc0f8109e05157d57258890a6b1c9d391b9e7fbd9e710a30d"
+    },
+    {
+      "signature": "dispatch_api.initiate_ownership_transfer(jsonb)",
+      "body_sha256": "60ae85f2f3940e6b54fede3832bdfbed01b0998405ead94d63ddb3b353e206c5"
+    },
+    {
+      "signature": "dispatch_api.invite_member(jsonb)",
+      "body_sha256": "499a1d860dcc7062a6338dcd236e4f33bd98ae7bec8b71ea83a6286d765efc88"
+    },
+    {
+      "signature": "dispatch_api.issue_dispatch_invitation(jsonb)",
+      "body_sha256": "d1b4d7f6678437141520de1b47561fea5c7ad9f8bed7c5a80f6d4a79ffab6305"
+    },
+    {
+      "signature": "dispatch_api.offboard_organization(jsonb)",
+      "body_sha256": "33fefbcddc1e349d89de35434637abc9d0d1aa0f3529c336bfb6828c4847b433"
+    },
+    {
+      "signature": "dispatch_api.offboard_unit(jsonb)",
+      "body_sha256": "a4cfa5d9e89a8ef95227acc30cfe06431950947dbc544ed2d7a7f7daeb01fb93"
+    },
+    {
+      "signature": "dispatch_api.publish_projection(jsonb)",
+      "body_sha256": "b9a9ae8373078213df34f6a0d42cc40cb99b7f33b74d4fa2ccfa1d336ee92f89"
+    },
+    {
+      "signature": "dispatch_api.publish_report(jsonb)",
+      "body_sha256": "367889f64421f04b7b657c866aff9405b9825f3fbd65f184867bbfebc272a4e9"
+    },
+    {
+      "signature": "dispatch_api.quarantine_report(jsonb)",
+      "body_sha256": "d11f8c07be985921f886735e1d2c13e05bf848d854c9d5539cfea58863cf0f5e"
+    },
+    {
+      "signature": "dispatch_api.reactivate_member(jsonb)",
+      "body_sha256": "c1ea013a0bea73116f594030264c6341e6527d1eacad51d3ae0380f5c425df21"
+    },
+    {
+      "signature": "dispatch_api.redact_report(jsonb)",
+      "body_sha256": "4cb87c3bd1d69b43efcf43fd26f339d8fb6869286957a95201cf0ca987fb92e7"
+    },
+    {
+      "signature": "dispatch_api.reject_projection(jsonb)",
+      "body_sha256": "3085342b9d7a9abc6b481b7545ed1d0ca6d0c9e7b7f354d0adac2f637efdcb07"
+    },
+    {
+      "signature": "dispatch_api.renew_attestation(jsonb)",
+      "body_sha256": "57f48e69995da6b6ad015b56043a3d4feffb707ae3572bc8a33985a576614d60"
+    },
+    {
+      "signature": "dispatch_api.renew_capability(jsonb)",
+      "body_sha256": "d778d5458f7fd2cce0a3680ae06b94722ba5dbb4ca522cf80119dfeaa88895a2"
+    },
+    {
+      "signature": "dispatch_api.renew_report_capability(jsonb)",
+      "body_sha256": "5b14a5adb48e4076c4dc092c2cdb8ea6e1dee14af17f4d3b4320fe0a333773bf"
+    },
+    {
+      "signature": "dispatch_api.renew_verification(jsonb)",
+      "body_sha256": "4dc9c8daad27776ba650b8561c76be9915a47397220861a3cb65a6b6977258e0"
+    },
+    {
+      "signature": "dispatch_api.replace_internal_share_recipients(jsonb)",
+      "body_sha256": "9ebd1aef6206eb578a8db725bef0827647454ccbc26bbe9fae6c53fb264009ba"
+    },
+    {
+      "signature": "dispatch_api.review_report_publication(jsonb)",
+      "body_sha256": "89a22902eaae914cb7ed3561d0085451a63b09fcc3db1ab9a998c74a7b23015c"
+    },
+    {
+      "signature": "dispatch_api.revise_report(jsonb)",
+      "body_sha256": "1a7bd08d958bc0ed2fe8178be921b795bce46031cc08b3b7a6d0aef665c7e566"
+    },
+    {
+      "signature": "dispatch_api.revoke_capability(jsonb)",
+      "body_sha256": "f56b5f4e4977a39bcd9aa7a81bb2af1b3492d02653c74015b0f4c01a63548251"
+    },
+    {
+      "signature": "dispatch_api.revoke_internal_share(jsonb)",
+      "body_sha256": "6d4a7fbf9490b90a76f68860b6b568915ee19b8611f3b6396cdeb4cac52093dc"
+    },
+    {
+      "signature": "dispatch_api.revoke_invitation(jsonb)",
+      "body_sha256": "975cd6c3708347ebed3e090acef9af1cdc884b0b4e8d71b63d6e60cf9439ec1a"
+    },
+    {
+      "signature": "dispatch_api.revoke_member(jsonb)",
+      "body_sha256": "f6153d1d879e60bd7b9d0b89d70e0e3d673cad6b2de13222096e3bae682293c4"
+    },
+    {
+      "signature": "dispatch_api.revoke_report_share(jsonb)",
+      "body_sha256": "7a047eff5509cf2910f6498279a12b428f6d28c15eb655fba8649ef2b579542a"
+    },
+    {
+      "signature": "dispatch_api.revoke_review_authorization(jsonb)",
+      "body_sha256": "ac636af70a1d82e4db2975a6067eb441743d0fff9d57f9288f2e31a52233b90b"
+    },
+    {
+      "signature": "dispatch_api.revoke_sharing_agreement(jsonb)",
+      "body_sha256": "bed601b8bfffc05bed1903815977eef5cc84a7f4bbbd818d39685883f9b16764"
+    },
+    {
+      "signature": "dispatch_api.set_delivery_suppression(jsonb)",
+      "body_sha256": "aba6f13815dab9978fdef1333ddd11d584b6bc6faf7c9708360f4eb8acbe09bf"
+    },
+    {
+      "signature": "dispatch_api.set_organization_status(jsonb)",
+      "body_sha256": "6e7e0c93006501c79b6d324f323c0c042d2013498c8f02010e73011df9666a89"
+    },
+    {
+      "signature": "dispatch_api.set_organization_verification(jsonb)",
+      "body_sha256": "13b0a5f8a1e9cae39200c185863c7ac4db28e51bd1f584b32d4b209f3e122401"
+    },
+    {
+      "signature": "dispatch_api.set_road_impact(jsonb)",
+      "body_sha256": "75e471f408c9692fb87f4a36184d3cf270d70a25d819c6019c8fe117b0564bce"
+    },
+    {
+      "signature": "dispatch_api.set_unit_membership(jsonb)",
+      "body_sha256": "0c1d98b69e0b6009b8bdce4d7f665760b098879d2faae04669af1c04423db219"
+    },
+    {
+      "signature": "dispatch_api.share_report(jsonb)",
+      "body_sha256": "0542f157ec03c7a320046b44f86883020827b328b36173f5974ab1b791cc5c18"
+    },
+    {
+      "signature": "dispatch_api.start_ownership_recovery(jsonb)",
+      "body_sha256": "ecebfe123b7f1bfed6f70d2a09233fa67fbaadb85be7cdea96d0e897968d9da8"
+    },
+    {
+      "signature": "dispatch_api.submit_projection_candidate(jsonb)",
+      "body_sha256": "e44fbf70a15077a2ca395dc0075cc4fbbe51ce761322f533c07cd95930865603"
+    },
+    {
+      "signature": "dispatch_api.submit_report_publication(jsonb)",
+      "body_sha256": "9e04bd5d3b3f509502f000482c2d46c40dfc5452ddca764089e72b127f31a7f1"
+    },
+    {
+      "signature": "dispatch_api.suspend_capability(jsonb)",
+      "body_sha256": "16970ebc3ecb1e1ec29c55898873a6bb63b896dc5bcef1bc30fe7277b1ffddaf"
+    },
+    {
+      "signature": "dispatch_api.suspend_member(jsonb)",
+      "body_sha256": "dc46fcb6c1ecc5434e196a2cd62d92a8ac4621d17101de270023cdbe2ccec624"
+    },
+    {
+      "signature": "dispatch_api.transition_operational_record(jsonb)",
+      "body_sha256": "5bca731a3da67c229d9f540daa6b7b7c080a7549d48ef41370cb5f879cd8182b"
+    },
+    {
+      "signature": "dispatch_api.update_operational_record(jsonb)",
+      "body_sha256": "b00daac2805523d7d95aee476c0f8bd1b5b9037efaff036b94399a2d5468b493"
+    },
+    {
+      "signature": "dispatch_api.withdraw_projection(jsonb)",
+      "body_sha256": "9cdd34013c1f7dbb1690c20f0085403b84005c020192d232cef78d9282fa0572"
+    },
+    {
+      "signature": "dispatch_api.withdraw_report(jsonb)",
+      "body_sha256": "609228b2a479b6219c408a0c8c8dfaaac0878abecc23742f79ff6a157bd02c60"
+    },
+    {
+      "signature": "dispatch_private.accept_invitation_command(jsonb)",
+      "body_sha256": "1ccefc0896182ed328ce51ce9ccd04134ce8ef84efa4bae27834afbcb2c190f6"
+    },
+    {
+      "signature": "dispatch_private.accept_ownership_transfer_command(jsonb)",
+      "body_sha256": "a99c5473ec272448f44c338b3bfef462cea6e61b2b55aa3cdbe7ce49f99b2378"
+    },
+    {
+      "signature": "dispatch_private.actor_membership(uuid,text)",
+      "body_sha256": "900bd9b3bee4781a72e483567a765675f26e9acc82fd227c5780634a838a63bf"
+    },
+    {
+      "signature": "dispatch_private.approve_ownership_recovery_command(jsonb)",
+      "body_sha256": "19f33b73f5343de3cb30b67fc2fc06620dc678c7a9732cc710520080dcd216ef"
+    },
+    {
+      "signature": "dispatch_private.approve_projection_command(jsonb)",
+      "body_sha256": "9d985092c68e06eadb1299f1d6503eb7c627b30decb4ff8e9f05df3f722e81ac"
+    },
+    {
+      "signature": "dispatch_private.assign_operational_record_command(jsonb)",
+      "body_sha256": "620a54ba5cff6d9cf58018230456ce126d48267e67b707e8203da153d7bb6a51"
+    },
+    {
+      "signature": "dispatch_private.cancel_ownership_transfer_command(jsonb)",
+      "body_sha256": "9b9508807f857ca28086c72012a3952b4663e2a60ff097356d209b2b5df95f0b"
+    },
+    {
+      "signature": "dispatch_private.change_member_role_command(jsonb)",
+      "body_sha256": "7815ff11eabb52f9a02bd624dff2ee759c07547f54d4fa02d7060aecaea1f6cb"
+    },
+    {
+      "signature": "dispatch_private.check_proof(uuid,uuid,text,jsonb,uuid)",
+      "body_sha256": "fe14401ca01d14ed7c9234989ea294354bdf0f8e9c61c9b366e006bfe7e66463"
+    },
+    {
+      "signature": "dispatch_private.close_operational_record_command(jsonb)",
+      "body_sha256": "7fb35bd4513bbab040be5b80b20c6d8d2df2566c7a4846587ce57534358e29d9"
+    },
+    {
+      "signature": "dispatch_private.command_event(text)",
+      "body_sha256": "37380768b834b0b1de68842eddc467bd5c2c9a9f6793fa9fc7e80c4989cfbd5c"
+    },
+    {
+      "signature": "dispatch_private.command_permission(text)",
+      "body_sha256": "3aeb934a6d9b9536588064bd7387c8e92bab7d7729f8e6ad10a08c81c46ec866"
+    },
+    {
+      "signature": "dispatch_private.create_operational_record_command(jsonb)",
+      "body_sha256": "99c8605fa37212eda9cb4b1810cb79668af48b30960122698bab532e90cea014"
+    },
+    {
+      "signature": "dispatch_private.current_actor_id()",
+      "body_sha256": "9fd9aeb6dce8d8d6e770a24374630dff81ac0f0c6a6fe79dd7232281a4d8dcda"
+    },
+    {
+      "signature": "dispatch_private.current_claims()",
+      "body_sha256": "5ca78813b7cf673acbde5c11819ef730fa6abbdbe1e29d4d342009c0ccdcdc30"
+    },
+    {
+      "signature": "dispatch_private.current_session_id()",
+      "body_sha256": "445822c420430e1e039b53e110926d637722c96e4e1c07f6e30d551b01f09e18"
+    },
+    {
+      "signature": "dispatch_private.erase_json(jsonb,uuid,uuid)",
+      "body_sha256": "54b26f18cd0db2c227bbac0aa22c10f6b6df4561189982d8dd714e3f92cd6a9b"
+    },
+    {
+      "signature": "dispatch_private.execute_command(text,jsonb)",
+      "body_sha256": "9c0792f41bc626161f1db06784be8bc31b5454be732c2bde9ea6b359a1986c7d"
+    },
+    {
+      "signature": "dispatch_private.fresh_totp(integer)",
+      "body_sha256": "586129107cf1afa4897629afe2df2ce7f8c6ee9a122c5d45329e41c2d87bbab5"
+    },
+    {
+      "signature": "dispatch_private.grant_capability_command(jsonb)",
+      "body_sha256": "fc26511171e55a12ddb69e4b7fd17ab4799c97fd56fe878341d705a1fbecb3d9"
+    },
+    {
+      "signature": "dispatch_private.has_live_aal2()",
+      "body_sha256": "98384f90150c73aa63bca7314d3b11ed591170d3cd792e1148904471d0ac4581"
+    },
+    {
+      "signature": "dispatch_private.initiate_ownership_transfer_command(jsonb)",
+      "body_sha256": "639a672704e21864c1e9d6f53b0583659c63aaeef20af70feb6dc071985568c9"
+    },
+    {
+      "signature": "dispatch_private.internal_access(uuid)",
+      "body_sha256": "506d37ee514b86de7ebcb6008d90dbf3af7af6d2b526f520e4ab8d339d9fd4d6"
+    },
+    {
+      "signature": "dispatch_private.invitation_claim_send(uuid)",
+      "body_sha256": "dc8e95974a92b85873285b517cc0407526c0bfb03c93f7949305b2baae321306"
+    },
+    {
+      "signature": "dispatch_private.invitation_issue(jsonb)",
+      "body_sha256": "bd920b3813b4297c3befde3af5333287aaac3d9f968d2dc6cd9c367d0e0b70fe"
+    },
+    {
+      "signature": "dispatch_private.invitation_suppress(jsonb)",
+      "body_sha256": "eb016ec6dce6993812b121f1e8ca332b577dfa3db66cafda73a85d94fdab2852"
+    },
+    {
+      "signature": "dispatch_private.invitation_transport_result(jsonb)",
+      "body_sha256": "689aaf6948e2b3bd3338895d992da6f3d2e136141d2cf96f4a738c312b3b345b"
+    },
+    {
+      "signature": "dispatch_private.invite_member_command(jsonb)",
+      "body_sha256": "ac061c6488b25a5553641f7cdcf310ee6abe2dceb15bf77cfc31ba4c8f9e97f5"
+    },
+    {
+      "signature": "dispatch_private.is_platform_command(text)",
+      "body_sha256": "9d49cbf23e8f02d268ad666191dafc44e3ec97b5e8809e0bdafb28e3d7141dc3"
+    },
+    {
+      "signature": "dispatch_private.lifecycle_allowed(dispatch_private.record_status,dispatch_private.record_status)",
+      "body_sha256": "5bc07e243b6e35b49dd1924a042ecbf9596bd1ff847f5f9016824a9b2a5d43f5"
+    },
+    {
+      "signature": "dispatch_private.phase26_command(text,jsonb)",
+      "body_sha256": "67e2582b4f691ba5a63e94dddbcfcb8f33246921b7d6b2f251d01a4447cf8edb"
+    },
+    {
+      "signature": "dispatch_private.phase28_partial_command(text,jsonb)",
+      "body_sha256": "07487178412fc2a510d6ee5e784ab14b94aa113f33b3868190167abd0cf57d03"
+    },
+    {
+      "signature": "dispatch_private.pilot_candidate_eligible(uuid,uuid)",
+      "body_sha256": "f314251eee972ba6702abe6315463188cda876208f49bec46a8ed79cdda18b4a"
+    },
+    {
+      "signature": "dispatch_private.projection_eligible(uuid)",
+      "body_sha256": "49de2dd8697ebbb8abea8caaca5b4dc6af2b85df5f1554f8a486fa6245ac2039"
+    },
+    {
+      "signature": "dispatch_private.pseudonymize_user(uuid)",
+      "body_sha256": "2511be59da28f5257de1da3ba0bc14e28f3c6a5897d3384b12b855394168d99a"
+    },
+    {
+      "signature": "dispatch_private.publish_projection_command(jsonb)",
+      "body_sha256": "021ec2eb949a42136856e6d9a4d08939e69d434f5abb213da522c09fca05bcb2"
+    },
+    {
+      "signature": "dispatch_private.reactivate_member_command(jsonb)",
+      "body_sha256": "584eee031da654d1fa5b044883af9a6e2f75f05bfb0234cf41410a20d10b5525"
+    },
+    {
+      "signature": "dispatch_private.record_access(uuid,text)",
+      "body_sha256": "1be168943a4c2128da900296b6e6a8537b25639e911a3e4e3d6cade669e7110a"
+    },
+    {
+      "signature": "dispatch_private.record_unit_insert()",
+      "body_sha256": "c8a10983b1b12c228432aa77b59acdda00cf6e826beb5c6d80ba620edf3951e7"
+    },
+    {
+      "signature": "dispatch_private.reject_append_only()",
+      "body_sha256": "a22b872b8e39a7dee33d7c69af99fcdf49bb3fcf79210524b74d8e188af504d8"
+    },
+    {
+      "signature": "dispatch_private.reject_projection_command(jsonb)",
+      "body_sha256": "63df5f62f4548ce1e604111fd58e461b4c610dff82220fe4c2723bc8a86db5aa"
+    },
+    {
+      "signature": "dispatch_private.report_capture_review_state()",
+      "body_sha256": "dfba8606b0542b39c3207493f4e696cd074685757d649cbb7ced44bb402d3bee"
+    },
+    {
+      "signature": "dispatch_private.report_department(uuid)",
+      "body_sha256": "99b699af847d7a4ea5fba1fc8987eaa0ad71c838d1da73928076a44f705de280"
+    },
+    {
+      "signature": "dispatch_private.report_execute(text,jsonb)",
+      "body_sha256": "f3ce846a44e55613d3c3283c7f2d6758268fb3c46367f601352046e0f312d3b5"
+    },
+    {
+      "signature": "dispatch_private.report_grants_valid(uuid,uuid[])",
+      "body_sha256": "44784e03c8dd5a66a0cd47d0cc3cfb6b0c75a444777a6a8a986d58400b898593"
+    },
+    {
+      "signature": "dispatch_private.report_impact_guard()",
+      "body_sha256": "2cc6d0ee42fe3bca4c408a07c327a887d8d1775aeda184609efffb51d957e397"
+    },
+    {
+      "signature": "dispatch_private.report_keys(jsonb,text[])",
+      "body_sha256": "71921f827f4735b270328482e56732f2dbf7e49bf7dca5dcf28af90b7a3ef282"
+    },
+    {
+      "signature": "dispatch_private.report_projection_eligible(uuid)",
+      "body_sha256": "1348ec6d7c5b6176ddf6a8838a907aa6de864d7e8de1e726ce1b281f14d31151"
+    },
+    {
+      "signature": "dispatch_private.report_public_eligible(uuid)",
+      "body_sha256": "6e95d8b3ff775409791d5e7bb8b4c29a9a81b66fb4ce13c980cf135b8f4bb16b"
+    },
+    {
+      "signature": "dispatch_private.report_required_keys(uuid)",
+      "body_sha256": "fe2d3ad7f51fb5c79cc75bfe10edc16d0056b3756d6ad101f0879d104dc3bffb"
+    },
+    {
+      "signature": "dispatch_private.report_review_attempt_eligible(uuid,uuid,uuid,uuid)",
+      "body_sha256": "f4198e0aba578ff8868f399dfff3659ea62d33a158c2403ba375abebd9b5f091"
+    },
+    {
+      "signature": "dispatch_private.report_review_authorization_guard()",
+      "body_sha256": "4a062cc74ccd65d32081ba9ffdf37ba423c9b2bda9d4a9cf25df6260d3e3274b"
+    },
+    {
+      "signature": "dispatch_private.report_review_prerequisites(uuid)",
+      "body_sha256": "da5f6b066734f2e9ff3b7f9cf3db73691adbb5b12f27f77ff0b2660388229196"
+    },
+    {
+      "signature": "dispatch_private.report_review_state_valid(uuid)",
+      "body_sha256": "bfb51512872309decd830c7482aa9ed7e5fdd733ae47def554acdc8fb0c9ae7c"
+    },
+    {
+      "signature": "dispatch_private.report_review_state(uuid)",
+      "body_sha256": "fdad3ce38c9bacc84024c9faf6ca649b3e5c602c487af43a3c2469075910e84b"
+    },
+    {
+      "signature": "dispatch_private.report_reviewer_authorized(uuid,uuid,uuid,uuid)",
+      "body_sha256": "df98022e3afd64a41a4332d33b21895da1b2176ba75bc2fb15f6bba9093b821a"
+    },
+    {
+      "signature": "dispatch_private.report_safe_impacts(uuid)",
+      "body_sha256": "449645a902dd28311553cab6f8ad32b8d2facd76151535b1d2aa30d1390ffd64"
+    },
+    {
+      "signature": "dispatch_private.report_screen(jsonb)",
+      "body_sha256": "1a777e8d91ac67eaa766b926de5c0d78aab0c82a527d8407e0709eb90094e794"
+    },
+    {
+      "signature": "dispatch_private.report_shared_eligible(uuid)",
+      "body_sha256": "f0275b04389f8ad08712caf4ce6632312cafb32215fe08eeea405e1ac2e23e7a"
+    },
+    {
+      "signature": "dispatch_private.request_hash(jsonb)",
+      "body_sha256": "936d97464c8009975122794ee11f4a4a452c00146f0070e6db96eb067b2b5203"
+    },
+    {
+      "signature": "dispatch_private.revoke_capability_command(jsonb)",
+      "body_sha256": "bca7a97fb7c8b5204fb3d4166e2bd089335bff9a31fcc8113a85e6a36487757e"
+    },
+    {
+      "signature": "dispatch_private.revoke_invitation_command(jsonb)",
+      "body_sha256": "2570c3d008c1cbbbc7b71d3857a131f7c2a709b9257d236477979129f4fcae85"
+    },
+    {
+      "signature": "dispatch_private.revoke_member_command(jsonb)",
+      "body_sha256": "268d4a640708fc9f3032c2b7e4c5d1d6f4bf7b8193a0fba0f5da0b4b36941563"
+    },
+    {
+      "signature": "dispatch_private.safe_payload(jsonb)",
+      "body_sha256": "ca45dea0f24778ecc5ad999e40663bd903dd714d95fc870d37f496c22848bb51"
+    },
+    {
+      "signature": "dispatch_private.set_organization_status_command(jsonb)",
+      "body_sha256": "eeb18f9ffa7de72b6925fbf7339e6f1e0ff811a8b5767ac8dcb3a74a49a21c45"
+    },
+    {
+      "signature": "dispatch_private.set_organization_verification_command(jsonb)",
+      "body_sha256": "8fa9aa167182d153cbdf076700720560fa1e696806a41c83d7df423851a6ddad"
+    },
+    {
+      "signature": "dispatch_private.start_ownership_recovery_command(jsonb)",
+      "body_sha256": "c9be0c253f7836a2c03ac5ed0595bfe00a6a8712fb751e00c1da7934b4aafcfa"
+    },
+    {
+      "signature": "dispatch_private.submit_projection_candidate_command(jsonb)",
+      "body_sha256": "68b54cc9331ef0421bb2edc757ad6ec66e2a72271d146e0159941cf602e3c9e2"
+    },
+    {
+      "signature": "dispatch_private.suspend_capability_command(jsonb)",
+      "body_sha256": "c590314af75604758ca8227fd998337884bcec99ed315e6b6987123116737e24"
+    },
+    {
+      "signature": "dispatch_private.suspend_member_command(jsonb)",
+      "body_sha256": "c6b41f27777166c0242069c9cee8754d4cdcb2d0e347b403e385f368b6b2ef98"
+    },
+    {
+      "signature": "dispatch_private.token_for(uuid,uuid)",
+      "body_sha256": "31738f458cb3c86bad9848e33548644847505be6169f8fd8a288ca52b2ea9ccf"
+    },
+    {
+      "signature": "dispatch_private.unit_access(uuid,uuid,text)",
+      "body_sha256": "9624cad94d472f19ba3dff18fee456d4d3eb36993f5a8a01029101fa94b2769c"
+    },
+    {
+      "signature": "dispatch_private.update_operational_record_command(jsonb)",
+      "body_sha256": "22ed00609fa35ed226ad4e4a0ac6d74f038d4747cd779819bf965893e44cf158"
+    },
+    {
+      "signature": "dispatch_private.withdraw_projection_command(jsonb)",
+      "body_sha256": "518185417ace91e2383a515adc5c59c2e8652f6668df8f7d8e04b2783caed42f"
+    }
+  ],
+  "exactCertifiedTableAndFunctionCatalogMatch": true,
+  "all135FunctionBodiesMatchCertifiedInstaller": true,
+  "postflight": "DISPATCH_POSTFLIGHT_PASS; certified postflight run inside BEGIN READ ONLY",
+  "verificationLimits": "Structural live verification plus exact certified function-body/ACL matching. No remote test participants or command mutations. Local runtime behavioral certification is prior evidence, not rerun remotely.",
+  "reviewer": "PASS — exact certified function bodies/catalog, scoped authorization and live-revalidation objects; no reviewer assignments",
+  "invitation": "PASS — exact certified function bodies/catalog; 168-hour/atomic reissue foundation installed; no invitations, attempts or provider events",
+  "activation": {
+    "units": 0,
+    "grants": 0,
+    "reports": 0,
+    "sharing": 0,
+    "reviewers": 0,
+    "auth_users": 0,
+    "invitations": 0,
+    "memberships": 0,
+    "minimum_tls": "TLSv1.2",
+    "organizations": 0,
+    "vault_secrets": 0,
+    "provider_events": 0,
+    "delivery_attempts": 0,
+    "publishing_enabled": false,
+    "automatic_rls_triggers": 0
+  },
+  "allNonregistryTablesEmpty": true,
+  "settings": {
+    "signup": false,
+    "anonymous": false,
+    "confirmEmail": true,
+    "secureEmailChange": true,
+    "securePasswordChange": true,
+    "currentPasswordRequired": true,
+    "leakedPasswordProtection": true,
+    "minPasswordLength": 14,
+    "totp": true,
+    "smsMfa": false,
+    "aal1RestrictionMinutes": 15,
+    "singleSession": true,
+    "maxSessionHours": 12,
+    "inactivityHours": 1,
+    "replayDetection": true,
+    "reuseSeconds": 10,
+    "jwtSeconds": 900,
+    "siteUrl": "https://dispatch.gridlygo.com",
+    "redirects": [
+      "https://dispatch.gridlygo.com/auth/callback",
+      "https://dispatch.gridlygo.com/auth/recovery"
+    ],
+    "sslEnforced": true,
+    "minTls": "TLSv1.2",
+    "dataApi": true,
+    "autoExpose": false,
+    "automaticRls": false,
+    "network": "Intentionally unrestricted/deferred; not approval after activation",
+    "exposedDispatchTablesAndFunctions": 0
+  },
+  "securityAdvisors": {
+    "lints": [
+      {
+        "name": "rls_enabled_no_policy",
+        "title": "RLS Enabled No Policy",
+        "level": "INFO",
+        "facing": "EXTERNAL",
+        "categories": [
+          "SECURITY"
+        ],
+        "description": "Detects cases where row level security (RLS) has been enabled on a table but no RLS policies have been created.",
+        "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy",
+        "count": 45,
+        "findings": [
+          {
+            "detail": "Table \\`dispatch_audit.command_receipts\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "command_receipts",
+              "type": "table",
+              "schema": "dispatch_audit"
+            },
+            "observed_at": "2026-10-05T21:41:33.746Z"
+          },
+          {
+            "detail": "Table \\`dispatch_audit.command_versions\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "command_versions",
+              "type": "table",
+              "schema": "dispatch_audit"
+            },
+            "observed_at": "2026-10-05T21:41:33.746Z"
+          },
+          {
+            "detail": "Table \\`dispatch_audit.content_remediation_events\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "content_remediation_events",
+              "type": "table",
+              "schema": "dispatch_audit"
+            },
+            "observed_at": "2026-10-05T21:41:33.746Z"
+          },
+          {
+            "detail": "Table \\`dispatch_audit.invitation_delivery_events\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "invitation_delivery_events",
+              "type": "table",
+              "schema": "dispatch_audit"
+            },
+            "observed_at": "2026-10-05T21:41:33.746Z"
+          },
+          {
+            "detail": "Table \\`dispatch_audit.pilot_events\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "pilot_events",
+              "type": "table",
+              "schema": "dispatch_audit"
+            },
+            "observed_at": "2026-10-05T21:41:33.746Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.actor_tokens\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "actor_tokens",
+              "type": "table",
+              "schema": "dispatch_private"
+            },
+            "observed_at": "2026-10-05T21:41:33.746Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.approval_proofs\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "approval_proofs",
+              "type": "table",
+              "schema": "dispatch_private"
+            },
+            "observed_at": "2026-10-05T21:41:33.746Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.auth_check_context\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "auth_check_context",
+              "type": "table",
+              "schema": "dispatch_private"
+            },
+            "observed_at": "2026-10-05T21:41:33.746Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.capability_catalog\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "capability_catalog",
+              "type": "table",
+              "schema": "dispatch_private"
+            },
+            "observed_at": "2026-10-05T21:41:33.746Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.capability_grant_constraints\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "capability_grant_constraints",
+              "type": "table",
+              "schema": "dispatch_private"
+            },
+            "observed_at": "2026-10-05T21:41:33.746Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.capability_grant_units\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "capability_grant_units",
+              "type": "table",
+              "schema": "dispatch_private"
+            },
+            "observed_at": "2026-10-05T21:41:33.746Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.capability_requirements\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "capability_requirements",
+              "type": "table",
+              "schema": "dispatch_private"
+            },
+            "observed_at": "2026-10-05T21:41:33.746Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.content_quarantine\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "content_quarantine",
+              "type": "table",
+              "schema": "dispatch_private"
+            },
+            "observed_at": "2026-10-05T21:41:33.746Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.content_screening_decisions\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "content_screening_decisions",
+              "type": "table",
+              "schema": "dispatch_private"
+            },
+            "observed_at": "2026-10-05T21:41:33.746Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.department_report_policies\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "department_report_policies",
+              "type": "table",
+              "schema": "dispatch_private"
+            },
+            "observed_at": "2026-10-05T21:41:33.746Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.erasure_context\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "erasure_context",
+              "type": "table",
+              "schema": "dispatch_private"
+            },
+            "observed_at": "2026-10-05T21:41:33.746Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.internal_share_recipients\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "internal_share_recipients",
+              "type": "table",
+              "schema": "dispatch_private"
+            },
+            "observed_at": "2026-10-05T21:41:33.746Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.invitation_delivery_attempts\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "invitation_delivery_attempts",
+              "type": "table",
+              "schema": "dispatch_private"
+            },
+            "observed_at": "2026-10-05T21:41:33.746Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.invitation_delivery_suppressions\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "invitation_delivery_suppressions",
+              "type": "table",
+              "schema": "dispatch_private"
+            },
+            "observed_at": "2026-10-05T21:41:33.746Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.invitation_provider_events\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "invitation_provider_events",
+              "type": "table",
+              "schema": "dispatch_private"
+            },
+            "observed_at": "2026-10-05T21:41:33.746Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.operational_scope_members\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "operational_scope_members",
+              "type": "table",
+              "schema": "dispatch_private"
+            },
+            "observed_at": "2026-10-05T21:41:33.746Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.permissions\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "permissions",
+              "type": "table",
+              "schema": "dispatch_private"
+            },
+            "observed_at": "2026-10-05T21:41:33.746Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.pilot_governance\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "pilot_governance",
+              "type": "table",
+              "schema": "dispatch_private"
+            },
+            "observed_at": "2026-10-05T21:41:33.746Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.publication_reviews\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "publication_reviews",
+              "type": "table",
+              "schema": "dispatch_private"
+            },
+            "observed_at": "2026-10-05T21:41:33.746Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.record_provenance\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "record_provenance",
+              "type": "table",
+              "schema": "dispatch_private"
+            },
+            "observed_at": "2026-10-05T21:41:33.746Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.recovery_approvals\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "recovery_approvals",
+              "type": "table",
+              "schema": "dispatch_private"
+            },
+            "observed_at": "2026-10-05T21:41:33.746Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.report_contract_versions\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "report_contract_versions",
+              "type": "table",
+              "schema": "dispatch_private"
+            },
+            "observed_at": "2026-10-05T21:41:33.746Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.report_details\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "report_details",
+              "type": "table",
+              "schema": "dispatch_private"
+            },
+            "observed_at": "2026-10-05T21:41:33.746Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.report_families\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "report_families",
+              "type": "table",
+              "schema": "dispatch_private"
+            },
+            "observed_at": "2026-10-05T21:41:33.746Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.report_redaction_context\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "report_redaction_context",
+              "type": "table",
+              "schema": "dispatch_private"
+            },
+            "observed_at": "2026-10-05T21:41:33.746Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.report_scope_segments\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "report_scope_segments",
+              "type": "table",
+              "schema": "dispatch_private"
+            },
+            "observed_at": "2026-10-05T21:41:33.746Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.report_subtypes\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "report_subtypes",
+              "type": "table",
+              "schema": "dispatch_private"
+            },
+            "observed_at": "2026-10-05T21:41:33.746Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.review_state_snapshots\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "review_state_snapshots",
+              "type": "table",
+              "schema": "dispatch_private"
+            },
+            "observed_at": "2026-10-05T21:41:33.746Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.reviewer_authorizations\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "reviewer_authorizations",
+              "type": "table",
+              "schema": "dispatch_private"
+            },
+            "observed_at": "2026-10-05T21:41:33.746Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.road_impact_revisions\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "road_impact_revisions",
+              "type": "table",
+              "schema": "dispatch_private"
+            },
+            "observed_at": "2026-10-05T21:41:33.746Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.road_impacts\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "road_impacts",
+              "type": "table",
+              "schema": "dispatch_private"
+            },
+            "observed_at": "2026-10-05T21:41:33.746Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.role_permissions\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "role_permissions",
+              "type": "table",
+              "schema": "dispatch_private"
+            },
+            "observed_at": "2026-10-05T21:41:33.746Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.role_templates\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "role_templates",
+              "type": "table",
+              "schema": "dispatch_private"
+            },
+            "observed_at": "2026-10-05T21:41:33.746Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.scope_governance\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "scope_governance",
+              "type": "table",
+              "schema": "dispatch_private"
+            },
+            "observed_at": "2026-10-05T21:41:33.746Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.shared_awareness_recipients\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "shared_awareness_recipients",
+              "type": "table",
+              "schema": "dispatch_private"
+            },
+            "observed_at": "2026-10-05T21:41:33.746Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.sharing_agreement_parties\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "sharing_agreement_parties",
+              "type": "table",
+              "schema": "dispatch_private"
+            },
+            "observed_at": "2026-10-05T21:41:33.746Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.sharing_agreement_units\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "sharing_agreement_units",
+              "type": "table",
+              "schema": "dispatch_private"
+            },
+            "observed_at": "2026-10-05T21:41:33.746Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.sharing_agreements\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "sharing_agreements",
+              "type": "table",
+              "schema": "dispatch_private"
+            },
+            "observed_at": "2026-10-05T21:41:33.746Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.unit_scope_grants\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "unit_scope_grants",
+              "type": "table",
+              "schema": "dispatch_private"
+            },
+            "observed_at": "2026-10-05T21:41:33.746Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.user_offboarding\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "user_offboarding",
+              "type": "table",
+              "schema": "dispatch_private"
+            },
+            "observed_at": "2026-10-05T21:41:33.746Z"
+          }
+        ],
+        "classification": "EXPECTED / FALSE POSITIVE",
+        "reason": "Forced RLS with no browser policy is intentional deny-by-default; exact certified ACL inventory and postflight match."
+      }
+    ]
+  },
+  "performanceAdvisors": {
+    "lints": [
+      {
+        "name": "unindexed_foreign_keys",
+        "title": "Unindexed foreign keys",
+        "level": "INFO",
+        "facing": "EXTERNAL",
+        "categories": [
+          "PERFORMANCE"
+        ],
+        "description": "Identifies foreign key constraints without a covering index, which can impact database performance.",
+        "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0001_unindexed_foreign_keys",
+        "count": 90,
+        "findings": [
+          {
+            "detail": "Table \\`dispatch_audit.audit_events\\` has a foreign key \\`audit_events_actor_user_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "audit_events",
+              "type": "table",
+              "schema": "dispatch_audit",
+              "fkey_name": "audit_events_actor_user_id_fkey",
+              "fkey_columns": [
+                3
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_audit.command_receipts\\` has a foreign key \\`command_receipts_actor_user_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "command_receipts",
+              "type": "table",
+              "schema": "dispatch_audit",
+              "fkey_name": "command_receipts_actor_user_id_fkey",
+              "fkey_columns": [
+                3
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_audit.content_remediation_events\\` has a foreign key \\`content_remediation_events_organization_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "content_remediation_events",
+              "type": "table",
+              "schema": "dispatch_audit",
+              "fkey_name": "content_remediation_events_organization_id_fkey",
+              "fkey_columns": [
+                2
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_audit.content_remediation_events\\` has a foreign key \\`content_remediation_events_quarantine_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "content_remediation_events",
+              "type": "table",
+              "schema": "dispatch_audit",
+              "fkey_name": "content_remediation_events_quarantine_id_fkey",
+              "fkey_columns": [
+                3
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_audit.content_remediation_events\\` has a foreign key \\`content_remediation_events_record_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "content_remediation_events",
+              "type": "table",
+              "schema": "dispatch_audit",
+              "fkey_name": "content_remediation_events_record_id_fkey",
+              "fkey_columns": [
+                4
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_audit.record_revisions\\` has a foreign key \\`record_revisions_actor_user_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "record_revisions",
+              "type": "table",
+              "schema": "dispatch_audit",
+              "fkey_name": "record_revisions_actor_user_id_fkey",
+              "fkey_columns": [
+                6
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.approval_proofs\\` has a foreign key \\`approval_proofs_organization_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "approval_proofs",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "approval_proofs_organization_id_fkey",
+              "fkey_columns": [
+                2
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.capability_catalog\\` has a foreign key \\`capability_catalog_subtype_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "capability_catalog",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "capability_catalog_subtype_fkey",
+              "fkey_columns": [
+                2
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.capability_grant_constraints\\` has a foreign key \\`capability_grant_constraints_organization_id_scope_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "capability_grant_constraints",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "capability_grant_constraints_organization_id_scope_id_fkey",
+              "fkey_columns": [
+                2,
+                3
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.capability_grant_constraints\\` has a foreign key \\`capability_grant_constraints_scope_id_scope_version_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "capability_grant_constraints",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "capability_grant_constraints_scope_id_scope_version_fkey",
+              "fkey_columns": [
+                3,
+                4
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.capability_grant_constraints\\` has a foreign key \\`capability_grant_constraints_subtype_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "capability_grant_constraints",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "capability_grant_constraints_subtype_fkey",
+              "fkey_columns": [
+                5
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.capability_grant_units\\` has a foreign key \\`capability_grant_units_organization_id_grant_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "capability_grant_units",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "capability_grant_units_organization_id_grant_id_fkey",
+              "fkey_columns": [
+                1,
+                2
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.capability_grant_units\\` has a foreign key \\`capability_grant_units_organization_id_unit_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "capability_grant_units",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "capability_grant_units_organization_id_unit_id_fkey",
+              "fkey_columns": [
+                1,
+                3
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.capability_grants\\` has a foreign key \\`capability_grants_catalog_fk\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "capability_grants",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "capability_grants_catalog_fk",
+              "fkey_columns": [
+                3
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.capability_grants\\` has a foreign key \\`capability_grants_granted_by_platform_actor_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "capability_grants",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "capability_grants_granted_by_platform_actor_fkey",
+              "fkey_columns": [
+                10
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.capability_grants\\` has a foreign key \\`capability_grants_operational_scope_id_operational_scope_v_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "capability_grants",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "capability_grants_operational_scope_id_operational_scope_v_fkey",
+              "fkey_columns": [
+                4,
+                5
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.capability_requirements\\` has a foreign key \\`capability_requirements_capability_key_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "capability_requirements",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "capability_requirements_capability_key_fkey",
+              "fkey_columns": [
+                2
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.content_quarantine\\` has a foreign key \\`content_quarantine_organization_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "content_quarantine",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "content_quarantine_organization_id_fkey",
+              "fkey_columns": [
+                2
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.content_quarantine\\` has a foreign key \\`content_quarantine_record_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "content_quarantine",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "content_quarantine_record_id_fkey",
+              "fkey_columns": [
+                4
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.content_quarantine\\` has a foreign key \\`content_quarantine_screening_decision_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "content_quarantine",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "content_quarantine_screening_decision_id_fkey",
+              "fkey_columns": [
+                3
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.content_screening_decisions\\` has a foreign key \\`content_screening_decisions_organization_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "content_screening_decisions",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "content_screening_decisions_organization_id_fkey",
+              "fkey_columns": [
+                2
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.content_screening_decisions\\` has a foreign key \\`content_screening_decisions_record_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "content_screening_decisions",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "content_screening_decisions_record_id_fkey",
+              "fkey_columns": [
+                3
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.department_report_policies\\` has a foreign key \\`department_report_policies_contract_version_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "department_report_policies",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "department_report_policies_contract_version_fkey",
+              "fkey_columns": [
+                6
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.department_report_policies\\` has a foreign key \\`department_report_policies_subtype_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "department_report_policies",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "department_report_policies_subtype_fkey",
+              "fkey_columns": [
+                2
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.internal_awareness\\` has a foreign key \\`internal_awareness_organization_id_source_record_id_source_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "internal_awareness",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "internal_awareness_organization_id_source_record_id_source_fkey",
+              "fkey_columns": [
+                2,
+                3,
+                4
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.internal_awareness\\` has a foreign key \\`internal_awareness_organization_id_source_unit_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "internal_awareness",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "internal_awareness_organization_id_source_unit_id_fkey",
+              "fkey_columns": [
+                2,
+                5
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.internal_share_recipients\\` has a foreign key \\`internal_share_recipients_organization_id_recipient_unit_i_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "internal_share_recipients",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "internal_share_recipients_organization_id_recipient_unit_i_fkey",
+              "fkey_columns": [
+                1,
+                3
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.internal_share_recipients\\` has a foreign key \\`internal_share_recipients_organization_id_share_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "internal_share_recipients",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "internal_share_recipients_organization_id_share_id_fkey",
+              "fkey_columns": [
+                1,
+                2
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.invitation_delivery_attempts\\` has a foreign key \\`invitation_delivery_attempts_organization_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "invitation_delivery_attempts",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "invitation_delivery_attempts_organization_id_fkey",
+              "fkey_columns": [
+                2
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.invitation_delivery_attempts\\` has a foreign key \\`invitation_delivery_attempts_prior_invitation_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "invitation_delivery_attempts",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "invitation_delivery_attempts_prior_invitation_id_fkey",
+              "fkey_columns": [
+                5
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.invitation_provider_events\\` has a foreign key \\`invitation_provider_events_attempt_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "invitation_provider_events",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "invitation_provider_events_attempt_id_fkey",
+              "fkey_columns": [
+                2
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.operational_records\\` has a foreign key \\`operational_records_organization_id_created_by_membership__fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "operational_records",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "operational_records_organization_id_created_by_membership__fkey",
+              "fkey_columns": [
+                2,
+                10
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.operational_records\\` has a foreign key \\`operational_records_organization_id_operational_scope_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "operational_records",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "operational_records_organization_id_operational_scope_id_fkey",
+              "fkey_columns": [
+                2,
+                3
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.organization_invitations\\` has a foreign key \\`organization_invitations_organization_id_created_by_member_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "organization_invitations",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "organization_invitations_organization_id_created_by_member_fkey",
+              "fkey_columns": [
+                2,
+                8
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.organization_memberships\\` has a foreign key \\`organization_memberships_user_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "organization_memberships",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "organization_memberships_user_id_fkey",
+              "fkey_columns": [
+                3
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.ownership_recovery_cases\\` has a foreign key \\`ownership_recovery_cases_organization_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "ownership_recovery_cases",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "ownership_recovery_cases_organization_id_fkey",
+              "fkey_columns": [
+                2
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.platform_admin_grants\\` has a foreign key \\`platform_admin_grants_granted_by_user_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "platform_admin_grants",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "platform_admin_grants_granted_by_user_id_fkey",
+              "fkey_columns": [
+                4
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.platform_admin_grants\\` has a foreign key \\`platform_admin_grants_permission_key_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "platform_admin_grants",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "platform_admin_grants_permission_key_fkey",
+              "fkey_columns": [
+                2
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.publication_reviews\\` has a foreign key \\`publication_reviews_acting_unit_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "publication_reviews",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "publication_reviews_acting_unit_id_fkey",
+              "fkey_columns": [
+                19
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.publication_reviews\\` has a foreign key \\`publication_reviews_contract_version_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "publication_reviews",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "publication_reviews_contract_version_fkey",
+              "fkey_columns": [
+                6
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.publication_reviews\\` has a foreign key \\`publication_reviews_organization_id_record_id_source_revis_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "publication_reviews",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "publication_reviews_organization_id_record_id_source_revis_fkey",
+              "fkey_columns": [
+                2,
+                3,
+                4
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.publication_reviews\\` has a foreign key \\`publication_reviews_reviewer_authorization_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "publication_reviews",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "publication_reviews_reviewer_authorization_id_fkey",
+              "fkey_columns": [
+                18
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.record_assignments\\` has a foreign key \\`record_assignments_organization_id_assigned_membership_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "record_assignments",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "record_assignments_organization_id_assigned_membership_id_fkey",
+              "fkey_columns": [
+                2,
+                4
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.record_assignments\\` has a foreign key \\`record_assignments_organization_id_record_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "record_assignments",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "record_assignments_organization_id_record_id_fkey",
+              "fkey_columns": [
+                2,
+                3
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.record_provenance\\` has a foreign key \\`record_provenance_organization_id_owning_unit_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "record_provenance",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "record_provenance_organization_id_owning_unit_id_fkey",
+              "fkey_columns": [
+                2,
+                8
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.record_provenance\\` has a foreign key \\`record_provenance_organization_id_record_id_revision_numbe_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "record_provenance",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "record_provenance_organization_id_record_id_revision_numbe_fkey",
+              "fkey_columns": [
+                2,
+                3,
+                4
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.recovery_approvals\\` has a foreign key \\`recovery_approvals_user_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "recovery_approvals",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "recovery_approvals_user_id_fkey",
+              "fkey_columns": [
+                2
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.report_details\\` has a foreign key \\`report_details_contract_version_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "report_details",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "report_details_contract_version_fkey",
+              "fkey_columns": [
+                5
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.report_details\\` has a foreign key \\`report_details_correction_of_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "report_details",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "report_details_correction_of_fkey",
+              "fkey_columns": [
+                17
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.report_details\\` has a foreign key \\`report_details_linked_record_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "report_details",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "report_details_linked_record_id_fkey",
+              "fkey_columns": [
+                16
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.report_details\\` has a foreign key \\`report_details_organization_id_record_id_source_revision_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "report_details",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "report_details_organization_id_record_id_source_revision_fkey",
+              "fkey_columns": [
+                2,
+                1,
+                6
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.report_details\\` has a foreign key \\`report_details_organization_id_unit_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "report_details",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "report_details_organization_id_unit_id_fkey",
+              "fkey_columns": [
+                2,
+                3
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.report_details\\` has a foreign key \\`report_details_subtype_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "report_details",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "report_details_subtype_fkey",
+              "fkey_columns": [
+                4
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.report_redaction_context\\` has a foreign key \\`report_redaction_context_record_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "report_redaction_context",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "report_redaction_context_record_id_fkey",
+              "fkey_columns": [
+                2
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.report_scope_segments\\` has a foreign key \\`report_scope_segments_organization_id_scope_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "report_scope_segments",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "report_scope_segments_organization_id_scope_id_fkey",
+              "fkey_columns": [
+                2,
+                3
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.report_scope_segments\\` has a foreign key \\`report_scope_segments_scope_id_scope_version_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "report_scope_segments",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "report_scope_segments_scope_id_scope_version_fkey",
+              "fkey_columns": [
+                3,
+                4
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.report_subtypes\\` has a foreign key \\`report_subtypes_contract_version_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "report_subtypes",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "report_subtypes_contract_version_fkey",
+              "fkey_columns": [
+                5
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.report_subtypes\\` has a foreign key \\`report_subtypes_family_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "report_subtypes",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "report_subtypes_family_fkey",
+              "fkey_columns": [
+                2
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.reviewer_authorizations\\` has a foreign key \\`reviewer_authorizations_organization_id_acting_unit_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "reviewer_authorizations",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "reviewer_authorizations_organization_id_acting_unit_id_fkey",
+              "fkey_columns": [
+                2,
+                4
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.reviewer_authorizations\\` has a foreign key \\`reviewer_authorizations_organization_id_scope_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "reviewer_authorizations",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "reviewer_authorizations_organization_id_scope_id_fkey",
+              "fkey_columns": [
+                2,
+                8
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.reviewer_authorizations\\` has a foreign key \\`reviewer_authorizations_organization_id_target_unit_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "reviewer_authorizations",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "reviewer_authorizations_organization_id_target_unit_id_fkey",
+              "fkey_columns": [
+                2,
+                5
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.reviewer_authorizations\\` has a foreign key \\`reviewer_authorizations_scope_id_scope_version_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "reviewer_authorizations",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "reviewer_authorizations_scope_id_scope_version_fkey",
+              "fkey_columns": [
+                8,
+                9
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.reviewer_authorizations\\` has a foreign key \\`reviewer_authorizations_subtype_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "reviewer_authorizations",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "reviewer_authorizations_subtype_fkey",
+              "fkey_columns": [
+                6
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.road_impact_revisions\\` has a foreign key \\`road_impact_revisions_record_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "road_impact_revisions",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "road_impact_revisions_record_id_fkey",
+              "fkey_columns": [
+                3
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.road_impacts\\` has a foreign key \\`road_impacts_organization_id_record_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "road_impacts",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "road_impacts_organization_id_record_id_fkey",
+              "fkey_columns": [
+                2,
+                3
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.road_impacts\\` has a foreign key \\`road_impacts_organization_id_segment_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "road_impacts",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "road_impacts_organization_id_segment_id_fkey",
+              "fkey_columns": [
+                2,
+                5
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.road_impacts\\` has a foreign key \\`road_impacts_reason_subtype_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "road_impacts",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "road_impacts_reason_subtype_fkey",
+              "fkey_columns": [
+                20
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.role_permissions\\` has a foreign key \\`role_permissions_permission_key_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "role_permissions",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "role_permissions_permission_key_fkey",
+              "fkey_columns": [
+                2
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.scope_governance\\` has a foreign key \\`scope_governance_organization_id_scope_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "scope_governance",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "scope_governance_organization_id_scope_id_fkey",
+              "fkey_columns": [
+                1,
+                2
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.shared_awareness_recipients\\` has a foreign key \\`shared_awareness_recipients_organization_id_unit_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "shared_awareness_recipients",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "shared_awareness_recipients_organization_id_unit_id_fkey",
+              "fkey_columns": [
+                2,
+                3
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.shared_awareness_representations\\` has a foreign key \\`shared_awareness_representati_organization_id_record_id_so_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "shared_awareness_representations",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "shared_awareness_representati_organization_id_record_id_so_fkey",
+              "fkey_columns": [
+                2,
+                3,
+                4
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.shared_awareness_representations\\` has a foreign key \\`shared_awareness_representations_agreement_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "shared_awareness_representations",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "shared_awareness_representations_agreement_id_fkey",
+              "fkey_columns": [
+                6
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.sharing_agreement_parties\\` has a foreign key \\`sharing_agreement_parties_organization_id_approver_members_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "sharing_agreement_parties",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "sharing_agreement_parties_organization_id_approver_members_fkey",
+              "fkey_columns": [
+                2,
+                4
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.sharing_agreement_parties\\` has a foreign key \\`sharing_agreement_parties_organization_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "sharing_agreement_parties",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "sharing_agreement_parties_organization_id_fkey",
+              "fkey_columns": [
+                2
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.sharing_agreement_units\\` has a foreign key \\`sharing_agreement_units_organization_id_unit_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "sharing_agreement_units",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "sharing_agreement_units_organization_id_unit_id_fkey",
+              "fkey_columns": [
+                2,
+                3
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.sharing_agreements\\` has a foreign key \\`sharing_agreements_recipient_organization_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "sharing_agreements",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "sharing_agreements_recipient_organization_id_fkey",
+              "fkey_columns": [
+                3
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.sharing_agreements\\` has a foreign key \\`sharing_agreements_scope_id_scope_version_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "sharing_agreements",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "sharing_agreements_scope_id_scope_version_fkey",
+              "fkey_columns": [
+                5,
+                6
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.sharing_agreements\\` has a foreign key \\`sharing_agreements_source_organization_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "sharing_agreements",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "sharing_agreements_source_organization_id_fkey",
+              "fkey_columns": [
+                2
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.sharing_agreements\\` has a foreign key \\`sharing_agreements_source_organization_id_scope_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "sharing_agreements",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "sharing_agreements_source_organization_id_scope_id_fkey",
+              "fkey_columns": [
+                2,
+                5
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.unit_memberships\\` has a foreign key \\`unit_memberships_organization_id_membership_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "unit_memberships",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "unit_memberships_organization_id_membership_id_fkey",
+              "fkey_columns": [
+                1,
+                3
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.unit_memberships\\` has a foreign key \\`unit_memberships_organization_id_unit_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "unit_memberships",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "unit_memberships_organization_id_unit_id_fkey",
+              "fkey_columns": [
+                1,
+                2
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.unit_scope_grants\\` has a foreign key \\`unit_scope_grants_organization_id_scope_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "unit_scope_grants",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "unit_scope_grants_organization_id_scope_id_fkey",
+              "fkey_columns": [
+                1,
+                3
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.unit_scope_grants\\` has a foreign key \\`unit_scope_grants_organization_id_unit_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "unit_scope_grants",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "unit_scope_grants_organization_id_unit_id_fkey",
+              "fkey_columns": [
+                1,
+                2
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_private.user_offboarding\\` has a foreign key \\`user_offboarding_organization_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "user_offboarding",
+              "type": "table",
+              "schema": "dispatch_private",
+              "fkey_name": "user_offboarding_organization_id_fkey",
+              "fkey_columns": [
+                2
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_projection.projection_candidates\\` has a foreign key \\`projection_candidates_organization_id_capability_grant_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "projection_candidates",
+              "type": "table",
+              "schema": "dispatch_projection",
+              "fkey_name": "projection_candidates_organization_id_capability_grant_id_fkey",
+              "fkey_columns": [
+                2,
+                5
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_projection.projection_candidates\\` has a foreign key \\`projection_candidates_organization_id_source_record_id_sou_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "projection_candidates",
+              "type": "table",
+              "schema": "dispatch_projection",
+              "fkey_name": "projection_candidates_organization_id_source_record_id_sou_fkey",
+              "fkey_columns": [
+                2,
+                3,
+                4
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_projection.projection_candidates\\` has a foreign key \\`projection_candidates_requested_by_user_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "projection_candidates",
+              "type": "table",
+              "schema": "dispatch_projection",
+              "fkey_name": "projection_candidates_requested_by_user_id_fkey",
+              "fkey_columns": [
+                8
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_projection.report_public_projections\\` has a foreign key \\`report_public_projections_organization_id_unit_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "report_public_projections",
+              "type": "table",
+              "schema": "dispatch_projection",
+              "fkey_name": "report_public_projections_organization_id_unit_id_fkey",
+              "fkey_columns": [
+                3,
+                4
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_projection.report_public_projections\\` has a foreign key \\`report_public_projections_review_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "report_public_projections",
+              "type": "table",
+              "schema": "dispatch_projection",
+              "fkey_name": "report_public_projections_review_id_fkey",
+              "fkey_columns": [
+                2
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Table \\`dispatch_projection.report_public_projections\\` has a foreign key \\`report_public_projections_subtype_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+            "metadata": {
+              "name": "report_public_projections",
+              "type": "table",
+              "schema": "dispatch_projection",
+              "fkey_name": "report_public_projections_subtype_fkey",
+              "fkey_columns": [
+                5
+              ]
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          }
+        ],
+        "classification": "NEEDS REVIEW",
+        "reason": "Review under a separately authorized workload/performance plan; no automatic schema changes."
+      },
+      {
+        "name": "unused_index",
+        "title": "Unused Index",
+        "level": "INFO",
+        "facing": "EXTERNAL",
+        "categories": [
+          "PERFORMANCE"
+        ],
+        "description": "Detects if an index has never been used and may be a candidate for removal.",
+        "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0005_unused_index",
+        "count": 6,
+        "findings": [
+          {
+            "detail": "Index \\`units_parent\\` on table \\`dispatch_private.organization_units\\` has not been used",
+            "metadata": {
+              "name": "organization_units",
+              "type": "table",
+              "schema": "dispatch_private"
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Index \\`unit_memberships_member\\` on table \\`dispatch_private.unit_memberships\\` has not been used",
+            "metadata": {
+              "name": "unit_memberships",
+              "type": "table",
+              "schema": "dispatch_private"
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Index \\`records_unit\\` on table \\`dispatch_private.operational_records\\` has not been used",
+            "metadata": {
+              "name": "operational_records",
+              "type": "table",
+              "schema": "dispatch_private"
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Index \\`recipients_unit\\` on table \\`dispatch_private.internal_share_recipients\\` has not been used",
+            "metadata": {
+              "name": "internal_share_recipients",
+              "type": "table",
+              "schema": "dispatch_private"
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Index \\`phase29_impacts_record\\` on table \\`dispatch_private.road_impacts\\` has not been used",
+            "metadata": {
+              "name": "road_impacts",
+              "type": "table",
+              "schema": "dispatch_private"
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          },
+          {
+            "detail": "Index \\`reviewer_authorizations_actor\\` on table \\`dispatch_private.reviewer_authorizations\\` has not been used",
+            "metadata": {
+              "name": "reviewer_authorizations",
+              "type": "table",
+              "schema": "dispatch_private"
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          }
+        ],
+        "classification": "EXPECTED / FALSE POSITIVE",
+        "reason": "New unactivated database has no workload; retain certified indexes."
+      },
+      {
+        "name": "multiple_permissive_policies",
+        "title": "Multiple Permissive Policies",
+        "level": "WARN",
+        "facing": "EXTERNAL",
+        "categories": [
+          "PERFORMANCE"
+        ],
+        "description": "Detects if multiple permissive row level security policies are present on a table for the same \\`role\\` and \\`action\\` (e.g. insert). Multiple permissive policies are suboptimal for performance as each policy must be executed for every relevant query.",
+        "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0006_multiple_permissive_policies",
+        "count": 1,
+        "findings": [
+          {
+            "detail": "Table \\`dispatch_private.organizations\\` has multiple permissive policies for role \\`authenticated\\` for action \\`SELECT\\`. Policies include \\`{organizations_member,organizations_platform}\\`",
+            "metadata": {
+              "name": "organizations",
+              "type": "table",
+              "schema": "dispatch_private"
+            },
+            "observed_at": "2026-10-05T21:41:33.955Z"
+          }
+        ],
+        "classification": "NEEDS REVIEW",
+        "reason": "Review under a separately authorized workload/performance plan; no automatic schema changes."
+      },
+      {
+        "name": "auth_db_connections_absolute",
+        "title": "Auth DB Connection Strategy is not Percentage",
+        "level": "INFO",
+        "facing": "EXTERNAL",
+        "categories": [
+          "PERFORMANCE"
+        ],
+        "description": "Using a percentage based allocation connection strategy for Auth can help to improve the server's performance when increasing instance size.",
+        "remediation": "https://supabase.com/docs/guides/deployment/going-into-prod",
+        "count": 1,
+        "findings": [
+          {
+            "detail": "Your project's Auth server is configured to use at most 10 connections. Increasing the instance size without manually adjusting this number will not improve the performance of the Auth server. Switch to a percentage based connection allocation strategy instead.",
+            "metadata": {
+              "type": "auth",
+              "entity": "Auth"
+            }
+          }
+        ],
+        "classification": "NEEDS REVIEW",
+        "reason": "Review under a separately authorized workload/performance plan; no automatic schema changes."
+      }
+    ]
+  },
+  "activationBlockers": [
+    "DAYTON-RETENTION-01-v1 legal/privacy approval and execution gaps",
+    "Integrated retention clocks/disposition",
+    "Legal holds",
+    "Restore reconciliation and rehearsal",
+    "Complete offboarding",
+    "Remediation authorization/proof",
+    "Enforced quarantine deadlines",
+    "Backup/export aging",
+    "Separate infrastructure/runtime authorization, credentials, connectivity and route acceptance before activation"
+  ],
+  "externalStatus": {
+    "hyperdrive": "Not configured by this task; no Cloudflare account inspection",
+    "worker": "Not deployed by this task; no Cloudflare account inspection",
+    "resend": "Not configured by this task; no provider account inspection",
+    "email": "No sending by this task; zero DB delivery attempts/provider events; no external provider-log inspection"
+  },
+  "safety": {
+    "remoteWrites": false,
+    "installerRerun": false,
+    "participantsCreated": false,
+    "consumerTouched": false,
+    "protectedCacheTouched": false,
+    "push": false
+  },
+  "managedSchemas": [
+    "auth",
+    "extensions",
+    "graphql",
+    "graphql_public",
+    "public",
+    "realtime",
+    "storage",
+    "vault"
+  ],
+  "consumerIsolation": "Fresh namespace inventory contains only Dispatch and standard platform schemas; no consumer project queried or modified; no consumer schemas/data imported by this task."
+}
