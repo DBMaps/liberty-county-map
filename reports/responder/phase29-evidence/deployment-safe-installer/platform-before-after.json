@@ -1,0 +1,1923 @@
+{
+  "unchanged": true,
+  "catalog": {
+    "tables": [
+      {
+        "acl": null,
+        "rls": false,
+        "name": "amr_id_pk",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": [
+          "supabase_auth_admin=arwdDxtm/supabase_auth_admin",
+          "dashboard_user=arwdDxtm/supabase_auth_admin",
+          "postgres=ar*wdDxtm/supabase_auth_admin"
+        ],
+        "rls": true,
+        "name": "audit_log_entries",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "audit_log_entries_pkey",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "audit_logs_instance_id_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "confirmation_token_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/supabase_auth_admin",
+          "supabase_auth_admin=arwdDxtm/supabase_auth_admin",
+          "dashboard_user=arwdDxtm/supabase_auth_admin"
+        ],
+        "rls": false,
+        "name": "custom_oauth_providers",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "custom_oauth_providers_created_at_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "custom_oauth_providers_enabled_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "custom_oauth_providers_identifier_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "custom_oauth_providers_identifier_key",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "custom_oauth_providers_pkey",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "custom_oauth_providers_provider_type_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "email_change_token_current_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "email_change_token_new_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "factor_id_created_at_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": [
+          "postgres=ar*wdDxtm/supabase_auth_admin",
+          "supabase_auth_admin=arwdDxtm/supabase_auth_admin",
+          "dashboard_user=arwdDxtm/supabase_auth_admin"
+        ],
+        "rls": true,
+        "name": "flow_state",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "flow_state_created_at_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "flow_state_pkey",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": [
+          "postgres=ar*wdDxtm/supabase_auth_admin",
+          "supabase_auth_admin=arwdDxtm/supabase_auth_admin",
+          "dashboard_user=arwdDxtm/supabase_auth_admin"
+        ],
+        "rls": true,
+        "name": "identities",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "identities_email_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "identities_pkey",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "identities_provider_id_provider_unique",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "identities_user_id_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "idx_auth_code",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "idx_oauth_client_states_created_at",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "idx_user_id_auth_method",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": [
+          "supabase_auth_admin=arwdDxtm/supabase_auth_admin",
+          "dashboard_user=arwdDxtm/supabase_auth_admin",
+          "postgres=ar*wdDxtm/supabase_auth_admin"
+        ],
+        "rls": true,
+        "name": "instances",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "instances_pkey",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": [
+          "postgres=ar*wdDxtm/supabase_auth_admin",
+          "supabase_auth_admin=arwdDxtm/supabase_auth_admin",
+          "dashboard_user=arwdDxtm/supabase_auth_admin"
+        ],
+        "rls": true,
+        "name": "mfa_amr_claims",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "mfa_amr_claims_session_id_authentication_method_pkey",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "mfa_challenge_created_at_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": [
+          "postgres=ar*wdDxtm/supabase_auth_admin",
+          "supabase_auth_admin=arwdDxtm/supabase_auth_admin",
+          "dashboard_user=arwdDxtm/supabase_auth_admin"
+        ],
+        "rls": true,
+        "name": "mfa_challenges",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "mfa_challenges_pkey",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": [
+          "postgres=ar*wdDxtm/supabase_auth_admin",
+          "supabase_auth_admin=arwdDxtm/supabase_auth_admin",
+          "dashboard_user=arwdDxtm/supabase_auth_admin"
+        ],
+        "rls": true,
+        "name": "mfa_factors",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "mfa_factors_last_challenged_at_key",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "mfa_factors_pkey",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "mfa_factors_user_friendly_name_unique",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "mfa_factors_user_id_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/supabase_auth_admin",
+          "supabase_auth_admin=arwdDxtm/supabase_auth_admin",
+          "dashboard_user=arwdDxtm/supabase_auth_admin"
+        ],
+        "rls": false,
+        "name": "mfa_recovery_code_sets",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "mfa_recovery_code_sets_mfa_factor_id_key",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "mfa_recovery_code_sets_pkey",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "mfa_recovery_code_sets_user_id_key",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/supabase_auth_admin",
+          "supabase_auth_admin=arwdDxtm/supabase_auth_admin",
+          "dashboard_user=arwdDxtm/supabase_auth_admin"
+        ],
+        "rls": false,
+        "name": "mfa_recovery_codes",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "mfa_recovery_codes_pkey",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "mfa_recovery_codes_set_id_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "oauth_auth_pending_exp_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/supabase_auth_admin",
+          "supabase_auth_admin=arwdDxtm/supabase_auth_admin",
+          "dashboard_user=arwdDxtm/supabase_auth_admin"
+        ],
+        "rls": false,
+        "name": "oauth_authorizations",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "oauth_authorizations_authorization_code_key",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "oauth_authorizations_authorization_id_key",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "oauth_authorizations_pkey",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/supabase_auth_admin",
+          "supabase_auth_admin=arwdDxtm/supabase_auth_admin",
+          "dashboard_user=arwdDxtm/supabase_auth_admin"
+        ],
+        "rls": false,
+        "name": "oauth_client_states",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "oauth_client_states_pkey",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/supabase_auth_admin",
+          "supabase_auth_admin=arwdDxtm/supabase_auth_admin",
+          "dashboard_user=arwdDxtm/supabase_auth_admin"
+        ],
+        "rls": false,
+        "name": "oauth_clients",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "oauth_clients_deleted_at_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "oauth_clients_pkey",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/supabase_auth_admin",
+          "supabase_auth_admin=arwdDxtm/supabase_auth_admin",
+          "dashboard_user=arwdDxtm/supabase_auth_admin"
+        ],
+        "rls": false,
+        "name": "oauth_consents",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "oauth_consents_active_client_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "oauth_consents_active_user_client_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "oauth_consents_pkey",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "oauth_consents_user_client_unique",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "oauth_consents_user_order_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": [
+          "postgres=ar*wdDxtm/supabase_auth_admin",
+          "supabase_auth_admin=arwdDxtm/supabase_auth_admin",
+          "dashboard_user=arwdDxtm/supabase_auth_admin"
+        ],
+        "rls": true,
+        "name": "one_time_tokens",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "one_time_tokens_pkey",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "one_time_tokens_relates_to_hash_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "one_time_tokens_token_hash_hash_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "one_time_tokens_user_id_token_type_key",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "reauthentication_token_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "recovery_token_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": [
+          "supabase_auth_admin=arwdDxtm/supabase_auth_admin",
+          "dashboard_user=arwdDxtm/supabase_auth_admin",
+          "postgres=ar*wdDxtm/supabase_auth_admin"
+        ],
+        "rls": true,
+        "name": "refresh_tokens",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": [
+          "supabase_auth_admin=rwU/supabase_auth_admin",
+          "dashboard_user=rwU/supabase_auth_admin",
+          "postgres=rwU/supabase_auth_admin"
+        ],
+        "rls": false,
+        "name": "refresh_tokens_id_seq",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "refresh_tokens_instance_id_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "refresh_tokens_instance_id_user_id_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "refresh_tokens_parent_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "refresh_tokens_pkey",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "refresh_tokens_session_id_revoked_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "refresh_tokens_token_unique",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "refresh_tokens_updated_at_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": [
+          "postgres=ar*wdDxtm/supabase_auth_admin",
+          "supabase_auth_admin=arwdDxtm/supabase_auth_admin",
+          "dashboard_user=arwdDxtm/supabase_auth_admin"
+        ],
+        "rls": true,
+        "name": "saml_providers",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "saml_providers_entity_id_key",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "saml_providers_pkey",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "saml_providers_sso_provider_id_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": [
+          "postgres=ar*wdDxtm/supabase_auth_admin",
+          "supabase_auth_admin=arwdDxtm/supabase_auth_admin",
+          "dashboard_user=arwdDxtm/supabase_auth_admin"
+        ],
+        "rls": true,
+        "name": "saml_relay_states",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "saml_relay_states_created_at_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "saml_relay_states_for_email_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "saml_relay_states_pkey",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "saml_relay_states_sso_provider_id_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": [
+          "supabase_auth_admin=arwdDxtm/supabase_auth_admin",
+          "postgres=r*/supabase_auth_admin"
+        ],
+        "rls": true,
+        "name": "schema_migrations",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "schema_migrations_pkey",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/supabase_auth_admin",
+          "supabase_auth_admin=arwdDxtm/supabase_auth_admin",
+          "dashboard_user=arwdDxtm/supabase_auth_admin"
+        ],
+        "rls": false,
+        "name": "scim_tokens",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "scim_tokens_expires_at_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "scim_tokens_pkey",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "scim_tokens_revoked_at_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "scim_tokens_sso_provider_id_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "scim_tokens_token_hash_key",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/supabase_auth_admin",
+          "supabase_auth_admin=arwdDxtm/supabase_auth_admin",
+          "dashboard_user=arwdDxtm/supabase_auth_admin"
+        ],
+        "rls": false,
+        "name": "scim_users",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "scim_users_created_at_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "scim_users_deleted_at_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "scim_users_external_id_key",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "scim_users_id_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "scim_users_pkey",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "scim_users_sso_provider_id_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "scim_users_updated_at_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "scim_users_user_id_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "scim_users_user_name_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "scim_users_user_name_key",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": [
+          "postgres=ar*wdDxtm/supabase_auth_admin",
+          "supabase_auth_admin=arwdDxtm/supabase_auth_admin",
+          "dashboard_user=arwdDxtm/supabase_auth_admin"
+        ],
+        "rls": true,
+        "name": "sessions",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "sessions_not_after_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "sessions_oauth_client_id_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "sessions_pkey",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "sessions_user_id_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": [
+          "postgres=ar*wdDxtm/supabase_auth_admin",
+          "supabase_auth_admin=arwdDxtm/supabase_auth_admin",
+          "dashboard_user=arwdDxtm/supabase_auth_admin"
+        ],
+        "rls": true,
+        "name": "sso_domains",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "sso_domains_domain_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "sso_domains_pkey",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "sso_domains_sso_provider_id_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": [
+          "postgres=ar*wdDxtm/supabase_auth_admin",
+          "supabase_auth_admin=arwdDxtm/supabase_auth_admin",
+          "dashboard_user=arwdDxtm/supabase_auth_admin"
+        ],
+        "rls": true,
+        "name": "sso_providers",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "sso_providers_pkey",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "sso_providers_resource_id_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "sso_providers_resource_id_pattern_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "unique_phone_factor_per_user",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "user_id_created_at_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": [
+          "supabase_auth_admin=arwdDxtm/supabase_auth_admin",
+          "dashboard_user=arwdDxtm/supabase_auth_admin",
+          "postgres=ar*wdDxtm/supabase_auth_admin"
+        ],
+        "rls": true,
+        "name": "users",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "users_email_partial_key",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "users_instance_id_email_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "users_instance_id_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "users_is_anonymous_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "users_phone_key",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "users_pkey",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/supabase_auth_admin",
+          "supabase_auth_admin=arwdDxtm/supabase_auth_admin",
+          "dashboard_user=arwdDxtm/supabase_auth_admin"
+        ],
+        "rls": false,
+        "name": "webauthn_challenges",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "webauthn_challenges_expires_at_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "webauthn_challenges_pkey",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "webauthn_challenges_user_id_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/supabase_auth_admin",
+          "supabase_auth_admin=arwdDxtm/supabase_auth_admin",
+          "dashboard_user=arwdDxtm/supabase_auth_admin"
+        ],
+        "rls": false,
+        "name": "webauthn_credentials",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "webauthn_credentials_credential_id_key",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "webauthn_credentials_pkey",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "webauthn_credentials_user_id_idx",
+        "owner": "supabase_auth_admin",
+        "forced": false,
+        "schema": "auth"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "ix_realtime_subscription_entity",
+        "owner": "supabase_realtime_admin",
+        "forced": false,
+        "schema": "realtime"
+      },
+      {
+        "acl": [
+          "supabase_realtime_admin=arwdDxtm/supabase_realtime_admin",
+          "postgres=a*r*wdDxtm/supabase_realtime_admin",
+          "dashboard_user=arwdDxtm/supabase_realtime_admin",
+          "anon=arw/supabase_realtime_admin",
+          "authenticated=arw/supabase_realtime_admin",
+          "service_role=arw/supabase_realtime_admin"
+        ],
+        "rls": true,
+        "name": "messages",
+        "owner": "supabase_realtime_admin",
+        "forced": false,
+        "schema": "realtime"
+      },
+      {
+        "acl": [
+          "supabase_realtime_admin=arwdDxtm/supabase_realtime_admin",
+          "postgres=a*r*wdDxtm/supabase_realtime_admin",
+          "dashboard_user=arwdDxtm/supabase_realtime_admin"
+        ],
+        "rls": false,
+        "name": "messages_2026_10_04",
+        "owner": "supabase_realtime_admin",
+        "forced": false,
+        "schema": "realtime"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "messages_2026_10_04_inserted_at_topic_idx",
+        "owner": "supabase_realtime_admin",
+        "forced": false,
+        "schema": "realtime"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "messages_2026_10_04_pkey",
+        "owner": "supabase_realtime_admin",
+        "forced": false,
+        "schema": "realtime"
+      },
+      {
+        "acl": [
+          "supabase_realtime_admin=arwdDxtm/supabase_realtime_admin",
+          "postgres=a*r*wdDxtm/supabase_realtime_admin",
+          "dashboard_user=arwdDxtm/supabase_realtime_admin"
+        ],
+        "rls": false,
+        "name": "messages_2026_10_05",
+        "owner": "supabase_realtime_admin",
+        "forced": false,
+        "schema": "realtime"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "messages_2026_10_05_inserted_at_topic_idx",
+        "owner": "supabase_realtime_admin",
+        "forced": false,
+        "schema": "realtime"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "messages_2026_10_05_pkey",
+        "owner": "supabase_realtime_admin",
+        "forced": false,
+        "schema": "realtime"
+      },
+      {
+        "acl": [
+          "supabase_realtime_admin=arwdDxtm/supabase_realtime_admin",
+          "postgres=a*r*wdDxtm/supabase_realtime_admin",
+          "dashboard_user=arwdDxtm/supabase_realtime_admin"
+        ],
+        "rls": false,
+        "name": "messages_2026_10_06",
+        "owner": "supabase_realtime_admin",
+        "forced": false,
+        "schema": "realtime"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "messages_2026_10_06_inserted_at_topic_idx",
+        "owner": "supabase_realtime_admin",
+        "forced": false,
+        "schema": "realtime"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "messages_2026_10_06_pkey",
+        "owner": "supabase_realtime_admin",
+        "forced": false,
+        "schema": "realtime"
+      },
+      {
+        "acl": [
+          "supabase_realtime_admin=arwdDxtm/supabase_realtime_admin",
+          "postgres=a*r*wdDxtm/supabase_realtime_admin",
+          "dashboard_user=arwdDxtm/supabase_realtime_admin"
+        ],
+        "rls": false,
+        "name": "messages_2026_10_07",
+        "owner": "supabase_realtime_admin",
+        "forced": false,
+        "schema": "realtime"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "messages_2026_10_07_inserted_at_topic_idx",
+        "owner": "supabase_realtime_admin",
+        "forced": false,
+        "schema": "realtime"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "messages_2026_10_07_pkey",
+        "owner": "supabase_realtime_admin",
+        "forced": false,
+        "schema": "realtime"
+      },
+      {
+        "acl": [
+          "supabase_realtime_admin=arwdDxtm/supabase_realtime_admin",
+          "postgres=a*r*wdDxtm/supabase_realtime_admin",
+          "dashboard_user=arwdDxtm/supabase_realtime_admin"
+        ],
+        "rls": false,
+        "name": "messages_2026_10_08",
+        "owner": "supabase_realtime_admin",
+        "forced": false,
+        "schema": "realtime"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "messages_2026_10_08_inserted_at_topic_idx",
+        "owner": "supabase_realtime_admin",
+        "forced": false,
+        "schema": "realtime"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "messages_2026_10_08_pkey",
+        "owner": "supabase_realtime_admin",
+        "forced": false,
+        "schema": "realtime"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "messages_inserted_at_topic_index",
+        "owner": "supabase_realtime_admin",
+        "forced": false,
+        "schema": "realtime"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "messages_pkey",
+        "owner": "supabase_realtime_admin",
+        "forced": false,
+        "schema": "realtime"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "pk_subscription",
+        "owner": "supabase_realtime_admin",
+        "forced": false,
+        "schema": "realtime"
+      },
+      {
+        "acl": [
+          "supabase_admin=arwdDxtm/supabase_admin",
+          "postgres=arwdDxtm/supabase_admin",
+          "dashboard_user=arwdDxtm/supabase_admin"
+        ],
+        "rls": false,
+        "name": "schema_migrations",
+        "owner": "supabase_admin",
+        "forced": false,
+        "schema": "realtime"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "schema_migrations_pkey",
+        "owner": "supabase_admin",
+        "forced": false,
+        "schema": "realtime"
+      },
+      {
+        "acl": [
+          "supabase_realtime_admin=arwdDxtm/supabase_realtime_admin",
+          "postgres=arwdDxtm/supabase_realtime_admin",
+          "dashboard_user=arwdDxtm/supabase_realtime_admin",
+          "anon=r/supabase_realtime_admin",
+          "authenticated=r/supabase_realtime_admin",
+          "service_role=r/supabase_realtime_admin"
+        ],
+        "rls": false,
+        "name": "subscription",
+        "owner": "supabase_realtime_admin",
+        "forced": false,
+        "schema": "realtime"
+      },
+      {
+        "acl": [
+          "supabase_realtime_admin=rwU/supabase_realtime_admin",
+          "postgres=rwU/supabase_realtime_admin",
+          "dashboard_user=rwU/supabase_realtime_admin",
+          "anon=U/supabase_realtime_admin",
+          "authenticated=U/supabase_realtime_admin",
+          "service_role=U/supabase_realtime_admin"
+        ],
+        "rls": false,
+        "name": "subscription_id_seq",
+        "owner": "supabase_realtime_admin",
+        "forced": false,
+        "schema": "realtime"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "subscription_subscription_id_entity_filters_action_filter_selec",
+        "owner": "supabase_realtime_admin",
+        "forced": false,
+        "schema": "realtime"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "user_defined_filter",
+        "owner": "supabase_realtime_admin",
+        "forced": false,
+        "schema": "realtime"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "wal_column",
+        "owner": "supabase_realtime_admin",
+        "forced": false,
+        "schema": "realtime"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "wal_rls",
+        "owner": "supabase_realtime_admin",
+        "forced": false,
+        "schema": "realtime"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "bname",
+        "owner": "supabase_storage_admin",
+        "forced": false,
+        "schema": "storage"
+      },
+      {
+        "acl": [
+          "supabase_storage_admin=arwdDxtm/supabase_storage_admin",
+          "postgres=a*r*w*d*D*x*t*m*/supabase_storage_admin",
+          "service_role=arwdDxtm/supabase_storage_admin",
+          "authenticated=arwd/supabase_storage_admin",
+          "anon=arwd/supabase_storage_admin"
+        ],
+        "rls": true,
+        "name": "buckets",
+        "owner": "supabase_storage_admin",
+        "forced": false,
+        "schema": "storage"
+      },
+      {
+        "acl": [
+          "supabase_storage_admin=arwdDxtm/supabase_storage_admin",
+          "service_role=arwdDxtm/supabase_storage_admin",
+          "authenticated=arwd/supabase_storage_admin",
+          "anon=arwd/supabase_storage_admin"
+        ],
+        "rls": true,
+        "name": "buckets_analytics",
+        "owner": "supabase_storage_admin",
+        "forced": false,
+        "schema": "storage"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "buckets_analytics_pkey",
+        "owner": "supabase_storage_admin",
+        "forced": false,
+        "schema": "storage"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "buckets_analytics_unique_name_idx",
+        "owner": "supabase_storage_admin",
+        "forced": false,
+        "schema": "storage"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "buckets_pkey",
+        "owner": "supabase_storage_admin",
+        "forced": false,
+        "schema": "storage"
+      },
+      {
+        "acl": [
+          "supabase_storage_admin=arwdDxtm/supabase_storage_admin",
+          "service_role=r/supabase_storage_admin",
+          "anon=r/supabase_storage_admin",
+          "authenticated=r/supabase_storage_admin"
+        ],
+        "rls": true,
+        "name": "buckets_vectors",
+        "owner": "supabase_storage_admin",
+        "forced": false,
+        "schema": "storage"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "buckets_vectors_pkey",
+        "owner": "supabase_storage_admin",
+        "forced": false,
+        "schema": "storage"
+      },
+      {
+        "acl": [
+          "supabase_storage_admin=arwdDxtm/supabase_storage_admin",
+          "service_role=arwdDxtm/supabase_storage_admin",
+          "authenticated=r/supabase_storage_admin",
+          "anon=r/supabase_storage_admin"
+        ],
+        "rls": true,
+        "name": "iceberg_namespaces",
+        "owner": "supabase_storage_admin",
+        "forced": false,
+        "schema": "storage"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "iceberg_namespaces_pkey",
+        "owner": "supabase_storage_admin",
+        "forced": false,
+        "schema": "storage"
+      },
+      {
+        "acl": [
+          "supabase_storage_admin=arwdDxtm/supabase_storage_admin",
+          "service_role=arwdDxtm/supabase_storage_admin",
+          "authenticated=r/supabase_storage_admin",
+          "anon=r/supabase_storage_admin"
+        ],
+        "rls": true,
+        "name": "iceberg_tables",
+        "owner": "supabase_storage_admin",
+        "forced": false,
+        "schema": "storage"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "iceberg_tables_pkey",
+        "owner": "supabase_storage_admin",
+        "forced": false,
+        "schema": "storage"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "idx_iceberg_namespaces_bucket_id",
+        "owner": "supabase_storage_admin",
+        "forced": false,
+        "schema": "storage"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "idx_iceberg_tables_location",
+        "owner": "supabase_storage_admin",
+        "forced": false,
+        "schema": "storage"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "idx_iceberg_tables_namespace_id",
+        "owner": "supabase_storage_admin",
+        "forced": false,
+        "schema": "storage"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "idx_multipart_uploads_list",
+        "owner": "supabase_storage_admin",
+        "forced": false,
+        "schema": "storage"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "idx_objects_bucket_id_name",
+        "owner": "supabase_storage_admin",
+        "forced": false,
+        "schema": "storage"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "idx_objects_bucket_id_name_lower",
+        "owner": "supabase_storage_admin",
+        "forced": false,
+        "schema": "storage"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "idx_objects_current_version",
+        "owner": "supabase_storage_admin",
+        "forced": false,
+        "schema": "storage"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "idx_objects_delete_markers",
+        "owner": "supabase_storage_admin",
+        "forced": false,
+        "schema": "storage"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "idx_objects_null_version",
+        "owner": "supabase_storage_admin",
+        "forced": false,
+        "schema": "storage"
+      },
+      {
+        "acl": null,
+        "rls": true,
+        "name": "migrations",
+        "owner": "supabase_storage_admin",
+        "forced": false,
+        "schema": "storage"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "migrations_name_key",
+        "owner": "supabase_storage_admin",
+        "forced": false,
+        "schema": "storage"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "migrations_pkey",
+        "owner": "supabase_storage_admin",
+        "forced": false,
+        "schema": "storage"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "name_prefix_search",
+        "owner": "supabase_storage_admin",
+        "forced": false,
+        "schema": "storage"
+      },
+      {
+        "acl": [
+          "supabase_storage_admin=arwdDxtm/supabase_storage_admin",
+          "postgres=a*r*w*d*D*x*t*m*/supabase_storage_admin",
+          "service_role=arwdDxtm/supabase_storage_admin",
+          "authenticated=arwd/supabase_storage_admin",
+          "anon=arwd/supabase_storage_admin"
+        ],
+        "rls": true,
+        "name": "objects",
+        "owner": "supabase_storage_admin",
+        "forced": false,
+        "schema": "storage"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "objects_bucket_id_name_version_key",
+        "owner": "supabase_storage_admin",
+        "forced": false,
+        "schema": "storage"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "objects_pkey",
+        "owner": "supabase_storage_admin",
+        "forced": false,
+        "schema": "storage"
+      },
+      {
+        "acl": [
+          "supabase_storage_admin=arwdDxtm/supabase_storage_admin",
+          "service_role=arwdDxtm/supabase_storage_admin",
+          "authenticated=r/supabase_storage_admin",
+          "anon=r/supabase_storage_admin"
+        ],
+        "rls": true,
+        "name": "s3_multipart_uploads",
+        "owner": "supabase_storage_admin",
+        "forced": false,
+        "schema": "storage"
+      },
+      {
+        "acl": [
+          "supabase_storage_admin=arwdDxtm/supabase_storage_admin",
+          "service_role=arwdDxtm/supabase_storage_admin",
+          "authenticated=r/supabase_storage_admin",
+          "anon=r/supabase_storage_admin"
+        ],
+        "rls": true,
+        "name": "s3_multipart_uploads_parts",
+        "owner": "supabase_storage_admin",
+        "forced": false,
+        "schema": "storage"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "s3_multipart_uploads_parts_pkey",
+        "owner": "supabase_storage_admin",
+        "forced": false,
+        "schema": "storage"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "s3_multipart_uploads_pkey",
+        "owner": "supabase_storage_admin",
+        "forced": false,
+        "schema": "storage"
+      },
+      {
+        "acl": [
+          "supabase_storage_admin=arwdDxtm/supabase_storage_admin",
+          "service_role=r/supabase_storage_admin",
+          "anon=r/supabase_storage_admin",
+          "authenticated=r/supabase_storage_admin"
+        ],
+        "rls": true,
+        "name": "vector_indexes",
+        "owner": "supabase_storage_admin",
+        "forced": false,
+        "schema": "storage"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "vector_indexes_name_bucket_id_idx",
+        "owner": "supabase_storage_admin",
+        "forced": false,
+        "schema": "storage"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "vector_indexes_pkey",
+        "owner": "supabase_storage_admin",
+        "forced": false,
+        "schema": "storage"
+      },
+      {
+        "acl": [
+          "supabase_admin=arwdDxtm/supabase_admin",
+          "postgres=r*d*D*x*/supabase_admin",
+          "service_role=rd/supabase_admin"
+        ],
+        "rls": false,
+        "name": "decrypted_secrets",
+        "owner": "supabase_admin",
+        "forced": false,
+        "schema": "vault"
+      },
+      {
+        "acl": [
+          "supabase_admin=arwdDxtm/supabase_admin",
+          "postgres=r*d*D*x*/supabase_admin",
+          "service_role=rd/supabase_admin"
+        ],
+        "rls": false,
+        "name": "secrets",
+        "owner": "supabase_admin",
+        "forced": false,
+        "schema": "vault"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "secrets_name_idx",
+        "owner": "supabase_admin",
+        "forced": false,
+        "schema": "vault"
+      },
+      {
+        "acl": null,
+        "rls": false,
+        "name": "secrets_pkey",
+        "owner": "supabase_admin",
+        "forced": false,
+        "schema": "vault"
+      }
+    ],
+    "defaults": [
+      {
+        "acl": [
+          "postgres=rwU/supabase_auth_admin",
+          "dashboard_user=rwU/supabase_auth_admin"
+        ],
+        "type": "S",
+        "owner": "supabase_auth_admin",
+        "schema": "auth"
+      },
+      {
+        "acl": [
+          "postgres=X/supabase_auth_admin",
+          "dashboard_user=X/supabase_auth_admin"
+        ],
+        "type": "f",
+        "owner": "supabase_auth_admin",
+        "schema": "auth"
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/supabase_auth_admin",
+          "dashboard_user=arwdDxtm/supabase_auth_admin"
+        ],
+        "type": "r",
+        "owner": "supabase_auth_admin",
+        "schema": "auth"
+      },
+      {
+        "acl": [
+          "postgres=rwU/supabase_admin",
+          "dashboard_user=rwU/supabase_admin"
+        ],
+        "type": "S",
+        "owner": "supabase_admin",
+        "schema": "realtime"
+      },
+      {
+        "acl": [
+          "postgres=X/supabase_admin",
+          "dashboard_user=X/supabase_admin"
+        ],
+        "type": "f",
+        "owner": "supabase_admin",
+        "schema": "realtime"
+      },
+      {
+        "acl": [
+          "postgres=a*r*wdDxtm/supabase_admin",
+          "dashboard_user=arwdDxtm/supabase_admin"
+        ],
+        "type": "r",
+        "owner": "supabase_admin",
+        "schema": "realtime"
+      },
+      {
+        "acl": [
+          "postgres=rwU/postgres",
+          "anon=rwU/postgres",
+          "authenticated=rwU/postgres",
+          "service_role=rwU/postgres"
+        ],
+        "type": "S",
+        "owner": "postgres",
+        "schema": "storage"
+      },
+      {
+        "acl": [
+          "postgres=X/postgres",
+          "anon=X/postgres",
+          "authenticated=X/postgres",
+          "service_role=X/postgres"
+        ],
+        "type": "f",
+        "owner": "postgres",
+        "schema": "storage"
+      },
+      {
+        "acl": [
+          "postgres=arwdDxtm/postgres",
+          "anon=arwdDxtm/postgres",
+          "authenticated=arwdDxtm/postgres",
+          "service_role=arwdDxtm/postgres"
+        ],
+        "type": "r",
+        "owner": "postgres",
+        "schema": "storage"
+      }
+    ]
+  }
+}

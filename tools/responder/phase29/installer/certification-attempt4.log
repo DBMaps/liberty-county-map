@@ -1,0 +1,1571 @@
+DROP SCHEMA
+ALTER ROLE
+✔ clean standard Supabase baseline without fixtures (560.2128ms)
+✔ wrong project fails atomically (835.783ms)
+✔ populated Dispatch fails atomically (837.3532ms)
+✔ conflicting role fails atomically (867.621ms)
+✔ incompatible prior namespace fails atomically (865.8161ms)
+✔ unexpected public record fails atomically (857.9732ms)
+✔ unexpected owner defaults fails atomically (860.2042ms)
+✔ version condition is executed and rejects unsupported version (268.6803ms)
+✖ full clean install, inventories and frozen postflight pass (1198.9568ms)
+✖ future public table has no browser table privileges (273.5826ms)
+✖ failure after hardening rolls back roles objects and ACL mutations (333.9642ms)
+✖ empty rollback and reapply pass (1149.9783ms)
+✖ exact inventory persisted for owner review (271.1146ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 8
+ℹ fail 5
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 9397.1719
+
+✖ failing tests:
+
+test at ..\..\..\..\..\..\GitHub\liberty-county-map\.artifacts\worktrees\RESPONDER-PHASE0-v1-contract-freeze\tools\responder\phase29\installer\runtime.test.mjs:11:1
+✖ full clean install, inventories and frozen postflight pass (1198.9568ms)
+  AssertionError [ERR_ASSERTION]: NOTICE:  role "postgres" has already been granted membership in role "dispatch_function_owner" by role "postgres"
+  NOTICE:  role "postgres" has already been granted membership in role "dispatch_function_owner" by role "postgres"
+  WARNING:  role "postgres" has not been granted membership in role "dispatch_delivery_connection" by role "postgres"
+  WARNING:  role "postgres" has not been granted membership in role "dispatch_delivery_transport" by role "postgres"
+  ERROR:  POSTFLIGHT elevated installer membership
+  CONTEXT:  PL/pgSQL function inline_code_block line 6 at RAISE
+  
+  cmrrvwgkgjhmdugzhnrh
+  BEGIN
+  SET
+  SET
+  
+  DO
+  ALTER DEFAULT PRIVILEGES
+  ALTER DEFAULT PRIVILEGES
+  ALTER DEFAULT PRIVILEGES
+  REVOKE
+  DO
+  CREATE SCHEMA
+  CREATE SCHEMA
+  CREATE SCHEMA
+  CREATE SCHEMA
+  REVOKE
+  CREATE TYPE
+  CREATE TYPE
+  CREATE TYPE
+  CREATE TYPE
+  CREATE TYPE
+  CREATE TYPE
+  CREATE TYPE
+  CREATE TYPE
+  CREATE TYPE
+  CREATE TYPE
+  CREATE TYPE
+  CREATE TYPE
+  CREATE TYPE
+  CREATE TYPE
+  CREATE TYPE
+  CREATE TYPE
+  CREATE TYPE
+  CREATE TYPE
+  CREATE TYPE
+  CREATE TYPE
+  CREATE TYPE
+  CREATE TYPE
+  CREATE TYPE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE INDEX
+  CREATE INDEX
+  CREATE TABLE
+  CREATE INDEX
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE INDEX
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE INDEX
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  INSERT 0 5
+  INSERT 0 26
+  INSERT 0 20
+  INSERT 0 19
+  INSERT 0 21
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  DO
+  CREATE TRIGGER
+  CREATE TRIGGER
+  CREATE TRIGGER
+  DO
+  CREATE POLICY
+  CREATE POLICY
+  CREATE POLICY
+  CREATE POLICY
+  CREATE POLICY
+  CREATE POLICY
+  CREATE POLICY
+  CREATE POLICY
+  CREATE POLICY
+  CREATE POLICY
+  CREATE POLICY
+  CREATE POLICY
+  CREATE POLICY
+  CREATE POLICY
+  CREATE POLICY
+  CREATE POLICY
+  CREATE POLICY
+  CREATE VIEW
+  CREATE VIEW
+  GRANT ROLE
+  GRANT
+  ALTER FUNCTION
+  DO
+  REVOKE
+  GRANT
+  GRANT
+  REVOKE
+  REVOKE
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  DO
+  DO
+  REVOKE ROLE
+  NOTIFY
+  GRANT ROLE
+  CREATE TYPE
+  CREATE TYPE
+  CREATE TYPE
+  CREATE TYPE
+  CREATE TABLE
+  CREATE INDEX
+  CREATE TABLE
+  CREATE INDEX
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  ALTER TABLE
+  CREATE INDEX
+  ALTER TABLE
+  CREATE TRIGGER
+  CREATE TABLE
+  CREATE TABLE
+  CREATE INDEX
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TRIGGER
+  INSERT 0 3
+  INSERT 0 10
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  DROP POLICY
+  CREATE POLICY
+  DROP POLICY
+  CREATE POLICY
+  DROP POLICY
+  CREATE POLICY
+  DROP POLICY
+  CREATE POLICY
+  CREATE POLICY
+  CREATE POLICY
+  CREATE POLICY
+  CREATE VIEW
+  CREATE VIEW
+  ALTER FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE TRIGGER
+  DO
+  DO
+  GRANT ROLE
+  GRANT
+  DO
+  REVOKE
+  REVOKE
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  REVOKE
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  DO
+  GRANT
+  GRANT
+  REVOKE ROLE
+  NOTIFY
+  GRANT ROLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE INDEX
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TRIGGER
+  ALTER TABLE
+  ALTER TABLE
+  ALTER TABLE
+  ALTER TABLE
+  ALTER TABLE
+  ALTER TABLE
+  ALTER TABLE
+  ALTER TABLE
+  CREATE INDEX
+  ALTER TABLE
+  CREATE INDEX
+  ALTER TABLE
+  ALTER TABLE
+  ALTER TABLE
+  ALTER TABLE
+  ALTER TABLE
+  ALTER TABLE
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  ALTER FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  DO
+  GRANT
+  DO
+  REVOKE
+  DO
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  REVOKE
+  GRANT
+  GRANT
+  GRANT
+  REVOKE
+  DO
+  GRANT
+  REVOKE ROLE
+  NOTIFY
+  GRANT ROLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  ALTER TABLE
+  ALTER TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE INDEX
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE TRIGGER
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE TABLE
+  CREATE INDEX
+  ALTER TABLE
+  CREATE TABLE
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE TRIGGER
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE TRIGGER
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE TABLE
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE TABLE
+  CREATE FUNCTION
+  INSERT 0 1
+  INSERT 0 10
+  INSERT 0 26
+  INSERT 0 104
+  INSERT 0 23
+  INSERT 0 54
+  GRANT ROLE
+  ALTER TABLE
+  ALTER TABLE
+  REVOKE
+  ALTER TABLE
+  ALTER TABLE
+  REVOKE
+  ALTER TABLE
+  ALTER TABLE
+  REVOKE
+  ALTER TABLE
+  ALTER TABLE
+  REVOKE
+  ALTER TABLE
+  ALTER TABLE
+  REVOKE
+  ALTER TABLE
+  ALTER TABLE
+  REVOKE
+  ALTER TABLE
+  ALTER TABLE
+  REVOKE
+  ALTER TABLE
+  ALTER TABLE
+  REVOKE
+  ALTER TABLE
+  ALTER TABLE
+  REVOKE
+  ALTER TABLE
+  ALTER TABLE
+  REVOKE
+  ALTER TABLE
+  ALTER TABLE
+  REVOKE
+  ALTER TABLE
+  ALTER TABLE
+  REVOKE
+  ALTER TABLE
+  ALTER TABLE
+  REVOKE
+  ALTER TABLE
+  ALTER TABLE
+  REVOKE
+  ALTER TABLE
+  ALTER TABLE
+  REVOKE
+  ALTER TABLE
+  ALTER TABLE
+  REVOKE
+  ALTER TABLE
+  ALTER TABLE
+  REVOKE
+  ALTER TABLE
+  ALTER TABLE
+  REVOKE
+  ALTER TABLE
+  ALTER TABLE
+  REVOKE
+  ALTER TABLE
+  ALTER TABLE
+  REVOKE
+  ALTER TABLE
+  ALTER TABLE
+  REVOKE
+  ALTER TABLE
+  ALTER TABLE
+  REVOKE
+  ALTER TABLE
+  ALTER TABLE
+  REVOKE
+  ALTER TABLE
+  ALTER TABLE
+  REVOKE
+  ALTER TABLE
+  ALTER TABLE
+  REVOKE
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  CREATE FUNCTION
+  CREATE TRIGGER
+  CREATE TRIGGER
+  CREATE TRIGGER
+  CREATE TRIGGER
+  GRANT
+  ALTER FUNCTION
+  REVOKE
+  ALTER FUNCTION
+  REVOKE
+  ALTER FUNCTION
+  REVOKE
+  ALTER FUNCTION
+  REVOKE
+  ALTER FUNCTION
+  REVOKE
+  ALTER FUNCTION
+  REVOKE
+  ALTER FUNCTION
+  REVOKE
+  ALTER FUNCTION
+  REVOKE
+  ALTER FUNCTION
+  REVOKE
+  ALTER FUNCTION
+  REVOKE
+  ALTER FUNCTION
+  REVOKE
+  ALTER FUNCTION
+  REVOKE
+  ALTER FUNCTION
+  REVOKE
+  ALTER FUNCTION
+  REVOKE
+  ALTER FUNCTION
+  REVOKE
+  ALTER FUNCTION
+  REVOKE
+  ALTER FUNCTION
+  REVOKE
+  ALTER FUNCTION
+  REVOKE
+  ALTER FUNCTION
+  REVOKE
+  REVOKE
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE POLICY
+  GRANT
+  GRANT
+  CREATE VIEW
+  GRANT
+  CREATE POLICY
+  GRANT
+  GRANT
+  CREATE VIEW
+  GRANT
+  REVOKE ROLE
+  NOTIFY
+  GRANT ROLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE ROLE
+  CREATE FUNCTION
+  CREATE FUNCTION
+  DO
+  CREATE TRIGGER
+  CREATE TRIGGER
+  GRANT
+  ALTER FUNCTION
+  ALTER FUNCTION
+  ALTER FUNCTION
+  ALTER FUNCTION
+  REVOKE
+  GRANT
+  REVOKE
+  REVOKE
+  GRANT
+  GRANT
+  GRANT
+  CREATE FUNCTION
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  REVOKE ROLE
+  NOTIFY
+  CREATE ROLE
+  GRANT
+  GRANT ROLE
+  ALTER ROLE
+  ALTER ROLE
+  ALTER ROLE
+  DO
+  REVOKE ROLE
+  DO
+  PHASE28_POSTFLIGHT_PASS
+  
+  
+  3 !== 0
+  
+      at sql (file:///C:/GitHub/liberty-county-map/.artifacts/worktrees/RESPONDER-PHASE0-v1-contract-freeze/tools/responder/phase29/installer/runtime.test.mjs:4:240)
+      at TestContext.<anonymous> (file:///C:/GitHub/liberty-county-map/.artifacts/worktrees/RESPONDER-PHASE0-v1-contract-freeze/tools/responder/phase29/installer/runtime.test.mjs:11:72)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+      at Test.postRun (node:internal/test_runner/test:1447:19)
+      at Test.run (node:internal/test_runner/test:1372:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at ..\..\..\..\..\..\GitHub\liberty-county-map\.artifacts\worktrees\RESPONDER-PHASE0-v1-contract-freeze\tools\responder\phase29\installer\runtime.test.mjs:12:1
+✖ future public table has no browser table privileges (273.5826ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  future privilege
+  CONTEXT:  PL/pgSQL function inline_code_block line 1 at RAISE
+  
+  BEGIN
+  CREATE TABLE
+  
+  
+  3 !== 0
+  
+      at sql (file:///C:/GitHub/liberty-county-map/.artifacts/worktrees/RESPONDER-PHASE0-v1-contract-freeze/tools/responder/phase29/installer/runtime.test.mjs:4:240)
+      at TestContext.<anonymous> (file:///C:/GitHub/liberty-county-map/.artifacts/worktrees/RESPONDER-PHASE0-v1-contract-freeze/tools/responder/phase29/installer/runtime.test.mjs:12:65)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+      at Test.postRun (node:internal/test_runner/test:1447:19)
+      at Test.run (node:internal/test_runner/test:1372:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at ..\..\..\..\..\..\GitHub\liberty-county-map\.artifacts\worktrees\RESPONDER-PHASE0-v1-contract-freeze\tools\responder\phase29\installer\runtime.test.mjs:13:1
+✖ failure after hardening rolls back roles objects and ACL mutations (333.9642ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  relation "dispatch_private.report_contract_versions" does not exist
+  LINE 1: EXISTS(SELECT 1 FROM dispatch_private.report_contract_versio...
+                               ^
+  QUERY:  EXISTS(SELECT 1 FROM dispatch_private.report_contract_versions WHERE publishing_enabled)
+  CONTEXT:  PL/pgSQL function inline_code_block line 3 at IF
+  
+  cmrrvwgkgjhmdugzhnrh
+  BEGIN
+  
+  
+  
+  3 !== 0
+  
+      at sql (file:///C:/GitHub/liberty-county-map/.artifacts/worktrees/RESPONDER-PHASE0-v1-contract-freeze/tools/responder/phase29/installer/runtime.test.mjs:4:240)
+      at TestContext.<anonymous> (file:///C:/GitHub/liberty-county-map/.artifacts/worktrees/RESPONDER-PHASE0-v1-contract-freeze/tools/responder/phase29/installer/runtime.test.mjs:13:80)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+      at Test.postRun (node:internal/test_runner/test:1447:19)
+      at Test.run (node:internal/test_runner/test:1372:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at ..\..\..\..\..\..\GitHub\liberty-county-map\.artifacts\worktrees\RESPONDER-PHASE0-v1-contract-freeze\tools\responder\phase29\installer\runtime.test.mjs:14:1
+✖ empty rollback and reapply pass (1149.9783ms)
+  AssertionError [ERR_ASSERTION]: NOTICE:  role "postgres" has already been granted membership in role "dispatch_function_owner" by role "postgres"
+  NOTICE:  role "postgres" has already been granted membership in role "dispatch_function_owner" by role "postgres"
+  WARNING:  role "postgres" has not been granted membership in role "dispatch_delivery_connection" by role "postgres"
+  WARNING:  role "postgres" has not been granted membership in role "dispatch_delivery_transport" by role "postgres"
+  ERROR:  POSTFLIGHT elevated installer membership
+  CONTEXT:  PL/pgSQL function inline_code_block line 6 at RAISE
+  
+  cmrrvwgkgjhmdugzhnrh
+  BEGIN
+  SET
+  SET
+  
+  DO
+  ALTER DEFAULT PRIVILEGES
+  ALTER DEFAULT PRIVILEGES
+  ALTER DEFAULT PRIVILEGES
+  REVOKE
+  DO
+  CREATE SCHEMA
+  CREATE SCHEMA
+  CREATE SCHEMA
+  CREATE SCHEMA
+  REVOKE
+  CREATE TYPE
+  CREATE TYPE
+  CREATE TYPE
+  CREATE TYPE
+  CREATE TYPE
+  CREATE TYPE
+  CREATE TYPE
+  CREATE TYPE
+  CREATE TYPE
+  CREATE TYPE
+  CREATE TYPE
+  CREATE TYPE
+  CREATE TYPE
+  CREATE TYPE
+  CREATE TYPE
+  CREATE TYPE
+  CREATE TYPE
+  CREATE TYPE
+  CREATE TYPE
+  CREATE TYPE
+  CREATE TYPE
+  CREATE TYPE
+  CREATE TYPE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE INDEX
+  CREATE INDEX
+  CREATE TABLE
+  CREATE INDEX
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE INDEX
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE INDEX
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  INSERT 0 5
+  INSERT 0 26
+  INSERT 0 20
+  INSERT 0 19
+  INSERT 0 21
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  DO
+  CREATE TRIGGER
+  CREATE TRIGGER
+  CREATE TRIGGER
+  DO
+  CREATE POLICY
+  CREATE POLICY
+  CREATE POLICY
+  CREATE POLICY
+  CREATE POLICY
+  CREATE POLICY
+  CREATE POLICY
+  CREATE POLICY
+  CREATE POLICY
+  CREATE POLICY
+  CREATE POLICY
+  CREATE POLICY
+  CREATE POLICY
+  CREATE POLICY
+  CREATE POLICY
+  CREATE POLICY
+  CREATE POLICY
+  CREATE VIEW
+  CREATE VIEW
+  GRANT ROLE
+  GRANT
+  ALTER FUNCTION
+  DO
+  REVOKE
+  GRANT
+  GRANT
+  REVOKE
+  REVOKE
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  DO
+  DO
+  REVOKE ROLE
+  NOTIFY
+  GRANT ROLE
+  CREATE TYPE
+  CREATE TYPE
+  CREATE TYPE
+  CREATE TYPE
+  CREATE TABLE
+  CREATE INDEX
+  CREATE TABLE
+  CREATE INDEX
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  ALTER TABLE
+  CREATE INDEX
+  ALTER TABLE
+  CREATE TRIGGER
+  CREATE TABLE
+  CREATE TABLE
+  CREATE INDEX
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TRIGGER
+  INSERT 0 3
+  INSERT 0 10
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  DROP POLICY
+  CREATE POLICY
+  DROP POLICY
+  CREATE POLICY
+  DROP POLICY
+  CREATE POLICY
+  DROP POLICY
+  CREATE POLICY
+  CREATE POLICY
+  CREATE POLICY
+  CREATE POLICY
+  CREATE VIEW
+  CREATE VIEW
+  ALTER FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE TRIGGER
+  DO
+  DO
+  GRANT ROLE
+  GRANT
+  DO
+  REVOKE
+  REVOKE
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  REVOKE
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  DO
+  GRANT
+  GRANT
+  REVOKE ROLE
+  NOTIFY
+  GRANT ROLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE INDEX
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TRIGGER
+  ALTER TABLE
+  ALTER TABLE
+  ALTER TABLE
+  ALTER TABLE
+  ALTER TABLE
+  ALTER TABLE
+  ALTER TABLE
+  ALTER TABLE
+  CREATE INDEX
+  ALTER TABLE
+  CREATE INDEX
+  ALTER TABLE
+  ALTER TABLE
+  ALTER TABLE
+  ALTER TABLE
+  ALTER TABLE
+  ALTER TABLE
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  ALTER FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  DO
+  GRANT
+  DO
+  REVOKE
+  DO
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  REVOKE
+  GRANT
+  GRANT
+  GRANT
+  REVOKE
+  DO
+  GRANT
+  REVOKE ROLE
+  NOTIFY
+  GRANT ROLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  ALTER TABLE
+  ALTER TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE INDEX
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE TRIGGER
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE TABLE
+  CREATE INDEX
+  ALTER TABLE
+  CREATE TABLE
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE TRIGGER
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE TRIGGER
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE TABLE
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE TABLE
+  CREATE FUNCTION
+  INSERT 0 1
+  INSERT 0 10
+  INSERT 0 26
+  INSERT 0 104
+  INSERT 0 23
+  INSERT 0 54
+  GRANT ROLE
+  ALTER TABLE
+  ALTER TABLE
+  REVOKE
+  ALTER TABLE
+  ALTER TABLE
+  REVOKE
+  ALTER TABLE
+  ALTER TABLE
+  REVOKE
+  ALTER TABLE
+  ALTER TABLE
+  REVOKE
+  ALTER TABLE
+  ALTER TABLE
+  REVOKE
+  ALTER TABLE
+  ALTER TABLE
+  REVOKE
+  ALTER TABLE
+  ALTER TABLE
+  REVOKE
+  ALTER TABLE
+  ALTER TABLE
+  REVOKE
+  ALTER TABLE
+  ALTER TABLE
+  REVOKE
+  ALTER TABLE
+  ALTER TABLE
+  REVOKE
+  ALTER TABLE
+  ALTER TABLE
+  REVOKE
+  ALTER TABLE
+  ALTER TABLE
+  REVOKE
+  ALTER TABLE
+  ALTER TABLE
+  REVOKE
+  ALTER TABLE
+  ALTER TABLE
+  REVOKE
+  ALTER TABLE
+  ALTER TABLE
+  REVOKE
+  ALTER TABLE
+  ALTER TABLE
+  REVOKE
+  ALTER TABLE
+  ALTER TABLE
+  REVOKE
+  ALTER TABLE
+  ALTER TABLE
+  REVOKE
+  ALTER TABLE
+  ALTER TABLE
+  REVOKE
+  ALTER TABLE
+  ALTER TABLE
+  REVOKE
+  ALTER TABLE
+  ALTER TABLE
+  REVOKE
+  ALTER TABLE
+  ALTER TABLE
+  REVOKE
+  ALTER TABLE
+  ALTER TABLE
+  REVOKE
+  ALTER TABLE
+  ALTER TABLE
+  REVOKE
+  ALTER TABLE
+  ALTER TABLE
+  REVOKE
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  GRANT
+  CREATE FUNCTION
+  CREATE TRIGGER
+  CREATE TRIGGER
+  CREATE TRIGGER
+  CREATE TRIGGER
+  GRANT
+  ALTER FUNCTION
+  REVOKE
+  ALTER FUNCTION
+  REVOKE
+  ALTER FUNCTION
+  REVOKE
+  ALTER FUNCTION
+  REVOKE
+  ALTER FUNCTION
+  REVOKE
+  ALTER FUNCTION
+  REVOKE
+  ALTER FUNCTION
+  REVOKE
+  ALTER FUNCTION
+  REVOKE
+  ALTER FUNCTION
+  REVOKE
+  ALTER FUNCTION
+  REVOKE
+  ALTER FUNCTION
+  REVOKE
+  ALTER FUNCTION
+  REVOKE
+  ALTER FUNCTION
+  REVOKE
+  ALTER FUNCTION
+  REVOKE
+  ALTER FUNCTION
+  REVOKE
+  ALTER FUNCTION
+  REVOKE
+  ALTER FUNCTION
+  REVOKE
+  ALTER FUNCTION
+  REVOKE
+  ALTER FUNCTION
+  REVOKE
+  REVOKE
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  CREATE POLICY
+  GRANT
+  GRANT
+  CREATE VIEW
+  GRANT
+  CREATE POLICY
+  GRANT
+  GRANT
+  CREATE VIEW
+  GRANT
+  REVOKE ROLE
+  NOTIFY
+  GRANT ROLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE TABLE
+  CREATE FUNCTION
+  CREATE FUNCTION
+  CREATE ROLE
+  CREATE FUNCTION
+  CREATE FUNCTION
+  DO
+  CREATE TRIGGER
+  CREATE TRIGGER
+  GRANT
+  ALTER FUNCTION
+  ALTER FUNCTION
+  ALTER FUNCTION
+  ALTER FUNCTION
+  REVOKE
+  GRANT
+  REVOKE
+  REVOKE
+  GRANT
+  GRANT
+  GRANT
+  CREATE FUNCTION
+  CREATE FUNCTION
+  REVOKE
+  GRANT
+  REVOKE ROLE
+  NOTIFY
+  CREATE ROLE
+  GRANT
+  GRANT ROLE
+  ALTER ROLE
+  ALTER ROLE
+  ALTER ROLE
+  DO
+  REVOKE ROLE
+  DO
+  PHASE28_POSTFLIGHT_PASS
+  
+  
+  3 !== 0
+  
+      at sql (file:///C:/GitHub/liberty-county-map/.artifacts/worktrees/RESPONDER-PHASE0-v1-contract-freeze/tools/responder/phase29/installer/runtime.test.mjs:4:240)
+      at TestContext.<anonymous> (file:///C:/GitHub/liberty-county-map/.artifacts/worktrees/RESPONDER-PHASE0-v1-contract-freeze/tools/responder/phase29/installer/runtime.test.mjs:14:45)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+      at Test.postRun (node:internal/test_runner/test:1447:19)
+      at Test.run (node:internal/test_runner/test:1372:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at ..\..\..\..\..\..\GitHub\liberty-county-map\.artifacts\worktrees\RESPONDER-PHASE0-v1-contract-freeze\tools\responder\phase29\installer\runtime.test.mjs:15:1
+✖ exact inventory persisted for owner review (271.1146ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  '0' !== '3'
+  
+      at TestContext.<anonymous> (file:///C:/GitHub/liberty-county-map/.artifacts/worktrees/RESPONDER-PHASE0-v1-contract-freeze/tools/responder/phase29/installer/runtime.test.mjs:15:63)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+      at Test.postRun (node:internal/test_runner/test:1447:19)
+      at Test.run (node:internal/test_runner/test:1372:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '0',
+    expected: '3',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+Exception: C:\GitHub\liberty-county-map\.artifacts\worktrees\RESPONDER-PHASE0-v1-contract-freeze\tools\responder\phase29\installer\run-certification.ps1:51
+Line |
+  51 |  … ($LASTEXITCODE -ne 0){throw 'installer runtime certification failed'}
+     |                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | installer runtime certification failed

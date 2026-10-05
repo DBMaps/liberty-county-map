@@ -1,0 +1,17 @@
+{
+  "status": "PASS",
+  "passed": 10,
+  "failed": 0,
+  "checks": [
+    "login attributes",
+    "private Auth audit candidate refusal",
+    "unrelated role refusal",
+    "creation ownership refusal",
+    "bounded command only",
+    "result permission and unknown refusal",
+    "commit pooled reset",
+    "timeout rollback reset",
+    "actual repository login reset",
+    "actual repository persisted event dedup authorization separation"
+  ]
+}

@@ -1,0 +1,170 @@
+DROP SCHEMA
+✔ clean standard Supabase baseline without fixtures (584.1794ms)
+✔ wrong project fails atomically (899.597ms)
+✔ populated Dispatch fails atomically (910.0484ms)
+✔ conflicting role fails atomically (908.7515ms)
+✔ incompatible prior namespace fails atomically (847.4717ms)
+✔ unexpected public record fails atomically (886.4971ms)
+✖ unexpected owner defaults fails atomically (301.1568ms)
+✔ version condition is executed and rejects unsupported version (282.5297ms)
+✖ full clean install, inventories and frozen postflight pass (282.6192ms)
+✖ future public table has no browser table privileges (278.0721ms)
+✖ failure after hardening rolls back roles objects and ACL mutations (276.4361ms)
+✖ empty rollback and reapply pass (317.1748ms)
+✔ exact inventory persisted for owner review (282.3715ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 8
+ℹ fail 5
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 7261.116
+
+✖ failing tests:
+
+test at ..\..\..\..\..\..\GitHub\liberty-county-map\.artifacts\worktrees\RESPONDER-PHASE0-v1-contract-freeze\tools\responder\phase29\installer\runtime.test.mjs:9:814
+✖ unexpected owner defaults fails atomically (301.1568ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /unknown default/. Input:
+  
+  'WARNING:  there is already a transaction in progress\n' +
+    'ERROR:  INSTALL_REFUSED unexpected application namespace\n' +
+    'CONTEXT:  PL/pgSQL function inline_code_block line 9 at RAISE\n'
+  
+      at TestContext.<anonymous> (file:///C:/GitHub/liberty-county-map/.artifacts/worktrees/RESPONDER-PHASE0-v1-contract-freeze/tools/responder/phase29/installer/runtime.test.mjs:9:905)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+      at Test.postRun (node:internal/test_runner/test:1447:19)
+      at Test.run (node:internal/test_runner/test:1372:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'WARNING:  there is already a transaction in progress\nERROR:  INSTALL_REFUSED unexpected application namespace\nCONTEXT:  PL/pgSQL function inline_code_block line 9 at RAISE\n',
+    expected: /unknown default/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at ..\..\..\..\..\..\GitHub\liberty-county-map\.artifacts\worktrees\RESPONDER-PHASE0-v1-contract-freeze\tools\responder\phase29\installer\runtime.test.mjs:11:1
+✖ full clean install, inventories and frozen postflight pass (282.6192ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  INSTALL_REFUSED unexpected application namespace
+  CONTEXT:  PL/pgSQL function inline_code_block line 9 at RAISE
+  
+  cmrrvwgkgjhmdugzhnrh
+  BEGIN
+  SET
+  SET
+  
+  
+  
+  3 !== 0
+  
+      at sql (file:///C:/GitHub/liberty-county-map/.artifacts/worktrees/RESPONDER-PHASE0-v1-contract-freeze/tools/responder/phase29/installer/runtime.test.mjs:4:240)
+      at TestContext.<anonymous> (file:///C:/GitHub/liberty-county-map/.artifacts/worktrees/RESPONDER-PHASE0-v1-contract-freeze/tools/responder/phase29/installer/runtime.test.mjs:11:72)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+      at Test.postRun (node:internal/test_runner/test:1447:19)
+      at Test.run (node:internal/test_runner/test:1372:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at ..\..\..\..\..\..\GitHub\liberty-county-map\.artifacts\worktrees\RESPONDER-PHASE0-v1-contract-freeze\tools\responder\phase29\installer\runtime.test.mjs:12:1
+✖ future public table has no browser table privileges (278.0721ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  future privilege
+  CONTEXT:  PL/pgSQL function inline_code_block line 1 at RAISE
+  
+  BEGIN
+  CREATE TABLE
+  
+  
+  3 !== 0
+  
+      at sql (file:///C:/GitHub/liberty-county-map/.artifacts/worktrees/RESPONDER-PHASE0-v1-contract-freeze/tools/responder/phase29/installer/runtime.test.mjs:4:240)
+      at TestContext.<anonymous> (file:///C:/GitHub/liberty-county-map/.artifacts/worktrees/RESPONDER-PHASE0-v1-contract-freeze/tools/responder/phase29/installer/runtime.test.mjs:12:65)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+      at Test.postRun (node:internal/test_runner/test:1447:19)
+      at Test.run (node:internal/test_runner/test:1372:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at ..\..\..\..\..\..\GitHub\liberty-county-map\.artifacts\worktrees\RESPONDER-PHASE0-v1-contract-freeze\tools\responder\phase29\installer\runtime.test.mjs:13:1
+✖ failure after hardening rolls back roles objects and ACL mutations (276.4361ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  relation "dispatch_private.report_contract_versions" does not exist
+  LINE 1: EXISTS(SELECT 1 FROM dispatch_private.report_contract_versio...
+                               ^
+  QUERY:  EXISTS(SELECT 1 FROM dispatch_private.report_contract_versions WHERE publishing_enabled)
+  CONTEXT:  PL/pgSQL function inline_code_block line 3 at IF
+  
+  cmrrvwgkgjhmdugzhnrh
+  BEGIN
+  
+  
+  
+  3 !== 0
+  
+      at sql (file:///C:/GitHub/liberty-county-map/.artifacts/worktrees/RESPONDER-PHASE0-v1-contract-freeze/tools/responder/phase29/installer/runtime.test.mjs:4:240)
+      at TestContext.<anonymous> (file:///C:/GitHub/liberty-county-map/.artifacts/worktrees/RESPONDER-PHASE0-v1-contract-freeze/tools/responder/phase29/installer/runtime.test.mjs:13:80)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+      at Test.postRun (node:internal/test_runner/test:1447:19)
+      at Test.run (node:internal/test_runner/test:1372:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at ..\..\..\..\..\..\GitHub\liberty-county-map\.artifacts\worktrees\RESPONDER-PHASE0-v1-contract-freeze\tools\responder\phase29\installer\runtime.test.mjs:14:1
+✖ empty rollback and reapply pass (317.1748ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  INSTALL_REFUSED unexpected application namespace
+  CONTEXT:  PL/pgSQL function inline_code_block line 9 at RAISE
+  
+  cmrrvwgkgjhmdugzhnrh
+  BEGIN
+  SET
+  SET
+  
+  
+  
+  3 !== 0
+  
+      at sql (file:///C:/GitHub/liberty-county-map/.artifacts/worktrees/RESPONDER-PHASE0-v1-contract-freeze/tools/responder/phase29/installer/runtime.test.mjs:4:240)
+      at TestContext.<anonymous> (file:///C:/GitHub/liberty-county-map/.artifacts/worktrees/RESPONDER-PHASE0-v1-contract-freeze/tools/responder/phase29/installer/runtime.test.mjs:14:45)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+      at Test.postRun (node:internal/test_runner/test:1447:19)
+      at Test.run (node:internal/test_runner/test:1372:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+Exception: C:\GitHub\liberty-county-map\.artifacts\worktrees\RESPONDER-PHASE0-v1-contract-freeze\tools\responder\phase29\installer\run-certification.ps1:49
+Line |
+  49 |  … ($LASTEXITCODE -ne 0){throw 'installer runtime certification failed'}
+     |                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | installer runtime certification failed

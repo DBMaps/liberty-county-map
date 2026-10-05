@@ -1,0 +1,71 @@
+DROP SCHEMA
+ALTER ROLE
+✔ clean standard Supabase baseline without fixtures (734.7186ms)
+✔ wrong project fails atomically (1012.8306ms)
+✔ populated Dispatch fails atomically (1082.1882ms)
+✔ conflicting role fails atomically (969.1823ms)
+✔ incompatible prior namespace fails atomically (1001.4765ms)
+✔ unexpected public record fails atomically (886.6436ms)
+✔ unexpected owner defaults fails atomically (1063.3013ms)
+✔ version condition is executed and rejects unsupported version (300.2235ms)
+✔ full clean install, inventories and frozen postflight pass (1766.9381ms)
+✔ future public table has no browser table privileges (276.0254ms)
+✔ external view and evidence-bearing state refuse destructive rollback (926.6306ms)
+✔ failure after hardening rolls back roles objects and ACL mutations (2969.3813ms)
+✔ empty rollback and reapply pass (4130.0375ms)
+✔ exact inventory persisted for owner review (640.3605ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 17956.3592
+✔ Phase 29 real local Auth and forced-RLS catalog (25866.9876ms)
+✔ all four department taxonomy allow/deny matrices (15466.3871ms)
+✔ structured impact validation, independent lanes and lifecycle (8095.0133ms)
+✔ Fire/EMS prohibited data and Police restricted-content defenses (3353.5616ms)
+✔ capability gates, independent publication review, public refusal default (5861.498ms)
+✔ DAYTON-REVIEW-01 exact reviewer authorization and immutable evidence (21128.8923ms)
+✔ DAYTON-REVIEW-01 explicit cross-unit grants and organization isolation (7102.4622ms)
+✔ DAYTON-REVIEW-01 approval-time live revalidation and distinct actors (71142.427ms)
+✔ DAYTON-REVIEW-01 stale candidate, source, impact, contract and scope refusal (28905.599ms)
+✔ same-org and bilateral sharing, expiry/revocation, source isolation (2302.4297ms)
+✔ redaction preserves identities and minimized immutable lineage (2523.8669ms)
+✔ Official Public Notice linked authority, expiry, correction and withdrawal (5444.4165ms)
+✔ idempotency, atomic stale refusal and concurrent report revision (1453.3066ms)
+✔ legacy compatibility, populated refusal and protected consumer baseline (2855.6915ms)
+✔ DAYTON-INVITE-01 disposable issuance, mock delivery, fallback and durable events (14992.6302ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 216800.0518
+✔ narrow real login and role attributes (73.5451ms)
+✔ no direct private/Auth/audit/candidate table access (113.8063ms)
+✔ cannot assume unrelated command owner Auth or API roles (60.538ms)
+✔ no schema database role creation or object ownership (103.4905ms)
+✔ allowed transport claim succeeds without table or issuance privilege (29.0027ms)
+✔ transport result permitted but unknown correlation refuses safely (21.8373ms)
+✔ transaction-local role resets after commit and pooled reuse (25.5134ms)
+✔ rollback and timeout cannot leak assumed role (50.1398ms)
+✔ actual repository uses login and resets pooled role after command refusal (32.8397ms)
+✔ actual repository event succeeds deduplicates and leaves authorization unchanged (1047.9116ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2312.5105
+ParentContainsErrorRecordException: C:\GitHub\liberty-county-map\.artifacts\worktrees\RESPONDER-PHASE0-v1-contract-freeze\tools\responder\phase29\installer\run-certification.ps1:19
+Line |
+  19 |   $sql=$sql.Replace('\ir seed-static-contract.sql',[IO.File]::ReadAllT …
+     |   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | Exception calling "ReadAllText" with "1" argument(s): "Could not find a part of the path
+     | 'C:\GitHub\liberty-county-map\.artifacts\worktrees\RESPONDER-PHASE0-v1-contract-freeze\tools\responder\phase29\phase26\seed-static-contract.sql'."

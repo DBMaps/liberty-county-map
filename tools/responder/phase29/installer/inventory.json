@@ -1,0 +1,102 @@
+{
+  "sourceLocks": {
+    "tools/responder/phase28/package.local.sql": "2764b88b0823df8148fbb953ba67eb1ba29862b3b25ce52aa754df3b1fec0670",
+    "tools/responder/phase29/package.local.sql": "d450ad597c5d97a069d2464ba4caf25773b2af9b09ef51a87b259baff50a551b",
+    "tools/responder/phase29/invitation-delivery.local.sql": "dbdbd9def0ce37783c759b7b94c90d4804bc059dddc7fa946fd4fe743cd60601",
+    "tools/responder/phase29/worker/database-principal.local.sql": "5227d98a5a0b6a4e12553ed26ed97cf360110fb9ef14ee926395dfd763a2928e",
+    "tools/responder/phase28/postflight.sql": "9274b892cc5ab8f0aebb770beaf4e4ab52ae3dd334143234859b7f97416e81e8",
+    "tools/responder/phase29/runtime.test.mjs": "c0797e8b09d3f924c55fa2b980120f28ecbf0fd813cf9ced97ab5a42acf46911",
+    "tools/responder/phase29/worker/database-principal.runtime.test.mjs": "617cdf2ea4fc58740a5dd2a416688014a474a13a60dd13095788b3b8b9f53dfd"
+  },
+  "installSha256": "2130af65786d4df79287d7ac3dfe033a57cc6b8e0f57d9871f4d087c55f655c9",
+  "tables": [
+    "dispatch_audit.audit_events",
+    "dispatch_audit.command_receipts",
+    "dispatch_audit.command_versions",
+    "dispatch_audit.content_remediation_events",
+    "dispatch_audit.invitation_delivery_events",
+    "dispatch_audit.pilot_events",
+    "dispatch_audit.record_revisions",
+    "dispatch_private.actor_tokens",
+    "dispatch_private.approval_proofs",
+    "dispatch_private.auth_check_context",
+    "dispatch_private.capability_catalog",
+    "dispatch_private.capability_grant_constraints",
+    "dispatch_private.capability_grant_units",
+    "dispatch_private.capability_grants",
+    "dispatch_private.capability_requirements",
+    "dispatch_private.content_quarantine",
+    "dispatch_private.content_screening_decisions",
+    "dispatch_private.department_report_policies",
+    "dispatch_private.erasure_context",
+    "dispatch_private.internal_awareness",
+    "dispatch_private.internal_share_recipients",
+    "dispatch_private.invitation_delivery_attempts",
+    "dispatch_private.invitation_delivery_suppressions",
+    "dispatch_private.invitation_provider_events",
+    "dispatch_private.operational_records",
+    "dispatch_private.operational_scope_members",
+    "dispatch_private.operational_scopes",
+    "dispatch_private.organization_invitations",
+    "dispatch_private.organization_memberships",
+    "dispatch_private.organization_units",
+    "dispatch_private.organizations",
+    "dispatch_private.ownership_recovery_cases",
+    "dispatch_private.ownership_transfers",
+    "dispatch_private.permissions",
+    "dispatch_private.pilot_governance",
+    "dispatch_private.platform_admin_grants",
+    "dispatch_private.profiles",
+    "dispatch_private.publication_reviews",
+    "dispatch_private.record_assignments",
+    "dispatch_private.record_provenance",
+    "dispatch_private.recovery_approvals",
+    "dispatch_private.report_contract_versions",
+    "dispatch_private.report_details",
+    "dispatch_private.report_families",
+    "dispatch_private.report_redaction_context",
+    "dispatch_private.report_scope_segments",
+    "dispatch_private.report_subtypes",
+    "dispatch_private.review_state_snapshots",
+    "dispatch_private.reviewer_authorizations",
+    "dispatch_private.road_impact_revisions",
+    "dispatch_private.road_impacts",
+    "dispatch_private.role_permissions",
+    "dispatch_private.role_templates",
+    "dispatch_private.scope_governance",
+    "dispatch_private.shared_awareness_recipients",
+    "dispatch_private.shared_awareness_representations",
+    "dispatch_private.sharing_agreement_parties",
+    "dispatch_private.sharing_agreement_units",
+    "dispatch_private.sharing_agreements",
+    "dispatch_private.unit_memberships",
+    "dispatch_private.unit_scope_grants",
+    "dispatch_private.user_offboarding",
+    "dispatch_projection.projection_candidates",
+    "dispatch_projection.public_safe_projections",
+    "dispatch_projection.report_public_projections"
+  ],
+  "roles": [
+    "dispatch_delivery_connection",
+    "dispatch_delivery_transport",
+    "dispatch_function_owner"
+  ],
+  "phases": [
+    {
+      "phase": "B",
+      "bodySha256": "e771e9fd492176dec681821c46e6a743c4ff385664c67e571b5d4d1366f2108c"
+    },
+    {
+      "phase": "C",
+      "bodySha256": "eb84ce2cef2a509db8876c55fd88690e0f44c45233eca393e9aec5695483860c"
+    },
+    {
+      "phase": "D",
+      "bodySha256": "2d37049bfdb5ab9b635a3a036ac568d5a55f7daad5ef160dab8ddacbecd847df"
+    },
+    {
+      "phase": "E",
+      "bodySha256": "c488a70319c023fb73b360154d406127d56406de2fcdc7e5d235b507184b10eb"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "tools/responder/phase28/package.local.sql": "2764b88b0823df8148fbb953ba67eb1ba29862b3b25ce52aa754df3b1fec0670",
+  "tools/responder/phase29/package.local.sql": "d450ad597c5d97a069d2464ba4caf25773b2af9b09ef51a87b259baff50a551b",
+  "tools/responder/phase29/invitation-delivery.local.sql": "dbdbd9def0ce37783c759b7b94c90d4804bc059dddc7fa946fd4fe743cd60601",
+  "tools/responder/phase29/worker/database-principal.local.sql": "5227d98a5a0b6a4e12553ed26ed97cf360110fb9ef14ee926395dfd763a2928e",
+  "tools/responder/phase28/postflight.sql": "9274b892cc5ab8f0aebb770beaf4e4ab52ae3dd334143234859b7f97416e81e8",
+  "tools/responder/phase29/runtime.test.mjs": "c0797e8b09d3f924c55fa2b980120f28ecbf0fd813cf9ced97ab5a42acf46911",
+  "tools/responder/phase29/worker/database-principal.runtime.test.mjs": "617cdf2ea4fc58740a5dd2a416688014a474a13a60dd13095788b3b8b9f53dfd"
+}

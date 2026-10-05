@@ -1,0 +1,88 @@
+DROP SCHEMA
+ALTER ROLE
+✔ clean standard Supabase baseline without fixtures (559.4414ms)
+✔ wrong project fails atomically (878.598ms)
+✔ populated Dispatch fails atomically (817.2488ms)
+✔ conflicting role fails atomically (818.7487ms)
+✔ incompatible prior namespace fails atomically (828.2034ms)
+✔ unexpected public record fails atomically (847.7349ms)
+✔ unexpected owner defaults fails atomically (836.0819ms)
+✔ version condition is executed and rejects unsupported version (265.8214ms)
+✔ full clean install, inventories and frozen postflight pass (1482.5145ms)
+✔ future public table has no browser table privileges (300.4276ms)
+✖ failure after hardening rolls back roles objects and ACL mutations (307.3215ms)
+✖ empty rollback and reapply pass (285.6948ms)
+✔ exact inventory persisted for owner review (569.6461ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 11
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 9038.9495
+
+✖ failing tests:
+
+test at ..\..\..\..\..\..\GitHub\liberty-county-map\.artifacts\worktrees\RESPONDER-PHASE0-v1-contract-freeze\tools\responder\phase29\installer\runtime.test.mjs:13:1
+✖ failure after hardening rolls back roles objects and ACL mutations (307.3215ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  ROLLBACK_REFUSED external dependency
+  CONTEXT:  PL/pgSQL function inline_code_block line 8 at RAISE
+  
+  cmrrvwgkgjhmdugzhnrh
+  BEGIN
+  
+  
+  
+  3 !== 0
+  
+      at sql (file:///C:/GitHub/liberty-county-map/.artifacts/worktrees/RESPONDER-PHASE0-v1-contract-freeze/tools/responder/phase29/installer/runtime.test.mjs:4:240)
+      at TestContext.<anonymous> (file:///C:/GitHub/liberty-county-map/.artifacts/worktrees/RESPONDER-PHASE0-v1-contract-freeze/tools/responder/phase29/installer/runtime.test.mjs:13:80)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+      at Test.postRun (node:internal/test_runner/test:1447:19)
+      at Test.run (node:internal/test_runner/test:1372:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at ..\..\..\..\..\..\GitHub\liberty-county-map\.artifacts\worktrees\RESPONDER-PHASE0-v1-contract-freeze\tools\responder\phase29\installer\runtime.test.mjs:14:1
+✖ empty rollback and reapply pass (285.6948ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  INSTALL_REFUSED existing Dispatch namespace/role
+  CONTEXT:  PL/pgSQL function inline_code_block line 7 at RAISE
+  
+  cmrrvwgkgjhmdugzhnrh
+  BEGIN
+  SET
+  SET
+  
+  
+  
+  3 !== 0
+  
+      at sql (file:///C:/GitHub/liberty-county-map/.artifacts/worktrees/RESPONDER-PHASE0-v1-contract-freeze/tools/responder/phase29/installer/runtime.test.mjs:4:240)
+      at TestContext.<anonymous> (file:///C:/GitHub/liberty-county-map/.artifacts/worktrees/RESPONDER-PHASE0-v1-contract-freeze/tools/responder/phase29/installer/runtime.test.mjs:14:45)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1306:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:897:18)
+      at Test.postRun (node:internal/test_runner/test:1447:19)
+      at Test.run (node:internal/test_runner/test:1372:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:897:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+Exception: C:\GitHub\liberty-county-map\.artifacts\worktrees\RESPONDER-PHASE0-v1-contract-freeze\tools\responder\phase29\installer\run-certification.ps1:51
+Line |
+  51 |  … ($LASTEXITCODE -ne 0){throw 'installer runtime certification failed'}
+     |                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | installer runtime certification failed

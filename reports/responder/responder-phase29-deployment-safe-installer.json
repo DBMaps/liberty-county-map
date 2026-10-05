@@ -1,0 +1,152 @@
+{
+  "decision": "DAYTON-PREINSTALL-01-v1",
+  "verdict": "PASS",
+  "branch": "RESPONDER-PHASE29-dispatch-durable-report-contract",
+  "startingHead": "d75850f574edf1a9ddf063e1526bd7bc20735349",
+  "finalHead": "d75850f574edf1a9ddf063e1526bd7bc20735349",
+  "worktree": "C:\\GitHub\\liberty-county-map\\.artifacts\\worktrees\\RESPONDER-PHASE0-v1-contract-freeze",
+  "installSha256": "2130af65786d4df79287d7ac3dfe033a57cc6b8e0f57d9871f4d087c55f655c9",
+  "hashRule": "UTF-8, CRLF to LF only, no other transformation",
+  "static": {
+    "passed": 57,
+    "failed": 0,
+    "files": [
+      "tests/responder-phase29-installer.test.mjs",
+      "tests/responder-phase29-durable-contract.test.mjs",
+      "tests/responder-phase29-invitation-delivery.test.mjs",
+      "tests/responder-phase29-worker-hosting.test.mjs"
+    ]
+  },
+  "runtime": {
+    "installer": 15,
+    "reportingReviewInvitation": 15,
+    "principal": 10,
+    "failed": 0,
+    "assertionGroups": 329,
+    "reviewGroups": 76
+  },
+  "totalTestsPassed": 97,
+  "totalTestsFailed": 0,
+  "securityPostflight": "PASS",
+  "tables": 65,
+  "functions": 135,
+  "roles": [
+    {
+      "name": "dispatch_delivery_connection",
+      "login": true,
+      "super": false,
+      "bypass": false,
+      "inherit": false,
+      "createDb": false,
+      "createRole": false
+    },
+    {
+      "name": "dispatch_delivery_transport",
+      "login": false,
+      "super": false,
+      "bypass": false,
+      "inherit": false,
+      "createDb": false,
+      "createRole": false
+    },
+    {
+      "name": "dispatch_function_owner",
+      "login": false,
+      "super": false,
+      "bypass": true,
+      "inherit": false,
+      "createDb": false,
+      "createRole": false
+    }
+  ],
+  "memberships": [
+    {
+      "set": false,
+      "role": "dispatch_function_owner",
+      "admin": true,
+      "member": "postgres",
+      "grantor": "supabase_admin",
+      "inherit": false
+    },
+    {
+      "set": false,
+      "role": "dispatch_delivery_transport",
+      "admin": true,
+      "member": "postgres",
+      "grantor": "supabase_admin",
+      "inherit": false
+    },
+    {
+      "set": true,
+      "role": "dispatch_delivery_transport",
+      "admin": false,
+      "member": "dispatch_delivery_connection",
+      "grantor": "postgres",
+      "inherit": false
+    },
+    {
+      "set": false,
+      "role": "dispatch_delivery_connection",
+      "admin": true,
+      "member": "postgres",
+      "grantor": "supabase_admin",
+      "inherit": false
+    }
+  ],
+  "rollbackReapply": "PASS",
+  "evidenceRollbackRefusal": "PASS",
+  "platformCatalogUnchanged": true,
+  "publicationInitiallyDisabled": true,
+  "retentionExecution": "OPEN; legal/privacy approval and restore rehearsal before activation",
+  "redirectsPendingApproval": [
+    "https://dispatch.gridlygo.com/auth/callback",
+    "https://dispatch.gridlygo.com/auth/recovery"
+  ],
+  "productionConnections": false,
+  "productionChanges": false,
+  "consumerTouched": false,
+  "protectedCacheTouched": false,
+  "commitCreated": false,
+  "pushPerformed": false,
+  "safeForOwnerReview": true,
+  "safeForSeparatelyAuthorizedBaselineInstall": "Conditional on owner settings/route approval, configuration evidence and fresh target/preflight; no remote authorization supplied by this task",
+  "files": [
+    "docs/RESPONDER/DAYTON-DISPATCH-ACTIVATION-OWNER-DECISIONS.md",
+    "docs/RESPONDER/DAYTON-DISPATCH-PREINSTALL-SECURITY.md",
+    "reports/responder/phase29-evidence/deployment-safe-installer/installed-inventory.json",
+    "reports/responder/phase29-evidence/deployment-safe-installer/installer-results.json",
+    "reports/responder/phase29-evidence/deployment-safe-installer/invitation-delivery-results.json",
+    "reports/responder/phase29-evidence/deployment-safe-installer/platform-before-after.json",
+    "reports/responder/phase29-evidence/deployment-safe-installer/runtime-results.json",
+    "reports/responder/phase29-evidence/deployment-safe-installer/security-catalog.json",
+    "reports/responder/phase29-evidence/deployment-safe-installer/worker-principal-results.json",
+    "reports/responder/responder-phase29-deployment-safe-installer.json",
+    "tests/responder-phase29-installer.test.mjs",
+    "tools/responder/phase29/README.md",
+    "tools/responder/phase29/installer/README.md",
+    "tools/responder/phase29/installer/build.mjs",
+    "tools/responder/phase29/installer/certification-attempt2.log",
+    "tools/responder/phase29/installer/certification-attempt3.log",
+    "tools/responder/phase29/installer/certification-attempt4.log",
+    "tools/responder/phase29/installer/certification-attempt5.log",
+    "tools/responder/phase29/installer/certification-attempt6.log",
+    "tools/responder/phase29/installer/certification-attempt7.log",
+    "tools/responder/phase29/installer/certification-final.log",
+    "tools/responder/phase29/installer/certification-final2.log",
+    "tools/responder/phase29/installer/certification.log",
+    "tools/responder/phase29/installer/compat.runtime.test.mjs",
+    "tools/responder/phase29/installer/default-privileges.sql",
+    "tools/responder/phase29/installer/install.sql",
+    "tools/responder/phase29/installer/inventory.json",
+    "tools/responder/phase29/installer/postflight.sql",
+    "tools/responder/phase29/installer/preflight.sql",
+    "tools/responder/phase29/installer/principal.runtime.test.mjs",
+    "tools/responder/phase29/installer/rollback.sql",
+    "tools/responder/phase29/installer/run-certification.ps1",
+    "tools/responder/phase29/installer/runtime.test.mjs",
+    "tools/responder/phase29/installer/security-postflight.sql",
+    "tools/responder/phase29/installer/source-lock.json",
+    "tools/responder/phase29/installer/static-certification.log",
+    "tools/responder/phase29/installer/target.mjs"
+  ]
+}

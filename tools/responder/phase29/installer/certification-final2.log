@@ -1,0 +1,72 @@
+DROP SCHEMA
+ALTER ROLE
+✔ clean standard Supabase baseline without fixtures (811.0637ms)
+✔ wrong project fails atomically (1207.1978ms)
+✔ populated Dispatch fails atomically (1294.9001ms)
+✔ conflicting role fails atomically (1117.259ms)
+✔ incompatible prior namespace fails atomically (1094.1959ms)
+✔ unexpected public record fails atomically (1098.1742ms)
+✔ unexpected owner defaults fails atomically (1151.5272ms)
+✔ version condition is executed and rejects unsupported version (345.6983ms)
+✔ global browser defaults cannot leak into future private application tables (2379.8315ms)
+✔ full clean install, inventories and frozen postflight pass (2122.2721ms)
+✔ future public table has no browser table privileges (351.2357ms)
+✔ external view and evidence-bearing state refuse destructive rollback (1161.9058ms)
+✔ failure after hardening rolls back roles objects and ACL mutations (3454.807ms)
+✔ empty rollback and reapply pass (3989.7381ms)
+✔ exact inventory persisted for owner review (699.9713ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 22455.9062
+✔ Phase 29 real local Auth and forced-RLS catalog (28688.9696ms)
+✔ all four department taxonomy allow/deny matrices (19154.5793ms)
+✔ structured impact validation, independent lanes and lifecycle (9683.2422ms)
+✔ Fire/EMS prohibited data and Police restricted-content defenses (4132.3006ms)
+✔ capability gates, independent publication review, public refusal default (7904.4518ms)
+✔ DAYTON-REVIEW-01 exact reviewer authorization and immutable evidence (28438.3237ms)
+✔ DAYTON-REVIEW-01 explicit cross-unit grants and organization isolation (9311.6296ms)
+✔ DAYTON-REVIEW-01 approval-time live revalidation and distinct actors (81027.2316ms)
+✔ DAYTON-REVIEW-01 stale candidate, source, impact, contract and scope refusal (23463.6271ms)
+✔ same-org and bilateral sharing, expiry/revocation, source isolation (2263.6683ms)
+✔ redaction preserves identities and minimized immutable lineage (2187.6931ms)
+✔ Official Public Notice linked authority, expiry, correction and withdrawal (4837.7629ms)
+✔ idempotency, atomic stale refusal and concurrent report revision (1339.5167ms)
+✔ legacy compatibility, populated refusal and protected consumer baseline (2736.3243ms)
+✔ DAYTON-INVITE-01 disposable issuance, mock delivery, fallback and durable events (14095.2295ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 239500.3091
+✔ narrow real login and role attributes (56.7009ms)
+✔ no direct private/Auth/audit/candidate table access (82.0491ms)
+✔ cannot assume unrelated command owner Auth or API roles (96.8665ms)
+✔ no schema database role creation or object ownership (115.5142ms)
+✔ allowed transport claim succeeds without table or issuance privilege (29.567ms)
+✔ transport result permitted but unknown correlation refuses safely (14.3224ms)
+✔ transaction-local role resets after commit and pooled reuse (27.671ms)
+✔ rollback and timeout cannot leak assumed role (49.2597ms)
+✔ actual repository uses login and resets pooled role after command refusal (34.2412ms)
+✔ actual repository event succeeds deduplicates and leaves authorization unchanged (1001.2148ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2179.736
+DO
+        ?column?         
+-------------------------
+ PHASE28_POSTFLIGHT_PASS
+(1 row)
+

@@ -1,0 +1,22 @@
+{
+  "status": "PASS",
+  "passed": 15,
+  "failed": 0,
+  "checks": [
+    "no disposable dependencies",
+    "wrong project atomic refusal",
+    "populated Dispatch atomic refusal",
+    "conflicting role atomic refusal",
+    "incompatible prior namespace atomic refusal",
+    "unexpected public record atomic refusal",
+    "unexpected owner defaults atomic refusal",
+    "unsupported version refusal",
+    "global defaults hardened and transaction rolled back",
+    "clean install and platform catalog unchanged",
+    "future object ACL denial",
+    "external reference and evidence rollback refusal",
+    "transactional failure rollback",
+    "empty rollback reapply",
+    "exact object role grant inventory"
+  ]
+}

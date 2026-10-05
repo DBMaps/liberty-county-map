@@ -1,0 +1,20 @@
+import {readFileSync,writeFileSync} from 'node:fs';import {createHash} from 'node:crypto';import {resolve} from 'node:path';
+const root=resolve(import.meta.dirname,'../../../..'),here=import.meta.dirname;
+const read=p=>readFileSync(resolve(root,p),'utf8').replaceAll('\r\n','\n');
+const local=n=>readFileSync(here+'/'+n,'utf8').replaceAll('\r\n','\n');
+const locks=JSON.parse(readFileSync(here+'/source-lock.json','utf8'));
+for(const [p,h] of Object.entries(locks))if(createHash('sha256').update(read(p)).digest('hex')!==h)throw Error('FROZEN_SOURCE_DRIFT '+p);
+function phase(source,guard){let s=read(source).replace(/^\\set ON_ERROR_STOP on\n/gm,'').replace(/^-- LOCAL.*\n/gm,'');s=s.replace(/^BEGIN;\n/m,'').replace(/COMMIT;\s*$/,'');if(guard){let hits=0;s=s.replace(guard,()=>{hits++;return '-- Phase prerequisite independently checked by installer A and single transaction.\n';});if(hits!==1)throw Error('GUARD_BOUNDARY_DRIFT '+source);}return s;}
+const b=phase('tools/responder/phase28/package.local.sql',/DO \$\$ BEGIN\n IF NOT EXISTS\(SELECT 1 FROM gridly_rehearsal\.environment[\s\S]*?END \$\$;/);
+const c=phase('tools/responder/phase29/package.local.sql',/DO \$\$ BEGIN\n IF NOT EXISTS\(SELECT 1 FROM gridly_rehearsal\.environment[\s\S]*?END \$\$;/);
+const d=phase('tools/responder/phase29/invitation-delivery.local.sql',/DO \$\$ BEGIN IF NOT EXISTS\(SELECT 1 FROM gridly_rehearsal\.environment[\s\S]*?END \$\$;/);
+const e=phase('tools/responder/phase29/worker/database-principal.local.sql',/DO \$\$ BEGIN\n IF current_user[\s\S]*?END \$\$;/);
+const parts=[['B',b],['C',c],['D',d],['E',e]];
+let sql="-- Deployment-safe empty-project candidate. Separately authorized execution only.\nBEGIN;\nSET LOCAL lock_timeout='5s';\nSET LOCAL statement_timeout='120s';\nSELECT pg_advisory_xact_lock(29291001);\n"+local('preflight.sql')+local('default-privileges.sql');
+for(const [name,body] of parts)sql+='\n-- PHASE '+name+'\n'+body;
+sql+='\n'+local('postflight.sql');
+const tables=[...sql.matchAll(/CREATE TABLE (dispatch_\w+\.\w+)/g)].map(m=>m[1]).sort();
+sql+=`\nDO $inventory$ BEGIN IF (SELECT array_agg(n.nspname||'.'||c.relname ORDER BY n.nspname,c.relname) FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname LIKE 'dispatch\\_%' ESCAPE '\\' AND c.relkind IN('r','p')) IS DISTINCT FROM ARRAY[${tables.map(t=>"'"+t+"'").join(',')}]::text[] THEN RAISE EXCEPTION 'POSTFLIGHT exact table inventory'; END IF; END $inventory$;\nCOMMIT;\n`;
+if(/gridly_rehearsal|gridly_consumer_sentinel|report_retention|\\ir|^BEGIN;/m.test(parts.map(x=>x[1]).join('\n')))throw Error('DISPOSABLE_DEPENDENCY');
+writeFileSync(here+'/install.sql',sql);
+writeFileSync(here+'/inventory.json',JSON.stringify({sourceLocks:locks,installSha256:createHash('sha256').update(sql).digest('hex'),tables,roles:[...sql.matchAll(/CREATE ROLE (dispatch_\w+)/g)].map(m=>m[1]).sort(),phases:parts.map(([phase,body])=>({phase,bodySha256:createHash('sha256').update(body).digest('hex')}))},null,2)+'\n');
