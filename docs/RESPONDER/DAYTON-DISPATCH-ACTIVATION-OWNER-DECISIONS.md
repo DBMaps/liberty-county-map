@@ -11,6 +11,8 @@ This register records subsequent activation decisions against the owner-approved
 | DAYTON-REVIEW-01 | Public report review authority | OWNER_APPROVED; LOCAL_ALIGNMENT_CERTIFIED | Independent explicitly scoped department/unit review; no self-approval; at least two trained authorized reviewers per unit; no default cross-unit review. |
 | DAYTON-RETENTION-01 | Retention/deletion/redaction | OWNER_APPROVED_POLICY_BASELINE; LEGAL_REVIEW_AND_EXECUTION_ALIGNMENT_REQUIRED | Bounded 1/2/3/7-year schedule, minimized evidence, earliest-completed remediation and maximum 30-day plaintext quarantine; scoped holds and restore obligations; see policy artifact. |
 
+| DAYTON-INVITE-01-v1 | Invitation origin/sender/delivery | OWNER_APPROVED; RESEND_OWNER_APPROVED; DOMAIN_VERIFIED_OWNER_CONFIRMED; EXECUTION_ALIGNMENT_REQUIRED | Exact origin https://dispatch.gridlygo.com; sender dispatch@gridlygo.com; explicit same-origin redirects; transactional primary and controlled manual fallback; no sending/activation authorization. |
+
 ## DAYTON-ORG-01 — Organization structure
 
 Authority: explicit owner instruction in the Dispatch planning conversation, titled “GRIDLY DISPATCH — OWNER GOVERNANCE DECISION: DAYTON ORGANIZATION STRUCTURE.” This is the approved default governance structure for the Dayton Dispatch activation plan.
@@ -109,3 +111,19 @@ This resolves the implementation-alignment stop for owner review. Named reviewer
 The owner-approved operational baseline, complete retention matrix, precise clocks, minimized evidence rules, quarantine/redaction, offboarding, holds, backups/exports and source-based support assessment are recorded in [DAYTON-RETENTION-01-v1](DAYTON-DISPATCH-RETENTION-POLICY.md). This resolves the operational policy proposal; external legal/privacy acceptance and execution alignment remain activation gates. No frozen reporting-contract text is changed.
 
 **STOP: implementation support is partial or missing.** There is no complete scoped hold system, disposition scheduler or restore-time reapplication; terminal anchors, offboarding inventory and remediation authorization/evidence need alignment. Rejected intake stores no quarantine plaintext; existing-record quarantine can retain source text until explicit redaction, without an enforced 30-day ceiling. No runtime/schema change or deletion is authorized in this task. Other governance decisions may continue, but real activation/retention execution remains blocked.
+
+## DAYTON-INVITE-01-v1 — Invitation origin / sender / delivery
+
+Owner-approved origin: **https://dispatch.gridlygo.com**. Owner-approved visible sender: **dispatch@gridlygo.com**; approved display name **Gridly Dispatch**. Transactional provider: **Resend — OWNER_APPROVED**; the subsequent owner decision closes provider selection. See [the invitation delivery policy](DAYTON-DISPATCH-INVITATION-DELIVERY-POLICY.md) for the approved lifecycle, redirects, fallback, content constraints and implementation support matrix.
+
+This resolves origin/sender policy only. Exact route allowlists, provider configuration/domain verification, safe delivery/fallback integration and certification remain activation gates. **STOP before runtime alignment:** current expiry is a maximum seven days, not an enforced exact issuance default; atomic reissue, web origin/redirect controls and actual delivery are missing or partial. No real email, invitations, DNS/provider configuration or runtime changes are authorized here. Historical Phase 28 null configuration and the frozen Phase 29 reporting contract remain unchanged.
+
+### DAYTON-INVITE-01-v1 — Resend provider closure
+
+Authority: owner instruction GRIDLY DISPATCH — OWNER GOVERNANCE DECISION: RESEND INVITATION PROVIDER. Resend is OWNER_APPROVED for outbound invitations/onboarding; visible sender is Gridly Dispatch <dispatch@gridlygo.com>. Owner reports Cloudflare Email Routing forwards inbound Dispatch mail to the owner inbox; no production verification was performed. Inbound/outbound roles remain separate. The invitation policy records domain recommendations, credential/event handling and missing controls. Selection is closed; DNS, configuration, secrets and real sending remain unauthorized. Implementation gaps remain a STOP before activation.
+
+### DAYTON-INVITE-01-v1 — Verified domain owner confirmation
+
+Owner confirms Resend sending domain **gridlygo.com — VERIFIED**; required verification DNS records were added manually by the owner. Provider **Resend — OWNER_APPROVED**; visible sender **Gridly Dispatch <dispatch@gridlygo.com>**; origin **https://dispatch.gridlygo.com**. Cloudflare is authoritative DNS and inbound Email Routing; Resend is outbound transactional sending only. No account/DNS verification or changes were performed by this task.
+
+Real API credentials are not yet created/configured and sending is not enabled. Credential configuration, delivery adapter, origin/redirect validation, atomic reissue, correlation, bounce/complaint suppression, controlled manual-copy fallback and webhook handling remain unimplemented/inactive as complete delivery controls. See the invitation policy for partial inherited primitives and exact gaps. Safe to proceed to separately authorized runtime implementation; real sending/activation remains blocked pending implementation and certification. No frozen contract or runtime/schema change.
