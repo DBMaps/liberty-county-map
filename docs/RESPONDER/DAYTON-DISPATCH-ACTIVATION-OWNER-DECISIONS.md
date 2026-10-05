@@ -9,6 +9,7 @@ This register records subsequent activation decisions against the owner-approved
 | DAYTON-ORG-01 | Dayton pilot organization structure | OWNER_APPROVED | One municipal organization with separate Police, Fire, EMS and Public Works department/unit boundaries; independent participating agencies use separate organizations and governed bilateral sharing. |
 
 | DAYTON-REVIEW-01 | Public report review authority | OWNER_APPROVED; LOCAL_ALIGNMENT_CERTIFIED | Independent explicitly scoped department/unit review; no self-approval; at least two trained authorized reviewers per unit; no default cross-unit review. |
+| DAYTON-RETENTION-01 | Retention/deletion/redaction | OWNER_APPROVED_POLICY_BASELINE; LEGAL_REVIEW_AND_EXECUTION_ALIGNMENT_REQUIRED | Bounded 1/2/3/7-year schedule, minimized evidence, earliest-completed remediation and maximum 30-day plaintext quarantine; scoped holds and restore obligations; see policy artifact. |
 
 ## DAYTON-ORG-01 — Organization structure
 
@@ -100,3 +101,11 @@ The owner subsequently authorized reviewer-specific implementation alignment. Th
 Final local certification: 10 static tests and 14 runtime tests passed with zero failures; 298 runtime assertion groups include 76 focused reviewer-policy assertions. The unchanged Phase 27 security postflight and frozen function/privilege comparison passed, including preservation of identity-map erasure. Evidence and limitations are recorded in `reports/responder/responder-phase29-review-authority.json`.
 
 This resolves the implementation-alignment stop for owner review. Named reviewers, evidence of training and minimum two-reviewer staffing per unit remain activation prerequisites. No real reviewers/grants/participants were created; publication remains disabled. The frozen Phase 29 reporting contract, historical certification artifacts and existing commits remain unchanged.
+
+## DAYTON-RETENTION-01 — Retention / deletion / redaction
+
+**OWNER_APPROVED POLICY BASELINE — LEGAL/PRIVACY REVIEW STILL REQUIRED BEFORE PRODUCTION ACTIVATION.**
+
+The owner-approved operational baseline, complete retention matrix, precise clocks, minimized evidence rules, quarantine/redaction, offboarding, holds, backups/exports and source-based support assessment are recorded in [DAYTON-RETENTION-01-v1](DAYTON-DISPATCH-RETENTION-POLICY.md). This resolves the operational policy proposal; external legal/privacy acceptance and execution alignment remain activation gates. No frozen reporting-contract text is changed.
+
+**STOP: implementation support is partial or missing.** There is no complete scoped hold system, disposition scheduler or restore-time reapplication; terminal anchors, offboarding inventory and remediation authorization/evidence need alignment. Rejected intake stores no quarantine plaintext; existing-record quarantine can retain source text until explicit redaction, without an enforced 30-day ceiling. No runtime/schema change or deletion is authorized in this task. Other governance decisions may continue, but real activation/retention execution remains blocked.
