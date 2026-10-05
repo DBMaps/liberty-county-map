@@ -1,0 +1,23 @@
+# Phase 29 durable report foundation — local certification only
+
+OWNER APPROVED PHASE 29 DURABLE REPORTING CONTRACT, version `PHASE29-v1`.
+
+The exact owner text is `owner-approved-contract-v1.txt`. `contract-version.json` records SHA-256 `3bb7740695a799632ee03b71f9daa9626b5e16f0bd455187bf3b53fe380029db`. The builder refuses a different contract/hash. Phase 28 documentation, packages and evidence remain historical.
+
+`taxonomy-v1.json` contains 18 public subtypes, seven internal subtypes and explicit department matrices. Police → Fire/EMS → Public Works is operational onboarding order only. Architecture supports all four immediately. Existing record identities and workflow remain; road-impact lifecycle is independent.
+
+`schema.local.sql` is the additive source; `build-package.mjs` manufactures `package.local.sql`, seeds the registry, installs forced RLS and exact privileges, and emits `object-inventory.json`. This package requires the local synthetic Phase 26 marker and an empty Phase 28 installation. Populated or referenced targets require a separately reviewed forward migration; this phase provides no production migration.
+
+Run `node tools/responder/phase29/build-package.mjs`, then `node --test tests/responder-phase29-durable-contract.test.mjs`. Run `./tools/responder/phase29/run-certification.ps1` for an unlinked, loopback-only, disposable Supabase project with real local JWT/TOTP/AAL2. The runner uses the cached installed CLI, creates only synthetic users/organizations, checks the unchanged Phase 28 security postflight, rehearses empty rollback/reapply, and cleans up in `finally`. All output is additive under `reports/responder/phase29-evidence`; credentials remain process-local.
+
+New API commands take `p_payload` and require live AAL2, individual permissions, explicit unit membership, current source/details revisions, idempotency and atomic minimized evidence. Public/private/raw candidate access remains separate. Legacy arbitrary JSON intake is refused; legacy unclassified records remain private and cannot publish through historical broad grants. No broad grant is converted into a subtype grant.
+
+Road-impact inputs are allowlisted; attribution, confirmation and activation timestamps are server-derived. Exact subtype keys and hazard/full-closure gates are conjunctive. Grants bind organization, explicit units, scope/version, subtype, evidence class, impact/timing envelopes, review policy and bounded validity. Official Public Notices cannot describe a hazard/closure without the structured linked source. Public payloads omit emergency-vehicle routing/access details.
+
+Clinical, identity, investigative/CJIS and tactical material is outside this system. All intake requires acknowledgment of the warning in `taxonomy-v1.json`. Deterministic screening and independent human content classification are defenses, not a legal/clinical compliance guarantee. Suspected submissions produce only a stable quarantine identity and digest before normal intake. Governed remediation removes ordinary/revision/projection/share text while preserving IDs, relationships and minimized audit evidence. Redaction expands the existing append-only guard solely for the exact redacted snapshot under a protected transaction context; the frozen pseudonymization branch stays intact.
+
+Same-organization shares require explicit recipient units and an independently approved sanitized source. Inter-organization shares additionally require a version-bound bilateral agreement, named recipients, category/field limits, purpose, scope and validity; both parties must approve. Restricted internal subtypes cannot use ordinary sharing or public projection. A separately governed restricted-recipient policy remains required before those can be shared. Recipient access never provides source access or onward authority.
+
+Publishing defaults off. No real publishing activation, participant, invitation, production connection, DNS/site/store/consumer change or push is authorized. Actual legal structure, people, authority evidence, grants/envelopes, retention/deletion, redaction policy, providers/origin, recovery staffing, real bilateral agreements and safety sign-off remain owner decisions for later activation.
+
+Certification results, limitations and the final verdict must be read from the Phase 29 report; schema/code existence alone is not certification.

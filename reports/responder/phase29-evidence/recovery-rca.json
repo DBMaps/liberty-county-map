@@ -1,0 +1,16 @@
+{
+  "classification": "syntax",
+  "failedFile": "tools/responder/phase29/package.local.sql",
+  "failedLine": 62,
+  "failedObject": "dispatch_private.report_review_prerequisites(uuid)",
+  "postgresError": "ERROR: syntax error at or near \"$\"",
+  "evidence": "tools/responder/phase29/certification.log:320-322",
+  "cause": "Phase29 source contained single-dollar SQL body delimiters in report_review_prerequisites and report_public_eligible; builder reproduced those malformed delimiters unchanged. SQL requires paired dollar-quote delimiters. Both source functions were repaired from AS $ / $; to AS $$ / $$; with no body, ownership, grants or policy changes.",
+  "regression": "New static delimiter regression failed on the original source, then passed after repair.",
+  "scope": "Only Phase29 SQL source/generated package, focused regression and disposable certification runner.",
+  "certificationPath": "Existing run-certification.ps1: guarded TEMP-only unlinked cached Supabase CLI; package installation via Docker exec psql against its disposable database. No CLI invocation from repository.",
+  "protectedCache": "Pre-existing untracked supabase/.temp/cli-latest left in place; no read/write/staging/cleanup operation targets it.",
+  "productionConnections": false,
+  "productionChanges": false,
+  "consumerTouched": false
+}

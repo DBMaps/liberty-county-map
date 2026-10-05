@@ -1,0 +1,212 @@
+{
+  "A_branch": "RESPONDER-PHASE29-dispatch-durable-report-contract",
+  "B_worktree": "C:\\GitHub\\liberty-county-map\\.artifacts\\worktrees\\RESPONDER-PHASE0-v1-contract-freeze",
+  "C_startingHead": "8406c2f246158fe0f98dee990b95257cf89f4611",
+  "D_finalHead": "8406c2f246158fe0f98dee990b95257cf89f4611",
+  "E_exactFiles": [
+    "tools/responder/phase29/build-package.mjs",
+    "tools/responder/phase29/contract-version.json",
+    "tools/responder/phase29/object-inventory.json",
+    "tools/responder/phase29/owner-approved-contract-v1.txt",
+    "tools/responder/phase29/package.local.sql",
+    "tools/responder/phase29/README.md",
+    "tools/responder/phase29/run-certification.ps1",
+    "tools/responder/phase29/runtime.test.mjs",
+    "tools/responder/phase29/schema.local.sql",
+    "tools/responder/phase29/taxonomy-v1.json",
+    "tests/responder-phase29-durable-contract.test.mjs",
+    "reports/responder/phase29-evidence/prior-runtime-results.json",
+    "reports/responder/phase29-evidence/runtime-results.json",
+    "reports/responder/responder-phase29-local-implementation.json",
+    "supabase/.temp/cli-latest"
+  ],
+  "F_schemaInventory": {
+    "state": "DRAFT_NOT_CERTIFIED; final disposable install rolled back",
+    "version": "PHASE29-v1",
+    "contractHash": "3bb7740695a799632ee03b71f9daa9626b5e16f0bd455187bf3b53fe380029db",
+    "tables": [
+      "dispatch_private.report_contract_versions",
+      "dispatch_private.report_families",
+      "dispatch_private.report_subtypes",
+      "dispatch_private.department_report_policies",
+      "dispatch_private.capability_catalog",
+      "dispatch_private.capability_requirements",
+      "dispatch_private.capability_grant_constraints",
+      "dispatch_private.capability_grant_units",
+      "dispatch_private.report_details",
+      "dispatch_private.report_scope_segments",
+      "dispatch_private.road_impacts",
+      "dispatch_private.road_impact_revisions",
+      "dispatch_private.content_screening_decisions",
+      "dispatch_private.content_quarantine",
+      "dispatch_audit.content_remediation_events",
+      "dispatch_private.publication_reviews",
+      "dispatch_private.sharing_agreements",
+      "dispatch_private.sharing_agreement_parties",
+      "dispatch_private.sharing_agreement_units",
+      "dispatch_private.shared_awareness_representations",
+      "dispatch_private.shared_awareness_recipients",
+      "dispatch_projection.report_public_projections",
+      "dispatch_private.report_redaction_context"
+    ],
+    "functions": [
+      {
+        "name": "report_department",
+        "args": "uuid"
+      },
+      {
+        "name": "report_keys",
+        "args": "jsonb,text[]"
+      },
+      {
+        "name": "report_screen",
+        "args": "jsonb"
+      },
+      {
+        "name": "report_impact_guard",
+        "args": ""
+      },
+      {
+        "name": "report_required_keys",
+        "args": "uuid"
+      },
+      {
+        "name": "report_grants_valid",
+        "args": "uuid,uuid[]"
+      },
+      {
+        "name": "report_review_prerequisites",
+        "args": "uuid"
+      },
+      {
+        "name": "report_public_eligible",
+        "args": "uuid"
+      },
+      {
+        "name": "report_shared_eligible",
+        "args": "uuid"
+      },
+      {
+        "name": "pilot_candidate_eligible",
+        "args": "uuid,uuid"
+      },
+      {
+        "name": "report_projection_eligible",
+        "args": "uuid"
+      },
+      {
+        "name": "report_safe_impacts",
+        "args": "uuid"
+      },
+      {
+        "name": "report_execute",
+        "args": "text,jsonb"
+      }
+    ],
+    "commands": [
+      "create_report",
+      "revise_report",
+      "set_road_impact",
+      "approve_report_content",
+      "submit_report_publication",
+      "review_report_publication",
+      "publish_report",
+      "withdraw_report",
+      "quarantine_report",
+      "redact_report",
+      "grant_report_capability",
+      "renew_report_capability",
+      "create_sharing_agreement",
+      "approve_sharing_agreement",
+      "revoke_sharing_agreement",
+      "share_report",
+      "revoke_report_share"
+    ],
+    "publicSubtypeCount": 18,
+    "internalSubtypeCount": 7,
+    "departmentPolicyRows": 104
+  },
+  "G_taxonomy": {
+    "public": 18,
+    "internal": 7,
+    "legacy": "LEGACY_UNCLASSIFIED",
+    "contractHash": "3bb7740695a799632ee03b71f9daa9626b5e16f0bd455187bf3b53fe380029db"
+  },
+  "H_police": "Draft eligibility 11 public subtypes; earlier runtime matrix passed; final code not certified",
+  "I_fire": "Draft eligibility 13 public subtypes; earlier runtime matrix passed; final code not certified",
+  "J_ems": "Draft eligibility 13 public subtypes; separate unit grants; earlier runtime matrix passed; final code not certified",
+  "K_publicWorks": "Draft eligibility 11 public subtypes; earlier runtime matrix passed; final code not certified",
+  "L_roadImpact": "Draft normalized multi-segment model; direction/lanes/closure/timing validated in earlier runtime; latest lifecycle additions not certified",
+  "M_capabilities": "Draft 18 narrow subtype keys plus five historical identifiers; hazard/full-closure gates conjunctive; explicit units/scope/version/envelopes/evidence",
+  "N_officialPublicNotice": "Draft linked incident gates, independent review, corrections/withdrawal; final expanded notice tests not executed",
+  "O_fireEmsProhibitedData": "Earlier unexpected-field refusal, deterministic screening, minimized quarantine and independent review passed; draft controlled redaction; no compliance guarantee",
+  "P_policeRestrictedContent": "Draft restricted internal taxonomy; excluded clinical/CJIS/investigative/tactical/identity domains; earlier allow/deny checks passed",
+  "Q_sameOrgSharing": "Earlier explicit recipient projection/source-isolation tests passed; final implementation not certified",
+  "R_interOrgSharing": "Earlier bilateral approval, recipient isolation, revocation and expiry tests passed; final implementation not certified",
+  "S_legacyCompatibility": "Earlier legacy private intake/broad-grant refusal passed; final implementation not certified",
+  "T_phase27Security": "Earlier new-schema postflight and real local AAL2/RLS checks passed; unchanged Phase 21-23 regression suites 36/36; final certification withheld",
+  "U_exactTests": [
+    {
+      "command": "node --test tests/responder-phase28-dayton-pilot.test.mjs tests/responder-phase28-closure-contracts.test.mjs tests/responder-phase25-production-shaped-neutral-migration-design.test.mjs tests/responder-phase26-production-shaped-clone-rehearsal.test.mjs",
+      "pass": 30,
+      "fail": 1,
+      "failureClassification": "KNOWN_PREEXISTING_NON_PHASE28 owner-decisions hash mismatch"
+    },
+    {
+      "command": "tools/responder/phase28/run-prior-local.ps1 -Phase 21",
+      "pass": 10,
+      "fail": 0
+    },
+    {
+      "command": "tools/responder/phase28/run-prior-local.ps1 -Phase 22",
+      "pass": 15,
+      "fail": 0
+    },
+    {
+      "command": "tools/responder/phase28/run-prior-local.ps1 -Phase 23",
+      "pass": 11,
+      "fail": 0
+    },
+    {
+      "command": "node --test tests/responder-phase29-durable-contract.test.mjs",
+      "pass": 4,
+      "fail": 0
+    },
+    {
+      "command": "tools/responder/phase29/run-certification.ps1",
+      "latestResult": "FAIL at install; 0 final runtime tests executed",
+      "previousRuntime": {
+        "pass": 8,
+        "fail": 0,
+        "applicability": "superseded implementation only"
+      }
+    }
+  ],
+  "V_counts": {
+    "completedApplicableNodeTests": {
+      "pass": 70,
+      "fail": 1,
+      "knownPreexistingFailures": 1
+    },
+    "latestPackageInstall": {
+      "pass": 0,
+      "fail": 1
+    },
+    "finalRuntimeTestsExecuted": 0,
+    "priorSupersededRuntime": {
+      "pass": 8,
+      "fail": 0
+    }
+  },
+  "W_rollbackRefusal": "Earlier empty rollback/reapply and populated/evidence-bearing refusal passed; latest failed install rolled back and all disposable resources were removed",
+  "X_productionConnections": "NO",
+  "Y_productionChanges": "NO",
+  "Z_consumerGridlyTouched": "NO",
+  "AA_cliLatestTouched": "YES; apparent indirect CLI cache creation; file left untouched after discovery",
+  "AB_commits": [],
+  "AC_pushPerformed": "NO",
+  "AD_localImplementationVerdict": "STOPPED",
+  "AE_safeForOwnerReview": "NO; incomplete uncertified draft, protected-file scope violation",
+  "workingTree": "DIRTY; untracked Phase 29 artifacts plus newly untracked protected cache file",
+  "nextRequiredDirection": "Explicit owner direction for the newly created protected cache file. Further restoration would require touching a path the owner expressly prohibited. No code or cache changes made after stop except these accurate stop/evidence reports."
+}

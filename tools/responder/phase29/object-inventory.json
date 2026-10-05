@@ -1,0 +1,105 @@
+{
+  "version": "PHASE29-v1",
+  "contractHash": "3bb7740695a799632ee03b71f9daa9626b5e16f0bd455187bf3b53fe380029db",
+  "tables": [
+    "dispatch_private.report_contract_versions",
+    "dispatch_private.report_families",
+    "dispatch_private.report_subtypes",
+    "dispatch_private.department_report_policies",
+    "dispatch_private.capability_catalog",
+    "dispatch_private.capability_requirements",
+    "dispatch_private.capability_grant_constraints",
+    "dispatch_private.capability_grant_units",
+    "dispatch_private.report_details",
+    "dispatch_private.report_scope_segments",
+    "dispatch_private.road_impacts",
+    "dispatch_private.road_impact_revisions",
+    "dispatch_private.content_screening_decisions",
+    "dispatch_private.content_quarantine",
+    "dispatch_audit.content_remediation_events",
+    "dispatch_private.publication_reviews",
+    "dispatch_private.sharing_agreements",
+    "dispatch_private.sharing_agreement_parties",
+    "dispatch_private.sharing_agreement_units",
+    "dispatch_private.shared_awareness_representations",
+    "dispatch_private.shared_awareness_recipients",
+    "dispatch_projection.report_public_projections",
+    "dispatch_private.report_redaction_context"
+  ],
+  "functions": [
+    {
+      "name": "report_department",
+      "args": "uuid"
+    },
+    {
+      "name": "report_keys",
+      "args": "jsonb,text[]"
+    },
+    {
+      "name": "report_screen",
+      "args": "jsonb"
+    },
+    {
+      "name": "report_impact_guard",
+      "args": ""
+    },
+    {
+      "name": "report_required_keys",
+      "args": "uuid"
+    },
+    {
+      "name": "report_grants_valid",
+      "args": "uuid,uuid[]"
+    },
+    {
+      "name": "report_review_prerequisites",
+      "args": "uuid"
+    },
+    {
+      "name": "report_public_eligible",
+      "args": "uuid"
+    },
+    {
+      "name": "report_shared_eligible",
+      "args": "uuid"
+    },
+    {
+      "name": "pilot_candidate_eligible",
+      "args": "uuid,uuid"
+    },
+    {
+      "name": "report_projection_eligible",
+      "args": "uuid"
+    },
+    {
+      "name": "report_safe_impacts",
+      "args": "uuid"
+    },
+    {
+      "name": "report_execute",
+      "args": "text,jsonb"
+    }
+  ],
+  "commands": [
+    "create_report",
+    "revise_report",
+    "set_road_impact",
+    "approve_report_content",
+    "submit_report_publication",
+    "review_report_publication",
+    "publish_report",
+    "withdraw_report",
+    "quarantine_report",
+    "redact_report",
+    "grant_report_capability",
+    "renew_report_capability",
+    "create_sharing_agreement",
+    "approve_sharing_agreement",
+    "revoke_sharing_agreement",
+    "share_report",
+    "revoke_report_share"
+  ],
+  "publicSubtypeCount": 18,
+  "internalSubtypeCount": 7,
+  "departmentPolicyRows": 104
+}

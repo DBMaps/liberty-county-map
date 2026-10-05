@@ -1,0 +1,57 @@
+{
+  "A_exactSQLFailure": {
+    "file": "tools/responder/phase29/package.local.sql",
+    "line": 62,
+    "object": "dispatch_private.report_review_prerequisites(uuid)",
+    "error": "ERROR: syntax error at or near \"$\"",
+    "log": "tools/responder/phase29/certification.log:320-322"
+  },
+  "B_exactRCA": "Syntax: single-dollar body delimiters in two Phase29 source functions were copied into the generated package. Corrected only those four delimiters; SQL function bodies and security remain unchanged.",
+  "C_exactFilesRepaired": [
+    "tools/responder/phase29/schema.local.sql",
+    "tools/responder/phase29/package.local.sql",
+    "tests/responder-phase29-durable-contract.test.mjs",
+    "tools/responder/phase29/run-certification.ps1"
+  ],
+  "D_protectedCacheLeftUntouched": "YES",
+  "E_supportedRecertificationPath": "Existing run-certification.ps1 under PowerShell 7; cached Supabase CLI exclusively in guarded, unlinked TEMP project; Docker exec psql for installation and frozen security/rollback checks. No CLI command ran from repository. Disposable containers/network/project removed.",
+  "F_packageInstallationResult": "PASS: initial installation, empty rollback and reinstallation in focused run and full run",
+  "G_focusedRegressionResult": "PASS: delimiter regression reproduced original failure and passes after repair; installed functions refuse missing reviews using transaction-scoped owner role rolled back afterward",
+  "H_fullPhase29CertificationResult": "PASS",
+  "I_exactCounts": {
+    "focusedRecoveryChecks": {
+      "pass": 8,
+      "fail": 0
+    },
+    "staticTests": {
+      "pass": 5,
+      "fail": 0
+    },
+    "fullRuntimeTests": {
+      "pass": 10,
+      "fail": 0
+    },
+    "fullRuntimeRecordedAssertionGroups": 218,
+    "earlierRecoveryAttempts": "Initial negative delimiter regression intentionally failed; Windows PowerShell startup stderr handling aborted one attempt; first installed-function probe lacked the deliberately restricted owner execution privilege. Corrected harness invocation/probe without any persistent security grant."
+  },
+  "J_phase27SecurityContinuity": "PASS: unchanged Phase28 postflight after installation/reinstallation and populated refusal; real local JWT/TOTP/AAL2, forced RLS, exact privileges, single bounded postgres Auth bridge and invoker identity/session helpers verified",
+  "K_productionConnectionsMade": "NO",
+  "L_productionChangesMade": "NO",
+  "M_consumerGridlyTouched": "NO",
+  "N_protectedCacheModifiedAfterOwnerInstruction": "NO",
+  "O_commitCreated": "Pending local commit after certification; see Git history for resulting commit IDs",
+  "P_pushPerformed": "NO",
+  "Q_finalVerdict": "PASS",
+  "R_safeForOwnerReview": "YES",
+  "branch": "RESPONDER-PHASE29-dispatch-durable-report-contract",
+  "worktree": "C:\\GitHub\\liberty-county-map\\.artifacts\\worktrees\\RESPONDER-PHASE0-v1-contract-freeze",
+  "startingHead": "8406c2f246158fe0f98dee990b95257cf89f4611",
+  "contractHash": "3bb7740695a799632ee03b71f9daa9626b5e16f0bd455187bf3b53fe380029db",
+  "publishingEnabled": false,
+  "trackedHistoricalOrUnrelatedChanges": [],
+  "supersedesVerdictOf": "reports/responder/responder-phase29-local-implementation.json",
+  "certificationLogs": {
+    "recovery-focused.log": "1f65b9de7b79352d541ea8f9bbeab6d6cffddbe9cf0821eb2e7b35e639e621d7",
+    "recovery-full.log": "efbeb160e90484426dafdf87ad535b27907c3317ca4a0aa285c124dbceeea23b"
+  }
+}
