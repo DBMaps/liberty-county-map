@@ -32,17 +32,28 @@
       "fail": 0
     },
     "fullRuntimeRecordedAssertionGroups": 218,
-    "earlierRecoveryAttempts": "Initial negative delimiter regression intentionally failed; Windows PowerShell startup stderr handling aborted one attempt; first installed-function probe lacked the deliberately restricted owner execution privilege. Corrected harness invocation/probe without any persistent security grant."
+    "earlierRecoveryAttempts": "Initial negative delimiter regression intentionally failed; Windows PowerShell startup stderr handling aborted one attempt; first installed-function probe lacked the deliberately restricted owner execution privilege. Corrected harness invocation/probe without any persistent security grant.",
+    "repositoryIntegrityChecks": {
+      "pass": 0,
+      "fail": 1
+    }
   },
   "J_phase27SecurityContinuity": "PASS: unchanged Phase28 postflight after installation/reinstallation and populated refusal; real local JWT/TOTP/AAL2, forced RLS, exact privileges, single bounded postgres Auth bridge and invoker identity/session helpers verified",
   "K_productionConnectionsMade": "NO",
   "L_productionChangesMade": "NO",
   "M_consumerGridlyTouched": "NO",
   "N_protectedCacheModifiedAfterOwnerInstruction": "NO",
-  "O_commitCreated": "Pending local commit after certification; see Git history for resulting commit IDs",
+  "O_commitCreated": {
+    "created": "YES",
+    "commits": [
+      "3da1d1cb38f8b5558e47192d66ed44cd9d5e1303",
+      "b7d6c7abfa919def28b2c8c86e348814c8020b84"
+    ],
+    "reportCorrectionCommit": "See Git history"
+  },
   "P_pushPerformed": "NO",
-  "Q_finalVerdict": "PASS",
-  "R_safeForOwnerReview": "YES",
+  "Q_finalVerdict": "STOPPED",
+  "R_safeForOwnerReview": "YES: local review only; unresolved committed contract byte/hash discrepancy",
   "branch": "RESPONDER-PHASE29-dispatch-durable-report-contract",
   "worktree": "C:\\GitHub\\liberty-county-map\\.artifacts\\worktrees\\RESPONDER-PHASE0-v1-contract-freeze",
   "startingHead": "8406c2f246158fe0f98dee990b95257cf89f4611",
@@ -53,5 +64,14 @@
   "certificationLogs": {
     "recovery-focused.log": "1f65b9de7b79352d541ea8f9bbeab6d6cffddbe9cf0821eb2e7b35e639e621d7",
     "recovery-full.log": "efbeb160e90484426dafdf87ad535b27907c3317ca4a0aa285c124dbceeea23b"
+  },
+  "repositoryIntegrityCheck": {
+    "result": "FAIL",
+    "expectedAndWorkingFileHash": "3bb7740695a799632ee03b71f9daa9626b5e16f0bd455187bf3b53fe380029db",
+    "committedBlobHash": "0ac80f48d3f6aa663cf3ae5f5ec04543a8b3196daa78188af0bbda295a7e7182",
+    "cause": "Git CRLF-to-LF normalization; text is identical after newline normalization",
+    "repairPerformed": false,
+    "reasonForStop": "Owner scoped recovery to SQL installation. Contract storage/line-ending policy repair would expand scope.",
+    "commandSequencingError": "PowerShell continued to stage/commit after the extra committed-hash check exited nonzero. No push or history rewriting performed."
   }
 }
