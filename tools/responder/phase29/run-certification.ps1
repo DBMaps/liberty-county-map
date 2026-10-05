@@ -1,4 +1,4 @@
-param([switch]$FocusedOnly,[switch]$ReviewOnly,[switch]$InviteOnly)
+param([switch]$FocusedOnly,[switch]$ReviewOnly,[switch]$InviteOnly,[switch]$WorkerOnly)
 # LOCAL DISPOSABLE CERTIFICATION ONLY. No linked project or production endpoint.
 $ErrorActionPreference='Stop'
 $repo=(Resolve-Path -LiteralPath (Join-Path $PSScriptRoot '..\..\..')).Path
@@ -10,6 +10,7 @@ $evidence=Join-Path $repo 'reports\responder\phase29-evidence'
 if($InviteOnly){$evidence=Join-Path $evidence 'invitation-delivery-focused'}elseif($ReviewOnly){$evidence=Join-Path $evidence 'review-authority-focused'}else{if(-not $FocusedOnly){$evidence=Join-Path $evidence 'invitation-delivery-final'}}
 $docker='C:\Users\gulfi\AppData\Local\Programs\DockerDesktop\resources\bin\docker.exe'
 $supabase='C:\Users\gulfi\AppData\Local\npm-cache\_npx\aa8e5c70f9d8d161\node_modules\@supabase\cli-windows-x64\bin\supabase.exe'
+if($WorkerOnly){$evidence=Join-Path $repo 'reports\responder\phase29-evidence\worker-hosting'; if($FocusedOnly -or $ReviewOnly -or $InviteOnly){throw 'Worker certification switches cannot be combined'}}
 $started=$false; $networkCreated=$false; $startAttempted=$false
 function Assert-DisposableCliDirectory {
  if((Get-Location).Path -ne $runtime -or -not $runtime.StartsWith([IO.Path]::GetFullPath($env:TEMP).TrimEnd('\')+'\',[StringComparison]::OrdinalIgnoreCase)){throw 'Supabase CLI outside disposable TEMP project refused'}
@@ -74,6 +75,7 @@ try {
  $env:P29_INVITE_ONLY=if($InviteOnly){'true'}else{'false'}; $env:P29_REVIEW_ONLY=if($ReviewOnly){'true'}else{'false'}; $env:P29_API_URL=$vars.API_URL; $env:P29_ANON_KEY=$vars.ANON_KEY; $env:P29_SERVICE_KEY=$vars.SERVICE_ROLE_KEY
  $env:P29_DOCKER=$docker; $env:P29_PROJECT_ID=$projectId; $env:P29_EVIDENCE_DIR=$evidence
  & node --test (Join-Path $PSScriptRoot 'runtime.test.mjs'); if($LASTEXITCODE -ne 0){throw 'Phase 29 runtime certification failed'}
+ if($WorkerOnly){ & node --test (Join-Path $PSScriptRoot 'worker\database-principal.runtime.test.mjs'); if($LASTEXITCODE -ne 0){throw 'Worker principal certification failed'}; Invoke-SqlFile (Join-Path $PSScriptRoot '..\phase28\postflight.sql') }
  } finally {Pop-Location}
 } finally {
  if($startAttempted -and (Test-Path -LiteralPath $runtime)){Push-Location $runtime; try{Assert-DisposableCliDirectory; & $supabase stop --no-backup 2>$null | Out-Null}finally{Pop-Location}}

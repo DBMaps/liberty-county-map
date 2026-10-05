@@ -1,0 +1,15 @@
+{
+  "name": "gridly-dispatch-worker-local",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test ../../../../tests/responder-phase29-worker-hosting.test.mjs"
+  },
+  "dependencies": {
+    "pg": "8.23.1"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2",
+    "miniflare": "4.20260730.0"
+  }
+}

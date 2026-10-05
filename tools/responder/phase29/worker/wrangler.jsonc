@@ -1,0 +1,31 @@
+{
+  "name": "gridly-dispatch-delivery-production",
+  "main": "index.mjs",
+  "compatibility_date": "2026-07-30",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "workers_dev": false,
+  "preview_urls": false,
+  "routes": [
+    {
+      "pattern": "dispatch.gridlygo.com/api/resend/webhook",
+      "zone_name": "gridlygo.com"
+    }
+  ],
+  "vars": {
+    "GRIDLY_DISPATCH_EMAIL_FROM": "Gridly Dispatch <dispatch@gridlygo.com>",
+    "GRIDLY_DISPATCH_ORIGIN": "https://dispatch.gridlygo.com",
+    "GRIDLY_DISPATCH_WEBHOOK_URL": "https://dispatch.gridlygo.com/api/resend/webhook",
+    "GRIDLY_DISPATCH_ENVIRONMENT": "PRODUCTION",
+    "GRIDLY_DISPATCH_SENDING_ENABLED": "false",
+    "GRIDLY_DISPATCH_DB_CACHING_DISABLED": "true",
+    "GRIDLY_DISPATCH_DB_TLS_REQUIRED": "true"
+  },
+  "hyperdrive": [
+    {
+      "binding": "DISPATCH_DELIVERY_DB",
+      "id": "OWNER_CONFIGURATION_REQUIRED"
+    }
+  ]
+}
