@@ -23,3 +23,5 @@ Publishing defaults off. No real publishing activation, participant, invitation,
 Certification results, limitations and the final verdict must be read from the Phase 29 report; schema/code existence alone is not certification.
 
 The current canonical-hash recovery verdict is `reports/responder/responder-phase29-hash-normalization.json`. Earlier STOPPED recovery reports remain historical evidence and are superseded by this certification.
+
+The owner-approved public-review policy `DAYTON-REVIEW-01` is recorded in [the Dayton activation decision register](../../../docs/RESPONDER/DAYTON-DISPATCH-ACTIVATION-OWNER-DECISIONS.md). Source inspection found gaps in reviewer-specific capability/scope authority, separate cross-unit review authorization, approval-time live eligibility checks and stale-candidate revision rejection. This policy requires separately authorized implementation alignment and certification before activation; no schema/runtime change was made while recording it.
