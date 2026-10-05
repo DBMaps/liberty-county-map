@@ -95,3 +95,92 @@ Real Resend API credentials are **NOT YET CREATED / CONFIGURED**. Real invitatio
 - Real invitation sending.
 
 Domain verification closes the sending-domain verification governance prerequisite; it is not runtime certification or permission to send. Safe to proceed to separately authorized invitation-delivery runtime implementation, preserving frozen security controls and requiring local/disposable certification. No API key, webhook, email, invitation, DNS/Email Routing change, production access or activation is performed by this documentation task.
+
+## DAYTON-HOSTING-01-v1 — Local Worker integration plan
+
+**OWNER_APPROVED ARCHITECTURE; LOCAL HOSTING CODE NOT YET IMPLEMENTED; NO PRODUCTION RESOURCE AUTHORIZATION.**
+
+The owner approved dedicated Cloudflare Worker gridly-dispatch-delivery-production (proposed name), dedicated Dispatch Supabase Database/Auth, TLS Cloudflare Hyperdrive with query caching DISABLED and Cloudflare Worker Secrets. Current locally certified invitation adapter: 89ea4e648f18f9c2794e4ce4388aa4c5300a1b42. Earlier NOT IMPLEMENTED assessments above describe the historical pre-adapter state; hosting, real network transport, credentials and live routes remain inactive.
+
+### Exact proposed local components
+
+These paths are proposed for the next separately authorized implementation; none is created here.
+
+| Proposed path | Responsibility |
+| --- | --- |
+| tools/responder/phase29/worker/index.mjs | Exact HTTP host/path/method, bounded streaming body, verification and safe responses |
+| tools/responder/phase29/worker/config.mjs | Private environment binding, sender/origin/path validation, signing-secret decoding, disabled-send gate |
+| tools/responder/phase29/worker/resend-transport.mjs | Fixed Resend endpoint, server credential, attempt idempotency, bounded response/error mapping; no blind ambiguous-send retry |
+| tools/responder/phase29/worker/delivery-repository.mjs | Fixed parameterized claim/result/event calls with transaction-local role |
+| tools/responder/phase29/worker/wrangler.jsonc | Pinned compatibility date/nodejs_compat, narrow route, isolated environments, secret names and placeholder Hyperdrive binding; no values |
+| tools/responder/phase29/worker/package.json and package-lock.json | Isolated pinned Worker tooling/database driver/test dependencies; no consumer package edits |
+| tools/responder/phase29/worker/README.md | Local workflow, rotation, isolation and later deployment gates |
+| tools/responder/phase29/worker/database-principal.local.sql | Disposable-only narrow login/role rehearsal; no embedded password or production installation authority |
+| tests/responder-phase29-worker-hosting.test.mjs | Actual local Worker-runtime HTTP/config/crypto/transport/logging tests |
+| tools/responder/phase29/worker/database-principal.runtime.test.mjs | Disposable privilege, transaction/role reset and refusal tests |
+| reports/responder/responder-phase29-worker-hosting.json | New local evidence; do not overwrite historical reports |
+
+Existing invitation-delivery.mjs needs explicit node:buffer import and actual Worker compatibility certification. Preserve lifecycle and frozen command semantics. Reuse the guarded disposable TEMP/Docker certification harness; never run Supabase CLI from this repository or touch supabase/.temp/cli-latest. Any runner extension must preserve its local-only guards. No production forward migration is supplied by this plan.
+
+### Dedicated Dispatch Supabase prerequisites
+
+Purpose: isolated Dispatch database and identity/session/MFA authority. Separate local/disposable, staging and production environments; no consumer project, identities, service credentials or runtime bindings. No tests against production.
+
+Verify pgcrypto, the baseline extensions-qualified UUID/digest functions, auth.users, auth.sessions and auth.mfa_factors, and PostgreSQL/Auth compatibility. No speculative new extensions. Preserve forced RLS, exact grants, sole postgres Auth bridge, NOLOGIN command owner, invoker identity/session helpers and fresh TOTP/AAL2. Expose only reviewed participant RPCs through the Data API; private/audit/candidate schemas remain inaccessible to browser roles. Delivery uses direct restricted PostgreSQL commands, not service_role.
+
+Operator commands use dedicated-project identity-bound sessions and live membership/permission checks. TOTP must be available. Actual Auth signup policy, approved redirects, Auth mail configuration, recovery staff and participant provisioning require separate owner setup approval; transport credentials have no Auth administration.
+
+Baseline installation is a prerequisite. Phase 26/28/29, reviewer alignment and invitation packages have disposable markers/install dependencies. Do not apply local-only packages remotely. A separately reviewed deployment-safe baseline/forward migration with exact privileges and compatibility/refusal tests is required before remote installation.
+
+Backups must support DAYTON-RETENTION-01-v1: restricted access, bounded aging, and restore-time reapplication of holds/remediation/disposition. Approve project region/plan, RPO/RTO, recovery owners, backup/PITR selection and restore rehearsal before activation. Exact schedules remain owner/legal decisions; existing retention execution gaps remain open. Dedicated-project isolation is not retention compliance.
+
+### Hyperdrive and narrow database bootstrap
+
+Dedicated delivery Hyperdrive configuration per environment; proposed binding DISPATCH_DELIVERY_DB. Dedicated Dispatch origin database only, TLS with certificate verification, parameterized fixed calls, query caching explicitly DISABLED, no authorization/suppression/session caching. Store the origin credential in Hyperdrive configuration, never Git/client code. Select a Supabase endpoint supporting the custom login; direct/pooler behavior must be certified, not assumed. Bound concurrency/timeouts based on later capacity evidence.
+
+Proposed login: dispatch_delivery_connection, LOGIN, NOINHERIT, NOBYPASSRLS, NOSUPERUSER, NOCREATEDB, NOCREATEROLE, NOREPLICATION. Permit dedicated database CONNECT and only explicit assumption of dispatch_delivery_transport, without role administration/inheritance. Check effective PUBLIC privileges too: no schema/database CREATE or unrelated privileged function authority. If this cannot be isolated without weakening frozen controls, STOP.
+
+Keep dispatch_delivery_transport NOLOGIN/NOINHERIT/NOBYPASSRLS with only private-schema usage and existing invitation_claim_send(uuid) and invitation_transport_result(jsonb) EXECUTE. BEGIN; SET LOCAL ROLE dispatch_delivery_transport; parameterized fixed call; COMMIT or ROLLBACK. No session-persistent role/identity state in pooled connections. Test resets after success/refusal/reuse. No command-owner membership, broad table access, service_role or additional Auth bridge.
+
+Issuance/reissue/manual disclosure remain a distinct authenticated operator path with existing identity/TOTP/live checks. The transport login cannot issue invitations. Recipient resolution and operator HTTP bindings require separate narrow design review; no broad Auth service credential is implied.
+
+### Exact secret/config bindings
+
+Proposed destination: Cloudflare Dashboard > Workers & Pages > gridly-dispatch-delivery-production > Settings > Variables and Secrets > Secret. Resource does not yet exist; staging has separate secrets/bindings.
+
+| Binding/config | Classification | Value/boundary |
+| --- | --- | --- |
+| GRIDLY_DISPATCH_RESEND_API_KEY | SECRET | Dedicated environment-specific Sending access key restricted to gridlygo.com; not created |
+| GRIDLY_DISPATCH_RESEND_WEBHOOK_SECRET | SECRET | Provider signing material decoded server-side; not created |
+| DISPATCH_DELIVERY_DB | PRIVATE SERVER BINDING | TLS cache-disabled Hyperdrive; narrow credential stored in its configuration |
+| GRIDLY_DISPATCH_EMAIL_FROM | NON-SECRET CONFIG | Gridly Dispatch <dispatch@gridlygo.com> |
+| GRIDLY_DISPATCH_ORIGIN | NON-SECRET CONFIG | https://dispatch.gridlygo.com |
+| GRIDLY_DISPATCH_PROVIDER_ENVIRONMENT | NON-SECRET CONFIG | Explicit PRODUCTION for eventual real integration; TEST continues to forbid real credentials/non-.invalid recipients |
+| GRIDLY_DISPATCH_INVITATION_SENDING_ENABLED | NON-SECRET CONFIG | false; refuse issuance, reissue and manual disclosure while disabled |
+| GRIDLY_DISPATCH_WEBHOOK_URL | NON-SECRET CONFIG | https://dispatch.gridlygo.com/api/resend/webhook |
+| GRIDLY_DISPATCH_INVITATION_TEMPLATE_VERSION | NON-SECRET CONFIG | Actual template/version requires approval; no invented production value |
+| acceptPath, supportPath, redirectPaths | NON-SECRET CONFIG | Exact approved same-origin paths remain unresolved; synthetic paths are not production approval |
+
+Names beyond the two approved secrets are proposed bindings. Display name is part of From; no separate region secret is needed. Region/endpoints are infrastructure metadata. Rotation uses replacement provider material, controlled Worker versions, verification, then old-material retirement; never accept caller-supplied verification keys. Ordinary wrangler secret put deploys immediately, so later operations require controlled deployment approval. No secrets in chat/Git/logs/responses/builds/client bundles.
+
+### Webhook HTTP contract
+
+POST only, exact HTTPS host dispatch.gridlygo.com, exact /api/resend/webhook path; no query string, alternate host or unrelated path ownership. Proposed responses: 404 unmatched host/path; 405 with Allow: POST wrong method; 415 unsupported content type/encoding; 413 oversized body; 400 malformed structure; 401 invalid/missing/stale signature; 409 conflicting duplicate; 503 missing configuration, unknown correlation or retryable database failure. Fixed bounded bodies, Cache-Control: no-store, no reflected provider/database errors or credentialed browser CORS.
+
+Require application/json with supported UTF-8 parameter; refuse unsupported Content-Encoding. Stream at most 65,536 raw bytes; Content-Length alone is insufficient. Preserve bytes, reject malformed UTF-8 rather than silently replacing it, and verify Svix ID/timestamp/signature with decoded server-held secret before JSON/event processing. Preserve five-minute timestamp bounds and constant-time HMAC. Webhook authentication is provider signature; it requires no participant JWT. Operator routes retain participant authentication and are outside this narrow route approval.
+
+Allow email.sent, email.delivered, email.bounced, email.complained, email.delivery_delayed, email.failed, email.suppressed. No invented email.rejected. Only normalized non-secret event/message IDs, status and timestamp reach the database. Return 204 only after durable success or an identical committed duplicate. Unknown correlation triggers bounded retry; never fabricate state. Preserve deduplication/conflict refusal, adverse precedence and delivery-only suppression; events cannot confer access.
+
+Never log raw request/message bodies, invitation links/tokens, recipient addresses, signature/authorization headers, secrets or database connection strings. Use bounded categories and approved non-secret correlation only. No endpoint caching or automatic consumer forwarding. Proposed HTTP mappings require local tests.
+
+### Local certification and later owner actions
+
+Local: actual Worker crypto/Buffer compatibility; provider secret format; exact routing/method/config; streamed size limits and raw-byte integrity; valid/invalid/stale signatures; safe responses/logging; transport normalization/idempotency; disabled sending. Fake outbound transport only, no real key/email/invitation. Disposable synthetic database tests: effective login privileges, parameterization, transaction-local role resets/pooling, event deduplication/conflicts/unknown correlation, adverse precedence and suppression. Recheck affected invitation tests and Phase 27 continuity. Mocks cannot prove live Cloudflare routing/Hyperdrive/provider connectivity.
+
+Cloudflare owner actions later: approve account/access ownership; create dedicated Worker/environments; create TLS cache-disabled Hyperdrive with narrow credential; inspect hostname/proxy state then configure exact route; enter secrets directly; approve deployment separately. Disable unapproved workers.dev/preview exposure. No broader routes or inbound mail changes.
+
+Supabase owner actions later: approve project/region/plan/admins; create dedicated projects; approve deployment-safe baseline installation and narrow principal provisioning; configure network/Auth/approved redirects/backups and rehearse restore. Retention legal/privacy/execution gates remain before activation. No consumer project work.
+
+Resend owner actions later: after private destination exists, create dedicated domain-restricted Sending access key; after approved endpoint deployment, register exact webhook and seven events; copy signing material directly to Worker Secrets; review provider retention/tracking settings. Never paste secrets into chat. No documented combined no-send key/sender acceptance test; any send-based verification requires separate owner approval.
+
+DNS change requirement is UNDETERMINED until authorized hostname/proxy inspection. A narrow Worker route is required. Sending-domain verification and inbound Email Routing remain unchanged. No production resource, secret, provider configuration, deployment or runtime/schema implementation is performed by this plan.

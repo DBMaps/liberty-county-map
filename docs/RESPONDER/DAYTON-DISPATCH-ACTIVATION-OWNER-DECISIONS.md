@@ -7,6 +7,7 @@ This register records subsequent activation decisions against the owner-approved
 | Decision ID | Topic | Owner status | Approved decision |
 | --- | --- | --- | --- |
 | DAYTON-ORG-01 | Dayton pilot organization structure | OWNER_APPROVED | One municipal organization with separate Police, Fire, EMS and Public Works department/unit boundaries; independent participating agencies use separate organizations and governed bilateral sharing. |
+| DAYTON-HOSTING-01-v1 | Dedicated hosting and secret storage | OWNER_APPROVED; LOCAL_IMPLEMENTATION_PENDING | Dedicated Cloudflare Worker, dedicated Dispatch Supabase, TLS Hyperdrive with caching disabled, Worker Secrets and narrow database principal; no production resource authorization. |
 
 | DAYTON-REVIEW-01 | Public report review authority | OWNER_APPROVED; LOCAL_ALIGNMENT_CERTIFIED | Independent explicitly scoped department/unit review; no self-approval; at least two trained authorized reviewers per unit; no default cross-unit review. |
 | DAYTON-RETENTION-01 | Retention/deletion/redaction | OWNER_APPROVED_POLICY_BASELINE; LEGAL_REVIEW_AND_EXECUTION_ALIGNMENT_REQUIRED | Bounded 1/2/3/7-year schedule, minimized evidence, earliest-completed remediation and maximum 30-day plaintext quarantine; scoped holds and restore obligations; see policy artifact. |
@@ -127,3 +128,21 @@ Authority: owner instruction GRIDLY DISPATCH — OWNER GOVERNANCE DECISION: RESE
 Owner confirms Resend sending domain **gridlygo.com — VERIFIED**; required verification DNS records were added manually by the owner. Provider **Resend — OWNER_APPROVED**; visible sender **Gridly Dispatch <dispatch@gridlygo.com>**; origin **https://dispatch.gridlygo.com**. Cloudflare is authoritative DNS and inbound Email Routing; Resend is outbound transactional sending only. No account/DNS verification or changes were performed by this task.
 
 Real API credentials are not yet created/configured and sending is not enabled. Credential configuration, delivery adapter, origin/redirect validation, atomic reissue, correlation, bounce/complaint suppression, controlled manual-copy fallback and webhook handling remain unimplemented/inactive as complete delivery controls. See the invitation policy for partial inherited primitives and exact gaps. Safe to proceed to separately authorized runtime implementation; real sending/activation remains blocked pending implementation and certification. No frozen contract or runtime/schema change.
+
+## DAYTON-HOSTING-01-v1 — Dedicated hosting and secret storage
+
+**OWNER_APPROVED ARCHITECTURE — GOVERNANCE AND LOCAL IMPLEMENTATION PLANNING ONLY.**
+
+Authority: explicit owner instruction titled GRIDLY DISPATCH — OWNER APPROVAL: HOSTING + SECRET-STORE ARCHITECTURE. Baseline: branch RESPONDER-PHASE29-dispatch-durable-report-contract, commit 89ea4e648f18f9c2794e4ce4388aa4c5300a1b42.
+
+Approved: dedicated Cloudflare Worker (proposed gridly-dispatch-delivery-production); dedicated Dispatch Supabase Database/Auth project; dedicated TLS Hyperdrive connection with parameterized queries, query caching DISABLED and no authorization-state caching. No consumer database binding.
+
+Approved webhook: https://dispatch.gridlygo.com/api/resend/webhook. Only this narrow route is approved; the Worker must not automatically own unrelated Dispatch paths. Broader frontend/API routing requires separate approval.
+
+Provider: Resend. Sender: Gridly Dispatch <dispatch@gridlygo.com>. Store GRIDLY_DISPATCH_RESEND_API_KEY and GRIDLY_DISPATCH_RESEND_WEBHOOK_SECRET in Cloudflare Worker Secrets. Cloudflare inbound Email Routing remains separate from Resend outbound sending.
+
+Approve a LOGIN/NOINHERIT/NOBYPASSRLS delivery connection principal that may assume only dispatch_delivery_transport within the appropriate transaction. No service_role authority, command-owner authority, table-wide private access, schema creation, Auth administration or broad database ownership. Preserve the frozen NOLOGIN command owner and sole bounded postgres Auth bridge.
+
+Dispatch must not use consumer Supabase, credentials, Edge Functions, application runtime or browser/client secrets. See [the invitation policy hosting plan](DAYTON-DISPATCH-INVITATION-DELIVERY-POLICY.md#dayton-hosting-01-v1--local-worker-integration-plan) for exact proposed components and boundaries.
+
+Architecture approval does not authorize production resources or implementation execution in this recording task. No Worker, project, Hyperdrive, secret, API key, webhook, DNS change, deployment, production connection, real invitation or email is created. Actual account/project identifiers, region, backup settings, administrators and production acceptance/support paths remain subsequent decisions. Retention legal/privacy and execution gates remain open. Frozen reporting contract and runtime/schema are unchanged.
