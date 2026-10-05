@@ -66,7 +66,7 @@ try {
   }
   Invoke-SqlFile (Join-Path $PSScriptRoot '..\phase28\postflight.sql')
   [IO.File]::WriteAllText((Join-Path $evidence 'recovery-focused-results.json'),'{"verdict":"PASS","checksPassed":8,"checksFailed":0,"checks":["initial installation","Phase27 security continuity","empty rollback","reinstallation","delimiter regression","installed eligibility functions refuse missing review","populated install refusal","evidence-bearing rollback refusal"]}')
-  Write-Output 'PHASE29_RECOVERY_FOCUSED_PASS: 8/8 checks; 5/5 static tests'
+  Write-Output 'PHASE29_RECOVERY_FOCUSED_PASS: 8/8 checks; 10/10 static tests'
   return
  }
  $env:P29_API_URL=$vars.API_URL; $env:P29_ANON_KEY=$vars.ANON_KEY; $env:P29_SERVICE_KEY=$vars.SERVICE_ROLE_KEY

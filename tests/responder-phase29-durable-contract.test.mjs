@@ -1,7 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {createHash} from 'node:crypto';
+import {execFileSync} from 'node:child_process';
+import {fileURLToPath} from 'node:url';
+import {canonicalContractHash} from '../tools/responder/phase29/contract-hash.mjs';
 const root=new URL('../tools/responder/phase29/',import.meta.url);
 const read=f=>readFileSync(new URL(f,root),'utf8');
 const manifest=JSON.parse(read('contract-version.json'));
@@ -9,7 +11,7 @@ const registry=JSON.parse(read('taxonomy-v1.json'));
 test('exact owner-approved versioned contract is preserved before implementation',()=>{
  assert.equal(manifest.title,'OWNER APPROVED PHASE 29 DURABLE REPORTING CONTRACT');
  assert.equal(manifest.version,'PHASE29-v1');
- assert.equal(createHash('sha256').update(readFileSync(new URL(manifest.artifact,root))).digest('hex'),'3bb7740695a799632ee03b71f9daa9626b5e16f0bd455187bf3b53fe380029db');
+ assert.equal(canonicalContractHash(read(manifest.artifact)),'0ac80f48d3f6aa663cf3ae5f5ec04543a8b3196daa78188af0bbda295a7e7182');
  assert.equal(registry.contractHash,manifest.sha256);
  assert.match(read(manifest.artifact),/Do not implement until this exact contract has been preserved/);
 });
@@ -47,3 +49,11 @@ test('eligibility function dollar quotes survive source and generated package',(
   assert.match(statement,/\$\$;\r?\n$/,file+': '+name+' closes the same dollar quote');
  }
 });
+
+const committedContract=()=>execFileSync('git',['show','HEAD:tools/responder/phase29/'+manifest.artifact],{cwd:fileURLToPath(new URL('../',import.meta.url)),encoding:'utf8'});
+const canonicalHash='0ac80f48d3f6aa663cf3ae5f5ec04543a8b3196daa78188af0bbda295a7e7182';
+test('LF checkout produces canonical contract hash',()=>{assert.equal(canonicalContractHash(committedContract().replaceAll('\r\n','\n')),canonicalHash)});
+test('CRLF checkout produces same canonical contract hash',()=>{assert.equal(canonicalContractHash(committedContract().replaceAll('\r\n','\n').replaceAll('\n','\r\n')),canonicalHash)});
+test('line-ending conversion alone preserves canonical hash',()=>{const lf=read(manifest.artifact).replaceAll('\r\n','\n');assert.equal(canonicalContractHash(lf),canonicalContractHash(lf.replaceAll('\n','\r\n')))});
+test('actual contract text and spacing changes alter canonical hash',()=>{const text=committedContract();assert.notEqual(canonicalContractHash(text.replace('PURPOSE','PURPOSE CHANGED')),canonicalHash);assert.notEqual(canonicalContractHash(text+' '),canonicalHash);assert.notEqual(canonicalContractHash(text+'\n'),canonicalHash)});
+test('recorded canonical hash matches authoritative committed artifact',()=>{const blob=committedContract();assert.equal(canonicalContractHash(blob),manifest.sha256);assert.equal(read(manifest.artifact).replaceAll('\r\n','\n'),blob.replaceAll('\r\n','\n'));assert.equal(registry.contractHash,manifest.sha256)});

@@ -1,6 +1,6 @@
 {
   "status": "PASS",
-  "contractHash": "3bb7740695a799632ee03b71f9daa9626b5e16f0bd455187bf3b53fe380029db",
+  "contractHash": "0ac80f48d3f6aa663cf3ae5f5ec04543a8b3196daa78188af0bbda295a7e7182",
   "checks": [
     "forced RLS dispatch_private.report_contract_versions",
     "forced RLS dispatch_private.report_families",

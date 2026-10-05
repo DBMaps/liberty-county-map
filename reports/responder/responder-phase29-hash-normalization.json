@@ -1,0 +1,82 @@
+{
+  "A_discrepancyProvenEOLOnly": "YES",
+  "B_anyContractContentDifference": "NO",
+  "proof": {
+    "originalByteLength": 23026,
+    "committedByteLength": 22048,
+    "originalSha256": "3bb7740695a799632ee03b71f9daa9626b5e16f0bd455187bf3b53fe380029db",
+    "committedBlobContentSha256": "0ac80f48d3f6aa663cf3ae5f5ec04543a8b3196daa78188af0bbda295a7e7182",
+    "comparisonIgnoringOnlyCRLF": "IDENTICAL",
+    "nonEOLDifference": false
+  },
+  "C_canonicalHashingRule": "SHA-256 over UTF-8 text with LF line endings; replace CRLF with LF only; no other transformation",
+  "D_canonicalCommittedContractSha256": "0ac80f48d3f6aa663cf3ae5f5ec04543a8b3196daa78188af0bbda295a7e7182",
+  "E_exactFilesChanged": [
+    "reports/responder/phase29-evidence/hash-normalization-proof.json",
+    "reports/responder/phase29-evidence/runtime-results.json",
+    "reports/responder/responder-phase29-hash-normalization.json",
+    "tests/responder-phase29-durable-contract.test.mjs",
+    "tools/responder/phase29/README.md",
+    "tools/responder/phase29/build-package.mjs",
+    "tools/responder/phase29/contract-hash.mjs",
+    "tools/responder/phase29/contract-version.json",
+    "tools/responder/phase29/object-inventory.json",
+    "tools/responder/phase29/package.local.sql",
+    "tools/responder/phase29/run-certification.ps1",
+    "tools/responder/phase29/taxonomy-v1.json"
+  ],
+  "F_contractTextModified": "NO",
+  "G_hashRegressionTests": "PASS: LF, CRLF, conversion invariance, real text/spacing sensitivity, recorded hash matches committed artifact",
+  "H_repositoryIntegrityCheck": "PASS: committed artifact and working-tree canonical hashes agree; contract raw working bytes unchanged; generated SQL differs only in recorded hash",
+  "I_packageInstallationResult": "PASS: disposable installation, empty rollback/reinstallation, populated/evidence-bearing refusal",
+  "J_phase27SecurityContinuity": "PASS: unchanged frozen security postflight and real local Auth/TOTP/AAL2/forced-RLS runtime certification",
+  "K_finalPhase29CertificationResult": "PASS",
+  "L_passFailCounts": {
+    "staticTests": {
+      "pass": 10,
+      "fail": 0,
+      "newHashRegressionTests": 5
+    },
+    "focusedSmokeChecks": {
+      "pass": 8,
+      "fail": 0
+    },
+    "finalRuntimeTests": {
+      "pass": 10,
+      "fail": 0,
+      "recordedAssertionGroups": 218
+    },
+    "repositoryIntegrityCheck": {
+      "pass": 1,
+      "fail": 0
+    }
+  },
+  "M_correctiveCommitSha": "The single corrective commit containing this report; see Git history",
+  "N_existingThreeCommitsPreserved": "YES",
+  "existingCommits": [
+    "3da1d1cb38f8b5558e47192d66ed44cd9d5e1303",
+    "b7d6c7abfa919def28b2c8c86e348814c8020b84",
+    "97d7e5f176664614564bfb745cf08013e530a66f"
+  ],
+  "O_protectedCacheModified": "NO",
+  "P_pushPerformed": "NO",
+  "Q_finalVerdict": "PASS",
+  "R_safeForOwnerReview": "YES",
+  "branch": "RESPONDER-PHASE29-dispatch-durable-report-contract",
+  "worktree": "C:\\GitHub\\liberty-county-map\\.artifacts\\worktrees\\RESPONDER-PHASE0-v1-contract-freeze",
+  "startingHead": "97d7e5f176664614564bfb745cf08013e530a66f",
+  "supersedes": [
+    "reports/responder/responder-phase29-local-implementation.json",
+    "reports/responder/responder-phase29-recovery.json"
+  ],
+  "gitattributesChange": false,
+  "publishingEnabled": false,
+  "productionConnections": false,
+  "productionChanges": false,
+  "consumerGridlyTouched": false,
+  "certificationPath": "Existing guarded TEMP-only unlinked Supabase harness, Docker/psql installation; no Supabase CLI from repository",
+  "logs": {
+    "hash-normalization-smoke.log": "c8a9e1e3091be5e677635c5bad06703be3df8dbfc6432d2fd3ac1e331400220d",
+    "hash-normalization-final.log": "001328f037fbe80e8f7d9617d7f5e50c10975b62c21c6dee277fd6f7bdc71f48"
+  }
+}

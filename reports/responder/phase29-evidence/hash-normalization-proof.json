@@ -1,0 +1,13 @@
+{
+  "authoritativeCommit": "97d7e5f176664614564bfb745cf08013e530a66f",
+  "originalByteLength": 23026,
+  "committedByteLength": 22048,
+  "originalSha256": "3bb7740695a799632ee03b71f9daa9626b5e16f0bd455187bf3b53fe380029db",
+  "committedBlobContentSha256": "0ac80f48d3f6aa663cf3ae5f5ec04543a8b3196daa78188af0bbda295a7e7182",
+  "canonicalSha256": "0ac80f48d3f6aa663cf3ae5f5ec04543a8b3196daa78188af0bbda295a7e7182",
+  "rule": "SHA-256 over UTF-8 text with LF line endings; replace CRLF with LF only; no other transformation",
+  "textComparisonIgnoringOnlyEOL": "IDENTICAL",
+  "nonEOLDifference": false,
+  "contractTextModified": false,
+  "gitattributesChanged": false
+}

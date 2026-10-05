@@ -2,7 +2,7 @@
 
 OWNER APPROVED PHASE 29 DURABLE REPORTING CONTRACT, version `PHASE29-v1`.
 
-The exact owner text is `owner-approved-contract-v1.txt`. `contract-version.json` records SHA-256 `3bb7740695a799632ee03b71f9daa9626b5e16f0bd455187bf3b53fe380029db`. The builder refuses a different contract/hash. Phase 28 documentation, packages and evidence remain historical.
+The exact owner text is `owner-approved-contract-v1.txt`. `contract-version.json` records canonical SHA-256 over UTF-8 text with LF line endings (CRLF → LF only; no trim or other transformation). Hash: `0ac80f48d3f6aa663cf3ae5f5ec04543a8b3196daa78188af0bbda295a7e7182`. The builder refuses a different contract/hash. Phase 28 documentation, packages and evidence remain historical.
 
 `taxonomy-v1.json` contains 18 public subtypes, seven internal subtypes and explicit department matrices. Police → Fire/EMS → Public Works is operational onboarding order only. Architecture supports all four immediately. Existing record identities and workflow remain; road-impact lifecycle is independent.
 
@@ -21,3 +21,5 @@ Same-organization shares require explicit recipient units and an independently a
 Publishing defaults off. No real publishing activation, participant, invitation, production connection, DNS/site/store/consumer change or push is authorized. Actual legal structure, people, authority evidence, grants/envelopes, retention/deletion, redaction policy, providers/origin, recovery staffing, real bilateral agreements and safety sign-off remain owner decisions for later activation.
 
 Certification results, limitations and the final verdict must be read from the Phase 29 report; schema/code existence alone is not certification.
+
+The current canonical-hash recovery verdict is `reports/responder/responder-phase29-hash-normalization.json`. Earlier STOPPED recovery reports remain historical evidence and are superseded by this certification.

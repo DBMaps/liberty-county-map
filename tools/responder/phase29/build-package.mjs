@@ -1,9 +1,9 @@
 import {readFileSync,writeFileSync} from 'node:fs';
-import {createHash} from 'node:crypto';
+import {canonicalContractHash} from './contract-hash.mjs';
 import {join} from 'node:path';
 const here=join(process.cwd(),'tools/responder/phase29');
 const m=JSON.parse(readFileSync(join(here,'contract-version.json'),'utf8'));
-if(createHash('sha256').update(readFileSync(join(here,m.artifact))).digest('hex')!==m.sha256)throw Error('Contract hash mismatch');
+if(canonicalContractHash(readFileSync(join(here,m.artifact),'utf8'))!==m.sha256)throw Error('Contract hash mismatch');
 const t=JSON.parse(readFileSync(join(here,'taxonomy-v1.json'),'utf8'));
 if(t.contractHash!==m.sha256)throw Error('Registry contract mismatch');
 let s=readFileSync(join(here,'schema.local.sql'),'utf8');

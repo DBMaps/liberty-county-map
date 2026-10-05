@@ -1,9 +1,12 @@
 {
   "title": "OWNER APPROVED PHASE 29 DURABLE REPORTING CONTRACT",
   "version": "PHASE29-v1",
-  "sha256": "3bb7740695a799632ee03b71f9daa9626b5e16f0bd455187bf3b53fe380029db",
+  "sha256": "0ac80f48d3f6aa663cf3ae5f5ec04543a8b3196daa78188af0bbda295a7e7182",
   "artifact": "owner-approved-contract-v1.txt",
   "startingHead": "8406c2f246158fe0f98dee990b95257cf89f4611",
   "environment": "LOCAL_DISPOSABLE_ONLY",
-  "publishingEnabled": false
+  "publishingEnabled": false,
+  "hashingRule": "SHA-256 over UTF-8 text with LF line endings; replace CRLF with LF only; no other transformation",
+  "originalPreservedBytesSha256": "3bb7740695a799632ee03b71f9daa9626b5e16f0bd455187bf3b53fe380029db",
+  "authoritativeArtifact": "Committed Git blob for owner-approved-contract-v1.txt"
 }
