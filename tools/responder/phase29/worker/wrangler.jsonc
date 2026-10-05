@@ -8,6 +8,7 @@
   "workers_dev": false,
   "preview_urls": false,
   "routes": [
+    {"pattern":"dispatch.gridlygo.com/health","zone_name":"gridlygo.com"},
     {
       "pattern": "dispatch.gridlygo.com/api/resend/webhook",
       "zone_name": "gridlygo.com"
