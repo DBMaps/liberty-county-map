@@ -1,0 +1,9 @@
+{
+  "title": "OWNER APPROVED PHASE 29 DURABLE REPORTING CONTRACT",
+  "version": "PHASE29-v1",
+  "sha256": "3bb7740695a799632ee03b71f9daa9626b5e16f0bd455187bf3b53fe380029db",
+  "artifact": "owner-approved-contract-v1.txt",
+  "startingHead": "8406c2f246158fe0f98dee990b95257cf89f4611",
+  "environment": "LOCAL_DISPOSABLE_ONLY",
+  "publishingEnabled": false
+}

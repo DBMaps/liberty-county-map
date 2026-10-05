@@ -1,0 +1,979 @@
+The full Phase 29 contract is OWNER-APPROVED in the planning conversation but has NOT yet been written into the repository.
+
+Use the following text as the authoritative Phase 29 contract.
+
+Do not substitute Phase 28 defaults.
+Do not infer missing categories.
+Do not simplify the matrices.
+Do not implement until this exact contract has been preserved as a versioned Phase 29 contract artifact in the authorized worktree.
+
+==================================================
+GRIDLY DISPATCH — APPROVED PHASE 29 DURABLE REPORT CONTRACT
+==================================================
+
+PURPOSE
+
+Build the durable Dispatch reporting foundation correctly from the beginning for:
+
+- Police
+- Fire
+- EMS
+- Public Works
+
+Operational onboarding order:
+
+Police → Fire/EMS → Public Works
+
+The onboarding sequence does NOT authorize architectural deferral. All four department classifications must be supported by the durable contract from the beginning.
+
+==================================================
+1. NORMALIZED REPORT MODEL
+==================================================
+
+A report consists of three independent dimensions:
+
+1. report family/subtype — what happened
+2. structured road/travel impact — how travel is affected
+3. timing — PLANNED or UNPLANNED
+
+A crash that closes a roadway remains one TRAFFIC_COLLISION report with structured FULL closure impact.
+
+Do NOT require duplicate crash + closure records.
+
+==================================================
+2. PUBLIC-ELIGIBLE REPORT TAXONOMY
+==================================================
+
+OFFICIAL COMMUNICATION
+
+OFFICIAL_PUBLIC_NOTICE
+
+COLLISION
+
+TRAFFIC_COLLISION
+
+ROAD CONDITION
+
+ROAD_CONDITION
+HIGH_WATER
+DEBRIS_OBSTRUCTION
+DOWNED_TREE
+
+UTILITY / INFRASTRUCTURE
+
+DOWNED_POWER_LINE
+UTILITY_INFRASTRUCTURE_ISSUE
+INFRASTRUCTURE_TRAVEL_CONDITION
+
+RAIL CROSSING
+
+RAIL_CROSSING_BLOCKED
+RAIL_CROSSING_DELAY
+RAIL_CROSSING_CONDITION
+
+FIRE / SCENE / ENVIRONMENT
+
+FIRE_SMOKE_TRAVEL_IMPACT
+HAZMAT_SPILL
+EMERGENCY_SCENE_TRAVEL_IMPACT
+
+WORK / TRAFFIC CONTROL
+
+PLANNED_WORK
+TRAFFIC_CONTROL
+
+GENERIC BOUNDED FALLBACK
+
+TRAVEL_RESTRICTION
+
+==================================================
+3. INTERNAL-ONLY TAXONOMY
+==================================================
+
+RESPONDER_SAFETY_NOTE
+STAGING_COORDINATION
+INTERNAL_OPERATIONAL_AWARENESS
+RESTRICTED_LAW_ENFORCEMENT_NOTE
+UNIT_COORDINATION_NOTE
+NONPUBLIC_INFRASTRUCTURE_DETAIL
+RESPONDER_ACCESS_NOTE
+
+POLICE_ACTIVITY MUST NOT EXIST AS A PUBLIC REPORT TYPE.
+
+Any public-facing communication concerning police activity must use:
+
+OFFICIAL_PUBLIC_NOTICE
+
+through the governed notice path.
+
+==================================================
+4. ROAD IMPACT IS NOT A DUPLICATE REPORT CATEGORY
+==================================================
+
+The following are impact values, not separate cause reports:
+
+- lane restriction
+- partial blockage
+- full closure
+- alternating traffic
+- roadway narrowing
+
+They remain first-class product/reporting choices but are stored as structured impact attached to the underlying cause report.
+
+==================================================
+5. ROAD / TRAVEL IMPACT CONTRACT
+==================================================
+
+A report may contain multiple independently identified impact segments.
+
+direction_affected:
+
+NORTHBOUND
+SOUTHBOUND
+EASTBOUND
+WESTBOUND
+BOTH_DIRECTIONS
+ALL_DIRECTIONS
+NOT_APPLICABLE
+UNKNOWN
+
+lane_extent:
+
+NONE
+ONE
+MULTIPLE
+ALL
+UNKNOWN
+
+lanes_affected_count:
+optional positive integer
+
+total_lanes_count:
+optional positive integer
+
+closure_extent:
+
+NONE
+PARTIAL
+FULL
+UNKNOWN
+
+traffic_operation:
+
+NORMAL
+ALTERNATING
+NARROWED
+STOPPED
+UNKNOWN
+
+public_passable:
+
+YES
+NO
+UNKNOWN
+
+emergency_vehicles_passable:
+
+YES
+NO
+UNKNOWN
+
+start_point:
+optional validated coordinates plus governed road/segment reference
+
+end_point:
+optional validated coordinates plus governed road/segment reference
+
+duration_state:
+
+ESTIMATED
+UNKNOWN
+
+estimated_end_at:
+required only when duration_state = ESTIMATED
+
+reason_subtype:
+normalized report subtype reference
+
+attribution:
+server-derived organization and reporting department/unit
+
+last_confirmed_at:
+trusted server-recorded confirmation timestamp
+
+timing:
+
+PLANNED
+UNPLANNED
+
+scheduled_start_at:
+required for planned impacts
+
+effective_start_at:
+actual activation time
+
+impact_status:
+
+SCHEDULED
+ACTIVE
+CLEARED
+EXPIRED
+CANCELLED
+
+valid_until:
+mandatory bounded validity deadline
+
+VALIDATION RULES
+
+FULL closure requires:
+
+lane_extent = ALL
+traffic_operation = STOPPED
+public_passable = NO
+
+for the affected segment/direction.
+
+Emergency vehicle access is independent.
+
+“Passable with caution” requires:
+
+closure_extent = PARTIAL
+public_passable = YES
+
+Narrowing / alternation can be specified separately.
+
+If supplied:
+
+ONE => lanes_affected_count = 1
+
+MULTIPLE => lanes_affected_count >= 2
+
+lanes_affected_count may not exceed total_lanes_count when total is known.
+
+ALTERNATING traffic requires a partial restriction.
+
+UNKNOWN must remain explicit and must never silently become YES/passable.
+
+Confirmation cannot be future-dated.
+
+PLANNED timing requires scheduled_start_at.
+
+Known public geometry must remain within governed scope.
+
+Private intake may accept incomplete information but incomplete intake must not automatically qualify for public publication.
+
+Public projections must omit responder-only routing/access detail.
+
+Operational workflow CLOSED must NOT be reinterpreted as road impact CLEARED.
+
+Impact lifecycle and operational-record lifecycle remain independent.
+
+==================================================
+6. POLICE REPORT MATRIX
+==================================================
+
+Police may create/publicly qualify, subject to capabilities and review:
+
+OFFICIAL_PUBLIC_NOTICE
+TRAFFIC_COLLISION
+HIGH_WATER
+DEBRIS_OBSTRUCTION
+DOWNED_TREE
+DOWNED_POWER_LINE
+RAIL_CROSSING_BLOCKED
+RAIL_CROSSING_DELAY
+HAZMAT_SPILL
+TRAFFIC_CONTROL
+TRAVEL_RESTRICTION
+
+Police may report structured:
+
+- lane restriction
+- partial blockage
+- full closure
+- alternating traffic
+- narrowed roadway
+
+when attached to an authorized cause subtype or TRAVEL_RESTRICTION.
+
+Restricted lawful Police operational notes:
+INTERNAL ONLY
+
+Standalone Police Activity:
+PROHIBITED as a public subtype
+
+Public Police Activity communication:
+OFFICIAL_PUBLIC_NOTICE only
+
+Police do NOT receive automatic department authority for:
+
+FIRE_SMOKE_TRAVEL_IMPACT
+EMERGENCY_SCENE_TRAVEL_IMPACT
+Public Works-only infrastructure subtypes
+
+unless separately extended by owner approval later.
+
+==================================================
+7. FIRE REPORT MATRIX
+==================================================
+
+Fire may create/publicly qualify, subject to capabilities and review:
+
+OFFICIAL_PUBLIC_NOTICE
+TRAFFIC_COLLISION
+HIGH_WATER
+DEBRIS_OBSTRUCTION
+DOWNED_TREE
+DOWNED_POWER_LINE
+RAIL_CROSSING_BLOCKED
+RAIL_CROSSING_DELAY
+FIRE_SMOKE_TRAVEL_IMPACT
+HAZMAT_SPILL
+EMERGENCY_SCENE_TRAVEL_IMPACT
+TRAFFIC_CONTROL
+TRAVEL_RESTRICTION
+
+Fire may report structured:
+
+- lane restriction
+- partial blockage
+- full closure
+- alternating traffic
+- narrowed roadway
+
+when attached to an authorized cause or travel restriction.
+
+Responder safety / staging / access notes:
+INTERNAL ONLY
+
+Patient or clinical content:
+PROHIBITED
+
+Restricted Police information:
+not authorized through Fire classification
+
+Public Works-only infrastructure subtypes:
+not automatically authorized
+
+==================================================
+8. EMS REPORT MATRIX
+==================================================
+
+EMS receives the same owner-approved public category eligibility as Fire through SEPARATELY ISSUED EMS GRANTS.
+
+No Fire grant automatically grants EMS authority.
+
+EMS may create/publicly qualify:
+
+OFFICIAL_PUBLIC_NOTICE
+TRAFFIC_COLLISION
+HIGH_WATER
+DEBRIS_OBSTRUCTION
+DOWNED_TREE
+DOWNED_POWER_LINE
+RAIL_CROSSING_BLOCKED
+RAIL_CROSSING_DELAY
+FIRE_SMOKE_TRAVEL_IMPACT
+HAZMAT_SPILL
+EMERGENCY_SCENE_TRAVEL_IMPACT
+TRAFFIC_CONTROL
+TRAVEL_RESTRICTION
+
+EMS may report structured:
+
+- lane restriction
+- partial blockage
+- full closure
+- alternating traffic
+- narrowed roadway
+
+Nonclinical staging / coordination / access notes:
+INTERNAL ONLY
+
+Patient identity:
+PROHIBITED
+
+Clinical narrative:
+PROHIBITED
+
+Treatment:
+PROHIBITED
+
+Patient-linked destination:
+PROHIBITED
+
+Restricted Police notes:
+not authorized
+
+Public Works-only infrastructure subtype authority:
+not automatically authorized
+
+==================================================
+9. PUBLIC WORKS REPORT MATRIX
+==================================================
+
+Public Works may create/publicly qualify:
+
+OFFICIAL_PUBLIC_NOTICE
+ROAD_CONDITION
+HIGH_WATER
+DEBRIS_OBSTRUCTION
+DOWNED_TREE
+UTILITY_INFRASTRUCTURE_ISSUE
+INFRASTRUCTURE_TRAVEL_CONDITION
+PLANNED_WORK
+TRAFFIC_CONTROL
+RAIL_CROSSING_CONDITION
+TRAVEL_RESTRICTION
+
+Public Works may report structured:
+
+- lane restriction
+- partial blockage
+- full closure
+- alternating traffic
+- roadway narrowing
+
+including planned impacts.
+
+Nonpublic infrastructure/unit details:
+INTERNAL ONLY
+
+Public Works does NOT automatically receive:
+
+TRAFFIC_COLLISION
+HAZMAT_SPILL
+FIRE_SMOKE_TRAVEL_IMPACT
+EMERGENCY_SCENE_TRAVEL_IMPACT
+
+unless separately extended by owner approval.
+
+Clinical / CJIS / investigative / tactical information:
+PROHIBITED
+
+==================================================
+10. CAPABILITY MODEL
+==================================================
+
+Each public-eligible subtype must have a narrow publishing capability:
+
+awareness.report.<subtype_slug>.publish
+
+Exact subtype slugs:
+
+official_public_notice
+traffic_collision
+road_condition
+high_water
+debris_obstruction
+downed_tree
+downed_power_line
+utility_infrastructure_issue
+infrastructure_travel_condition
+rail_crossing_blocked
+rail_crossing_delay
+rail_crossing_condition
+fire_smoke_travel_impact
+hazmat_spill
+emergency_scene_travel_impact
+planned_work
+traffic_control
+travel_restriction
+
+RETAIN:
+
+awareness.hazard.publish
+awareness.road_closure.publish
+
+These remain additional conjunctive HIGH-RISK gates.
+
+They are NOT:
+
+- inheritable parent permissions
+- blanket publication permissions
+- substitutes for subtype keys
+
+HAZARD SUBTYPE
+
+requires:
+
+narrow subtype capability
+AND awareness.hazard.publish
+
+FULL ROAD CLOSURE
+
+requires:
+
+narrow subtype capability
+AND awareness.road_closure.publish
+
+HAZARD-CAUSED FULL CLOSURE
+
+requires all three:
+
+narrow subtype capability
+AND awareness.hazard.publish
+AND awareness.road_closure.publish
+
+LANE RESTRICTION / PARTIAL BLOCKAGE
+
+requires:
+
+narrow subtype capability
+AND permitted impact envelope
+
+PLANNED closure still requires road-closure authority.
+
+A capability grant binds:
+
+- organization
+- explicit eligible department/unit set
+- exact subtype capability
+- governed scope/version
+- permitted impact envelope
+- timing restriction
+- review policy
+- start/end
+- renewal
+- authority evidence
+- issuing platform reviewer
+
+Organization-wide grants MUST NOT silently authorize every department unit.
+
+Existing broad condition/planned-work/official-notice keys remain historical compatibility identifiers and must not silently grant new subtype authority.
+
+==================================================
+11. COMMON PUBLICATION REQUIREMENTS
+==================================================
+
+Public eligibility does NOT make source content public.
+
+Publication creates a separate reviewed projection.
+
+Every public publication requires:
+
+- individual permission
+- live membership
+- current verification
+- current public-capability attestation
+- exact subtype capability
+- applicable hazard gate
+- applicable road-closure gate
+- governed scope/version
+- adequate location evidence
+- current confirmation
+- independent authorized reviewer
+- author cannot self-approve
+- contract/policy version
+- expiry
+- withdrawal path
+- audit lineage
+
+==================================================
+12. AUTHORITY EVIDENCE CLASSES
+==================================================
+
+N:
+documented departmental communication authority + governed geographic audience
+
+R:
+governed road/response/service geography + authority to report the specified impact
+
+Observing a closure and ordering a closure are distinct claims.
+
+X:
+R plus relevant rail operator/crossing evidence
+
+No implied railway control.
+
+U:
+R plus utility/asset authority when making asset-status claims
+
+==================================================
+13. OFFICIAL PUBLIC NOTICE
+==================================================
+
+OFFICIAL_PUBLIC_NOTICE is a governed communication path.
+
+It is NOT a safety or capability bypass.
+
+Requires:
+
+- notice capability
+- bounded scope/audience
+- documented communication authority
+- current verification
+- individual permission
+- independent review
+
+Required structured data:
+
+- subject
+- approved title/body
+- issuing organization
+- issuing department
+- scope/version
+- effective time
+- mandatory expiry
+- linked incident/impact when applicable
+- revision/correction reference
+- review decision
+
+Prohibited:
+
+- patient/clinical information
+- investigative information
+- tactical information
+- victim/witness identity
+- protected identity
+- restricted infrastructure information
+
+If a notice describes a hazard or closure, linked structured impact and corresponding hazard/closure gates remain mandatory.
+
+Police activity communication uses this path.
+
+Corrections:
+new reviewed revision + invalidate previous active projection
+
+Withdrawal:
+immediate active-eligibility removal
+
+Expiry:
+cannot exceed earliest applicable grant, scope, verification, confirmation, or notice deadline
+
+Audit:
+
+- author token
+- reviewer token
+- source revision
+- policy version
+- decision
+- correction/withdrawal reason
+
+==================================================
+14. FIRE / EMS PROHIBITED DATA CONTRACT
+==================================================
+
+Dispatch is NOT a patient-care or clinical-record system.
+
+Prohibited in Fire/EMS records, public OR internal:
+
+- patient names
+- patient identifiers
+- diagnosis
+- patient-linked symptoms
+- treatment information
+- patient-linked transport destination
+- medical record numbers
+- protected clinical narrative
+- victim medical detail
+
+ENFORCEMENT LAYERS
+
+1. structured allowlisted intake
+2. no clinical field definitions
+3. bounded operational text
+4. unexpected-key rejection
+5. clear user warning
+6. deterministic screening
+7. content-classification screening as supplemental defense
+8. quarantine/refusal before ordinary record/share/public flows
+9. independent review
+10. prohibited content cannot be approved by exception
+11. minimized audit evidence
+12. remediation path
+
+Suggested states:
+
+PENDING_REVIEW
+APPROVED
+REJECTED_PROHIBITED_CONTENT
+QUARANTINED
+REDACTED
+
+Do not copy prohibited plaintext into ordinary logs/audit records.
+
+Controlled redaction must preserve:
+
+- event identity
+- relationships
+- redaction evidence
+
+while removing prohibited plaintext under approved policy.
+
+Automated screening MUST NOT be represented as a guarantee of legal/clinical compliance.
+
+==================================================
+15. POLICE SAFETY BOUNDARY
+==================================================
+
+Dispatch does NOT become:
+
+- CAD
+- RMS
+- evidence management
+- investigation system
+- tactical-planning system
+- CJIS system
+- victim/witness database
+- protected identity repository
+
+Lawful restricted operational notes may be internal-only.
+
+Those excluded domains require separate architecture and authorization if ever considered.
+
+==================================================
+16. INTERNAL SHARING — SUPPORT BOTH ORGANIZATION STRUCTURES
+==================================================
+
+Actual Dayton legal structure remains open.
+
+The durable architecture must support BOTH:
+
+OPTION A
+
+One municipal organization with department units.
+
+Reuse Phase 28 same-organization explicit recipient-unit sharing.
+
+No inherited private access based on:
+
+- parent relationship
+- admin role
+- department classification
+
+OPTION B
+
+Separate organizations.
+
+Implement explicit bilateral inter-organization sharing agreements.
+
+Required:
+
+- source organization
+- recipient organization
+- explicit recipient units
+- allowed categories
+- allowed fields
+- purpose
+- governed scope
+- validity
+- source approver
+- recipient approver
+- revocation
+- no onward sharing by default
+
+Both organizations must approve.
+
+Prohibit:
+
+- wildcard municipal audience
+- implicit mutual-aid access
+- private/source-record access
+- uncontrolled forwarding
+
+Police ↔ Fire
+Police ↔ EMS
+Fire ↔ EMS
+First Responders ↔ Public Works
+
+all use explicit recipient contracts.
+
+Restricted information requires a separately governed recipient policy.
+
+Clinical content remains prohibited on every sharing path.
+
+==================================================
+17. APPROVED SCHEMA DIRECTION
+==================================================
+
+Phase 28 organization/security structures are reused.
+
+Approved additive normalized objects include:
+
+dispatch_private.report_families
+dispatch_private.report_subtypes
+dispatch_private.department_report_policies
+dispatch_private.report_contract_versions
+dispatch_private.report_details
+dispatch_private.road_impacts
+dispatch_private.road_impact_revisions
+dispatch_private.capability_catalog
+dispatch_private.capability_requirements
+dispatch_private.capability_grant_constraints
+dispatch_private.capability_grant_units
+dispatch_private.publication_reviews
+dispatch_private.content_screening_decisions
+dispatch_private.content_quarantine
+dispatch_private.sharing_agreements
+dispatch_private.sharing_agreement_parties
+dispatch_private.shared_awareness_representations
+dispatch_private.shared_awareness_recipients
+
+dispatch_audit.content_remediation_events
+
+Prefer registry foreign keys rather than continually expanding a report-category enum.
+
+Preserve existing record identity and workflow.
+
+Replace the existing fixed five-key capability CHECK with catalog-backed validation while retaining all historical capability keys and their historical meanings.
+
+Public-safe projection extensions must use explicit allowlisted structured fields.
+
+All new objects require:
+
+- forced RLS
+- exact privileges
+- reviewed command boundaries
+- narrow browser exposure
+- no additional postgres Auth bridge
+- no broad table grants
+
+==================================================
+18. LEGACY COMPATIBILITY
+==================================================
+
+Preserve all Phase 28 historical records and immutable evidence.
+
+Do NOT destructively reinterpret existing records.
+
+OPERATIONAL_NOTICE:
+may map to Official Public Notice only when actual historic meaning is established
+
+PLANNED_WORK:
+may map when provenance supports it
+
+CONDITION:
+may receive a new subtype only through a new authored/reviewed revision
+
+HAZARD:
+same rule
+
+Never infer subtype or closure authority from title/text.
+
+Ambiguous historic records:
+
+LEGACY_UNCLASSIFIED
+PRIVATE
+NONPUBLISHABLE
+
+Unknown impact fields remain UNKNOWN.
+
+Never infer:
+
+- passability
+- closure extent
+- department
+- geometry
+- authority
+
+Never automatically convert existing broad grants into narrow grants.
+
+Existing public candidates cannot silently gain new eligibility.
+
+Require revalidation/review under the new contract.
+
+Preserve:
+
+- actor tokens
+- source/provenance
+- scope/version
+- identity
+- revision lineage
+- receipts
+- public lineage
+
+Preserve Phase 27 compatibility refusal rules.
+
+No permanent dual-contract wrapper.
+
+==================================================
+19. PHASE 27 FROZEN SECURITY CONTRACTS
+==================================================
+
+MUST REMAIN UNCHANGED:
+
+- narrow NOLOGIN/BYPASSRLS command owner
+- one bounded postgres Auth bridge
+- identity/session helpers remain invoker functions
+- exact grants
+- forced RLS
+- fresh TOTP controls
+- seven-day invitation model
+- compatibility refusal rules
+- no public candidate-table access
+- no broad private-record access
+- immutable/minimized audit, receipt and revision lineage
+
+Any required weakening is a HARD STOP.
+
+==================================================
+20. OWNER-OPEN ITEMS — NOT IMPLEMENTATION GAPS
+==================================================
+
+Do NOT invent these values.
+
+These remain real-activation/governance decisions:
+
+- actual Dayton legal organization structure: A or B
+- named participants
+- named reviewers
+- authority evidence
+- actual department/unit capability grants
+- permitted impact envelopes
+- legal retention/deletion approval
+- quarantine/redaction legal policy
+- invitation provider
+- sender
+- exact HTTPS origin
+- named recovery staff
+- actual bilateral sharing agreements
+- safety/training sign-off
+
+These do NOT block building the generic durable local foundation.
+
+==================================================
+21. IMPLEMENTATION SEQUENCE
+==================================================
+
+Implement locally:
+
+1. versioned contract / taxonomy registry
+2. all four department policy matrices
+3. structured impact model
+4. narrow capability catalog + high-risk conjunctive gates
+5. publication review
+6. Official Public Notice
+7. Fire/EMS prohibited-data screening/refusal/quarantine/redaction
+8. Police restricted-content enforcement
+9. same-organization sharing
+10. bilateral inter-organization sharing
+11. compatibility/migration refusal rules
+12. exhaustive disposable/local certification
+
+Operational activation remains:
+
+Police → Fire/EMS → Public Works
+
+Publication remains disabled until real grants/review paths are later approved.
+
+==================================================
+22. REQUIRED FIRST IMPLEMENTATION ARTIFACT
+==================================================
+
+Before implementing schema/code, preserve this exact contract in a new versioned Phase 29 repository artifact.
+
+Do NOT overwrite Phase 28 documentation.
+
+The new artifact must explicitly state:
+
+OWNER APPROVED PHASE 29 DURABLE REPORTING CONTRACT
+
+and record the contract version/hash used by implementation and tests.
+
+After preserving this contract, proceed with the previously authorized local Phase 29 implementation and certification.
+
+No deployment.
+No production.
+No consumer changes.
+No push until local certification passes.

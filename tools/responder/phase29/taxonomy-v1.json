@@ -1,0 +1,156 @@
+{
+  "version": "PHASE29-v1",
+  "contractHash": "3bb7740695a799632ee03b71f9daa9626b5e16f0bd455187bf3b53fe380029db",
+  "onboarding": [
+    "POLICE",
+    "FIRE",
+    "EMS",
+    "PUBLIC_WORKS"
+  ],
+  "publicSubtypes": {
+    "OFFICIAL_COMMUNICATION": [
+      "OFFICIAL_PUBLIC_NOTICE"
+    ],
+    "COLLISION": [
+      "TRAFFIC_COLLISION"
+    ],
+    "ROAD_CONDITION": [
+      "ROAD_CONDITION",
+      "HIGH_WATER",
+      "DEBRIS_OBSTRUCTION",
+      "DOWNED_TREE"
+    ],
+    "UTILITY_INFRASTRUCTURE": [
+      "DOWNED_POWER_LINE",
+      "UTILITY_INFRASTRUCTURE_ISSUE",
+      "INFRASTRUCTURE_TRAVEL_CONDITION"
+    ],
+    "RAIL_CROSSING": [
+      "RAIL_CROSSING_BLOCKED",
+      "RAIL_CROSSING_DELAY",
+      "RAIL_CROSSING_CONDITION"
+    ],
+    "FIRE_SCENE_ENVIRONMENT": [
+      "FIRE_SMOKE_TRAVEL_IMPACT",
+      "HAZMAT_SPILL",
+      "EMERGENCY_SCENE_TRAVEL_IMPACT"
+    ],
+    "WORK_TRAFFIC_CONTROL": [
+      "PLANNED_WORK",
+      "TRAFFIC_CONTROL"
+    ],
+    "TRAVEL_RESTRICTION": [
+      "TRAVEL_RESTRICTION"
+    ]
+  },
+  "internalSubtypes": [
+    "RESPONDER_SAFETY_NOTE",
+    "STAGING_COORDINATION",
+    "INTERNAL_OPERATIONAL_AWARENESS",
+    "RESTRICTED_LAW_ENFORCEMENT_NOTE",
+    "UNIT_COORDINATION_NOTE",
+    "NONPUBLIC_INFRASTRUCTURE_DETAIL",
+    "RESPONDER_ACCESS_NOTE"
+  ],
+  "departmentPublic": {
+    "POLICE": [
+      "OFFICIAL_PUBLIC_NOTICE",
+      "TRAFFIC_COLLISION",
+      "HIGH_WATER",
+      "DEBRIS_OBSTRUCTION",
+      "DOWNED_TREE",
+      "DOWNED_POWER_LINE",
+      "RAIL_CROSSING_BLOCKED",
+      "RAIL_CROSSING_DELAY",
+      "HAZMAT_SPILL",
+      "TRAFFIC_CONTROL",
+      "TRAVEL_RESTRICTION"
+    ],
+    "FIRE": [
+      "OFFICIAL_PUBLIC_NOTICE",
+      "TRAFFIC_COLLISION",
+      "HIGH_WATER",
+      "DEBRIS_OBSTRUCTION",
+      "DOWNED_TREE",
+      "DOWNED_POWER_LINE",
+      "RAIL_CROSSING_BLOCKED",
+      "RAIL_CROSSING_DELAY",
+      "FIRE_SMOKE_TRAVEL_IMPACT",
+      "HAZMAT_SPILL",
+      "EMERGENCY_SCENE_TRAVEL_IMPACT",
+      "TRAFFIC_CONTROL",
+      "TRAVEL_RESTRICTION"
+    ],
+    "EMS": [
+      "OFFICIAL_PUBLIC_NOTICE",
+      "TRAFFIC_COLLISION",
+      "HIGH_WATER",
+      "DEBRIS_OBSTRUCTION",
+      "DOWNED_TREE",
+      "DOWNED_POWER_LINE",
+      "RAIL_CROSSING_BLOCKED",
+      "RAIL_CROSSING_DELAY",
+      "FIRE_SMOKE_TRAVEL_IMPACT",
+      "HAZMAT_SPILL",
+      "EMERGENCY_SCENE_TRAVEL_IMPACT",
+      "TRAFFIC_CONTROL",
+      "TRAVEL_RESTRICTION"
+    ],
+    "PUBLIC_WORKS": [
+      "OFFICIAL_PUBLIC_NOTICE",
+      "ROAD_CONDITION",
+      "HIGH_WATER",
+      "DEBRIS_OBSTRUCTION",
+      "DOWNED_TREE",
+      "UTILITY_INFRASTRUCTURE_ISSUE",
+      "INFRASTRUCTURE_TRAVEL_CONDITION",
+      "PLANNED_WORK",
+      "TRAFFIC_CONTROL",
+      "RAIL_CROSSING_CONDITION",
+      "TRAVEL_RESTRICTION"
+    ]
+  },
+  "departmentInternal": {
+    "POLICE": [
+      "INTERNAL_OPERATIONAL_AWARENESS",
+      "RESTRICTED_LAW_ENFORCEMENT_NOTE",
+      "UNIT_COORDINATION_NOTE"
+    ],
+    "FIRE": [
+      "RESPONDER_SAFETY_NOTE",
+      "STAGING_COORDINATION",
+      "INTERNAL_OPERATIONAL_AWARENESS",
+      "UNIT_COORDINATION_NOTE",
+      "RESPONDER_ACCESS_NOTE"
+    ],
+    "EMS": [
+      "STAGING_COORDINATION",
+      "INTERNAL_OPERATIONAL_AWARENESS",
+      "UNIT_COORDINATION_NOTE",
+      "RESPONDER_ACCESS_NOTE"
+    ],
+    "PUBLIC_WORKS": [
+      "INTERNAL_OPERATIONAL_AWARENESS",
+      "UNIT_COORDINATION_NOTE",
+      "NONPUBLIC_INFRASTRUCTURE_DETAIL"
+    ]
+  },
+  "hazardSubtypes": [
+    "TRAFFIC_COLLISION",
+    "HIGH_WATER",
+    "DEBRIS_OBSTRUCTION",
+    "DOWNED_TREE",
+    "DOWNED_POWER_LINE",
+    "FIRE_SMOKE_TRAVEL_IMPACT",
+    "HAZMAT_SPILL",
+    "EMERGENCY_SCENE_TRAVEL_IMPACT"
+  ],
+  "legacyCapabilities": [
+    "awareness.condition.publish",
+    "awareness.hazard.publish",
+    "awareness.planned_work.publish",
+    "awareness.official_notice.publish",
+    "awareness.road_closure.publish"
+  ],
+  "warning": "Operational awareness only. Do not enter patient, clinical, CJIS, investigative, tactical, victim/witness or protected identity information. Screening does not guarantee compliance."
+}
