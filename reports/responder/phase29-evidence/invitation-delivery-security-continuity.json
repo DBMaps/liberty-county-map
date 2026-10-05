@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "newTablesForcedRls": 4,
+  "existingFunctionsChanged": [
+    "dispatch_private.report_execute"
+  ],
+  "intendedChange": "Legacy invite_member refuses caller-selected duration; new exact-168-hour command required",
+  "ownerAttributesUnchanged": true,
+  "postgresAuthBridgeCount": 1,
+  "existingTableSecurityUnchanged": true,
+  "baseline": "02a73f90ce9a82ea6e128f62e62ec4a8af662cf9",
+  "browserTableGrants": false
+}

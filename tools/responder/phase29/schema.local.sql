@@ -100,6 +100,7 @@ CREATE FUNCTION dispatch_private.report_execute(p_command text,p jsonb) RETURNS 
 DECLARE org uuid:=(p->>'organization_id')::uuid; actor uuid:=dispatch_private.current_actor_id(); k uuid:=(p->>'idempotency_key')::uuid; oid uuid:=(p->>'object_id')::uuid; rid uuid:=(p->>'record_id')::uuid; impact_revision integer; uid uuid:=(p->>'unit_id')::uuid; mid uuid; tok uuid; dept text; subtype text:=p->>'subtype'; r dispatch_private.operational_records%ROWTYPE; d dispatch_private.report_details%ROWTYPE; v dispatch_private.publication_reviews%ROWTYPE; a dispatch_private.sharing_agreements%ROWTYPE; h bytea:=dispatch_private.request_hash(p-'idempotency_key'); receipt dispatch_audit.command_receipts%ROWTYPE; result jsonb; source jsonb; flag boolean; expected integer:=(p->>'expected_revision')::integer; x jsonb; cap uuid; grants uuid[]; deadline timestamptz; qid uuid; sid uuid; recipients uuid[]; permission text; constraints dispatch_private.capability_grant_constraints%ROWTYPE;
 BEGIN
  IF NOT dispatch_private.has_live_aal2() OR actor IS NULL OR org IS NULL OR k IS NULL THEN RAISE EXCEPTION 'PHASE29_FORBIDDEN'; END IF;
+ IF p_command='invite_member' THEN RAISE EXCEPTION 'DAYTON_INVITE_SERVER_ISSUANCE_REQUIRED'; END IF;
  PERFORM pg_advisory_xact_lock(280028);
  PERFORM 1 FROM dispatch_private.organizations WHERE id=org AND status='ACTIVE' FOR UPDATE; IF NOT FOUND THEN RAISE EXCEPTION 'PHASE29_ORGANIZATION'; END IF;
  tok:=dispatch_private.token_for(org,actor);
