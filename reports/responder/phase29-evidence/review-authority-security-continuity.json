@@ -1,0 +1,16 @@
+{
+  "status": "PASS",
+  "baselineCommit": "e48c7f459ca306e6d5eb95c5ab263ab888f984ee",
+  "existingFunctionsChangedOnly": [
+    "dispatch_private.report_execute",
+    "dispatch_private.report_public_eligible",
+    "dispatch_private.report_review_prerequisites"
+  ],
+  "allOtherExistingFunctionDefinitionsOwnersDefinerFlagsAndAclsUnchanged": true,
+  "commandOwnerPostureUnchanged": true,
+  "phase27And28SourceUnchanged": true,
+  "postflight": "Unchanged Phase28 postflight passed after install and reinstall",
+  "identityMapRetirement": "transaction-scoped command-owner deletion permitted; reviewer eligibility immediately refused without live actor mapping",
+  "forcedRlsTables": 61,
+  "additionalPostgresAuthBridges": 0
+}

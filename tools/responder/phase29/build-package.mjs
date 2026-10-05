@@ -7,10 +7,16 @@ if(canonicalContractHash(readFileSync(join(here,m.artifact),'utf8'))!==m.sha256)
 const t=JSON.parse(readFileSync(join(here,'taxonomy-v1.json'),'utf8'));
 if(t.contractHash!==m.sha256)throw Error('Registry contract mismatch');
 let s=readFileSync(join(here,'schema.local.sql'),'utf8');
+s=s.replace('CREATE FUNCTION dispatch_private.report_review_prerequisites',()=>readFileSync(join(here,'review-authority.local.sql'),'utf8')+'\nCREATE FUNCTION dispatch_private.report_review_prerequisites');
+const prerequisite=s.match(/CREATE FUNCTION dispatch_private\.report_review_prerequisites\(p_review uuid\)[\s\S]*?\$\$;/)?.[0];
+if(!prerequisite)throw Error('Review prerequisite definition missing');
+const attempt=prerequisite.replace('report_review_prerequisites(p_review uuid)','report_review_attempt_eligible(p_review uuid,p_authorization uuid,p_acting_unit uuid,p_token uuid)').replace("v.state='APPROVED'","v.state IN('PENDING_REVIEW','APPROVED','REJECTED')").replaceAll('v.reviewer_authorization_id','p_authorization').replaceAll('v.acting_unit_id','p_acting_unit').replaceAll('v.reviewer_token','p_token');
+s=s.replace('CREATE FUNCTION dispatch_private.report_public_eligible',()=>attempt+'\nCREATE FUNCTION dispatch_private.report_public_eligible');
 s=s.replace('DEFAULT false CHECK(NOT publishing_enabled)','DEFAULT false');
 s=s.replace(/CREATE FUNCTION dispatch_private.report_revision_guard\(\)[\s\S]*?END \$\$;/,'');
-const start=s.indexOf(" IF p_command NOT IN('create_report'");
-const end=s.indexOf(" IF p_command IN('create_report','revise_report') THEN",start);
+const start=s.indexOf(" IF p_command NOT IN('grant_review_authorization'");
+const end=s.indexOf(" IF p_command IN('grant_review_authorization','revoke_review_authorization') THEN",start);
+if(start<0||end<start)throw Error('Legacy boundary markers missing');
 const legacy=s.slice(start,end);
 s=s.slice(0,start)+s.slice(end);
 s=s.replace(' tok:=dispatch_private.token_for(org,actor);',legacy+' tok:=dispatch_private.token_for(org,actor);');
@@ -28,7 +34,7 @@ seed+='INSERT INTO dispatch_private.capability_requirements VALUES '+publicCodes
 const tables=[...s.matchAll(/CREATE TABLE (dispatch_(?:private|audit|projection)\.\w+)/g)].map(x=>x[1]);
 let security='GRANT dispatch_function_owner TO postgres;\n';
 for(const table of tables)security+=`ALTER TABLE ${table} ENABLE ROW LEVEL SECURITY; ALTER TABLE ${table} FORCE ROW LEVEL SECURITY; REVOKE ALL ON ${table} FROM PUBLIC,anon,authenticated,service_role;\n`;
-const mutable=['report_details','road_impacts','capability_grant_constraints','content_quarantine','publication_reviews','sharing_agreements','shared_awareness_representations','report_public_projections'];
+const mutable=['reviewer_authorizations','report_details','road_impacts','capability_grant_constraints','content_quarantine','publication_reviews','sharing_agreements','shared_awareness_representations','report_public_projections'];
 for(const table of tables) {
  const n=table.split('.')[1];
  const registry=['report_contract_versions','report_families','report_subtypes','department_report_policies','capability_catalog','capability_requirements','report_scope_segments'].includes(n);
@@ -38,12 +44,12 @@ for(const table of tables) {
 const original=readFileSync(join(here,'../phase28/closure.sql'),'utf8').match(/CREATE OR REPLACE FUNCTION dispatch_private.reject_append_only\(\)[\s\S]*?END \$\$;/)[0];
 const guarded=original.replace('SELECT user_id INTO subject',`IF TG_TABLE_NAME='record_revisions' AND TG_OP='UPDATE' AND EXISTS(SELECT 1 FROM dispatch_private.report_redaction_context c WHERE c.transaction_id=txid_current() AND c.record_id=(to_jsonb(OLD)->>'record_id')::uuid) AND (to_jsonb(NEW)-'snapshot')=(to_jsonb(OLD)-'snapshot') AND NEW.snapshot=jsonb_build_object('redacted',true,'record_id',(to_jsonb(OLD)->>'record_id')::uuid,'revision',(to_jsonb(OLD)->>'revision_number')::integer) THEN RETURN NEW; END IF;\n SELECT user_id INTO subject`);
 security+=guarded+'\n';
-for(const table of ['dispatch_private.road_impact_revisions','dispatch_private.content_screening_decisions','dispatch_audit.content_remediation_events'])security+=`CREATE TRIGGER phase29_append_only BEFORE UPDATE OR DELETE ON ${table} FOR EACH ROW EXECUTE FUNCTION dispatch_private.reject_append_only();\n`;
+for(const table of ['dispatch_private.review_state_snapshots','dispatch_private.road_impact_revisions','dispatch_private.content_screening_decisions','dispatch_audit.content_remediation_events'])security+=`CREATE TRIGGER phase29_append_only BEFORE UPDATE OR DELETE ON ${table} FOR EACH ROW EXECUTE FUNCTION dispatch_private.reject_append_only();\n`;
 const functions=[...s.matchAll(/CREATE (?:OR REPLACE )?FUNCTION dispatch_private\.(\w+)\(([^)]*)\)/g)].map(x=>({name:x[1],args:x[2].split(',').filter(Boolean).map(p=>p.trim().split(/\s+/).slice(1).join(' ')).join(',')}));
 security+='GRANT CREATE ON SCHEMA dispatch_private TO dispatch_function_owner;\n';
 for(const f of functions)security+=`ALTER FUNCTION dispatch_private.${f.name}(${f.args}) OWNER TO dispatch_function_owner; REVOKE ALL ON FUNCTION dispatch_private.${f.name}(${f.args}) FROM PUBLIC,anon,authenticated,service_role;\n`;
 security+='REVOKE CREATE ON SCHEMA dispatch_private FROM dispatch_function_owner;\nREVOKE EXECUTE ON FUNCTION dispatch_private.execute_command(text,jsonb) FROM authenticated;\nGRANT EXECUTE ON FUNCTION dispatch_private.report_execute(text,jsonb) TO authenticated;\n';
-const commands=['create_report','revise_report','set_road_impact','approve_report_content','submit_report_publication','review_report_publication','publish_report','withdraw_report','quarantine_report','redact_report','grant_report_capability','renew_report_capability','create_sharing_agreement','approve_sharing_agreement','revoke_sharing_agreement','share_report','revoke_report_share'];
+const commands=['grant_review_authorization','revoke_review_authorization','create_report','revise_report','set_road_impact','approve_report_content','submit_report_publication','review_report_publication','publish_report','withdraw_report','quarantine_report','redact_report','grant_report_capability','renew_report_capability','create_sharing_agreement','approve_sharing_agreement','revoke_sharing_agreement','share_report','revoke_report_share'];
 const oldCommands=[...readFileSync(join(here,'../phase28/command-contract.mjs'),'utf8').matchAll(/'([a-z]+_[a-z_]+)'/g)].map(x=>x[1]).filter(x=>!['expected_revision','source_revision'].includes(x));
 for(const name of new Set([...commands,...oldCommands]))security+=`CREATE OR REPLACE FUNCTION dispatch_api.${name}(p_payload jsonb) RETURNS jsonb LANGUAGE sql SECURITY INVOKER SET search_path='' AS $fn$ SELECT dispatch_private.report_execute(${q(name)},p_payload) $fn$; REVOKE ALL ON FUNCTION dispatch_api.${name}(jsonb) FROM PUBLIC,anon,service_role; GRANT EXECUTE ON FUNCTION dispatch_api.${name}(jsonb) TO authenticated;\n`;
 security+=`CREATE POLICY report_public_read ON dispatch_projection.report_public_projections FOR SELECT TO anon,authenticated USING(dispatch_private.report_projection_eligible(id));

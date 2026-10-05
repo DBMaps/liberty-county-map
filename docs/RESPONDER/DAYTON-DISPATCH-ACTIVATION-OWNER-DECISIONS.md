@@ -8,7 +8,7 @@ This register records subsequent activation decisions against the owner-approved
 | --- | --- | --- | --- |
 | DAYTON-ORG-01 | Dayton pilot organization structure | OWNER_APPROVED | One municipal organization with separate Police, Fire, EMS and Public Works department/unit boundaries; independent participating agencies use separate organizations and governed bilateral sharing. |
 
-| DAYTON-REVIEW-01 | Public report review authority | OWNER_APPROVED; IMPLEMENTATION_ALIGNMENT_REQUIRED | Independent explicitly scoped department/unit review; no self-approval; at least two trained authorized reviewers per unit; no default cross-unit review. |
+| DAYTON-REVIEW-01 | Public report review authority | OWNER_APPROVED; LOCAL_ALIGNMENT_CERTIFIED | Independent explicitly scoped department/unit review; no self-approval; at least two trained authorized reviewers per unit; no default cross-unit review. |
 
 ## DAYTON-ORG-01 — Organization structure
 
@@ -50,7 +50,7 @@ No organization, unit, participant, invitation, capability grant or sharing agre
 
 ## DAYTON-REVIEW-01 — Public report review authority
 
-Authority: explicit owner instruction titled “GRIDLY DISPATCH — OWNER GOVERNANCE DECISION: PUBLIC REPORT REVIEW AUTHORITY.” Status: **OWNER_APPROVED governance policy; current implementation does not fully enforce it.** This decision does not modify the frozen Phase 29 reporting contract or retroactively extend its certification.
+Authority: explicit owner instruction titled “GRIDLY DISPATCH — OWNER GOVERNANCE DECISION: PUBLIC REPORT REVIEW AUTHORITY.” Status: **OWNER_APPROVED governance policy; locally aligned and certified after the initial assessment below.** This decision does not modify the frozen Phase 29 reporting contract or retroactively extend its certification.
 
 ### Independent review and coverage
 
@@ -76,7 +76,7 @@ The reviewer must be currently eligible at approval time. Approval must bind to 
 
 Audit lineage must record the author token, reviewer token, decision, revision, policy version and timestamp.
 
-### Read-only implementation comparison and stop
+### Initial read-only implementation comparison and stop (historical)
 
 Reviewed committed implementation at `26d71ae6a6b7cbc4ab795c274e848f10b26429bc`, against the frozen certified Phase 29 implementation at `e48c7f459ca306e6d5eb95c5ab263ab888f984ee`. Findings are from source inspection, not a new runtime certification.
 
@@ -92,3 +92,11 @@ Already supported: author/reviewer separation, live identity/session and unit-ac
 The exact installed review branch is `tools/responder/phase29/package.local.sql:200-203`; later eligibility checks are in `report_public_eligible`. Reviewer staffing/training is an operational prerequisite, not evidence that these runtime gaps are resolved.
 
 **STOP: no schema/runtime repair is authorized or performed in this decision-recording task.** No new certification claim is made for this policy. Public activation under DAYTON-REVIEW-01 remains blocked until the owner separately authorizes implementation alignment and focused certification. The previously certified Phase 29 baseline remains unchanged.
+
+### DAYTON-REVIEW-01 — Local alignment resolution
+
+The owner subsequently authorized reviewer-specific implementation alignment. The governance decision was preserved first in commit `6260218572cea1e124cf75fd765d15d348f6ee06`. The four historical gaps above are resolved by additive reviewer authorizations, explicit acting/target unit bindings, current-authority checks before receipt replay and approval, and immutable candidate-state snapshots covering report/detail/impact/candidate/contract/policy/scope state.
+
+Final local certification: 10 static tests and 14 runtime tests passed with zero failures; 298 runtime assertion groups include 76 focused reviewer-policy assertions. The unchanged Phase 27 security postflight and frozen function/privilege comparison passed, including preservation of identity-map erasure. Evidence and limitations are recorded in `reports/responder/responder-phase29-review-authority.json`.
+
+This resolves the implementation-alignment stop for owner review. Named reviewers, evidence of training and minimum two-reviewer staffing per unit remain activation prerequisites. No real reviewers/grants/participants were created; publication remains disabled. The frozen Phase 29 reporting contract, historical certification artifacts and existing commits remain unchanged.

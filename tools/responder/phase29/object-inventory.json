@@ -23,6 +23,8 @@
     "dispatch_private.sharing_agreement_units",
     "dispatch_private.shared_awareness_representations",
     "dispatch_private.shared_awareness_recipients",
+    "dispatch_private.reviewer_authorizations",
+    "dispatch_private.review_state_snapshots",
     "dispatch_projection.report_public_projections",
     "dispatch_private.report_redaction_context"
   ],
@@ -52,8 +54,32 @@
       "args": "uuid,uuid[]"
     },
     {
+      "name": "report_review_state",
+      "args": "uuid"
+    },
+    {
+      "name": "report_capture_review_state",
+      "args": ""
+    },
+    {
+      "name": "report_review_state_valid",
+      "args": "uuid"
+    },
+    {
+      "name": "report_reviewer_authorized",
+      "args": "uuid,uuid,uuid,uuid"
+    },
+    {
+      "name": "report_review_authorization_guard",
+      "args": ""
+    },
+    {
       "name": "report_review_prerequisites",
       "args": "uuid"
+    },
+    {
+      "name": "report_review_attempt_eligible",
+      "args": "uuid,uuid,uuid,uuid"
     },
     {
       "name": "report_public_eligible",
@@ -81,6 +107,8 @@
     }
   ],
   "commands": [
+    "grant_review_authorization",
+    "revoke_review_authorization",
     "create_report",
     "revise_report",
     "set_road_impact",

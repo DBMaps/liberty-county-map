@@ -16,7 +16,7 @@ async function elevate(u){const e=await http('/auth/v1/factors',{method:'POST',t
 async function rpc(name,u,p,accept=[200]){return http(`/rest/v1/rpc/${name}`,{method:'POST',token:u.access_token,profile:'dispatch_api',body:{p_payload:p},accept})}
 const key=()=>randomUUID(); const digest=t=>createHash('sha256').update(t).digest('hex');
 
-const checks=[];
+const checks=[]; const reviewChecks=[]; const reviewOnly=process.env.P29_REVIEW_ONLY==='true';
 const registry=JSON.parse(readFileSync(new URL('./taxonomy-v1.json',import.meta.url),'utf8'));
 const inventory=JSON.parse(readFileSync(new URL('./object-inventory.json',import.meta.url),'utf8'));
 const units=Object.fromEntries(['POLICE','FIRE','EMS','PUBLIC_WORKS','FOREIGN'].map(x=>[x,key()]));
@@ -24,7 +24,7 @@ const actors={}; const memberships={}; const records={};
 const future=(minutes=10)=>new Date(Date.now()+minutes*60000).toISOString();
 const past=()=>new Date(Date.now()-60000).toISOString();
 const reportBase=(dep,sub)=>({organization_id:org1,idempotency_key:key(),unit_id:units[dep],scope_id:scope1,subtype:sub,timing:'UNPLANNED',title:'Synthetic operational travel awareness',warning_acknowledged:true,...(sub==='OFFICIAL_PUBLIC_NOTICE'?{subject:'Synthetic communication',body:'Operational awareness bulletin',notice_effective_at:past(),notice_expires_at:future()}:{} )});
-async function command(name,user,p={}){return (await rpc(name,user,{organization_id:org1,idempotency_key:key(),...p})).data}
+async function command(name,user,p={}){if(name==='review_report_publication' && user===actors.reviewer){const record=sql(`SELECT record_id FROM dispatch_private.publication_reviews WHERE id=${q(p.object_id)}`);const unit=sql(`SELECT unit_id FROM dispatch_private.report_details WHERE record_id=${q(record)}`);const subtype=sql(`SELECT subtype FROM dispatch_private.report_details WHERE record_id=${q(record)}`);p={record_id:record,expected_candidate_revision:1,acting_unit_id:unit,reviewer_authorization_id:certFixtures.reviewAuthorizations?.[subtype],...p};}return (await rpc(name,user,{organization_id:org1,idempotency_key:key(),...p})).data}
 async function denied(label,name,user,p={}){const r=await rpc(name,user,{organization_id:org1,idempotency_key:key(),...p},[400,401,403]);assert.ok(r.status>=400,label);checks.push(label)}
 function checked(label,fn){fn();checks.push(label)}
 const dRev=id=>Number(sql(`SELECT revision FROM dispatch_private.report_details WHERE record_id=${q(id)}`));
@@ -36,7 +36,7 @@ async function approve(id){return command('approve_report_content',actors.review
 const impactBase=(extra={})=>({direction_affected:'NORTHBOUND',lane_extent:'ONE',lanes_affected_count:1,total_lanes_count:2,closure_extent:'PARTIAL',traffic_operation:'NARROWED',public_passable:'YES',emergency_vehicles_passable:'UNKNOWN',impact_status:'ACTIVE',valid_until:future(),...extra});
 let segment; const certFixtures={};
 let success=false;
-process.on('exit',code=>writeFileSync(join(evidence,'runtime-results.json'),JSON.stringify({status:success&&code===0?'PASS':'FAIL',contractHash:registry.contractHash,checks,assertionGroups:checks.length,syntheticOnly:true,productionConnections:false,productionChanges:false},null,2)+'\n'));
+process.on('exit',code=>writeFileSync(join(evidence,'runtime-results.json'),JSON.stringify({status:success&&code===0?'PASS':'FAIL',contractHash:registry.contractHash,reviewPolicy:'DAYTON-REVIEW-01-v1',reviewOnly,reviewChecks,focusedReviewAssertionGroups:reviewChecks.length,checks,assertionGroups:checks.length,syntheticOnly:true,productionConnections:false,productionChanges:false},null,2)+'\n'));
 test('Phase 29 real local Auth and forced-RLS catalog',async()=>{
  const labels=['POLICE','FIRE','EMS','PUBLIC_WORKS','reviewer','foreign','platform','viewer'];
  for(const label of labels){actors[label]=await elevate(await signup(label)); memberships[label]=key();sql(`INSERT INTO dispatch_private.profiles(user_id,display_name) VALUES(${q(actors[label].userId)},'Synthetic actor')`)}
@@ -57,6 +57,8 @@ test('Phase 29 real local Auth and forced-RLS catalog',async()=>{
  await denied('viewer create refused','create_report',actors.viewer,reportBase('POLICE','TRAFFIC_COLLISION'));
  await denied('platform cannot write private report','create_report',actors.platform,reportBase('POLICE','TRAFFIC_COLLISION'));
  await denied('cross-unit creation refused','create_report',actors.FIRE,reportBase('EMS','TRAFFIC_COLLISION'));
+ certFixtures.reviewAuthorizations={};for(const subtype of ['TRAFFIC_COLLISION','OFFICIAL_PUBLIC_NOTICE']) certFixtures.reviewAuthorizations[subtype]=(await command('grant_review_authorization',actors.platform,{reviewer_membership_id:memberships.reviewer,acting_unit_id:units.FIRE,target_unit_id:units.FIRE,subtype,risk_gates:['awareness.hazard.publish','awareness.road_closure.publish'],scope_id:scope1,scope_version:1,valid_until:future(60),authority_evidence:'local synthetic reviewer appointment and training'})).object_id;
+ checked('review authorization private denied',()=>roleSQL(actors.reviewer,'SELECT * FROM dispatch_private.reviewer_authorizations',true));checked('snapshot private denied',()=>roleSQL(actors.reviewer,'SELECT * FROM dispatch_private.review_state_snapshots',true));
  checked('raw report private denied',()=>roleSQL(actors.POLICE,'SELECT body FROM dispatch_private.report_details',true));
  checked('old dispatcher direct execution denied',()=>roleSQL(actors.POLICE,"SELECT dispatch_private.execute_command('create_operational_record','{}')",true));
 });
@@ -96,7 +98,7 @@ test('capability gates, independent publication review, public refusal default',
  for(const [label,g] of [['no subtype key',[hazard,closure]],['hazard gate missing',[exact,closure]],['closure gate missing',[exact,hazard]]])await denied(label,'submit_report_publication',actors.FIRE,{record_id:id,expected_revision:dRev(id),title:'Synthetic collision',summary:'Synthetic roadway restriction',grant_ids:g,valid_until:future(5)});
  certFixtures.grants=[exact,hazard,closure];certFixtures.collision=id;
  const review=(await command('submit_report_publication',actors.FIRE,{record_id:id,expected_revision:dRev(id),title:'Synthetic collision',summary:'Synthetic roadway restriction',grant_ids:[exact,hazard,closure],valid_until:future(5)})).object_id;
- await denied('no self approval','review_report_publication',actors.FIRE,{object_id:review,expected_revision:dRev(id),decision:'APPROVED'});
+ certFixtures.review=review; await denied('no self approval','review_report_publication',actors.FIRE,{object_id:review,expected_revision:dRev(id),decision:'APPROVED'});
  await command('review_report_publication',actors.reviewer,{object_id:review,expected_revision:dRev(id),decision:'APPROVED'});
  await denied('publication remains disabled','publish_report',actors.reviewer,{object_id:review,expected_revision:dRev(id)});
  checked('EMS cannot inherit Fire units grant',()=>assert.equal(ownerSQL(`SELECT dispatch_private.report_grants_valid(${q(records['EMS:TRAFFIC_COLLISION'])},ARRAY[${[exact,hazard,closure].map(q).join(',')}]::uuid[])`),'f'));
@@ -105,7 +107,98 @@ test('capability gates, independent publication review, public refusal default',
  checked('public impact omits responder passability',()=>assert.equal(ownerSQL(`SELECT dispatch_private.report_safe_impacts(${q(id)})::text LIKE '%emergency_vehicles_passable%'`),'f'));
  checked('no source automatically public',()=>assert.equal(sql('SELECT count(*) FROM dispatch_projection.report_public_projections'),'0'));
 });
-test('same-org and bilateral sharing, expiry/revocation, source isolation',async()=>{
+
+// DAYTON-REVIEW-01 certification; every mutation below is confined to the disposable clone.
+const focusedReview={};
+function reviewCheck(label,fn){checked('DAYTON REVIEW '+label,fn);reviewChecks.push(label)}
+async function reviewerGrant(extra={}){return (await command('grant_review_authorization',actors.platform,{reviewer_membership_id:memberships.reviewer,acting_unit_id:units.FIRE,target_unit_id:units.FIRE,subtype:'TRAFFIC_COLLISION',risk_gates:['awareness.hazard.publish','awareness.road_closure.publish'],scope_id:scope1,scope_version:1,valid_until:future(60),authority_evidence:'local synthetic trained reviewer evidence',...extra})).object_id}
+async function pendingReview(){return (await command('submit_report_publication',actors.FIRE,{record_id:focusedReview.record,expected_revision:dRev(focusedReview.record),title:'Synthetic review safety case',summary:'Synthetic travel closure awareness',grant_ids:certFixtures.grants,valid_until:future(5)})).object_id}
+function reviewPayload(id,extra={}){return {organization_id:org1,idempotency_key:key(),object_id:id,record_id:focusedReview.record,expected_revision:dRev(focusedReview.record),expected_candidate_revision:1,reviewer_authorization_id:certFixtures.reviewAuthorizations.TRAFFIC_COLLISION,acting_unit_id:units.FIRE,decision:'APPROVED',...extra}}
+async function reviewDenied(label,id,extra={},user=actors.reviewer,pattern=/DAYTON_REVIEW_|PHASE29_/){const receipts=sql('SELECT count(*) FROM dispatch_audit.command_receipts');const p=reviewPayload(id,extra);const result=await rpc('review_report_publication',user,p,[400,401,403]);assert.match(result.data.message,pattern,label);assert.equal(sql('SELECT count(*) FROM dispatch_audit.command_receipts'),receipts);assert.equal(sql(`SELECT state FROM dispatch_private.publication_reviews WHERE id=${q(id)}`),'PENDING_REVIEW');checks.push('DAYTON REVIEW '+label);reviewChecks.push(label)}
+async function replayDenied(label,payload){const count=sql('SELECT count(*) FROM dispatch_audit.command_receipts');const result=await rpc('review_report_publication',actors.reviewer,payload,[400,401,403]);assert.match(result.data.message,/DAYTON_REVIEW_|PHASE29_/);assert.equal(sql('SELECT count(*) FROM dispatch_audit.command_receipts'),count);checks.push('DAYTON REVIEW '+label);reviewChecks.push(label)}
+async function approveFocused(id,extra={},user=actors.reviewer){return (await rpc('review_report_publication',user,reviewPayload(id,extra))).data}
+function historicalExpiredAuthorization(id){const next=key();sql(`INSERT INTO dispatch_private.reviewer_authorizations SELECT ${q(next)},organization_id,reviewer_token,acting_unit_id,target_unit_id,subtype,risk_gates,scope_id,scope_version,scope_source_version,now()-interval '2 hours',now()-interval '1 hour',NULL,authority_evidence,issued_by_token,governance_approval_reference,policy_version,created_at FROM dispatch_private.reviewer_authorizations WHERE id=${q(id)}`);return next}
+
+test('DAYTON-REVIEW-01 exact reviewer authorization and immutable evidence',async()=>{
+ focusedReview.record=(await command('create_report',actors.FIRE,reportBase('FIRE','TRAFFIC_COLLISION'))).object_id;
+ focusedReview.impact=(await command('set_road_impact',actors.FIRE,{record_id:focusedReview.record,expected_revision:dRev(focusedReview.record),impact:impactBase({segment_id:segment,lane_extent:'ALL',lanes_affected_count:2,closure_extent:'FULL',traffic_operation:'STOPPED',public_passable:'NO'})})).object_id;await approve(focusedReview.record);
+ const id=await pendingReview();focusedReview.pending=id;
+ await reviewDenied('missing explicit subtype grant',id,{reviewer_authorization_id:null});
+ await reviewDenied('wrong subtype grant',id,{reviewer_authorization_id:certFixtures.reviewAuthorizations.OFFICIAL_PUBLIC_NOTICE});
+ const unitWrong=await reviewerGrant({acting_unit_id:units.EMS,target_unit_id:units.EMS});await reviewDenied('wrong target unit',id,{reviewer_authorization_id:unitWrong,acting_unit_id:units.EMS});
+ const newScope=key();focusedReview.otherScope=newScope;sql(`INSERT INTO dispatch_private.operational_scopes(id,organization_id,scope_type,label,source_reference,version) VALUES('${newScope}','${org1}','SERVICE_TERRITORY','Synthetic alternate v2 scope','local evidence',2); INSERT INTO dispatch_private.scope_governance VALUES('${org1}','${newScope}','local evidence','v2',now()+interval '1 hour')`);
+ const scopeWrong=await reviewerGrant({scope_id:newScope,scope_version:2});await reviewDenied('wrong scope/version',id,{reviewer_authorization_id:scopeWrong});
+ const wrongVersion=await rpc('grant_review_authorization',actors.platform,{organization_id:org1,idempotency_key:key(),reviewer_membership_id:memberships.reviewer,acting_unit_id:units.FIRE,target_unit_id:units.FIRE,subtype:'TRAFFIC_COLLISION',risk_gates:[],scope_id:scope1,scope_version:2,valid_until:future(60),authority_evidence:'synthetic'},[400,403]);assert.match(wrongVersion.data.message,/DAYTON_REVIEW_AUTHORIZATION_SCOPE/);reviewChecks.push('invalid scope version cannot be issued');checks.push('DAYTON REVIEW invalid scope version cannot be issued');
+ const plain=await reviewerGrant({risk_gates:[]});await reviewDenied('missing hazard and closure review gates',id,{reviewer_authorization_id:plain});
+ const hazardOnly=await reviewerGrant({risk_gates:['awareness.hazard.publish']});await reviewDenied('missing closure review gate',id,{reviewer_authorization_id:hazardOnly});
+ const closureOnly=await reviewerGrant({risk_gates:['awareness.road_closure.publish']});await reviewDenied('missing hazard review gate',id,{reviewer_authorization_id:closureOnly});
+ const futureGrant=await reviewerGrant({valid_from:future(5)});await reviewDenied('future review grant not usable',id,{reviewer_authorization_id:futureGrant});
+ const expired=historicalExpiredAuthorization(certFixtures.reviewAuthorizations.TRAFFIC_COLLISION);await reviewDenied('expired authorization',id,{reviewer_authorization_id:expired});
+ const revoked=await reviewerGrant();await command('revoke_review_authorization',actors.platform,{object_id:revoked});await reviewDenied('revoked authorization',id,{reviewer_authorization_id:revoked});
+ await reviewDenied('wrong organization request',id,{organization_id:org2});
+ await reviewDenied('report identity mismatch',id,{record_id:certFixtures.collision});
+ await reviewDenied('missing explicit acting unit context',id,{acting_unit_id:null});
+ const firstApproval=reviewPayload(id);await rpc('review_report_publication',actors.reviewer,firstApproval);certFixtures.reviewReplay=firstApproval;const replay=(await rpc('review_report_publication',actors.reviewer,firstApproval)).data;reviewCheck('eligible receipt replay succeeds',()=>assert.equal(replay.replay,true));reviewCheck('exact subtype, unit, scope and all risk gates succeed',()=>assert.equal(ownerSQL(`SELECT dispatch_private.report_review_prerequisites(${q(id)})`),'t'));
+ reviewCheck('review audit exact lineage and timestamp',()=>assert.equal(sql(`SELECT (payload->>'author_token') IS NOT NULL AND (payload->>'reviewer_token') IS NOT NULL AND payload->>'author_token'<>payload->>'reviewer_token' AND payload->>'decision'='APPROVED' AND payload->>'source_revision' IS NOT NULL AND payload->>'details_revision' IS NOT NULL AND payload->>'candidate_revision'='1' AND payload->>'reviewer_policy_version'='DAYTON-REVIEW-01-v1' AND payload->>'reviewed_at' IS NOT NULL AND length(payload->>'state_digest')=64 AND jsonb_array_length(payload->'impact_revisions')>0 FROM dispatch_audit.pilot_events WHERE command_name='review_report_publication' AND target_id=${q(id)}`),'t'));
+ reviewCheck('snapshot immutable',()=>sql(`UPDATE dispatch_private.review_state_snapshots SET state_digest=decode(repeat('00',32),'hex') WHERE review_id=${q(id)}`,{fail:true}));
+ const retireToken=sql(`SELECT reviewer_token FROM dispatch_private.reviewer_authorizations WHERE id=${q(certFixtures.reviewAuthorizations.TRAFFIC_COLLISION)}`);reviewCheck('Phase27 identity-map retirement preserved and review immediately unusable',()=>assert.equal(ownerSQL(`DELETE FROM dispatch_private.actor_tokens WHERE token=${q(retireToken)}; SELECT NOT dispatch_private.report_reviewer_authorized(${q(focusedReview.record)},${q(certFixtures.reviewAuthorizations.TRAFFIC_COLLISION)},${q(units.FIRE)},${q(retireToken)})`),'t'));
+ reviewCheck('authorization scope immutable',()=>sql(`UPDATE dispatch_private.reviewer_authorizations SET subtype='OFFICIAL_PUBLIC_NOTICE' WHERE id=${q(certFixtures.reviewAuthorizations.TRAFFIC_COLLISION)}`,{fail:true}));
+ const liveGrant=await reviewerGrant();const live=await pendingReview();const livePayload=reviewPayload(live,{reviewer_authorization_id:liveGrant});await rpc('review_report_publication',actors.reviewer,livePayload);await command('revoke_review_authorization',actors.platform,{object_id:liveGrant});await replayDenied('revoked review authority refuses receipt replay',livePayload);reviewCheck('authorization revocation immediately invalidates approved eligibility',()=>assert.equal(ownerSQL(`SELECT dispatch_private.report_review_prerequisites(${q(live)})`),'f'));
+});
+
+test('DAYTON-REVIEW-01 explicit cross-unit grants and organization isolation',async()=>{
+ const id=await pendingReview();await reviewDenied('multiple memberships do not authorize acting from another unit',id,{acting_unit_id:units.POLICE});
+ await denied('DAYTON REVIEW cross-unit grant requires owner reference','grant_review_authorization',actors.platform,{reviewer_membership_id:memberships.reviewer,acting_unit_id:units.POLICE,target_unit_id:units.FIRE,subtype:'TRAFFIC_COLLISION',risk_gates:['awareness.hazard.publish','awareness.road_closure.publish'],scope_id:scope1,scope_version:1,valid_until:future(60),authority_evidence:'synthetic reviewer authority'});reviewChecks.push('cross-unit grant requires governance approval reference');
+ const cross=await reviewerGrant({acting_unit_id:units.POLICE,governance_approval_reference:'OWNER-APPROVED-SYNTHETIC-CROSS-UNIT-v1'});
+ await reviewDenied('cross-unit grant cannot expand acting units',id,{acting_unit_id:units.EMS,reviewer_authorization_id:cross});
+ await approveFocused(id,{acting_unit_id:units.POLICE,reviewer_authorization_id:cross});reviewCheck('explicit cross-unit approval succeeds',()=>assert.equal(ownerSQL(`SELECT dispatch_private.report_review_prerequisites(${q(id)})`),'t'));
+ const grantInput={organization_id:org1,idempotency_key:key(),reviewer_membership_id:memberships.reviewer,acting_unit_id:units.POLICE,target_unit_id:null,subtype:'TRAFFIC_COLLISION',risk_gates:[],scope_id:scope1,scope_version:1,valid_until:future(60),authority_evidence:'synthetic',governance_approval_reference:'synthetic'};
+ const wildcard=await rpc('grant_review_authorization',actors.platform,grantInput,[400,403]);assert.ok(wildcard.status>=400);reviewChecks.push('no wildcard unit authorization');checks.push('DAYTON REVIEW no wildcard unit authorization');
+ const cats=await rpc('grant_review_authorization',actors.platform,{...grantInput,idempotency_key:key(),target_unit_id:units.FIRE,subtype:'*'},[400,403]);assert.ok(cats.status>=400);reviewChecks.push('no wildcard category authorization');checks.push('DAYTON REVIEW no wildcard category authorization');
+ const risk=await rpc('grant_review_authorization',actors.platform,{...grantInput,idempotency_key:key(),target_unit_id:units.FIRE,risk_gates:['*']},[400,403]);assert.ok(risk.status>=400);reviewChecks.push('no wildcard risk gate authorization');checks.push('DAYTON REVIEW no wildcard risk gate authorization');
+ const agreement=(await command('create_sharing_agreement',actors.POLICE,{recipient_organization_id:org2,scope_id:scope1,scope_version:1,purpose:'Synthetic travel review boundary test',allowed_subtypes:['TRAFFIC_COLLISION'],allowed_fields:['title','summary'],recipient_unit_ids:[units.FOREIGN],valid_until:future(60)})).object_id;await command('approve_sharing_agreement',actors.POLICE,{object_id:agreement,expected_revision:1});await command('approve_sharing_agreement',actors.foreign,{organization_id:org2,object_id:agreement,expected_revision:1});
+ const foreignGrant=await reviewerGrant({organization_id:org2,reviewer_membership_id:memberships.foreign,acting_unit_id:units.FOREIGN,target_unit_id:units.FOREIGN,scope_id:scope2});await reviewDenied('bilateral agreement does not confer cross-organization review',await pendingReview(),{organization_id:org2,acting_unit_id:units.FOREIGN,reviewer_authorization_id:foreignGrant},actors.foreign);
+ sql(`UPDATE dispatch_private.organization_memberships SET role_template='ORGANIZATION_ADMIN' WHERE id='${memberships.POLICE}'`);try{await reviewDenied('parent admin with membership still needs explicit grant',await pendingReview(),{acting_unit_id:units.FIRE},actors.POLICE)}finally{sql(`UPDATE dispatch_private.organization_memberships SET role_template='OWNER' WHERE id='${memberships.POLICE}'`)}
+});
+
+test('DAYTON-REVIEW-01 approval-time live revalidation and distinct actors',async()=>{
+ const id=await pendingReview();const cases=[
+ ['verification expired',`UPDATE dispatch_private.pilot_governance SET verification_expires_at=now()-interval '1 second' WHERE organization_id='${org1}'`,`UPDATE dispatch_private.pilot_governance SET verification_expires_at=now()+interval '1 hour' WHERE organization_id='${org1}'`],
+ ['verification revoked',`UPDATE dispatch_private.organizations SET verification_level='UNVERIFIED' WHERE id='${org1}'`,`UPDATE dispatch_private.organizations SET verification_level='VERIFIED_PUBLIC_ENTITY' WHERE id='${org1}'`],
+ ['attestation expired',`UPDATE dispatch_private.pilot_governance SET attestation_expires_at=now()-interval '1 second' WHERE organization_id='${org1}'`,`UPDATE dispatch_private.pilot_governance SET attestation_expires_at=now()+interval '1 hour' WHERE organization_id='${org1}'`],
+ ...certFixtures.grants.map((g,i)=>[['subtype capability revoked','hazard gate revoked','closure gate revoked'][i],`UPDATE dispatch_private.capability_grants SET status='REVOKED' WHERE id=${q(g)}`,`UPDATE dispatch_private.capability_grants SET status='ACTIVE' WHERE id=${q(g)}`]),
+ ['membership revoked',`UPDATE dispatch_private.organization_memberships SET status='REVOKED' WHERE id='${memberships.reviewer}'`,`UPDATE dispatch_private.organization_memberships SET status='ACTIVE' WHERE id='${memberships.reviewer}'`],
+ ['reviewer role revoked',`UPDATE dispatch_private.organization_memberships SET role_template='OPERATOR' WHERE id='${memberships.reviewer}'`,`UPDATE dispatch_private.organization_memberships SET role_template='SUPERVISOR' WHERE id='${memberships.reviewer}'`],
+ ['reviewer unit eligibility revoked',`UPDATE dispatch_private.unit_memberships SET status='REVOKED' WHERE unit_id='${units.FIRE}' AND membership_id='${memberships.reviewer}'`,`UPDATE dispatch_private.unit_memberships SET status='ACTIVE' WHERE unit_id='${units.FIRE}' AND membership_id='${memberships.reviewer}'`],
+ ['governed scope expired',`UPDATE dispatch_private.scope_governance SET valid_until=now()-interval '1 second' WHERE scope_id='${scope1}'`,`UPDATE dispatch_private.scope_governance SET valid_until=now()+interval '1 hour' WHERE scope_id='${scope1}'`],
+ ['scope inactive',`UPDATE dispatch_private.operational_scopes SET status='SUSPENDED' WHERE id='${scope1}'`,`UPDATE dispatch_private.operational_scopes SET status='ACTIVE' WHERE id='${scope1}'`],
+ ['participant suspended',`UPDATE dispatch_private.profiles SET status='DISABLED' WHERE user_id=${q(actors.reviewer.userId)}`,`UPDATE dispatch_private.profiles SET status='ACTIVE' WHERE user_id=${q(actors.reviewer.userId)}`],
+ ['participant profile disabled/offboarded',`UPDATE dispatch_private.profiles SET status='DISABLED' WHERE user_id=${q(actors.reviewer.userId)}`,`UPDATE dispatch_private.profiles SET status='ACTIVE' WHERE user_id=${q(actors.reviewer.userId)}`]
+ ];
+ for(const [label,change,restore] of cases){sql(change);try{await reviewDenied(label,id);await replayDenied(label+' also refuses receipt replay',certFixtures.reviewReplay)}finally{sql(restore)}}
+ for(const column of ['banned_until','deleted_at']){sql(`UPDATE auth.users SET ${column}=now()+interval '1 hour' WHERE id=${q(actors.reviewer.userId)}`);try{await reviewDenied(column==='banned_until'?'Auth account suspended':'Auth account offboarded',id)}finally{sql(`UPDATE auth.users SET ${column}=NULL WHERE id=${q(actors.reviewer.userId)}`)}}
+ const expiredGrant=certFixtures.grants[0];const old=sql(`SELECT valid_until FROM dispatch_private.capability_grants WHERE id=${q(expiredGrant)}`);sql(`UPDATE dispatch_private.capability_grants SET valid_from=now()-interval '2 hours',valid_until=now()-interval '1 hour' WHERE id=${q(expiredGrant)}`);try{await reviewDenied('capability expired',id);await replayDenied('capability expiry refuses receipt replay',certFixtures.reviewReplay)}finally{sql(`UPDATE dispatch_private.capability_grants SET valid_from=now(),valid_until=${q(old)} WHERE id=${q(expiredGrant)}`)}
+ sql(`UPDATE dispatch_private.organization_memberships SET role_template='SUPERVISOR' WHERE id='${memberships.FIRE}'`);try{const own=await reviewerGrant({reviewer_membership_id:memberships.FIRE});await reviewDenied('fully authorized author still cannot self-approve',id,{reviewer_authorization_id:own},actors.FIRE,/PHASE29_INDEPENDENT_REVIEW/)}finally{sql(`UPDATE dispatch_private.organization_memberships SET role_template='OPERATOR' WHERE id='${memberships.FIRE}'`)}
+ const deadline=future(0.5);const short=await reviewerGrant({valid_until:deadline});const shortReview=await pendingReview();const shortPayload=reviewPayload(shortReview,{reviewer_authorization_id:short});await rpc('review_report_publication',actors.reviewer,shortPayload);await new Promise(resolve=>setTimeout(resolve,Math.max(0,Date.parse(deadline)+200-Date.now())));await replayDenied('review authorization expiry refuses receipt replay',shortPayload);
+ await approveFocused(id);reviewCheck('all restored live conditions permit exact approval',()=>assert.equal(ownerSQL(`SELECT dispatch_private.report_review_prerequisites(${q(id)})`),'t'));
+});
+
+test('DAYTON-REVIEW-01 stale candidate, source, impact, contract and scope refusal',async()=>{
+ let id=await pendingReview();await reviewDenied('candidate revision input stale',id,{expected_candidate_revision:2});
+ await reviewDenied('details revision input stale',id,{expected_revision:dRev(focusedReview.record)-1});
+ await command('revise_report',actors.FIRE,{...reportBase('FIRE','TRAFFIC_COLLISION'),object_id:focusedReview.record,expected_revision:rRev(focusedReview.record),title:'Synthetic revised operational cause'});await approve(focusedReview.record);await reviewDenied('source and details revision changed after candidate',id);await replayDenied('source revision change invalidates receipt replay',certFixtures.reviewReplay);
+ id=await pendingReview();await command('set_road_impact',actors.FIRE,{record_id:focusedReview.record,object_id:focusedReview.impact,impact_revision:Number(sql(`SELECT revision FROM dispatch_private.road_impacts WHERE id=${q(focusedReview.impact)}`)),expected_revision:dRev(focusedReview.record),impact:impactBase({segment_id:segment,direction_affected:'SOUTHBOUND',lane_extent:'ALL',lanes_affected_count:2,closure_extent:'FULL',traffic_operation:'STOPPED',public_passable:'NO'})});await approve(focusedReview.record);await reviewDenied('structured impact changed after candidate',id);
+ id=await pendingReview();sql(`UPDATE dispatch_private.publication_reviews SET candidate_revision=2 WHERE id=${q(id)}`);await reviewDenied('stored candidate revision changed',id,{expected_candidate_revision:2});
+ id=await pendingReview();sql(`INSERT INTO dispatch_private.report_contract_versions VALUES('SYNTHETIC-CONTRACT-v2',${q(registry.contractHash)},'PHASE29-INDEPENDENT-v1',now(),false); UPDATE dispatch_private.publication_reviews SET contract_version='SYNTHETIC-CONTRACT-v2' WHERE id=${q(id)}`);await reviewDenied('candidate contract version stale',id);
+ id=await pendingReview();sql(`UPDATE dispatch_private.report_contract_versions SET policy_version='SYNTHETIC-POLICY-v2' WHERE version='PHASE29-v1'`);try{await reviewDenied('contract policy version stale',id)}finally{sql(`UPDATE dispatch_private.report_contract_versions SET policy_version='PHASE29-INDEPENDENT-v1' WHERE version='PHASE29-v1'`)}
+ sql(`UPDATE dispatch_private.report_contract_versions SET contract_hash=repeat('0',64) WHERE version='PHASE29-v1'`);try{await reviewDenied('contract hash/version stale',id)}finally{sql(`UPDATE dispatch_private.report_contract_versions SET contract_hash=${q(registry.contractHash)} WHERE version='PHASE29-v1'`)}
+ sql(`UPDATE dispatch_private.scope_governance SET source_version='SYNTHETIC-SCOPE-v2' WHERE scope_id='${scope1}'`);try{await reviewDenied('governed scope/version changed',id)}finally{sql(`UPDATE dispatch_private.scope_governance SET source_version='v1' WHERE scope_id='${scope1}'`)}
+ await approveFocused(id);reviewCheck('fresh exact state approved',()=>assert.equal(ownerSQL(`SELECT dispatch_private.report_review_prerequisites(${q(id)})`),'t'));
+ await command('withdraw_report',actors.FIRE,{record_id:focusedReview.record,expected_revision:dRev(focusedReview.record),reason_code:'WITHDRAWN'});reviewCheck('withdrawal immediately removes eligibility without review',()=>assert.equal(ownerSQL(`SELECT dispatch_private.report_review_prerequisites(${q(id)})`),'f'));
+ if(reviewOnly)success=true;
+});
+
+test('same-org and bilateral sharing, expiry/revocation, source isolation',{skip:reviewOnly},async()=>{
  const id=records['POLICE:HIGH_WATER'];await approve(id);
  const reviewerToken=sql(`SELECT token FROM dispatch_private.actor_tokens WHERE organization_id='${org1}' AND user_id=${q(actors.reviewer.userId)}`);
  const shareRequest={record_id:id,expected_revision:dRev(id),title:'Synthetic road awareness',summary:'Synthetic high water coordination',recipient_unit_ids:[units.FIRE],reviewer_token:reviewerToken,valid_until:future()};
@@ -122,7 +215,7 @@ test('same-org and bilateral sharing, expiry/revocation, source isolation',async
  await command('revoke_sharing_agreement',actors.foreign,{organization_id:org2,object_id:agreement,expected_revision:1});assert.ok(!(await safeRead(actors.foreign,'durable_shared_awareness')).some(x=>x.id===cross.object_id));checks.push('bilateral revocation immediate');
  sql(`UPDATE dispatch_private.shared_awareness_representations SET valid_until=now()-interval '1 second' WHERE id=${q(same.object_id)}`);assert.ok(!(await safeRead(actors.FIRE,'durable_shared_awareness')).some(x=>x.id===same.object_id));checks.push('sharing expiry immediate');
 });
-test('redaction preserves identities and minimized immutable lineage',async()=>{
+test('redaction preserves identities and minimized immutable lineage',{skip:reviewOnly},async()=>{
  const id=records['POLICE:DEBRIS_OBSTRUCTION'];await approve(id);
  const r=await command('redact_report',actors.reviewer,{record_id:id,expected_revision:dRev(id),policy_reference:'synthetic-approved-remediation-policy-v1'});
  checked('redaction stable source identity',()=>assert.equal(sql(`SELECT screening_state FROM dispatch_private.report_details WHERE record_id=${q(id)}`),'REDACTED'));
@@ -130,7 +223,7 @@ test('redaction preserves identities and minimized immutable lineage',async()=>{
  checked('redaction evidence preserved',()=>assert.equal(sql(`SELECT count(*) FROM dispatch_audit.content_remediation_events WHERE quarantine_id=${q(r.object_id)}`),'1'));
  checked('ordinary revision mutation still refused',()=>sql(`UPDATE dispatch_audit.record_revisions SET snapshot='{}' WHERE record_id=${q(id)}`,{fail:true}));
 });
-test('Official Public Notice linked authority, expiry, correction and withdrawal',async()=>{
+test('Official Public Notice linked authority, expiry, correction and withdrawal',{skip:reviewOnly},async()=>{
  const noticeGrant=(await command('grant_report_capability',actors.platform,{capability_key:'awareness.report.official_public_notice.publish',subtype:'OFFICIAL_PUBLIC_NOTICE',scope_id:scope1,scope_version:1,unit_ids:[units.FIRE],closure_envelope:['NONE','PARTIAL','FULL'],lane_envelope:['NONE','ONE','MULTIPLE','ALL'],allowed_timing:['PLANNED','UNPLANNED'],authority_evidence:'local synthetic communication evidence',evidence_class:'N',valid_until:future(60)})).object_id;
  const notice=(await command('create_report',actors.FIRE,{...reportBase('FIRE','OFFICIAL_PUBLIC_NOTICE'),linked_record_id:certFixtures.collision,body:'Synthetic collision road closure bulletin'})).object_id;await approve(notice);
  const req={record_id:notice,expected_revision:dRev(notice),title:'Synthetic official notice',summary:'Synthetic collision road closure bulletin',valid_until:future(5)};
@@ -144,14 +237,14 @@ test('Official Public Notice linked authority, expiry, correction and withdrawal
  await approve(correction);await command('withdraw_report',actors.FIRE,{record_id:correction,expected_revision:dRev(correction),reason_code:'WITHDRAWN'});
  checked('notice withdrawal recorded immediately',()=>assert.equal(sql(`SELECT withdrawn_at IS NOT NULL FROM dispatch_private.report_details WHERE record_id=${q(correction)}`),'t'));
 });
-test('idempotency, atomic stale refusal and concurrent report revision',async()=>{
+test('idempotency, atomic stale refusal and concurrent report revision',{skip:reviewOnly},async()=>{
  const p=reportBase('EMS','HIGH_WATER');const [a,b]=await Promise.all([rpc('create_report',actors.EMS,p),rpc('create_report',actors.EMS,p)]);assert.equal(a.data.object_id,b.data.object_id);assert.equal([a.data.replay,b.data.replay].filter(Boolean).length,1);checks.push('concurrent create one identity and replay');
  const id=a.data.object_id;await denied('same token changed content refused','create_report',actors.EMS,{...p,title:'Changed synthetic title'});
  const revision=rRev(id);const one={...reportBase('EMS','HIGH_WATER'),object_id:id,expected_revision:revision};const two={...one,idempotency_key:key(),title:'Alternate synthetic revision'};
  const results=await Promise.all([rpc('revise_report',actors.EMS,one,[200,400,403]),rpc('revise_report',actors.EMS,two,[200,400,403])]);assert.equal(results.filter(r=>r.status===200).length,1);checks.push('concurrent revision one winner');
  const count=sql('SELECT count(*) FROM dispatch_audit.command_receipts');await denied('stale revision is atomic','revise_report',actors.EMS,{...one,idempotency_key:key()});assert.equal(sql('SELECT count(*) FROM dispatch_audit.command_receipts'),count);checks.push('stale command leaves no receipt');
 });
-test('legacy compatibility, populated refusal and protected consumer baseline',async()=>{
+test('legacy compatibility, populated refusal and protected consumer baseline',{skip:reviewOnly},async()=>{
  checked('historical broad grants cannot authorize subtype',()=>assert.equal(ownerSQL(`SELECT dispatch_private.pilot_candidate_eligible(${q(records['POLICE:HIGH_WATER'])},${q(key())})`),'f'));
  await denied('legacy Fire arbitrary payload refused','create_operational_record',actors.FIRE,{unit_id:units.FIRE,scope_id:scope1,record_type:'CONDITION',title:'Synthetic record',private_payload:{patient_name:'SYNTHETIC'},data_attestation:'OPERATIONAL_AWARENESS_ONLY',safety_class:'GENERAL_AWARENESS'});
  const legacy=await command('create_operational_record',actors.POLICE,{unit_id:units.POLICE,scope_id:scope1,record_type:'CONDITION',title:'Synthetic legacy awareness',private_payload:{},data_attestation:'OPERATIONAL_AWARENESS_ONLY',safety_class:'GENERAL_AWARENESS'});checked('legacy private identity preserved without inferred subtype',()=>assert.equal(sql(`SELECT count(*) FROM dispatch_private.report_details WHERE record_id=${q(legacy.object_id)}`),'0'));
