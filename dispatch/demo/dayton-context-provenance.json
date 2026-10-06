@@ -1,0 +1,21 @@
+{
+  "source": "https://api.openstreetmap.org/api/0.6/map.json?bbox=-94.915,30.03,-94.865,30.065",
+  "acquired": "2026-10-06",
+  "sha256": "bfd18dcbaa6d9c241f13b2219f663ea63a8ccd908fb318f1ecb35574c0d4010e",
+  "bbox": [
+    -94.915,
+    30.03,
+    -94.865,
+    30.065
+  ],
+  "license": "https://opendatacommons.org/licenses/odbl/1-0/",
+  "attribution": "© OpenStreetMap contributors",
+  "counts": {
+    "rail": 11,
+    "crossing": 12,
+    "waterway": 5,
+    "water": 4,
+    "locality": 1
+  },
+  "transform": "Resolve way node references without changing coordinates. Keep active rail, level crossings, waterways, closed water polygons, town labels. Allowlist identifiers and cartographic tags; exclude contributor identities and all unrelated features. Complete selected ways may extend beyond request bounds. No inferred rail crossings or jurisdiction boundaries."
+}

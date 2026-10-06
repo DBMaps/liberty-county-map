@@ -144,7 +144,7 @@ view persistence on reload; the explicit URL wins when present.
 Split uses approximately 40% list / 60% map on desktop. Map devotes approximately
 80% to geography while retaining a compact equivalent incident list. At tablet
 width the map and list stack. Short viewports use vertical scrolling. Select a
-list title or a labeled marker to select the same incident and reveal its popup.
+list title or a category marker to select the same incident and reveal its popup.
 If needed, the map scrolls into view to show that popup. **View details** in the
 list or popup opens the unchanged detail drawer; Escape/Close restores focus.
 Search, filters, acting unit and theme remain intact when switching modes.
@@ -153,7 +153,7 @@ Changing the acting unit retains the original filter-reset behavior.
 `map-view.mjs` is lazy-loaded only for geographic demo views. Leaflet **1.9.4**
 is reused as an unchanged vendored library, with its BSD-2-Clause license in
 `vendor/leaflet/LICENSE`. No consumer map/auth/runtime module is imported.
-There are no tiles or third-party requests. A local Canvas layer draws 331 public
+There are no tiles or third-party runtime requests. Local Canvas layers draw 331 public
 OpenStreetMap road segments around Dayton. The source extract has timestamp
 2026-05-09T22:50:58Z and is context only, not live routing or jurisdiction data.
 Only the four existing synthetic fixtures receive approximate demo coordinates.
@@ -179,10 +179,48 @@ Run all UI certification with:
 
 ```powershell
 $env:DISPATCH_BROWSER_CHANNEL='msedge'
-node --test tests/dispatch-map.test.mjs tests/dispatch-theme.test.mjs tests/dispatch-visual-shell.test.mjs
+node --test tests/dispatch-operational-map.test.mjs tests/dispatch-map.test.mjs tests/dispatch-theme.test.mjs tests/dispatch-visual-shell.test.mjs
 ```
 
 `reports/responder/dispatch-map/CERTIFICATION.md` records the evidence. The map
 suite renders approved commit `65b59e55d772b2de4d668f3f2e15d9140b7fc329` from Git
 blobs and requires exact Board PNG equality with only the new View control hidden,
 both before and after loading the map library. Screenshots/logs remain local.
+
+## Operational basemap refinement
+
+`basemap.mjs` adds cased major/arterial/local roads, collision-aware rotated street
+labels, highway shields, rail lines with sleeper marks, sourced crossing points,
+streams/water polygons and the Dayton locality label. Labels derive from source
+geometry, reflow after pan/zoom/resize, and prioritize Main/Winfree, rail and major
+roads. Geometry is never simplified for rendering; only label placement uses a
+screen-space simplification to avoid suppressing names on densely sampled roads.
+The approved Board/Split/Map structure, sizes, list density and filters are intact.
+
+An additional bounded public OSM extract was acquired once on October 6, 2026
+through the primary read API after Overpass proved unavailable. The bundle contains
+33 context features: 11 active rail ways, 12 mapped level crossings, 5 waterways,
+4 water polygons and 1 town label. Provenance/source URL, request bounds, raw hash
+and transform are in `demo/dayton-context-provenance.json`. The derivative excludes
+contributor identities. Its ODbL attribution/download is visible beside the roads.
+`node tools/dispatch-ui/prepare-context.mjs` rebuilds it offline from the ignored
+`demo/source/dayton-context-osm.json` raw response. This source file is not served.
+Roads and context have different documented vintages/coverage; outside their finite
+extracts, absent features must not be interpreted as absent real-world features.
+
+`marker-language.mjs` isolates four current consumer Gridly PNG mappings: flooding
+→ water-over-road, rail blockage → train-front, signal outage → traffic-signal-issue,
+debris → debris-in-road. Asset bytes and pointer anchors are unchanged. See
+`assets/markers/README.md`. Icons communicate incident category; Dispatch adds a
+static selection ring, restrained severity accent and resolved check. Popups add
+source, review and publication state and an explicit synthetic-location/authority
+caveat; unit, location, severity, status, age, ID and View details remain available.
+Enter/Space selects the marker; the full list path and existing drawer still work.
+
+No production map service, key, payment, CSP exception or external runtime fetch
+is required by this build. Production rollout still needs approved geography,
+freshness/coverage, coordinate accuracy, auth/read integration and hosting work.
+Visual certification does not certify real incident positions or navigation.
+The new suite additionally compares the entire Board (including View selector)
+against `4952fcc09586bf2c4a193e40b0dbdc4a57ff94f1` and checks Split/Map geometry.
+Evidence: `reports/responder/dispatch-operational-map/CERTIFICATION.md`.

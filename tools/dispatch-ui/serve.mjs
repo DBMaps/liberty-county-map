@@ -15,7 +15,7 @@ export function previewServer({demo=false}={}) {
     let pathname;try{pathname=new URL(request.url,'http://127.0.0.1').pathname;}catch{return send(400);}
     if(pathname==='/__preview')return send(200,JSON.stringify({mode:demo?'local-fixtures':'login-only'}),'application/json');
     const name=pathname==='/'?'index.html':pathname.slice(1);
-    if(!files.has(name) && !(demo && ['demo/fixtures.mjs','map-view.mjs','demo/dayton-roads.geojson','demo/dayton-roads-provenance.json','vendor/leaflet/leaflet.js','vendor/leaflet/leaflet.css','vendor/leaflet/LICENSE'].includes(name)))return send(404);
+    if(!files.has(name) && !(demo && ['demo/fixtures.mjs','map-view.mjs','basemap.mjs','marker-language.mjs','demo/dayton-context.geojson','demo/dayton-context-provenance.json','assets/markers/water-over-road.png','assets/markers/train-front.png','assets/markers/traffic-signal-issue.png','assets/markers/debris-in-road.png','demo/dayton-roads.geojson','demo/dayton-roads-provenance.json','vendor/leaflet/leaflet.js','vendor/leaflet/leaflet.css','vendor/leaflet/LICENSE'].includes(name)))return send(404);
     try { const bytes=await readFile(resolve(root,name));send(200,request.method==='HEAD'?'':bytes,{'.html':'text/html; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.png':'image/png','.geojson':'application/geo+json','.json':'application/json'}[extname(name)]); } catch {send(404);}
   });
 }

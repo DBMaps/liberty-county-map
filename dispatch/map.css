@@ -30,17 +30,25 @@
 .geo-map-panel .leaflet-bar a:hover { background:var(--bg-hover); }
 .geo-map-panel .leaflet-bar a.leaflet-disabled { background:var(--bg-disabled); color:var(--text-disabled); }
 .geo-map-panel .leaflet-control-scale-line { background:var(--bg-panel); color:var(--text-primary); border-color:var(--text-secondary); text-shadow:none; }
-.geo-map-panel .dispatch-marker { display:grid; place-items:center; border:2px solid var(--status-low-border); border-radius:5px; background:var(--status-low-bg); color:var(--status-low-text); font-size:12px; font-weight:700; box-shadow:0 2px 6px var(--shadow-drawer); }
-.geo-map-panel .marker-high { background:var(--status-high-bg); color:var(--status-high-text); border-color:var(--status-high-border); }
-.geo-map-panel .marker-moderate { background:var(--status-moderate-bg); color:var(--status-moderate-text); border-color:var(--status-moderate-border); }
-.geo-map-panel .marker-critical { background:var(--status-critical-bg); color:var(--status-critical-text); border-color:var(--status-critical-border); }
-.geo-map-panel .marker-resolved { background:var(--status-resolved-bg); color:var(--status-resolved-text); border-color:var(--status-resolved-border); border-radius:50%; }
-.geo-map-panel .dispatch-marker.is-selected { outline:3px solid var(--focus-ring); outline-offset:3px; }
-.geo-map-panel .map-road-label { white-space:nowrap; color:var(--map-label); font-size:10px; font-weight:600; text-align:center; text-shadow:0 1px 2px var(--map-land),0 -1px 2px var(--map-land),1px 0 2px var(--map-land); pointer-events:none; }
+.geo-map-panel .dispatch-marker { background:transparent; border:0; }
+.geo-map-panel .gridly-category-icon { display:block; width:64px; height:64px; }
+.geo-map-panel .dispatch-marker::before { content:''; position:absolute; inset:9px 16px 23px; border-radius:50%; pointer-events:none; }
+.geo-map-panel .dispatch-marker.is-selected::before { outline:3px solid var(--focus-ring); outline-offset:4px; box-shadow:0 0 0 6px var(--bg-panel); }
+.geo-map-panel .marker-state { position:absolute; right:8px; top:8px; width:8px; height:8px; border:2px solid var(--bg-panel); border-radius:50%; background:var(--status-moderate-text); }
+.geo-map-panel .marker-high .marker-state { background:var(--status-high-text); }
+.geo-map-panel .marker-resolved .marker-state { width:15px; height:15px; top:4px; right:3px; font:700 11px/15px sans-serif; text-align:center; color:var(--status-resolved-text); background:var(--status-resolved-bg); border-color:var(--status-resolved-border); }
+.geo-map-panel .map-context-label { pointer-events:none; }
+.geo-map-panel .map-context-label span { position:absolute; white-space:nowrap; color:var(--map-label); font:600 11px/18px Arial,sans-serif; text-shadow:0 1px 1px var(--map-land),0 -1px 1px var(--map-land),1px 0 1px var(--map-land),-1px 0 1px var(--map-land); }
+.geo-map-panel .label-highway span { padding:0 5px; border:1px solid var(--map-label); border-radius:4px; background:var(--map-land); font-weight:700; }
+.geo-map-panel .label-locality span { font-size:14px; letter-spacing:2px; text-transform:uppercase; }
+.geo-map-panel .label-rail span { color:var(--map-rail); font-style:italic; }
+.geo-map-panel .label-waterway span { color:var(--map-water-label); font-style:italic; }
 .geo-map-panel .leaflet-popup-content-wrapper,.geo-map-panel .leaflet-popup-tip { background:var(--bg-panel-raised); color:var(--text-primary); box-shadow:0 3px 14px var(--shadow-drawer); }
 .geo-map-panel .leaflet-popup-content-wrapper { border:1px solid var(--border-strong); border-radius:7px; }
 .geo-map-panel .leaflet-popup-close-button { color:var(--text-secondary); }
-.dispatch-popup { display:flex; flex-direction:column; gap:10px; font-size:12px; }
+.dispatch-popup { display:flex; flex-direction:column; gap:7px; font-size:12px; }
+.dispatch-popup .popup-authority { border-top:1px solid var(--border-subtle); padding-top:6px; color:var(--text-secondary); }
+.geo-map-panel .leaflet-popup-content { max-height:240px; overflow-y:auto; }
 .geo-map-panel .leaflet-popup-content p { margin:0; font-size:12px; line-height:1.4; }
 .dispatch-popup small { font-size:10px; line-height:1.5; }
 .dispatch-popup .button { font-size:11px; padding:8px 12px; }

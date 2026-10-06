@@ -1,9 +1,16 @@
 /* All Dispatch palette values live here. Theme switches never change geometry. */
 :root {
   --map-land: #e8edeb;
-  --map-road-major: #819995;
-  --map-road-local: #b5c4c1;
-  --map-label: #485f61;
+  --map-road-major: #f4d494;
+  --map-road-arterial: #fff5d9;
+  --map-road-local: #ffffff;
+  --map-road-casing: #aab9b6;
+  --map-label: #334949;
+  --map-rail: #58616b;
+  --map-rail-halo: #e8edeb;
+  --map-water: #b6dce5;
+  --map-water-edge: #76a9bb;
+  --map-water-label: #305f73;
   color-scheme: light;
   --bg-brand: #082d40;
   --bg-sidebar: #062332;
@@ -101,9 +108,16 @@
 }
 :root[data-theme="dark"] {
   --map-land: #18282d;
-  --map-road-major: #74908b;
-  --map-road-local: #3c5559;
-  --map-label: #acbdc5;
+  --map-road-major: #887954;
+  --map-road-arterial: #65746d;
+  --map-road-local: #46595e;
+  --map-road-casing: #101e23;
+  --map-label: #d0d9d6;
+  --map-rail: #b4a998;
+  --map-rail-halo: #18282d;
+  --map-water: #203e4e;
+  --map-water-edge: #4a7388;
+  --map-water-label: #91bbc9;
   color-scheme: dark;
   --bg-brand: #102d3b;
   --bg-sidebar: #101f29;
