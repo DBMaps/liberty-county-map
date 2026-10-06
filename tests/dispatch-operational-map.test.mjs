@@ -11,7 +11,7 @@ const evidence=new URL('../reports/responder/dispatch-operational-map/',import.m
 const listen=s=>new Promise(resolve=>s.listen(0,'127.0.0.1',()=>resolve(`http://127.0.0.1:${s.address().port}`)));
 before(async()=>{server=previewServer({demo:true});baseline=approvedBoardServer('4952fcc09586bf2c4a193e40b0dbdc4a57ff94f1');plain=previewServer();base=await listen(server);approved=await listen(baseline);login=await listen(plain);browser=await chromium.launch({headless:true,...(process.env.DISPATCH_BROWSER_CHANNEL?{channel:process.env.DISPATCH_BROWSER_CHANNEL}:{})});await mkdir(evidence,{recursive:true});});
 after(async()=>{await browser?.close();server?.close();baseline?.close();plain?.close();});
-async function visit(fn,{width=1440,height=900,theme='dark'}={}){const context=await browser.newContext({viewport:{width,height}});await context.addInitScript(theme=>localStorage.setItem('gridlyDispatchTheme',theme),theme);const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));try{await fn(page);assert.deepEqual(errors,[]);}finally{await context.close();}}
+async function visit(fn,{width=1440,height=900,theme='dark'}={}){const context=await browser.newContext({viewport:{width,height}});await context.addInitScript(theme=>localStorage.setItem('gridlyDispatchTheme',theme),theme);const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push({url:page.url(),message:e.message,stack:e.stack}));try{await fn(page);assert.deepEqual(errors,[]);}finally{await context.close();}}
 const view=p=>p.getByRole('combobox',{name:'View',exact:true});
 const ready=p=>p.locator('[data-marker]').first().waitFor();
 const shot=(p,name)=>p.screenshot({path:new URL(name+'.png',evidence).pathname.replace(/^\/([A-Z]:)/,'$1')});
@@ -22,7 +22,8 @@ test('four categories reuse exact production Gridly PNGs and tip semantics',asyn
   const data=JSON.parse(await read('dispatch/demo/dayton-context.geojson'));assert.equal(data.features.length,33);assert.equal(data.features.filter(f=>f.properties.layer==='rail').length,11);assert.equal(data.features.filter(f=>f.properties.layer==='water').length,4);assert.equal(data.features.filter(f=>f.properties.layer==='crossing').length,12);assert.equal(data.features.find(f=>f.properties.layer==='locality').properties.name,'Dayton');assert.doesNotMatch(JSON.stringify(data),/Sample Railroad|"user"|"uid"/);
 });
 test('street, highway, locality and rail labels orient at normal fit zoom',()=>visit(async p=>{
-  await p.goto(base+'/?demo=1&view=split');await ready(p);const labels=await p.locator('[data-context-label]').allTextContents();assert.ok(labels.length>=8);assert.ok(labels.includes('FM 1960'));assert.ok(labels.some(s=>/Main St/.test(s)));assert.ok(labels.some(s=>/Winfree St/.test(s)));assert.ok(labels.includes('Dayton'));assert.ok(await p.locator('.label-rail').count()>0);
+  await p.goto(base+'/?demo=1&view=split');await ready(p);const labels=await p.locator('[data-context-label]').allTextContents();assert.ok(labels.length>=8);assert.ok(labels.includes('FM 1960'));assert.ok(labels.some(s=>/Main St|Winfree St/.test(s))); // Marker exclusion can suppress the other nearby name.
+  assert.ok(await p.locator('.label-rail').count()>0);if(!labels.includes('Dayton'))await p.getByRole('button',{name:'Zoom out',exact:true}).click();assert.ok((await p.locator('[data-context-label]').allTextContents()).includes('Dayton'));
 }));
 test('category markers, enriched authority/source popup and keyboard drawer path',()=>visit(async p=>{
   await p.goto(base+'/?demo=1&view=map');await ready(p);

@@ -24,7 +24,7 @@ function loadStyles(path) {
 export function createGeographicView(host,{mode,rows,selectedId,onSelect,onDetail,unitName}) {
   let disposed=false,map,L,basemap,markers=new Map(),currentRows=rows,selection=selectedId;
   const abort=new AbortController();
-  host.innerHTML=`<div class="geo-layout geo-${mode}"><section class="panel geo-list-panel" aria-label="Incident list"><div class="panel-heading"><h2>Unit incidents</h2><span id="geo-count"></span></div><div id="geo-list"></div></section><section class="panel geo-map-panel"><div class="panel-heading"><div><h2>Dayton, Texas</h2><small>${escape(unitName)} · Approximate demo locations</small></div><button class="text-button" id="fit-incidents">Fit incidents</button></div><div class="map-stage"><div id="dispatch-map" aria-label="Dayton incident map. Use the incident list for an equivalent keyboard path."></div><div id="map-message" role="status">Loading local map…</div></div><div class="map-caption"><span>Offline OSM context · Approximate demo positions</span><span>Category icons · Ring: selected · ✓ Resolved</span></div><div class="map-credit">Map data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a> · <a href="./demo/dayton-roads.geojson" download>ODbL roads</a> · <a href="./demo/dayton-context.geojson" download>ODbL context</a> · <a href="https://leafletjs.com" target="_blank" rel="noopener noreferrer">Leaflet</a></div></section></div>`;
+  host.innerHTML=`<div class="geo-layout geo-${mode}"><section class="panel geo-list-panel" aria-label="Incident list"><div class="panel-heading"><h2>Unit incidents</h2><span id="geo-count"></span></div><div id="geo-list"></div></section><section class="panel geo-map-panel"><div class="panel-heading"><div><h2>Dayton, Texas</h2><small>${escape(unitName)} · Approximate demo locations</small></div><button class="text-button" id="fit-incidents">Fit incidents</button></div><div class="map-stage"><div id="dispatch-map" aria-label="Dayton incident map. Use the incident list for an equivalent keyboard path."></div><div id="map-message" role="status">Loading local map…</div></div><div class="map-caption"><span>Offline OSM context · Approximate demo positions</span><span>Category icons · Ring: selected · ✓ Resolved</span></div><div class="map-credit">Map data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a> · <a href="./demo/dayton-roads.geojson" download>ODbL roads</a> · <a href="./demo/dayton-context.geojson" download>ODbL context</a> · <a href="./demo/dayton-landmarks.geojson" download>OSM landmarks</a> · <a href="https://leafletjs.com" target="_blank" rel="noopener noreferrer">Leaflet</a></div></section></div>`;
   const list=host.querySelector('#geo-list'),message=host.querySelector('#map-message');
   function renderList() {
     host.querySelector('#geo-count').textContent=`${currentRows.length} visible`;
@@ -35,6 +35,7 @@ export function createGeographicView(host,{mode,rows,selectedId,onSelect,onDetai
   function markSelection() {
     list.querySelectorAll('[data-geo-row]').forEach(row=>{const selected=row.dataset.geoRow===selection;row.classList.toggle('is-selected',selected);row.querySelector('[data-select]').setAttribute('aria-pressed',String(selected));});
     for(const [id,marker]of markers){const element=marker.getElement();if(element){element.classList.toggle('is-selected',id===selection);element.setAttribute('aria-pressed',String(id===selection));}marker.setZIndexOffset(id===selection?1000:0);}
+    basemap?.refresh();
   }
   function select(id,focusMap=true) {
     if(!currentRows.some(item=>item.id===id))return;
@@ -79,11 +80,11 @@ export function createGeographicView(host,{mode,rows,selectedId,onSelect,onDetai
   async function initialize() {
     message.hidden=false;message.textContent='Loading local map…';
     try{
-      const results=await Promise.all([loadLibrary(),loadStyles('./vendor/leaflet/leaflet.css'),fetch('./demo/dayton-roads.geojson',{signal:abort.signal}).then(response=>{if(!response.ok)throw new Error('Map data unavailable');return response.json();}),fetch('./demo/dayton-context.geojson',{signal:abort.signal}).then(response=>{if(!response.ok)throw new Error('Map context unavailable');return response.json();})]);
+      const results=await Promise.all([loadLibrary(),loadStyles('./vendor/leaflet/leaflet.css'),fetch('./demo/dayton-roads.geojson',{signal:abort.signal}).then(response=>{if(!response.ok)throw new Error('Map data unavailable');return response.json();}),fetch('./demo/dayton-context.geojson',{signal:abort.signal}).then(response=>{if(!response.ok)throw new Error('Map context unavailable');return response.json();}),fetch('./demo/dayton-landmarks.geojson',{signal:abort.signal}).then(response=>{if(!response.ok)throw new Error('Map landmarks unavailable');return response.json();})]);
       if(disposed)return;L=results[0];const data=results[2];
       if(data.type!=='FeatureCollection'||!data.features.length||results[3].type!=='FeatureCollection'||!results[3].features.some(f=>f.properties.layer==='rail'))throw new Error('Map data unavailable');
       map=L.map(host.querySelector('#dispatch-map'),{center:[30.047,-94.891],zoom:14,minZoom:13,maxZoom:17,maxBounds:[[30.017,-94.948],[30.083,-94.852]],maxBoundsViscosity:1,zoomAnimation:false,fadeAnimation:false,markerZoomAnimation:false,inertia:false,scrollWheelZoom:false,attributionControl:false,preferCanvas:true});
-      basemap=createBasemap(L,map,data,results[3]);
+      basemap=createBasemap(L,map,data,results[3],results[4],()=>[...markers.values()].map(marker=>({latlng:marker.getLatLng(),anchor:marker.options.icon.options.iconAnchor,size:marker.options.icon.options.iconSize})));
       L.control.scale({imperial:true,metric:false,position:'bottomleft'}).addTo(map);
       renderMarkers();fit();if(selection&&markers.has(selection))select(selection);
       map.on('popupclose',()=>{ /* Selection remains visible when the popup closes. */ });

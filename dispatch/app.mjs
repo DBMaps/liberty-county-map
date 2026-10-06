@@ -21,6 +21,7 @@ if (loopback) {
 if (demoEnabled && params.get('demo') === '1') {
   fixtures = await import('./demo/fixtures.mjs');
   viewMode=initialView(params.get('view'));
+  if(fixtures.memberships.includes(params.get('unit')))activeUnit=params.get('unit');
   if(['light','dark','system'].includes(params.get('theme')))window.gridlyDispatchTheme.setPreference(params.get('theme'));
   state = ['populated','empty','loading','error','denied'].includes(params.get('state')) ? params.get('state') : 'populated';
   renderShell();

@@ -179,7 +179,7 @@ Run all UI certification with:
 
 ```powershell
 $env:DISPATCH_BROWSER_CHANNEL='msedge'
-node --test tests/dispatch-operational-map.test.mjs tests/dispatch-map.test.mjs tests/dispatch-theme.test.mjs tests/dispatch-visual-shell.test.mjs
+node --test tests/dispatch-map-polish.test.mjs tests/dispatch-operational-map.test.mjs tests/dispatch-map.test.mjs tests/dispatch-theme.test.mjs tests/dispatch-visual-shell.test.mjs
 ```
 
 `reports/responder/dispatch-map/CERTIFICATION.md` records the evidence. The map
@@ -224,3 +224,27 @@ Visual certification does not certify real incident positions or navigation.
 The new suite additionally compares the entire Board (including View selector)
 against `4952fcc09586bf2c4a193e40b0dbdc4a57ff94f1` and checks Split/Map geometry.
 Evidence: `reports/responder/dispatch-operational-map/CERTIFICATION.md`.
+
+## Final map polish
+
+The unchanged Gridly PNGs now use an 80px canvas and 48px contrast backing.
+Selected markers have a static 3px ring; resolved markers retain their category
+and check at 70% opacity. Full incident rectangles reserve space before any
+context label is placed. Road label order is US/I, TX/SH, FM/RM, important city
+streets, local streets, then county roads. County names appear only at zoom 16+
+(maximum three at 16, five at 17), without highway shields.
+
+Nine named OSM landmarks are derived offline from the existing context snapshot:
+one police station, two fire stations, five schools and one park. Emergency/civic
+labels are eligible from zoom 13; schools/parks from 15. Collision and count caps
+keep these muted orientation labels secondary to incidents. No hospital, EMS or
+municipal feature was present in the finite extract. Commercial POIs, addresses,
+unnamed features and ambiguous duplicate Colbert school names are excluded.
+Facilities are not independently verified; footprint centers are not entrances.
+See demo/dayton-landmarks-provenance.json for source, hash and limitations.
+Rebuild with node tools/dispatch-ui/prepare-landmarks.mjs using the existing
+ignored raw context response; the app makes no external data request.
+
+Demo URLs support unit=police or unit=works, validated against demo memberships.
+All map assets remain demo-gated. Canvas teardown guards are Dispatch-local.
+Final preservation and visual evidence: reports/responder/dispatch-map-polish/CERTIFICATION.md.

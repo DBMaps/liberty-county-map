@@ -31,18 +31,29 @@
 .geo-map-panel .leaflet-bar a.leaflet-disabled { background:var(--bg-disabled); color:var(--text-disabled); }
 .geo-map-panel .leaflet-control-scale-line { background:var(--bg-panel); color:var(--text-primary); border-color:var(--text-secondary); text-shadow:none; }
 .geo-map-panel .dispatch-marker { background:transparent; border:0; }
-.geo-map-panel .gridly-category-icon { display:block; width:64px; height:64px; }
-.geo-map-panel .dispatch-marker::before { content:''; position:absolute; inset:9px 16px 23px; border-radius:50%; pointer-events:none; }
-.geo-map-panel .dispatch-marker.is-selected::before { outline:3px solid var(--focus-ring); outline-offset:4px; box-shadow:0 0 0 6px var(--bg-panel); }
-.geo-map-panel .marker-state { position:absolute; right:8px; top:8px; width:8px; height:8px; border:2px solid var(--bg-panel); border-radius:50%; background:var(--status-moderate-text); }
+.geo-map-panel .gridly-category-icon { position:relative; display:block; width:80px; height:80px; }
+.geo-map-panel .dispatch-marker::before { content:''; position:absolute; left:16px; top:6px; width:48px; height:48px; box-sizing:border-box; border:2px solid var(--text-primary); background:var(--bg-panel-raised); border-radius:50%; box-shadow:0 2px 5px var(--shadow-drawer),0 0 0 1px var(--status-moderate-border); pointer-events:none; }
+.geo-map-panel .marker-high::before { box-shadow:0 2px 5px var(--shadow-drawer),0 0 0 2px var(--status-high-border); }
+.geo-map-panel .marker-critical::before { box-shadow:0 2px 5px var(--shadow-drawer),0 0 0 2px var(--status-critical-border); }
+.geo-map-panel .marker-low::before { box-shadow:0 2px 5px var(--shadow-drawer),0 0 0 1px var(--status-low-border); }
+.geo-map-panel .dispatch-marker.is-selected::before { outline:3px solid var(--focus-ring); outline-offset:4px; }
+.geo-map-panel .marker-state { position:absolute; right:13px; top:8px; width:8px; height:8px; border:2px solid var(--bg-panel); border-radius:50%; background:var(--status-moderate-text); }
 .geo-map-panel .marker-high .marker-state { background:var(--status-high-text); }
-.geo-map-panel .marker-resolved .marker-state { width:15px; height:15px; top:4px; right:3px; font:700 11px/15px sans-serif; text-align:center; color:var(--status-resolved-text); background:var(--status-resolved-bg); border-color:var(--status-resolved-border); }
+.geo-map-panel .marker-critical .marker-state { background:var(--status-critical-text); }
+.geo-map-panel .marker-low .marker-state { background:var(--status-low-text); }
+.geo-map-panel .marker-resolved { opacity:.7; }
+.geo-map-panel .marker-resolved.is-selected { opacity:1; }
+.geo-map-panel .marker-resolved::before { box-shadow:0 1px 3px var(--shadow-drawer); border-color:var(--status-resolved-border); }
+.geo-map-panel .marker-resolved .marker-state { width:15px; height:15px; top:5px; right:7px; font:700 11px/15px sans-serif; text-align:center; color:var(--status-resolved-text); background:var(--status-resolved-bg); border-color:var(--status-resolved-border); }
 .geo-map-panel .map-context-label { pointer-events:none; }
 .geo-map-panel .map-context-label span { position:absolute; white-space:nowrap; color:var(--map-label); font:600 11px/18px Arial,sans-serif; text-shadow:0 1px 1px var(--map-land),0 -1px 1px var(--map-land),1px 0 1px var(--map-land),-1px 0 1px var(--map-land); }
 .geo-map-panel .label-highway span { padding:0 5px; border:1px solid var(--map-label); border-radius:4px; background:var(--map-land); font-weight:700; }
+.geo-map-panel [data-label-group="major"] span { font-size:12px; }
+.geo-map-panel [data-label-group="county"] span { border:0; background:transparent; font-size:10px; font-weight:500; }
 .geo-map-panel .label-locality span { font-size:14px; letter-spacing:2px; text-transform:uppercase; }
 .geo-map-panel .label-rail span { color:var(--map-rail); font-style:italic; }
 .geo-map-panel .label-waterway span { color:var(--map-water-label); font-style:italic; }
+.geo-map-panel .label-landmark span { color:var(--map-landmark); font-size:10px; font-weight:500; }
 .geo-map-panel .leaflet-popup-content-wrapper,.geo-map-panel .leaflet-popup-tip { background:var(--bg-panel-raised); color:var(--text-primary); box-shadow:0 3px 14px var(--shadow-drawer); }
 .geo-map-panel .leaflet-popup-content-wrapper { border:1px solid var(--border-strong); border-radius:7px; }
 .geo-map-panel .leaflet-popup-close-button { color:var(--text-secondary); }

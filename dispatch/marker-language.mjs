@@ -9,7 +9,7 @@ export const markerCategories=Object.freeze({
 export function incidentIcon(L,item){
   const category=markerCategories[item.mapCategory];
   if(!category)throw new Error('Unmapped demo incident category');
-  const size=64,anchor=[size/2,size*category.tip];
+  const size=80,anchor=[size/2,size*category.tip];
   return L.divIcon({className:`dispatch-marker marker-${item.severity.toLowerCase()} ${item.status==='Resolved'?'marker-resolved':''}`,
     html:`<img class="gridly-category-icon" src="./assets/markers/${category.asset}" alt="" aria-hidden="true"><span class="marker-state" aria-hidden="true">${item.status==='Resolved'?'✓':''}</span>`,
     iconSize:[size,size],iconAnchor:anchor,popupAnchor:[0,-anchor[1]+8]});

@@ -15,9 +15,12 @@ The mappings and pointer ratios isolate the production contracts in `js/app.js`
 | signal_outage | traffic-signal-issue.png | 194/256 |
 | debris | debris-in-road.png | 200/256 |
 
-Display size follows the consumer's 64×64 CSS pixel convention, including the
-transparent margins. Symbols/category colors stay unchanged in both themes.
-Dispatch adds a static selection ring, small severity accent and resolved check.
+Dispatch displays the unchanged PNG canvas at 80×80 CSS pixels (previously
+64×64), retaining its transparent margins and pointer anchor ratios. A 48×48
+pixel theme-aware backing has a 2px contrast border. Selection adds a static
+3px outline with 4px offset; severity is a secondary 1–2px accent and small dot.
+Resolved markers use 70% opacity and a check; selected resolved markers regain
+full opacity. Symbols/category colors stay unchanged in both themes.
 Fixed crossing infrastructure uses sourced basemap points, never the train hazard
 icon. No consumer classifier, popup copy, mutable state, animation, auth,
 home/search or Route Watch code is imported. The consumer SVG directory describes

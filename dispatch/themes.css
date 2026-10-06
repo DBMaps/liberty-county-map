@@ -1,6 +1,7 @@
 /* All Dispatch palette values live here. Theme switches never change geometry. */
 :root {
   --map-land: #e8edeb;
+  --map-landmark: #586861;
   --map-road-major: #f4d494;
   --map-road-arterial: #fff5d9;
   --map-road-local: #ffffff;
@@ -108,6 +109,7 @@
 }
 :root[data-theme="dark"] {
   --map-land: #18282d;
+  --map-landmark: #a0b0aa;
   --map-road-major: #887954;
   --map-road-arterial: #65746d;
   --map-road-local: #46595e;
