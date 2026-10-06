@@ -1,6 +1,6 @@
-# Dispatch Worker hosting layer — local only
+# Dispatch Worker hosting layer
 
-DAYTON-HOSTING-01-v1. Governance commit 94faa3b2406c0e5eea1cbecdf618c6aa33c4d0a0. No Cloudflare/Supabase/Hyperdrive resource, real credential, webhook, email or deployment is created. This directory is a private server artifact, not a browser build.
+DAYTON-HOSTING-01-v1. Governance commit 94faa3b2406c0e5eea1cbecdf618c6aa33c4d0a0. The original local implementation created no production resources. The authorized production transport repair status is recorded below. This directory is a private server artifact, not a browser build.
 
 ## Local checks
 
@@ -32,7 +32,7 @@ GRIDLY_DISPATCH_SENDING_ENABLED=false is the default Wrangler state. The transpo
 
 ## Database/Hyperdrive boundary
 
-Binding: DISPATCH_DELIVERY_DB. Validate the narrow username, credential presence, TLS/caching declarations and disallow insecure sslmode. pg clients require certificate verification, connection/query/statement/idle-transaction bounds. Each command creates/closes its logical client; Hyperdrive owns the origin pool.
+Binding: DISPATCH_DELIVERY_DB. Require a nonempty string connectionString, a parseable PostgreSQL URL, password presence and explicit TLS/caching declarations. Worker-facing username and sslmode representations are not origin-policy evidence; origin identity is checked through database responses and origin TLS through Hyperdrive configuration. pg clients require certificate verification, connection/query/statement/idle-transaction bounds. Each command creates/closes its logical client; Hyperdrive owns the origin pool.
 
 Repository exposes claim, complete and event only. Fixed parameterized SQL: BEGIN, SET LOCAL ROLE dispatch_delivery_transport, local timeouts, the one bounded command, COMMIT; failures ROLLBACK and close. No table reads or issue/suppression-admin commands. Unknown correlation is unavailable; conflicting committed duplicate is separately classified.
 
@@ -42,7 +42,7 @@ Hyperdrive query caching must be explicitly disabled at account configuration. G
 
 ## Activation and rotation gates
 
-wrangler.jsonc contains an unusable owner-configuration placeholder, exact narrow route and disabled workers.dev/preview exposure. There is no deploy script. Keep environments separate; no consumer bindings. Real keys go only into Worker Secrets GRIDLY_DISPATCH_RESEND_API_KEY and GRIDLY_DISPATCH_RESEND_WEBHOOK_SECRET. No private values in vars or source. The database credential belongs in Hyperdrive configuration.
+wrangler.jsonc records the approved nonsecret Hyperdrive resource ID, exact narrow routes and disabled workers.dev/preview exposure. There is no deploy script. Keep environments separate; no consumer bindings. Real keys go only into Worker Secrets GRIDLY_DISPATCH_RESEND_API_KEY and GRIDLY_DISPATCH_RESEND_WEBHOOK_SECRET. No private values in vars or source. The database credential belongs in Hyperdrive configuration.
 
 Future creation/deployment needs separate approval, actual project/account IDs, reviewed production baseline/forward installation, narrow login provisioning, approved real routes/template, account-side TLS/cache checks, secret-safe logging/build review and legal/privacy/retention readiness. Existing retention gaps are unchanged. Rotate provider material through controlled secret versions/deployment and retire old material after verification. Secret commands may deploy; none is run here.
 
@@ -53,3 +53,11 @@ Sources: Cloudflare Node compatibility/crypto/Worker Secrets/Hyperdrive node-pos
 GET https://dispatch.gridlygo.com/health is the only additional route. It uses the existing narrow Hyperdrive binding validation, certificate verification and bounded pg client, without Resend secrets. Two read-only transactions verify session_user/current_user, SET LOCAL ROLE dispatch_delivery_transport, rollback and reset on the same logical client. Hyperdrive owns physical pooling; local proof does not establish live Hyperdrive reuse. Production connectivity and identity-of-origin assertions still require separately authorized account preflight. No application query, data mutation, bearer secret or diagnostic output is introduced. Failures return a fixed sanitized 503; success returns only service/environment/status and verification booleans. No deployment is performed by this local change.
 
 Readiness certification: 80 PASS / 0 FAIL (55 HTTP/static including 12 new readiness checks; 15 reporting/reviewer/invitation runtime; 10 real-login/role-reset runtime), existing 329 assertion groups, Phase 27 security postflight PASS. Existing guarded WorkerOnly harness used an unlinked TEMP Supabase project and separate disposable evidence; no production connection. Focused readiness role transitions use injected clients; real PostgreSQL role/reset/pool boundaries are independently certified by the unchanged principal suite. Live Hyperdrive pooling remains unverified until production connectivity authorization.
+
+## Authorized production binding repair
+
+Production repair version 1742f91a-4897-4ba7-a270-09875a43c8f7 returned HTTP 200/status ok. The unchanged readiness success path proves session_user dispatch_delivery_connection, transaction-local dispatch_delivery_transport, role reset after each rollback and a second read-only transaction without elevated-role persistence on the same logical client. Physical origin-pool reuse is not asserted. Client SSL certificate verification remains unchanged.
+
+Certification: 123 PASS / 0 FAIL (98 static/HTTP, 15 reporting/reviewer/invitation runtime, 10 principal runtime), 329 existing runtime assertion groups; rollback/reinstall, populated refusal and Phase 27 continuity PASS. Production read-only inventory: 4 schemas, 65 tables with FORCE RLS, 135 functions, 22 policies, three narrow roles; nonregistry application tables empty. Hyperdrive origin, verify-full CA/TLS and disabled caching remain unchanged. No Resend secret binding exists and sending remains false.
+
+Failure diagnostics contain only fixed stages/codes and bounded boolean/type binding facts; URI contents and raw exceptions are never exposed. Success payload is unchanged. Evidence: reports/responder/responder-phase29-binding-validator-repair.json; earlier diagnostic artifacts preserve the refusal history. The production results supersede the historical local-only readiness status above. Separate Resend authorization is required; retention/legal and restore gates still block participant activation.

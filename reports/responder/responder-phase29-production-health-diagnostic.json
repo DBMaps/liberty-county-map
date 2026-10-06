@@ -1,0 +1,69 @@
+{
+  "task": "GRIDLY DISPATCH — DIAGNOSE PRODUCTION /HEALTH 503 WITHOUT CHANGING AUTHORITY",
+  "recordedAt": "2026-10-05T23:52:59.181Z",
+  "diagnosis": "Exact failure stage identified; production behavior not repaired",
+  "sourceHead": "be59deba33d68ccfc250a70ca4a84a760aeb31f6",
+  "runtime": {
+    "pg": "8.23.1",
+    "compatibility_date": "2026-07-30",
+    "compatibility_flags": [
+      "nodejs_compat"
+    ],
+    "freshClientPerRequest": true,
+    "globalClientOrPool": false,
+    "bindingConnectionStringUsed": true,
+    "workerClientTlsOptions": {
+      "rejectUnauthorized": true
+    },
+    "clientConstruction": "new Client({connectionString,ssl:{rejectUnauthorized:true},connectionTimeoutMillis:3000,query_timeout:4000,application_name:'dispatch-readiness'})",
+    "sqlSequence": "Identity SELECT; twice BEGIN READ ONLY, SET LOCAL ROLE dispatch_delivery_transport, local statement/idle timeouts, transport identity SELECT, ROLLBACK, reset identity SELECT; end client"
+  },
+  "certification": {
+    "httpStaticPass": 68,
+    "reportingReviewerInvitationRuntimePass": 15,
+    "transportPrincipalRuntimePass": 10,
+    "totalPass": 93,
+    "totalFail": 0,
+    "disposableHarness": "Existing run-certification.ps1 -WorkerOnly executed via TEMP copy; repository Supabase CLI never used",
+    "postflight": "PASS",
+    "rollbackReinstall": "PASS"
+  },
+  "deployment": {
+    "worker": "gridly-dispatch-delivery-production",
+    "previousVersion": "2b8f450e-e9e6-47e3-bf90-fe873f0e5ba6",
+    "diagnosticVersion": "0b18eea5-7a4a-4c76-9358-bf277dae1519",
+    "trafficPercent": 100,
+    "method": "wrangler versions upload then versions deploy; no triggers deploy",
+    "deploymentCount": 1
+  },
+  "health": {
+    "httpStatus": 503,
+    "status": "unavailable",
+    "databaseConnected": false,
+    "failureStage": "binding",
+    "failureCode": "BINDING_MISSING"
+  },
+  "interpretation": {
+    "proven": "databaseBinding(env) refused before pg Client construction and before SQL; public code covers all binding validator refusals and does not prove binding absence",
+    "candidate": "Certified binding validation predicates do not match one or more properties of live runtime binding/configuration",
+    "exactPredicate": "NOT PROVEN; no raw binding URI or credential inspected or exposed",
+    "workerTlsCandidate": "Worker adds independent TLS config, but it was not reached in this request; no TLS change performed"
+  },
+  "safety": {
+    "rawExceptionExposed": false,
+    "hyperdriveAltered": false,
+    "databaseRoleOrGrantAltered": false,
+    "databaseBaselineAltered": false,
+    "webhookBehaviorChanged": false,
+    "dnsAltered": false,
+    "consumerTouched": false,
+    "resendTouched": false,
+    "protectedCacheTouched": false,
+    "productionDataCreated": false,
+    "repairDeployed": false,
+    "secondDeployment": false,
+    "committed": false,
+    "pushed": false
+  },
+  "git": "Diagnostic source/tests/evidence remain unstaged for next scoped repair"
+}

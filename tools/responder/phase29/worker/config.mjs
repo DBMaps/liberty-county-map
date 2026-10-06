@@ -15,10 +15,10 @@ export function signingKey(env){
 }
 export function databaseBinding(env){
  const b=env.DISPATCH_DELIVERY_DB;
- if(!b||typeof b.connectionString!=='string'||env.GRIDLY_DISPATCH_DB_CACHING_DISABLED!=='true'||env.GRIDLY_DISPATCH_DB_TLS_REQUIRED!=='true')throw new Refusal('CONFIGURATION_REFUSED');
+ if(!b||typeof b.connectionString!=='string'||b.connectionString.length===0||env.GRIDLY_DISPATCH_DB_CACHING_DISABLED!=='true'||env.GRIDLY_DISPATCH_DB_TLS_REQUIRED!=='true')throw new Refusal('CONFIGURATION_REFUSED');
  let u;try{u=new URL(b.connectionString)}catch{throw new Refusal('CONFIGURATION_REFUSED')}
- if(u.protocol!=='postgres:'&&u.protocol!=='postgresql:'||decodeURIComponent(u.username)!=='dispatch_delivery_connection'||!u.password||u.searchParams.has('sslmode')&&u.searchParams.get('sslmode')!=='verify-full')throw new Refusal('CONFIGURATION_REFUSED');
- // Account-side caching, dedicated project and TLS must also be verified before deployment.
+ if(u.protocol!=='postgres:'&&u.protocol!=='postgresql:'||!u.password)throw new Refusal('CONFIGURATION_REFUSED');
+ // Origin identity/TLS are verified by control-plane configuration and database proofs, not proxy URI fields.
  return b.connectionString;
 }
 
