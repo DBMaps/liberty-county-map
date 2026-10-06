@@ -32,6 +32,8 @@ test('retired native client is rejected independently of ambient Android output'
  const directory=await mkdtemp(join(tmpdir(),'gridly-retired-client-'));
  try {
   await mkdir(join(directory,'js'));
+  // The release guard inspects HTML before checking the retired app bytes.
+  await writeFile(join(directory,'index.html'),'<!doctype html><html><head></head><body></body></html>');
   await writeFile(join(directory,'js/app.js'),'retired native app');
   await assert.rejects(verifyCommunitySubmissionBundle(directory),/Retired or mismatched submission client: js\/app.js/);
  } finally {await rm(directory,{recursive:true,force:true});}
