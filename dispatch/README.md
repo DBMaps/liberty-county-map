@@ -51,7 +51,8 @@ live authorization and stale-revision rejection are explained in the detail view
 `app.mjs` owns view state and interaction; `components.mjs` owns reusable icons,
 branding, badges, records, queue items and state panels; `styles.css` owns design
 tokens and responsive layouts. The native dialog supplies modal focus containment.
-No map provider is loaded. The reserved location panel uses no fabricated map.
+Board retains its approved reserved location panel. The separate Split and Map
+modes load the local geographic adapter described below.
 
 ## Certification
 
@@ -110,13 +111,13 @@ themes. Native inputs use the resolved `color-scheme`. Focus, placeholder, statu
 hover, selected-row, disabled and drawer surfaces are theme-aware. Reduced-motion
 preferences disable transitions/animation, though the UI introduces no motion.
 
-Future map integration should read `document.documentElement.dataset.theme` on
+Map integration reads `document.documentElement.dataset.theme` on
 initialization and listen for `gridlydispatch:themechange` on `window`, whose
 `detail` contains `{preference, resolved}`. Use `resolved` to select the reviewed
 light/dark basemap style, keeping the camera, layers, filters and records intact.
 Controls/popups should consume `--bg-panel-raised`, `--bg-input`, `--text-primary`,
-`--text-secondary`, `--border-strong` and `--focus-ring`. No map provider, tiles or
-map network requests are added by this phase.
+`--text-secondary`, `--border-strong` and `--focus-ring`. The adapter uses local
+vector road data; no external map provider or tile requests are made.
 
 Dual-theme certification:
 
@@ -129,3 +130,59 @@ New evidence lives in `reports/responder/dispatch-theme/`. The same login and bo
 URLs support every mode: choose Dark for both dark previews, Light for the light
 preview, or System to follow the OS. A browser refresh is needed once to load this
 new application version; subsequent theme switches are immediate.
+
+## Board, Split and Map
+
+The compact **View** selector defaults to Board. Explicit selections persist as
+`localStorage.gridlyDispatchView` (`board`, `split`, `map`); missing/invalid values
+fall back to Board and unavailable storage does not prevent switching. Only a
+display preference is stored. A local demo URL may override the initial view:
+`?demo=1&view=split&theme=dark`. Valid `theme` values are light/dark/system and
+apply the existing theme preference. Remove `view` from the URL to test saved
+view persistence on reload; the explicit URL wins when present.
+
+Split uses approximately 40% list / 60% map on desktop. Map devotes approximately
+80% to geography while retaining a compact equivalent incident list. At tablet
+width the map and list stack. Short viewports use vertical scrolling. Select a
+list title or a labeled marker to select the same incident and reveal its popup.
+If needed, the map scrolls into view to show that popup. **View details** in the
+list or popup opens the unchanged detail drawer; Escape/Close restores focus.
+Search, filters, acting unit and theme remain intact when switching modes.
+Changing the acting unit retains the original filter-reset behavior.
+
+`map-view.mjs` is lazy-loaded only for geographic demo views. Leaflet **1.9.4**
+is reused as an unchanged vendored library, with its BSD-2-Clause license in
+`vendor/leaflet/LICENSE`. No consumer map/auth/runtime module is imported.
+There are no tiles or third-party requests. A local Canvas layer draws 331 public
+OpenStreetMap road segments around Dayton. The source extract has timestamp
+2026-05-09T22:50:58Z and is context only, not live routing or jurisdiction data.
+Only the four existing synthetic fixtures receive approximate demo coordinates.
+
+The road data is [ODbL 1.0](https://opendatacommons.org/licenses/odbl/1-0/),
+attributed to [OpenStreetMap contributors](https://www.openstreetmap.org/copyright).
+Visible map credits link to attribution and the downloadable derived GeoJSON.
+`demo/dayton-roads-provenance.json` records the source hash, bounds and transform.
+Rebuild offline with `node tools/dispatch-ui/prepare-map.mjs`. Source coordinates
+are preserved; no boundaries or roads are invented. The finite extract is not a
+worldwide basemap. Map controls, popup, markers and roads follow the resolved
+theme, including runtime System changes, without replacing records or camera.
+
+Data/library failure presents **Map unavailable** and **Retry map**; the list and
+Board remain usable. Zero matching incidents retains geographic context and
+explicitly states the empty result. Map access adds no API key, external provider,
+paid dependency, routing change or CSP exception. Production still requires the
+separate hosting/auth/read work above; production coordinates, geographic scope,
+data refresh/licensing and any future tile service need their own review. Demo
+coordinates and this gated fixture extract must not become production records.
+
+Run all UI certification with:
+
+```powershell
+$env:DISPATCH_BROWSER_CHANNEL='msedge'
+node --test tests/dispatch-map.test.mjs tests/dispatch-theme.test.mjs tests/dispatch-visual-shell.test.mjs
+```
+
+`reports/responder/dispatch-map/CERTIFICATION.md` records the evidence. The map
+suite renders approved commit `65b59e55d772b2de4d668f3f2e15d9140b7fc329` from Git
+blobs and requires exact Board PNG equality with only the new View control hidden,
+both before and after loading the map library. Screenshots/logs remain local.

@@ -1,5 +1,9 @@
 /* All Dispatch palette values live here. Theme switches never change geometry. */
 :root {
+  --map-land: #e8edeb;
+  --map-road-major: #819995;
+  --map-road-local: #b5c4c1;
+  --map-label: #485f61;
   color-scheme: light;
   --bg-brand: #082d40;
   --bg-sidebar: #062332;
@@ -96,6 +100,10 @@
   --border-disabled: #b9c5cb;
 }
 :root[data-theme="dark"] {
+  --map-land: #18282d;
+  --map-road-major: #74908b;
+  --map-road-local: #3c5559;
+  --map-label: #acbdc5;
   color-scheme: dark;
   --bg-brand: #102d3b;
   --bg-sidebar: #101f29;

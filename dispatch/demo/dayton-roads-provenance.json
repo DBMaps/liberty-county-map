@@ -1,0 +1,15 @@
+{
+  "source": "data/liberty-county-road-segments.geojson",
+  "sha256": "bbea076ffc97920c6d5cb0050870f22c644c5a78b114ee14b5fceeab0dfd6978",
+  "sourceTimestamp": "2026-05-09T22:50:58Z",
+  "bbox": [
+    -94.95,
+    30.015,
+    -94.85,
+    30.085
+  ],
+  "featureCount": 331,
+  "transform": "LineString highway features; contiguous in-bounds vertex runs of at least two points; preserve coordinates and allowlist four public road properties. No jurisdiction or incident data.",
+  "license": "ODbL 1.0",
+  "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+}
