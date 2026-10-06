@@ -130,7 +130,7 @@ def signed_app_facts(app, certificate_prefix):
     info = plistlib.loads((app / "Info.plist").read_bytes())
     architectures = subprocess.check_output(["lipo", "-archs", str(app / info["CFBundleExecutable"])], text=True).strip().split()
     assert architectures == ["arm64"], "unexpected executable architecture(s)"
-    expected = {"CFBundleShortVersionString": "1.0.0", "CFBundleVersion": "13", "CFBundleIdentifier": BUNDLE, "UIDeviceFamily": [1]}
+    expected = {"CFBundleShortVersionString": "1.0.0", "CFBundleVersion": "14", "CFBundleIdentifier": BUNDLE, "UIDeviceFamily": [1]}
     assert {key: info.get(key) for key in expected} == expected, "wrong app version/build/bundle/device family"
     return {"codesign": metadata, "certificate_sha1": leaf_sha1, "entitlements": entitlements, "architectures": architectures,
             "profile_uuid": profile["UUID"], "identity": expected, "executable": info["CFBundleExecutable"]}
@@ -139,10 +139,13 @@ def signed_app_facts(app, certificate_prefix):
 def certify_native_parity(app, ipa, native_source):
     app, ipa = Path(app), Path(ipa)
     source = Path(native_source).read_text()
-    assert 'as? String == "13"' in source, "missing Build-13-only activation"
+    assert 'as? String == "14"' in source, "missing Build-14-only activation"
     match = re.search(r'private static let legacyRecoveryScript = #"""\n(.*?)\n\s*"""#', source, re.S)
     assert match, "missing scoped recovery body"
     recovery = textwrap.dedent(match.group(1)).encode()
+    ready_match = re.search(r'private static let legacyReadinessScript = #"""\n(.*?)\n\s*"""#', source, re.S)
+    assert ready_match, "missing event-driven runtime readiness body"
+    readiness = textwrap.dedent(ready_match.group(1)).encode()
     with tempfile.TemporaryDirectory(prefix="gridly-native-parity-") as temporary:
         work = Path(temporary)
         # ditto preserves native bundle structure. Only extraction/copies change;
@@ -180,12 +183,13 @@ def certify_native_parity(app, ipa, native_source):
         require_neutral_parity(neutral_archive, neutral_ipa)
         for label, body in (("archive", neutral_archive), ("IPA", neutral_ipa)):
             assert recovery in body, label + " compiled recovery body differs from source"
+            assert readiness in body, label + " compiled runtime readiness body differs from source"
             for text in (b"Review legacy saved report", b"Keep saved retry", b"Forget saved retry"):
                 assert text in body, label + " compiled owner confirmation missing"
         assert archive_path.read_bytes() == archive_bytes and ipa_path.read_bytes() == ipa_bytes, "signed artifact was modified"
         result = {"archive_sha256": sha256(archive_bytes), "ipa_sha256": sha256(ipa_bytes),
                   "signing_neutral_sha256": sha256(neutral_archive), "source_sha256": sha256(source.encode()),
-                  "recovery_body_sha256": sha256(recovery), "architecture": archive_macho["architecture"],
+                  "recovery_body_sha256": sha256(recovery), "readiness_body_sha256": sha256(readiness), "architecture": archive_macho["architecture"],
                   "raw_equal": archive_bytes == ipa_bytes, "code_equal": True,
                   "recovery_in_archive_and_ipa": True, "signed_artifacts_unchanged": True}
         print("signing-aware native recovery parity PASS: " + json.dumps(result, sort_keys=True), flush=True)
