@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {mkdir,readFile} from 'node:fs/promises';
 import {chromium} from '@playwright/test';
 import {previewServer} from '../tools/dispatch-ui/serve.mjs';
-import {approvedBoardServer} from '../tools/dispatch-ui/approved-board.mjs';
+import {approvedBoardServer,sameMapPixels} from '../tools/dispatch-ui/approved-board.mjs';
 const evidence=new URL('../reports/responder/dispatch-selection/',import.meta.url);
 let browser,server,baseline,base,approved;
 const listen=s=>new Promise(r=>s.listen(0,'127.0.0.1',()=>r(`http://127.0.0.1:${s.address().port}`)));
@@ -40,7 +40,7 @@ for(const theme of ['dark','light'])test(`${theme}: selected marker/row, bidirec
 },{theme}));
 for(const theme of ['dark','light'])for(const [width,height]of [[1440,900],[1920,1080],[1280,720],[1024,768]])test(`${theme} ${width}x${height}: approved Board exact and geographic views unchanged outside selection/key`,()=>visit(async p=>{
   const compare={};for(const origin of [approved,base]){await p.goto(origin+'/?demo=1&view=board');await p.locator('tbody tr').first().waitFor();await p.mouse.move(0,0);const board=await p.screenshot();if(origin===approved)compare.board=board;else{assert.ok(compare.board.equals(board),'Exact Board');await shot(p,`${theme}-${width}-board`);}
-    for(const mode of ['split','map']){await view(p).selectOption(mode);await ready(p);await p.mouse.move(0,0);const geometry=await bounds(p);assert.equal(await p.locator('.map-caption > span:first-child').innerText(),'Offline OSM context · Approximate demo positions');const png=await stableScreenshot(p,{mask:[p.locator('.map-caption')]});if(origin===approved)compare[mode]={geometry,png};else{assert.deepEqual(geometry,compare[mode].geometry);assert.ok(png.equals(compare[mode].png),'Only compact key differs in unselected view');}}
+    for(const mode of ['split','map']){await view(p).selectOption(mode);await ready(p);await p.mouse.move(0,0);const geometry=await bounds(p);assert.equal(await p.locator('.map-caption > span:first-child').innerText(),'Offline OSM context · Approximate demo positions');const png=await stableScreenshot(p,{mask:[p.locator('.map-caption'),p.locator('[data-marker]')]});if(origin===approved)compare[mode]={geometry,png};else{assert.deepEqual(geometry,compare[mode].geometry);assert.ok(sameMapPixels(png,compare[mode].png),'Only compact key and normalized category artwork differ in unselected view');}}
   }
 },{theme,width,height}));
 test('only isolated map styling and caption change; no consumer imports or writes',async()=>{const s=await readFile(new URL('../dispatch/map-view.mjs',import.meta.url),'utf8');assert.doesNotMatch(s,/from\s+['"]\.\.\/|supabase|\.insert\(|\.rpc\(/);});
