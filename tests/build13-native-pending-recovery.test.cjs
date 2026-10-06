@@ -149,8 +149,8 @@ test('empty storage, unknown actions and unbound confirmation cannot erase anyth
  assert.equal(f.run('clear').status,'changed');assert.deepEqual(f.data,before);assert.deepEqual(f.writes,[]);
 });
 
-test('native entry is limited to Build 13 and explicit destructive confirmation; no general evaluator or vault action is exposed',()=>{
- assert.match(native,/CFBundleVersion"\) as\? String == "13"/);
+test('native entry is limited to Build 14 and explicit destructive confirmation; no general evaluator or vault action is exposed',()=>{
+ assert.match(native,/CFBundleVersion"\) as\? String == "14"/);
  assert.match(native,/Bundle\.main\.bundleIdentifier == "com\.gridlygo\.gridly"/);
  assert.match(native,/title: "Keep saved retry", style: \.cancel/);
  assert.match(native,/title: "Forget saved retry", style: \.destructive/);
@@ -159,5 +159,59 @@ test('native entry is limited to Build 13 and explicit destructive confirmation;
  assert.equal((script.match(/localStorage\.removeItem\(KEY\)/g)||[]).length,1);
  assert.doesNotMatch(script,/\bawait\b|\.setItem\(|\.clear\(|\.rpc\(|\bfetch\(|\.retry\(|\.submit\(|\.cancel\(/);
  assert.doesNotMatch(native,/isInspectable|webContentsDebuggingEnabled|SecItem|StoreKit\.sync|print\(|console\./);
- assert.match(native,/attempt < 60/);assert.match(native,/private static let legacyRecoveryScript/);
+ assert.match(native,/attempts < 12/);assert.match(native,/private static let legacyRecoveryScript/);
+ assert.doesNotMatch(native,/asyncAfter|legacyRecoveryStarted/);
+ assert.match(native,/UIApplication.didBecomeActiveNotification/);
+ assert.match(native,/UIScene.didActivateNotification/);
+ assert.match(native,/target.observe\(\\.isLoading/);
+ assert.match(native,/message.webView === webView/);
+});
+
+const readiness=native.match(/private static let legacyReadinessScript = #"""\r?\n([\s\S]*?)\r?\n\s*"""#/)[1];
+function readinessFixture() {
+ const f=fixture(),events=new Map(),messages=[];let mutation,disconnects=0;
+ f.context.document.readyState='loading';
+ f.context.document.documentElement={};
+ const add=(name,callback)=>events.set(name,callback);
+ const remove=name=>events.delete(name);
+ Object.assign(f.context.window,{addEventListener:add,removeEventListener:remove,
+  webkit:{messageHandlers:{gridlyLegacyRuntimeReady:{postMessage:value=>messages.push(value)}}}});
+ Object.assign(f.context.document,{addEventListener:add,removeEventListener:remove});
+ f.context.MutationObserver=class {constructor(callback){mutation=callback;}observe(){}disconnect(){disconnects++;}};
+ vm.runInContext(readiness,f.context);
+ return {...f,messages,events,mutation:()=>mutation(),disconnects:()=>disconnects};
+}
+
+test('document-end before didFinish is read-only; actual load completion signals exactly once',()=>{
+ const f=readinessFixture(),before=new Map(f.data);
+ assert.deepEqual(f.messages,[]);f.mutation();assert.deepEqual(f.messages,[]);
+ f.context.document.readyState='complete';f.events.get('load')();
+ assert.deepEqual(f.messages,[true]);assert.equal(f.disconnects(),1);
+ f.mutation();assert.deepEqual(f.messages,[true]);assert.deepEqual(f.data,before);assert.deepEqual(f.writes,[]);
+});
+
+test('paid admission after navigation and the old 30-second window still signals readiness',()=>{
+ const f=readinessFixture();f.context.document.readyState='complete';
+ delete f.context.gridlyReportSubmissionRecoveryState;
+ f.events.get('load')();assert.deepEqual(f.messages,[]);
+ // Classic paid scripts can be admitted arbitrarily later; no timer is involved.
+ vm.runInContext('const gridlyReportSubmissionRecoveryState = {activeSubmission:false}',f.context);
+ f.mutation();assert.deepEqual(f.messages,[true]);assert.deepEqual(f.writes,[]);
+});
+
+test('hidden page waits for visibility; navigation/resume mutations cannot duplicate its signal',()=>{
+ const f=readinessFixture();f.context.document.readyState='complete';f.context.document.visibilityState='hidden';
+ f.events.get('load')();assert.deepEqual(f.messages,[]);
+ f.context.document.visibilityState='visible';f.events.get('visibilitychange')();
+ f.mutation();f.mutation();assert.deepEqual(f.messages,[true]);
+});
+
+test('readiness rejects foreign origin and unavailable protocol; it never reads storage',()=>{
+ for(const condition of ['origin','protocol']) {
+  const f=readinessFixture();f.context.document.readyState='complete';
+  f.storage.getItem=()=>assert.fail('readiness must not inspect persistence');
+  if(condition==='origin')f.context.location.hostname='other';else f.context.window.gridlyReportProtocol=null;
+  f.events.get('load')();f.mutation();assert.deepEqual(f.messages,[]);
+ }
+ assert.doesNotMatch(readiness,/localStorage|\bfetch\(|setTimeout|setInterval|\.removeItem\(/);
 });
