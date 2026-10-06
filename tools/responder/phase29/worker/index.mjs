@@ -16,3 +16,4 @@ export async function handle(request,env,{repositoryFactory=deliveryRepository,r
  try{await repositoryFactory(env).event(event);return response(204)}catch(e){return response(e?.code==='EVENT_CONFLICT'?409:503)}
 }
 export default {fetch:handle};
+export {authenticatedInvitationService} from './authenticated-invitation-service.mjs';
