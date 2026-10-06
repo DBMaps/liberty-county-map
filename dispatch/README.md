@@ -88,3 +88,44 @@ zero records. This visual phase intentionally does not introduce those contracts
 
 Publication stays off; onboarding remains blocked. No production identities,
 invitations, DB schemas, credentials, transport configuration or DNS were changed.
+
+## Theme system
+
+Use the labeled **Theme** selector on login or in the top bar: **System**, **Light**,
+**Dark**. System is the default. Explicit selections persist as one validated
+string in `localStorage.gridlyDispatchTheme`; this key is Dispatch-specific and
+contains no identity or operational data. Missing/corrupt values resolve to
+System. If storage is unavailable, the selection still works for the current
+page. Tabs on this origin synchronize preferences through the storage event.
+
+`theme.js` is a small external blocking script before CSS and the body. It applies
+`data-theme="light|dark"` and `data-theme-preference="system|light|dark"` to the root
+before rendering, without weakening the CSP. It listens to `prefers-color-scheme`
+changes only for System. Explicit Light/Dark choices override the OS. A theme
+change does not reload or rerender views, modify fixtures, or initiate requests.
+
+`themes.css` owns all light/dark palette values as semantic variables. Components
+reference these variables through `styles.css`; geometry is shared by both
+themes. Native inputs use the resolved `color-scheme`. Focus, placeholder, status,
+hover, selected-row, disabled and drawer surfaces are theme-aware. Reduced-motion
+preferences disable transitions/animation, though the UI introduces no motion.
+
+Future map integration should read `document.documentElement.dataset.theme` on
+initialization and listen for `gridlydispatch:themechange` on `window`, whose
+`detail` contains `{preference, resolved}`. Use `resolved` to select the reviewed
+light/dark basemap style, keeping the camera, layers, filters and records intact.
+Controls/popups should consume `--bg-panel-raised`, `--bg-input`, `--text-primary`,
+`--text-secondary`, `--border-strong` and `--focus-ring`. No map provider, tiles or
+map network requests are added by this phase.
+
+Dual-theme certification:
+
+```powershell
+$env:DISPATCH_BROWSER_CHANNEL='msedge'
+node --test tests/dispatch-theme.test.mjs tests/dispatch-visual-shell.test.mjs
+```
+
+New evidence lives in `reports/responder/dispatch-theme/`. The same login and board
+URLs support every mode: choose Dark for both dark previews, Light for the light
+preview, or System to follow the OS. A browser refresh is needed once to load this
+new application version; subsequent theme switches are immediate.

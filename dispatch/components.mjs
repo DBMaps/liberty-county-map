@@ -4,6 +4,10 @@ export function icon(name) {
   return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${paths[name] || paths.board}"/></svg>`;
 }
 export function brand() { return '<div class="brand"><img src="./assets/gridly-logo.png" alt="Gridly"><span>DISPATCH</span></div>'; }
+export function themeControl() {
+  const preference = window.gridlyDispatchTheme?.preference || 'system';
+  return `<label class="theme-control">Theme<select data-theme-select>${['system','light','dark'].map(value=>`<option value="${value}" ${value===preference?'selected':''}>${value[0].toUpperCase()+value.slice(1)}</option>`).join('')}</select></label>`;
+}
 export function badge(value) {
   const tone = {High:'high',Critical:'critical',Moderate:'moderate',Low:'low',Reviewed:'reviewed',Resolved:'reviewed','Needs review':'pending',Active:'active',Monitoring:'low'}[value] || 'neutral';
   return `<span class="badge ${tone}"><span aria-hidden="true" class="dot"></span>${escape(value)}</span>`;

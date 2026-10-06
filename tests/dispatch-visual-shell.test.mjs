@@ -83,7 +83,7 @@ test('remote origin query cannot activate fixtures even if preview files were co
   await page.route('https://dispatch-preview.invalid/**',async route=>{
     const path=new URL(route.request().url()).pathname;requested.push(path);
     const name=path==='/'?'index.html':path.slice(1);
-    if(['index.html','app.mjs','auth.mjs','components.mjs','styles.css'].includes(name))await route.fulfill({body:await readFile(new URL('../dispatch/'+name,import.meta.url)),contentType:name.endsWith('.mjs')?'text/javascript':name.endsWith('.css')?'text/css':'text/html'});
+    if(['index.html','app.mjs','auth.mjs','components.mjs','theme.js','themes.css','styles.css'].includes(name))await route.fulfill({body:await readFile(new URL('../dispatch/'+name,import.meta.url)),contentType:/\.(?:mjs|js)$/.test(name)?'text/javascript':name.endsWith('.css')?'text/css':'text/html'});
     else await route.fulfill({status:404,body:''});
   });
   await page.goto('https://dispatch-preview.invalid/?demo=1');await page.getByRole('heading',{name:'Welcome to Dispatch'}).waitFor();
