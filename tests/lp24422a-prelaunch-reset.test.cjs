@@ -138,7 +138,7 @@ test('maintenance response preserves the operation and retired clients remain re
   const storage={getItem:key=>stored.get(key)||null,setItem:(key,value)=>stored.set(key,value),removeItem:key=>stored.delete(key)};
   const client={rpc:async()=>({data:{status:'maintenance'}})};
   const reporter=protocol.create({storage,crypto:{randomUUID:()=> '2442200a-0000-4000-8000-000000000003'},now:()=>1});
-  assert.equal((await reporter.submit('create',{crossing_id:'DOT'},client,'device')).status,'maintenance');
+  assert.equal((await reporter.submit('create',{crossing_id:'DOT',lat:30,lng:-95,report_type:'blocked'},client,'device')).status,'maintenance');
   assert.equal(reporter.pending().pending,true);
   assert.match(migrationSql(),/revoke insert on public\.reports from public,anon,authenticated,service_role/);
   assert.equal((migrationSql().match(/'status','maintenance'/g)||[]).length,3);

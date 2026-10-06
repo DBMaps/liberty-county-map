@@ -19,7 +19,7 @@ vm.runInContext(`${runtimeSource}\nthis.lp24429a={create:gridlyCreateReportingAv
 const runtimeApi=runtimeContext.lp24429a;
 const changedAt='2026-09-16T12:00:00.000Z';
 const statusResponse=enabled=>({data:{protocol_version:2,reporting_enabled:enabled,changed_at:changedAt}});
-const payload=kind=>kind==='create'?{crossing_id:'DOT-24429A'}:{observation_id:randomUUID(),changes:{}};
+const payload=kind=>kind==='create'?{crossing_id:'DOT-24429A',lat:30,lng:-95,report_type:'blocked'}:{observation_id:randomUUID(),changes:{}};
 const memory=()=>{
   const values=new Map();let writes=0,removes=0;
   return {getItem:key=>values.get(key)||null,setItem:(key,value)=>{writes++;values.set(key,value);},removeItem:key=>{removes++;values.delete(key);},raw:key=>values.get(key)||null,counts:()=>({writes,removes})};

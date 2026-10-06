@@ -68,11 +68,12 @@ test('LP244.2A Back cancels without submitting while close and reopen preserve r
   assert.doesNotMatch(close, /governedRoadHazardReportDraft\s*=\s*null/);
 });
 
-test('LP244.2A bounded audit stages are distinct and Tap Map ownership is unchanged', () => {
+test('LP244.2A bounded audit stages are distinct and Tap Map shares explicit review', () => {
   for (const stage of ['location_acquired', 'road_snap_settled', 'governed_draft_ready', 'review_presented', 'explicit_confirmation_invoked', 'submission_invoked', 'submission_settled', 'cancellation_invoked']) {
     assert.match(app, new RegExp(`"${stage}"`));
   }
   assert.match(draftLifecycle, /length > 40/);
-  assert.equal((tapMap.match(/await snapHazardToRoad\(/g) || []).length, 1);
-  assert.equal((tapMap.match(/await createSharedHazardReport\(/g) || []).length, 1);
+  assert.equal((tapMap.match(/snapHazardToRoad\(/g) || []).length, 1);
+  assert.equal((tapMap.match(/await createSharedHazardReport\(/g) || []).length, 0);
+  assert.match(tapMap, /continueGovernedRoadHazardDraftToReview\(draft\)/);
 });

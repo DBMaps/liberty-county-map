@@ -64,10 +64,10 @@ test('visible action snaps once and continuation owns success while denial, time
   assert.match(app, /kind: "browser", plugin: navigator\.geolocation/);
 });
 
-test('shared submission stays behind explicit draft confirmation and Tap Map keeps its existing submit owner', () => {
+test('shared submission stays behind explicit draft confirmation for GPS and Tap Map', () => {
   assert.match(continuation, /async function submitGovernedRoadHazardDraft\(\)[\s\S]*return createSharedHazardReport\(/);
-  assert.equal((tapMap.match(/await snapHazardToRoad\(/g) || []).length, 1);
-  assert.equal((tapMap.match(/await createSharedHazardReport\(/g) || []).length, 1);
-  assert.match(tapMap, /confidence === "tap map placement"|"tap map placement"/);
+  assert.equal((tapMap.match(/snapHazardToRoad\(/g) || []).length, 1);
+  assert.equal((tapMap.match(/await createSharedHazardReport\(/g) || []).length, 0);
+  assert.match(tapMap, /continueGovernedRoadHazardDraftToReview\(draft\)/);
   assert.match(app, /continuingGovernedReportReview[\s\S]*!continuingGovernedReportReview/);
 });

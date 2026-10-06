@@ -31220,7 +31220,8 @@ function isPortraitV2ConfirmationMirrorActive() {
 }
 
 function shouldMirrorReportConfirmationToPortraitV2(message, type, options = {}) {
-  if (!message || (type !== "success" && options.source !== "around-me")) return false;
+  const reportRecovery = ["report-placement", "report-recovery"].includes(options.source);
+  if (!message || (type !== "success" && options.source !== "around-me" && !reportRecovery)) return false;
   if (typeof isPortraitMode === "function" ? !isPortraitMode() : document.body?.dataset?.layoutMode !== "portrait") return false;
   const statusSurface = document.querySelector("#gridlyPortraitV2 .gridly-v2-status-pill");
   if (!isGridlyElementVisiblyReadable(statusSurface)) return false;
@@ -87780,7 +87781,7 @@ function recordGovernedRoadHazardReviewStage(stage, detail = {}) {
 
 window.gridlyGovernedRoadHazardReviewAudit = () => governedRoadHazardReviewAudit.slice();
 
-function buildGovernedRoadHazardReportDraft(hazardType, rawCoordinate, snapped) {
+function buildGovernedRoadHazardReportDraft(hazardType, rawCoordinate, snapped, options = {}) {
   const raw = gridlyCoordinateFromRecord(rawCoordinate);
   const finalCoordinate = gridlyCoordinateFromRecord(snapped?.finalPlacementCoordinate)
     || gridlyCoordinateFromRecord(snapped)
@@ -87802,7 +87803,8 @@ function buildGovernedRoadHazardReportDraft(hazardType, rawCoordinate, snapped) 
     communityMetadata: Object.freeze({ ...(communityMetadata || {}) }),
     placementMode: snapped?.placementMode || "road_aware_use_my_location",
     createdAt: new Date().toISOString(),
-    source: "hazard_use_my_location",
+    source: options.source || "hazard_use_my_location",
+    lp034ReportTapMapInteractionId: options.lp034ReportTapMapInteractionId || null,
     reviewState: "ready"
   });
 }
@@ -87848,7 +87850,7 @@ async function submitGovernedRoadHazardDraft() {
           draft.hazardType,
           draft.finalCoordinate.lat,
           draft.finalCoordinate.lng,
-          "gps hazard report",
+          draft.source === "hazard_tap_map" ? "tap map placement" : "gps hazard report",
           "",
           draft.rawCoordinate,
           {
@@ -87859,6 +87861,9 @@ async function submitGovernedRoadHazardDraft() {
             countyMetadata: draft.countyMetadata,
             communityMetadata: draft.communityMetadata,
             governedDraftConfirmation: true,
+            tapMapUserSelectedCoordinate: draft.source === "hazard_tap_map" ? draft.finalCoordinate : undefined,
+            resolvedRoadCoordinate: draft.snappedRoadCoordinate,
+            lp034ReportTapMapInteractionId: draft.lp034ReportTapMapInteractionId,
             abortSignal: governedSubmissionAbortController?.signal
           }
         );
@@ -87882,16 +87887,16 @@ async function submitGovernedRoadHazardDraft() {
         window.gridlyGovernedRoadHazardReportDraft = null;
         closeVisiblePortraitV2ReportSurfaceAfterSubmit();
       } else {
-        const message = "Report was not submitted. Review the details and try again.";
+        const message = reportingState.lastReportError || "Report was not submitted. Review the details and try again.";
         updateReportingState({ submissionInProgress: false, lastReportError: message, lastReportMessage: "" });
-        setConfirmation(message, "error");
+        setConfirmation(message, "error", { source: "report-recovery" });
       }
       return submitted;
     } catch (error) {
       recordGovernedRoadHazardReviewStage("submission_settled", { submitted: false, error: String(error?.message || error) });
       const message = String(error?.message || "Report was not submitted. Review the details and try again.");
       updateReportingState({ submissionInProgress: false, lastReportError: message, lastReportMessage: "" });
-      setConfirmation(message, "error");
+      setConfirmation(message, "error", { source: "report-recovery" });
       return false;
     } finally {
       governedRoadHazardSubmissionPromise = null;
@@ -88166,7 +88171,7 @@ function beginRoadHazardMapPlacement(hazardType, options = {}) {
     lastReportError: "",
     lastReportMessage: "Tap a road to place this hazard."
   });
-  setConfirmation("Tap a road to place this hazard.", "info");
+  setConfirmation("Tap a road to place this hazard.", "info", { source: "report-placement" });
   markReportActionCompletionAudit({
     reportTapMapPlacementArmed: true,
     reportTapMapCompleted: true,
@@ -88368,6 +88373,9 @@ async function handleHazardPlacementMapClick(event) {
   const selectedCoordinate = immediateCoordinate || leafletCoordinate;
   if (!selectedCoordinate) return;
   const selectedType = pendingHazardPlacement || reportingState.selectedHazardType;
+  // Own this coordinate once while the resolver runs. No submission/token is
+  // created by placement; the existing explicit review owns that boundary.
+  updateReportingState({ placementModeActive: false, locationLookupInProgress: true });
   const lp034ReportTapMapInteractionId = `report-tap-map-${Date.now()}`;
   gridlyLp034CaptureReportTapMapObservation({
     observationType: "report_tap_map_coordinate_selected",
@@ -88413,13 +88421,27 @@ async function handleHazardPlacementMapClick(event) {
     resolverMatched: false,
     structuredMetadataCreated: false
   });
-  const snapped = await snapHazardToRoad(rawTapCoordinate.lat, rawTapCoordinate.lng, { source: "tap_map" });
+  let snapped, roadLookupTimeout;
+  try {
+    snapped = await Promise.race([
+      snapHazardToRoad(rawTapCoordinate.lat, rawTapCoordinate.lng, { source: "tap_map" }),
+      new Promise((_, reject) => {
+        roadLookupTimeout = window.setTimeout(() => reject(new Error("Road lookup timed out")), 12000);
+      })
+    ]);
+  } catch (_) {
+    updateReportingState({ placementModeActive: true, locationLookupInProgress: false });
+    setConfirmation("The road location could not be checked. Tap a road to try again.", "error", { source: "report-placement" });
+    return;
+  } finally {
+    window.clearTimeout(roadLookupTimeout);
+  }
   if (snapped.invalid) {
     const message = "Tap closer to a road to place this hazard.";
-    updateReportingState({ placementModeActive: true });
+    updateReportingState({ placementModeActive: true, locationLookupInProgress: false });
     lastRoadSnapDebug.rawHazardCoordinatesBlockedWhenInvalid = true;
     markReportActionCompletionAudit({ reportTapMapError: message, lastReportActionCompleted: false });
-    setConfirmation("Hazard location must be near a road. Tap closer to a roadway.", "error");
+    setConfirmation("Hazard location must be near a road. Tap closer to a roadway.", "error", { source: "report-placement" });
     updateReportingState({ lastReportError: message, lastReportMessage: "" });
     pushTapMapTrace("snap_failed", { reason: "no_nearby_road" });
     return;
@@ -88484,61 +88506,20 @@ async function handleHazardPlacementMapClick(event) {
     finding: "road resolver completed without replacing the report coordinate",
     coordinateRendered: false
   });
-  pushTapMapTrace("submit_started", { hazardType: selectedType, coordinateSourceUsed: lastMobileReportSubmitDebug.coordinateSourceUsed });
-  const submitted = await createSharedHazardReport(selectedType, finalPlacement.lat, finalPlacement.lng, "tap map placement", "", rawTapCoordinate, {
-    deferPostSubmitUiReset: true,
-    tapMapUserSelectedCoordinate: finalPlacement,
-    resolvedRoadCoordinate,
-    selectedRoadName: snapped.selectedRoadName,
-    primaryRoad: snapped.selectedRoadName,
-    roadName: snapped.selectedRoadName,
-    lp034ReportTapMapInteractionId
-  });
-  if (!submitted) {
-    const message = reportingState.lastReportError || lastMobileReportSubmitDebug.lastSubmitError || "Hazard report was not submitted.";
-    updateReportingState({ placementModeActive: true });
-    markReportActionCompletionAudit({ reportTapMapError: message, lastReportActionCompleted: false });
-    pushTapMapTrace("submit_failed", { hazardType: selectedType, reason: "create_report_failed" });
-    return;
+  try {
+    const draft = buildGovernedRoadHazardReportDraft(selectedType, rawTapCoordinate, {
+      ...snapped,
+      finalPlacementCoordinate: finalPlacement,
+      snappedRoadCoordinate: resolvedRoadCoordinate
+    }, { source: "hazard_tap_map", lp034ReportTapMapInteractionId });
+    pendingHazardPlacement = null;
+    continueGovernedRoadHazardDraftToReview(draft);
+    setConfirmation("Review the location before submitting your report.", "info", { source: "report-placement" });
+    pushTapMapTrace("review_ready", { hazardType: selectedType });
+  } catch (_) {
+    updateReportingState({ placementModeActive: true, locationLookupInProgress: false });
+    setConfirmation("The report location could not be prepared. Tap a road to try again.", "error", { source: "report-placement" });
   }
-  markReportActionCompletionAudit({
-    reportTapMapSubmitted: true,
-    reportTapMapCompleted: true,
-    reportTapMapError: "",
-    lastReportAction: "report-tap-map",
-    lastReportActionCompleted: true,
-    lastReportCompletionState: "submitted"
-  });
-  pushTapMapTrace("submit_succeeded", { hazardType: selectedType });
-  if (map) {
-    L.circleMarker([finalPlacement.lat, finalPlacement.lng], { radius: 4, color: "#8fb6ff", weight: 1, fillOpacity: 0.3, opacity: 0.8 })
-      .addTo(unifiedIncidentLayer)
-      .bindTooltip("Tap", { permanent: false, direction: "top" });
-  }
-  gridlyFinishTapMapPlacementAccuracyCapture({
-    submittedReportCoordinate: finalPlacement,
-    renderedMarkerCoordinate: finalPlacement,
-    resolvedRoadCoordinate,
-    finding: "submitted and rendered coordinates remained locked to the raw tap coordinate",
-    monitoringComplete: true
-  });
-  setConfirmation("Hazard placed at the intended roadway location", "success");
-  updateReportingState({ placementModeActive: false, reportModeActive: false, selectedHazardType: null });
-  selectedOtherHazardSubtype = "";
-  resetQuickHazardReportState();
-  closeHazardPanel({ preserveLastReportMessage: true });
-  returnMobileToLiveMode("submit_hazard_success");
-  lastMobileReportSubmitDebug.postSubmitUiResetSucceeded = true;
-  lastMobileReportSubmitDebug.lastSubmitAttempt = "ui_reset_complete_after_tap_map_coordinate_lock";
-  gridlyFinishTapMapPlacementAccuracyCapture({
-    submittedReportCoordinate: finalPlacement,
-    renderedMarkerCoordinate: finalPlacement,
-    resolvedRoadCoordinate,
-    finding: "post-submit sheet and map container state recorded after coordinate lock",
-    monitoringComplete: true,
-    afterCoordinateLockCleanup: true
-  });
-  pushTapMapTrace("placement_mode_cleared_restored", { outcome: "success" });
 }
 
 function gridlyRoundAuditMeters(value) {
@@ -89602,6 +89583,7 @@ function gridlyReportingResultMessage(result) {
 function gridlyReportingSubmissionErrorMessage(error, fallback) {
   if (error?.code === "maintenance") return error.message || GRIDLY_REPORTING_UNAVAILABLE_MESSAGE;
   if (error?.code === "terms_required") return error.message || "Accept the Community Terms and Guidelines before sharing a new report.";
+  if (error?.code === "authorization_required") return window.gridlyReportProtocol.outcome("authorization_required").message;
   return fallback;
 }
 async function gridlySubmitCommunityOperation(kind, payload, client = supabaseClient, device = deviceId) {
@@ -89640,7 +89622,11 @@ window.gridlyReportingAvailability = Object.freeze({
 
 function gridlyRefreshPendingOperationButton() {
   let pending;
-  try { pending = gridlyGetCommunityProtocolClient().pending(); } catch (_) { return; }
+  try { pending = gridlyGetCommunityProtocolClient().pending(); }
+  catch (_) {
+    setConfirmation("Saved reporting state could not be read. Try reopening Gridly; your pending report has not been confirmed.", "error", { source: "report-recovery" });
+    return;
+  }
   let button = document.getElementById("gridlyRetryPendingReport");
   if (!pending) { button?.remove(); return; }
   if (!button) {
@@ -89650,17 +89636,41 @@ function gridlyRefreshPendingOperationButton() {
     button.onclick = async () => {
       button.disabled = true;
       try {
+        const queued = gridlyGetCommunityProtocolClient().pending();
+        if (queued?.kind === "unrecoverable") {
+          if (gridlyGetCommunityProtocolClient().discardUnrecoverable()) {
+            window.openPortraitV2Sheet?.("report");
+            setConfirmation("The incomplete saved report was removed. Choose a location to start again. Its earlier submission could not be confirmed.", "info", { source: "report-recovery" });
+          }
+          return;
+        }
+        setConfirmation("Checking your saved report...", "info", { source: "report-recovery" });
         const result = await gridlyGetCommunityProtocolClient().retry(gridlyAuthorizedReportTransport(supabaseClient), deviceId);
         gridlyReportingAvailabilityRuntime.observeResult(result);
         const outcome = window.gridlyReportProtocol.outcome(result.status);
-        setConfirmation(outcome.message, outcome.success ? "success" : "error");
-        if (outcome.success) await loadSharedReports("pending_report_resolved");
+        setConfirmation(outcome.message, outcome.success ? "success" : "error", { source: "report-recovery" });
+        gridlyRefreshPendingOperationButton();
+        if (outcome.success && queued?.kind === "create") {
+          // An explicit Retry has resolved the saved submission. Its retained
+          // review must not offer a second Submit with a newly minted UUID.
+          governedRoadHazardReportDraft = null;
+          window.gridlyGovernedRoadHazardReportDraft = null;
+          closeVisiblePortraitV2ReportSurfaceAfterSubmit();
+        }
+        if (outcome.success) {
+          try { await loadSharedReports("pending_report_resolved"); }
+          catch (_) {
+            setConfirmation("Your report update was confirmed. Live reports could not be refreshed.", "info", { source: "report-recovery" });
+          }
+        }
+      } catch (_) {
+        setConfirmation("The saved report could not be retried. It is still unconfirmed; try again when connected.", "error", { source: "report-recovery" });
       } finally { button.disabled = false; gridlyRefreshPendingOperationButton(); }
     };
     document.body.appendChild(button);
   }
   const reportingDisabled = gridlyReportingAvailabilityRuntime.snapshot().state === GRIDLY_REPORTING_AVAILABILITY_STATES.DISABLED;
-  button.textContent = reportingDisabled
+  button.textContent = pending.kind === "unrecoverable" ? "Remove incomplete saved report" : pending.recovery === "incomplete" ? "Finish cancelling incomplete report" : reportingDisabled
     ? (pending.kind === "cancel" ? "Finish pending report when reporting reopens" : "Retry pending report when reporting reopens")
     : (pending.kind === "cancel" ? "Finish expired pending report" : "Retry pending report");
   if (reportingDisabled) button.title = GRIDLY_REPORTING_UNAVAILABLE_MESSAGE;
