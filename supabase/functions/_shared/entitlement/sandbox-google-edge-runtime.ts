@@ -5,6 +5,7 @@ import {nativeAuthorizationRpcPorts} from './native-rpc-ports.mjs';
 import {createGoogleIntegrityVerifier,GOOGLE_PLAY_CLOUD_PROJECT_ID} from './google-integrity.mjs';
 import {googleIntegrityAccessToken} from './google-oauth.mjs';
 import {createHandler} from './handler.mjs';
+import {GOOGLE_LICENSE_TEST_POLICY} from './google-license-test-policy.mjs';
 
 const closed=()=>createHandler({platform:'google'});
 const origin='https://nhwhkbkludzkuyxmkkcj.supabase.co';
@@ -27,9 +28,10 @@ export async function sandboxGoogleEdgeRuntime() {
     const der=from64(account.private_key.split(/\r?\n/).filter((line:string)=>line&&!line.startsWith('-----')).join(''));
     const privateKey=await crypto.subtle.importKey('pkcs8',der,{name:'RSASSA-PKCS1-v1_5',hash:'SHA-256'},false,['sign']);
     const googleVerifier=createGoogleIntegrityVerifier({accessToken:googleIntegrityAccessToken({clientEmail:account.client_email,privateKey}),
-      acceptedEnvironment:'sandbox/test'});
+      acceptedEnvironment:'sandbox/test',acceptedVersionCodes:GOOGLE_LICENSE_TEST_POLICY.versionCodes});
     const authorizeNative=createNativeAuthorizer({store:nativeAuthorizationRpcPorts(db),googleVerifier});
     const server=await createSandboxAcceptanceServer({readSecret,authorizeNative,
+      googleLicenseTestAuthority:GOOGLE_LICENSE_TEST_POLICY.authority,
       makeSupabaseClient:(url:string,key:string,options:object)=>createClient(url,key,options)});
     return server.google;
   } catch {return closed();}

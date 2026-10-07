@@ -85,12 +85,16 @@ export async function cacheRecord(record,key,crypto=globalThis.crypto) {
  subscription_state:record.subscriptionState,entitlement_state:record.entitlementState,current_period_end:record.currentPeriodEnd,
  last_verified_at:record.lastVerifiedAt,verification_source:record.verificationSource,error_category:record.errorCategory});
 }
-export async function signResponse(record,nonce,key,crypto=globalThis.crypto,{continuityBinding}={}) {
+export async function signResponse(record,nonce,key,crypto=globalThis.crypto,{continuityBinding,googleLicenseTestAuthority}={}) {
  if(!trusted.has(record)||!key)throw Error('invalid_evidence');
  const now=epoch(record.lastVerifiedAt),end=record.currentPeriodEnd===null?null:epoch(record.currentPeriodEnd);
  const body={platform:record.platform,productId:record.productId,subscriptionState:record.subscriptionState,entitlementState:record.entitlementState,
  currentPeriodEnd:record.currentPeriodEnd,lastVerifiedAt:record.lastVerifiedAt,verificationSource:record.verificationSource,environment:record.environment,
  restoreAvailable:true,errorCategory:record.errorCategory,nonce,audience:'com.gridlygo.gridly',expiresAt:new Date(record.entitlementState==='entitled'?Math.min(now+300000,end):now+300000).toISOString()};
+ if(googleLicenseTestAuthority!==undefined) {
+  if(record.platform!=='google'||record.environment!=='sandbox/test'||googleLicenseTestAuthority!=='gridly-google-play-internal-v11')throw Error('invalid_evidence');
+  body.testAuthority=googleLicenseTestAuthority;
+ }
  if(continuityBinding!==undefined) {
   if(!/^[a-f0-9]{64}$/.test(continuityBinding))throw Error('invalid_evidence');
   // Only current ACTIVE evidence mints durable authority; no hints or old cache.

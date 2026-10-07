@@ -7,7 +7,7 @@ const bundle='com.gridlygo.gridly';
 function bytes(value,max=16384){if(typeof value!=='string'||value.length>max||! /^[A-Za-z0-9+/]+={0,2}$/.test(value))throw Error('configuration_unavailable');return Uint8Array.from(atob(value),c=>c.charCodeAt(0));}
 // Operator supplied secrets, official Apple constructors and DER trust assets;
 // never accept these ports, environment or verification keys from an HTTP body.
-async function setup(environment,{readSecret,authorizeNative,makeSupabaseClient,appleLibrary,appleRoots,crypto=globalThis.crypto,fetchImpl=fetch}={}) {
+async function setup(environment,{readSecret,authorizeNative,makeSupabaseClient,appleLibrary,appleRoots,crypto=globalThis.crypto,fetchImpl=fetch,googleLicenseTestAuthority}={}) {
  const factory=environment==='production'?productionComposition:sandboxAcceptanceComposition;
  try{
   if(typeof readSecret!=='function'||typeof authorizeNative!=='function'||typeof makeSupabaseClient!=='function')throw Error();
@@ -19,7 +19,7 @@ async function setup(environment,{readSecret,authorizeNative,makeSupabaseClient,
   const fingerprintBytes=bytes(secret('GRIDLY_ENTITLEMENT_FINGERPRINT_KEY_B64'));if(fingerprintBytes.length!==32)throw Error();
   const fingerprintKey=await crypto.subtle.importKey('raw',fingerprintBytes,{name:'HMAC',hash:'SHA-256'},false,['sign']);
   const rpc=subscriptionRpcPorts(makeSupabaseClient(url.origin,secret('SUPABASE_SERVICE_ROLE_KEY'),{auth:{persistSession:false,autoRefreshToken:false}}));
-  const common={authorizeNative,cache:rpc.cache,signingKey:privateKey,fingerprintKey,crypto};let apple,google;
+  const common={authorizeNative,cache:rpc.cache,signingKey:privateKey,fingerprintKey,crypto,googleLicenseTestAuthority};let apple,google;
   // Platform configuration errors disable that platform independently.
   try{
    if(environment==='production'){

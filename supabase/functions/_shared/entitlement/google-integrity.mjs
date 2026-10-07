@@ -12,11 +12,16 @@ async function boundedJson(response) {
 }
 
 // Decode occurs only on the server. A Play verdict is never subscriber ownership.
-/** @param {{accessToken?: unknown, fetchImpl?: typeof fetch, now?: () => number, acceptedEnvironment?: string}} options */
-export function createGoogleIntegrityVerifier({accessToken,fetchImpl=fetch,now=Date.now,acceptedEnvironment='production'}={}) {
+/** @param {{accessToken?: unknown, fetchImpl?: typeof fetch, now?: () => number, acceptedEnvironment?: string, acceptedVersionCodes?: readonly string[]}} options */
+export function createGoogleIntegrityVerifier({accessToken,fetchImpl=fetch,now=Date.now,acceptedEnvironment='production',acceptedVersionCodes}={}) {
+  const versions=acceptedVersionCodes===undefined?null:
+    Array.isArray(acceptedVersionCodes)&&acceptedVersionCodes.length>0&&acceptedVersionCodes.length<=8&&
+    acceptedVersionCodes.every(value=>typeof value==='string'&&/^[1-9][0-9]{0,8}$/.test(value))?
+      Object.freeze([...acceptedVersionCodes]):false;
   return Object.freeze({verify:async ({authorization,requestHash,environment})=>{
     try {
-      if(typeof accessToken !== 'function' || !['production','sandbox/test'].includes(acceptedEnvironment) ||
+      if(typeof accessToken !== 'function' || versions===false ||
+        (versions!==null&&acceptedEnvironment!=='sandbox/test') || !['production','sandbox/test'].includes(acceptedEnvironment) ||
         environment !== acceptedEnvironment || authorization?.type !== 'google_standard' ||
         typeof authorization.token !== 'string' || authorization.token.length<1 || authorization.token.length>16384 ||
         !/^[A-Za-z0-9_-]{43}$/.test(requestHash)) return null;
@@ -30,6 +35,7 @@ export function createGoogleIntegrityVerifier({accessToken,fetchImpl=fetch,now=D
       if(details?.requestPackageName!==PACKAGE || details?.requestHash!==requestHash ||
         !Number.isSafeInteger(at) || at>current+5000 || at<current-120000 ||
         app?.packageName!==PACKAGE || app?.appRecognitionVerdict!=='PLAY_RECOGNIZED' ||
+        (versions!==null&&!versions.includes(app.versionCode)) ||
         account?.appLicensingVerdict!=='LICENSED' ||
         !Array.isArray(device?.deviceRecognitionVerdict) || !device.deviceRecognitionVerdict.includes('MEETS_DEVICE_INTEGRITY')) return null;
       return Object.freeze({verified:true,platform:'google',kind:'google_standard'});

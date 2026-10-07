@@ -26,19 +26,25 @@ const decode=value=>{
 
 // The caller's decoded fields are only routing hints. The pinned key verifies
 // the entire signed proof before any trusted report writer is reached.
-export async function verifyPaidReportProof(proof,{publicKey,now=Date.now(),crypto=globalThis.crypto}={}) {
+export async function verifyPaidReportProof(proof,{publicKey,googleLicenseTestPublicKey,now=Date.now(),crypto=globalThis.crypto}={}) {
   if(typeof proof!=='string'||proof.length>8192||!publicKey)return false;
   try {
     const parts=proof.split('.');if(parts.length!==3)return false;
     const hint=decode(parts[1]);
-    if(!hint||!['google','apple'].includes(hint.platform)||hint.environment!=='production'||
+    if(!hint||!['google','apple'].includes(hint.platform)||
       typeof hint.nonce!=='string'||!/^[A-Za-z0-9_-]{32,128}$/.test(hint.nonce))return false;
-    const verified=await verifyAuthorityProof({proof,publicKey,platform:hint.platform,environment:'production',nonce:hint.nonce,now,crypto});
-    return accessDecision(verified,{platform:hint.platform,environment:'production',now}).allowed;
+    const test=hint.platform==='google'&&hint.environment==='sandbox/test'&&
+      hint.testAuthority==='gridly-google-play-internal-v11'&&!!googleLicenseTestPublicKey;
+    if(hint.environment!=='production'&&!test)return false;
+    const environment=test?'sandbox/test':'production',key=test?googleLicenseTestPublicKey:publicKey;
+    const verified=await verifyAuthorityProof({proof,publicKey:key,platform:hint.platform,environment,nonce:hint.nonce,now,crypto});
+    return accessDecision(verified,{platform:hint.platform,environment,now}).allowed;
   }catch{return false;}
 }
 
-export function createPaidReportHandler({publicKey,writer,now=Date.now,crypto=globalThis.crypto}={}) {
+/** @param {{publicKey?: unknown, googleLicenseTestPublicKey?: unknown, writer?: unknown,
+ * now?: () => number, crypto?: Crypto}} options */
+export function createPaidReportHandler({publicKey,googleLicenseTestPublicKey,writer,now=Date.now,crypto=globalThis.crypto}={}) {
   return async request=>{
     if(request.method==='OPTIONS')return new Response(null,{status:204,headers:HEADERS});
     if(request.method!=='POST')return reply(405,'invalid_request');
@@ -52,7 +58,7 @@ export function createPaidReportHandler({publicKey,writer,now=Date.now,crypto=gl
       const allowed=Object.hasOwn(OPERATIONS,body.operation)?OPERATIONS[body.operation]:null;
       if(!allowed||!body.args||Array.isArray(body.args)||typeof body.args!=='object'||
         Object.keys(body.args).some(key=>!allowed.includes(key)))return reply(400,'invalid_request');
-      if(!await verifyPaidReportProof(body.proof,{publicKey,now:now(),crypto}))return reply(403,'forbidden');
+      if(!await verifyPaidReportProof(body.proof,{publicKey,googleLicenseTestPublicKey,now:now(),crypto}))return reply(403,'forbidden');
       const result=await writer(body.operation,body.args);
       if(result?.error||!result?.data||typeof result.data.status!=='string')return reply(503,'retryable_failure');
       return Response.json(result.data,{headers:HEADERS});

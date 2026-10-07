@@ -9,7 +9,7 @@ test('native HTTP transport uses fixed gateway/verifier routes and public routin
       ?{challenge:'a'.repeat(43),expiresAt:'2026-09-28T00:02:00Z',protocolVersion:'gridly-subscription-verification-v1'}
       :{proof:'synthetic'}};}}});
   assert.equal((await transport.requestChallenge({platform:'google'})).data.challenge,'a'.repeat(43));
-  assert.equal((await transport.invoke('gridly-verify-google-subscription',{body:{platform:'google'}})).data.proof,'synthetic');
+  assert.equal((await transport.invoke('gridly-verify-google-subscription',{body:{platform:'google',environment:'production'}})).data.proof,'synthetic');
   assert.equal(calls[0].url,'https://gridlygo.com/subscription-challenge');
   assert.equal(calls[1].url,'https://nhwhkbkludzkuyxmkkcj.supabase.co/functions/v1/gridly-verify-google-subscription');
   assert.match(calls[1].headers.apikey,/^sb_publishable_/);

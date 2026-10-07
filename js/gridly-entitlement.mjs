@@ -38,7 +38,9 @@ export async function verifyAuthorityProof({proof, publicKey, nonce, platform, e
     if(Object.keys(header).sort().join(',') !== 'alg,typ' || header.alg !== 'ES256' || header.typ !== 'gridly-entitlement-v1') return failure();
     if(!await crypto.subtle.verify({name:'ECDSA',hash:'SHA-256'}, publicKey, decode(parts[2]), new TextEncoder().encode(parts[0]+'.'+parts[1]))) return failure();
     const row = JSON.parse(new TextDecoder().decode(decode(parts[1])));
-    if(!row || Object.keys(row).filter(key=>key!=='continuityAuthorization').sort().join(',') !== [...FIELDS].sort().join(',') || (row.continuityAuthorization!==undefined && (typeof row.continuityAuthorization!=='string'||row.continuityAuthorization.length>4096)) ||
+    if(!row || Object.keys(row).filter(key=>key!=='continuityAuthorization'&&key!=='testAuthority').sort().join(',') !== [...FIELDS].sort().join(',') ||
+       (row.testAuthority!==undefined&&(platform!=='google'||environment!=='sandbox/test'||row.testAuthority!=='gridly-google-play-internal-v11')) ||
+       (row.continuityAuthorization!==undefined && (typeof row.continuityAuthorization!=='string'||row.continuityAuthorization.length>4096)) ||
        row.platform !== platform || row.productId !== product(platform) || row.environment !== environment ||
        row.audience !== 'com.gridlygo.gridly' || row.nonce !== nonce ||
        row.verificationSource !== 'gridly_server_store_api' || row.restoreAvailable !== true ||

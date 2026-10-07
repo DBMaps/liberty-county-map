@@ -6,7 +6,8 @@ import {tokenCipher,acknowledgmentQueue} from './acknowledgment.mjs';
 function compose(environment,ports={}) {
  const closed=platform=>createHandler({platform});
  try {
-  const {authorizeNative,cache,signingKey,fingerprintKey,crypto=globalThis.crypto,apple,google}=ports;
+  const {authorizeNative,cache,signingKey,fingerprintKey,crypto=globalThis.crypto,apple,google,googleLicenseTestAuthority}=ports;
+  if(googleLicenseTestAuthority!==undefined&&(environment!=='sandbox/test'||googleLicenseTestAuthority!=='gridly-google-play-internal-v11'))throw Error();
   if(typeof authorizeNative!=='function'||typeof cache?.apply!=='function'||signingKey?.type!=='private'||signingKey.extractable||signingKey.algorithm?.name!=='ECDSA'||signingKey.algorithm.namedCurve!=='P-256'||!signingKey.usages.includes('sign')||fingerprintKey?.algorithm?.name!=='HMAC'||fingerprintKey.algorithm.hash?.name!=='SHA-256'||fingerprintKey.extractable)throw Error();
   const shared={authorizeNative:args=>args.environment===environment&&authorizeNative(args),cache,signingKey,fingerprintKey,crypto};
   const ready=port=>typeof port?.signedVerifier?.verifyAndDecodeTransaction==='function'&&typeof port?.signedVerifier?.verifyAndDecodeRenewalInfo==='function'&&typeof port?.apiClient?.getAllSubscriptionStatuses==='function';
@@ -18,7 +19,7 @@ function compose(environment,ports={}) {
   if(typeof google?.accessToken==='function'&&google?.store&&google?.encryptionKeys){
    const provider=googleAdapter({...google,env:environment});
    const queue=acknowledgmentQueue({environment,store:google.store,cipher:tokenCipher({...google.encryptionKeys,crypto}),provider,cache,fingerprintKey,crypto});
-   googleHandler=createHandler({...shared,platform:'google',provider,ackQueue:queue});retry=options=>queue.drain(null,options);
+   googleHandler=createHandler({...shared,platform:'google',provider,ackQueue:queue,googleLicenseTestAuthority});retry=options=>queue.drain(null,options);
   }
   return Object.freeze({apple:appleHandler,google:googleHandler,retryGoogle:retry});
  }catch{return Object.freeze({apple:closed('apple'),google:closed('google'),retryGoogle:null});}

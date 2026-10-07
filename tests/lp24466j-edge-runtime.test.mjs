@@ -13,6 +13,8 @@ const entries=[
   ['apple','supabase/functions/gridly-verify-apple-subscription/index.ts'],
   ['google','supabase/functions/gridly-verify-google-subscription/index.ts'],
   ['ops','supabase/functions/gridly-subscription-ops/index.ts'],
+  ['google-test','supabase/functions/gridly-verify-google-sandbox-subscription/index.ts'],
+  ['paid-report','supabase/functions/gridly-paid-report/index.ts'],
 ];
 
 const isolatedEnvironment=(overrides={})=>{
@@ -65,6 +67,9 @@ function syntheticConfiguration(){
     GRIDLY_STORE_BUNDLE_ID:'com.gridlygo.gridly',
     GRIDLY_ENTITLEMENT_SIGNING_PKCS8_B64:ec.export({format:'der',type:'pkcs8'}).toString('base64'),
     GRIDLY_ENTITLEMENT_FINGERPRINT_KEY_B64:randomBytes(32).toString('base64'),
+    GRIDLY_APPLE_NODE_URL:'https://localcertfixture.lambda-url.us-east-1.on.aws/',
+    GRIDLY_APPLE_NODE_INTERNAL_TOKEN:randomBytes(32).toString('hex'),
+    GRIDLY_APPLE_NODE_RESPONSE_HMAC_KEY:randomBytes(32).toString('base64'),
     GRIDLY_APPLE_ISSUER_ID:'00000000-0000-4000-8000-000000000001',
     GRIDLY_APPLE_KEY_ID:'ABCDEFGHIJ',
     GRIDLY_APPLE_PRIVATE_KEY_P8:ec.export({format:'pem',type:'pkcs8'}),
@@ -94,7 +99,7 @@ test('actual Deno Edge entrypoints start and deny without deployment configurati
           const response=await fetch(endpoint,request);
           assert.equal(response.headers.get('cache-control'),'no-store',`${name} cache policy`);
           const body=await response.json();
-          assert.deepEqual(Object.keys(body),['error'],`${name} returned authority`);
+          assert.deepEqual(Object.keys(body),[name==='paid-report'?'status':'error'],`${name} returned authority`);
           assert.ok([400,401,405,503].includes(response.status),`${name} status ${response.status}`);
           assert.notEqual(response.status,200,`${name} minted authority without configuration`);
         }
@@ -134,6 +139,19 @@ test('configured Deno handlers enforce independent HTTP tokens and native author
       assert.equal((await fetch(endpoint,{...post({unexpected:true}),headers:{'Content-Type':'application/json',
         'X-Gridly-Subscription-Ops-Token':config.GRIDLY_SUBSCRIPTION_OPS_TOKEN}})).status,400);
     });
+    const testConfig={...config,SUPABASE_URL:'https://nhwhkbkludzkuyxmkkcj.supabase.co',
+      GRIDLY_SANDBOX_STORE_ENVIRONMENT:'sandbox/test',
+      GRIDLY_SANDBOX_ENTITLEMENT_SIGNING_PKCS8_B64:config.GRIDLY_ENTITLEMENT_SIGNING_PKCS8_B64};
+    await withServer(entries[4][1],testConfig,async()=>{
+      assert.equal((await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:'not-json'})).status,400);
+      assert.equal((await fetch(endpoint,post({platform:'google',environment:'sandbox/test',nonce:'a'.repeat(48),
+        productId:'com.gridlygo.gridly.monthly',basePlanId:'monthly',evidence:{purchaseTokens:['synthetic-token']}}))).status,401);
+    });
+    await withServer(entries[5][1],config,async()=>{
+      assert.equal((await fetch(endpoint,post({}))).status,400);
+      assert.equal((await fetch(endpoint,post({operation:'cancel_community_operation',args:{operation_id:'00000000-0000-4000-8000-000000000001'},
+        proof:'synthetic.payload.signature'}))).status,403);
+    });
   });
 
 test('malformed deployment URL keeps every Deno entrypoint closed',
@@ -145,7 +163,7 @@ test('malformed deployment URL keeps every Deno entrypoint closed',
         const response=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});
         assert.equal(response.status,503,`${name} malformed configuration must deny`);
         assert.equal(response.headers.get('cache-control'),'no-store');
-        assert.deepEqual(Object.keys(await response.json()),['error']);
+        assert.deepEqual(Object.keys(await response.json()),[name==='paid-report'?'status':'error']);
       });
     }
   });
