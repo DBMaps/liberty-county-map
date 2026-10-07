@@ -34,7 +34,10 @@ function parseEnvelope(body,subscription){
  const kind=kinds[0],event=notice[kind];if(!event||typeof event!=='object'||Array.isArray(event))throw Error('malformed');
  if(kind==='subscriptionNotification'){
   if(event.version!=='1.0'||!types.has(event.notificationType)||!token(event.purchaseToken)||
-   Object.keys(event).some(key=>!['version','notificationType','purchaseToken'].includes(key)))throw Error('malformed');
+   // Google still delivers legacy notifications with subscriptionId. Admit
+   // only our exact product; Publisher remains authoritative for all state.
+   (event.subscriptionId!==undefined&&event.subscriptionId!=='com.gridlygo.gridly.monthly')||
+   Object.keys(event).some(key=>!['version','notificationType','purchaseToken','subscriptionId'].includes(key)))throw Error('malformed');
   return {messageId:m.messageId,kind:'subscription',token:event.purchaseToken,eventType:event.notificationType};
  }
  if(kind==='voidedPurchaseNotification'){
@@ -61,7 +64,27 @@ function parseEnvelope(body,subscription){
  // contract; acknowledge only their validated envelope, never their token.
  return {messageId:m.messageId,kind:'ignored',token:null};
 }
-export function createGoogleRtdnHandler({authenticate,subscription,receipts,provider,cache,ackQueues,fingerprintKey,crypto=globalThis.crypto}={}){
+// Diagnose authenticated parser rejection without exposing message contents,
+// identities, purchase tokens, JWTs, or arbitrary property names.
+function rejectionCategory(body,subscription){
+ if(!body||typeof body!=='object'||Array.isArray(body))return 'body_shape';
+ if(body.subscription!==subscription)return 'subscription_binding';
+ if(Object.keys(body).some(key=>!['message','subscription','deliveryAttempt'].includes(key)))return 'envelope_fields';
+ const m=body.message;
+ if(!m||typeof m!=='object'||Array.isArray(m))return 'message_shape';
+ if(Object.keys(m).some(key=>!['data','messageId','message_id','publishTime','publish_time','orderingKey','attributes'].includes(key)))return 'message_fields';
+ try{
+  if(typeof m.data!=='string'||m.data.length>32768)return 'message_data';
+  const n=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(Uint8Array.from(atob(m.data),c=>c.charCodeAt(0))));
+  if(n?.packageName!=='com.gridlygo.gridly')return 'package_binding';
+  if(n.version!=='1.0')return 'notice_version';
+  if(n.subscriptionNotification&&Object.hasOwn(n.subscriptionNotification,'subscriptionId'))return 'legacy_subscription_id';
+  if(n.pendingRefundReviewNotification&&Object.hasOwn(n.pendingRefundReviewNotification,'version'))return 'refund_review_version';
+  if(Object.keys(n).some(key=>!['version','packageName','eventTimeMillis','subscriptionNotification','oneTimeProductNotification','voidedPurchaseNotification','testNotification','pendingRefundReviewNotification'].includes(key)))return 'notice_fields';
+  return 'notification_shape';
+ }catch{return 'message_data';}
+}
+export function createGoogleRtdnHandler({authenticate,subscription,receipts,provider,cache,ackQueues,fingerprintKey,onReject,crypto=globalThis.crypto}={}){
  const ready=typeof authenticate==='function'&&/^projects\/[a-z][a-z0-9-]{3,62}\/subscriptions\/[A-Za-z][A-Za-z0-9-]{2,254}$/.test(subscription||'')&&
   typeof receipts?.claim==='function'&&typeof receipts?.finish==='function'&&typeof provider?.verify==='function'&&
   typeof cache?.apply==='function'&&fingerprintKey?.algorithm?.name==='HMAC'&&
@@ -70,7 +93,10 @@ export function createGoogleRtdnHandler({authenticate,subscription,receipts,prov
   if(request.method!=='POST'||new URL(request.url).search)return reply(405);
   if(!ready)return reply(503);
   try{if(!await authenticate(request))return reply(401);}catch{return reply(503);}
-  let notice;try{notice=parseEnvelope(await readBody(request),subscription);}catch{return reply(400);}
+  let notice,body;try{body=await readBody(request);notice=parseEnvelope(body,subscription);}catch{
+   try{if(typeof onReject==='function')onReject(rejectionCategory(body,subscription));}catch{/* Diagnostics cannot alter admission. */}
+   return reply(400);
+  }
   let claim;try{claim=await receipts.claim(notice.messageId);}catch{return reply(503);}
   if(!claim||!['claimed','done','terminal','busy'].includes(claim.status))return reply(503);
   if(claim.status==='done'||claim.status==='terminal')return reply(204);

@@ -12,7 +12,8 @@ const decode=(value,max=16384)=>{
  return Uint8Array.from(atob(value),c=>c.charCodeAt(0));
 };
 // All credentials come from server-held secrets. Missing configuration is 503.
-export async function createGoogleRtdnRuntime({readSecret,makeSupabaseClient,fetchImpl=fetch,crypto=globalThis.crypto}={}){
+/** @param {{readSecret?: (name:string)=>string|undefined, makeSupabaseClient?: unknown, onReject?: (category:string)=>void, fetchImpl?: typeof fetch, crypto?: Crypto}} options */
+export async function createGoogleRtdnRuntime({readSecret,makeSupabaseClient,onReject,fetchImpl=fetch,crypto=globalThis.crypto}={}){
  try{
   if(typeof readSecret!=='function'||typeof makeSupabaseClient!=='function')throw Error();
   const required=name=>{const value=readSecret(name);if(typeof value!=='string'||!value)throw Error();return value;};
@@ -40,6 +41,6 @@ export async function createGoogleRtdnRuntime({readSecret,makeSupabaseClient,fet
   const authenticate=googlePubSubAuthenticator({serviceAccountEmail:required('GRIDLY_GOOGLE_RTDN_PUSH_IDENTITY_EMAIL'),audience:endpoint,fetchImpl,crypto});
   const subscription=required('GRIDLY_GOOGLE_RTDN_SUBSCRIPTION');
   if(!subscription.startsWith('projects/gridly-play-billing/subscriptions/'))throw Error();
-  return createGoogleRtdnHandler({authenticate,subscription,receipts,provider,cache:ports.cache,ackQueues,fingerprintKey,crypto});
+  return createGoogleRtdnHandler({authenticate,subscription,receipts,provider,cache:ports.cache,ackQueues,fingerprintKey,onReject,crypto});
  }catch{return createGoogleRtdnHandler();}
 }

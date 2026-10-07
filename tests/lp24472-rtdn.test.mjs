@@ -31,7 +31,7 @@ async function request(body,token){
  token??=await identity();
  return new Request(endpoint,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify(body)});
 }
-function setup({observations={['synthetic-token']:google()},providerFailure=null}={}){
+function setup({observations={['synthetic-token']:google()},providerFailure=null,onReject}={}){
  const rows=new Map(),states=[],lineages=[],calls=[],acks=[];
  const receipts={claim:async id=>{const row=rows.get(id);if(row?.state==='done'||row?.state==='terminal')return {status:row.state};
   if(row?.state==='processing')return {status:'busy'};const lease='00000000-0000-0000-0000-'+String(rows.size+1).padStart(12,'0');rows.set(id,{state:'processing',lease});return {status:'claimed',lease};},
@@ -40,7 +40,7 @@ function setup({observations={['synthetic-token']:google()},providerFailure=null
   calls.push({url,method:options.method});if(providerFailure?.value)throw Error('offline');
   const token=decodeURIComponent(url.split('/').at(-1));return observations[token]?Response.json(observations[token]):new Response(null,{status:410});}});
  const authenticate=googlePubSubAuthenticator({serviceAccountEmail:email,audience:endpoint,now:()=>now,crypto:webcrypto,fetchImpl:async()=>Response.json({keys:[jwk]})});
- const handler=createGoogleRtdnHandler({authenticate,subscription,receipts,provider,cache:{apply:async(row,lineage)=>{states.push(row);lineages.push(lineage);return true;}},
+ const handler=createGoogleRtdnHandler({authenticate,subscription,receipts,provider,onReject,cache:{apply:async(row,lineage)=>{states.push(row);lineages.push(lineage);return true;}},
   ackQueues:{production:{ensure:async args=>{acks.push(args.record);return args.record;}},'sandbox/test':{ensure:async args=>{acks.push(args.record);return args.record;}}},
   fingerprintKey:hmac,crypto:webcrypto});
  return {handler,receipts,rows,states,lineages,calls,acks,observations};
@@ -66,6 +66,41 @@ test('strict envelope, package and notification shape reject malformed pushes be
   notice({subscriptionNotification:{version:'1.0',notificationType:999,purchaseToken:'synthetic-token'}}),
   notice({...event(4),testNotification:{version:'1.0'}})])assert.equal((await s.handler(await request(body))).status,400);
  assert.equal(s.calls.length,0);assert.equal(s.rows.size,0);
+});
+test('authenticated parser diagnostics disclose static categories only and cannot alter admission',async()=>{
+ const categories=[],s=setup({onReject:category=>categories.push(category)});
+ const legacy={subscriptionNotification:{...event(4).subscriptionNotification,subscriptionId:'wrong-product'}};
+ const cases=[
+  [{...notice(event(4)),subscription:'projects/other/subscriptions/other'},'subscription_binding'],
+  [notice(legacy),'legacy_subscription_id'],
+  [notice(event(4),'1234',{packageName:'other'}),'package_binding'],
+  [notice(event(4),'1234',{version:'2.0'}),'notice_version'],
+  [notice(event(4),'bad id'),'notification_shape']
+ ];
+ for(const [body,category] of cases){assert.equal((await s.handler(await request(body))).status,400);assert.equal(categories.at(-1),category);}
+ const count=categories.length;
+ assert.equal((await s.handler(await request(notice(legacy),await identity({aud:'https://wrong.invalid'})))).status,401);
+ assert.equal(categories.length,count);assert.equal(s.rows.size,0);assert.equal(s.calls.length,0);
+ assert.doesNotMatch(JSON.stringify(categories),/synthetic-token|GPA|com\.gridlygo|projects\/|Bearer/);
+ const throwing=setup({onReject:()=>{throw Error('diagnostic failure');}});
+ assert.equal((await throwing.handler(await request(notice(legacy)))).status,400);
+});
+test('Google-authenticated legacy subscriptionId reconciles only the approved product through Publisher',async()=>{
+ const s=setup();
+ for(const type of [4,2,3,12,13]){
+  const legacy={subscriptionNotification:{...event(type).subscriptionNotification,subscriptionId:'com.gridlygo.gridly.monthly'}};
+  assert.equal((await s.handler(await request(notice(legacy,String(4000+type))))).status,204);
+ }
+ assert.equal(s.calls.length,5);assert.equal(s.states.length,5);
+ // An optional legacy field never supplies authority or replaces Google state.
+ assert.ok(s.states.every(row=>row.subscription_state==='active'));
+ for(const subscriptionId of ['other',null,123,'',{},'com.gridlygo.gridly.monthly ']){
+  const body=notice({subscriptionNotification:{...event(4).subscriptionNotification,subscriptionId}});
+  assert.equal((await s.handler(await request(body))).status,400);
+ }
+ assert.equal(s.calls.length,5);
+ const extra=notice({subscriptionNotification:{...event(4).subscriptionNotification,subscriptionId:'com.gridlygo.gridly.monthly',unexpected:true}});
+ assert.equal((await s.handler(await request(extra))).status,400);
 });
 test('subscription lifecycle event types reconcile current Google state, never event assertions',async()=>{
  const cases=[
