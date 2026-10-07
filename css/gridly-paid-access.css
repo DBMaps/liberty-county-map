@@ -34,6 +34,18 @@ html.gridly-paid-locked.gridly-paid-onboarding body > #gridlyWelcomeOnboarding:n
 #gridlyPaidLegalAccess[hidden] { display:none !important; }
 #gridlyPaidLegalAccess a { color:#b0ece0; }
 
+/* Native Android's public branded entry; paid runtime remains proof-gated. */
+#gridlyPaidPending[data-gridly-paid-entry="google"] { overflow:auto; align-content:safe center; }
+#gridlyPaidEntryStatus { max-width:340px; }
+#gridlyPaidEntryActions { width:min(100%,340px); }
+#gridlyPaidEntryActions[hidden] { display:none; }
+#gridlyPaidEntryActions button { display:block; width:100%; min-height:48px; margin:8px 0;
+  padding:10px 12px; border:1px solid #9de4d1; border-radius:12px;
+  font:inherit; font-weight:600; color:#09252b; background:#9de4d1; }
+#gridlyPaidEntryActions button:disabled { opacity:.5; }
+#gridlyPaidEntryActions a { color:#b0ece0; }
+#gridlyPaidEntryActions :focus-visible { outline:3px solid #fff; outline-offset:3px; }
+
 @media (max-height: 700px) {
   .gridly-paid-card { padding:18px 22px; }
   .gridly-paid-card img { width:110px; height:110px; }

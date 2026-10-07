@@ -30471,3 +30471,49 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet[data-active-sheet="sett
     height: min(56dvh, 520px);
   }
 }
+
+/* Samsung keyboard acceptance: the contracted WebView can remain taller than
+   it is wide, so the existing landscape Search rules do not apply. Reclaim
+   only the native Android short portrait viewport, as for Home Area above. */
+@media (max-width: 760px) and (max-height: 500px) {
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) {
+    top: max(34px, env(safe-area-inset-top, 0px)) !important;
+    bottom: max(8px, env(safe-area-inset-bottom, 0px)) !important;
+    height: auto !important;
+    max-height: calc(var(--gridly-visual-vh, 100dvh) - 42px) !important;
+  }
+
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"]:has(#gridlySearchShell:not([hidden])) #gridlyPortraitBottomRegion {
+    display: none !important;
+    pointer-events: none !important;
+  }
+
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) .gridly-search-card {
+    padding: 8px 10px !important;
+  }
+
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) .gridly-search-label {
+    font-size: 1.15rem;
+    line-height: 1.15;
+  }
+
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) .gridly-search-subtitle {
+    display: none;
+  }
+
+  /* Keep the focused field and Close available while the same card scrolls
+     through results and Nearby Places; do not remove either search surface. */
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) .gridly-search-header {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    background: var(--gridly-elevated, #07111f);
+  }
+
+  html[data-gridly-native-platform="android"] body[data-layout-mode="portrait"] #gridlySearchShell:not([hidden]) .gridly-search-input-row {
+    position: sticky;
+    top: 52px;
+    z-index: 2;
+    background: var(--gridly-elevated, #07111f);
+  }
+}

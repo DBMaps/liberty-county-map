@@ -20,6 +20,36 @@ export async function bootPaidAccess() {
   const restore=document.getElementById('gridlyPaidRestore'), retry=document.getElementById('gridlyPaidRetry');
   const settingsRestore=document.getElementById('gridlySettingsRestore');
   const coordinator=createPaidAccess(await productionPaidComposition(window.Capacitor,{googleLicenseTest:GRIDLY_ANDROID_LICENSE_TEST_CANDIDATE}));
+  const googleEntry=nativeStore(window.Capacitor)==='google';
+  let subscriptionOpen=false;
+  let entryStatus, entryActions, entrySubscribe, entryRestore, entryRetry;
+  if(googleEntry) {
+    // Public presentation only. This entry never executes the protected runtime
+    // or changes provider authority; subscription details require an action.
+    pending.dataset.gridlyPaidEntry='google';
+    pending.setAttribute('role','region');pending.setAttribute('aria-label','Gridly');
+    pending.removeAttribute('aria-live');
+    entryStatus=pending.querySelector('span');entryStatus.id='gridlyPaidEntryStatus';
+    entryStatus.setAttribute('role','status');entryStatus.setAttribute('aria-live','polite');
+    entryActions=document.createElement('div');entryActions.id='gridlyPaidEntryActions';entryActions.hidden=true;
+    const note=document.createElement('p');note.textContent='A subscription is required to use Gridly.';
+    entryActions.append(note);
+    const button=(id,text)=>{const e=document.createElement('button');e.id=id;e.type='button';e.textContent=text;entryActions.append(e);return e;};
+    entrySubscribe=button('gridlyPaidEntrySubscribe','View subscription');
+    entryRestore=button('gridlyPaidEntryRestore','Check Purchase / Restore');
+    entryRetry=button('gridlyPaidEntryRetry','Retry verification');
+    entryActions.append(gate.querySelector('nav').cloneNode(true));pending.append(entryActions);
+    const back=document.createElement('button');back.id='gridlyPaidEntryBack';back.type='button';back.textContent='Back';
+    gate.querySelector('nav').before(back);
+    entrySubscribe.addEventListener('click',()=>{
+      if(entrySubscribe.disabled)return;
+      subscriptionOpen=true;void render(coordinator.read());restore.focus();
+    });
+    back.addEventListener('click',()=>{
+      subscriptionOpen=false;void render(coordinator.read());entrySubscribe.focus();
+    });
+    entryRestore.addEventListener('click',()=>{if(!entryRestore.disabled)void coordinator.restore();});
+  }
   // The short-lived signed proof stays in this page's memory. Reporting obtains
   // a fresh proof through paid access; neither native evidence nor receipts leak.
   Object.defineProperty(window,'gridlyPaidReporting',{configurable:true,value:Object.freeze({getProof:()=>coordinator.getReportingProof()})});
@@ -30,7 +60,8 @@ export async function bootPaidAccess() {
   document.body.append(legal);
   const previousInert=new Map();
   const lock=(checking=false)=>{
-    root.classList.add('gridly-paid-locked');root.classList.toggle('gridly-paid-pending',checking);gate.hidden=checking;
+    const entry=googleEntry&&!subscriptionOpen;
+    root.classList.add('gridly-paid-locked');root.classList.toggle('gridly-paid-pending',checking||entry);gate.hidden=checking||entry;
     for(const child of document.body.children) if(child!==gate&&child!==pending&&child!==legal&&child.tagName!=='SCRIPT') {
       if(!previousInert.has(child)) previousInert.set(child,child.inert);
       child.inert=true;
@@ -83,6 +114,11 @@ export async function bootPaidAccess() {
     restore.textContent=value.platform==='google'?'Check Purchase / Restore':'Restore Purchases';
     document.getElementById('gridlyPaidPrice').textContent=value.product?.available?value.product.displayPrice+'/month':value.platform==='google'&&!value.productLoading?'Price unavailable':'Price loading…';
     document.getElementById('gridlyPaidBilling').textContent=value.platform==='google'?'Billed through Google Play.':value.platform==='apple'?'Billed through the Apple App Store.':'App-store subscription • U.S. launch';
+    if(googleEntry) {
+      entryStatus.textContent=value.state==='initializing'?copy.initializing:status.textContent;
+      entryActions.hidden=value.state==='initializing'||value.allowed;
+      entrySubscribe.disabled=entryRestore.disabled=entryRetry.disabled=busy;
+    }
     if(value.allowed && !loading && !started && !loadFailed) {
       loading=true;
       purchase.disabled=restore.disabled=retry.disabled=true;
@@ -94,7 +130,8 @@ export async function bootPaidAccess() {
           await loadPaidRuntime({document,window,allowed});
         });
         started=true;if(coordinator.allowed()) unlock();
-      } catch {loadFailed=true;lock();status.textContent='Gridly could not start. Reopen the app or contact Support.';retry.disabled=false;retry.textContent='Reopen Gridly';}
+      } catch {loadFailed=true;lock();status.textContent='Gridly could not start. Reopen the app or contact Support.';retry.disabled=false;retry.textContent='Reopen Gridly';
+        if(googleEntry){entryStatus.textContent=status.textContent;entryActions.hidden=false;entryRetry.disabled=false;entryRetry.textContent=retry.textContent;}}
       finally {loading=false;}
     } else if(value.allowed && started) unlock();
   };
@@ -107,7 +144,9 @@ export async function bootPaidAccess() {
     button.disabled=true;void coordinator.restore().finally(()=>{if(button.isConnected)button.disabled=false;});
   };
   document.addEventListener('click',settingsRestoreClick);
-  retry.addEventListener('click',()=>{if(loadFailed) window.location.reload();else void coordinator.refresh();});
+  const retryVerification=()=>{if(loadFailed) window.location.reload();else void coordinator.refresh();};
+  retry.addEventListener('click',retryVerification);
+  entryRetry?.addEventListener('click',()=>{if(!entryRetry.disabled)retryVerification();});
   const connectivity=()=>{if(!closing)void coordinator.refresh();};
   window.addEventListener('online',connectivity);
   window.addEventListener('pagehide',()=>{closing=true;delete window.gridlyPaidReporting;window.removeEventListener('online',connectivity);document.removeEventListener('click',settingsRestoreClick);onboarding?.dispose();lock();void coordinator.stop();},{once:true});
