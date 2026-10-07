@@ -19,8 +19,13 @@ export async function bootPaidAccess() {
   const status=document.getElementById('gridlyPaidStatus'), purchase=document.getElementById('gridlyPaidPurchase');
   const restore=document.getElementById('gridlyPaidRestore'), retry=document.getElementById('gridlyPaidRetry');
   const settingsRestore=document.getElementById('gridlySettingsRestore');
-  const coordinator=createPaidAccess(await productionPaidComposition(window.Capacitor,{googleLicenseTest:GRIDLY_ANDROID_LICENSE_TEST_CANDIDATE}));
+  let coordinator=createPaidAccess(await productionPaidComposition(window.Capacitor,{googleLicenseTest:GRIDLY_ANDROID_LICENSE_TEST_CANDIDATE}));
   const googleEntry=nativeStore(window.Capacitor)==='google';
+  if(googleEntry&&!GRIDLY_ANDROID_LICENSE_TEST_CANDIDATE) {
+    const {withGoogleReviewAccess,productionGoogleReviewComposition}=await import('./gridly-google-review-access.mjs');
+    const review=await productionGoogleReviewComposition(window.Capacitor);
+    if(review)coordinator=withGoogleReviewAccess(coordinator,review);
+  }
   let subscriptionOpen=false;
   let entryStatus, entryActions, entrySubscribe, entryRestore, entryRetry;
   if(googleEntry) {
@@ -49,10 +54,21 @@ export async function bootPaidAccess() {
       subscriptionOpen=false;void render(coordinator.read());entrySubscribe.focus();
     });
     entryRestore.addEventListener('click',()=>{if(!entryRestore.disabled)void coordinator.restore();});
+    if(typeof coordinator.enterReview==='function') {
+      const details=document.createElement('details'),summary=document.createElement('summary');summary.textContent='App Review Access';details.append(summary);
+      const note=document.createElement('p');note.textContent='For Google reviewers only. Reports entered during review are not published.';details.append(note);
+      const form=document.createElement('form'),label=document.createElement('label'),input=document.createElement('input'),submit=document.createElement('button'),message=document.createElement('p');
+      input.type='password';input.id='gridlyGoogleReviewCode';input.autocomplete='off';input.maxLength=80;input.required=true;
+      label.htmlFor=input.id;label.textContent='Reviewer access code';submit.type='submit';submit.textContent='Open review access';message.setAttribute('role','status');
+      form.append(label,input,submit,message);details.append(form);entryActions.append(details);
+      form.addEventListener('submit',async event=>{event.preventDefault();if(submit.disabled)return;submit.disabled=true;
+        const code=input.value.trim();input.value='';message.textContent='Verifying review access…';
+        const accepted=await coordinator.enterReview(code);message.textContent=accepted?'Review access verified.':'Review access could not be verified. Check the code and try again.';submit.disabled=false;});
+    }
   }
   // The short-lived signed proof stays in this page's memory. Reporting obtains
   // a fresh proof through paid access; neither native evidence nor receipts leak.
-  Object.defineProperty(window,'gridlyPaidReporting',{configurable:true,value:Object.freeze({getProof:()=>coordinator.getReportingProof()})});
+  Object.defineProperty(window,'gridlyPaidReporting',{configurable:true,value:Object.freeze({getProof:()=>coordinator.getReportingProof(),isReviewActive:()=>coordinator.isReviewActive?.()===true,validateReviewOperation:(...args)=>coordinator.validateReviewOperation?.(...args)??Promise.resolve({status:'authorization_required'})})});
   let loading=false, started=false, wasVisible=false, loadFailed=false, closing=false;
   let tourComplete=onboardingComplete(), onboarding;
   const legal=document.createElement('details');legal.id='gridlyPaidLegalAccess';legal.hidden=true;
@@ -99,7 +115,7 @@ export async function bootPaidAccess() {
       // revalidates signed native continuity or obtains fresh authority; no query unlock.
       if(wasVisible && value.state!=='initializing') {window.location.reload();return;}
     }
-    status.textContent=value.temporaryAccess?'Subscription verified previously. Temporary access; reconnect to refresh.':value.errorCategory==='user_canceled'?'Purchase canceled. You can retry or restore.'
+    status.textContent=value.reviewAccess?'Google Play review access active.':value.temporaryAccess?'Subscription verified previously. Temporary access; reconnect to refresh.':value.errorCategory==='user_canceled'?'Purchase canceled. You can retry or restore.'
       :value.product?.errorCategory==='product_unavailable'?`Subscription product is unavailable from ${value.platform==='google'?'Google Play':'the App Store'}. Retry later.`
       :value.product?.errorCategory==='store_unavailable'?value.platform==='google'?'Google Play is unavailable. Retry later.':'The App Store is unavailable. Retry later.'
       :value.action==='purchase'?'Completing your store purchase…'

@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { tmpdir } from 'node:os';
 import { execFileSync } from 'node:child_process';
 import { composeProductionRuntimeConfig } from './lp1831/prepare-cloudflare-preview-artifact.mjs';
+import {productionAndroidSource,PRODUCTION_SPECIALIZED_MODULES} from './android-production-sources.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const output = resolve(root, process.argv.includes('--output') ? process.argv[process.argv.indexOf('--output') + 1] : 'www');
@@ -19,7 +20,7 @@ export const runtimePolicy = Object.freeze({
     // Paid admission precedes the protected stack; both store adapters use shared verification.
     'js/gridly-continuity.mjs', 'js/gridly-paid-onboarding.mjs', 'js/gridly-paid-access.mjs', 'js/gridly-paid-config.mjs', 'js/gridly-entitlement-public-key.mjs', 'js/gridly-sandbox-entitlement-public-key.mjs', 'js/gridly-native-verification-binding.mjs', 'js/gridly-native-attested-invoke.mjs', 'js/gridly-native-edge-transport.mjs', 'js/gridly-paid-ui.mjs', 'js/gridly-paid-startup.mjs',
     'js/gridly-apple-storekit.mjs', 'js/gridly-google-play-billing.mjs',
-    'js/gridly-entitlement.mjs', 'js/gridly-store-verification.mjs',
+    'js/gridly-entitlement.mjs', 'js/gridly-store-verification.mjs', 'js/gridly-google-review-proof.mjs', 'js/gridly-google-review-access.mjs',
     'assets/UI', 'assets/desktop-gate', 'assets/icons', 'assets/markers', 'assets/onboarding',
     'assets/walkthrough/gridly-walkthrough-kbyg.png',
     'assets/walkthrough/gridly-walkthrough-nearby.png',
@@ -174,7 +175,12 @@ export async function stageNativeAddressRuntime(sourceRoot, destination) {
 
 const licenseTestOff='const GRIDLY_ANDROID_LICENSE_TEST_CANDIDATE = false;';
 const licenseTestOn='const GRIDLY_ANDROID_LICENSE_TEST_CANDIDATE = true;';
-export async function stage(destination, { runtimeConfigFile, googleLicenseTest=false } = {}) {
+export async function stage(destination, { runtimeConfigFile, googleLicenseTest=false,androidProduction=false } = {}) {
+  if(androidProduction&&googleLicenseTest)throw Error('Production and license-test staging are mutually exclusive');
+  if(androidProduction) {
+    const metadata=await readFile(join(root,'android/app/build.gradle'),'utf8');
+    if(!/^\s*versionCode 12\s*$/m.test(metadata)||!/^\s*versionName ["']1\.0\.0["']\s*$/m.test(metadata))throw Error('Production staging requires Gridly 1.0.0 / versionCode 12');
+  }
   const consumerScriptManifest = await readConsumerScriptManifest(root);
   let composedRuntimeConfig = null;
   if (runtimeConfigFile) {
@@ -193,6 +199,10 @@ export async function stage(destination, { runtimeConfigFile, googleLicenseTest=
   const copyRuntime = (entry) => copyGovernedRuntime(root, destination, entry);
   for (const entry of [...runtimePolicy.trees, ...runtimePolicy.files]) await copyRuntime(entry);
   for (const entry of nativePackagedScriptPaths(consumerScriptManifest)) await copyRuntime(entry);
+  if(androidProduction) {
+    for(const path of PRODUCTION_SPECIALIZED_MODULES)await writeFile(join(destination,path),productionAndroidSource(path,await readFile(join(root,path),'utf8')));
+    await rm(join(destination,'js/gridly-sandbox-entitlement-public-key.mjs'));
+  }
   if(googleLicenseTest){
     const uiPath=join(destination,'js/gridly-paid-ui.mjs');
     const source=await readFile(uiPath,'utf8');
@@ -352,7 +362,8 @@ async function identity(directory) {
   return { digest: `sha256:${hash.digest('hex')}`, files: records };
 }
 
-async function verify(directory, { reportFile, googleLicenseTest=false } = {}) {
+async function verify(directory, { reportFile, googleLicenseTest=false,androidProduction=false } = {}) {
+  if(androidProduction&&googleLicenseTest)throw Error('Production and license-test staging are mutually exclusive');
   await verifyCommunitySubmissionBundle(directory);
   const consumerScriptManifest = await readConsumerScriptManifest(root);
   const required = [
@@ -367,6 +378,13 @@ async function verify(directory, { reportFile, googleLicenseTest=false } = {}) {
   const paths = await files(directory);
   const paidUi=await readFile(join(directory,'js/gridly-paid-ui.mjs'),'utf8');
   if(!paidUi.includes(googleLicenseTest?licenseTestOn:licenseTestOff)||paidUi.includes(googleLicenseTest?licenseTestOff:licenseTestOn))throw new Error('Android license-test candidate mode mismatch');
+  if(androidProduction) {
+    if(paths.includes('js/gridly-sandbox-entitlement-public-key.mjs'))throw Error('Production stage contains sandbox signer');
+    for(const path of PRODUCTION_SPECIALIZED_MODULES) {
+      const actual=await readFile(join(directory,path),'utf8');
+      if(actual!==productionAndroidSource(path,await readFile(join(root,path),'utf8'))||/gridly-google-play-internal-v11|gridly-verify-google-sandbox-subscription/.test(actual))throw Error('Production specialization mismatch: '+path);
+    }
+  }
   const expectedScripts = nativePackagedScriptPaths(consumerScriptManifest).sort();
   const stagedScripts = paths.filter((path) => path.startsWith('js/') && path.endsWith('.js')).sort();
   if (JSON.stringify(stagedScripts) !== JSON.stringify(expectedScripts)) throw new Error('Native JavaScript boundary differs from the governed consumer manifest.');
@@ -418,9 +436,9 @@ async function verify(directory, { reportFile, googleLicenseTest=false } = {}) {
     const actual = await identity(directory);
     if (reportFile) {
       const report = JSON.parse(await readFile(reportFile, 'utf8'));
-      if (report.bundleDigest !== actual.digest || report.googleLicenseTest !== googleLicenseTest || JSON.stringify(report.files) !== JSON.stringify(actual.files)) throw new Error('Native configured bundle identity report mismatch.');
+      if (report.bundleDigest !== actual.digest || report.googleLicenseTest !== googleLicenseTest || !!report.androidProduction !== androidProduction || JSON.stringify(report.files) !== JSON.stringify(actual.files)) throw new Error('Native configured bundle identity report mismatch.');
     } else {
-      await stage(temporary,{googleLicenseTest});
+      await stage(temporary,{googleLicenseTest,androidProduction});
       const repeated = await identity(temporary);
       if (actual.digest !== repeated.digest) throw new Error(`Staged web identity differs from a clean repeat (${actual.digest} != ${repeated.digest}).`);
     }
@@ -432,8 +450,9 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
   const runtimeConfigFile = option('--runtime-config-file');
   const reportFile = option('--report-file');
   const googleLicenseTest=process.argv.includes('--google-license-test');
-  if (process.argv.includes('--verify')) await verify(output, { reportFile,googleLicenseTest }); else {
-    await stage(output, { runtimeConfigFile,googleLicenseTest });
+  const androidProduction=process.argv.includes('--android-production');
+  if (process.argv.includes('--verify')) await verify(output, { reportFile,googleLicenseTest,androidProduction }); else {
+    await stage(output, { runtimeConfigFile,googleLicenseTest,androidProduction });
     if (runtimeConfigFile) {
       if (!reportFile) throw new Error('--report-file is required with --runtime-config-file.');
       const attestation = await identity(output);
@@ -442,6 +461,7 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
         schemaVersion: 'gridly.nativeConfiguredWebBundle.v1',
         candidateGitSha: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim(),
         googleLicenseTest,
+        androidProduction,
         bundleDigest: attestation.digest,
         runtimeConfig: { path: runtimeConfigPath, bytes: runtimeBytes.length, sha256: createHash('sha256').update(runtimeBytes).digest('hex'), classification: 'OWNER_COMPOSED_BROWSER_PUBLIC_CONFIG' },
         files: attestation.files

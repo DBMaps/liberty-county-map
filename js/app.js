@@ -89576,7 +89576,9 @@ function gridlyBindReportingAvailabilityRefresh() {
     void gridlyRefreshReportingAvailability({ force: true }).then(gridlyRefreshPendingOperationButton);
   });
 }
+const GRIDLY_REVIEW_REPORT_MESSAGE = "Review mode — report validated but not published.";
 function gridlyReportingResultMessage(result) {
+  if (result?.status === "review_validated") return GRIDLY_REVIEW_REPORT_MESSAGE;
   if (result?.status === "terms_required") return "Accept the Community Terms and Guidelines before sharing a new report.";
   return result?.blockedBeforeBegin ? GRIDLY_REPORTING_UNAVAILABLE_MESSAGE : window.gridlyReportProtocol.outcome(result?.status).message;
 }
@@ -89591,6 +89593,16 @@ async function gridlySubmitCommunityOperation(kind, payload, client = supabaseCl
     const accepted = await window.gridlyUgcCompliance?.ensureAccepted?.();
     if (!accepted) return Object.freeze({ status: "terms_required", blockedBeforeBegin: true });
   }
+  // Review validation never enters the persisted/replayed production queue.
+  // The server still verifies the signed authority and the complete request.
+  if (window.gridlyPaidReporting?.isReviewActive?.() === true) {
+    const token = crypto.randomUUID();
+    const operation = kind === "create" ? "submit_community_observation" : kind === "cancel" ? "cancel_community_operation" : "mutate_community_observation";
+    const args = kind === "create" ? { submission_token: token, report: payload, reporter_device_id: device }
+      : kind === "cancel" ? { operation_id: token }
+      : { operation_id: token, observation_id: payload.observation_id, action: kind, changes: payload.changes || {}, reporter_device_id: device };
+    return window.gridlyPaidReporting.validateReviewOperation(operation, args, client);
+  }
   return gridlyReportingAvailabilityRuntime.submit(kind, payload, gridlyGetCommunityProtocolClient(), gridlyAuthorizedReportTransport(client), device);
 }
 window.gridlyUgcComplianceBridge = Object.freeze({
@@ -89601,6 +89613,9 @@ window.gridlyUgcComplianceBridge = Object.freeze({
   },
   submitModeration: async ({ operationId, reportId, reason }) => {
     if (!supabaseClient) return { status: "retryable_failure" };
+    if (window.gridlyPaidReporting?.isReviewActive?.() === true) return window.gridlyPaidReporting.validateReviewOperation("submit_community_moderation_report", {
+      operation_id: operationId, target_report_id: reportId, reason, reporter_device_id: deviceId
+    }, supabaseClient);
     const response = await supabaseClient.rpc("submit_community_moderation_report", {
       operation_id: operationId, target_report_id: reportId, reason, reporter_device_id: deviceId
     });
@@ -89608,6 +89623,9 @@ window.gridlyUgcComplianceBridge = Object.freeze({
   },
   requestDeletion: async ({ operationId, reportId }) => {
     if (!supabaseClient) return { status: "retryable_failure" };
+    if (window.gridlyPaidReporting?.isReviewActive?.() === true) return window.gridlyPaidReporting.validateReviewOperation("request_community_report_deletion", {
+      operation_id: operationId, target_report_id: reportId, reporter_device_id: deviceId
+    }, supabaseClient);
     const response = await supabaseClient.rpc("request_community_report_deletion", {
       operation_id: operationId, target_report_id: reportId, reporter_device_id: deviceId
     });
@@ -89680,6 +89698,7 @@ async function gridlySubmitCommunityMutation(action, observationId, changes = {}
   if (!observationId) { setConfirmation("The original report is unavailable. Refresh before updating it.", "error"); return false; }
   try {
     const result = await gridlySubmitCommunityOperation(action, { observation_id: observationId, changes });
+    if (result.status === "review_validated") { setConfirmation(GRIDLY_REVIEW_REPORT_MESSAGE, "success"); return true; }
     if (result.status === "already_processed") {
       await loadSharedReports("community_mutation_replay");
       setConfirmation(gridlyReportingResultMessage(result), "error"); return false;
@@ -89702,6 +89721,7 @@ async function gridlyInsertWithCountyMetadataFallback(client, tableName, row, op
       if (isClear && !target) return { error: { code: "ORIGINAL_REQUIRED", message: "Original report unavailable." } };
       const result = await gridlySubmitCommunityOperation(isClear ? "clear" : "create",
         isClear ? { observation_id: target, changes: {} } : payload, client, deviceId);
+      if (result.status === "review_validated") return { reviewMode: true, data: [], error: null, insertedRow: null };
       if (!["accepted", "already_processed"].includes(result.status)) return { error: { code: result.status, message: gridlyReportingResultMessage(result) } };
       let returned = result.report;
       if (isClear && !returned) {
@@ -91172,6 +91192,15 @@ async function createSharedHazardReport(hazardType, lat, lng, confidence, locati
 
     if (error) throw error;
 
+    if (insertResult.reviewMode === true) {
+      setConfirmation(GRIDLY_REVIEW_REPORT_MESSAGE, "success"); setSync("Review mode");
+      updateReportingState({ submissionInProgress: false, locationLookupInProgress: false });
+      gridlyFinalizeReportSubmissionRecovery(recoveryLifecycleId, "review_validation");
+      gridlyEndRoadHazardPendingSubmitLock(duplicateGuardLockKey);
+      if (!options.deferPostSubmitUiReset) gridlyRestoreReportSubmissionInteraction("review_validation");
+      return true;
+    }
+
     gridlyLP238SubmissionCaptureAuthority.successfulSubmissionObserved = true;
     gridlyLP238PatchSubmissionCapture({
       // Legacy persistedRoadValue was payload evidence, not a returned/read row.
@@ -91694,6 +91723,7 @@ async function gridlyPersistExactHazardClear(row, lifecycleTargetReportId, mutat
   gridlyRecordHazardClearLifecycle("mutation_invoked", { reportId: lifecycleTargetReportId });
   const result = mutationResult || await gridlyInsertWithCountyMetadataFallback(supabaseClient, "reports", row);
   if (result?.error) throw result.error;
+  if (result?.reviewMode === true) return { reviewMode: true };
   const affectedRows = Array.isArray(result?.data) ? result.data : (result?.data ? [result.data] : []);
   if (affectedRows.length !== 1) throw new Error("Clear persistence did not confirm one affected row.");
   const persisted = affectedRows[0];
@@ -91747,6 +91777,9 @@ window.clearHazard = async function (hazardType, lat, lng, lifecycleTargetReport
     const clearMutation = gridlyInsertWithCountyMetadataFallback(supabaseClient, "reports", row);
     gridlyRecordHazardClearLifecycle("mutation_invoked", { reportId: targetId });
     const persistedClear = await Promise.race([clearMutation.then((result) => gridlyPersistExactHazardClear(row, targetId, result)), timeout]);
+    if (persistedClear.reviewMode === true) {
+      setConfirmation(GRIDLY_REVIEW_REPORT_MESSAGE, "success"); setSync("Review mode"); finishPending(); return true;
+    }
     gridlyCacheClearedHazardAuthority(targetId, persistedClear);
     gridlyCaptureHazardHistoryEvent(persistedClear, { hazardType, sourceHazards: Array.isArray(activeHazards) ? activeHazards : [] });
     gridlyApplyImmediateClearLifecycleConvergence({ kind: "road_hazard", hazardType, normalizedClearRow: persistedClear });
@@ -94651,6 +94684,13 @@ async function createSharedReport(crossing, reportType, confidence, buttonEl = n
     const { error } = insertResult;
 
     if (error) throw error;
+    if (insertResult.reviewMode === true) {
+      setConfirmation(GRIDLY_REVIEW_REPORT_MESSAGE, "success"); setSync("Review mode");
+      if (buttonEl) { buttonEl.classList.remove("is-submitting", "is-success"); buttonEl.textContent = originalButtonText; }
+      updateReportingState({ submissionInProgress: false });
+      if (reportType === "cleared") gridlyLp0534bClearDiagnostics.crossingClearInFlightKeys.delete(lp0534bCrossingClearKey);
+      gridlyRestoreReportSubmissionInteraction("review_validation"); return;
+    }
     if (reportType === "cleared") gridlyLp0534bClearDiagnostics.crossingClearInsertSuccessCount += 1;
     gridlyMarkReportSubmissionRecovery("writeCompleted", { flow: "crossing", reportType });
 

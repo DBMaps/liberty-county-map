@@ -5,11 +5,12 @@ const sandboxGoogleName='gridly-verify-google-sandbox-subscription';
 
 // A routing adapter only. The Edge authorizer must independently verify the
 // native object and atomically consume the server challenge before minting proof.
-export function createNativeAttestedInvoke({platform,invoke,requestChallenge,nativeAttestation,googleEnvironment='production',crypto=globalThis.crypto,now=Date.now}={}) {
+export function createNativeAttestedInvoke({platform,invoke,requestChallenge,nativeAttestation,googleEnvironment='production',googleReviewAccess=false,crypto=globalThis.crypto,now=Date.now}={}) {
   if(!Object.hasOwn(names,platform) || typeof invoke !== 'function' || typeof requestChallenge !== 'function' ||
     typeof nativeAttestation?.authorize !== 'function' || (platform==='google'&&!['production','sandbox/test'].includes(googleEnvironment))) return null;
+  if(googleReviewAccess&&(platform!=='google'||googleEnvironment!=='production'))return null;
   return async (name,{body}={}) => {
-    const expected=platform==='google'&&googleEnvironment==='sandbox/test'?sandboxGoogleName:names[platform];
+    const expected=googleReviewAccess?'gridly-google-review-access':platform==='google'&&googleEnvironment==='sandbox/test'?sandboxGoogleName:names[platform];
     if(name !== expected || body?.platform !== platform || (platform==='google'&&body.environment!==googleEnvironment)) throw Error('verification_unavailable');
     const challengeResult = await requestChallenge({platform});
     const challenge = challengeResult?.data?.challenge, expiresAt = challengeResult?.data?.expiresAt;

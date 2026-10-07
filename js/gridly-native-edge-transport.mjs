@@ -12,10 +12,11 @@ function boundedJson(data,max) {
 }
 // Routing credentials are public and carry no paid authority. The Edge handler
 // must independently verify App Attest/Play Integrity and consume the challenge.
-export function createNativeEdgeTransport({capacitor,http,googleEnvironment='production'}={}) {
+export function createNativeEdgeTransport({capacitor,http,googleEnvironment='production',googleReviewAccess=false}={}) {
   const platform=capacitor?.isNativePlatform?.()===true?capacitor.getPlatform?.():null;
   if(!Object.hasOwn(verifier,platform)||(platform==='android'&&!['production','sandbox/test'].includes(googleEnvironment)))return null;
-  const verifierName=platform==='android'&&googleEnvironment==='sandbox/test'?sandboxGoogleName:verifier[platform];
+  if(googleReviewAccess&&(platform!=='android'||googleEnvironment!=='production'))return null;
+  const verifierName=googleReviewAccess?'gridly-google-review-access':platform==='android'&&googleEnvironment==='sandbox/test'?sandboxGoogleName:verifier[platform];
   // Native staging copies this module without a JS package resolver. Capacitor's
   // injected bridge exposes its registered, built-in CapacitorHttp plugin.
   const nativeRequest=http===undefined

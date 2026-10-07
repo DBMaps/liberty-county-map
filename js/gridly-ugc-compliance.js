@@ -188,7 +188,8 @@
       const button = event.currentTarget; button.disabled=true;
       const reason = dialog.querySelector("[data-gridly-ugc-reason]")?.value || "other";
       const result = await bridge().submitModeration?.({ operationId:uuid(), reportId:id, reason });
-      if (["accepted","already_processed"].includes(result?.status)) { notify("Thanks. The report was sent for review."); closeDialog(dialog,"submitted"); }
+      if (result?.status === "review_validated") { notify("Review mode — report validated but not published."); closeDialog(dialog,"submitted"); }
+      else if (["accepted","already_processed"].includes(result?.status)) { notify("Thanks. The report was sent for review."); closeDialog(dialog,"submitted"); }
       else { notify(result?.status === "rate_limited" ? "You’ve reached the report limit. Try again later." : "We couldn’t send that report. Try again.","error"); button.disabled=false; }
     });
   }
@@ -197,7 +198,8 @@
     const id = String(reportId || "").toLowerCase();
     if (!UUID_V4.test(id)) return;
     const result = await bridge().requestDeletion?.({ operationId:uuid(), reportId:id });
-    if (["accepted","already_processed"].includes(result?.status)) notify("Deletion request received. Gridly will remove or review the report through the privacy workflow.");
+    if (result?.status === "review_validated") notify("Review mode — report validated but not published.");
+    else if (["accepted","already_processed"].includes(result?.status)) notify("Deletion request received. Gridly will remove or review the report through the privacy workflow.");
     else if (result?.status === "forbidden") notify("This device cannot verify that it submitted that report. Use the Privacy entry in Settings for help.","error");
     else notify("We couldn’t submit the deletion request. Try again.","error");
   }
