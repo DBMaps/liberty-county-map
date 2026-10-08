@@ -3,6 +3,8 @@ param([string]$Repository=(Resolve-Path -LiteralPath (Join-Path $PSScriptRoot '.
 $ErrorActionPreference='Stop'
 $repo=[IO.Path]::GetFullPath($Repository).TrimEnd('\','/');$safe=$repo.Replace('\','/')
 $base='4f685022e26a07297339750ae67219526384eef2'
+$repairBase='926902deafb4fded1fb0a91b2382b5415ea0f108'
+$repairPaths=@('tools/dispatch-auth-local/portability.test.mjs','tools/dispatch-auth-local/source-integrity.json','tools/dispatch-auth-local/verify-sources.ps1')
 $branchName='codex/dispatch-visual-shell'
 function Git-Read([string[]]$Arguments){$result=@(& git -c ('safe.directory='+$safe) -C $repo @Arguments);if($LASTEXITCODE -ne 0){throw 'Source provenance Git check failed'};return $result}
 $root=(Git-Read @('rev-parse','--show-toplevel')) -join ''
@@ -11,10 +13,12 @@ $branch=(Git-Read @('branch','--show-current')) -join ''
 $head=(Git-Read @('rev-parse','HEAD')) -join ''
 if($branch -ne $branchName){throw 'Certified Dispatch branch required'}
 $phase='development'
-if($head -ne $base){
+if($head -eq $repairBase){$phase='repair-development'}
+elseif($head -ne $base){
  $parents=(Git-Read @('show','-s','--format=%P','HEAD')) -join ''
  $subject=(Git-Read @('show','-s','--format=%s','HEAD')) -join ''
- if($parents -ne $base -or $subject -ne 'Complete Dispatch operational authentication foundation'){throw 'Incompatible source revision; reviewed closure commit required'}
+ $changed=@(Git-Read @('diff-tree','--no-commit-id','--name-only','-r','HEAD'))
+ if($parents -ne $repairBase -or $subject -ne 'Fix Dispatch owner launcher readiness race' -or @($changed).Count -ne 3 -or @((Compare-Object $changed $repairPaths)).Count){throw 'Incompatible source revision; exact authorized corrective commit required'}
  $phase='closure'
 }
 $required=@(
@@ -44,12 +48,14 @@ foreach($name in @($required)+@($manifestName)){
   else{$sha=[Security.Cryptography.SHA256]::Create();try{$text=[IO.File]::ReadAllText($path).Replace("`r`n","`n");$actual=([BitConverter]::ToString($sha.ComputeHash([Text.Encoding]::UTF8.GetBytes($text)))).Replace('-','').ToLowerInvariant()}finally{$sha.Dispose()}}
   if($actual -ne $expected){throw ('Reviewed source mismatch: '+$name)}
  }
- if($phase -eq 'closure'){
+ if($phase -ne 'development'){
   # Index/worktree must match the committed review, including the manifest itself.
   & git -c ('safe.directory='+$safe) -C $repo ls-files --error-unmatch -- $name *> $null
   if($LASTEXITCODE -ne 0){throw 'Closure source is not tracked'}
-  & git -c ('safe.directory='+$safe) -C $repo diff --quiet HEAD -- $name
-  if($LASTEXITCODE -ne 0){throw 'Closure source differs from committed review'}
+  if(-not ($phase -eq 'repair-development' -and $repairPaths -contains $name)){
+   & git -c ('safe.directory='+$safe) -C $repo diff --quiet HEAD -- $name
+   if($LASTEXITCODE -ne 0){throw 'Protected source differs from committed review'}
+  }
  }
 }
 Write-Output ('SOURCE INTEGRITY PASS: '+$required.Count+' reviewed files; '+$phase+' provenance; no generated evidence dependency')

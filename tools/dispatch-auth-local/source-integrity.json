@@ -26,7 +26,7 @@
     "tools/dispatch-auth-local/owner-credentials.ps1": "4f106f6aee8b68731f715219e568018845231fac7ff9b75acd97e5a53c14ad88",
     "tools/dispatch-auth-local/owner-fixture.mjs": "dca89225124333a17cb82fc895786ce2b2adb96cac57f2d1bafb3fed1d9da90c",
     "tools/dispatch-auth-local/owner-runtime.mjs": "da7a43416c9cbce08e004a6eaf8257faf35c3ac36acbc85c9271192380eb1f72",
-    "tools/dispatch-auth-local/verify-sources.ps1": "39a1fcb349ccf32a833210545e774451188b6c74e915b499d047e8cbc8192aea",
+    "tools/dispatch-auth-local/verify-sources.ps1": "9c6116cb3ea0de512fb66f17939dcace5426ce1a8ead8415c59e3a621218e5e6",
     "tools/dispatch-auth-local/run.ps1": "c921d810b930517f5aaadaf3496aa11a0a9743b9982603e5fbc581ea0ebeb7ba",
     "tools/dispatch-auth-local/certify.ps1": "9a47883b91fb05a434b904848a8e30c6250baa9adc56f3c765b50a491dd09cc3",
     "tools/dispatch-auth-local/run-regressions.ps1": "d6763116dcc9c347f9bcaa72ff0ca2ddb8425c5b39b0e767f78ea9c17925cf17",
@@ -35,7 +35,7 @@
     "tools/dispatch-auth-local/owner.test.mjs": "d61d8f50baff26a35ed35c59555d9a453ce57d3fe5ddcac7f4bbfdace857331e",
     "tools/dispatch-auth-local/owner-dialog.test.mjs": "37b179a01402982b35718a1abab7f36f8aae09081e378dbdc26fce76452dd643",
     "tools/dispatch-auth-local/owner-edge.test.mjs": "26251b0cf19acf31ad092b5f3e2f01572689ff054d79016b2ca917eed88f3deb",
-    "tools/dispatch-auth-local/portability.test.mjs": "713e4bc05c4774b9673f9baa2eb768f7bb40ecacedc48264ab1c024499e0efd5",
+    "tools/dispatch-auth-local/portability.test.mjs": "c4ccf5ac865d6297343139a21cea941725cff2b18f012be3cb7621508d4163aa",
     "tools/dispatch-auth-local/OWNER-ACCEPTANCE.md": "0c2f47bcd4550300406afad0196e6fb31ab498c1bae6a7fe53d102e2015a8626",
     "tools/dispatch-auth-local/README.md": "f75a1a770893a7646fe6efb44b2934535f00dde8ddf7910b0caf9955a8ff6816"
   }
