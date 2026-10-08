@@ -1,4 +1,4 @@
-// Disposable Git copies only. No commits, resets, production requests or secret reads.
+// Fixture commits live only in UUID-owned TEMP clones. No source-history rewrites or production requests.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {spawn,spawnSync} from 'node:child_process';
@@ -6,7 +6,7 @@ import {readFileSync,writeFileSync,mkdirSync,existsSync,rmSync,copyFileSync,lsta
 import {fileURLToPath} from 'node:url';
 import {dirname,join} from 'node:path';
 import {tmpdir} from 'node:os';
-import {randomUUID} from 'node:crypto';
+import {randomUUID,createHash} from 'node:crypto';
 const root=fileURLToPath(new URL('../../',import.meta.url));
 const temp=join(tmpdir(),'dispatch-portability-'+randomUUID()),copy=join(temp,'checkout');
 const ps=join(process.env.SystemRoot,'System32','WindowsPowerShell','v1.0','powershell.exe');
@@ -17,7 +17,11 @@ const files=[...Object.keys(manifest.sources),manifestPath];
 function git(repo,args){const r=spawnSync('git',['-c','safe.directory='+repo.replaceAll('\\','/'),'-C',repo,...args],{encoding:'utf8',windowsHide:true});assert.equal(r.status,0,'Disposable Git operation failed: '+r.stderr);return r.stdout.trim()}
 function verify(repo=copy){return spawnSync(ps,['-NoProfile','-NonInteractive','-File',join(repo,'tools/dispatch-auth-local/verify-sources.ps1'),'-Repository',repo],{encoding:'utf8',windowsHide:true,env})}
 function edit(name,fn){const path=join(copy,name),original=readFileSync(path);try{fn(path,original)}finally{writeFileSync(path,original)}}
-const repairBase='926902deafb4fded1fb0a91b2382b5415ea0f108';
+const repairBase='4e08dd26dc7aebcb57f7be85ab7972bf0cfe0b48';
+const registryPaths=['dispatch/roadway-registry.mjs','tools/dispatch-roadway-local/validate-registry.mjs','tools/dispatch-roadway-local/README.md','tests/dispatch-roadway-registry.test.mjs'];
+const approvalPaths=[...registryPaths,'tools/dispatch-auth-local/portability.test.mjs',manifestPath,'tools/dispatch-auth-local/verify-sources.ps1'];
+function fixtureCommit(paths,message){git(copy,['add','--sparse','--',...paths]);if(git(copy,['rev-parse','HEAD'])===repairBase){const r=verify();assert.equal(r.status,0,r.stderr)}return git(copy,['-c','user.name=Local synthetic certification','-c','user.email=synthetic@dispatch.invalid','commit','-m',message]);}
+function committedEdit(paths,operation){const before=git(copy,['rev-parse','HEAD']),originals=paths.map(p=>[p,existsSync(join(copy,p))?readFileSync(join(copy,p)):null]);try{operation();fixtureCommit(paths,'Synthetic adversarial fixture');assert.notEqual(verify().status,0);}finally{const current=git(copy,['rev-parse','HEAD']);git(copy,['update-ref','refs/heads/'+manifest.branch,before,current]);git(copy,['read-tree',before]);for(const [p,b]of originals){if(b===null)rmSync(join(copy,p),{force:true});else writeFileSync(join(copy,p),b);}}}
 const repairPaths=['tools/dispatch-auth-local/portability.test.mjs',manifestPath,'tools/dispatch-auth-local/verify-sources.ps1'];
 const announcement='LOCAL DISPATCH URL: http://127.0.0.1:4180/';
 function diagnostics(output,stage){
@@ -46,12 +50,13 @@ mkdirSync(temp);
 try{
  const cloned=spawnSync('git',['-c','safe.directory='+root.replaceAll('\\','/'),'clone','--shared','--no-checkout','--branch',manifest.branch,root,copy],{encoding:'utf8',windowsHide:true});assert.equal(cloned.status,0,'Local clone failed');
  git(copy,['sparse-checkout','init','--cone']);git(copy,['sparse-checkout','set','dispatch','tools/dispatch-auth-local','tools/dispatch-ui','tools/responder/phase29/installer']);git(copy,['checkout',manifest.branch]);
- // Before closure, overlay only the reviewed source set into the base checkout.
- // After closure, no overlay is permitted: verification uses committed files alone.
+ // Precommit: create a clean reviewed candidate only in the disposable clone.
+ // Postcommit: use committed source alone, with no overlays.
+ const startingHead=git(copy,['rev-parse','HEAD']);
+ if(startingHead===repairBase){for(const name of approvalPaths){const target=join(copy,name);mkdirSync(dirname(target),{recursive:true});copyFileSync(join(root,name),target)}fixtureCommit(approvalPaths,'Synthetic reviewed seven-file candidate');}
  const head=git(copy,['rev-parse','HEAD']);
- if(head===manifest.baseRevision||head===repairBase)for(const name of head===repairBase?repairPaths:files){const target=join(copy,name);mkdirSync(dirname(target),{recursive:true});copyFileSync(join(root,name),target)}
  await test('certified development or closure checkout passes provenance and all source hashes',()=>{const r=verify(root);assert.equal(r.status,0,r.stderr);assert.match(r.stdout,/SOURCE INTEGRITY PASS/)});
- await test('fresh local source copy works without generated certification evidence',()=>{assert.ok(!existsSync(join(copy,'reports/responder/dispatch-auth-local')));assert.ok(!existsSync(join(copy,'reports/responder/dispatch-auth-owner')));const r=verify();assert.equal(r.status,0,r.stderr);if(head!==manifest.baseRevision&&head!==repairBase)assert.equal(git(copy,['status','--porcelain']), '')});
+ await test('fresh local source copy works without generated certification evidence',()=>{assert.ok(!existsSync(join(copy,'reports/responder/dispatch-auth-local')));assert.ok(!existsSync(join(copy,'reports/responder/dispatch-auth-owner')));const r=verify();assert.equal(r.status,0,r.stderr);assert.equal(git(copy,['status','--porcelain']), '')});
  await test('every security-critical source alteration fails closed',()=>{for(const name of Object.keys(manifest.sources))edit(name,(path,original)=>{writeFileSync(path,Buffer.concat([original,Buffer.from('\n# altered source\n')]));assert.notEqual(verify().status,0,'Altered source accepted: '+name)})});
  await test('missing reviewed manifest fails closed',()=>edit(manifestPath,path=>{rmSync(path);assert.notEqual(verify().status,0)}));
  await test('missing security-critical adapter fails closed',()=>edit('tools/dispatch-auth-local/session.mjs',path=>{rmSync(path);assert.notEqual(verify().status,0)}));
@@ -59,18 +64,24 @@ try{
  await test('unrelated branch fails closed',()=>{git(copy,['checkout','-b','unrelated-portability-test']);try{assert.notEqual(verify().status,0)}finally{git(copy,['checkout',manifest.branch])}});
  await test('incompatible existing Git revision fails closed without creating a test commit',()=>{const previous=git(copy,['rev-parse',manifest.baseRevision+'^']);git(copy,['update-ref','refs/heads/'+manifest.branch,previous,head]);try{assert.notEqual(verify().status,0)}finally{git(copy,['update-ref','refs/heads/'+manifest.branch,head,previous])}});
  await test('unrelated repository cannot borrow the reviewed source set',()=>{const unrelated=join(temp,'unrelated');mkdirSync(unrelated);git(unrelated,['init']);for(const name of files){const target=join(unrelated,name);mkdirSync(dirname(target),{recursive:true});copyFileSync(join(root,name),target)}assert.notEqual(verify(unrelated).status,0)});
- await test('canonical text hashes support LF and Windows CRLF checkout conversion',()=>{if(head===manifest.baseRevision||head===repairBase)edit('tools/dispatch-auth-local/session.mjs',(path,original)=>{writeFileSync(path,original.toString().replaceAll('\r\n','\n').replaceAll('\n','\r\n'));const r=verify();assert.equal(r.status,0,r.stderr)});else{assert.equal(verify().status,0);assert.equal(git(copy,['diff','--name-only','HEAD']), '')}});
- await test('startup no longer depends on generated reports or a fixed current HEAD',()=>{const owner=readFileSync(join(copy,'tools/dispatch-auth-local/owner.ps1'),'utf8');assert.ok(owner.includes("'verify-sources.ps1'"));assert.ok(!owner.includes('certified-sources.json'));assert.ok(!owner.includes('4f685022e26a07297339750ae67219526384eef2'));assert.equal(manifest.format,'dispatch-local-auth-sha256-lf-v1')});
+ await test('canonical text hashes support LF and Windows CRLF checkout conversion',()=>edit('tools/dispatch-auth-local/session.mjs',(path,original)=>{writeFileSync(path,original.toString().replaceAll('\r\n','\n').replaceAll('\n','\r\n'));const r=verify();assert.equal(r.status,0,r.stderr)}));
+ await test('startup no longer depends on generated reports or a fixed current HEAD',()=>{const owner=readFileSync(join(copy,'tools/dispatch-auth-local/owner.ps1'),'utf8');assert.ok(owner.includes("'verify-sources.ps1'"));assert.ok(!owner.includes('certified-sources.json'));assert.ok(!owner.includes('4f685022e26a07297339750ae67219526384eef2'));assert.equal(manifest.format,'dispatch-local-auth-sha256-lf-v2')});
  await test('worker listener readiness does not complete launcher readiness',async()=>{let tick=0;const result=await waitLauncherReady({readOutput:()=>tick<2?'':announcement+'\n',workerReady:()=>true,exited:()=>false,now:()=>tick*200,pause:async()=>{tick++}});assert.equal(result.workerReadyMs,0);assert.equal(result.launcherReadyMs,400)});
  await test('normal stop is withheld until the complete readiness announcement',async()=>{let tick=0,completed=false;const result=await waitLauncherReady({readOutput:()=>tick===0?announcement:announcement+'\n',workerReady:()=>true,exited:()=>false,now:()=>tick*200,pause:async()=>{assert.equal(completed,false);tick++}});completed=result.stage==='launcher-ready';assert.equal(tick,1);assert.equal(completed,true)});
  await test('readiness timeout is bounded and retains only sanitized stage',async()=>{let tick=0;await assert.rejects(waitLauncherReady({readOutput:()=>'',workerReady:()=>true,exited:()=>false,now:()=>tick,pause:async()=>{tick+=200},timeoutMs:600}),error=>error.message==='Owner launcher readiness timeout'&&error.diagnostic.stage==='waiting-launcher');assert.equal(tick,600)});
  await test('genuine startup refusal preserves safe category without arbitrary details',async()=>{await assert.rejects(waitLauncherReady({readOutput:()=> 'OWNER START/SESSION REFUSED: UI unreachable\n',workerReady:()=>true,exited:()=>false}),error=>error.diagnostic.refusal==='UI unreachable');const safe=diagnostics('OWNER START/SESSION REFUSED: DO_NOT_RECORD_FAKE_VALUE\n','waiting-launcher');assert.ok(!JSON.stringify(safe).includes('DO_NOT_RECORD_FAKE_VALUE'));assert.equal(safe.refusal,'startup refusal details withheld')});
  await test('failed readiness permits exact owned cleanup but premature normal stop is refused',()=>{const runtime=join(tmpdir(),'gridly-dispatch-auth-'+randomUUID().replaceAll('-','').slice(0,12));mkdirSync(runtime);try{assert.throws(()=>requestOwnedStop(runtime,{ready:false,failed:false}),/withheld/);assert.ok(!existsSync(join(runtime,'stop.request')));assert.equal(requestOwnedStop(runtime,{ready:false,failed:true}),true)}finally{assert.equal(dirname(runtime),tmpdir());rmSync(runtime,{recursive:true,force:true})}});
+ await test('harmless roadway-only fixture commit preserves protected source approval',()=>{const name='dispatch/roadway-only-certification-fixture.mjs',before=git(copy,['rev-parse','HEAD']);try{writeFileSync(join(copy,name),'// Synthetic independent roadmap artifact; no imports or privileges.\n');fixtureCommit([name],'Synthetic independently certified roadway-only commit');const r=verify();assert.equal(r.status,0,r.stderr);}finally{const current=git(copy,['rev-parse','HEAD']);git(copy,['update-ref','refs/heads/'+manifest.branch,before,current]);git(copy,['read-tree',before]);rmSync(join(copy,name),{force:true});}});
+ await test('committed Auth alteration and forged manifest hash are refused',()=>committedEdit(['tools/dispatch-auth-local/session.mjs',manifestPath],()=>{const name='tools/dispatch-auth-local/session.mjs',body=readFileSync(join(copy,name),'utf8')+'\n// unreviewed\n';writeFileSync(join(copy,name),body);const m=JSON.parse(readFileSync(join(copy,manifestPath)));m.sources[name]=createHash('sha256').update(body.replaceAll('\r\n','\n')).digest('hex');writeFileSync(join(copy,manifestPath),JSON.stringify(m,null,2)+'\n');}));
+ await test('committed guard changes are refused',()=>committedEdit(['tools/dispatch-auth-local/docker-guard.cs'],()=>{const p=join(copy,'tools/dispatch-auth-local/docker-guard.cs');writeFileSync(p,readFileSync(p,'utf8')+'\n// unreviewed\n');}));
+ await test('verifier self-hash substitution cannot replace the reviewed Git manifest',()=>committedEdit(['tools/dispatch-auth-local/verify-sources.ps1',manifestPath],()=>{const name='tools/dispatch-auth-local/verify-sources.ps1',body=readFileSync(join(copy,name),'utf8')+'\n# unreviewed verifier\n';writeFileSync(join(copy,name),body);const m=JSON.parse(readFileSync(join(copy,manifestPath)));m.sources[name]=createHash('sha256').update(body.replaceAll('\r\n','\n')).digest('hex');writeFileSync(join(copy,manifestPath),JSON.stringify(m,null,2)+'\n');}));
+ await test('new tracked or untracked Auth additions are never silently trusted',()=>{const name='tools/dispatch-auth-local/unreviewed-security-addon.mjs',p=join(copy,name);writeFileSync(p,'// synthetic unreviewed addition\n');try{assert.notEqual(verify().status,0);}finally{rmSync(p);}committedEdit([name],()=>writeFileSync(p,'// synthetic unreviewed addition\n'));});
+ await test('untracked protected replacement is refused',()=>{const name='tools/dispatch-auth-local/session.mjs';git(copy,['rm','--cached','--',name]);try{assert.notEqual(verify().status,0);}finally{git(copy,['read-tree','HEAD']);}});
  if(process.env.DISPATCH_PORTABILITY_OWNER_SMOKE==='1')await test('committed evidence-free checkout starts genuine local login and cleans up',{timeout:600000},async()=>{
   assert.notEqual(head,manifest.baseRevision,'Postcommit verification required');
   const owner=join(copy,'tools/dispatch-auth-local/owner.ps1'),docker=process.env.DISPATCH_SMOKE_DOCKER,supabase=process.env.DISPATCH_SMOKE_SUPABASE;assert.ok(docker&&supabase);
   const child=spawn(ps,['-NoProfile','-NonInteractive','-File',owner,'-Supabase',supabase,'-Docker',docker,'-Certification'],{cwd:copy,env,windowsHide:true,stdio:['ignore','pipe','pipe']});let output='';child.stdout.on('data',b=>output+=b);child.stderr.on('data',b=>output+=b);const done=new Promise(resolve=>child.once('close',resolve));let runtime,failure;
-  const record={sourceRevision:head,sourceOverlay:head===repairBase,ready:false};
+  const record={sourceRevision:head,sourceOverlay:false,precommitCandidate:startingHead===repairBase,ready:false};
   try{
    record.readiness=await waitLauncherReady({readOutput:()=>output,workerReady:()=>{runtime=output.match(/OWNER SESSION: ([^\r\n]+)/)?.[1];return !!runtime&&existsSync(join(runtime,'ready.json'))},exited:()=>child.exitCode!==null});record.ready=true;
    const ready=JSON.parse(readFileSync(join(runtime,'ready.json')));assert.equal(ready.url,'http://127.0.0.1:4180/');assert.equal(ready.units.length,2);assert.equal(ready.catalogUnchanged,true);
