@@ -75,7 +75,7 @@ test('fixtures require explicit local server mode, no writes or production reque
   const requests=[];page.on('request',request=>requests.push([request.url(),request.method()]));await board(page);await page.getByRole('button',{name:'Flooded Roadway',exact:true}).click();
   assert.ok(requests.every(([url,method])=>url.startsWith(base+'/')&&method==='GET'));
   const sourceFiles=(await readdir(new URL('../dispatch/',import.meta.url))).filter(file=>/\.mjs$/.test(file)&&file!=='view-preference.mjs');
-  for(const file of sourceFiles){const source=await readFile(new URL('../dispatch/'+file,import.meta.url),'utf8');assert.doesNotMatch(source,/from\s+['"]\.\.\/(?:js|lib|tools)|\.insert\(|\.rpc\(|sendBeacon|localStorage|sessionStorage|indexedDB/);}
+  for(const file of sourceFiles){const source=await readFile(new URL('../dispatch/'+file,import.meta.url),'utf8');assert.doesNotMatch(source,/from\s+['"]\.\.\/(?:js|lib|tools)|\.insert\(|\.rpc\(|sendBeacon|localStorage|indexedDB/);if(file!=='notice-preview-view.mjs')assert.doesNotMatch(source,/sessionStorage/);else assert.match(source,/storage=sessionStorage/);}
   const hash=async path=>createHash('sha256').update(await readFile(new URL(path,import.meta.url))).digest('hex');assert.equal(await hash('../dispatch/assets/gridly-logo.png'),await hash('../assets/store/branding/Logos/gridly-logo-horizontal.png'));
 }));
 test('remote origin query cannot activate fixtures even if preview files were copied',()=>withPage(async page=>{

@@ -99,3 +99,20 @@ export function createGeographicView(host,{mode,rows,selectedId,onSelect,onDetai
     destroy(){disposed=true;abort.abort();observer.disconnect();window.removeEventListener('gridlydispatch:themechange',restyle);basemap?.destroy();basemap=null;map?.remove();map=null;}
   };
 }
+
+// Dedicated composer map: existing incident views remain unchanged.
+export async function createRoadPicker(host,registry,selected,onCandidates,isCurrent=()=>true){
+ const {pickCandidates}=await import('./road-selection.mjs');
+ const L=await loadLibrary();await loadStyles('./vendor/leaflet/leaflet.css');
+ const context=await Promise.all(['dayton-context','dayton-landmarks'].map(async name=>{const r=await fetch('./demo/'+name+'.geojson');if(!r.ok)throw new Error('Local map context unavailable');return r.json();}));
+ if(!host.isConnected||!isCurrent())return {destroy(){},update(){}};
+ const map=L.map(host,{center:[30.047,-94.891],zoom:14,minZoom:13,maxZoom:17,maxBounds:[[30.017,-94.948],[30.083,-94.852]],maxBoundsViscosity:1,zoomAnimation:false,fadeAnimation:false,markerZoomAnimation:false,inertia:false,scrollWheelZoom:false,attributionControl:false,preferCanvas:true});
+ const roads={type:'FeatureCollection',features:registry.features.map(r=>r.feature)};
+ const base=createBasemap(L,map,roads,context[0],context[1],()=>[]);
+ const highlightColor=()=>getComputedStyle(host).getPropertyValue('--focus-ring').trim();const highlight=L.geoJSON(null,{interactive:false,style:()=>({color:highlightColor(),weight:7,opacity:1})}).addTo(map);
+ function update(ids){const chosen=registry.selected(ids);highlight.clearLayers();highlight.addData({type:'FeatureCollection',features:chosen.map(r=>r.feature)});host._previewGeometry=highlight.toGeoJSON(false);}
+ map.on('click',e=>onCandidates(pickCandidates(registry,e.containerPoint,p=>map.latLngToContainerPoint([p[1],p[0]]))));
+ const theme=()=>{base.restyle();highlight.setStyle({color:highlightColor()});};window.addEventListener('gridlydispatch:themechange',theme);
+ const observer=new ResizeObserver(()=>map.invalidateSize({animate:false}));observer.observe(host);update(selected);
+ return {update,fit(ids){const f=registry.selected(ids);if(f.length)map.fitBounds(L.geoJSON({type:'FeatureCollection',features:f.map(r=>r.feature)}).getBounds(),{padding:[25,25],maxZoom:16,animate:false});},destroy(){observer.disconnect();window.removeEventListener('gridlydispatch:themechange',theme);base.destroy();map.remove();delete host._previewGeometry;}};
+}

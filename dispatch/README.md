@@ -248,3 +248,147 @@ ignored raw context response; the app makes no external data request.
 Demo URLs support unit=police or unit=works, validated against demo memberships.
 All map assets remain demo-gated. Canvas teardown guards are Dispatch-local.
 Final preservation and visual evidence: reports/responder/dispatch-map-polish/CERTIFICATION.md.
+
+## Street selection and recurring notice draft preview
+
+The **Draft Notice Preview** button opens a dedicated local synthetic composer.
+It appears only in the loopback fixture session. Existing incident views, markers,
+filters, assets, services and sign-in behavior remain unchanged.
+
+Search existing road names/references, or click the composer map to see every
+candidate within a 10-pixel picking tolerance. Explicitly add/remove up to 50
+source lines. A separate highlight layer uses their original coordinates without
+rounding, snapping, connectors, intersection inference or corridor expansion.
+The 331 OSM ways remain source lines, not certified operational segments.
+**Source geometry preview — jurisdiction unverified** remains visible.
+The derivative SHA-256 and recorded source hash are checked before loading; stale
+or unknown datasets/identities refuse. No governed source data is modified.
+
+Write bounded subject/body/reference text and notice effective/expiry wall times.
+References are text only: no URL fetching, uploads or attachments. The project
+has its own inclusive calendar-date range and IANA timezone. Crew work and roadway
+restriction schedules are independently editable. Each supports one-time (on the
+project start date), selected weekdays (Sunday=0 through Saturday=6), and continuous
+24-hour windows. Continuous windows are represented as individual daily occurrence
+intervals beneath the same parent notice, including DST days of 23 or 25 hours;
+these are not separate reports. Restriction windows inherit crew occurrences only
+when the user explicitly selects work-hour matching; otherwise they are independent.
+
+Skip/cancel a date or modify its individual hours using the date-exception controls.
+Parent edits retain exceptions; exceptions excluded by a new parent schedule must
+be explicitly removed or corrected. Review lists human-readable schedules, date
+exceptions, exact UTC occurrence boundaries and affected dates. A review is
+invalidated by further edits. Clock labels describe crew scheduling only and are
+computed when the review is opened; they never declare a road open or closed.
+
+Limits: 2000–2100 calendar dates, at most 366 project dates, 50 source lines,
+30 notices per synthetic unit, 100 revisions per notice and 2,000,000 serialized
+characters per unit workspace. End times must be later on the same date.
+Overnight custom windows and ambiguous/nonexistent DST wall times are explicitly
+blocked. Timezone conversion uses the installed JavaScript Intl timezone data;
+there is no external timezone service or new dependency. Notice validity must
+contain all generated crew and restriction occurrences.
+
+Save/reopen/revise/close keeps one DEMO-NOTICE identity and append-only version
+snapshots. Overlapping synthetic notices remain separate and receive an advisory.
+Stale saves refuse while edits remain in the current editor. Replacing unsaved
+edits requires explicit confirmation. Closed notices are inspection-only.
+Versioned sessionStorage is limited to
+`gridlyDispatchNoticePreview.v1.DEMO-DAYTON.police` and
+`gridlyDispatchNoticePreview.v1.DEMO-DAYTON.works`.
+Working drafts, saved occurrence lists, exceptions and revision history recover
+on refresh within the same browser tab. Invalid storage, inconsistent history,
+dataset changes and unavailable storage refuse, with explicit unit-only reset.
+This is not durable storage for real agency data or cross-device collaboration.
+
+Focused certification:
+
+```powershell
+$env:DISPATCH_BROWSER_CHANNEL='msedge'
+node --test --test-concurrency=1 tests/dispatch-road-selection.test.mjs tests/dispatch-notice-schedule.test.mjs tests/dispatch-notice-preview.test.mjs tests/dispatch-notice-preview-browser.test.mjs
+```
+
+Rerun the seven existing Dispatch UI suites listed above. Historical comparisons
+hide only the additive entry control using DOM visibility (screenshot style
+injection is blocked by the existing CSP). All original pixel, marker and geometry
+assertions remain. The source-isolation guard permits sessionStorage only in the
+new composer; browser tests restrict it to the exact synthetic unit keys.
+
+The new browser suite covers both themes at 1440×900, 1920×1080, 1280×720,
+1024×768 and 390×844. The composer has no horizontal overflow. The existing
+mobile dashboard's underlying width is measured and preserved without redesign.
+Ignored evidence lives in reports/responder/dispatch-visual/notice-preview-*.png
+and notice-preview-certification.log. Captures include entry, one/multiple selected
+roads, editor and schedule review. Actual agency scopes, road authority/topology,
+real authentication, backend writes, publication and consumer integration remain
+unimplemented or disabled. No schema, consumer, native or production changes.
+
+### Local certification result — October 8, 2026
+
+Final distinct checks: **167 passed, 0 unresolved failures**: 56 new focused
+checks and 111 existing Dispatch UI checks. The seven-suite/full run recorded
+156/164 while eight marker comparisons still used inconsistent hiding across
+stable frames. After correcting that test helper, the final focused run passed
+80/80 (all 56 new checks, all 11 marker-normalization checks and all 13 visual-shell
+checks). Original Board pixels, map geometry, asset-byte checks and existing
+Canvas tolerances were preserved. No runtime edit followed the final checks.
+
+Evidence: notice-preview-certification.log, notice-preview-final.log,
+notice-preview-summary.json and 60 notice-preview-*.png files in the ignored
+reports/responder/dispatch-visual directory. Screenshots include saved completed
+previews as well as entry, one-road/multi-road selection, editor and review states.
+The summary contains the exact 20-file source/test inventory and protection checks.
+HEAD remains 920108bf8715263daed5d936a8119780ece67080. No commit, push, merge or deploy.
+
+
+## Three-step notice composer
+
+The same **Draft Notice Preview** entry now opens three steps: **Where is the
+issue?**, **What should people know?**, and **Review your notice**. Location requires
+one or more valid source lines before Next. Search and explicit candidate choices
+provide the keyboard alternative to map picking. Selected lines stay above search
+candidates. Only the current step is rendered, with a larger map, one main scroll
+area and stable footer controls. Back preserves unsaved values; Escape returns
+focus to the entry. Saved synthetic notices can be reopened from the Location step.
+
+New drafts require an explicit traffic restriction choice: work hours, continuous
+project coverage, or custom hours. Work-hour matching generates the exact work
+occurrences, including skipped dates and modified windows. Custom schedule values
+and exceptions survive switching choices; independent restriction edits are shown
+for continuous/custom choices. Legacy v1 saved schedules load unchanged, without
+rewriting their snapshots. Choosing another restriction option is a normal reviewed
+revision. Weekday buttons display Monday through Sunday, retaining Sunday=0 storage.
+Timezone labels show plain names alongside the exact editable IANA identifier.
+
+**Change or skip specific dates** is collapsed initially. Review distinguishes
+**Work scheduled** from **Traffic restrictions scheduled**, with local times for
+each scheduled date and expandable exact UTC occurrences and version history.
+Back to edit discards the review snapshot. Any subsequent change requires fresh
+validation and review before save. Closing a saved notice requires separate closure
+review and confirmation; closed records remain available for inspection.
+
+This remains a loopback-only, local synthetic sessionStorage preview. Start from
+the Dispatch worktree with **node tools/dispatch-ui/serve.mjs --demo**, then open
+**http://127.0.0.1:4178/?demo=1**. DISPATCH_UI_PORT overrides the port. The bare root
+is the sign-in shell; the demo flag and demo query are both required. No running
+owner server or authentication controls are changed by this refinement.
+
+Refinement evidence uses the separate ignored **notice-ux-** prefix in
+reports/responder/dispatch-visual; historical screenshot fixtures are unchanged.
+The focused browser suite includes all five sizes in both themes, explicit choice,
+matching exceptions, independent custom schedules, navigation, refresh/revision
+recovery, closure, stale-save refusal, keyboard focus, map failure/retry, DST and
+Sunday mapping. Existing source geometry and seven dashboard suites remain required.
+
+### Refinement certification — October 8, 2026
+
+**172 passed, 0 failed:** 61 focused notice checks (18 browser, 12 draft/revision,
+26 schedule, 5 roadway) and 111 existing Dispatch checks. An initial keyboard
+boundary failure was reproduced and fixed in the isolated composer; the final
+focused run passes. Logs: notice-ux-final.log and notice-ux-dashboard.log. There
+are 70 notice-ux-*.png screenshots across both themes and all five sizes, including
+schedule and daily-review scroll positions. Actual screenshots were visually
+inspected. No historical baseline adjustments, source geometry changes or new
+dependencies. The same 20-file working-tree inventory remains; this refinement
+changes six of those files. All other 14 retain their pre-refinement byte hashes.
+Protected detached checkout remains clean. Commit/push/merge/deploy: NONE.

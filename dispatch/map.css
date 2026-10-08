@@ -74,3 +74,9 @@
 .map-key-selected,.map-key-resolved { display:inline-block; box-sizing:border-box; width:10px; height:10px; margin-right:5px; vertical-align:-1px; }
 .map-key-selected { border:2px solid var(--text-accent); border-radius:50%; }
 .map-key-resolved { border-radius:50%; color:var(--status-resolved-text); background:var(--status-resolved-bg); text-align:center; font:700 9px/10px Arial,sans-serif; }
+
+.notice-map {height:340px;position:relative;background:var(--map-land);border:1px solid var(--border-strong);border-radius:6px;margin-bottom:12px;color:var(--text-primary);}
+.notice-map .leaflet-control-zoom a {background:var(--bg-panel);color:var(--text-primary);}
+@media(max-width:760px) {.notice-map {height:280px;}}
+
+.notice-dialog .notice-map {background:var(--map-land);}

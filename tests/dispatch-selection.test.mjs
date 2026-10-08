@@ -12,7 +12,7 @@ after(async()=>{await browser?.close();server?.close();baseline?.close();});
 const view=p=>p.getByRole('combobox',{name:'View',exact:true});
 const ready=p=>p.locator('[data-marker]').first().waitFor();
 const shot=(p,name)=>p.screenshot({path:new URL(name+'.png',evidence).pathname.replace(/^\/([A-Z]:)/,'$1')});
-async function stableScreenshot(p,options={}){let previous=await p.screenshot(options);for(let i=0;i<5;i++){await p.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));const current=await p.screenshot(options);if(previous.equals(current))return current;previous=current;}throw new Error('Screenshot did not settle');}
+async function stableScreenshot(p,options={}){let previous=await protectedShot(p,options);for(let i=0;i<5;i++){await p.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));const current=await protectedShot(p,options);if(previous.equals(current))return current;previous=current;}throw new Error('Screenshot did not settle');}
 const bounds=p=>p.locator('.geo-layout,.geo-list-panel,.geo-list-row,#dispatch-map,.map-caption,.map-credit,.geo-filters,.topbar,.sidebar,.shell-footer').evaluateAll(es=>es.map(e=>{const r=e.getBoundingClientRect();return [r.x,r.y,r.width,r.height];}));
 const camera=p=>p.locator('.leaflet-map-pane,[data-marker]').evaluateAll(es=>es.map(e=>[e.style.transform,e.style.marginLeft,e.style.marginTop,e.style.width,e.style.height]));
 async function visit(fn,{theme='dark',width=1440,height=900}={}){const c=await browser.newContext({viewport:{width,height}});await c.addInitScript(t=>localStorage.setItem('gridlyDispatchTheme',t),theme);const p=await c.newPage(),errors=[];p.on('pageerror',e=>errors.push(e.message));try{await fn(p);assert.deepEqual(errors,[]);}finally{await c.close();}}
@@ -39,7 +39,7 @@ for(const theme of ['dark','light'])test(`${theme}: selected marker/row, bidirec
   assert.ok(requests.every(([u,m])=>u.startsWith(base+'/')&&m==='GET'));
 },{theme}));
 for(const theme of ['dark','light'])for(const [width,height]of [[1440,900],[1920,1080],[1280,720],[1024,768]])test(`${theme} ${width}x${height}: approved Board exact and geographic views unchanged outside selection/key`,()=>visit(async p=>{
-  const compare={};for(const origin of [approved,base]){await p.goto(origin+'/?demo=1&view=board');await p.locator('tbody tr').first().waitFor();await p.mouse.move(0,0);const board=await p.screenshot();if(origin===approved)compare.board=board;else{assert.ok(compare.board.equals(board),'Exact Board');await shot(p,`${theme}-${width}-board`);}
+  const compare={};for(const origin of [approved,base]){await p.goto(origin+'/?demo=1&view=board');await p.locator('tbody tr').first().waitFor();await p.mouse.move(0,0);const board=await protectedShot(p);if(origin===approved)compare.board=board;else{assert.ok(compare.board.equals(board),'Exact Board');await shot(p,`${theme}-${width}-board`);}
     for(const mode of ['split','map']){await view(p).selectOption(mode);await ready(p);await p.mouse.move(0,0);const geometry=await bounds(p);assert.equal(await p.locator('.map-caption > span:first-child').innerText(),'Offline OSM context · Approximate demo positions');const png=await stableScreenshot(p,{mask:[p.locator('.map-caption'),p.locator('[data-marker]')]});if(origin===approved)compare[mode]={geometry,png};else{assert.deepEqual(geometry,compare[mode].geometry);assert.ok(sameMapPixels(png,compare[mode].png),'Only compact key and normalized category artwork differ in unselected view');}}
   }
 },{theme,width,height}));
@@ -58,3 +58,6 @@ test('selection camera, scroll, filtered state and popup match approved behavior
     }
   }
 }));
+
+// Only the additive preview entry is hidden; all historical pixels remain checked.
+async function protectedShot(page,options={}){const entry=page.locator('.notice-entry'),previous=await entry.evaluateAll(es=>es.map(e=>e.style.visibility));await entry.evaluateAll(es=>es.forEach(e=>e.style.visibility='hidden'));try{return await page.screenshot(options);}finally{await entry.evaluateAll((es,values)=>es.forEach((e,i)=>e.style.visibility=values[i]||''),previous);}}
