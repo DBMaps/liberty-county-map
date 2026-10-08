@@ -1,0 +1,24 @@
+{
+  "contract": "dispatch-roadway-topology-v1",
+  "rules": "shared-node-conservative-grade-v1",
+  "packageId": "dispatch.dayton-context.topology-2a",
+  "sourcePath": "dispatch/demo/source/dayton-context-osm.json",
+  "provenancePath": "dispatch/demo/dayton-context-provenance.json",
+  "sourceHash": "bfd18dcbaa6d9c241f13b2219f663ea63a8ccd908fb318f1ecb35574c0d4010e",
+  "provenanceHash": "d3f5f58baf426b4d731cbf33224235eb675b457350930b6d30bd8a20758dc30f",
+  "snapshot": "2026-10-06",
+  "sourceUrl": "https://api.openstreetmap.org/api/0.6/map.json?bbox=-94.915,30.03,-94.865,30.065",
+  "crs": "OGC:CRS84",
+  "bbox": [
+    -94.915,
+    30.03,
+    -94.865,
+    30.065
+  ],
+  "expectedElements": 25893,
+  "expectedHighwayWays": 567,
+  "license": "https://opendatacommons.org/licenses/odbl/1-0/",
+  "attribution": "© OpenStreetMap contributors",
+  "authority": "UNVERIFIED",
+  "publication": "DISABLED"
+}
