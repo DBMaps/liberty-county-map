@@ -3,12 +3,36 @@ import {incidentIcon} from './marker-language.mjs';
 import {createBasemap} from './basemap.mjs';
 
 let library;
+const adaptedLibraries=new WeakSet();
+function dispatchMapLibrary(L) {
+  if(!adaptedLibraries.has(L)){
+    // Leaflet's synchronous path update clears the scheduled redraw handle.
+    // Cancel that frame first so it cannot outlive canvas renderer teardown.
+    const updatePaths=L.Canvas.prototype._updatePaths;
+    L.Canvas.prototype._updatePaths=function(...args){
+      if(!this._postponeUpdatePaths && this._redrawRequest!=null){
+        L.Util.cancelAnimFrame(this._redrawRequest);
+        this._redrawRequest=null;
+      }
+      return updatePaths.apply(this,args);
+    };
+    const destroyContainer=L.Canvas.prototype._destroyContainer;
+    L.Canvas.prototype._destroyContainer=function(...args){
+      const result=destroyContainer.apply(this,args);
+      // Native teardown cancels the frame but retains its ID; permit reuse.
+      this._redrawRequest=null;
+      return result;
+    };
+    adaptedLibraries.add(L);
+  }
+  return L;
+}
 function loadLibrary() {
-  if(window.L)return Promise.resolve(window.L);
+  if(window.L)return Promise.resolve(dispatchMapLibrary(window.L));
   if(library)return library;
   library=new Promise((resolve,reject)=>{
     const script=document.createElement('script');script.src='./vendor/leaflet/leaflet.js';
-    script.onload=()=>window.L?resolve(window.L):reject(new Error('Map library unavailable'));
+    script.onload=()=>window.L?resolve(dispatchMapLibrary(window.L)):reject(new Error('Map library unavailable'));
     script.onerror=()=>{script.remove();library=null;reject(new Error('Map library unavailable'));};
     document.head.append(script);
   });
