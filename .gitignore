@@ -110,3 +110,8 @@ reports/lp1601l/controlled-fixture/lp1601l/counties/*.destinations.jsonl.gz
 /.artifacts/android-acceptance/
 *.apk
 *.log
+
+# Disposable Dispatch authentication certification evidence stays local.
+/reports/responder/dispatch-auth-local/
+/reports/responder/dispatch-auth-owner/
+/reports/responder/**/auth-m1-*/

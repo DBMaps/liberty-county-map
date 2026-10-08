@@ -14,9 +14,9 @@ let lastFocus;
 let viewMode='board', selectedIncident=null, mapController=null, viewGeneration=0;
 // Query parameters alone never unlock the preview. An explicit loopback server is required.
 const loopback = ['127.0.0.1','localhost','[::1]'].includes(location.hostname);
-let demoEnabled = false;
+let demoEnabled = false, operationalEnabled=false, connectLocalLogin;
 if (loopback) {
-  try { const result = await fetch('./__preview', {cache:'no-store'}); demoEnabled = result.ok && (await result.json()).mode === 'local-fixtures'; } catch {}
+  try { const result = await fetch('./__preview', {cache:'no-store'}); const mode=result.ok?(await result.json()).mode:null; demoEnabled=mode==='local-fixtures'; operationalEnabled=mode==='local-auth'; } catch {}
 }
 if (demoEnabled && params.get('demo') === '1') {
   fixtures = await import('./demo/fixtures.mjs');
@@ -25,10 +25,14 @@ if (demoEnabled && params.get('demo') === '1') {
   if(['light','dark','system'].includes(params.get('theme')))window.gridlyDispatchTheme.setPreference(params.get('theme'));
   state = ['populated','empty','loading','error','denied'].includes(params.get('state')) ? params.get('state') : 'populated';
   renderShell();
-} else renderLogin();
+} else {
+  if(operationalEnabled)({connectOperationalLogin:connectLocalLogin}=await import('./local-auth-view.mjs'));
+  renderLogin();
+}
 
 function renderLogin() {
   app.innerHTML = `<div class="login-layout"><section class="login-story">${brand()}<div class="story-content"><p class="eyebrow">COMMUNITY OPERATIONS, CONNECTED</p><h1>Operational awareness for the people responsible for keeping communities moving.</h1><p class="story-description">A clear view of what matters. A shared commitment to the communities you serve.</p><div class="service-list"><span>Police</span><span>Fire</span><span>EMS</span><span>Public Works</span></div></div><div class="story-footer"><span>GRIDLY DISPATCH</span><span>Clarity. Coordination. Confidence.</span></div></section><main id="main" class="login-main"><div class="login-tools">${themeControl()}</div><div class="login-form"><div class="access-icon">${icon('lock')}</div><p class="eyebrow">AUTHORIZED AGENCY ACCESS</p><h2>Welcome to Dispatch</h2><p class="muted">Sign in with your organization-managed account.</p><form id="login"><label for="email">Email</label><input id="email" type="email" autocomplete="username" placeholder="you@agency.gov" required><div class="password-label"><label for="password">Password</label><button type="button" class="text-button" id="recover">Forgot password?</button></div><input id="password" type="password" autocomplete="current-password" required><button class="button primary sign-in" type="submit">Sign In ${icon('arrow')}</button></form><p id="auth-message" class="auth-message" role="status"></p><div class="secure-note">${icon('lock')}<p>Authorized agency access only.<br><span>Access and verification are managed by your organization.</span></p></div>${demoEnabled?'<a class="demo-link" href="?demo=1">Open local visual demo <span aria-hidden="true">↗</span></a><p class="preview-caption">Synthetic records · no live operations</p>':''}</div><footer>Gridly Dispatch <span>Organization-controlled access</span></footer></main></div>`;
+  if(operationalEnabled){connectLocalLogin({app,restart:renderLogin});return;}
   document.querySelector('#login').addEventListener('submit',async event=>{
     event.preventDefault();
     // Credentials are deliberately neither read, stored nor transmitted by this preview.
