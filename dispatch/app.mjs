@@ -88,7 +88,7 @@ function filtersMarkup(){return `<div class="filters"><label class="search">${ic
 function wireFilters(){
   document.querySelector('#search').oninput=event=>{filters.search=event.target.value;renderResults();};
   document.querySelectorAll('[data-filter]').forEach(select=>select.onchange=event=>{filters[select.dataset.filter]=event.target.value;renderResults();});
-  document.querySelector('#clear').onclick=()=>{filters={search:'',severity:'',status:'',source:'',review:''};renderView();document.querySelector('#search').focus();};
+  document.querySelector('#clear').onclick=()=>{filters={search:'',severity:'',status:'',source:'',review:''};if(document.querySelector('.map-expanded')){document.querySelector('#search').value='';document.querySelectorAll('[data-filter]').forEach(select=>select.value='');renderResults();}else renderView();document.querySelector('#search').focus();};
 }
 function filter(key,label,options) {return `<label>${label}<select data-filter="${key}"><option value="">All ${label.toLowerCase()}</option>${options.map(value=>`<option ${filters[key]===value?'selected':''}>${value}</option>`).join('')}</select></label>`;}
 function queue(rows) { const pending=rows.filter(item=>item.review==='Needs review');return pending.length?pending.map(reviewItem).join(''):empty('Nothing waiting for review','Items requiring your authorized review will appear here.'); }

@@ -46,10 +46,77 @@ function loadStyles(path) {
   document.head.append(link);return link._ready;
 }
 export function createGeographicView(host,{mode,rows,selectedId,onSelect,onDetail,unitName}) {
+  let normalMapSize,cameraCenter, resizing=false, workspaceResize=false;
+  let expanded=false,drawer=false,filterOpen=false,entryFocus,scrollY=0;
+  let nativeFullscreen=false,fullscreenPending=false;
   let disposed=false,map,L,basemap,markers=new Map(),currentRows=rows,selection=selectedId;
   const abort=new AbortController();
   host.innerHTML=`<div class="geo-layout geo-${mode}"><section class="panel geo-list-panel" aria-label="Incident list"><div class="panel-heading"><h2>Unit incidents</h2><span id="geo-count"></span></div><div id="geo-list"></div></section><section class="panel geo-map-panel"><div class="panel-heading"><div><h2>Dayton, Texas</h2><small>${escape(unitName)} · Approximate demo locations</small></div><button class="text-button" id="fit-incidents">Fit incidents</button></div><div class="map-stage"><div id="dispatch-map" aria-label="Dayton incident map. Use the incident list for an equivalent keyboard path."></div><div id="map-message" role="status">Loading local map…</div></div><div class="map-caption"><span>Offline OSM context · Approximate demo positions</span><span class="map-state-key" aria-label="Incident state key"><span><i class="map-key-selected" aria-hidden="true"></i>Selected</span><span><i class="map-key-resolved" aria-hidden="true">✓</i>Resolved</span></span></div><div class="map-credit">Map data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a> · <a href="./demo/dayton-roads.geojson" download>ODbL roads</a> · <a href="./demo/dayton-context.geojson" download>ODbL context</a> · <a href="./demo/dayton-landmarks.geojson" download>OSM landmarks</a> · <a href="https://leafletjs.com" target="_blank" rel="noopener noreferrer">Leaflet</a></div></section></div>`;
   const list=host.querySelector('#geo-list'),message=host.querySelector('#map-message');
+  const shell=host.closest('.shell'),listPanel=host.querySelector('.geo-list-panel');
+  const heading=host.querySelector('.geo-map-panel > .panel-heading');
+  const expand=document.createElement('button');expand.type='button';expand.id='expand-map';expand.className='text-button expand-map';expand.textContent='Expand Map';expand.hidden=mode!=='map';host.querySelector('.map-stage').append(expand);
+  const actions=document.createElement('div');actions.className='expanded-map-actions';actions.hidden=true;
+  actions.innerHTML='<button type="button" class="button" id="return-map">Return to Map</button><button type="button" class="button" id="map-incidents" aria-controls="map-incident-drawer" aria-expanded="false">Incidents</button><button type="button" class="button" id="map-filters" aria-controls="map-workspace-filters" aria-expanded="false">Filters</button><button type="button" class="button" id="map-fullscreen">Full screen</button><span id="map-fullscreen-status" role="status" aria-live="polite"></span>';
+  heading.append(actions);listPanel.id='map-incident-drawer';
+  const filters=host.parentElement.querySelector('.geo-filters');filters.id='map-workspace-filters';
+  const screenButton=host.querySelector('#map-fullscreen'),screenStatus=host.querySelector('#map-fullscreen-status');
+  screenButton.disabled=!document.fullscreenEnabled||typeof shell.requestFullscreen!=='function';
+  if(screenButton.disabled)screenButton.title='Browser full screen unavailable; viewport map remains available';
+  async function leaveNativeFullscreen(){
+    if(document.fullscreenElement!==shell)return;
+    try{await document.exitFullscreen();}catch{if(expanded)screenStatus.textContent='Could not exit browser full screen. Use browser Escape.';}
+  }
+  function fullscreenChanged(){
+    const owned=document.fullscreenElement===shell;
+    screenButton.textContent=owned?'Exit full screen':'Full screen';
+    if(owned){nativeFullscreen=true;if(!expanded)void leaveNativeFullscreen();}
+    else if(nativeFullscreen){nativeFullscreen=false;setExpanded(false);}
+  }
+  screenButton.onclick=async()=>{
+    if(fullscreenPending)return;
+    if(document.fullscreenElement===shell){await leaveNativeFullscreen();return;}
+    screenStatus.textContent='';fullscreenPending=true;
+    try{await shell.requestFullscreen();}
+    catch{if(expanded)screenStatus.textContent='Browser full screen unavailable. Viewport map remains available.';}
+    finally{fullscreenPending=false;}
+  };
+  document.addEventListener('fullscreenchange',fullscreenChanged);
+  function workspaceBounds(){
+    const bounds=L.latLngBounds([[30.017,-94.948],[30.083,-94.852]]);
+    if(!expanded||!normalMapSize)return bounds;
+    // Presentation padding keeps the same permitted center range as normal Map.
+    // It does not invent source geometry, boundaries or jurisdiction authority.
+    const delta=map.getSize().subtract(normalMapSize).divideBy(2),zoom=map.getZoom();
+    return L.latLngBounds(map.unproject(map.project(bounds.getNorthWest(),zoom).subtract(delta),zoom),map.unproject(map.project(bounds.getSouthEast(),zoom).add(delta),zoom));
+  }
+  function closeDrawer(focus=true){drawer=false;shell.classList.remove('map-drawer-open');listPanel.inert=expanded;host.querySelector('#map-incidents').setAttribute('aria-expanded','false');if(focus)host.querySelector('#map-incidents').focus();}
+  function closeFilters(focus=true){filterOpen=false;shell.classList.remove('map-filters-open');filters.inert=expanded;host.querySelector('#map-filters').setAttribute('aria-expanded','false');if(focus)host.querySelector('#map-filters').focus();}
+  function setExpanded(value,restore=true){
+    if(value===expanded)return;
+    if(map){cameraCenter=map.getCenter();if(value)normalMapSize=map.getSize().clone();map.setMaxBounds(null);}
+    workspaceResize=true;expanded=value;
+    if(!value)void leaveNativeFullscreen();else screenStatus.textContent='';
+    if(value){entryFocus=document.activeElement;scrollY=window.scrollY;}
+    shell.classList.toggle('map-expanded',value);document.body.classList.toggle('dispatch-map-expanded',value);actions.hidden=!value;expand.hidden=value||mode!=='map';
+    closeDrawer(false);closeFilters(false);
+    if(value)host.querySelector('#return-map').focus();else if(restore){window.scrollTo({top:scrollY,behavior:'instant'});(entryFocus?.isConnected?entryFocus:expand).focus({preventScroll:true});}
+  }
+  expand.onclick=()=>setExpanded(true);host.querySelector('#return-map').onclick=()=>setExpanded(false);
+  host.querySelector('#map-incidents').onclick=()=>{if(drawer){closeDrawer();return;}closeFilters(false);drawer=true;shell.classList.add('map-drawer-open');listPanel.inert=false;host.querySelector('#map-incidents').setAttribute('aria-expanded','true');listPanel.querySelector('button')?.focus();};
+  host.querySelector('#map-filters').onclick=()=>{if(filterOpen){closeFilters();return;}closeDrawer(false);filterOpen=true;shell.classList.add('map-filters-open');filters.inert=false;host.querySelector('#map-filters').setAttribute('aria-expanded','true');filters.querySelector('input')?.focus();};
+  function workspaceEscape(event){
+    if(!expanded||event.key!=='Escape')return;
+    // Some browsers deliver Escape to the page; others exit natively first.
+    // Both paths converge through fullscreenchange, without a stuck workspace.
+    if(document.fullscreenElement===shell){void leaveNativeFullscreen();return;}
+    if(document.querySelector('dialog[open]'))return;
+    event.preventDefault();event.stopPropagation();
+    const popup=[...markers.values()].find(marker=>marker.isPopupOpen());
+    if(popup){map.closePopup();popup.getElement()?.focus();}
+    else if(filterOpen)closeFilters();else if(drawer)closeDrawer();else setExpanded(false);
+  }
+  window.addEventListener('keydown',workspaceEscape,true);
   function renderList() {
     host.querySelector('#geo-count').textContent=`${currentRows.length} visible`;
     list.innerHTML=currentRows.length?currentRows.map(item=>`<div class="geo-list-row ${selection===item.id?'is-selected':''}" data-geo-row="${item.id}"><button class="geo-select" data-select="${item.id}" aria-pressed="${selection===item.id}"><span class="geo-row-heading"><strong>${escape(item.title)}</strong>${badge(item.severity)}</span><span>${escape(item.location)}</span><small>${escape(item.unitName)}</small><span class="geo-row-state">${badge(item.status)}<small>${item.updated} · ${item.review}</small></span></button><button class="text-button geo-detail" data-detail="${item.id}">View details<span class="sr-only"> for ${escape(item.title)}</span></button></div>`).join(''):empty('No matching incidents','No incidents match the current filters.');
@@ -73,7 +140,7 @@ export function createGeographicView(host,{mode,rows,selectedId,onSelect,onDetai
       const dy=bubble.top<frame.top+20?bubble.top-frame.top-20:Math.max(0,bubble.bottom-frame.bottom+20);
       if(dx||dy)map.panBy([dx,dy],{animate:false});
       const topbar=document.querySelector('.topbar').getBoundingClientRect();
-      if(frame.top<topbar.bottom||frame.bottom>innerHeight)map.getContainer().scrollIntoView({block:'center',behavior:'instant'});
+      if(!expanded&&(frame.top<topbar.bottom||frame.bottom>innerHeight))map.getContainer().scrollIntoView({block:'center',behavior:'instant'});
     }
   }
   function fit() {
@@ -111,16 +178,17 @@ export function createGeographicView(host,{mode,rows,selectedId,onSelect,onDetai
       basemap=createBasemap(L,map,data,results[3],results[4],()=>[...markers.values()].map(marker=>({latlng:marker.getLatLng(),anchor:marker.options.icon.options.iconAnchor,size:marker.options.icon.options.iconSize})));
       L.control.scale({imperial:true,metric:false,position:'bottomleft'}).addTo(map);
       renderMarkers();fit();if(selection&&markers.has(selection))select(selection);
+      cameraCenter=map.getCenter();map.on('moveend',()=>{if(!disposed&&map&&!resizing)cameraCenter=map.getCenter();});map.on('zoomend',()=>{if(expanded&&!resizing)map.setMaxBounds(workspaceBounds());});
       map.on('popupclose',()=>{ /* Selection remains visible when the popup closes. */ });
     }catch(error){if(disposed||error.name==='AbortError')return;basemap?.destroy();basemap=null;map?.remove();map=null;message.hidden=false;message.innerHTML='<strong>Map unavailable</strong><p>Incident records remain available in Board view.</p><button class="button" id="retry-map">Retry map</button>';message.querySelector('button').onclick=initialize;}
   }
   host.querySelector('#fit-incidents').onclick=fit;
   window.addEventListener('gridlydispatch:themechange',restyle);
-  const observer=new ResizeObserver(()=>map?.invalidateSize({animate:false}));observer.observe(host);
+  const observer=new ResizeObserver(()=>{if(map){if(!expanded&&!workspaceResize){map.invalidateSize({animate:false});return;}const center=cameraCenter||map.getCenter();resizing=true;map.invalidateSize({animate:false,pan:false});map.setView(center,map.getZoom(),{animate:false,reset:true});map.setMaxBounds(workspaceBounds());workspaceResize=false;resizing=false;}});observer.observe(host.querySelector('#dispatch-map'));
   renderList();initialize();
   return {
-    update(next){currentRows=next;if(!next.some(item=>item.id===selection)){selection=null;onSelect(null);}renderList();renderMarkers();fit();},
-    destroy(){disposed=true;abort.abort();observer.disconnect();window.removeEventListener('gridlydispatch:themechange',restyle);basemap?.destroy();basemap=null;map?.remove();map=null;}
+    update(next){currentRows=next;if(!next.some(item=>item.id===selection)){selection=null;onSelect(null);}renderList();renderMarkers();if(!expanded)fit();},
+    destroy(){setExpanded(false,false);document.removeEventListener('fullscreenchange',fullscreenChanged);window.removeEventListener('keydown',workspaceEscape,true);disposed=true;abort.abort();observer.disconnect();window.removeEventListener('gridlydispatch:themechange',restyle);basemap?.destroy();basemap=null;map?.remove();map=null;}
   };
 }
 

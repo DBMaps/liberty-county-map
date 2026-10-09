@@ -34,5 +34,6 @@ for(const theme of ['dark','light'])for(const [width,height]of [[1440,900],[1920
   }
 },{theme,width,height}));
 
-// Only the additive preview entry is hidden; all historical pixels remain checked.
-async function protectedShot(page,options={}){const entry=page.locator('.notice-entry'),previous=await entry.evaluateAll(es=>es.map(e=>e.style.visibility));await entry.evaluateAll(es=>es.forEach(e=>e.style.visibility='hidden'));try{return await page.screenshot(options);}finally{await entry.evaluateAll((es,values)=>es.forEach((e,i)=>e.style.visibility=values[i]||''),previous);}}
+// Only additive controls are transparent during historical comparisons.
+// visibility preserves layout and reveals the original toolbar beneath Expand Map.
+async function protectedShot(page,options={}){const entry=page.locator(options.mask?'.notice-entry, #expand-map':'.notice-entry'),previous=await entry.evaluateAll(es=>es.map(e=>e.style.visibility));await entry.evaluateAll(es=>es.forEach(e=>e.style.visibility='hidden'));try{return await page.screenshot(options);}finally{await entry.evaluateAll((es,values)=>es.forEach((e,i)=>e.style.visibility=values[i]||''),previous);}}

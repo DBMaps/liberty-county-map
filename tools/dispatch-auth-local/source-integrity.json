@@ -39,5 +39,36 @@
     "tools/dispatch-auth-local/OWNER-ACCEPTANCE.md": "0c2f47bcd4550300406afad0196e6fb31ab498c1bae6a7fe53d102e2015a8626",
     "tools/dispatch-auth-local/README.md": "f75a1a770893a7646fe6efb44b2934535f00dde8ddf7910b0caf9955a8ff6816"
   },
-  "repositoryAnchorRevision": "4e08dd26dc7aebcb57f7be85ab7972bf0cfe0b48"
+  "repositoryAnchorRevision": "4e08dd26dc7aebcb57f7be85ab7972bf0cfe0b48",
+  "milestoneASnapshot": {
+    "startingHead": "a8d746d0a9f5215e4fabdf9ef544a4b9a79ba72e",
+    "commitSubject": "Complete Dispatch fullscreen and regional awareness foundation",
+    "inventory": [
+      "dispatch/README.md",
+      "dispatch/app.mjs",
+      "dispatch/awareness-perspective.mjs",
+      "dispatch/map-view.mjs",
+      "dispatch/map.css",
+      "tests/dispatch-awareness-perspective.test.mjs",
+      "tests/dispatch-map-workspace.test.mjs",
+      "tests/dispatch-marker-normalization.test.mjs",
+      "tests/dispatch-selection.test.mjs",
+      "tools/dispatch-auth-local/portability.test.mjs",
+      "tools/dispatch-auth-local/source-integrity.json",
+      "tools/dispatch-auth-local/verify-sources.ps1"
+    ],
+    "verifierCanonicalHash": "2e7f4690d6987eb5675ec15f18ca226a9bcf628bde8469d1e6b48234b192d0c1",
+    "files": {
+      "dispatch/README.md": "ea4726abbd7af100cb58a997bb248fd770ab090a9044c70ff33d6e09e1e03a75",
+      "dispatch/app.mjs": "d61a60922c95adfcba783e8eb675af1af9f12b2ffe8fec551e8263f6e6c29a33",
+      "dispatch/awareness-perspective.mjs": "9add18b5b1b5c1701c46c62868d1aff3ef3cac1f23f868eccfdacdb38f09e10d",
+      "dispatch/map-view.mjs": "fa6d631fee267ed3c5861c55b240a2f9bfcb84562a499b5c94d95c19ae0aaad4",
+      "dispatch/map.css": "5a7ac9f056df32599adada5a5f82031382b30ab4664858c445bb8939a87ca401",
+      "tests/dispatch-awareness-perspective.test.mjs": "43b7f883b099899d9f708f7cf4d8403abde14d00267e98c12d93b8b81558d0a3",
+      "tests/dispatch-map-workspace.test.mjs": "cd04ba91c84ef3b865e5782e094bf985f08e681d1397e2af664dc26e2c7c30ea",
+      "tests/dispatch-marker-normalization.test.mjs": "4b4a86cf43dfb268b19ee3865107a87b6d874252574e7a9dbaa5a5538f995f03",
+      "tests/dispatch-selection.test.mjs": "34e61cc3bd89b24328bf2623a5b1da688b0a8c16cb69f6bbc36ac4529fe006c8",
+      "tools/dispatch-auth-local/portability.test.mjs": "ef33da4375f40e9e3e6868072cf66df11dd9803796cdb826ad487546b2a38f34"
+    }
+  }
 }

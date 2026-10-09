@@ -392,3 +392,21 @@ inspected. No historical baseline adjustments, source geometry changes or new
 dependencies. The same 20-file working-tree inventory remains; this refinement
 changes six of those files. All other 14 retain their pre-refinement byte hashes.
 Protected detached checkout remains clean. Commit/push/merge/deploy: NONE.
+
+## Expanded map workspace (Milestone A, local preview)
+In the synthetic demo, select Map and choose Expand Map. Return to Map restores
+normal layout and focus without changing the saved view preference. The same
+Leaflet map stays mounted; camera, filters and selected incident are retained.
+Incidents and Filters open collapsible panels. Escape closes a detail dialog,
+then an open popup, then the active panel, then returns to normal Map.
+The map fills the browser viewport; agency header, sidebar, banner, dashboard
+title and permanent list are hidden. Return to Map, Incidents, Filters, zoom,
+Fit incidents and attribution float above the map. Open panels do not resize it.
+The existing theme and agency/unit context are preserved; change them after returning.
+Full screen explicitly requests the browser Fullscreen API where available.
+Denial leaves the viewport workspace usable. Browser fullscreen exit (including
+native Escape) returns to normal Map and restores focus. Outside native fullscreen,
+Escape closes the dialog, popup or panel before returning. This does not replace
+the existing authentication flow. No satellite, direct road picking or operational
+writes are added. Use the explicit Milestone A certification integrity switch only for
+this uncommitted candidate; the ordinary owner launcher deliberately refuses it.
