@@ -114,3 +114,9 @@
 @media(max-width:760px) {
  .map-expanded .expanded-map-actions .button { padding:7px 8px; font-size:12px; }
 }
+
+/* Source controls live in the dismissible fullscreen filter overlay. */
+.basemap-picker {display:none;}
+.map-expanded.map-filters-open .basemap-picker {display:flex;flex-direction:column;gap:4px;}
+.map-source-status {position:absolute;z-index:730;left:56px;bottom:86px;max-width:min(340px,calc(100% - 76px));padding:6px;background:var(--bg-panel-raised);color:var(--text-primary);font-size:10px;border:1px solid var(--border-strong);pointer-events:none;}
+.map-source-status[hidden] {display:none;}

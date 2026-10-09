@@ -1,6 +1,8 @@
 import {badge,escape,empty} from './components.mjs';
 import {incidentIcon} from './marker-language.mjs';
-import {createBasemap} from './basemap.mjs';
+import {createBasemap,createStandardBasemap} from './basemap.mjs';
+// Bounded, in-memory demo presentation state; never an authority or membership.
+let geographicCamera;
 
 let library;
 const adaptedLibraries=new WeakSet();
@@ -50,6 +52,9 @@ export function createGeographicView(host,{mode,rows,selectedId,onSelect,onDetai
   let expanded=false,drawer=false,filterOpen=false,entryFocus,scrollY=0;
   let nativeFullscreen=false,fullscreenPending=false;
   let disposed=false,map,L,basemap,markers=new Map(),currentRows=rows,selection=selectedId;
+  const prior=geographicCamera?.unitName===unitName?geographicCamera:null;
+  let freeCamera=!!prior||new URLSearchParams(location.search).get('basemap')==='mock';
+  let providerId=prior?.provider|| (freeCamera?'local-mock':'dayton');
   const abort=new AbortController();
   host.innerHTML=`<div class="geo-layout geo-${mode}"><section class="panel geo-list-panel" aria-label="Incident list"><div class="panel-heading"><h2>Unit incidents</h2><span id="geo-count"></span></div><div id="geo-list"></div></section><section class="panel geo-map-panel"><div class="panel-heading"><div><h2>Dayton, Texas</h2><small>${escape(unitName)} · Approximate demo locations</small></div><button class="text-button" id="fit-incidents">Fit incidents</button></div><div class="map-stage"><div id="dispatch-map" aria-label="Dayton incident map. Use the incident list for an equivalent keyboard path."></div><div id="map-message" role="status">Loading local map…</div></div><div class="map-caption"><span>Offline OSM context · Approximate demo positions</span><span class="map-state-key" aria-label="Incident state key"><span><i class="map-key-selected" aria-hidden="true"></i>Selected</span><span><i class="map-key-resolved" aria-hidden="true">✓</i>Resolved</span></span></div><div class="map-credit">Map data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a> · <a href="./demo/dayton-roads.geojson" download>ODbL roads</a> · <a href="./demo/dayton-context.geojson" download>ODbL context</a> · <a href="./demo/dayton-landmarks.geojson" download>OSM landmarks</a> · <a href="https://leafletjs.com" target="_blank" rel="noopener noreferrer">Leaflet</a></div></section></div>`;
   const list=host.querySelector('#geo-list'),message=host.querySelector('#map-message');
@@ -60,6 +65,11 @@ export function createGeographicView(host,{mode,rows,selectedId,onSelect,onDetai
   actions.innerHTML='<button type="button" class="button" id="return-map">Return to Map</button><button type="button" class="button" id="map-incidents" aria-controls="map-incident-drawer" aria-expanded="false">Incidents</button><button type="button" class="button" id="map-filters" aria-controls="map-workspace-filters" aria-expanded="false">Filters</button><button type="button" class="button" id="map-fullscreen">Full screen</button><span id="map-fullscreen-status" role="status" aria-live="polite"></span>';
   heading.append(actions);listPanel.id='map-incident-drawer';
   const filters=host.parentElement.querySelector('.geo-filters');filters.id='map-workspace-filters';
+  const source=document.createElement('div');source.className='map-source-status';source.setAttribute('role','status');source.hidden=true;host.querySelector('.map-stage').append(source);
+  const picker=document.createElement('label');picker.className='basemap-picker';picker.innerHTML='Basemap <select aria-label="Basemap source"><option value="dayton">Limited Dayton extract</option><option value="local-mock">Continuous local mock — synthetic</option></select>';filters.append(picker);
+  const choice=picker.querySelector('select');choice.value=providerId;choice.onchange=()=>switchProvider(choice.value);
+  function switchProvider(id){if(!map)return;freeCamera=true;map.setMaxBounds(null);map.setMinZoom(5);map.setMaxZoom(18);providerId=id;basemap.select(id);rememberCamera();}
+  function rememberCamera(){if(freeCamera&&map)geographicCamera={unitName,provider:providerId,center:[map.getCenter().lat,map.getCenter().lng],zoom:map.getZoom()};}
   const screenButton=host.querySelector('#map-fullscreen'),screenStatus=host.querySelector('#map-fullscreen-status');
   screenButton.disabled=!document.fullscreenEnabled||typeof shell.requestFullscreen!=='function';
   if(screenButton.disabled)screenButton.title='Browser full screen unavailable; viewport map remains available';
@@ -83,6 +93,7 @@ export function createGeographicView(host,{mode,rows,selectedId,onSelect,onDetai
   };
   document.addEventListener('fullscreenchange',fullscreenChanged);
   function workspaceBounds(){
+    if(freeCamera)return null;
     const bounds=L.latLngBounds([[30.017,-94.948],[30.083,-94.852]]);
     if(!expanded||!normalMapSize)return bounds;
     // Presentation padding keeps the same permitted center range as normal Map.
@@ -175,20 +186,21 @@ export function createGeographicView(host,{mode,rows,selectedId,onSelect,onDetai
       if(disposed)return;L=results[0];const data=results[2];
       if(data.type!=='FeatureCollection'||!data.features.length||results[3].type!=='FeatureCollection'||!results[3].features.some(f=>f.properties.layer==='rail'))throw new Error('Map data unavailable');
       map=L.map(host.querySelector('#dispatch-map'),{center:[30.047,-94.891],zoom:14,minZoom:13,maxZoom:17,maxBounds:[[30.017,-94.948],[30.083,-94.852]],maxBoundsViscosity:1,zoomAnimation:false,fadeAnimation:false,markerZoomAnimation:false,inertia:false,scrollWheelZoom:false,attributionControl:false,preferCanvas:true});
-      basemap=createBasemap(L,map,data,results[3],results[4],()=>[...markers.values()].map(marker=>({latlng:marker.getLatLng(),anchor:marker.options.icon.options.iconAnchor,size:marker.options.icon.options.iconSize})));
+      basemap=createStandardBasemap(L,map,data,results[3],results[4],()=>[...markers.values()].map(marker=>({latlng:marker.getLatLng(),anchor:marker.options.icon.options.iconAnchor,size:marker.options.icon.options.iconSize})),{onState:state=>{source.hidden=!freeCamera;source.dataset.health=state.health;source.textContent=state.attribution+' · '+state.health+' · '+state.coverage+' · Display only; no roadway authority';providerId=state.id;choice.value=state.id;}});
+      if(freeCamera){map.setMaxBounds(null);map.setMinZoom(5);map.setMaxZoom(18);}basemap.select(providerId);
       L.control.scale({imperial:true,metric:false,position:'bottomleft'}).addTo(map);
-      renderMarkers();fit();if(selection&&markers.has(selection))select(selection);
-      cameraCenter=map.getCenter();map.on('moveend',()=>{if(!disposed&&map&&!resizing)cameraCenter=map.getCenter();});map.on('zoomend',()=>{if(expanded&&!resizing)map.setMaxBounds(workspaceBounds());});
+      renderMarkers();if(prior)map.setView(prior.center,prior.zoom,{animate:false});else fit();if(selection&&markers.has(selection))select(selection, !freeCamera);
+      cameraCenter=map.getCenter();map.on('moveend',()=>{if(!disposed&&map&&!resizing){cameraCenter=map.getCenter();rememberCamera();}});map.on('zoomend',()=>{if(expanded&&!resizing)map.setMaxBounds(workspaceBounds());rememberCamera();});
       map.on('popupclose',()=>{ /* Selection remains visible when the popup closes. */ });
     }catch(error){if(disposed||error.name==='AbortError')return;basemap?.destroy();basemap=null;map?.remove();map=null;message.hidden=false;message.innerHTML='<strong>Map unavailable</strong><p>Incident records remain available in Board view.</p><button class="button" id="retry-map">Retry map</button>';message.querySelector('button').onclick=initialize;}
   }
   host.querySelector('#fit-incidents').onclick=fit;
   window.addEventListener('gridlydispatch:themechange',restyle);
-  const observer=new ResizeObserver(()=>{if(map){if(!expanded&&!workspaceResize){map.invalidateSize({animate:false});return;}const center=cameraCenter||map.getCenter();resizing=true;map.invalidateSize({animate:false,pan:false});map.setView(center,map.getZoom(),{animate:false,reset:true});map.setMaxBounds(workspaceBounds());workspaceResize=false;resizing=false;}});observer.observe(host.querySelector('#dispatch-map'));
+  const observer=new ResizeObserver(()=>{if(map){if(!expanded&&!workspaceResize&&!freeCamera){map.invalidateSize({animate:false});return;}const center=cameraCenter||map.getCenter();resizing=true;map.invalidateSize({animate:false,pan:false});map.setView(center,map.getZoom(),{animate:false,reset:true});map.setMaxBounds(workspaceBounds());workspaceResize=false;resizing=false;}});observer.observe(host.querySelector('#dispatch-map'));
   renderList();initialize();
   return {
-    update(next){currentRows=next;if(!next.some(item=>item.id===selection)){selection=null;onSelect(null);}renderList();renderMarkers();if(!expanded)fit();},
-    destroy(){setExpanded(false,false);document.removeEventListener('fullscreenchange',fullscreenChanged);window.removeEventListener('keydown',workspaceEscape,true);disposed=true;abort.abort();observer.disconnect();window.removeEventListener('gridlydispatch:themechange',restyle);basemap?.destroy();basemap=null;map?.remove();map=null;}
+    update(next){currentRows=next;if(!next.some(item=>item.id===selection)){selection=null;onSelect(null);}renderList();renderMarkers();if(!expanded&&!freeCamera)fit();},
+    destroy(){rememberCamera();setExpanded(false,false);document.removeEventListener('fullscreenchange',fullscreenChanged);window.removeEventListener('keydown',workspaceEscape,true);disposed=true;abort.abort();observer.disconnect();window.removeEventListener('gridlydispatch:themechange',restyle);basemap?.destroy();basemap=null;map?.remove();map=null;}
   };
 }
 

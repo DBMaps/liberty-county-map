@@ -51,6 +51,66 @@ function requestOwnedStop(runtime,{ready,failed}){
  assert.ok(ready||failed,'Normal stop withheld until launcher readiness');writeFileSync(join(runtime,'stop.request'),'');return true;
 }
 function awaitExit(done,timeoutMs=240000){let timer;return Promise.race([done,new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('Owner cleanup deadline exceeded')),timeoutMs);timer.unref()})]).finally(()=>clearTimeout(timer))}
+if(manifest.basemapSnapshot){
+ mkdirSync(temp);try{
+  assert.equal(spawnSync('git',['-c','safe.directory='+root.replaceAll('\\','/'),'clone','--shared','--no-checkout','--branch',manifest.branch,root,copy],{encoding:'utf8'}).status,0);
+  git(copy,['sparse-checkout','init','--cone']);git(copy,['sparse-checkout','set','dispatch','tools/dispatch-auth-local','tools/dispatch-ui','tools/responder/phase29/installer','tests']);git(copy,['checkout',manifest.branch]);
+  const basemapStart='740a1a225ddeb18656a348d5878ff2c45693a775',basemapSubject='Establish continuous Dispatch basemap foundation',startingHead=git(copy,['rev-parse','HEAD']),paths=[...manifest.basemapSnapshot.inventory];
+  const reviewed=(repo=copy)=>spawnSync(ps,['-NoProfile','-NonInteractive','-File',join(repo,'tools/dispatch-auth-local/verify-sources.ps1'),'-Repository',repo,'-BasemapReview'],{encoding:'utf8',windowsHide:true,env});
+  if(startingHead===basemapStart){for(const name of paths){mkdirSync(dirname(join(copy,name)),{recursive:true});copyFileSync(join(root,name),join(copy,name));}const r=reviewed();assert.equal(r.status,0,r.stderr);assert.notEqual(verify().status,0);fixtureCommit(paths,basemapSubject);}
+  const head=git(copy,['rev-parse','HEAD']);assert.equal(verify().status,0);
+  function pendingReview(fn){const current=git(copy,['rev-parse','HEAD']);git(copy,['update-ref','refs/heads/'+manifest.branch,basemapStart,current]);restoreFixtureIndex(basemapStart);try{return fn();}finally{git(copy,['update-ref','refs/heads/'+manifest.branch,current,basemapStart]);restoreFixtureIndex(current);}}
+  function pendingTest(name,fn){return test(name,()=>pendingReview(fn));}
+  await pendingTest('exact eleven-file pending basemap review accepted',()=>{const r=reviewed();assert.equal(r.status,0,r.stderr)});
+  await pendingTest('ordinary launcher refuses uncommitted basemap candidate',()=>assert.notEqual(verify().status,0));
+  await pendingTest('old milestone flag cannot authorize new basemap candidate',()=>assert.notEqual(verify(copy,true).status,0));
+  await pendingTest('every reviewed source mutation rejected',()=>{for(const name of paths.filter(p=>p!==manifestPath))edit(name,(p,b)=>{writeFileSync(p,Buffer.concat([b,Buffer.from('\n// unauthorized\n')]));assert.notEqual(reviewed().status,0,name);});});
+  await pendingTest('every original security protection retained',()=>{for(const name of Object.keys(manifest.sources).filter(p=>!paths.includes(p)))edit(name,(p,b)=>{writeFileSync(p,Buffer.concat([b,Buffer.from('\n# unauthorized\n')]));assert.notEqual(reviewed().status,0,name);});});
+  await pendingTest('missing and substituted manifests rejected',()=>edit(manifestPath,(p,b)=>{rmSync(p);assert.notEqual(reviewed().status,0);const m=structuredClone(manifest);m.basemapSnapshot.files['dispatch/basemap.mjs']='0'.repeat(64);writeFileSync(p,JSON.stringify(m));assert.notEqual(reviewed().status,0);}));
+  await pendingTest('original manifest contracts cannot be changed',()=>edit(manifestPath,p=>{for(const change of [m=>m.sources['tools/dispatch-auth-local/session.mjs']='0'.repeat(64),m=>m.milestoneASnapshot.commitSubject='unauthorized']){const m=structuredClone(manifest);change(m);writeFileSync(p,JSON.stringify(m));assert.notEqual(reviewed().status,0);}}));
+  await pendingTest('unapproved file addition and unrelated tracked changes rejected',()=>{const p=join(copy,'dispatch/extra.mjs');try{writeFileSync(p,'// unapproved');assert.notEqual(reviewed().status,0);}finally{rmSync(p);}edit('dispatch/components.mjs',(p,b)=>{writeFileSync(p,Buffer.concat([b,Buffer.from('\n// changed\n')]));assert.notEqual(reviewed().status,0);});});
+  await pendingTest('staged index changes rejected and sparse restoration retained',()=>{try{git(copy,['add','--','dispatch/basemap.mjs']);assert.notEqual(reviewed().status,0);}finally{restoreFixtureIndex('HEAD');}assert.equal(reviewed().status,0);});
+  await pendingTest('wrong branch rejected',()=>{git(copy,['checkout','-b','unreviewed-basemap']);try{assert.notEqual(reviewed().status,0);}finally{git(copy,['checkout',manifest.branch]);}});
+  await pendingTest('unexpected starting revision rejected',()=>{const head=git(copy,['rev-parse','HEAD']),previous=git(copy,['rev-parse','HEAD^']);git(copy,['update-ref','refs/heads/'+manifest.branch,previous,head]);try{assert.notEqual(reviewed().status,0);}finally{git(copy,['update-ref','refs/heads/'+manifest.branch,head,previous]);}});
+  await pendingTest('non-root and unrelated repository rejected',()=>{assert.notEqual(reviewed(join(copy,'dispatch')).status,0);const p=join(temp,'unrelated');mkdirSync(p);git(p,['init']);for(const name of [...new Set([...paths,...Object.keys(manifest.sources)])]){mkdirSync(dirname(join(p,name)),{recursive:true});copyFileSync(join(root,name),join(p,name));}assert.notEqual(reviewed(p).status,0);});
+  await pendingTest('CRLF review conversion accepted without changed content',()=>edit('tools/dispatch-auth-local/verify-sources.ps1',(p,b)=>{writeFileSync(p,b.toString().replaceAll('\r\n','\n').replaceAll('\n','\r\n'));const r=reviewed();assert.equal(r.status,0,r.stderr)}));
+
+  await test('exact reviewed direct-child basemap snapshot accepts ordinary startup',()=>{assert.equal(git(copy,['rev-parse','HEAD^']),basemapStart);assert.equal(git(copy,['show','-s','--format=%B']),basemapSubject);assert.deepEqual(git(copy,['diff-tree','--no-commit-id','--name-only','--no-renames','-r','HEAD']).split('\n').sort(),[...paths].sort());assert.equal(verify().status,0);});
+  await test('committed basemap cannot use either review flag',()=>{assert.notEqual(reviewed().status,0);assert.notEqual(verify(copy,true).status,0);});
+  function revisionCheck({parents=[basemapStart],subject=basemapSubject,tree=git(copy,['rev-parse','HEAD^{tree}'])}={}){const before=git(copy,['rev-parse','HEAD']),revision=git(copy,['-c','user.name=Local synthetic certification','-c','user.email=synthetic@dispatch.invalid','commit-tree',tree,...parents.flatMap(p=>['-p',p]),'-m',subject]);git(copy,['update-ref','refs/heads/'+manifest.branch,revision,before]);restoreFixtureIndex(revision);try{assert.notEqual(verify().status,0);}finally{git(copy,['update-ref','refs/heads/'+manifest.branch,before,revision]);restoreFixtureIndex(before);}}
+  await test('wrong basemap commit subject rejected',()=>revisionCheck({subject:'Unauthorized basemap snapshot'}));
+  await test('wrong basemap direct parent rejected',()=>revisionCheck({parents:[git(copy,['rev-parse',basemapStart+'^'])]}));
+  await test('basemap merge and unrelated descendant rejected',()=>{revisionCheck({parents:[basemapStart,git(copy,['rev-parse',basemapStart+'^'])]});revisionCheck({parents:[git(copy,['rev-parse','HEAD'])]});});
+  await test('committed basemap extra file inventory rejected',()=>{const p='dispatch/unapproved.mjs';try{writeFileSync(join(copy,p),'// unapproved');git(copy,['add','--',p]);revisionCheck({tree:git(copy,['write-tree'])});}finally{restoreFixtureIndex('HEAD');rmSync(join(copy,p),{force:true});}});
+  await test('committed basemap missing addition rejected',()=>{try{git(copy,['rm','--cached','--','dispatch/basemap-provider.mjs']);revisionCheck({tree:git(copy,['write-tree'])});}finally{restoreFixtureIndex('HEAD');}});
+  await test('committed basemap executable source mode rejected',()=>{try{git(copy,['update-index','--chmod=+x','--','dispatch/basemap.mjs']);revisionCheck({tree:git(copy,['write-tree'])});}finally{restoreFixtureIndex('HEAD');}});
+  await test('committed basemap dirty index rejected',()=>edit('dispatch/basemap.mjs',(p,b)=>{try{writeFileSync(p,b.toString()+'\n// unreviewed\n');git(copy,['add','--',p]);assert.notEqual(verify().status,0);}finally{restoreFixtureIndex('HEAD');}}));
+  await test('every committed basemap dirty reviewed source rejected',()=>{for(const name of paths)edit(name,(p,b)=>{writeFileSync(p,Buffer.concat([b,Buffer.from('\n// unauthorized\n')]));assert.notEqual(verify().status,0,name);});});
+  await test('equivalent manifest substitution remains dirty and rejected',()=>edit(manifestPath,(p,b)=>{writeFileSync(p,b.toString()+'\n');assert.notEqual(verify().status,0);}));
+  await test('committed untracked file and Auth addition rejected',()=>{for(const name of ['dispatch/unreviewed.mjs','tools/dispatch-auth-local/unreviewed.mjs']){const p=join(copy,name);try{writeFileSync(p,'// unreviewed');assert.notEqual(verify().status,0);}finally{rmSync(p);}}});
+  await test('snapshot parent subject and inventory substitution rejected',()=>edit(manifestPath,p=>{for(const mutate of [m=>m.basemapSnapshot.startingHead='0'.repeat(40),m=>m.basemapSnapshot.commitSubject='unauthorized',m=>m.basemapSnapshot.inventory.pop()]){const m=structuredClone(manifest);mutate(m);writeFileSync(p,JSON.stringify(m));assert.notEqual(verify().status,0);}}));
+  await test('committed CRLF verifier retains canonical content and clean Git interpretation',()=>edit('tools/dispatch-auth-local/verify-sources.ps1',(p,b)=>{writeFileSync(p,b.toString().replaceAll('\r\n','\n').replaceAll('\n','\r\n'));const r=verify();assert.equal(r.status,0,r.stderr);}));
+  await test('worker listener readiness still does not permit premature shutdown',async()=>{let tick=0;const r=await waitLauncherReady({readOutput:()=>tick<2?'':announcement+'\n',workerReady:()=>true,exited:()=>false,now:()=>tick*200,pause:async()=>{tick++;}});assert.equal(r.launcherReadyMs,400);});
+  await test('launcher readiness timeout and genuine failure remain bounded and sanitized',async()=>{let tick=0;await assert.rejects(waitLauncherReady({readOutput:()=>'',workerReady:()=>true,exited:()=>false,now:()=>tick,pause:async()=>{tick+=200},timeoutMs:600}),e=>e.diagnostic.stage==='waiting-launcher');await assert.rejects(waitLauncherReady({readOutput:()=>'OWNER START/SESSION REFUSED: UI unreachable\n',workerReady:()=>false,exited:()=>true}),e=>!!e.diagnostic);});
+ if(process.env.DISPATCH_PORTABILITY_OWNER_SMOKE==='1')await test('committed evidence-free checkout starts genuine local login and cleans up',{timeout:600000},async()=>{
+  assert.notEqual(head,manifest.baseRevision,'Postcommit verification required');
+  const owner=join(copy,'tools/dispatch-auth-local/owner.ps1'),docker=process.env.DISPATCH_SMOKE_DOCKER,supabase=process.env.DISPATCH_SMOKE_SUPABASE;assert.ok(docker&&supabase);
+  const child=spawn(ps,['-NoProfile','-NonInteractive','-File',owner,'-Supabase',supabase,'-Docker',docker,'-Certification'],{cwd:copy,env,windowsHide:true,stdio:['ignore','pipe','pipe']});let output='';child.stdout.on('data',b=>output+=b);child.stderr.on('data',b=>output+=b);const done=new Promise(resolve=>child.once('close',resolve));let runtime,failure;
+  const record={sourceRevision:head,sourceOverlay:false,precommitCandidate:startingHead===basemapStart,ready:false};
+  try{
+   record.readiness=await waitLauncherReady({readOutput:()=>output,workerReady:()=>{runtime=output.match(/OWNER SESSION: ([^\r\n]+)/)?.[1];return !!runtime&&existsSync(join(runtime,'ready.json'))},exited:()=>child.exitCode!==null});record.ready=true;
+   const ready=JSON.parse(readFileSync(join(runtime,'ready.json')));assert.equal(ready.url,'http://127.0.0.1:4180/');assert.equal(ready.units.length,2);assert.equal(ready.catalogUnchanged,true);
+   const response=await fetch(ready.url);record.loginHttpStatus=response.status;assert.equal(response.status,200);assert.match(await response.text(),/Gridly/i);const denied=await fetch(ready.url+'api/context',{headers:{'X-Gridly-Dispatch':'local-auth'}});record.anonymousContextStatus=denied.status;assert.equal(denied.status,401);
+  }catch(error){failure=error;record.failure=error.diagnostic||diagnostics(output,record.ready?'http-checks':'waiting-readiness')}
+  finally{
+   try{record.stopRequested=requestOwnedStop(runtime,{ready:record.ready,failed:!!failure});record.stopAfterAnnouncement=output.includes(announcement+'\r\n')||output.includes(announcement+'\n');record.exitCode=await awaitExit(done);record.cleanup=diagnostics(output,'shutdown');record.runtimeRemoved=!runtime||!existsSync(runtime);if(record.exitCode!==0||!record.cleanup.cleanupPass||!record.runtimeRemoved){failure ||= Error('Owner shutdown verification failed')}}catch(error){failure ||= error;record.cleanupFailure={stage:'shutdown',category:'cleanup verification failed'}}
+   const evidence=join(root,'reports/responder/dispatch-auth-owner');mkdirSync(evidence,{recursive:true});writeFileSync(join(evidence,'portability-smoke-'+randomUUID()+'.json'),JSON.stringify(record,null,2));
+  }
+  if(failure)throw Error('Owner smoke failed: '+JSON.stringify(record));
+  assert.equal(record.stopAfterAnnouncement,true);assert.equal(record.exitCode,0);
+ });
+ }finally{assert.equal(dirname(temp),tmpdir());rmSync(temp,{recursive:true,force:true});}
+}else{
 mkdirSync(temp);
 try{
  const cloned=spawnSync('git',['-c','safe.directory='+root.replaceAll('\\','/'),'clone','--shared','--no-checkout','--branch',manifest.branch,root,copy],{encoding:'utf8',windowsHide:true});assert.equal(cloned.status,0,'Local clone failed');
@@ -135,4 +195,6 @@ try{
 }finally{
  // Exact UUID-owned TEMP checkout only; never touch the source/protected worktrees.
  assert.equal(dirname(temp),tmpdir());assert.match(temp.split(/[\\/]/).at(-1),/^dispatch-portability-[a-f0-9-]{36}$/);rmSync(temp,{recursive:true,force:true});
+}
+
 }

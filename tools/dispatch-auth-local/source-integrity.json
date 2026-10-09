@@ -70,5 +70,34 @@
       "tests/dispatch-selection.test.mjs": "34e61cc3bd89b24328bf2623a5b1da688b0a8c16cb69f6bbc36ac4529fe006c8",
       "tools/dispatch-auth-local/portability.test.mjs": "ef33da4375f40e9e3e6868072cf66df11dd9803796cdb826ad487546b2a38f34"
     }
+  },
+  "basemapSnapshot": {
+    "startingHead": "740a1a225ddeb18656a348d5878ff2c45693a775",
+    "inventory": [
+      "dispatch/README.md",
+      "dispatch/basemap-provider.mjs",
+      "dispatch/basemap.mjs",
+      "dispatch/map-view.mjs",
+      "dispatch/map.css",
+      "tests/dispatch-basemap-provider.test.mjs",
+      "tests/dispatch-map-workspace.test.mjs",
+      "tools/dispatch-auth-local/portability.test.mjs",
+      "tools/dispatch-auth-local/source-integrity.json",
+      "tools/dispatch-auth-local/verify-sources.ps1",
+      "tools/dispatch-ui/serve.mjs"
+    ],
+    "verifierCanonicalHash": "d2059515994013edbc50a8434f85db8d6af17d2045e9eeb2bcb511eab8213e43",
+    "files": {
+      "dispatch/README.md": "a000ecc81cbc6004d210e366f139b9602914f56b62b5b8010053da31f97fbcee",
+      "dispatch/basemap-provider.mjs": "cec67b7b5cbd50c3891ccfbd397a8de62f700fffdb956df5043c40d653550115",
+      "dispatch/basemap.mjs": "60fff4bbdba9c52a2fd525573679476af3b702b37c8385c5951fa4229409bc57",
+      "dispatch/map-view.mjs": "af962e949bf99a0b9957f64ed840ccd9d7ace7de46a462e0a9ff8fdbdc869233",
+      "dispatch/map.css": "22868df453ca2b42fa314c13ccc386f6f7995bfa20ad34eada8f66ec59f89419",
+      "tests/dispatch-basemap-provider.test.mjs": "cc264b4871975d7804f4caef6f907125c346aac69a8dad3b05ba6dcde63d200c",
+      "tests/dispatch-map-workspace.test.mjs": "da1407abb9f2aafb85af2f38128d51e86454f25872533b58b1a33a227ccfa5c0",
+      "tools/dispatch-auth-local/portability.test.mjs": "59632ebdba5c9c8a3ec6d06234cd121d7fce20444f268dea166075463d14daf1",
+      "tools/dispatch-ui/serve.mjs": "87b19eb93ff74cfa7301fb032973c9116b54f1bdf5a41e5aa2cff75cf39dfd64"
+    },
+    "commitSubject": "Establish continuous Dispatch basemap foundation"
   }
 }

@@ -410,3 +410,8 @@ Escape closes the dialog, popup or panel before returning. This does not replace
 the existing authentication flow. No satellite, direct road picking or operational
 writes are added. Use the explicit Milestone A certification integrity switch only for
 this uncommitted candidate; the ordinary owner launcher deliberately refuses it.
+
+### Continuous Standard basemap foundation (local synthetic only)
+The default retains the historical bounded Dayton extract. Open the demo Map with `?demo=1&view=map&basemap=mock`, or Expand Map → Filters → Basemap source → Continuous local mock. All tiles are deterministic local canvases; no tile service, API key, billing or external request is enabled. The synthetic grid contains no real roads or statewide cartography and cannot support roadway selection or authority.
+Mock exploration supports zoom 5–18 and free Web Mercator panning. Display camera/provider state is retained in memory for the current demo unit across views; it is not a permission grant. Selecting Limited Dayton extract preserves the explored camera and explicitly reports missing local coverage outside the extract. A tile failure activates that labeled fallback without moving the camera. Attribution and health remain visible while mock exploration is enabled. Tiles use Leaflet viewport pruning and one-tile buffering; there is no persistent tile cache.
+Future licensed Standard/Satellite activation requires a separately reviewed provider, rights/attribution, coverage and currency, quotas/billing, key restrictions, privacy and failure policy. This milestone has no real provider activation, jurisdiction conclusions or operational roadway geometry.
