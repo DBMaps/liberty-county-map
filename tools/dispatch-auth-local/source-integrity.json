@@ -99,5 +99,30 @@
       "tools/dispatch-ui/serve.mjs": "87b19eb93ff74cfa7301fb032973c9116b54f1bdf5a41e5aa2cff75cf39dfd64"
     },
     "commitSubject": "Establish continuous Dispatch basemap foundation"
+  },
+  "arcgisOfflineSnapshot": {
+    "startingHead": "6317583b3e3e6166658b9355d3e582d7fe146165",
+    "inventory": [
+      "dispatch/README.md",
+      "dispatch/arcgis-offline.mjs",
+      "dispatch/basemap.mjs",
+      "dispatch/map-view.mjs",
+      "tests/dispatch-arcgis-offline.test.mjs",
+      "tools/dispatch-auth-local/portability.test.mjs",
+      "tools/dispatch-auth-local/source-integrity.json",
+      "tools/dispatch-auth-local/verify-sources.ps1",
+      "tools/dispatch-ui/serve.mjs"
+    ],
+    "verifierCanonicalHash": "b2867e9212dd42224a28a51226d3aa03fa3996cf89d47db403fe32abb4b64cbd",
+    "files": {
+      "dispatch/README.md": "6f2b50c1aac766c10554027de0ebd2cdf385a99c8a2894e884f14899cd8cc23d",
+      "dispatch/arcgis-offline.mjs": "517ae511f7693271933381b3623b73ece7609a58cddf6cbeaee3ca0b35f2e812",
+      "dispatch/basemap.mjs": "478269d106365191adeb8645586598c0e45c21c16e6132ca018bd2b914711eb1",
+      "dispatch/map-view.mjs": "d471e004d5e2e438f2683e2f7727c47ba4aec7a435b386dd62cda408eb2d1999",
+      "tests/dispatch-arcgis-offline.test.mjs": "857646ad78e72876875e18d8bc889b233668e9eecdb2a13ba3e2c7544b85aa9f",
+      "tools/dispatch-auth-local/portability.test.mjs": "aa7a0fc1e4d26da2224038f1c40eb321928f473b677fda3895f3c24d276e6507",
+      "tools/dispatch-ui/serve.mjs": "8c9ba4ad849162f75ff2a3fd268734a2e22f955329f4110163f44c1727b7f7a5"
+    },
+    "commitSubject": "Prepare Dispatch ArcGIS Standard and Satellite offline"
   }
 }

@@ -1,6 +1,7 @@
 // Read-only local cartography. No consumer map/state imports and no tile requests.
 import {roadLabelPolicy,landmarkPolicy} from './map-label-policy.mjs';
 import {createContinuousBasemap} from './basemap-provider.mjs';
+import {createArcgisFixtureBasemap} from './arcgis-offline.mjs';
 export function createBasemap(L,map,roadData,contextData,landmarkData,incidentIcons=()=>[]){
   const layers=[],labels=L.layerGroup().addTo(map);
   const measure=document.createElement('canvas').getContext('2d');
@@ -90,7 +91,7 @@ export function withinDaytonDisplay(center){return center.lat>=30.017&&center.la
 export function createStandardBasemap(L,map,roads,context,landmarks,icons,{onState=()=>{}}={}){
  let active,disposed=false,id='dayton',failure=false;
  function localState(){onState({id:'dayton',health:failure?'fallback':'limited',coverage:withinDaytonDisplay(map.getCenter())?'Limited Dayton source extract · no county/regional coverage':'No local cartography coverage at this camera',attribution:'OpenStreetMap contributors · bounded Dayton extract',operationalGeometry:false});}
- function select(next){if(disposed)return;if(!['dayton','local-mock'].includes(next))throw Error('Unapproved basemap provider');active?.destroy();active=null;id=next;if(next==='dayton'){active=createBasemap(L,map,roads,context,landmarks,icons);localState();}else{failure=false;active=createContinuousBasemap(L,map,{onState:s=>{onState(s);if(s.health==='unavailable'){failure=true;queueMicrotask(()=>{if(!disposed&&id==='local-mock')select('dayton');});}}});}return id;}
+ function select(next){if(disposed)return;if(!['dayton','local-mock','arcgis-standard-fixture','arcgis-satellite-fixture'].includes(next))throw Error('Unapproved basemap provider');active?.destroy();active=null;id=next;if(next==='dayton'){active=createBasemap(L,map,roads,context,landmarks,icons);localState();}else{failure=false;active=(next==='local-mock'?createContinuousBasemap:createArcgisFixtureBasemap)(L,map,{id:next,onState:s=>{onState(s);if(s.health==='unavailable'){failure=true;queueMicrotask(()=>{if(!disposed&&id===next)select('dayton');});}}});}return id;}
  map.on('moveend',update);function update(){if(id==='dayton'&&!disposed)localState();}
  return {select,get id(){return id;},restyle(){active?.restyle();},refresh(){active?.refresh();},destroy(){if(disposed)return;disposed=true;map.off('moveend',update);active?.destroy();active=null;}};
 }
