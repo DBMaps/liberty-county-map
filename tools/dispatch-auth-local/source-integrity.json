@@ -174,5 +174,36 @@
       "tools/dispatch-auth-local/portability.test.mjs": "9b981bf411cddff5383147447bca1dea2b0410add5d405cec7aa130d02365ffc"
     },
     "commitSubject": "Fix Gridly Connect mobile shell overflow"
+  },
+  "fieldPresentationSnapshot": {
+    "startingHead": "f6e9b26e832655f108d94266f8661cdbb28a084c",
+    "inventory": [
+      "dispatch/app.mjs",
+      "dispatch/components.mjs",
+      "dispatch/map-view.mjs",
+      "dispatch/map.css",
+      "dispatch/styles.css",
+      "tests/dispatch-field-workspace.test.mjs",
+      "tests/dispatch-notice-preview-browser.test.mjs",
+      "tests/dispatch-responsive-shell.test.mjs",
+      "tests/dispatch-visual-shell.test.mjs",
+      "tools/dispatch-auth-local/portability.test.mjs",
+      "tools/dispatch-auth-local/source-integrity.json",
+      "tools/dispatch-auth-local/verify-sources.ps1"
+    ],
+    "verifierCanonicalHash": "5fbf63525187d88057113f5b746cb2a9dad3afb2382384f14a52ec8aff33000c",
+    "files": {
+      "dispatch/app.mjs": "5c559fbe8c09caa0783d5adba976a11db8960b1eaecd4d85b79516f26c278115",
+      "dispatch/components.mjs": "9412b5c13d2bfd49582a847b0f8ae5c0080b64378ae0c444b7bf75683ff42870",
+      "dispatch/map-view.mjs": "3c8ec054be2f0592d13982c4bbf2ff4eaface9e09d67cfb61aeea5c0f77763b0",
+      "dispatch/map.css": "571fcc19702feef270dc088b7ac529370c1d6f1f40c8ed5f18b74aa905cb4b1d",
+      "dispatch/styles.css": "13e7f4ba2e9fa117fb54342d99b85349aba0a78fc529e16aa8d539ef66df2957",
+      "tests/dispatch-field-workspace.test.mjs": "53761b0eb56de0bb706ed1ff7b886ee5114d29e460b25d3c179f818c93fc5888",
+      "tests/dispatch-notice-preview-browser.test.mjs": "1d7b0ecac8130b0bd115724c7dca9a8a667e10eef4a023a7842d95224a29149f",
+      "tests/dispatch-responsive-shell.test.mjs": "ea54af681b5291b1e8e2354033b5a74d61003bfddf5edca14d9f2ae297ce8aad",
+      "tests/dispatch-visual-shell.test.mjs": "b368cfe82d039e687012c1283f9955b3f885fdbbca6fea8c275a8cfc5bc44844",
+      "tools/dispatch-auth-local/portability.test.mjs": "c2da5925b60d00cc5e95663ebb3d908f2f6dbed0ec3b1323c0804e487d0a4310"
+    },
+    "commitSubject": "Establish Gridly Connect Field presentation"
   }
 }

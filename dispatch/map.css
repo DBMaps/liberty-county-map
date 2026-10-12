@@ -120,3 +120,25 @@
 .map-expanded.map-filters-open .basemap-picker {display:flex;flex-direction:column;gap:4px;}
 .map-source-status {position:absolute;z-index:730;left:56px;bottom:86px;max-width:min(340px,calc(100% - 76px));padding:6px;background:var(--bg-panel-raised);color:var(--text-primary);font-size:10px;border:1px solid var(--border-strong);pointer-events:none;}
 .map-source-status[hidden] {display:none;}
+
+/* Normal Field layout never overrides the certified expanded workspace. */
+.field-shell:not(.map-expanded) #geo-host,.field-shell:not(.map-expanded) .geo-layout {height:100%;min-height:0;position:relative;display:block;}
+.field-shell:not(.map-expanded) .geo-map-panel {height:100%;display:flex;flex-direction:column;border:0;border-radius:0;}
+.field-shell:not(.map-expanded) .geo-map-panel>.panel-heading {position:absolute;z-index:750;top:6px;right:6px;padding:0;border:0;background:transparent;}
+.field-shell:not(.map-expanded) .geo-map-panel>.panel-heading>div:first-child {display:none;}
+.field-shell:not(.map-expanded) #fit-incidents {min-height:44px;padding:8px 12px;background:var(--bg-panel);border:1px solid var(--border-strong);}
+.field-shell:not(.map-expanded) .map-stage {flex:1;min-height:120px;}
+.field-shell:not(.map-expanded) #dispatch-map {height:100%;}
+.field-shell:not(.map-expanded) .map-caption {display:none;}
+.field-shell:not(.map-expanded) .map-credit {flex-shrink:0;padding:5px 8px;}
+.field-shell:not(.map-expanded) .expand-map {display:none;}
+.field-shell:not(.map-expanded) .geo-list-panel,.field-shell:not(.map-expanded) .geo-filters {position:absolute;z-index:800;inset:56px 8px 72px;min-height:0;max-height:calc(100% - 128px);align-self:stretch;overflow:auto;margin:0;background:var(--bg-panel);}
+.field-shell:not(.map-expanded) #geo-list {display:block;}
+.field-shell:not(.map-expanded) .geo-filters .filters {padding:12px;flex-wrap:wrap;}
+.field-shell:not(.map-expanded) .geo-filters .search {width:100%;min-width:0;}
+.field-shell:not(.map-expanded) .geo-filters .filter-selects {flex-wrap:wrap;}
+.field-shell:not(.map-expanded) .geo-filters select {max-width:100%;}
+.field-panel-close {min-height:44px;margin:5px 8px;padding:7px 10px;}
+.field-shell .geo-list-panel[hidden],.field-shell .geo-filters[hidden] {display:none;}
+
+.field-shell:not(.map-expanded) #fit-incidents[hidden] {display:none;}

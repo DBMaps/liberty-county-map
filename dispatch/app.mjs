@@ -1,5 +1,5 @@
 import {initialView,saveView,viewControl} from './view-preference.mjs';
-import {brand, icon, badge, empty, statePanel, incidentRow, reviewItem, escape, themeControl} from './components.mjs';
+import {brand, icon, badge, empty, statePanel, incidentRow, reviewItem, escape, themeControl, fieldBrand, fieldNav} from './components.mjs';
 import {signIn, recoveryMessage, verificationMessage} from './auth.mjs';
 
 const app = document.querySelector('#app');
@@ -12,6 +12,7 @@ let state = 'populated';
 let filters = {search:'',severity:'',status:'',source:'',review:''};
 let lastFocus;
 let viewMode='board', selectedIncident=null, mapController=null, viewGeneration=0;
+let presentation='operations',fieldPane='map';const fieldCameras=new Map();
 // Query parameters alone never unlock the preview. An explicit loopback server is required.
 const loopback = ['127.0.0.1','localhost','[::1]'].includes(location.hostname);
 let demoEnabled = false, operationalEnabled=false, connectLocalLogin;
@@ -21,6 +22,7 @@ if (loopback) {
 if (demoEnabled && params.get('demo') === '1') {
   fixtures = await import('./demo/fixtures.mjs');
   viewMode=initialView(params.get('view'));
+  presentation=['board','split','map'].includes(params.get('view'))?'operations':(['field','operations'].includes(params.get('presentation'))?params.get('presentation'):(innerWidth<=760?'field':'operations'));
   if(fixtures.memberships.includes(params.get('unit')))activeUnit=params.get('unit');
   if(['light','dark','system'].includes(params.get('theme')))window.gridlyDispatchTheme.setPreference(params.get('theme'));
   state = ['populated','empty','loading','error','denied'].includes(params.get('state')) ? params.get('state') : 'populated';
@@ -47,7 +49,9 @@ function renderLogin() {
 function currentRecords() { return state==='populated' ? fixtures.unitRecords(activeUnit) : []; }
 function activeName() { return fixtures.units.find(unit=>unit.id===activeUnit).name; }
 function renderShell() {
-  app.innerHTML = `<div class="shell"><aside class="sidebar">${brand()}<p class="nav-label">OPERATIONS</p><nav aria-label="Primary">${[['Dispatch Board','board'],['Reports','reports'],['Review Queue','review'],['Activity','activity'],['Organization','organization']].map(([name,symbol])=>`<button data-page="${name}" ${page===name?'aria-current="page"':''}>${icon(symbol)}${name}</button>`).join('')}</nav><div class="nav-future"><p class="nav-label">ADMINISTRATION</p><p>Members · Units · Sharing · Settings</p><small>Available after activation</small></div><div class="sidebar-bottom">${icon('lock')}<strong>Controlled access</strong><span>Publication is off</span><span>Participant onboarding blocked</span></div></aside><div class="workspace"><header class="topbar"><div class="context"><span class="org-label">${icon('organization')}City of Dayton</span><label for="active-unit">ACTING UNIT</label><select id="active-unit" aria-describedby="unit-scope">${fixtures.units.filter(unit=>fixtures.memberships.includes(unit.id)).map(unit=>`<option value="${unit.id}" ${activeUnit===unit.id?'selected':''}>${unit.name}</option>`).join('')}</select></div><div class="user-area">${themeControl()}<span class="avatar">DV</span><div><strong>Demo viewer</strong><small>Local visual session</small></div><button class="text-button" id="signout">Exit demo</button></div></header><div class="demo-banner"><strong>LOCAL VISUAL DEMO</strong><span>Synthetic records · no live operations</span><label for="preview-state">Preview state</label><select id="preview-state">${['populated','empty','loading','error','denied'].map(value=>`<option value="${value}" ${state===value?'selected':''}>${value==='denied'?'Authorization error':value[0].toUpperCase()+value.slice(1)}</option>`).join('')}</select></div><main id="main" tabindex="-1"><div class="page-heading"><div><p class="eyebrow">DAYTON / OPERATIONS</p><h1>${page}</h1><p id="unit-scope">${escape(activeName())} <span class="separator">/</span> Separate unit authorization required</p></div><div class="snapshot"><span class="status-dot"></span>Fixture snapshot<strong>Oct 6, 2026 · 08:30 CDT</strong></div></div><div id="view"></div></main><footer class="shell-footer"><span>City of Dayton · ${escape(activeName())}</span><span>Internal workspace · Publication off</span></footer></div></div>`;
+  if(presentation==='field'){capturePresentationCamera();mapController?.destroy();mapController=null;viewGeneration++;renderFieldShell();return;}
+  app.innerHTML = `<div class="shell"><aside class="sidebar">${brand()}<p class="nav-label">OPERATIONS</p><nav aria-label="Primary">${[['Dispatch Board','board'],['Reports','reports'],['Review Queue','review'],['Activity','activity'],['Organization','organization']].map(([name,symbol])=>`<button data-page="${name}" ${page===name?'aria-current="page"':''}>${icon(symbol)}${name}</button>`).join('')}</nav><div class="nav-future"><p class="nav-label">ADMINISTRATION</p><p>Members · Units · Sharing · Settings</p><small>Available after activation</small></div><div class="sidebar-bottom">${icon('lock')}<strong>Controlled access</strong><span>Publication is off</span><span>Participant onboarding blocked</span></div></aside><div class="workspace"><header class="topbar"><div class="context"><button type="button" class="org-label presentation-choice" id="presentation-choice" aria-haspopup="dialog" title="Choose Field or Operations presentation" aria-label="City of Dayton demo: choose Field or Operations presentation">${icon('organization')}City of Dayton</button><label for="active-unit">ACTING UNIT</label><select id="active-unit" aria-describedby="unit-scope">${fixtures.units.filter(unit=>fixtures.memberships.includes(unit.id)).map(unit=>`<option value="${unit.id}" ${activeUnit===unit.id?'selected':''}>${unit.name}</option>`).join('')}</select></div><div class="user-area">${themeControl()}<span class="avatar">DV</span><div><strong>Demo viewer</strong><small>Local visual session</small></div><button class="text-button" id="signout">Exit demo</button></div></header><div class="demo-banner"><strong>LOCAL VISUAL DEMO</strong><span>Synthetic records · no live operations</span><label for="preview-state">Preview state</label><select id="preview-state">${['populated','empty','loading','error','denied'].map(value=>`<option value="${value}" ${state===value?'selected':''}>${value==='denied'?'Authorization error':value[0].toUpperCase()+value.slice(1)}</option>`).join('')}</select></div><main id="main" tabindex="-1"><div class="page-heading"><div><p class="eyebrow">DAYTON / OPERATIONS</p><h1>${page}</h1><p id="unit-scope">${escape(activeName())} <span class="separator">/</span> Separate unit authorization required</p></div><div class="snapshot"><span class="status-dot"></span>Fixture snapshot<strong>Oct 6, 2026 · 08:30 CDT</strong></div></div><div id="view"></div></main><footer class="shell-footer"><span>City of Dayton · ${escape(activeName())}</span><span>Internal workspace · Publication off</span></footer></div></div>`;
+  document.querySelector('#presentation-choice').onclick=()=>openPresentationChoice(document.querySelector('#presentation-choice'));
   const noticeEntry=document.createElement('button');noticeEntry.className='notice-entry';noticeEntry.textContent='Draft Notice Preview';noticeEntry.onclick=async()=>{const {openNoticePreview}=await import('./notice-preview-view.mjs');openNoticePreview(activeUnit,noticeEntry);};document.querySelector('.sidebar').append(noticeEntry);
   if(page==='Dispatch Board'){
     document.querySelector('.page-heading').insertAdjacentHTML('beforeend',viewControl(viewMode));
@@ -94,7 +98,7 @@ function filter(key,label,options) {return `<label>${label}<select data-filter="
 function queue(rows) { const pending=rows.filter(item=>item.review==='Needs review');return pending.length?pending.map(reviewItem).join(''):empty('Nothing waiting for review','Items requiring your authorized review will appear here.'); }
 function renderResults() {
   const rows=filteredRecords();
-  if(page==='Dispatch Board'&&viewMode!=='board'){mapController?.update(rows);return;}
+  if(presentation==='field'||page==='Dispatch Board'&&viewMode!=='board'){mapController?.update(rows);return;}
   const filtered=Object.values(filters).some(Boolean);
   document.querySelector('#record-results').innerHTML=rows.length?`<div class="table-wrap"><table><caption class="sr-only">Reports for ${activeName()}</caption><thead><tr><th>Incident / source</th><th>Severity</th><th>Location / owning unit</th><th>Status / review</th><th>Updated</th></tr></thead><tbody>${rows.map(incidentRow).join('')}</tbody></table></div><div class="table-footer"><span>${rows.length} reports · ${activeName()}</span><span>All times CDT</span></div>`:empty(filtered?'No matching reports':'No active incidents',filtered?'Adjust or reset your filters to see reports for this unit.':'When reports or operational incidents require attention, they’ll appear here.');
   bindRecords();
@@ -120,6 +124,38 @@ async function renderGeographic(){
   try{
     const {createGeographicView}=await import('./map-view.mjs');
     if(generation!==viewGeneration)return;
-    mapController=createGeographicView(host,{mode:viewMode,rows:filteredRecords(),selectedId:selectedIncident,onSelect:id=>selectedIncident=id,onDetail:openDetail,unitName:activeName()});
+    mapController=createGeographicView(host,{mode:presentation==='field'?'map':viewMode,field:presentation==='field',scopeId:activeUnit,initialCamera:presentation==='field'?fieldCameras.get(activeUnit):null,rows:filteredRecords(),selectedId:selectedIncident,onSelect:id=>selectedIncident=id,onDetail:openDetail,unitName:activeName()});
+    if(presentation==='field')fieldNavigation(fieldPane);
   }catch{if(generation!==viewGeneration)return;host.innerHTML=`<section class="panel">${empty('Map unavailable','Incident records remain available in Board view.','<button class="button" id="retry-map-view">Retry map</button>')}</section>`;host.querySelector('button').onclick=renderView;}
 }
+
+function capturePresentationCamera(){const snapshot=mapController?.cameraSnapshot();if(snapshot)fieldCameras.set(snapshot.scopeId,snapshot);}
+function switchPresentation(value){
+  if(!demoEnabled||!['field','operations'].includes(value))return;
+  capturePresentationCamera();presentation=value;fieldPane='map';page='Dispatch Board';renderShell();
+  document.querySelector(value==='field'?'#field-map':'#dispatch-view')?.focus({preventScroll:true});
+}
+function fieldNavigation(pane,restore=false){
+  if(presentation!=='field')return;
+  fieldPane=pane;
+  const more=document.querySelector('#field-more-panel');more.hidden=!['more','draft'].includes(pane);
+  document.querySelector('#field-draft-guidance').hidden=pane!=='draft';
+  mapController?.fieldPanel(pane);
+  for(const button of document.querySelectorAll('[data-field-pane]')){const selected=button.dataset.fieldPane===pane;button.setAttribute('aria-expanded',String(selected&&pane!=='map'));if(selected)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');}
+  if(restore)document.querySelector('#field-'+pane)?.focus({preventScroll:true});
+  else if(pane==='more'||pane==='draft')more.querySelector('button')?.focus({preventScroll:true});
+}
+function renderFieldShell(){
+  app.innerHTML=`<div class="shell field-shell"><header class="topbar field-header"><div class="field-identity">${fieldBrand()}</div><label for="active-unit">Demo acting department<select id="active-unit">${fixtures.units.filter(unit=>fixtures.memberships.includes(unit.id)).map(unit=>`<option value="${unit.id}" ${activeUnit===unit.id?'selected':''}>${escape(unit.name)}</option>`).join('')}</select></label><p class="field-source" id="unit-scope">Synthetic incidents · Limited geographic source coverage · No operational publication authority</p></header><main id="main" tabindex="-1"><div id="view"></div><section id="field-more-panel" class="panel field-more" aria-label="Field information and demo controls" hidden><button class="button" id="field-close-more">Return to Map</button><p id="field-draft-guidance" role="status" hidden>Draft Notice Preview needs a taller screen in Field. Rotate to portrait or use a taller screen; the existing short-height composer can clip. No draft dialog was opened.</p><h2>Local demo controls</h2><p>City of Dayton · ${escape(activeName())}</p><p>Connected Agencies. Informed Communities.</p><p>Incident text/ID/location search only. General address search, GPS, routing, report submission, approval, publication and regional feeds are unavailable.</p><p>OSM source lines and approximate synthetic positions are not operational roadway evidence. Draft Notice Preview is local to this tab.</p>${themeControl()}<label for="preview-state">Preview state<select id="preview-state">${['populated','empty','loading','error','denied'].map(value=>`<option value="${value}" ${state===value?'selected':''}>${value}</option>`).join('')}</select></label><button class="button" id="field-operations">Open Operations presentation</button><button class="button" id="signout">Exit demo</button></section></main><nav class="field-navigation" aria-label="Field navigation">${fieldNav()}</nav></div>`;
+  document.querySelectorAll('[data-field-pane]').forEach(button=>button.onclick=()=>{const pane=button.dataset.fieldPane;if(pane==='draft'){if(innerHeight<=500){fieldNavigation('draft');return;}const trigger=button,unit=activeUnit,previous=fieldPane;import('./notice-preview-view.mjs').then(({openNoticePreview})=>{if(presentation!=='field'||unit!==activeUnit||!trigger.isConnected)return;openNoticePreview(unit,trigger);for(const nav of document.querySelectorAll('[data-field-pane]')){if(nav===trigger)nav.setAttribute('aria-current','page');else nav.removeAttribute('aria-current');}document.querySelector('.notice-dialog')?.addEventListener('close',()=>{fieldNavigation(previous);trigger.focus({preventScroll:true});},{once:true});}).catch(()=>{fieldNavigation('draft');document.querySelector('#field-draft-guidance').textContent='Draft Notice Preview is unavailable. No operational action was taken.';});return;}fieldNavigation(pane);});
+  document.querySelector('#field-close-more').onclick=()=>fieldNavigation('map',true);
+  document.querySelector('#field-operations').onclick=()=>switchPresentation('operations');
+  document.querySelector('#signout').onclick=()=>location.assign(location.pathname);
+  document.querySelector('#active-unit').onchange=event=>{if(!fixtures.memberships.includes(event.target.value)){event.target.value=activeUnit;return;}capturePresentationCamera();activeUnit=event.target.value;selectedIncident=null;filters={search:'',severity:'',status:'',source:'',review:''};fieldPane='map';renderShell();document.querySelector('#active-unit').focus();};
+  document.querySelector('#preview-state').onchange=event=>{state=event.target.value;renderShell();document.querySelector('#preview-state').focus();};
+  if(['loading','error','denied'].includes(state)){document.querySelector('#view').innerHTML=`<section class="panel">${statePanel(state)}</section>`;document.querySelector('#retry').onclick=()=>{if(state==='denied')location.assign(location.pathname);else{state='populated';renderShell();}};fieldNavigation(fieldPane);return;}
+  renderGeographic();fieldNavigation(fieldPane);
+}
+window.addEventListener('keydown',event=>{if(presentation==='field'&&event.key==='Escape'&&!document.querySelector('dialog[open]')&&fieldPane!=='map'){event.preventDefault();fieldNavigation('map',true);}});
+
+function openPresentationChoice(trigger){const menu=document.createElement('dialog');menu.className='presentation-dialog';menu.setAttribute('aria-labelledby','presentation-heading');menu.innerHTML='<h2 id="presentation-heading">Choose presentation</h2><p>Same local demo, unchanged authority.</p><button class="button" id="choose-field">Field — map-first demo</button><button class="button" id="choose-operations">Operations — full workspace</button><button class="button" id="close-presentation">Cancel</button>';document.body.append(menu);menu.querySelector('#choose-field').onclick=()=>{menu.close();switchPresentation('field');};menu.querySelector('#choose-operations').onclick=()=>{menu.close();switchPresentation('operations');};menu.querySelector('#close-presentation').onclick=()=>menu.close();menu.addEventListener('close',()=>{menu.remove();if(trigger.isConnected)trigger.focus({preventScroll:true});},{once:true});menu.showModal();menu.querySelector('#choose-field').focus();}

@@ -17,7 +17,7 @@ async function withPage(fn,viewport={width:1440,height:900}) {
   page.on('pageerror',error=>errors.push(error.message));
   try {await fn(page);assert.deepEqual(errors,[],'No browser runtime errors');}finally{await context.close();}
 }
-async function board(page,query='') {await page.goto(base+'/?demo=1'+query);await page.getByRole('heading',{name:'Dispatch Board',exact:true}).waitFor();}
+async function board(page,query='') {await page.goto(base+'/?demo=1&presentation=operations'+query);await page.getByRole('heading',{name:'Dispatch Board',exact:true}).waitFor();}
 test('login has labels, authorized-access messaging and no signup; credentials never leave browser',()=>withPage(async page=>{
   const writes=[];page.on('request',request=>{if(request.method()!=='GET')writes.push(request.url());});
   await page.goto(base);await page.getByRole('heading',{name:'Welcome to Gridly Connect'}).waitFor();

@@ -33,7 +33,7 @@ async function noOverflow(p,originalWidth){
  const visible=await p.locator('.notice-footer').evaluate(e=>{const r=e.getBoundingClientRect();return r.top>=0&&r.bottom<=innerHeight;});assert.ok(visible,'Navigation remains within viewport');
 }
 for(const theme of ['light','dark'])for(const [width,height]of [[1440,900],[1920,1080],[1280,720],[1024,768],[390,844]])test(theme+' '+width+' three-step geometry/review/recovery and keyboard workflow',()=>visit(async p=>{
- await p.goto(base+'/?demo=1');await p.locator('tbody tr').first().waitFor();
+ await p.goto(base+'/?demo=1&presentation=operations');await p.locator('tbody tr').first().waitFor();
  const originalWidth=await p.evaluate(()=>document.documentElement.scrollWidth);await shot(p,theme+'-'+width+'-dashboard');
  const entry=p.getByRole('button',{name:'Draft Notice Preview',exact:true});await open(p);
  assert.equal(await p.locator('#notice-next').isDisabled(),true);assert.equal(await p.locator('#notice-subject').count(),0);
@@ -76,7 +76,7 @@ for(const theme of ['light','dark'])for(const [width,height]of [[1440,900],[1920
  assert.equal(await p.locator('[data-open]').count(),0);await select(p);await details(p);assert.equal(await p.locator('#notice-subject').inputValue(),'');
 },{theme,width,height}));
 test('map picks explicit candidates; remove and re-add preserve exact highlighted coordinates',()=>visit(async p=>{
- await p.goto(base+'/?demo=1');await open(p);await select(p,'Main');await p.locator('#notice-fit').click();
+ await p.goto(base+'/?demo=1&presentation=operations');await open(p);await select(p,'Main');await p.locator('#notice-fit').click();
  const map=p.locator('#notice-map'),box=await map.boundingBox();await map.click({position:{x:box.width/2,y:box.height/2}});
  assert.match(await p.locator('#notice-candidates').innerText(),/Map pick/);assert.ok(await p.locator('[data-add]').count()>0);
  const id=await p.locator('[data-add]').first().getAttribute('data-add');await p.locator('[data-add]').first().click();
@@ -85,7 +85,7 @@ test('map picks explicit candidates; remove and re-add preserve exact highlighte
  assert.equal(await p.locator('#notice-next').isDisabled(),true);assert.equal((await map.evaluate(e=>e._previewGeometry.features)).length,0);
 }));
 test('matching work includes exceptions; parent edits invalidate review; stable revisions and closure',()=>visit(async p=>{
- await p.goto(base+'/?demo=1');await open(p);await select(p);await details(p);await fill(p,'work');await exceptions(p);
+ await p.goto(base+'/?demo=1&presentation=operations');await open(p);await select(p);await details(p);await fill(p,'work');await exceptions(p);
  await p.locator('#work-date').fill('2026-10-12');await p.locator('[data-exception="work"]').click();
  await p.locator('#work-date').fill('2026-10-13');await p.locator('#work-exception-kind').selectOption('modify');
  await p.locator('#work-modified-start').fill('08:00');await p.locator('#work-modified-end').fill('12:00');await p.locator('[data-exception="work"]').click();
@@ -100,7 +100,7 @@ test('matching work includes exceptions; parent edits invalidate review; stable 
  await back(p);assert.equal(await p.locator('#notice-subject').isDisabled(),true);
 }));
 test('custom restrictions remain independent and survive toggles and refresh with date edits',()=>visit(async p=>{
- await p.goto(base+'/?demo=1');await open(p);await select(p);await details(p);await fill(p,'custom');
+ await p.goto(base+'/?demo=1&presentation=operations');await open(p);await select(p);await details(p);await fill(p,'custom');
  await p.locator('#restriction-mode').selectOption('weekdays');await p.locator('#restriction-start').fill('17:00');await p.locator('#restriction-end').fill('19:00');
  await exceptions(p);await p.locator('#restriction-date').fill('2026-10-14');await p.locator('[data-exception="restriction"]').click();
  await p.locator('#restriction-choice').selectOption('work');await p.locator('#restriction-choice').selectOption('custom');
@@ -109,14 +109,14 @@ test('custom restrictions remain independent and survive toggles and refresh wit
  const n=(await stored(p)).notices[0];assert.equal(n.restrictionOccurrences.length,4);assert.equal(n.workOccurrences.length,5);assert.notDeepEqual(n.restrictionOccurrences,n.workOccurrences);
 }));
 test('malformed storage refuses composer; sign-in and modules gated; POST refused',()=>visit(async p=>{
- await p.goto(base+'/?demo=1');await p.evaluate(k=>sessionStorage.setItem(k,'bad'),key);
+ await p.goto(base+'/?demo=1&presentation=operations');await p.evaluate(k=>sessionStorage.setItem(k,'bad'),key);
  await p.getByRole('button',{name:'Draft Notice Preview',exact:true}).click();await p.getByRole('button',{name:'Reset this unit’s synthetic preview storage'}).waitFor();assert.equal(await p.locator('#notice-subject').count(),0);
  for(const name of ['notice-preview.mjs','notice-preview-view.mjs','notice-schedule.mjs','road-selection.mjs'])assert.equal((await p.request.get(login+'/'+name)).status(),404);
  assert.equal((await p.request.post(base+'/')).status(),405);await p.keyboard.press('Escape');await p.goto(login+'/?demo=1');
  assert.equal(await p.getByRole('button',{name:'Draft Notice Preview',exact:true}).count(),0);assert.equal(await p.getByRole('button',{name:/Sign In/}).count(),1);
 }));
 test('theme changes, map retry and canceled replacement keep unsaved edits; keyboard focus trapped',()=>visit(async p=>{
- await p.goto(base+'/?demo=1');await open(p);await select(p);const before=await p.locator('#notice-map').evaluate(e=>e._previewGeometry);
+ await p.goto(base+'/?demo=1&presentation=operations');await open(p);await select(p);const before=await p.locator('#notice-map').evaluate(e=>e._previewGeometry);
  await p.evaluate(()=>window.gridlyDispatchTheme.setPreference('dark'));assert.deepEqual(await p.locator('#notice-map').evaluate(e=>e._previewGeometry),before);
  await p.locator('#notice-retry').click();await p.locator('#notice-map.leaflet-container').waitFor();assert.deepEqual(await p.locator('#notice-map').evaluate(e=>e._previewGeometry),before);
  await details(p);await fill(p);p.once('dialog',d=>d.dismiss());await p.locator('#notice-new').click();assert.equal(await p.locator('#notice-subject').inputValue(),'Synthetic maintenance notice');
@@ -125,7 +125,7 @@ test('theme changes, map retry and canceled replacement keep unsaved edits; keyb
  assert.notEqual(await p.locator('#notice-check').evaluate(e=>getComputedStyle(e).outlineStyle),'none');
 }));
 test('concurrent revision refusal keeps editor state without overwriting current save',()=>visit(async p=>{
- await p.goto(base+'/?demo=1');await open(p);await select(p);await details(p);await fill(p);await p.locator('#notice-check').click();await p.locator('#notice-save').click();
+ await p.goto(base+'/?demo=1&presentation=operations');await open(p);await select(p);await details(p);await fill(p);await p.locator('#notice-check').click();await p.locator('#notice-save').click();
  await back(p);await p.locator('#notice-subject').fill('My unsaved revision');
  await p.evaluate(async()=>{
   const {loadWorkspace,saveNotice}=await import('./notice-preview.mjs'),{registryFromBytes}=await import('./road-selection.mjs');
@@ -137,7 +137,7 @@ test('concurrent revision refusal keeps editor state without overwriting current
  const n=(await stored(p)).notices[0];assert.equal(n.subject,'Concurrent saved revision');assert.equal(n.revision,2);
 }));
 test('map failure retains keyboard road selection; retry after step navigation restores geometry',()=>visit(async p=>{
- const block=route=>route.abort();await p.route('**/demo/dayton-context.geojson',block);await p.goto(base+'/?demo=1');await open(p,false);
+ const block=route=>route.abort();await p.route('**/demo/dayton-context.geojson',block);await p.goto(base+'/?demo=1&presentation=operations');await open(p,false);
  await p.getByText('Map unavailable. Search and selected lines remain available.',{exact:true}).waitFor();await select(p);
  await details(p);await fill(p);await back(p);await p.getByText('Map unavailable. Search and selected lines remain available.',{exact:true}).waitFor();
  await p.unroute('**/demo/dayton-context.geojson',block);await p.locator('#notice-retry').click();await p.locator('#notice-map.leaflet-container').waitFor();
@@ -145,7 +145,7 @@ test('map failure retains keyboard road selection; retry after step navigation r
  await details(p);assert.equal(await p.locator('#notice-subject').inputValue(),'Synthetic maintenance notice');await p.locator('#notice-check').click();assert.equal(await p.locator('#notice-save').isDisabled(),false);
 }));
 test('schedule validation blocks overnight and DST gap without losing input; one-time Sunday mapping works',()=>visit(async p=>{
- await p.goto(base+'/?demo=1');await open(p);await select(p);await details(p);await fill(p,'work');
+ await p.goto(base+'/?demo=1&presentation=operations');await open(p);await select(p);await details(p);await fill(p,'work');
  await p.locator('#work-start').fill('22:00');await p.locator('#work-end').fill('06:00');await p.locator('#notice-check').click();assert.match(await p.locator('.notice-message').innerText(),/Overnight|end.*start/i);
  await p.locator('#project-start').fill('2026-03-08');await p.locator('#project-end').fill('2026-03-08');
  await p.locator('#notice-effective').fill('2026-03-08T00:00');await p.locator('#notice-expiry').fill('2026-03-09T00:00');

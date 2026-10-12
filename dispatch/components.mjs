@@ -24,3 +24,6 @@ export function incidentRow(item) {
 export function reviewItem(item) {
   return `<button class="queue-item" data-record="${item.id}"><span class="queue-top">${badge(item.severity)}<span>${item.updated}</span></span><strong>${escape(item.title)}</strong><span>${escape(item.unitName)}</span><span class="review-label">Needs review ${icon('arrow')}</span><small>Eligibility requires live verification</small></button>`;
 }
+
+export function fieldBrand(){return brand()+'<span>Field</span>';}
+export function fieldNav(){return [['map','Map','pin'],['incidents','Incidents','reports'],['search','Search','search'],['draft','Draft','review'],['more','More','organization']].map(([id,label,symbol])=>`<button type="button" id="field-${id}" data-field-pane="${id}" ${id==='draft'?'aria-label="Draft Notice Preview"':''} ${id==='map'?'aria-current="page"':''}>${icon(symbol)}<span>${label}</span></button>`).join('');}
