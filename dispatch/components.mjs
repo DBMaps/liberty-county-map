@@ -3,7 +3,7 @@ export function icon(name) {
   const paths = {board:'M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h7v7h-7z', reports:'M6 3h9l3 3v15H6z M9 10h6 M9 14h6 M9 18h4', review:'M9 3h6v4H9z M7 5H5v16h14V5h-2 M8 14l3 3 5-6', activity:'M3 12h4l3-7 4 14 3-7h4', organization:'M3 21h18 M5 21V8h14v13 M3 8l9-5 9 5 M9 11v6 M15 11v6', pin:'M12 21s7-7 7-12a7 7 0 0 0-14 0c0 5 7 12 7 12z M12 7v4 M10 9h4', arrow:'M5 12h14 M14 7l5 5-5 5', lock:'M6 10h12v11H6z M8 10V7a4 4 0 0 1 8 0v3', close:'M6 6l12 12 M18 6 6 18', check:'M5 12l4 4L19 6', search:'M10 17a7 7 0 1 0 0-14 7 7 0 0 0 0 14z M15 15l6 6'};
   return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${paths[name] || paths.board}"/></svg>`;
 }
-export function brand() { return '<div class="brand"><img src="./assets/gridly-logo.png" alt="Gridly"><span>DISPATCH</span></div>'; }
+export function brand() { return '<div class="brand" role="img" aria-label="Gridly Connect"><img src="./assets/gridly-logo.png" alt="Gridly"><span>CONNECT</span></div>'; }
 export function themeControl() {
   const preference = window.gridlyDispatchTheme?.preference || 'system';
   return `<label class="theme-control">Theme<select data-theme-select>${['system','light','dark'].map(value=>`<option value="${value}" ${value===preference?'selected':''}>${value[0].toUpperCase()+value.slice(1)}</option>`).join('')}</select></label>`;

@@ -8,7 +8,7 @@ import {previewServer} from '../tools/dispatch-ui/serve.mjs';
 import {unitRecords,memberships} from '../dispatch/demo/fixtures.mjs';
 
 let browser,server,plain,base,plainBase;
-const evidence=new URL('../reports/responder/dispatch-visual/',import.meta.url);
+const evidence=process.env.DISPATCH_BRANDING_EVIDENCE?new URL(process.env.DISPATCH_BRANDING_EVIDENCE):new URL('../reports/responder/dispatch-visual/',import.meta.url);
 const listen=server=>new Promise(resolve=>server.listen(0,'127.0.0.1',()=>resolve(`http://127.0.0.1:${server.address().port}`)));
 before(async()=>{server=previewServer({demo:true});plain=previewServer();base=await listen(server);plainBase=await listen(plain);browser=await chromium.launch({headless:true,...(process.env.DISPATCH_BROWSER_CHANNEL?{channel:process.env.DISPATCH_BROWSER_CHANNEL}:{})});await mkdir(evidence,{recursive:true});});
 after(async()=>{await browser?.close();server?.close();plain?.close();});
@@ -20,7 +20,8 @@ async function withPage(fn,viewport={width:1440,height:900}) {
 async function board(page,query='') {await page.goto(base+'/?demo=1'+query);await page.getByRole('heading',{name:'Dispatch Board',exact:true}).waitFor();}
 test('login has labels, authorized-access messaging and no signup; credentials never leave browser',()=>withPage(async page=>{
   const writes=[];page.on('request',request=>{if(request.method()!=='GET')writes.push(request.url());});
-  await page.goto(base);await page.getByRole('heading',{name:'Welcome to Dispatch'}).waitFor();
+  await page.goto(base);await page.getByRole('heading',{name:'Welcome to Gridly Connect'}).waitFor();
+  assert.equal(await page.title(),'Gridly Connect');assert.equal(await page.getByRole('img',{name:'Gridly Connect',exact:true}).count(),1);assert.equal(await page.getByText('Connected Agencies. Informed Communities.',{exact:true}).count(),1);assert.doesNotMatch(await page.locator('body').innerText(),/Gridly Dispatch|GRIDLY DISPATCH|Welcome to Dispatch/);
   assert.equal(await page.getByLabel('Email',{exact:true}).count(),1);assert.equal(await page.getByLabel('Password',{exact:true}).count(),1);
   assert.match(await page.locator('.secure-note').innerText(),/Authorized agency access only\./);
   assert.equal(await page.getByRole('button',{name:/create account|sign up|register|google|apple/i}).count(),0);
@@ -65,10 +66,10 @@ test('empty, loading, network error and authorization refusal are distinct',()=>
   await board(page,'&state=empty');await page.getByRole('heading',{name:'No active incidents'}).waitFor();await page.getByRole('heading',{name:'Nothing waiting for review'}).waitFor();
   await page.getByLabel('Preview state').selectOption('loading');assert.equal(await page.getByRole('status',{name:'Loading Dispatch Board'}).count(),1);
   await page.getByLabel('Preview state').selectOption('error');await page.getByRole('heading',{name:'We couldn’t load the Dispatch Board.'}).waitFor();await page.getByRole('button',{name:'Retry',exact:true}).click();assert.equal(await page.locator('tbody tr').count(),2);
-  await page.getByLabel('Preview state').selectOption('denied');await page.getByRole('heading',{name:'Access could not be verified'}).waitFor();assert.equal(await page.locator('tbody tr').count(),0);await page.getByRole('button',{name:'Return to sign in'}).click();await page.getByRole('heading',{name:'Welcome to Dispatch'}).waitFor();
+  await page.getByLabel('Preview state').selectOption('denied');await page.getByRole('heading',{name:'Access could not be verified'}).waitFor();assert.equal(await page.locator('tbody tr').count(),0);await page.getByRole('button',{name:'Return to sign in'}).click();await page.getByRole('heading',{name:'Welcome to Gridly Connect'}).waitFor();
 }));
 test('fixtures require explicit local server mode, no writes or production requests; asset bytes unchanged',()=>withPage(async page=>{
-  await page.goto(plainBase+'/?demo=1');await page.getByRole('heading',{name:'Welcome to Dispatch'}).waitFor();assert.equal(await page.getByRole('link',{name:/Open local visual demo/}).count(),0);
+  await page.goto(plainBase+'/?demo=1');await page.getByRole('heading',{name:'Welcome to Gridly Connect'}).waitFor();assert.equal(await page.getByRole('link',{name:/Open local visual demo/}).count(),0);
   assert.equal((await fetch(plainBase+'/demo/fixtures.mjs')).status,404);assert.equal((await fetch(base+'/../package.json')).status,404);assert.equal((await fetch(base+'/',{method:'POST',body:'synthetic'})).status,405);
   const hostStatus=await new Promise((resolve,reject)=>get(base+'/',{headers:{host:'dispatch.gridlygo.com'}},response=>{response.resume();resolve(response.statusCode);}).on('error',reject));
   assert.equal(hostStatus,403);
@@ -86,12 +87,17 @@ test('remote origin query cannot activate fixtures even if preview files were co
     if(['index.html','app.mjs','auth.mjs','components.mjs','theme.js','themes.css','styles.css','map.css','view-preference.mjs'].includes(name))await route.fulfill({body:await readFile(new URL('../dispatch/'+name,import.meta.url)),contentType:/\.(?:mjs|js)$/.test(name)?'text/javascript':name.endsWith('.css')?'text/css':'text/html'});
     else await route.fulfill({status:404,body:''});
   });
-  await page.goto('https://dispatch-preview.invalid/?demo=1');await page.getByRole('heading',{name:'Welcome to Dispatch'}).waitFor();
+  await page.goto('https://dispatch-preview.invalid/?demo=1');await page.getByRole('heading',{name:'Welcome to Gridly Connect'}).waitFor();
   assert.ok(!requested.includes('/__preview'));assert.ok(!requested.some(path=>path.includes('fixtures')));
 }));
 for(const [width,height] of [[1440,900],[1920,1080],[1280,720],[1024,768]])test(`visual certification ${width}x${height}`,()=>withPage(async page=>{
   async function capture(name){await page.screenshot({path:new URL(`${width}x${height}-${name}.png`,evidence).pathname.replace(/^\/([A-Z]:)/,'$1')});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,'No horizontal document overflow');}
-  await page.goto(base);await page.getByRole('heading',{name:'Welcome to Dispatch'}).waitFor();await capture('login');
+  await page.goto(base);await page.getByRole('heading',{name:'Welcome to Gridly Connect'}).waitFor();await capture('login');
   await board(page);await capture('board');assert.equal(await page.locator('.table-wrap').evaluate(node=>node.scrollWidth<=node.clientWidth),true,'Desktop/tablet table needs no horizontal scrolling');await page.getByRole('button',{name:'Flooded Roadway',exact:true}).click();await capture('detail');await page.getByRole('dialog').getByRole('heading',{name:'Publication',exact:true}).scrollIntoViewIfNeeded();await capture('detail-authority');await page.keyboard.press('Escape');
   await page.getByLabel('Preview state').selectOption('empty');await capture('empty');
 },{width,height}));
+
+for(const [width,height] of [[1440,900],[390,844]])test('Gridly Connect branding and notice return '+width,()=>withPage(async page=>{
+ await page.goto(base);assert.equal(await page.title(),'Gridly Connect');await page.getByRole('heading',{name:'Welcome to Gridly Connect'}).waitFor();await page.screenshot({path:new URL(width+'-connect-login.png',evidence).pathname.replace(/^\/([A-Z]:)/,'$1')});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+ await board(page);assert.equal(await page.locator('.brand').getAttribute('role'),'img');assert.equal(await page.locator('.brand').getAttribute('aria-label'),'Gridly Connect');assert.equal(await page.getByRole('img',{name:'Gridly Connect',exact:true}).count(),width===390?0:1);assert.equal(await page.locator('.brand').isVisible(),width!==390);assert.doesNotMatch(await page.locator('body').innerText(),/Gridly Dispatch|GRIDLY DISPATCH/);await page.getByRole('button',{name:'Draft Notice Preview',exact:true}).click();const back=page.getByRole('button',{name:'Return to Gridly Connect',exact:true});await back.waitFor();await back.click();await page.getByRole('heading',{name:'Dispatch Board',exact:true}).waitFor();assert.equal(await page.getByRole('dialog').count(),0);
+ },{width,height}));

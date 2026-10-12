@@ -124,5 +124,38 @@
       "tools/dispatch-ui/serve.mjs": "8c9ba4ad849162f75ff2a3fd268734a2e22f955329f4110163f44c1727b7f7a5"
     },
     "commitSubject": "Prepare Dispatch ArcGIS Standard and Satellite offline"
+  },
+  "brandingSnapshot": {
+    "startingHead": "3a7112ffa6af85654e142138f315f66927d0d6d2",
+    "inventory": [
+      "dispatch/app.mjs",
+      "dispatch/components.mjs",
+      "dispatch/index.html",
+      "dispatch/notice-preview-view.mjs",
+      "tests/dispatch-map-polish.test.mjs",
+      "tests/dispatch-map.test.mjs",
+      "tests/dispatch-marker-normalization.test.mjs",
+      "tests/dispatch-operational-map.test.mjs",
+      "tests/dispatch-selection.test.mjs",
+      "tests/dispatch-visual-shell.test.mjs",
+      "tools/dispatch-auth-local/portability.test.mjs",
+      "tools/dispatch-auth-local/source-integrity.json",
+      "tools/dispatch-auth-local/verify-sources.ps1"
+    ],
+    "verifierCanonicalHash": "0af742496575a91bd3b5f13401826008afd30dd7c0db42e8db8577e52f18a6d2",
+    "files": {
+      "dispatch/app.mjs": "6f86cfccd6bdd10693e2f46c63620aa9a19897f4d8ff7d167a99367927472d10",
+      "dispatch/components.mjs": "9bd735aa24bdac6705ac69203ecd6b9da7f3a19807fa812a71e974444c680f47",
+      "dispatch/index.html": "b35559f2cd7cfbcdb9cec6d2f945617f65f03fcd90271ce8dfc174888651c1a0",
+      "dispatch/notice-preview-view.mjs": "0d2fb281a238cc1b62a9a35f93ec351804a7e6b941f0aaaf77a15e5f7273ea01",
+      "tests/dispatch-map-polish.test.mjs": "bee08ba13e739549911e4a3fff4f3a851291041ea0ecd7072752b2163d63fbfb",
+      "tests/dispatch-map.test.mjs": "705a3c50fd57e4a9437314c19f06888179f349fbafb0b7362905704706a5bf6f",
+      "tests/dispatch-marker-normalization.test.mjs": "5f1556ea7fc6ac5cad94bef71638480b86acca890f4e65c7b4fcd7804c414751",
+      "tests/dispatch-operational-map.test.mjs": "5a6cbfc2929bbc96e35a1c16c7e8d47ab1ef7487d6c208ab577541fa213b3a0c",
+      "tests/dispatch-selection.test.mjs": "604f4ffcbb433aa878e295f355ed331e0bd1494c4909b105a8837a1baf0d9def",
+      "tests/dispatch-visual-shell.test.mjs": "00b6630604c123db1bcf481877d11e6cbea9a5f75b052222cc64b184e24c7d56",
+      "tools/dispatch-auth-local/portability.test.mjs": "01cedc6ca54780db633d42eecbc91817bd22e5b674ba79f9958340026f070463"
+    },
+    "commitSubject": "Brand professional workspace as Gridly Connect"
   }
 }

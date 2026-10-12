@@ -47,9 +47,38 @@ test('light/dark context overview and remaining category icons; System changes p
 for(const theme of ['dark','light'])for(const [width,height]of [[1440,900],[1920,1080],[1280,720],[1024,768]])test(`${theme} ${width}x${height}: approved Board exact, Split/Map geometry preserved and operational screenshots`,()=>visit(async p=>{
   await p.goto(approved+'/?demo=1');await p.locator('tbody tr').first().waitFor();const before=await protectedShot(p);const bounds={};
   for(const mode of ['split','map']){await view(p).selectOption(mode);await ready(p);bounds[mode]=await p.locator('.geo-layout,.geo-list-panel,#dispatch-map,.geo-filters,.geo-list-row').evaluateAll(nodes=>nodes.map(e=>{const r=e.getBoundingClientRect();return [r.x,r.y,r.width,r.height];}));}
-  await p.goto(base+'/?demo=1');await p.locator('tbody tr').first().waitFor();await p.mouse.move(0,0);assert.equal(before.equals(await protectedShot(p)),true,'Entire approved Board including View selector must match');await shot(p,`${theme}-${width}x${height}-board`);
+  await p.goto(base+'/?demo=1');await p.locator('tbody tr').first().waitFor();await p.mouse.move(0,0);assert.equal(before.equals(await protectedShot(p)),true,'Entire approved Board including View selector must match');await brandingNegativeControls(p,before);await shot(p,`${theme}-${width}x${height}-board`);
   for(const mode of ['split','map']){await view(p).selectOption(mode);await ready(p);await p.evaluate(()=>scrollTo(0,0));const now=await p.locator('.geo-layout,.geo-list-panel,#dispatch-map,.geo-filters,.geo-list-row').evaluateAll(nodes=>nodes.map(e=>{const r=e.getBoundingClientRect();return [r.x,r.y,r.width,r.height];}));assert.deepEqual(now,bounds[mode]);await shot(p,`${theme}-${width}x${height}-${mode}`);const id=mode==='split'?'DEMO-001':'DEMO-002';await p.locator(`[data-select="${id}"]`).click();await shot(p,`${theme}-${width}x${height}-${mode}-selected`);await p.locator('#dispatch-map').screenshot({path:new URL(`${theme}-${width}x${height}-${mode}-closeup.png`,evidence).pathname.replace(/^\/([A-Z]:)/,'$1')});await p.locator('.dispatch-popup').getByRole('button',{name:'View details'}).click();await p.getByRole('dialog').waitFor();await shot(p,`${theme}-${width}x${height}-${mode}-detail`);await p.keyboard.press('Escape');}
 },{theme,width,height}));
 
 // Only the additive preview entry is hidden; all historical pixels remain checked.
-async function protectedShot(page,options={}){const entry=page.locator('.notice-entry'),previous=await entry.evaluateAll(es=>es.map(e=>e.style.visibility));await entry.evaluateAll(es=>es.forEach(e=>e.style.visibility='hidden'));try{return await page.screenshot(options);}finally{await entry.evaluateAll((es,values)=>es.forEach((e,i)=>e.style.visibility=values[i]||''),previous);}}
+// Change only the historical wordmark expectation; compare the complete image with the original thresholds.
+async function protectedShot(page,options={}){
+ const entry=page.locator('.notice-entry'),previous=await entry.evaluateAll(es=>es.map(e=>e.style.visibility));
+ const label=page.locator('.brand>span'),original=await label.textContent(),historical=new URL(page.url()).origin===approved;
+ try{
+  assert.equal(original,historical?'DISPATCH':'CONNECT','Exact product wordmark required');
+  if(!historical){assert.equal(await page.locator('.brand').getAttribute('role'),'img');assert.equal(await page.locator('.brand').getAttribute('aria-label'),'Gridly Connect');}
+  await entry.evaluateAll(es=>es.forEach(e=>e.style.visibility='hidden'));
+  if(historical)await label.evaluate(e=>e.textContent='CONNECT');
+  return await page.screenshot(options);
+ }finally{
+  if(historical)await label.evaluate((e,value)=>e.textContent=value,original);
+  await entry.evaluateAll((es,values)=>es.forEach((e,i)=>e.style.visibility=values[i]||''),previous);
+ }
+}
+
+async function stableBrandingShot(page){
+ let previous=await protectedShot(page);
+ for(let i=0;i<5;i++){await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));const next=await protectedShot(page);if(previous.equals(next))return next;previous=next;}
+ throw new Error('Branding comparison screenshot did not settle');
+}
+async function brandingNegativeControls(page,expected){
+ for(const [selector,property,value]of [['.page-heading h1','transform','translateX(2px)'],['[data-record="DEMO-001"]','color','rgb(255,0,0)'],['button[data-page="Reports"]','backgroundColor','rgb(255,0,0)'],['.brand>span','letterSpacing','7px']]){
+  const element=page.locator(selector).first(),original=await element.evaluate((e,key)=>e.style[key],property);
+  try{await element.evaluate((e,{property,value})=>e.style[property]=value,{property,value});assert.equal(expected.equals(await stableBrandingShot(page)),false,'Must reject non-brand visual regression: '+selector+' '+property);}
+  finally{await element.evaluate((e,{property,original})=>e.style[property]=original,{property,original});}
+ }
+ assert.equal(expected.equals(await stableBrandingShot(page)),true,'Negative controls must restore the complete image exactly');
+ console.log('BRANDING NEGATIVE CONTROLS PASS: dispatch-operational-map.test.mjs '+page.viewportSize().width+' '+await page.locator('html').getAttribute('data-theme')+' 4/4');
+}

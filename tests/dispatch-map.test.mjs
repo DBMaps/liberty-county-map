@@ -29,7 +29,7 @@ test('Board default, explicit preference persistence and all mode transitions',(
 for(const stored of ['bad','MAP',''])test(`invalid view ${JSON.stringify(stored)} falls back to Board`,()=>visit(async page=>{await open(page);assert.equal(await view(page).inputValue(),'board');},{stored}));
 test('storage unavailable keeps working and deep links are local/demo only',()=>visit(async page=>{
   await page.addInitScript(()=>Object.defineProperty(window,'localStorage',{get(){throw new Error('unavailable');}}));await open(page);await view(page).selectOption('split');await ready(page);
-  await page.goto(loginOnly+'/?demo=1&view=map');await page.getByRole('heading',{name:'Welcome to Dispatch'}).waitFor();assert.equal(await view(page).count(),0);
+  await page.goto(loginOnly+'/?demo=1&view=map');await page.getByRole('heading',{name:'Welcome to Gridly Connect'}).waitFor();assert.equal(await view(page).count(),0);
 }));
 test('filters/search/theme/active unit persist across modes with consistent visible incident eligibility',()=>visit(async page=>{
   await open(page);await page.getByLabel('ACTING UNIT').selectOption('works');await page.getByLabel('Search reports').fill('Signal');
@@ -76,11 +76,40 @@ test('only local reads; fixtures/vendor gated; offline data/licensing/vendor iso
 }));
 for(const theme of ['light','dark'])for(const [width,height]of [[1440,900],[1920,1080],[1280,720],[1024,768]])test(`${theme} ${width}x${height}: exact protected Board and additive map screenshots`,()=>visit(async page=>{
   await page.goto(approved+'/?demo=1');await page.locator('tbody tr').first().waitFor();const before=await protectedShot(page);
-  await open(page);await page.locator('tbody tr').first().waitFor();await view(page).evaluate(node=>node.parentElement.style.visibility='hidden');const after=await protectedShot(page);assert.equal(before.equals(after),true,'Approved Board pixels must match exactly outside the view selector');await page.locator('#dispatch-view').evaluate(node=>node.parentElement.style.visibility='');await capture(page,`${theme}-${width}x${height}-board`);
+  await open(page);await page.locator('tbody tr').first().waitFor();await view(page).evaluate(node=>node.parentElement.style.visibility='hidden');const after=await protectedShot(page);assert.equal(before.equals(after),true,'Approved Board pixels must match exactly outside the view selector');await brandingNegativeControls(page,before);await page.locator('#dispatch-view').evaluate(node=>node.parentElement.style.visibility='');await capture(page,`${theme}-${width}x${height}-board`);
   for(const mode of ['split','map']){await view(page).selectOption(mode);await ready(page);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);await capture(page,`${theme}-${width}x${height}-${mode}`);await page.locator('[data-select="DEMO-001"]').click();await capture(page,`${theme}-${width}x${height}-${mode}-selected`);await page.locator('.dispatch-popup').getByRole('button',{name:'View details'}).click();await page.getByRole('dialog').waitFor();await capture(page,`${theme}-${width}x${height}-${mode}-detail`);await page.keyboard.press('Escape');}
   await page.getByLabel('Search reports').fill('no-match');await capture(page,`${theme}-${width}x${height}-map-empty`);
   await page.getByRole('button',{name:'Reset',exact:true}).click();await view(page).selectOption('board');await page.locator('#dispatch-view').evaluate(node=>{node.blur();node.parentElement.style.visibility='hidden';});await page.mouse.move(0,0);await page.evaluate(()=>window.scrollTo(0,0));assert.equal(before.equals(await protectedShot(page)),true,'Board must remain identical after map library/styles have loaded');
 },{theme,width,height}));
 
 // Only the additive preview entry is hidden; all historical pixels remain checked.
-async function protectedShot(page,options={}){const entry=page.locator('.notice-entry'),previous=await entry.evaluateAll(es=>es.map(e=>e.style.visibility));await entry.evaluateAll(es=>es.forEach(e=>e.style.visibility='hidden'));try{return await page.screenshot(options);}finally{await entry.evaluateAll((es,values)=>es.forEach((e,i)=>e.style.visibility=values[i]||''),previous);}}
+// Change only the historical wordmark expectation; compare the complete image with the original thresholds.
+async function protectedShot(page,options={}){
+ const entry=page.locator('.notice-entry'),previous=await entry.evaluateAll(es=>es.map(e=>e.style.visibility));
+ const label=page.locator('.brand>span'),original=await label.textContent(),historical=new URL(page.url()).origin===approved;
+ try{
+  assert.equal(original,historical?'DISPATCH':'CONNECT','Exact product wordmark required');
+  if(!historical){assert.equal(await page.locator('.brand').getAttribute('role'),'img');assert.equal(await page.locator('.brand').getAttribute('aria-label'),'Gridly Connect');}
+  await entry.evaluateAll(es=>es.forEach(e=>e.style.visibility='hidden'));
+  if(historical)await label.evaluate(e=>e.textContent='CONNECT');
+  return await page.screenshot(options);
+ }finally{
+  if(historical)await label.evaluate((e,value)=>e.textContent=value,original);
+  await entry.evaluateAll((es,values)=>es.forEach((e,i)=>e.style.visibility=values[i]||''),previous);
+ }
+}
+
+async function stableBrandingShot(page){
+ let previous=await protectedShot(page);
+ for(let i=0;i<5;i++){await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));const next=await protectedShot(page);if(previous.equals(next))return next;previous=next;}
+ throw new Error('Branding comparison screenshot did not settle');
+}
+async function brandingNegativeControls(page,expected){
+ for(const [selector,property,value]of [['.page-heading h1','transform','translateX(2px)'],['[data-record="DEMO-001"]','color','rgb(255,0,0)'],['button[data-page="Reports"]','backgroundColor','rgb(255,0,0)'],['.brand>span','letterSpacing','7px']]){
+  const element=page.locator(selector).first(),original=await element.evaluate((e,key)=>e.style[key],property);
+  try{await element.evaluate((e,{property,value})=>e.style[property]=value,{property,value});assert.equal(expected.equals(await stableBrandingShot(page)),false,'Must reject non-brand visual regression: '+selector+' '+property);}
+  finally{await element.evaluate((e,{property,original})=>e.style[property]=original,{property,original});}
+ }
+ assert.equal(expected.equals(await stableBrandingShot(page)),true,'Negative controls must restore the complete image exactly');
+ console.log('BRANDING NEGATIVE CONTROLS PASS: dispatch-map.test.mjs '+page.viewportSize().width+' '+await page.locator('html').getAttribute('data-theme')+' 4/4');
+}
