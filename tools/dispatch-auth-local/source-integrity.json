@@ -157,5 +157,22 @@
       "tools/dispatch-auth-local/portability.test.mjs": "01cedc6ca54780db633d42eecbc91817bd22e5b674ba79f9958340026f070463"
     },
     "commitSubject": "Brand professional workspace as Gridly Connect"
+  },
+  "mobileShellSnapshot": {
+    "startingHead": "824c31c8c1bff2f8352e67995898f7cf9cfe45c7",
+    "inventory": [
+      "dispatch/styles.css",
+      "tests/dispatch-responsive-shell.test.mjs",
+      "tools/dispatch-auth-local/portability.test.mjs",
+      "tools/dispatch-auth-local/source-integrity.json",
+      "tools/dispatch-auth-local/verify-sources.ps1"
+    ],
+    "verifierCanonicalHash": "26282d4d9c31c5f3db19ab1bb79799f4466c8f365ef4032c95196017dc96e573",
+    "files": {
+      "dispatch/styles.css": "d2ee9d781d5a3dc6b84a5459d611b4d3459b8a5e2bcc04a1f2f90336b2440bb1",
+      "tests/dispatch-responsive-shell.test.mjs": "d1da10aa0fb1b70e381a8ff0ae4e7afb9f10be303250d3b08a9cf725036cc5f9",
+      "tools/dispatch-auth-local/portability.test.mjs": "9b981bf411cddff5383147447bca1dea2b0410add5d405cec7aa130d02365ffc"
+    },
+    "commitSubject": "Fix Gridly Connect mobile shell overflow"
   }
 }
