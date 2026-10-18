@@ -19,11 +19,61 @@ export async function bootPaidAccess() {
   const status=document.getElementById('gridlyPaidStatus'), purchase=document.getElementById('gridlyPaidPurchase');
   const restore=document.getElementById('gridlyPaidRestore'), retry=document.getElementById('gridlyPaidRetry');
   const settingsRestore=document.getElementById('gridlySettingsRestore');
-  const coordinator=createPaidAccess(await productionPaidComposition(window.Capacitor,{googleLicenseTest:GRIDLY_ANDROID_LICENSE_TEST_CANDIDATE}));
+  const composition=await productionPaidComposition(window.Capacitor,{googleLicenseTest:GRIDLY_ANDROID_LICENSE_TEST_CANDIDATE});
+  let diagnostics=null,diagnosticListener=null,diagnosticSurface=null,unsubscribeDiagnostics=()=>{};
+  let loading=false, started=false, wasVisible=false, loadFailed=false, closing=false;
+  // Stable observer port: optional setup never gates coordinator creation/start.
+  const diagnosticPort=Object.freeze({
+    get enabled(){return !closing&&diagnostics?.enabled===true;},
+    begin:action=>!closing?diagnostics?.begin(action):null,
+    emit:(...args)=>{if(!closing)diagnostics?.emit(...args);},
+    timeout:(...args)=>{if(!closing)diagnostics?.timeout(...args);},
+    finish:(...args)=>{if(!closing)diagnostics?.finish(...args);}
+  });
+  const coordinator=createPaidAccess({...composition,diagnostics:diagnosticPort});
+  async function initializeDiagnostics() {
+    let candidate=null,handle=null,surface=null,unsubscribe=()=>{},installed=false;
+    try {
+      if(closing||composition.capacitor?.getPlatform?.()!=='ios'||typeof composition.plugin?.diagnosticConfiguration!=='function')return;
+      const configuration=await composition.plugin.diagnosticConfiguration();
+      // Only the exact native acknowledgement can authorize diagnostic UI.
+      if(closing||!configuration||Object.keys(configuration).join(',')!=='enabled'||configuration.enabled!==true)return;
+      const {createStoreKitDiagnostics}=await import('./gridly-apple-storekit.mjs');
+      if(closing)return;
+      candidate=createStoreKitDiagnostics({enabled:true});
+      handle=await composition.plugin.addListener('storeDiagnostic',value=>{
+        if(!closing&&diagnostics===candidate)candidate.native(value);
+      });
+      if(closing||typeof handle?.remove!=='function')return;
+        surface=document.createElement('details');surface.id='gridlyStoreDiagnostics';
+        const diagnosticSummary=document.createElement('summary'),diagnosticHistory=document.createElement('pre');
+        surface.append(diagnosticSummary,diagnosticHistory);
+        surface.setAttribute('role','status');surface.setAttribute('aria-live','polite');
+        surface.style.cssText='position:fixed;bottom:0;left:0;right:0;z-index:2147483647;max-height:30vh;overflow:auto;margin:0;padding:8px;background:#111;color:#fff;font:12px monospace;white-space:pre-wrap;pointer-events:auto';
+        surface.style.setProperty('display','block','important'); // Paywall CSS hides unrelated body children.
+        document.body.append(surface);
+        unsubscribe=candidate.subscribe(events=>{
+          const failed=events.find(event=>['failed','rejected','timeout','cancelled','pending','no_evidence','unverified','multiple','busy'].includes(event.outcome)||event.outcome.endsWith('_rejected')||event.stage==='latest_lookup'&&event.outcome==='none');
+          const latest=failed??events.at(-1);
+          diagnosticSummary.textContent='STOREKIT DIAGNOSTIC BUILD — '+(latest?'#'+latest.attempt+' '+latest.action+' '+latest.stage+' / '+latest.outcome:'session only');
+          diagnosticHistory.textContent=(failed?'First diagnostic outcome: '+failed.stage+' / '+failed.outcome+'\n':'')+events.map(event=>
+            '#'+event.attempt+' '+event.action+' '+event.stage+' / '+event.outcome+' '+event.elapsedMs+'ms'+
+            (event.errorCode!==undefined?' code='+event.errorCode:'')+(event.httpStatus!==undefined?' HTTP='+event.httpStatus:'')).join('\n');
+          diagnosticHistory.scrollTop=diagnosticHistory.scrollHeight;
+        });
+      diagnostics=candidate;diagnosticListener=handle;diagnosticSurface=surface;unsubscribeDiagnostics=unsubscribe;installed=true;
+    }catch{
+      // Optional diagnostics fail closed without affecting paid access.
+    }finally{
+      if(!installed){
+        unsubscribe();candidate?.dispose();surface?.remove();
+        try{await handle?.remove();}catch{}
+      }
+    }
+  }
   // The short-lived signed proof stays in this page's memory. Reporting obtains
   // a fresh proof through paid access; neither native evidence nor receipts leak.
   Object.defineProperty(window,'gridlyPaidReporting',{configurable:true,value:Object.freeze({getProof:()=>coordinator.getReportingProof()})});
-  let loading=false, started=false, wasVisible=false, loadFailed=false, closing=false;
   let tourComplete=onboardingComplete(), onboarding;
   const legal=document.createElement('details');legal.id='gridlyPaidLegalAccess';legal.hidden=true;
   const summary=document.createElement('summary');summary.textContent='Help & legal';legal.append(summary,gate.querySelector('nav').cloneNode(true));
@@ -31,7 +81,7 @@ export async function bootPaidAccess() {
   const previousInert=new Map();
   const lock=(checking=false)=>{
     root.classList.add('gridly-paid-locked');root.classList.toggle('gridly-paid-pending',checking);gate.hidden=checking;
-    for(const child of document.body.children) if(child!==gate&&child!==pending&&child!==legal&&child.tagName!=='SCRIPT') {
+    for(const child of document.body.children) if(child!==gate&&child!==pending&&child!==legal&&child!==diagnosticSurface&&child.tagName!=='SCRIPT') {
       if(!previousInert.has(child)) previousInert.set(child,child.inert);
       child.inert=true;
     }
@@ -63,6 +113,7 @@ export async function bootPaidAccess() {
       return; // Even a valid store subscriber completes the first-install tour.
     }
     if(!value.allowed) {
+      if(value.state!=='initializing'&&!value.action)diagnostics?.presentation(value.diagnosticAttempt,'paywall');
       lock(value.state==='initializing');
       // Destroy protected timers/feeds after failed re-verification. Fresh launch
       // revalidates signed native continuity or obtains fresh authority; no query unlock.
@@ -93,10 +144,10 @@ export async function bootPaidAccess() {
           root.classList.remove('gridly-paid-locked');
           await loadPaidRuntime({document,window,allowed});
         });
-        started=true;if(coordinator.allowed()) unlock();
-      } catch {loadFailed=true;lock();status.textContent='Gridly could not start. Reopen the app or contact Support.';retry.disabled=false;retry.textContent='Reopen Gridly';}
+        started=true;if(coordinator.allowed()){unlock();diagnostics?.presentation(value.diagnosticAttempt,'unlocked');}
+      } catch {diagnostics?.presentation(value.diagnosticAttempt,'runtime_failed');loadFailed=true;lock();status.textContent='Gridly could not start. Reopen the app or contact Support.';retry.disabled=false;retry.textContent='Reopen Gridly';}
       finally {loading=false;}
-    } else if(value.allowed && started) unlock();
+    } else if(value.allowed && started){unlock();diagnostics?.presentation(value.diagnosticAttempt,'unlocked');}
   };
   coordinator.subscribe(render);
   purchase.addEventListener('click',()=>{void coordinator.purchase();});
@@ -110,7 +161,9 @@ export async function bootPaidAccess() {
   retry.addEventListener('click',()=>{if(loadFailed) window.location.reload();else void coordinator.refresh();});
   const connectivity=()=>{if(!closing)void coordinator.refresh();};
   window.addEventListener('online',connectivity);
-  window.addEventListener('pagehide',()=>{closing=true;delete window.gridlyPaidReporting;window.removeEventListener('online',connectivity);document.removeEventListener('click',settingsRestoreClick);onboarding?.dispose();lock();void coordinator.stop();},{once:true});
+  window.addEventListener('pagehide',()=>{closing=true;unsubscribeDiagnostics();diagnostics?.dispose();try{void Promise.resolve(diagnosticListener?.remove()).catch(()=>{});}catch{}diagnosticSurface?.remove();delete window.gridlyPaidReporting;window.removeEventListener('online',connectivity);document.removeEventListener('click',settingsRestoreClick);onboarding?.dispose();lock();void coordinator.stop();},{once:true});
   window.addEventListener('pageshow',event=>{if(event.persisted) window.location.reload();});
-  await coordinator.start();
+  const startup=coordinator.start();
+  void initializeDiagnostics().catch(()=>{});
+  await startup;
 }
