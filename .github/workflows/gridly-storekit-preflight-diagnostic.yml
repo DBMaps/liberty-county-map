@@ -1,0 +1,59 @@
+name: Gridly Build 15 Isolated macOS Preflight Diagnostic
+
+# PREPARATION ONLY. A separate owner authorization is required to commit/push,
+# then create ONE new annotated preflight tag after reviewing the exact commit.
+# This workflow never invokes the delivery job. The old delivery tag is immutable
+# historical checkout evidence, never reused as current authorization.
+# Exact annotation (no other fields, defaults, account data or upload permission):
+# {"preflight_commit":"<reviewed-40-hex>",
+#  "delivery_source_commit":"45bfe026b81f4928caceb9632cbf15e7ed842a25",
+#  "failed_delivery_run_id":39188851227,
+#  "historical_certification_run_id":39181592021,
+#  "preflight_only_authorized":true,"build_sign_export_upload_forbidden":true}
+# The reviewed commit must directly follow 45bfe026 and add ONLY this workflow,
+# tools/apple_storekit_preflight_diagnostic.py and its focused safety test.
+on:
+  push:
+    tags:
+      - 'gridly-storekit-preflight-15-*'
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose-storekit-preflight:
+    if: ${{ github.repository == 'DBMaps/liberty-county-map' && github.event_name == 'push' && github.event.created == true && github.event.deleted == false && github.event.forced == false && github.run_attempt == 1 && startsWith(github.ref, 'refs/tags/gridly-storekit-preflight-15-') }}
+    runs-on: macos-26
+    timeout-minutes: 15
+    concurrency:
+      group: gridly-storekit-preflight-build-15
+      cancel-in-progress: false
+    defaults:
+      run:
+        shell: bash --noprofile --norc -e -o pipefail {0}
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - name: Checkout exact reviewed preflight-only candidate
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Diagnose eight source and tooling checks without building or delivering
+        run: |
+          set -euo pipefail
+          set +x
+          umask 077
+          python3 -B tools/apple_storekit_preflight_diagnostic.py run
+      - name: Clean up all private preflight files and report fixed cleanup status
+        if: always()
+        run: |
+          set -euo pipefail
+          set +x
+          if test -f tools/apple_storekit_preflight_diagnostic.py; then
+            python3 -B tools/apple_storekit_preflight_diagnostic.py cleanup
+          else
+            printf '%s\n' '{"stage":"P09_CLEANUP","status":"FAIL","category":"CLEANUP_HELPER_UNAVAILABLE"}'
+            exit 1
+          fi
