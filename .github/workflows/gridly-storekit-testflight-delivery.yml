@@ -144,7 +144,7 @@ jobs:
           node tools/native-web.mjs --verify --report-file "$DIAGNOSTIC_PRIVATE_ROOT/reports/storekit-diagnostic-native-web.json"
           npx cap sync ios
           if test -f ios/App/Podfile; then (cd ios/App && pod install); fi
-          xcodebuild -resolvePackageDependencies -project ios/App/App.xcodeproj -scheme App -derivedDataPath "$DIAGNOSTIC_PRIVATE_ROOT/gridly-storekit-diagnostic-derived-data" -clonedSourcePackagesDirPath "$DIAGNOSTIC_PRIVATE_ROOT/source-packages"
+          ( . "$DIAGNOSTIC_PRIVATE_ROOT/runner-context.sh"; xcodebuild -resolvePackageDependencies -project ios/App/App.xcodeproj -scheme App -derivedDataPath "$DIAGNOSTIC_PRIVATE_ROOT/gridly-storekit-diagnostic-derived-data" -clonedSourcePackagesDirPath "$DIAGNOSTIC_PRIVATE_ROOT/source-packages" )
       - name: Install distribution signing
         shell: bash
         env:
@@ -156,9 +156,11 @@ jobs:
           set +x
           umask 077
           exec > "$DIAGNOSTIC_PRIVATE_ROOT/logs/step-6.log" 2>&1
+          . "$DIAGNOSTIC_PRIVATE_ROOT/runner-context.sh"
           cd "$DELIVERY_SOURCE_DIR"
           export TMPDIR="$DIAGNOSTIC_PRIVATE_ROOT/tmp/"
           umask 077
+          python3 -B tools/apple_storekit_testflight_delivery.py signing-context --runner-temp "$RUNNER_TEMP" --commit "$EXPECTED_COMMIT_SHA"
           cleanup_signing_material() {
             rm -f "$DIAGNOSTIC_PRIVATE_ROOT/distribution-private.key" "$DIAGNOSTIC_PRIVATE_ROOT/distribution-cert.pem" "$DIAGNOSTIC_PRIVATE_ROOT/distribution.p12"
             unset TEMP_P12_PASSWORD KEYCHAIN_PASSWORD
@@ -192,11 +194,7 @@ jobs:
           test "$PROFILE_NAME" = 'Gridly App Store Build 9'
           test "$TEAM_ID" = '2XSH6R7K37'
           test "$PROFILE_UUID" = "$(python3 -B -c 'import sys; sys.path.insert(0,"tools"); import apple_native_parity as release; print(release.PROFILE_UUID)')"
-          mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
-          profile_path="$HOME/Library/MobileDevice/Provisioning Profiles/$PROFILE_UUID.mobileprovision"
-          test ! -e "$profile_path"
-          printf '%s' "$profile_path" > "$DIAGNOSTIC_PRIVATE_ROOT/installed-profile"
-          cp "$DIAGNOSTIC_PRIVATE_ROOT/distribution.mobileprovision" "$profile_path"
+          python3 -B tools/apple_storekit_testflight_delivery.py profile-install --runner-temp "$RUNNER_TEMP" --commit "$EXPECTED_COMMIT_SHA"
           { printf 'PROFILE_NAME=%s\n' "$PROFILE_NAME"; printf 'TEAM_ID=%s\n' "$TEAM_ID"; } >> "$GITHUB_ENV"
           rm -f "$DIAGNOSTIC_PRIVATE_ROOT/distribution.mobileprovision" "$DIAGNOSTIC_PRIVATE_ROOT/profile.plist"
       - name: Signing identity precheck
@@ -206,6 +204,7 @@ jobs:
           set +x
           umask 077
           exec > "$DIAGNOSTIC_PRIVATE_ROOT/logs/step-7-1.log" 2>&1
+          . "$DIAGNOSTIC_PRIVATE_ROOT/runner-context.sh"
           cd "$DELIVERY_SOURCE_DIR"
           export TMPDIR="$DIAGNOSTIC_PRIVATE_ROOT/tmp/"
           security find-identity -v -p codesigning "$DIAGNOSTIC_PRIVATE_ROOT/signing.keychain-db" | grep -Fq '1264FCB7434D20490824D05F959D90D3825EA45C "Apple Distribution: DJ Burns Collective LLC (2XSH6R7K37)"'
@@ -216,6 +215,7 @@ jobs:
           set +x
           umask 077
           exec > "$DIAGNOSTIC_PRIVATE_ROOT/logs/step-7-2.log" 2>&1
+          . "$DIAGNOSTIC_PRIVATE_ROOT/runner-context.sh"
           cd "$DELIVERY_SOURCE_DIR"
           export TMPDIR="$DIAGNOSTIC_PRIVATE_ROOT/tmp/"
           xcode_status=0
@@ -235,6 +235,7 @@ jobs:
           # FD 3 carries only the fixed archive classification; raw output stays private.
           exec 3>&1
           exec > "$DIAGNOSTIC_PRIVATE_ROOT/logs/step-7-3.log" 2>&1
+          . "$DIAGNOSTIC_PRIVATE_ROOT/runner-context.sh"
           cd "$DELIVERY_SOURCE_DIR"
           export TMPDIR="$DIAGNOSTIC_PRIVATE_ROOT/tmp/"
           archive="$DIAGNOSTIC_PRIVATE_ROOT/Gridly-StoreKit-Diagnostic-$DIAGNOSTIC_BUILD_NUMBER.xcarchive"
@@ -253,6 +254,7 @@ jobs:
           set +x
           umask 077
           exec > "$DIAGNOSTIC_PRIVATE_ROOT/logs/step-7-4.log" 2>&1
+          . "$DIAGNOSTIC_PRIVATE_ROOT/runner-context.sh"
           cd "$DELIVERY_SOURCE_DIR"
           export TMPDIR="$DIAGNOSTIC_PRIVATE_ROOT/tmp/"
           archive="$DIAGNOSTIC_PRIVATE_ROOT/Gridly-StoreKit-Diagnostic-$DIAGNOSTIC_BUILD_NUMBER.xcarchive"
@@ -276,6 +278,7 @@ jobs:
           set +x
           umask 077
           exec > "$DIAGNOSTIC_PRIVATE_ROOT/logs/step-7-5.log" 2>&1
+          . "$DIAGNOSTIC_PRIVATE_ROOT/runner-context.sh"
           cd "$DELIVERY_SOURCE_DIR"
           export TMPDIR="$DIAGNOSTIC_PRIVATE_ROOT/tmp/"
           archive="$DIAGNOSTIC_PRIVATE_ROOT/Gridly-StoreKit-Diagnostic-$DIAGNOSTIC_BUILD_NUMBER.xcarchive"

@@ -30,6 +30,30 @@ ROOT = Path(__file__).resolve().parents[1]
 WORKFLOW = ROOT / ".github/workflows/gridly-storekit-testflight-delivery.yml"
 
 
+
+def restore_signing_environment(text):
+    old = delivery.cert.git("show", delivery.ENVIRONMENT_BASE + ":.github/workflows/gridly-storekit-testflight-delivery.yml").decode()
+    expected = old
+    for label in ("step-6", "step-7-1", "step-7-2", "step-7-3", "step-7-4", "step-7-5"):
+        original = '          exec > "$DIAGNOSTIC_PRIVATE_ROOT/logs/' + label + '.log" 2>&1\n'
+        expected = expected.replace(original, original + '          . "$DIAGNOSTIC_PRIVATE_ROOT/runner-context.sh"\n', 1)
+    original = '          cd "$DELIVERY_SOURCE_DIR"\n          export TMPDIR="$DIAGNOSTIC_PRIVATE_ROOT/tmp/"\n          umask 077\n'
+    expected = expected.replace(original, original + '          python3 -B tools/apple_storekit_testflight_delivery.py signing-context --runner-temp "$RUNNER_TEMP" --commit "$EXPECTED_COMMIT_SHA"\n', 1)
+    original = ('          mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"\n'
+                '          profile_path="$HOME/Library/MobileDevice/Provisioning Profiles/$PROFILE_UUID.mobileprovision"\n'
+                '          test ! -e "$profile_path"\n'
+                '          printf \'%s\' "$profile_path" > "$DIAGNOSTIC_PRIVATE_ROOT/installed-profile"\n'
+                '          cp "$DIAGNOSTIC_PRIVATE_ROOT/distribution.mobileprovision" "$profile_path"\n')
+    expected = expected.replace(original, '          python3 -B tools/apple_storekit_testflight_delivery.py profile-install --runner-temp "$RUNNER_TEMP" --commit "$EXPECTED_COMMIT_SHA"\n', 1)
+    line = next(line for line in expected.splitlines() if line.startswith('          xcodebuild -resolvePackageDependencies '))
+    expected = expected.replace(line, '          ( . "$DIAGNOSTIC_PRIVATE_ROOT/runner-context.sh"; ' + line.strip() + ' )', 1)
+    if text == old:
+        return old
+    if text != expected:
+        raise AssertionError("only exact runner context and owned profile-install workflow changes authorized")
+    return old
+
+
 def without_p04_auth(text):
     permission = "permissions:\n  contents: read\n  actions: read\n"
     scoped = ("      - name: Verify source, build identity input and Xcode\n"
@@ -54,7 +78,7 @@ def owner_automatic_authorization():
             }}
 
 
-def source_git(*, parent=delivery.EVIDENCE_BASE, base_parent=delivery.SOURCE,
+def source_git(*, parent=delivery.ENVIRONMENT_BASE, base_parent=delivery.SOURCE,
                owner_parent=delivery.DELIVERY_BASE, preflight_parent=delivery.OWNER_CORRECTION,
                preparation=None, past_correction=None, preflight_inventory=None,
                historical_refinement=None, signing_inventory=None, cms_inventory=None,
@@ -64,6 +88,7 @@ def source_git(*, parent=delivery.EVIDENCE_BASE, base_parent=delivery.SOURCE,
                alignment_inventory=None, repair_inventory=None, verification_inventory=None,
                p04_parent=delivery.P04_BASE, p04_inventory=None,
                evidence_parent=delivery.ARCHIVE_BASE, archive_inventory=None,
+               environment_parent=delivery.EVIDENCE_BASE, environment_inventory=None,
                correction=None, net=None, mode="100644", dirty=b"", staged=b"", untracked=b"",
                tag_object=None, tag_target=None, tag_type=None, missing_tag=None):
     additions = "\n".join("A\t" + path for path in sorted(delivery.FILES)).encode()
@@ -85,6 +110,7 @@ def source_git(*, parent=delivery.EVIDENCE_BASE, base_parent=delivery.SOURCE,
         ("show", "-s", "--format=%P", delivery.P04_BASE): alignment_parent.encode(),
         ("show", "-s", "--format=%P", delivery.ARCHIVE_BASE): p04_parent.encode(),
         ("show", "-s", "--format=%P", delivery.EVIDENCE_BASE): evidence_parent.encode(),
+        ("show", "-s", "--format=%P", delivery.ENVIRONMENT_BASE): environment_parent.encode(),
         ("show", "-s", "--format=%P", delivery.PREFLIGHT_BASE): preflight_parent.encode(),
         ("show", "-s", "--format=%P", delivery.OWNER_CORRECTION): owner_parent.encode(),
         ("show", "-s", "--format=%P", delivery.DELIVERY_BASE): base_parent.encode(),
@@ -101,7 +127,8 @@ def source_git(*, parent=delivery.EVIDENCE_BASE, base_parent=delivery.SOURCE,
         ("diff", "--name-status", "--no-renames", delivery.SIGNING_VERIFIED_BASE, delivery.P04_BASE): alignment if alignment_inventory is None else alignment_inventory,
         ("diff", "--name-status", "--no-renames", delivery.P04_BASE, delivery.ARCHIVE_BASE): modifications if p04_inventory is None else p04_inventory,
         ("diff", "--name-status", "--no-renames", delivery.ARCHIVE_BASE, delivery.EVIDENCE_BASE): modifications if archive_inventory is None else archive_inventory,
-        ("diff", "--name-status", "--no-renames", delivery.EVIDENCE_BASE, COMMIT): modifications if correction is None else correction,
+        ("diff", "--name-status", "--no-renames", delivery.EVIDENCE_BASE, delivery.ENVIRONMENT_BASE): modifications if environment_inventory is None else environment_inventory,
+        ("diff", "--name-status", "--no-renames", delivery.ENVIRONMENT_BASE, COMMIT): modifications if correction is None else correction,
         ("diff", "--name-status", "--no-renames", delivery.SOURCE, COMMIT): all_additions if net is None else net,
         ("diff", "--name-only", "HEAD"): dirty,
         ("diff", "--cached", "--name-only"): staged,
@@ -114,7 +141,7 @@ def source_git(*, parent=delivery.EVIDENCE_BASE, base_parent=delivery.SOURCE,
                          (delivery.SIGNING_VERIFIED_BASE,delivery.SIGNING_VERIFICATION_FILES),
                          (delivery.P04_BASE,delivery.DELIVERY_ALIGNMENT_FILES),
                          (delivery.ARCHIVE_BASE,delivery.FILES),
-                         (delivery.EVIDENCE_BASE,delivery.FILES)):
+                         (delivery.EVIDENCE_BASE,delivery.FILES), (delivery.ENVIRONMENT_BASE,delivery.FILES)):
         for path in files:
             values[("ls-tree",target,"--",path)]=("100644 blob "+"0"*40+"\t"+path).encode()
     for path in delivery.FILES | delivery.PREFLIGHT_FILES | delivery.SIGNING_FILES | delivery.CMS_FILES:
@@ -1271,7 +1298,7 @@ class WorkflowTests(unittest.TestCase):
         before, after = functions(baseline), functions(current)
         self.assertEqual(set(after) - set(before), {"preflight_result", "emit_preflight", "delivery_preflight",
                                                   "HistoryFailure", "HistoryNoRedirect", "history_context", "history_retry_delay", "cleanup_delivery",
-                                                  "classify_archive", "archive_report", "emit_archive", "cleanup_errno"})
+                                                  "classify_archive", "archive_report", "emit_archive", "cleanup_errno"} | {"owned_runner_directory", "runner_context", "capture_runner_context", "runner_native_environment", "runner_profile", "prepare_signing_context", "install_runner_profile", "verify_runner_profile_ownership", "restore_keychain_context"})
         self.assertFalse(set(before) - set(after))
         for name in before.keys() - {"source_guard", "main", "public_json", "historical_evidence", "finish"}:
             self.assertEqual(after[name], before[name], name)
@@ -1380,7 +1407,7 @@ class CmsSigningRepairTests(unittest.TestCase):
         self.assertNotIn(self.old_cms, current)
         self.assertEqual(without_p04_auth(restore_archive_block(current)).split("\non:\n",1)[1],
                          previous.replace(self.old_cms,self.new_cms).split("\non:\n",1)[1])
-        self.assertEqual(self.signing_body(current), self.signing_body(previous).replace(self.old_cms,self.new_cms))
+        self.assertEqual(self.signing_body(restore_signing_environment(current)), self.signing_body(previous).replace(self.old_cms,self.new_cms))
 
     def test_cms_uses_the_created_unlocked_import_destination_without_fallback(self):
         body = self.signing_body(WORKFLOW.read_text())
@@ -1402,7 +1429,7 @@ class CmsSigningRepairTests(unittest.TestCase):
         # Execute only the production signing boundary with shell-function fakes.
         # No security/OpenSSL tool, real key, certificate, profile or app is used.
         bash = "C:/Program Files/Git/bin/bash.exe" if os.name=="nt" else "/bin/bash"
-        body = self.signing_body(WORKFLOW.read_text())
+        body = self.signing_body(restore_signing_environment(WORKFLOW.read_text()))
         preamble = body[:body.index('test -n "$APPLE_DIST_PRIVATE_KEY_PEM_BASE64"')]
         boundary = body[body.index('security create-keychain '):body.index("PROFILE_NAME=$(")]
         if implicit_mutant:
@@ -1454,7 +1481,7 @@ security() {
 '''
         with tempfile.TemporaryDirectory(prefix="gridly-cms-repair-synthetic-") as temporary:
             root=Path(temporary)
-            (root/"logs").mkdir();(root/"tmp").mkdir()
+            (root/"logs").mkdir();(root/"tmp").mkdir();(root/"runner-context.sh").write_text(":\n")
             for name in ("distribution-private.key","distribution-cert.pem","distribution.p12"):
                 (root/name).write_text("SYNTHETIC_PRIVATE_NEVER_PUBLIC")
             (root/"distribution.mobileprovision").write_text("SYNTHETIC_PROFILE_BYTES")
@@ -1513,19 +1540,19 @@ security() {
         original,current=functions(before),functions(after)
         self.assertEqual(set(current)-set(original),
                          {"HistoryFailure","HistoryNoRedirect","history_context","history_retry_delay","cleanup_delivery",
-                          "classify_archive","archive_report","emit_archive","cleanup_errno"})
+                          "classify_archive","archive_report","emit_archive","cleanup_errno"} | {"owned_runner_directory", "runner_context", "capture_runner_context", "runner_native_environment", "runner_profile", "prepare_signing_context", "install_runner_profile", "verify_runner_profile_ownership", "restore_keychain_context"})
         self.assertFalse(set(original)-set(current))
         for name in original.keys()-{"source_guard","public_json","historical_evidence","delivery_preflight","finish","main"}:
             self.assertEqual(original[name],current[name],name)
         nodes=lambda text:{n.targets[0].id:n.value for n in ast.parse(text).body
                            if isinstance(n,ast.Assign) and isinstance(n.targets[0],ast.Name)}
         old,new=nodes(before),nodes(after)
-        self.assertEqual(set(new)-set(old),{"P04_BASE","ARCHIVE_BASE","EVIDENCE_BASE","ARCHIVE_RULES","ARCHIVE_MAX_BYTES","ARCHIVE_STRUCTURED_STATES","HISTORY_CATEGORIES","HISTORY_ATTEMPTS",
+        self.assertEqual(set(new)-set(old),{"P04_BASE","ARCHIVE_BASE","EVIDENCE_BASE","ENVIRONMENT_BASE","ARCHIVE_RULES","ARCHIVE_MAX_BYTES","ARCHIVE_STRUCTURED_STATES","HISTORY_CATEGORIES","HISTORY_ATTEMPTS",
                          "HISTORY_WAIT_BUDGET","HISTORY_DEADLINE","HISTORY_TIMEOUT","HISTORY_MAX_BYTES"})
         for name,node in old.items():
             if name=="HISTORICAL_TAGS":
                 self.assertIsInstance(new[name],ast.Dict)
-                self.assertEqual(len(new[name].keys),10)
+                self.assertEqual(len(new[name].keys),11)
                 retained=ast.Dict(keys=new[name].keys[:7],values=new[name].values[:7])
                 self.assertEqual(ast.dump(node),ast.dump(retained))
             elif name=="PREFLIGHT_CATEGORIES":
@@ -1533,7 +1560,7 @@ security() {
             else:self.assertEqual(ast.dump(node),ast.dump(new[name]),name)
         self.assertEqual(delivery.OWNER_CHECK_TTL,1800)
 
-    def test_exact_reviewed_history_and_all_ten_authorization_tags(self):
+    def test_exact_reviewed_history_and_all_eleven_authorization_tags(self):
         self.assertEqual(delivery.REFINEMENT_BASE,"4c95caed0d261fca1dbaf86fc926660661d0643b")
         self.assertEqual(delivery.SIGNING_BASE,"db4df3949b1f02325b8869433bbbd16b234487db")
         self.assertEqual(delivery.CMS_BASE,"cbe3c297099dbca9c6d376848157de0253aeae39")
@@ -1568,8 +1595,11 @@ security() {
         expected["gridly-storekit-testflight-deliver-15-779d67c7b89569db7cacb6a253eff6da8d3f74ef"]=(
             "69876691a5c1e996ac099edb492c75fbd6b99696",delivery.EVIDENCE_BASE)
         self.assertEqual(delivery.EVIDENCE_BASE,"779d67c7b89569db7cacb6a253eff6da8d3f74ef")
+        self.assertEqual(delivery.ENVIRONMENT_BASE,"b27d780e3148a903917b7a05595f17006f1ab8e0")
+        expected["gridly-storekit-testflight-deliver-15-"+delivery.ENVIRONMENT_BASE]=("c8a561e739bff54346c75864042d65b08b1b9b4e",delivery.ENVIRONMENT_BASE)
         self.assertEqual(delivery.HISTORICAL_TAGS,expected)
-        for child,parent in ((delivery.EVIDENCE_BASE,delivery.ARCHIVE_BASE),
+        for child,parent in ((delivery.ENVIRONMENT_BASE,delivery.EVIDENCE_BASE),
+                             (delivery.EVIDENCE_BASE,delivery.ARCHIVE_BASE),
                              (delivery.ARCHIVE_BASE,delivery.P04_BASE),
                              (delivery.P04_BASE,delivery.SIGNING_VERIFIED_BASE),
                              (delivery.SIGNING_VERIFIED_BASE,delivery.CMS_REPAIR_BASE),
@@ -1582,7 +1612,7 @@ security() {
                 self.assertEqual(historical, delivery.cert.git("show",delivery.CMS_BASE+":"+path),path)
                 if path not in {"tools/apple_storekit_signing_diagnostic.py","tests/storekit-signing-diagnostic.test.py"}:
                     self.assertEqual((ROOT/path).read_bytes().replace(b"\r\n",b"\n"),historical,path)
-        checkpoint=delivery.EVIDENCE_BASE
+        checkpoint=delivery.ENVIRONMENT_BASE
         support={".github/workflows/gridly-storekit-testflight-delivery.yml",
                  "tools/apple_storekit_testflight_delivery.py","tests/storekit-testflight-delivery.test.py"}
         def git(*args):
@@ -1699,7 +1729,7 @@ security() {
                     (delivery.SIGNING_VERIFIED_BASE,delivery.SIGNING_VERIFICATION_FILES),
                     (delivery.P04_BASE,delivery.DELIVERY_ALIGNMENT_FILES),
                          (delivery.ARCHIVE_BASE,delivery.FILES),
-                         (delivery.EVIDENCE_BASE,delivery.FILES))
+                         (delivery.EVIDENCE_BASE,delivery.FILES), (delivery.ENVIRONMENT_BASE,delivery.FILES))
         valid=source_git()
         for target,files in historical:
             for path in files:
@@ -1801,6 +1831,7 @@ class ArchiveStageVisibilityTests(unittest.TestCase):
             root=Path(temporary)
             for name in ("logs","reports","source","tmp"):
                 (root/name).mkdir()
+            (root/"runner-context.sh").write_text(":\n")
             posix=lambda path:str(path).replace("\\","/")
             environment={**os.environ,"DIAGNOSTIC_PRIVATE_ROOT":posix(root),
                          "DELIVERY_SOURCE_DIR":posix(root/"source"),"DIAGNOSTIC_BUILD_NUMBER":"15",
@@ -1885,7 +1916,7 @@ python3() {
         new=(ROOT/"tools/apple_storekit_testflight_delivery.py").read_text()
         functions=lambda text:{n.name:n for n in ast.parse(text).body if isinstance(n,ast.FunctionDef)}
         before,after=functions(old),functions(new)
-        for name in before.keys()-{"source_guard","finish","main"}:
+        for name in before.keys()-{"source_guard","finish","main","cleanup_delivery"}:
             self.assertEqual(ast.dump(before[name]),ast.dump(after[name]),name)
         old_main=next(n for n in ast.parse(normalize_archive_cli(old)).body if isinstance(n,ast.FunctionDef) and n.name=="main")
         new_main=next(n for n in ast.parse(normalize_archive_cli(new)).body if isinstance(n,ast.FunctionDef) and n.name=="main")
@@ -2063,6 +2094,7 @@ class CleanupStageVisibilityTests(unittest.TestCase):
 
 
 def restore_archive_reporting(text):
+    text=restore_signing_environment(text)
     """Validate and reverse only the new reporting shell wrapper."""
     marker="      - name: Xcode archive\n";end_marker="      - name: Internal-only IPA export\n"
     start=text.index(marker);end=text.index(end_marker,start)
@@ -2083,6 +2115,15 @@ def restore_archive_reporting(text):
 
 def normalize_archive_cli(source):
     tree=ast.parse(source)
+    main=next(n for n in tree.body if isinstance(n,ast.FunctionDef) and n.name=="main")
+    for node in ast.walk(main):
+        if isinstance(node,ast.If) and isinstance(node.test,ast.Compare) and ast.unparse(node.test) == "args.mode == 'private-init'":
+            node.body=[statement for statement in node.body if not (isinstance(statement,ast.Try) and len(statement.body)==1 and isinstance(statement.body[0],ast.Expr) and isinstance(statement.body[0].value,ast.Call) and getattr(statement.body[0].value.func,"id","")=="capture_runner_context")]
+    main.body=[node for node in main.body if not (isinstance(node,ast.If) and isinstance(node.test,ast.Compare) and isinstance(node.test.comparators[0],ast.Set)
+               and {getattr(value,"value",None) for value in node.test.comparators[0].elts}=={"signing-context","profile-install"})]
+    for node in ast.walk(main):
+        if isinstance(node,ast.keyword) and node.arg=="choices" and isinstance(node.value,ast.List):
+            node.value.elts=[value for value in node.value.elts if getattr(value,"value",None) not in {"signing-context","profile-install"}]
     main=next(n for n in tree.body if isinstance(n,ast.FunctionDef) and n.name=="main")
     main.body=[n for n in main.body if not (isinstance(n,ast.If) and ast.dump(n.test)==
         ast.dump(ast.parse('args.mode == "archive-public"',mode="eval").body))]
@@ -2219,7 +2260,7 @@ class ArchiveErrorEvidenceTests(unittest.TestCase):
         body="\n".join(line[10:] for line in blocks[2].split("        run: |\n",1)[1].splitlines())+"\n"
         for native_status in (0,65,74):
             with self.subTest(status=native_status),tempfile.TemporaryDirectory() as temporary:
-                root=Path(temporary);(root/"logs").mkdir()
+                root=Path(temporary);(root/"logs").mkdir();(root/"runner-context.sh").write_text(":\n")
                 env={**os.environ,"DIAGNOSTIC_PRIVATE_ROOT":str(root).replace("\\","/"),
                      "DELIVERY_SOURCE_DIR":str(root).replace("\\","/"),"DIAGNOSTIC_BUILD_NUMBER":"15",
                      "TEAM_ID":"SYNTHETIC","PROFILE_NAME":"SYNTHETIC","RUNNER_TEMP":str(root).replace("\\","/"),
@@ -2241,7 +2282,7 @@ class ArchiveErrorEvidenceTests(unittest.TestCase):
         new=(ROOT/"tools/apple_storekit_testflight_delivery.py").read_text()
         functions=lambda text:{n.name:ast.dump(n) for n in ast.parse(text).body if isinstance(n,(ast.FunctionDef,ast.ClassDef))}
         before,after=functions(old),functions(new)
-        self.assertEqual(set(after)-set(before),{"classify_archive","archive_report","emit_archive","cleanup_errno"})
+        self.assertEqual(set(after)-set(before),{"classify_archive","archive_report","emit_archive","cleanup_errno"} | {"owned_runner_directory", "runner_context", "capture_runner_context", "runner_native_environment", "runner_profile", "prepare_signing_context", "install_runner_profile", "verify_runner_profile_ownership", "restore_keychain_context"})
         for name in before.keys()-{"source_guard","cleanup_delivery","main"}:
             self.assertEqual(before[name],after[name],name)
         normalized=functions(normalize_archive_cli(new))
@@ -2339,6 +2380,300 @@ class CleanupErrorRecoveryTests(unittest.TestCase):
         self.assertEqual(source.count("shutil.rmtree(root)"),2)
         self.assertIn("root_identity",source)
         self.assertIn('{"EBUSY", "ENOTEMPTY"}'.replace('"',"'"),source)
+
+
+
+class RunnerSigningEnvironmentTests(unittest.TestCase):
+    @contextlib.contextmanager
+    def context(self, cf=False):
+        with tempfile.TemporaryDirectory() as temporary:
+            base=Path(temporary)
+            root=delivery.cert.private_directory(base)
+            for name in ("home","logs","reports","tmp"):
+                (root/name).mkdir(parents=True,exist_ok=True)
+            (root/".owned").write_text(delivery.cert.PRIVATE_MARKER)
+            home=base/"normal-runner-home";home.mkdir()
+            values={"HOME":str(home)}
+            with patch.dict(delivery.os.environ,values):
+                delivery.os.environ.pop("CFFIXED_USER_HOME",None)
+                if cf:delivery.os.environ["CFFIXED_USER_HOME"]=str(home)
+                delivery.capture_runner_context(root)
+                delivery.write_json(root/"reports/delivery-authorization.json",
+                    {"authorization":owner_automatic_authorization(),"ref":REF,"source_commit":COMMIT,"build":"15"})
+                names=[str(home/"Library/Keychains/original.keychain-db")]
+                state={"names":names[:],"original":names[:],"calls":[],"set_failure":False,"verify_failure":False,"delete_failure":False,"real_run":subprocess.run}
+                def native(args,**kwargs):
+                    self.assertEqual(kwargs["env"]["HOME"],str(home))
+                    self.assertEqual(kwargs["env"].get("CFFIXED_USER_HOME"),str(home) if cf else None)
+                    self.assertEqual(kwargs["stdout"],subprocess.PIPE)
+                    self.assertEqual(kwargs["stderr"],subprocess.PIPE)
+                    state["calls"].append(args)
+                    if args[:5]==["security","list-keychains","-d","user","-s"]:
+                        if state["set_failure"]:raise OSError(errno.EACCES,"SYNTHETIC_PRIVATE_CANARY")
+                        state["names"]=args[5:]
+                        if state["verify_failure"]:state["names"]=[]
+                        return subprocess.CompletedProcess(args,0,b"",b"PRIVATE_CANARY")
+                    if args==["security","list-keychains","-d","user"]:
+                        return subprocess.CompletedProcess(args,0,
+                            "\n".join(json.dumps(name) for name in state["names"]).encode(),b"PRIVATE_CANARY")
+                    if args==["security","delete-keychain",str(root/"signing.keychain-db")]:
+                        if state["delete_failure"]:raise OSError(errno.EACCES,"SYNTHETIC_PRIVATE_CANARY")
+                        (root/"signing.keychain-db").unlink(missing_ok=True)
+                        state["names"]=[name for name in state["names"] if name!=str(root/"signing.keychain-db")]
+                        return subprocess.CompletedProcess(args,0,b"",b"PRIVATE_CANARY")
+                    self.fail("unexpected native operation")
+                with patch.object(delivery.subprocess,"run",side_effect=native),patch.object(delivery.time,"time",return_value=NOW):
+                    yield root,home,state
+
+    def prepare(self,root,state):
+        delivery.prepare_signing_context(root,COMMIT)
+        (root/"signing.keychain-db").write_bytes(b"SYNTHETIC_PRIVATE_KEYCHAIN")
+        state["names"]=[str(root/"signing.keychain-db")]
+
+    def install(self,root):
+        (root/"distribution.mobileprovision").write_bytes(b"SAME_SYNTHETIC_PROFILE_BYTES")
+        delivery.install_runner_profile(root,COMMIT)
+        return delivery.runner_profile(root)
+
+    def cleanup(self,root):
+        with patch.object(delivery.Path,"home",return_value=root/"home"),contextlib.redirect_stdout(io.StringIO()) as out,contextlib.redirect_stderr(io.StringIO()) as err:
+            result=delivery.cleanup_delivery(root.parent)
+        self.assertEqual(out.getvalue()+err.getvalue(),"")
+        self.assertNotIn("CANARY",json.dumps(result))
+        self.assertNotIn(str(root),json.dumps(result))
+        return result
+
+    def test_runner_home_capture_is_metadata_only_and_preserves_unset_cf(self):
+        with self.context() as (root,home,state):
+            self.assertEqual(state["calls"],[])
+            self.assertEqual(delivery.runner_context(root)["home"],str(home))
+            self.assertIsNone(delivery.runner_context(root)["cf_home"])
+            script=(root/"runner-context.sh").read_text()
+            self.assertIn("unset CFFIXED_USER_HOME\n",script)
+            self.assertNotIn("PRIVATE_KEY",script)
+
+    def test_original_cf_home_is_restored_exactly_when_present(self):
+        with self.context(cf=True) as (root,home,state):
+            self.assertEqual(delivery.runner_native_environment(root)["CFFIXED_USER_HOME"],str(home))
+            self.assertIn("export CFFIXED_USER_HOME=",(root/"runner-context.sh").read_text())
+
+    def test_conflicting_cf_context_is_rejected_without_native_access(self):
+        with self.context() as (root,home,state),patch.dict(delivery.os.environ,{"CFFIXED_USER_HOME":str(root/"wrong")}):
+            with self.assertRaises(ValueError):delivery.capture_runner_context(root)
+            self.assertEqual(state["calls"],[])
+
+    def test_private_or_different_home_cannot_authorize_signing(self):
+        with self.context() as (root,home,state),patch.dict(delivery.os.environ,{"HOME":str(root/"home")}):
+            with self.assertRaises(ValueError):delivery.prepare_signing_context(root,COMMIT)
+            self.assertEqual(state["calls"],[])
+
+    def test_context_identity_mutation_fails_closed(self):
+        with self.context() as (root,home,state):
+            value=delivery.read_json(root/"runner-context.json");value["identity"][1]+=1
+            delivery.write_json(root/"runner-context.json",value)
+            with self.assertRaises(ValueError):delivery.prepare_signing_context(root,COMMIT)
+            self.assertEqual(state["calls"],[])
+
+    def test_expired_authorization_precedes_keychain_query(self):
+        with self.context() as (root,home,state),patch.object(delivery.time,"time",return_value=NOW+1801):
+            with self.assertRaises(ValueError):delivery.prepare_signing_context(root,COMMIT)
+            self.assertEqual(state["calls"],[])
+
+    def test_existing_profile_is_never_overwritten_or_claimed(self):
+        with self.context() as (root,home,state):
+            profile=delivery.runner_profile(root);profile.parent.mkdir(parents=True);profile.write_bytes(b"UNRELATED_OWNER_BYTES")
+            with self.assertRaises(ValueError):delivery.prepare_signing_context(root,COMMIT)
+            self.assertEqual(profile.read_bytes(),b"UNRELATED_OWNER_BYTES")
+            self.assertFalse((root/"installed-profile").exists())
+            self.assertEqual(state["calls"],[])
+
+    def test_snapshot_is_captured_before_signing_and_cannot_be_repeated(self):
+        with self.context() as (root,home,state):
+            self.prepare(root,state)
+            self.assertEqual(delivery.read_json(root/"keychain-search-list.json")["names"],state["original"])
+            with self.assertRaises(ValueError):delivery.prepare_signing_context(root,COMMIT)
+            self.assertEqual(len(state["calls"]),1)
+
+    def test_same_original_profile_bytes_are_installed_in_runner_library(self):
+        with self.context() as (root,home,state):
+            self.prepare(root,state);profile=self.install(root)
+            self.assertTrue(profile.is_relative_to(home))
+            self.assertFalse(profile.is_relative_to(root))
+            self.assertEqual(profile.read_bytes(),(root/"distribution.mobileprovision").read_bytes())
+            delivery.verify_runner_profile_ownership(root,profile)
+
+    def test_install_collision_remains_exclusive_after_preparation(self):
+        with self.context() as (root,home,state):
+            self.prepare(root,state)
+            profile=delivery.runner_profile(root);profile.parent.mkdir(parents=True);profile.write_bytes(b"UNRELATED")
+            with self.assertRaises(FileExistsError):self.install(root)
+            self.assertEqual(profile.read_bytes(),b"UNRELATED")
+            self.assertFalse((root/"installed-profile").exists())
+
+    def test_changed_profile_inode_is_not_deleted(self):
+        with self.context() as (root,home,state):
+            self.prepare(root,state);profile=self.install(root)
+            replacement=profile.with_suffix(".replacement");replacement.write_bytes(b"UNRELATED");replacement.replace(profile)
+            result=self.cleanup(root)
+            self.assertEqual(result["status"],"FAIL")
+            self.assertEqual(result["stages"]["C02_PROFILE"]["category"],"OWNERSHIP_UNVERIFIED")
+            self.assertEqual(profile.read_bytes(),b"UNRELATED")
+            self.assertEqual(result["resources"]["profile"],"PRESENT")
+
+    def test_symlinked_profile_parent_cannot_install_or_delete(self):
+        with self.context() as (root,home,state):
+            self.prepare(root,state)
+            actual=Path.is_symlink
+            with patch.object(Path,"is_symlink",new=lambda path: path==home/"Library" or actual(path)):
+                with self.assertRaises(ValueError):self.install(root)
+                result=self.cleanup(root)
+            self.assertEqual(result["status"],"FAIL")
+            self.assertTrue(root.exists())
+
+    def test_cleanup_restores_original_search_list_then_verifies_all_absence(self):
+        with self.context() as (root,home,state):
+            self.prepare(root,state);profile=self.install(root)
+            unrelated=home/"unrelated";unrelated.write_bytes(b"PRESERVE")
+            result=self.cleanup(root)
+            self.assertEqual(result["status"],"PASS")
+            self.assertEqual(state["names"],state["original"])
+            self.assertFalse(profile.exists());self.assertFalse(root.exists())
+            self.assertEqual(unrelated.read_bytes(),b"PRESERVE")
+            operations=[call[1] for call in state["calls"]]
+            self.assertEqual(operations,["list-keychains","list-keychains","list-keychains","list-keychains","delete-keychain","list-keychains"])
+
+    def test_search_list_restore_error_is_not_hidden_by_keychain_deletion(self):
+        with self.context() as (root,home,state):
+            self.prepare(root,state);self.install(root);state["set_failure"]=True
+            result=self.cleanup(root)
+            self.assertEqual(result["status"],"FAIL")
+            self.assertEqual(result["stages"]["C03_KEYCHAIN"]["status"],"FAIL")
+            self.assertEqual(result["resources"]["keychain"],"UNVERIFIED")
+            self.assertTrue(any(call[1]=="delete-keychain" for call in state["calls"]))
+
+    def test_restore_requires_exact_readback_not_only_success_exit(self):
+        with self.context() as (root,home,state):
+            self.prepare(root,state);self.install(root);state["verify_failure"]=True
+            self.assertEqual(self.cleanup(root)["status"],"FAIL")
+
+    def test_native_delete_failure_does_not_prevent_search_list_restoration(self):
+        with self.context() as (root,home,state):
+            self.prepare(root,state);self.install(root);state["delete_failure"]=True
+            result=self.cleanup(root)
+            self.assertEqual(result["status"],"FAIL")
+            self.assertEqual(state["names"],state["original"])
+
+    def test_malformed_snapshot_cannot_set_arbitrary_keychain_paths(self):
+        with self.context() as (root,home,state):
+            self.prepare(root,state)
+            delivery.write_json(root/"keychain-search-list.json",{"home":str(home),"names":["relative"]})
+            before=len(state["calls"])
+            with self.assertRaises(ValueError):delivery.restore_keychain_context(root)
+            self.assertEqual(len(state["calls"]),before)
+
+    def test_missing_context_cannot_fall_back_and_certify_external_cleanup(self):
+        with self.context() as (root,home,state):
+            self.prepare(root,state);profile=self.install(root)
+            (root/"runner-context.json").unlink()
+            result=self.cleanup(root)
+            self.assertEqual(result["status"],"FAIL")
+            self.assertEqual(result["stages"]["C01_OWNERSHIP"]["status"],"FAIL")
+            self.assertTrue(profile.exists());self.assertTrue(root.exists())
+
+    def test_eacces_remains_failure_without_chmod_or_speculative_retry(self):
+        with self.context() as (root,home,state):
+            self.prepare(root,state);profile=self.install(root)
+            with patch.object(delivery.shutil,"rmtree",side_effect=PermissionError(errno.EACCES,"CANARY")) as tree:
+                result=self.cleanup(root)
+            self.assertEqual(result["status"],"FAIL")
+            self.assertEqual(result["stages"]["C04_WORKSPACE"]["error_code"],"EACCES")
+            self.assertEqual(result["stages"]["C04_WORKSPACE"]["retry_status"],"NOT_ATTEMPTED")
+            self.assertEqual(result["resources"]["workspace"],"PRESENT")
+            self.assertFalse(profile.exists());self.assertEqual(state["names"],state["original"])
+            self.assertEqual(tree.call_count,1)
+
+    def test_no_original_home_deletion_or_permission_broadening_exists(self):
+        code=Path("tools/apple_storekit_testflight_delivery.py").read_text()
+        functions={n.name:ast.unparse(n) for n in ast.parse(code).body if isinstance(n,ast.FunctionDef)}
+        for name in ("cleanup_delivery","install_runner_profile","restore_keychain_context"):
+            for forbidden in ("chmod(","chown(","chflags(","kill(","ignore_errors=True"):
+                self.assertNotIn(forbidden,functions[name])
+        self.assertEqual(functions["cleanup_delivery"].count("shutil.rmtree(root)"),2)
+        self.assertIn('profile.open(\'xb\')',functions["install_runner_profile"])
+
+    def test_actual_workflow_native_scope_keeps_upload_home_private_and_cms_explicit(self):
+        text=WORKFLOW.read_text()
+        old=restore_signing_environment(text)
+        self.assertEqual(text.count('. "$DIAGNOSTIC_PRIVATE_ROOT/runner-context.sh"'),7)
+        signing=CmsSigningRepairTests.signing_body(text)
+        self.assertLess(signing.index("signing-context --"),signing.index("security create-keychain"))
+        self.assertLess(signing.index('test "$PROFILE_UUID"'),signing.index("profile-install --"))
+        self.assertIn(CmsSigningRepairTests.new_cms,signing)
+        transfer=text.split("      - name: Validate availability and deliver",1)[1]
+        self.assertNotIn("runner-context.sh",transfer)
+        for value in ("testFlightInternalTestingOnly","manageAppVersionAndBuildNumber","ASC_PRIVATE_KEY_P8_BASE64"):
+            self.assertEqual(text.count(value),old.count(value))
+
+    def test_capture_is_only_new_private_init_operation_and_transfer_contract_is_identical(self):
+        old=delivery.cert.git("show",delivery.ENVIRONMENT_BASE+":tools/apple_storekit_testflight_delivery.py").decode()
+        new=Path("tools/apple_storekit_testflight_delivery.py").read_text()
+        functions=lambda code:{n.name:ast.dump(n) for n in ast.parse(code).body if isinstance(n,ast.FunctionDef)}
+        for name in functions(old).keys()-{"source_guard","cleanup_delivery","main"}:
+            self.assertEqual(functions(old)[name],functions(new)[name],name)
+        self.assertEqual(functions(normalize_archive_cli(old))["main"],functions(normalize_archive_cli(new))["main"])
+
+
+    def test_real_shell_sources_runner_context_only_inside_native_subshell(self):
+        bash="C:/Program Files/Git/bin/bash.exe" if os.name=="nt" else "/bin/bash"
+        with self.context() as (root,home,state):
+            posix=lambda path:str(path).replace("\\","/")
+            environment={**os.environ,"HOME":posix(root/"home"),"CFFIXED_USER_HOME":posix(root/"home"),
+                         "DIAGNOSTIC_PRIVATE_ROOT":posix(root),"EXPECTED_RUNNER":str(home)}
+            script='''
+set -euo pipefail
+outer="$HOME"
+outer_cf="$CFFIXED_USER_HOME"
+(
+ . "$DIAGNOSTIC_PRIVATE_ROOT/runner-context.sh"
+ test "$HOME" = "$EXPECTED_RUNNER"
+ test -z "$(printenv CFFIXED_USER_HOME || true)"
+)
+test "$HOME" = "$outer"
+test "$CFFIXED_USER_HOME" = "$outer_cf"
+'''
+            completed=state["real_run"]([bash,"--noprofile","--norc"],input=script,text=True,capture_output=True,env=environment)
+            self.assertEqual(completed.returncode,0)
+            self.assertEqual(completed.stdout+completed.stderr,"")
+
+    def test_tampering_to_environment_workflow_delta_fails_preservation(self):
+        text=WORKFLOW.read_text()
+        for mutant in (text.replace(' . "$DIAGNOSTIC_PRIVATE_ROOT/runner-context.sh"; ',' ',1),
+                       text.replace('profile-install --','unauthorized-install --',1),
+                       text.replace('CODE_SIGN_STYLE=Manual','CODE_SIGN_STYLE=Automatic',1)):
+            with self.assertRaises(AssertionError):restore_signing_environment(mutant)
+
+
+    def test_profile_install_requires_keychain_discoverable_under_runner_context(self):
+        with self.context() as (root,home,state):
+            self.prepare(root,state);state["names"]=state["original"]
+            with self.assertRaises(ValueError):self.install(root)
+            self.assertFalse(delivery.runner_profile(root).exists())
+            self.assertFalse((root/"installed-profile").exists())
+
+    def test_initial_context_failure_publishes_only_fixed_status(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            argv=["helper","private-init","--runner-temp",temporary,"--github-env",str(Path(temporary)/"env")]
+            with patch.object(sys,"argv",argv),patch.object(delivery,"capture_runner_context",side_effect=OSError(errno.EACCES,"PRIVATE_CANARY_PATH")),contextlib.redirect_stdout(io.StringIO()) as out,contextlib.redirect_stderr(io.StringIO()) as err,self.assertRaises(SystemExit) as stopped:
+                delivery.main()
+            self.assertEqual(stopped.exception.code,1)
+            self.assertEqual(out.getvalue(),'{"private_workspace":"FAILED"}\n')
+            self.assertEqual(err.getvalue(),"")
+
+    def test_latest_environment_parent_and_inventory_fail_closed(self):
+        for options in ({"environment_parent":"9"*40},{"environment_parent":delivery.EVIDENCE_BASE+" "+"8"*40},
+                        {"environment_inventory":b""},{"environment_inventory":b"M\tjs/gridly-paid-ui.mjs"}):
+            with self.subTest(options=options),patch.object(delivery.cert,"git",side_effect=source_git(**options)),patch.object(delivery.subprocess,"run"),patch.object(delivery.cert,"original_contracts"),self.assertRaises(ValueError):
+                delivery.source_guard(COMMIT,True)
 
 
 if __name__ == "__main__":

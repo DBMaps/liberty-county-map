@@ -37,6 +37,7 @@ SIGNING_VERIFIED_BASE = "b1e2b7a35dff887dfa4a464a19215b66893b0ee8"
 P04_BASE = "40824c760a65b56b1b0056d1d9b90d571b7f47d4"
 ARCHIVE_BASE = "45ce66b98b44bd6cea67820124e695483e7a6b9b"
 EVIDENCE_BASE = "779d67c7b89569db7cacb6a253eff6da8d3f74ef"
+ENVIRONMENT_BASE = "b27d780e3148a903917b7a05595f17006f1ab8e0"
 SIGNING_VERIFICATION_FILES = {
     "tools/apple_storekit_signing_diagnostic.py",
     "tests/storekit-signing-diagnostic.test.py",
@@ -97,7 +98,7 @@ FILES = {
 }
 # The historical four-file refinement is pinned at REFINEMENT_BASE.
 # REPAIR_FILES remains the pinned four-file CMS repair inventory.
-# Only one direct child of EVIDENCE_BASE may modify the three FILES; all older inventories stay pinned.
+# Only one direct child of ENVIRONMENT_BASE may modify the three FILES; all older inventories stay pinned.
 REFINEMENT_FILES = FILES | {"tests/storekit-preflight-diagnostic.test.py"}
 REPAIR_FILES = FILES | {"tests/storekit-signing-diagnostic.test.py"}
 HISTORICAL_TAGS = {
@@ -121,6 +122,8 @@ HISTORICAL_TAGS = {
         ("e71cf11b1fbca960527ad019762a12cb68b25600", ARCHIVE_BASE),
     "gridly-storekit-testflight-deliver-15-" + EVIDENCE_BASE:
         ("69876691a5c1e996ac099edb492c75fbd6b99696", EVIDENCE_BASE),
+    "gridly-storekit-testflight-deliver-15-" + ENVIRONMENT_BASE:
+        ("c8a561e739bff54346c75864042d65b08b1b9b4e", ENVIRONMENT_BASE),
 }
 
 CONFIRMATIONS = {
@@ -213,11 +216,11 @@ def authorize(ref, commit, event_path, attempt):
 def source_guard(commit, clean):
     require(re.fullmatch(r"[0-9a-f]{40}", commit or ""), "exact source SHA required")
     pinned = {SOURCE, DELIVERY_BASE, OWNER_CORRECTION, PREFLIGHT_BASE, REFINEMENT_BASE,
-              SIGNING_BASE, CMS_BASE, CMS_REPAIR_BASE, SIGNING_VERIFIED_BASE, P04_BASE, ARCHIVE_BASE, EVIDENCE_BASE}
+              SIGNING_BASE, CMS_BASE, CMS_REPAIR_BASE, SIGNING_VERIFIED_BASE, P04_BASE, ARCHIVE_BASE, EVIDENCE_BASE, ENVIRONMENT_BASE}
     require(cert.git("rev-parse", "HEAD").decode().strip() == commit and commit not in pinned,
             "new reviewed delivery-support commit required")
     for child, parent in (
-        (commit, EVIDENCE_BASE), (EVIDENCE_BASE, ARCHIVE_BASE), (ARCHIVE_BASE, P04_BASE), (P04_BASE, SIGNING_VERIFIED_BASE),
+        (commit, ENVIRONMENT_BASE), (ENVIRONMENT_BASE, EVIDENCE_BASE), (EVIDENCE_BASE, ARCHIVE_BASE), (ARCHIVE_BASE, P04_BASE), (P04_BASE, SIGNING_VERIFIED_BASE),
         (SIGNING_VERIFIED_BASE, CMS_REPAIR_BASE),
         (CMS_REPAIR_BASE, CMS_BASE), (CMS_BASE, SIGNING_BASE), (SIGNING_BASE, REFINEMENT_BASE),
         (REFINEMENT_BASE, PREFLIGHT_BASE), (PREFLIGHT_BASE, OWNER_CORRECTION),
@@ -246,12 +249,13 @@ def source_guard(commit, clean):
         (SIGNING_VERIFIED_BASE, P04_BASE, "M", DELIVERY_ALIGNMENT_FILES),
         (P04_BASE, ARCHIVE_BASE, "M", FILES),
         (ARCHIVE_BASE, EVIDENCE_BASE, "M", FILES),
-        (EVIDENCE_BASE, commit, "M", FILES),
+        (EVIDENCE_BASE, ENVIRONMENT_BASE, "M", FILES),
+        (ENVIRONMENT_BASE, commit, "M", FILES),
         (SOURCE, commit, "A", FILES | PREFLIGHT_FILES | SIGNING_FILES | CMS_FILES),
     ):
         records = cert.git("diff", "--name-status", "--no-renames", base, target).decode().splitlines()
         require(set(records) == {status + "\t" + path for path in inventory} and len(records) == len(inventory),
-                "exact historical inventories and three-file archive/cleanup support correction required; all other source frozen")
+                "exact historical inventories and three-file signing-environment correction required; all other source frozen")
         for path in inventory:
             require(cert.git("ls-tree", target, "--", path).decode().split()[0] == "100644",
                     "historical or current support file mode changed")
@@ -817,6 +821,154 @@ def emit_archive(record):
     os.write(3, (json.dumps(record, sort_keys=True) + "\n").encode())
 
 
+
+def owned_runner_directory(path):
+    require(path.is_absolute() and path.is_dir() and not path.is_symlink(), "owned runner directory required")
+    require(all(not parent.is_symlink() for parent in path.parents), "symlinked runner parent")
+    value = path.stat()
+    if hasattr(os, "getuid"):
+        require(value.st_uid == os.getuid(), "runner directory owner changed")
+    return [value.st_dev, value.st_ino, value.st_uid]
+
+
+def runner_context(root):
+    require(root.is_dir() and not root.is_symlink()
+            and not (root / ".owned").is_symlink()
+            and (root / ".owned").read_text() == cert.PRIVATE_MARKER, "owned workspace required")
+    if hasattr(os, "getuid"):
+        require(root.stat().st_uid == os.getuid(), "workspace owner changed")
+    path = root / "runner-context.json"
+    require(path.is_file() and not path.is_symlink(), "runner context required")
+    value = read_json(path)
+    require(set(value) == {"home", "identity", "cf_home"} and isinstance(value["home"], str)
+            and not any(c in value["home"] for c in "\r\n")
+            and isinstance(value["identity"], list) and len(value["identity"]) == 3
+            and all(type(part) is int for part in value["identity"]), "exact runner context required")
+    home = Path(value["home"])
+    require(not home.is_relative_to(root) and home != root, "original runner home required")
+    require(owned_runner_directory(home) == value["identity"], "runner home identity changed")
+    require(value["cf_home"] is None or value["cf_home"] == str(home), "conflicting CoreFoundation home")
+    return value
+
+
+def capture_runner_context(root):
+    # Before overriding HOME: capture metadata only, never credentials/keychain data.
+    home = Path(os.environ["HOME"])
+    value = {"home": str(home), "identity": owned_runner_directory(home),
+             "cf_home": os.environ.get("CFFIXED_USER_HOME")}
+    require(value["cf_home"] is None or value["cf_home"] == str(home), "conflicting runner context")
+    write_json(root / "runner-context.json", value)
+    runner_context(root)
+    shell = "export HOME=" + shlex.quote(str(home)) + "\n"
+    shell += ("unset CFFIXED_USER_HOME\n" if value["cf_home"] is None else
+              "export CFFIXED_USER_HOME=" + shlex.quote(value["cf_home"]) + "\n")
+    (root / "runner-context.sh").write_text(shell)
+
+
+def runner_native_environment(root):
+    context = runner_context(root)
+    environment = dict(os.environ)
+    environment["HOME"] = context["home"]
+    if context["cf_home"] is None:
+        environment.pop("CFFIXED_USER_HOME", None)
+    else:
+        environment["CFFIXED_USER_HOME"] = context["cf_home"]
+    return environment
+
+
+def runner_profile(root):
+    home = Path(runner_context(root)["home"])
+    profile = home / "Library/MobileDevice/Provisioning Profiles" / (cert.release.PROFILE_UUID + ".mobileprovision")
+    for parent in profile.parents:
+        require(not parent.is_symlink(), "unsafe profile parent")
+        if parent.exists() and hasattr(os, "getuid"):
+            require(parent.stat().st_uid == os.getuid(), "profile parent owner changed")
+        if parent == home:
+            break
+    return profile
+
+
+def prepare_signing_context(root, commit):
+    authorization_guard(root, commit)
+    context = runner_context(root)
+    require(os.environ.get("HOME") == context["home"]
+            and os.environ.get("CFFIXED_USER_HOME") == context["cf_home"], "runner signing context required")
+    profile = runner_profile(root)
+    require(not profile.exists() and not profile.is_symlink(), "existing runner profile must not be replaced")
+    snapshot = root / "keychain-search-list.json"
+    require(not snapshot.exists() and not snapshot.is_symlink(), "one signing context only")
+    listed = subprocess.run(["security", "list-keychains", "-d", "user"], check=True,
+                            stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                            env=runner_native_environment(root))
+    names = shlex.split(listed.stdout.decode())
+    require(all(Path(name).is_absolute() and not any(c in name for c in "\r\n") for name in names)
+            and str(root / "signing.keychain-db") not in names, "original keychain list required")
+    write_json(snapshot, {"home": context["home"], "names": names})
+
+
+def install_runner_profile(root, commit):
+    authorization_guard(root, commit)
+    context = runner_context(root)
+    require(os.environ.get("HOME") == context["home"]
+            and os.environ.get("CFFIXED_USER_HOME") == context["cf_home"], "runner profile context required")
+    require((root / "keychain-search-list.json").is_file(), "signing context not prepared")
+    keychain = root / "signing.keychain-db"
+    require(keychain.is_file() and not keychain.is_symlink(), "owned signing keychain required")
+    listed = subprocess.run(["security", "list-keychains", "-d", "user"], check=True,
+                            stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=runner_native_environment(root))
+    require(shlex.split(listed.stdout.decode()) == [str(keychain)], "runner signing keychain not discoverable")
+    source = root / "distribution.mobileprovision"
+    require(source.is_file() and not source.is_symlink(), "owned original profile required")
+    profile = runner_profile(root)
+    profile.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
+    runner_profile(root)  # Recheck ancestors after mkdir, never overwrite a profile.
+    with profile.open("xb") as destination:
+        value = destination.fileno()
+        identity = os.fstat(value)
+        ownership = {"path": str(profile), "identity": [identity.st_dev, identity.st_ino, identity.st_uid]}
+        (root / "installed-profile").write_text(str(profile))
+        # Record ownership before writing; interrupted writes remain removable by inode.
+        write_json(root / "profile-ownership.json", ownership)
+        destination.write(source.read_bytes())
+        destination.flush()
+        os.fsync(value)
+    require(profile.read_bytes() == source.read_bytes(), "installed profile bytes changed")
+
+
+def verify_runner_profile_ownership(root, profile):
+    require(profile == runner_profile(root), "wrong runner profile")
+    record = root / "profile-ownership.json"
+    require(record.is_file() and not record.is_symlink(), "profile ownership required")
+    value = read_json(record)
+    require(set(value) == {"path", "identity"} and value["path"] == str(profile), "wrong profile ownership")
+    if profile.exists() or profile.is_symlink():
+        require(not profile.is_symlink() and profile.is_file(), "unsafe runner profile")
+        state = profile.stat()
+        require([state.st_dev, state.st_ino, state.st_uid] == value["identity"], "installed profile identity changed")
+
+
+def restore_keychain_context(root):
+    path = root / "keychain-search-list.json"
+    if not path.exists():
+        require(not path.is_symlink() and not (root / "signing.keychain-db").exists()
+                and not (root / "installed-profile").exists(), "missing keychain context")
+        return None
+    require(path.is_file() and not path.is_symlink(), "unsafe keychain snapshot")
+    value = read_json(path)
+    require(set(value) == {"home", "names"} and value["home"] == runner_context(root)["home"]
+            and isinstance(value["names"], list)
+            and all(isinstance(name, str) and Path(name).is_absolute()
+                    and not any(c in name for c in "\r\n") for name in value["names"])
+            and str(root / "signing.keychain-db") not in value["names"], "invalid original keychain context")
+    environment = runner_native_environment(root)
+    subprocess.run(["security", "list-keychains", "-d", "user", "-s", *value["names"]],
+                   check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=environment)
+    listed = subprocess.run(["security", "list-keychains", "-d", "user"], check=True,
+                            stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=environment)
+    require(shlex.split(listed.stdout.decode()) == value["names"], "keychain context restoration unverified")
+    return value["names"]
+
+
 def cleanup_errno(error):
     code = getattr(error, "errno", None)
     for name in ("EACCES", "EPERM", "EBUSY", "ETXTBSY", "ENOTEMPTY", "EEXIST", "ENOENT", "EROFS"):
@@ -871,7 +1023,12 @@ def cleanup_delivery(runner_temp):
         initial = root.stat()
         root_identity = (initial.st_dev, initial.st_ino)
         require(Path.home() == root / "home", "private delivery home required")
-        profile = Path.home() / "Library/MobileDevice/Provisioning Profiles" / (cert.release.PROFILE_UUID + ".mobileprovision")
+        has_runner_context = (root / "runner-context.json").exists() or (root / "runner-context.json").is_symlink()
+        require(has_runner_context or not any((root / name).exists() for name in
+                ("runner-context.sh", "keychain-search-list.json", "profile-ownership.json")), "runner context missing")
+        profile = (runner_profile(root) if has_runner_context else
+                   Path.home() / "Library/MobileDevice/Provisioning Profiles" / (cert.release.PROFILE_UUID + ".mobileprovision"))
+        native_environment = runner_native_environment(root) if has_runner_context else None
         keychain = root / "signing.keychain-db"
         # Never traverse symlinked profile ancestors or remove an unowned target.
         for parent in (profile.parent, *profile.parents):
@@ -890,6 +1047,8 @@ def cleanup_delivery(runner_temp):
         if not absent(marker):
             require(marker.is_file() and not marker.is_symlink(), "unsafe profile marker")
             require(Path(marker.read_text()) == profile and not profile.is_symlink(), "wrong installed profile")
+            if has_runner_context:
+                verify_runner_profile_ownership(root, profile)
             profile_category = "REMOVAL_FAILED"
             profile.unlink(missing_ok=True)
         profile_category = "ABSENCE_UNVERIFIED"
@@ -901,23 +1060,33 @@ def cleanup_delivery(runner_temp):
     native_absent = False
     delete_failed = False
     keychain_category = "OWNERSHIP_UNVERIFIED"
+    restoration_failed = False
+    expected_search_list = None
+    if has_runner_context:
+        try:
+            expected_search_list = restore_keychain_context(root)
+        except Exception as error:
+            restoration_failed = True
+            raw.append(str(error).encode())
     try:
         require(not keychain.is_symlink(), "unsafe keychain")
         if not absent(keychain):
             keychain_category = "REMOVAL_FAILED"
             deleted = subprocess.run(["security", "delete-keychain", str(keychain)],
-                                     check=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                                     check=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=native_environment)
             raw.extend((deleted.stdout, deleted.stderr))
             delete_failed = deleted.returncode != 0
         # Query while the private HOME still exists. Tree removal must not erase
         # the ability to distinguish a native keychain registration from a file.
         keychain_category = "REMOVAL_FAILED_ABSENCE_UNVERIFIED" if delete_failed else "ABSENCE_UNVERIFIED"
         listed = subprocess.run(["security", "list-keychains", "-d", "user"],
-                                check=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                                check=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=native_environment)
         raw.extend((listed.stdout, listed.stderr))
         require(listed.returncode == 0, "native absence unverified")
         names = shlex.split(listed.stdout.decode())
         require(all(Path(name).is_absolute() for name in names), "invalid native listing")
+        require(not restoration_failed and (expected_search_list is None or names == expected_search_list),
+                "keychain context restoration unverified")
         native_absent = str(keychain) not in names
         keychain_category = "RESOURCE_REMAINS"
         require(native_absent and absent(keychain), "keychain remains")
@@ -1009,7 +1178,7 @@ def finish(runner_temp, job_status):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("mode", choices=["private-init", "authorize", "preflight", "transfer", "finish-public", "archive-public"])
+    parser.add_argument("mode", choices=["private-init", "authorize", "preflight", "transfer", "finish-public", "archive-public", "signing-context", "profile-install"])
     for name in ("runner-temp", "github-env", "ref", "commit", "event", "attempt", "output", "ipa", "job-status", "archive-exit"):
         parser.add_argument("--" + name)
     args = parser.parse_args()
@@ -1017,6 +1186,11 @@ def main():
         cert.prepare_private(args.runner_temp, args.github_env)
         root = cert.private_directory(args.runner_temp)
         (root / "home").mkdir(mode=0o700)
+        try:
+            capture_runner_context(root)
+        except Exception:
+            print('{"private_workspace":"FAILED"}')
+            raise SystemExit(1) from None
         with Path(args.github_env).open("a") as destination:
             for key, value in {"HOME": root / "home", "CFFIXED_USER_HOME": root / "home",
                                "XDG_CACHE_HOME": root / "home/.cache", "npm_config_cache": root / "home/.npm",
@@ -1024,6 +1198,15 @@ def main():
                                "JAVA_TOOL_OPTIONS": '-Duser.home="' + str(root / "home") + '" -Djava.io.tmpdir="' + str(root / "tmp") + '"'}.items():
                 destination.write(key + "=" + str(value) + "\n")
         print('{"private_workspace":"PREPARED"}')
+        return
+    if args.mode in {"signing-context", "profile-install"}:
+        require(os.environ.get("RUNNER_OS") == "macOS" and os.environ.get("GITHUB_ACTIONS") == "true", "authorized macOS only")
+        root = cert.private_directory(args.runner_temp)
+        require(str(root) == os.environ.get("DIAGNOSTIC_PRIVATE_ROOT"), "owned private root required")
+        if args.mode == "signing-context":
+            prepare_signing_context(root, args.commit)
+        else:
+            install_runner_profile(root, args.commit)
         return
     if args.mode == "finish-public":
         result = finish(args.runner_temp, args.job_status)
