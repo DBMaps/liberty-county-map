@@ -39,32 +39,43 @@ def owner_automatic_authorization():
             }}
 
 
-def source_git(*, parent=delivery.PREFLIGHT_BASE, base_parent=delivery.SOURCE,
+def source_git(*, parent=delivery.CMS_BASE, base_parent=delivery.SOURCE,
                owner_parent=delivery.DELIVERY_BASE, preflight_parent=delivery.OWNER_CORRECTION,
                preparation=None, past_correction=None, preflight_inventory=None,
-               correction=None, net=None, mode="100644", dirty=b"", staged=b"", untracked=b"",
+               historical_refinement=None, signing_inventory=None, cms_inventory=None,
+               refinement_parent=delivery.PREFLIGHT_BASE, signing_parent=delivery.REFINEMENT_BASE,
+               cms_parent=delivery.SIGNING_BASE, correction=None, net=None, mode="100644", dirty=b"", staged=b"", untracked=b"",
                tag_object=None, tag_target=None, tag_type=None, missing_tag=None):
     additions = "\n".join("A\t" + path for path in sorted(delivery.FILES)).encode()
     modifications = "\n".join("M\t" + path for path in sorted(delivery.FILES)).encode()
+    repair = "\n".join("M\t" + path for path in sorted(delivery.REPAIR_FILES)).encode()
     refinement = "\n".join("M\t" + path for path in sorted(delivery.REFINEMENT_FILES)).encode()
     preflight = "\n".join("A\t" + path for path in sorted(delivery.PREFLIGHT_FILES)).encode()
-    all_additions = "\n".join("A\t" + path for path in sorted(delivery.FILES | delivery.PREFLIGHT_FILES)).encode()
+    all_additions = "\n".join("A\t" + path for path in sorted(delivery.FILES | delivery.PREFLIGHT_FILES | delivery.SIGNING_FILES | delivery.CMS_FILES)).encode()
     values = {
         ("rev-parse", "HEAD"): COMMIT.encode(),
         ("show", "-s", "--format=%P", COMMIT): parent.encode(),
+        ("show", "-s", "--format=%P", delivery.REFINEMENT_BASE): refinement_parent.encode(),
+        ("show", "-s", "--format=%P", delivery.SIGNING_BASE): signing_parent.encode(),
+        ("show", "-s", "--format=%P", delivery.CMS_BASE): cms_parent.encode(),
         ("show", "-s", "--format=%P", delivery.PREFLIGHT_BASE): preflight_parent.encode(),
         ("show", "-s", "--format=%P", delivery.OWNER_CORRECTION): owner_parent.encode(),
         ("show", "-s", "--format=%P", delivery.DELIVERY_BASE): base_parent.encode(),
         ("diff", "--name-status", "--no-renames", delivery.SOURCE, delivery.DELIVERY_BASE): additions if preparation is None else preparation,
         ("diff", "--name-status", "--no-renames", delivery.DELIVERY_BASE, delivery.OWNER_CORRECTION): modifications if past_correction is None else past_correction,
         ("diff", "--name-status", "--no-renames", delivery.OWNER_CORRECTION, delivery.PREFLIGHT_BASE): preflight if preflight_inventory is None else preflight_inventory,
-        ("diff", "--name-status", "--no-renames", delivery.PREFLIGHT_BASE, COMMIT): refinement if correction is None else correction,
+        ("diff", "--name-status", "--no-renames", delivery.PREFLIGHT_BASE, delivery.REFINEMENT_BASE): refinement if historical_refinement is None else historical_refinement,
+        ("diff", "--name-status", "--no-renames", delivery.REFINEMENT_BASE, delivery.SIGNING_BASE):
+            "\n".join("A\t" + path for path in sorted(delivery.SIGNING_FILES)).encode() if signing_inventory is None else signing_inventory,
+        ("diff", "--name-status", "--no-renames", delivery.SIGNING_BASE, delivery.CMS_BASE):
+            "\n".join("A\t" + path for path in sorted(delivery.CMS_FILES)).encode() if cms_inventory is None else cms_inventory,
+        ("diff", "--name-status", "--no-renames", delivery.CMS_BASE, COMMIT): repair if correction is None else correction,
         ("diff", "--name-status", "--no-renames", delivery.SOURCE, COMMIT): all_additions if net is None else net,
         ("diff", "--name-only", "HEAD"): dirty,
         ("diff", "--cached", "--name-only"): staged,
         ("status", "--porcelain=v1", "--untracked-files=normal"): untracked,
     }
-    for path in delivery.FILES | delivery.PREFLIGHT_FILES:
+    for path in delivery.FILES | delivery.PREFLIGHT_FILES | delivery.SIGNING_FILES | delivery.CMS_FILES:
         values[("ls-tree", COMMIT, "--", path)] = (mode + " blob " + "0"*40 + "\t" + path).encode()
     for name, (original_object, original_target) in delivery.HISTORICAL_TAGS.items():
         ref = "refs/tags/" + name
@@ -276,7 +287,8 @@ class SourceAndEvidenceTests(unittest.TestCase):
     def test_incorrect_checkout_and_unclean_source_fail(self):
         with patch.object(delivery.cert, "git", return_value=b"9"*40), self.assertRaises(ValueError):
             delivery.source_guard(COMMIT, True)
-        for old in (delivery.SOURCE, delivery.DELIVERY_BASE, delivery.OWNER_CORRECTION, delivery.PREFLIGHT_BASE):
+        for old in (delivery.SOURCE, delivery.DELIVERY_BASE, delivery.OWNER_CORRECTION, delivery.PREFLIGHT_BASE,
+                    delivery.REFINEMENT_BASE, delivery.SIGNING_BASE, delivery.CMS_BASE):
             with self.subTest(old=old), self.assertRaises(ValueError):
                 delivery.source_guard(old, True)
         for options in ({"dirty": b"js/gridly-paid-ui.mjs"}, {"staged": b"js/gridly-paid-ui.mjs"},
@@ -289,7 +301,9 @@ class SourceAndEvidenceTests(unittest.TestCase):
                         {"parent": delivery.DELIVERY_BASE + " " + "8"*40},
                         {"base_parent": "7"*40}, {"base_parent": delivery.SOURCE + " " + "8"*40},
                         {"owner_parent": "7"*40}, {"preflight_parent": "8"*40},
-                        {"preflight_parent": delivery.OWNER_CORRECTION + " " + "8"*40}):
+                        {"preflight_parent": delivery.OWNER_CORRECTION + " " + "8"*40},
+                        {"refinement_parent": "8"*40}, {"signing_parent": "8"*40}, {"cms_parent": "8"*40},
+                        {"cms_parent": delivery.SIGNING_BASE + " " + "8"*40}):
             with self.subTest(options=options), patch.object(delivery.cert, "git", side_effect=source_git(**options)), self.assertRaises(ValueError):
                 delivery.source_guard(COMMIT, True)
 
@@ -329,7 +343,7 @@ class SourceAndEvidenceTests(unittest.TestCase):
         candidates += [records + [records[0]], records + ["M\t.github/workflows/gridly-storekit-diagnostic-certification.yml"],
                        records + ["M\t.github/workflows/gridly-storekit-preflight-diagnostic.yml"]]
         for candidate in candidates:
-            with self.subTest(candidate=candidate), patch.object(delivery.cert, "git", side_effect=source_git(correction="\n".join(candidate).encode())), patch.object(delivery.subprocess, "run"), patch.object(delivery.cert, "original_contracts"), self.assertRaises(ValueError):
+            with self.subTest(candidate=candidate), patch.object(delivery.cert, "git", side_effect=source_git(historical_refinement="\n".join(candidate).encode())), patch.object(delivery.subprocess, "run"), patch.object(delivery.cert, "original_contracts"), self.assertRaises(ValueError):
                 delivery.source_guard(COMMIT, True)
 
     def test_missing_or_unsuccessful_historical_certificate_fails(self):
@@ -860,7 +874,10 @@ class WorkflowTests(unittest.TestCase):
             start=text.index("      - name: Verify source, build identity input and Xcode\n")
             end=text.index("      - name: Set up Node\n",start)
             return text[:start],text[end:]
-        self.assertEqual(outside_preflight(self.text),outside_preflight(old_workflow))
+        old_cms = 'security cms -D -i "$DIAGNOSTIC_PRIVATE_ROOT/distribution.mobileprovision" > "$DIAGNOSTIC_PRIVATE_ROOT/profile.plist"'
+        new_cms = 'security cms -D -k "$DIAGNOSTIC_PRIVATE_ROOT/signing.keychain-db" -i "$DIAGNOSTIC_PRIVATE_ROOT/distribution.mobileprovision" > "$DIAGNOSTIC_PRIVATE_ROOT/profile.plist"'
+        self.assertEqual(old_workflow.count(old_cms), 1)
+        self.assertEqual(outside_preflight(self.text),outside_preflight(old_workflow.replace(old_cms,new_cms)))
         self.assertIn("no_other_eligible_internal_users_confirmed", self.text)
         self.assertIn("BOTH", self.text)
 
@@ -924,6 +941,212 @@ class WorkflowTests(unittest.TestCase):
         for block in blocks:
             body = "\n".join(line[10:] if line.startswith("          ") else line for line in block.splitlines()) + "\n"
             subprocess.run([str(bash), "-n"], input=body, text=True, check=True, capture_output=True)
+
+
+
+class CmsSigningRepairTests(unittest.TestCase):
+    old_cms = 'security cms -D -i "$DIAGNOSTIC_PRIVATE_ROOT/distribution.mobileprovision" > "$DIAGNOSTIC_PRIVATE_ROOT/profile.plist"'
+    new_cms = 'security cms -D -k "$DIAGNOSTIC_PRIVATE_ROOT/signing.keychain-db" -i "$DIAGNOSTIC_PRIVATE_ROOT/distribution.mobileprovision" > "$DIAGNOSTIC_PRIVATE_ROOT/profile.plist"'
+
+    @staticmethod
+    def signing_body(text):
+        start = text.index("      - name: Install distribution signing\n")
+        end = text.index("      - name: Archive and export", start)
+        block = text[start:end].split("        run: |\n", 1)[1]
+        return "\n".join(line[10:] for line in block.splitlines()) + "\n"
+
+    def test_only_executable_workflow_change_is_explicit_cms_keychain(self):
+        previous = delivery.cert.git("show", delivery.CMS_BASE + ":.github/workflows/gridly-storekit-testflight-delivery.yml").decode()
+        current = WORKFLOW.read_text()
+        self.assertEqual(previous.count(self.old_cms), 1)
+        self.assertEqual(current.count(self.new_cms), 1)
+        self.assertNotIn(self.old_cms, current)
+        self.assertEqual(current.split("\non:\n",1)[1],
+                         previous.replace(self.old_cms,self.new_cms).split("\non:\n",1)[1])
+        self.assertEqual(self.signing_body(current), self.signing_body(previous).replace(self.old_cms,self.new_cms))
+
+    def test_cms_uses_the_created_unlocked_import_destination_without_fallback(self):
+        body = self.signing_body(WORKFLOW.read_text())
+        commands = [line for line in body.splitlines() if line.startswith("security ")]
+        cms = [line for line in commands if line.startswith("security cms ")]
+        self.assertEqual(cms, [self.new_cms])
+        keychain = '"$DIAGNOSTIC_PRIVATE_ROOT/signing.keychain-db"'
+        for prefix in ("security create-keychain ", "security unlock-keychain ", "security import "):
+            line = next(line for line in commands if line.startswith(prefix))
+            self.assertIn(keychain, line)
+            self.assertLess(body.index(line), body.index(self.new_cms))
+            if prefix=="security import ":
+                self.assertIn("-k " + keychain, line)
+        self.assertEqual(body.count("security cms "), 1)
+        self.assertNotIn("||", cms[0])
+        self.assertIn("set -euo pipefail\n", body)
+
+    def exercise_signing_boundary(self, fail=False, implicit_mutant=False):
+        # Execute only the production signing boundary with shell-function fakes.
+        # No security/OpenSSL tool, real key, certificate, profile or app is used.
+        bash = "C:/Program Files/Git/bin/bash.exe" if os.name=="nt" else "/bin/bash"
+        body = self.signing_body(WORKFLOW.read_text())
+        preamble = body[:body.index('test -n "$APPLE_DIST_PRIVATE_KEY_PEM_BASE64"')]
+        boundary = body[body.index('security create-keychain '):body.index("PROFILE_NAME=$(")]
+        if implicit_mutant:
+            boundary=boundary.replace(' -k "$DIAGNOSTIC_PRIVATE_ROOT/signing.keychain-db" -i ', ' -i ')
+        fake = r'''
+native_phase=0
+security() {
+  operation="$1"; shift
+  case "$operation" in
+    create-keychain)
+      last=""
+      for value in "$@"; do last="$value"; done
+      test "$last" = "$DIAGNOSTIC_PRIVATE_ROOT/signing.keychain-db" || return 71
+      printf OWNED_SYNTHETIC_KEYCHAIN > "$last"
+      native_phase=1;;
+    unlock-keychain)
+      last=""
+      for value in "$@"; do last="$value"; done
+      test "$native_phase" = 1 && test -f "$last" || return 72
+      test "$last" = "$DIAGNOSTIC_PRIVATE_ROOT/signing.keychain-db" || return 72
+      native_phase=2;;
+    import)
+      test "$native_phase" = 2 || return 73
+      import_key=""
+      while test "$#" -gt 0; do
+        if test "$1" = -k; then shift; import_key="$1"; fi
+        shift
+      done
+      test "$import_key" = "$DIAGNOSTIC_PRIVATE_ROOT/signing.keychain-db" || return 73
+      native_phase=3;;
+    set-key-partition-list|list-keychains)
+      test "$native_phase" = 3 || return 74;;
+    cms)
+      test "$native_phase" = 3 || return 75
+      cms_key=""
+      cms_input=""
+      while test "$#" -gt 0; do
+        case "$1" in -k) shift; cms_key="$1";; -i) shift; cms_input="$1";; esac
+        shift
+      done
+      test "$cms_key" = "$DIAGNOSTIC_PRIVATE_ROOT/signing.keychain-db" || return 76
+      test "$cms_input" = "$DIAGNOSTIC_PRIVATE_ROOT/distribution.mobileprovision" || return 77
+      test "$(cat "$cms_input")" = SYNTHETIC_PROFILE_BYTES || return 78
+      if test "$FAIL_CMS" = 1; then return 23; fi
+      printf SYNTHETIC_PLIST_ONLY;;
+    *) return 79;;
+  esac
+}
+'''
+        with tempfile.TemporaryDirectory(prefix="gridly-cms-repair-synthetic-") as temporary:
+            root=Path(temporary)
+            (root/"logs").mkdir();(root/"tmp").mkdir()
+            for name in ("distribution-private.key","distribution-cert.pem","distribution.p12"):
+                (root/name).write_text("SYNTHETIC_PRIVATE_NEVER_PUBLIC")
+            (root/"distribution.mobileprovision").write_text("SYNTHETIC_PROFILE_BYTES")
+            names=("PATH","SystemRoot","SYSTEMROOT","WINDIR","TEMP","TMP","PATHEXT","COMSPEC","ProgramFiles","PROGRAMFILES")
+            env={name:os.environ[name] for name in names if name in os.environ}
+            env.update(DIAGNOSTIC_PRIVATE_ROOT=str(root).replace("\\","/"),
+                       DELIVERY_SOURCE_DIR=str(root).replace("\\","/"), KEYCHAIN_PASSWORD="SYNTHETIC",
+                       TEMP_P12_PASSWORD="SYNTHETIC", FAIL_CMS="1" if fail else "0")
+            script=fake+preamble+boundary+'\nprintf VALIDATION_REACHED > "$DIAGNOSTIC_PRIVATE_ROOT/reached"\n'
+            result=subprocess.run([bash,"--noprofile","--norc","-e","-o","pipefail"],input=script,text=True,
+                                  capture_output=True,env=env)
+            expected=76 if implicit_mutant else 23 if fail else 0
+            self.assertEqual(result.returncode,expected)
+            self.assertEqual((root/"reached").exists(),not (fail or implicit_mutant))
+            self.assertTrue(all(not (root/name).exists() for name in
+                                ("distribution-private.key","distribution-cert.pem","distribution.p12")))
+            self.assertNotIn("SYNTHETIC_PRIVATE_NEVER_PUBLIC",result.stdout+result.stderr)
+
+    def test_actual_boundary_accepts_explicit_imported_identity_keychain(self):
+        self.exercise_signing_boundary()
+
+    def test_actual_boundary_rejects_cms_failure_before_profile_validation_and_cleans(self):
+        self.exercise_signing_boundary(fail=True)
+
+    def test_synthetic_boundary_detects_an_implicit_keychain_fallback(self):
+        self.exercise_signing_boundary(implicit_mutant=True)
+
+    def test_existing_functions_and_controls_are_unchanged_except_source_guard(self):
+        before=delivery.cert.git("show",delivery.CMS_BASE+":tools/apple_storekit_testflight_delivery.py").decode()
+        after=(ROOT/"tools/apple_storekit_testflight_delivery.py").read_text()
+        functions=lambda text:{node.name:ast.dump(node) for node in ast.parse(text).body if isinstance(node,ast.FunctionDef)}
+        original,current=functions(before),functions(after)
+        self.assertEqual(set(original),set(current))
+        for name in original.keys()-{"source_guard"}:
+            self.assertEqual(original[name],current[name],name)
+        nodes=lambda text:{n.targets[0].id:n.value for n in ast.parse(text).body
+                           if isinstance(n,ast.Assign) and isinstance(n.targets[0],ast.Name)}
+        old,new=nodes(before),nodes(after)
+        self.assertEqual(set(new)-set(old),{"REFINEMENT_BASE","SIGNING_BASE","CMS_BASE","SIGNING_FILES","CMS_FILES","REPAIR_FILES"})
+        for name,node in old.items():
+            if name=="HISTORICAL_TAGS":
+                self.assertIsInstance(new[name],ast.Dict)
+                self.assertEqual(len(new[name].keys),6)
+                retained=ast.Dict(keys=new[name].keys[:3],values=new[name].values[:3])
+                self.assertEqual(ast.dump(node),ast.dump(retained))
+            else:self.assertEqual(ast.dump(node),ast.dump(new[name]),name)
+        self.assertEqual(delivery.OWNER_CHECK_TTL,1800)
+
+    def test_exact_reviewed_history_and_all_six_authorization_tags(self):
+        self.assertEqual(delivery.REFINEMENT_BASE,"4c95caed0d261fca1dbaf86fc926660661d0643b")
+        self.assertEqual(delivery.SIGNING_BASE,"db4df3949b1f02325b8869433bbbd16b234487db")
+        self.assertEqual(delivery.CMS_BASE,"cbe3c297099dbca9c6d376848157de0253aeae39")
+        expected={
+            "gridly-storekit-diagnostic-certify-15-f9fc818321970b8b7e29df17358daf87a7d20308":
+                ("bb496cafcbeaf7d6aaf6574e6b5561ac242599fc",delivery.SOURCE),
+            "gridly-storekit-testflight-deliver-15-45bfe026b81f4928caceb9632cbf15e7ed842a25":
+                ("15a2d8093f31ccaea515b715e604c803d89af469",delivery.OWNER_CORRECTION),
+            "gridly-storekit-preflight-15-13e73183cf3f257fbc9acd9a32d34d62b70ffb1e":
+                ("41b9592697daf7898b66dd582b6da3af5dc8412d",delivery.PREFLIGHT_BASE),
+            "gridly-storekit-testflight-deliver-15-4c95caed0d261fca1dbaf86fc926660661d0643b":
+                ("e6425dadac56501e8b389efecd5c50d95501d823",delivery.REFINEMENT_BASE),
+            "gridly-storekit-signing-diagnostic-15-db4df3949b1f02325b8869433bbbd16b234487db":
+                ("ffa6924f2ec257f42a183f8f05daaccc66b85685",delivery.SIGNING_BASE),
+            "gridly-storekit-cms-diagnostic-15-cbe3c297099dbca9c6d376848157de0253aeae39":
+                ("975205d798d31197be41fe505a417064b519b63f",delivery.CMS_BASE),
+        }
+        self.assertEqual(delivery.HISTORICAL_TAGS,expected)
+        for child,parent in ((delivery.CMS_BASE,delivery.SIGNING_BASE),(delivery.SIGNING_BASE,delivery.REFINEMENT_BASE),
+                             (delivery.REFINEMENT_BASE,delivery.PREFLIGHT_BASE)):
+            self.assertEqual(delivery.cert.git("show","-s","--format=%P",child).decode().strip(),parent)
+        for commit,files in ((delivery.SIGNING_BASE,delivery.SIGNING_FILES),(delivery.CMS_BASE,delivery.CMS_FILES)):
+            for path in files:
+                historical = delivery.cert.git("show",commit+":"+path)
+                self.assertEqual(historical, delivery.cert.git("show",delivery.CMS_BASE+":"+path),path)
+                if path == "tests/storekit-signing-diagnostic.test.py":
+                    before,after = ast.parse(historical),ast.parse((ROOT/path).read_text())
+                    allowed = {"test_original_signing_commands_are_retained_in_order",
+                               "test_existing_tracked_runtime_workflows_and_baseline_are_unchanged"}
+                    def remove_aligned_methods(tree):
+                        for node in ast.walk(tree):
+                            if isinstance(node,ast.ClassDef):
+                                node.body = [n for n in node.body if not
+                                    (isinstance(n,ast.FunctionDef) and n.name in allowed)]
+                        return ast.dump(tree)
+                    self.assertEqual(remove_aligned_methods(before),remove_aligned_methods(after))
+                else:
+                    self.assertEqual((ROOT/path).read_bytes().replace(b"\r\n",b"\n"),historical,path)
+
+    def test_one_direct_child_requires_all_four_reviewed_modified_files_only(self):
+        self.assertEqual(delivery.REPAIR_FILES, delivery.FILES | {"tests/storekit-signing-diagnostic.test.py"})
+        records=["M\t"+path for path in sorted(delivery.REPAIR_FILES)]
+        bad=[records[:i]+records[i+1:] for i in range(4)]
+        bad += [records+[records[0]],["A\t"+path for path in sorted(delivery.REPAIR_FILES)],
+                records+["M\tjs/gridly-paid-ui.mjs"],
+                records+["M\ttools/apple_storekit_signing_diagnostic.py"],
+                records+["M\ttests/storekit-preflight-diagnostic.test.py"]]
+        for candidate in bad:
+            with self.subTest(candidate=candidate),patch.object(delivery.cert,"git",side_effect=source_git(
+                    correction="\n".join(candidate).encode())),patch.object(delivery.subprocess,"run"),\
+                    patch.object(delivery.cert,"original_contracts"),self.assertRaises(ValueError):
+                delivery.source_guard(COMMIT,True)
+
+    def test_historical_signing_and_cms_inventory_changes_are_rejected(self):
+        for options in ({"signing_inventory":b""},{"cms_inventory":b""},
+                        {"signing_inventory":b"A\tjs/gridly-paid-ui.mjs"},
+                        {"cms_inventory":b"M\ttools/apple_storekit_cms_diagnostic.py"}):
+            with self.subTest(options=options),patch.object(delivery.cert,"git",side_effect=source_git(**options)),\
+                    patch.object(delivery.subprocess,"run"),patch.object(delivery.cert,"original_contracts"),self.assertRaises(ValueError):
+                delivery.source_guard(COMMIT,True)
 
 
 if __name__ == "__main__":

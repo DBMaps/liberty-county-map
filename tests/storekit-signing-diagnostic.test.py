@@ -668,10 +668,42 @@ class ExecutionAndWorkflowTests(unittest.TestCase):
             subprocess.run([BASH, "-n"], input="\n".join(s[10:] for s in block.splitlines())+"\n", text=True, capture_output=True, check=True)
 
     def test_original_signing_commands_are_retained_in_order(self):
-        baseline = subprocess.check_output(["git", "show", d.BASE+":.github/workflows/gridly-storekit-testflight-delivery.yml"], cwd=ROOT).decode()
-        section = baseline.split("      - name: Install distribution signing\n", 1)[1].split("      - name: Archive and export", 1)[0]
+        path = ".github/workflows/gridly-storekit-testflight-delivery.yml"
+        baseline = subprocess.check_output(["git", "show", d.BASE+":"+path], cwd=ROOT).decode()
+        checkpoint = "cbe3c297099dbca9c6d376848157de0253aeae39"
+        historical = subprocess.check_output(["git", "show", checkpoint+":"+path], cwd=ROOT).decode()
+        def signing_section(text):
+            return text.split("      - name: Install distribution signing\n", 1)[1].split("      - name: Archive and export", 1)[0]
+        section = signing_section(baseline)
+        self.assertEqual(section, signing_section(historical))
+        original = 'security cms -D -i "$DIAGNOSTIC_PRIVATE_ROOT/distribution.mobileprovision" > "$DIAGNOSTIC_PRIVATE_ROOT/profile.plist"'
+        repaired = 'security cms -D -k "$DIAGNOSTIC_PRIVATE_ROOT/signing.keychain-db" -i "$DIAGNOSTIC_PRIVATE_ROOT/distribution.mobileprovision" > "$DIAGNOSTIC_PRIVATE_ROOT/profile.plist"'
+        self.assertEqual(section.count(original), 1)
+        expected = section.replace(original, repaired)
+        current = signing_section((ROOT/path).read_text())
+        def validate(candidate):
+            self.assertEqual(candidate, expected)
+            self.assertEqual(candidate.count(repaired), 1)
+            self.assertNotIn(original, candidate)
+            keychain = '"$DIAGNOSTIC_PRIVATE_ROOT/signing.keychain-db"'
+            commands = [line.strip() for line in candidate.splitlines() if line.strip().startswith("security ")]
+            setup = [next(line for line in commands if line.startswith("security "+operation))
+                     for operation in ("create-keychain ", "unlock-keychain ", "import ")]
+            positions = [candidate.index(line) for line in setup] + [candidate.index(repaired)]
+            self.assertEqual(positions, sorted(positions))
+            for line in setup:
+                self.assertIn(keychain, line)
+        validate(current)
+        for mutant in (section, expected.replace("security unlock-keychain", "security lock-keychain"),
+                       expected.replace(repaired, repaired.replace("signing.keychain-db", "other.keychain-db")),
+                       expected.replace(repaired, repaired.replace("distribution.mobileprovision", "other.mobileprovision")),
+                       expected.replace(repaired, repaired.replace("profile.plist", "other.plist")),
+                       expected + "          security list-keychains\n",
+                       expected.replace("          security unlock-keychain", "          # security unlock-keychain")):
+            with self.subTest(mutant="bounded signing mutation"), self.assertRaises(AssertionError):
+                validate(mutant)
         script = d.signing_script()
-        commands = [line[10:] for line in section.splitlines() if line.startswith("          ") and line[10:].startswith(
+        commands = [line[10:] for line in expected.splitlines() if line.startswith("          ") and line[10:].startswith(
             ("security ", "openssl ", "KEY_PUBLIC_SHA=", "CERT_PUBLIC_SHA=", "PROFILE_NAME=", "PROFILE_UUID=", "TEAM_ID=", "APP_ID="))]
         position = 0
         for command in commands:
@@ -748,8 +780,62 @@ class ExecutionAndWorkflowTests(unittest.TestCase):
             d.workspace(Path(tempfile.gettempdir()).anchor, "123456")
 
     def test_existing_tracked_runtime_workflows_and_baseline_are_unchanged(self):
-        changed = subprocess.check_output(["git", "diff", "--name-only", "HEAD"], cwd=ROOT)
-        self.assertEqual(changed, b"")
+        checkpoint = "cbe3c297099dbca9c6d376848157de0253aeae39"
+        authorized = {".github/workflows/gridly-storekit-testflight-delivery.yml",
+                      "tools/apple_storekit_testflight_delivery.py",
+                      "tests/storekit-testflight-delivery.test.py",
+                      "tests/storekit-signing-diagnostic.test.py"}
+        def git(*args):
+            return subprocess.check_output(["git", *args], cwd=ROOT).decode().strip()
+        expected = {"M\t"+path for path in authorized}
+        def validate(head, parents, records, modes, dirty, staged, untracked):
+            self.assertFalse(staged)
+            self.assertFalse(untracked)
+            self.assertEqual(set(records), expected)
+            self.assertEqual(len(records), 4)
+            self.assertEqual(modes, dict.fromkeys(authorized, "100644"))
+            if head == checkpoint:
+                self.assertIsNone(parents)
+                self.assertEqual(dirty, records)
+            else:
+                self.assertEqual(parents, checkpoint)
+                self.assertFalse(dirty)
+        head = git("rev-parse", "HEAD")
+        precommit = head == checkpoint
+        records = git("diff", "--name-status", "--no-renames", checkpoint).splitlines()
+        dirty = git("diff", "--name-status", "--no-renames", "HEAD").splitlines()
+        modes = {}
+        for path in authorized:
+            entry = git("ls-files", "--stage", "--", path).split()
+            self.assertEqual(entry[2], "0")
+            modes[path] = entry[0]
+            self.assertEqual(git("ls-tree", head, "--", path).split()[0], "100644")
+        parents = None if precommit else git("show", "-s", "--format=%P", head)
+        validate(head, parents, records, modes, dirty,
+                 git("diff", "--cached", "--name-only"), git("ls-files", "--others", "--exclude-standard"))
+        # Negative cases exercise both exact candidate scope and postcommit cleanliness.
+        valid = dict(head="1"*40, parents=checkpoint, records=sorted(expected),
+                     modes=dict.fromkeys(authorized, "100644"), dirty=[], staged="", untracked="")
+        mutations = [
+            {"records":sorted(expected)[:-1]}, {"records":sorted(expected)+[sorted(expected)[0]]},
+            {"records":sorted(expected)+["M\tjs/gridly-paid-ui.mjs"]},
+            {"records":[line.replace("M\t","A\t") for line in sorted(expected)]},
+            {"parents":checkpoint+" "+"2"*40}, {"parents":"2"*40},
+            {"dirty":["M\t"+next(iter(authorized))]}, {"staged":"unexpected"}, {"untracked":"unexpected"},
+            {"modes":dict.fromkeys(authorized,"100755")},
+            {"head":checkpoint,"parents":None,"dirty":[]},
+        ]
+        for mutation in mutations:
+            with self.subTest(mutation=mutation), self.assertRaises(AssertionError):
+                validate(**{**valid,**mutation})
+        # The original historical signing workflow/helper and test snapshot remain pinned.
+        signing = "db4df3949b1f02325b8869433bbbd16b234487db"
+        for path in (".github/workflows/gridly-storekit-signing-diagnostic.yml",
+                     "tools/apple_storekit_signing_diagnostic.py", "tests/storekit-signing-diagnostic.test.py"):
+            historical = subprocess.check_output(["git","show",signing+":"+path],cwd=ROOT)
+            self.assertEqual(historical, subprocess.check_output(["git","show",checkpoint+":"+path],cwd=ROOT))
+            if path != "tests/storekit-signing-diagnostic.test.py":
+                self.assertEqual((ROOT/path).read_bytes().replace(b"\r\n",b"\n"),historical)
         protected = [".github/workflows/gridly-apple-build-9.yml", "tools/apple_native_parity.py",
                      "ios/App/App/GridlyStoreKitPlugin.swift", "js/gridly-apple-storekit.mjs",
                      "js/gridly-paid-access.mjs", "js/gridly-paid-ui.mjs",

@@ -4,7 +4,8 @@ name: Gridly StoreKit Build 15 Internal TestFlight Delivery
 # reviewed and a NEW upload authorization is explicitly granted by the owner.
 # Separate annotated tag: gridly-storekit-testflight-deliver-15-<delivery-commit>
 # Pinned source chain: f9fc8183 -> bd5b1fea -> 45bfe026 -> 13e73183
-# -> ONE reviewed correction: three delivery files plus the preflight preservation test.
+# -> 4c95caed (four-file refinement) -> db4df394 (signing diagnostic)
+# -> cbe3c297 (CMS diagnostic) -> ONE direct-child repair of four reviewed support files.
 # Preflight workflow/helper, historical tags and certified diagnostic runtime stay frozen.
 # Strict disabled-automatic-distribution JSON (unchanged; no omitted/default/extra fields):
 # {"delivery_commit":"<reviewed-40-hex>","certified_source_commit":"f9fc818321970b8b7e29df17358daf87a7d20308",
@@ -179,7 +180,7 @@ jobs:
           security import "$DIAGNOSTIC_PRIVATE_ROOT/distribution.p12" -k "$DIAGNOSTIC_PRIVATE_ROOT/signing.keychain-db" -P "$TEMP_P12_PASSWORD" -T /usr/bin/codesign
           security set-key-partition-list -S apple-tool:,apple: -s -k "$KEYCHAIN_PASSWORD" "$DIAGNOSTIC_PRIVATE_ROOT/signing.keychain-db" >/dev/null
           security list-keychains -d user -s "$DIAGNOSTIC_PRIVATE_ROOT/signing.keychain-db"
-          security cms -D -i "$DIAGNOSTIC_PRIVATE_ROOT/distribution.mobileprovision" > "$DIAGNOSTIC_PRIVATE_ROOT/profile.plist"
+          security cms -D -k "$DIAGNOSTIC_PRIVATE_ROOT/signing.keychain-db" -i "$DIAGNOSTIC_PRIVATE_ROOT/distribution.mobileprovision" > "$DIAGNOSTIC_PRIVATE_ROOT/profile.plist"
           PROFILE_NAME=$(/usr/libexec/PlistBuddy -c 'Print :Name' "$DIAGNOSTIC_PRIVATE_ROOT/profile.plist")
           PROFILE_UUID=$(/usr/libexec/PlistBuddy -c 'Print :UUID' "$DIAGNOSTIC_PRIVATE_ROOT/profile.plist")
           TEAM_ID=$(/usr/libexec/PlistBuddy -c 'Print :TeamIdentifier:0' "$DIAGNOSTIC_PRIVATE_ROOT/profile.plist")

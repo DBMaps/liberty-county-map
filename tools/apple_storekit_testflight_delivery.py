@@ -21,6 +21,19 @@ SOURCE = "f9fc818321970b8b7e29df17358daf87a7d20308"
 DELIVERY_BASE = "bd5b1feac696ba7db0e7d8d271b054df1d25850b"
 OWNER_CORRECTION = "45bfe026b81f4928caceb9632cbf15e7ed842a25"
 PREFLIGHT_BASE = "13e73183cf3f257fbc9acd9a32d34d62b70ffb1e"
+REFINEMENT_BASE = "4c95caed0d261fca1dbaf86fc926660661d0643b"
+SIGNING_BASE = "db4df3949b1f02325b8869433bbbd16b234487db"
+CMS_BASE = "cbe3c297099dbca9c6d376848157de0253aeae39"
+SIGNING_FILES = {
+    ".github/workflows/gridly-storekit-signing-diagnostic.yml",
+    "tools/apple_storekit_signing_diagnostic.py",
+    "tests/storekit-signing-diagnostic.test.py",
+}
+CMS_FILES = {
+    ".github/workflows/gridly-storekit-cms-diagnostic.yml",
+    "tools/apple_storekit_cms_diagnostic.py",
+    "tests/storekit-cms-diagnostic.test.py",
+}
 PREFLIGHT_FILES = {
     ".github/workflows/gridly-storekit-preflight-diagnostic.yml",
     "tools/apple_storekit_preflight_diagnostic.py",
@@ -47,8 +60,10 @@ FILES = {
     "tools/apple_storekit_testflight_delivery.py",
     "tests/storekit-testflight-delivery.test.py",
 }
-# Exactly one reviewed refinement after PREFLIGHT_BASE; no general exclusions.
+# The historical four-file refinement is pinned at REFINEMENT_BASE.
+# Only one new direct child of CMS_BASE may modify exactly REPAIR_FILES.
 REFINEMENT_FILES = FILES | {"tests/storekit-preflight-diagnostic.test.py"}
+REPAIR_FILES = FILES | {"tests/storekit-signing-diagnostic.test.py"}
 HISTORICAL_TAGS = {
     "gridly-storekit-diagnostic-certify-15-" + SOURCE:
         ("bb496cafcbeaf7d6aaf6574e6b5561ac242599fc", SOURCE),
@@ -56,6 +71,12 @@ HISTORICAL_TAGS = {
         ("15a2d8093f31ccaea515b715e604c803d89af469", OWNER_CORRECTION),
     "gridly-storekit-preflight-15-" + PREFLIGHT_BASE:
         ("41b9592697daf7898b66dd582b6da3af5dc8412d", PREFLIGHT_BASE),
+    "gridly-storekit-testflight-deliver-15-" + REFINEMENT_BASE:
+        ("e6425dadac56501e8b389efecd5c50d95501d823", REFINEMENT_BASE),
+    "gridly-storekit-signing-diagnostic-15-" + SIGNING_BASE:
+        ("ffa6924f2ec257f42a183f8f05daaccc66b85685", SIGNING_BASE),
+    "gridly-storekit-cms-diagnostic-15-" + CMS_BASE:
+        ("975205d798d31197be41fe505a417064b519b63f", CMS_BASE),
 }
 
 CONFIRMATIONS = {
@@ -147,11 +168,12 @@ def authorize(ref, commit, event_path, attempt):
 
 def source_guard(commit, clean):
     require(re.fullmatch(r"[0-9a-f]{40}", commit or ""), "exact source SHA required")
-    pinned = {SOURCE, DELIVERY_BASE, OWNER_CORRECTION, PREFLIGHT_BASE}
+    pinned = {SOURCE, DELIVERY_BASE, OWNER_CORRECTION, PREFLIGHT_BASE, REFINEMENT_BASE, SIGNING_BASE, CMS_BASE}
     require(cert.git("rev-parse", "HEAD").decode().strip() == commit and commit not in pinned,
             "new reviewed delivery-support commit required")
     for child, parent in (
-        (commit, PREFLIGHT_BASE), (PREFLIGHT_BASE, OWNER_CORRECTION),
+        (commit, CMS_BASE), (CMS_BASE, SIGNING_BASE), (SIGNING_BASE, REFINEMENT_BASE),
+        (REFINEMENT_BASE, PREFLIGHT_BASE), (PREFLIGHT_BASE, OWNER_CORRECTION),
         (OWNER_CORRECTION, DELIVERY_BASE), (DELIVERY_BASE, SOURCE),
     ):
         require(cert.git("show", "-s", "--format=%P", child).decode().strip() == parent,
@@ -169,13 +191,16 @@ def source_guard(commit, clean):
         (SOURCE, DELIVERY_BASE, "A", FILES),
         (DELIVERY_BASE, OWNER_CORRECTION, "M", FILES),
         (OWNER_CORRECTION, PREFLIGHT_BASE, "A", PREFLIGHT_FILES),
-        (PREFLIGHT_BASE, commit, "M", REFINEMENT_FILES),
-        (SOURCE, commit, "A", FILES | PREFLIGHT_FILES),
+        (PREFLIGHT_BASE, REFINEMENT_BASE, "M", REFINEMENT_FILES),
+        (REFINEMENT_BASE, SIGNING_BASE, "A", SIGNING_FILES),
+        (SIGNING_BASE, CMS_BASE, "A", CMS_FILES),
+        (CMS_BASE, commit, "M", REPAIR_FILES),
+        (SOURCE, commit, "A", FILES | PREFLIGHT_FILES | SIGNING_FILES | CMS_FILES),
     ):
         records = cert.git("diff", "--name-status", "--no-renames", base, target).decode().splitlines()
         require(set(records) == {status + "\t" + path for path in inventory} and len(records) == len(inventory),
-                "exact four-file refinement required; all other source frozen")
-    for path in FILES | PREFLIGHT_FILES:
+                "exact historical inventories and four-file CMS repair required; all other source frozen")
+    for path in FILES | PREFLIGHT_FILES | SIGNING_FILES | CMS_FILES:
         require(cert.git("ls-tree", commit, "--", path).decode().split()[0] == "100644", "support file mode changed")
     require(not cert.git("diff", "--name-only", "HEAD"), "tracked working source changed")
     require(not cert.git("diff", "--cached", "--name-only"), "staged source changed")
