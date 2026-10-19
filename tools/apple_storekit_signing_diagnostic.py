@@ -16,6 +16,34 @@ from pathlib import Path
 import apple_native_parity as release
 
 BASE = "4c95caed0d261fca1dbaf86fc926660661d0643b"
+# BASE remains the original delivery identity in the unchanged owner contract.
+SOURCE = "f9fc818321970b8b7e29df17358daf87a7d20308"
+DELIVERY = "bd5b1feac696ba7db0e7d8d271b054df1d25850b"
+OWNER = "45bfe026b81f4928caceb9632cbf15e7ed842a25"
+PREFLIGHT = "13e73183cf3f257fbc9acd9a32d34d62b70ffb1e"
+SIGNING = "db4df3949b1f02325b8869433bbbd16b234487db"
+CMS = "cbe3c297099dbca9c6d376848157de0253aeae39"
+REPAIR = "17e36af1f5a8cc5f7f8ed927fb3e7fae758ee991"
+SUPPORT_FILES = {
+    "tools/apple_storekit_signing_diagnostic.py",
+    "tests/storekit-signing-diagnostic.test.py",
+    "tests/storekit-testflight-delivery.test.py",
+}
+DELIVERY_FILES = {
+    ".github/workflows/gridly-storekit-testflight-delivery.yml",
+    "tools/apple_storekit_testflight_delivery.py",
+    "tests/storekit-testflight-delivery.test.py",
+}
+PREFLIGHT_FILES = {
+    ".github/workflows/gridly-storekit-preflight-diagnostic.yml",
+    "tools/apple_storekit_preflight_diagnostic.py",
+    "tests/storekit-preflight-diagnostic.test.py",
+}
+CMS_FILES = {
+    ".github/workflows/gridly-storekit-cms-diagnostic.yml",
+    "tools/apple_storekit_cms_diagnostic.py",
+    "tests/storekit-cms-diagnostic.test.py",
+}
 PREFIX = "refs/tags/gridly-storekit-signing-diagnostic-15-"
 FILES = {
     ".github/workflows/gridly-storekit-signing-diagnostic.yml",
@@ -25,6 +53,7 @@ FILES = {
 REPOSITORY = "DBMaps/liberty-county-map"
 DIAGNOSTIC_BRANCH = "refs/remotes/origin/codex/storekit-diagnostics"
 CHAIN = (
+    (REPAIR, CMS), (CMS, SIGNING), (SIGNING, BASE),
     (BASE, "13e73183cf3f257fbc9acd9a32d34d62b70ffb1e"),
     ("13e73183cf3f257fbc9acd9a32d34d62b70ffb1e", "45bfe026b81f4928caceb9632cbf15e7ed842a25"),
     ("45bfe026b81f4928caceb9632cbf15e7ed842a25", "bd5b1feac696ba7db0e7d8d271b054df1d25850b"),
@@ -39,7 +68,20 @@ HISTORY = {
         ("41b9592697daf7898b66dd582b6da3af5dc8412d", "13e73183cf3f257fbc9acd9a32d34d62b70ffb1e"),
     "gridly-storekit-testflight-deliver-15-" + BASE:
         ("e6425dadac56501e8b389efecd5c50d95501d823", BASE),
+    "gridly-storekit-signing-diagnostic-15-" + SIGNING:
+        ("ffa6924f2ec257f42a183f8f05daaccc66b85685", SIGNING),
+    "gridly-storekit-cms-diagnostic-15-" + CMS:
+        ("975205d798d31197be41fe505a417064b519b63f", CMS),
 }
+HISTORICAL_INVENTORIES = (
+    (SOURCE, DELIVERY, "A", DELIVERY_FILES),
+    (DELIVERY, OWNER, "M", DELIVERY_FILES),
+    (OWNER, PREFLIGHT, "A", PREFLIGHT_FILES),
+    (PREFLIGHT, BASE, "M", DELIVERY_FILES | {"tests/storekit-preflight-diagnostic.test.py"}),
+    (BASE, SIGNING, "A", FILES),
+    (SIGNING, CMS, "A", CMS_FILES),
+    (CMS, REPAIR, "M", DELIVERY_FILES | {"tests/storekit-signing-diagnostic.test.py"}),
+)
 MARKER = "gridly-signing-only-v1"
 INPUTS = ("APPLE_DIST_PRIVATE_KEY_PEM_BASE64", "APPLE_DIST_CERT_PEM_BASE64",
           "APPLE_PROVISION_PROFILE_BASE64")
@@ -140,15 +182,17 @@ def emit(records, stream=None):
 
 
 def source_guard(commit):
-    require(isinstance(commit, str) and re.fullmatch(r"[0-9a-f]{40}", commit) and commit != BASE)
+    # Only the exact reviewed repair plus ONE three-file support child is accepted.
+    require(isinstance(commit, str) and re.fullmatch(r"[0-9a-f]{40}", commit) and commit != REPAIR)
     require(git("rev-parse", "HEAD").decode().strip() == commit)
-    require(git("show", "-s", "--format=%P", commit).decode().strip() == BASE)
+    require(git("show", "-s", "--format=%P", commit).decode().strip() == REPAIR)
     for child, parent in CHAIN:
         require(git("show", "-s", "--format=%P", child).decode().strip() == parent)
-    rows = git("diff", "--name-status", "--no-renames", BASE, commit).decode().splitlines()
-    require(len(rows) == 3 and set(rows) == {"A\t" + p for p in FILES})
-    for path in FILES:
-        require(git("ls-tree", commit, "--", path).decode().split()[0] == "100644")
+    for base, target, status, files in (*HISTORICAL_INVENTORIES, (REPAIR, commit, "M", SUPPORT_FILES)):
+        rows = git("diff", "--name-status", "--no-renames", base, target).decode().splitlines()
+        require(len(rows) == len(files) and set(rows) == {status+"\t"+p for p in files})
+        for path in files:
+            require(git("ls-tree", target, "--", path).decode().split()[0] == "100644")
     for name, (obj, target) in HISTORY.items():
         ref = "refs/tags/" + name
         require(git("rev-parse", "--verify", ref).decode().strip() == obj)

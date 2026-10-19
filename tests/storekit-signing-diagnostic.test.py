@@ -56,9 +56,9 @@ def fixture(parent):
 def source_git(**changes):
     values = {
         ("rev-parse", "HEAD"): COMMIT.encode(),
-        ("show", "-s", "--format=%P", COMMIT): d.BASE.encode(),
-        ("diff", "--name-status", "--no-renames", d.BASE, COMMIT):
-            "\n".join("A\t" + p for p in sorted(d.FILES)).encode(),
+        ("show", "-s", "--format=%P", COMMIT): d.REPAIR.encode(),
+        ("diff", "--name-status", "--no-renames", d.REPAIR, COMMIT):
+            "\n".join("M\t" + p for p in sorted(d.SUPPORT_FILES)).encode(),
         ("status", "--porcelain=v1", "--untracked-files=normal"): b"",
         ("rev-parse", "--verify", d.DIAGNOSTIC_BRANCH): COMMIT.encode(),
         ("cat-file", "-t", REF): b"tag",
@@ -69,7 +69,11 @@ def source_git(**changes):
     }
     for child, parent in d.CHAIN:
         values[("show", "-s", "--format=%P", child)] = parent.encode()
-    for path in d.FILES:
+    for base,target,status,files in d.HISTORICAL_INVENTORIES:
+        values[("diff", "--name-status", "--no-renames", base, target)] = "\n".join(status+"\t"+p for p in sorted(files)).encode()
+        for path in files:
+            values[("ls-tree", target, "--", path)] = ("100644 blob "+"0"*40+"\t"+path).encode()
+    for path in d.SUPPORT_FILES:
         values[("ls-tree", COMMIT, "--", path)] = ("100644 blob " + "0"*40 + "\t" + path).encode()
     for name, (obj, target) in d.HISTORY.items():
         ref = "refs/tags/" + name
@@ -119,15 +123,16 @@ class AuthorizationAndSourceTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             json.loads('{"authorized":true,"authorized":false}', object_pairs_hook=d.unique_json_object)
 
-    def test_exact_three_additions_and_all_history_pass(self):
+    def test_exact_three_successor_modifications_and_all_history_pass(self):
         with patch.object(d, "git", side_effect=source_git()):
             d.source_guard(COMMIT)
 
     def test_extra_missing_renamed_modified_or_duplicate_inventory_fails(self):
-        rows = ["A\t" + p for p in sorted(d.FILES)]
+        rows = ["M\t" + p for p in sorted(d.SUPPORT_FILES)]
         bad = [rows[:-1], rows + [rows[0]], rows + ["M\tjs/gridly-paid-ui.mjs"],
-               ["M\t" + p for p in d.FILES], rows + ["A\tunexpected.txt"]]
-        key = ("diff", "--name-status", "--no-renames", d.BASE, COMMIT)
+               ["A\t" + p for p in d.SUPPORT_FILES], rows + ["A\tunexpected.txt"], rows + ["M\t.github/workflows/gridly-storekit-signing-diagnostic.yml"],
+               rows + ["M\t.github/workflows/gridly-storekit-testflight-delivery.yml"]]
+        key = ("diff", "--name-status", "--no-renames", d.REPAIR, COMMIT)
         for value in bad:
             with self.subTest(value=value), patch.object(d, "git", side_effect=source_git(values={key: "\n".join(value).encode()})), self.assertRaises(ValueError):
                 d.source_guard(COMMIT)
@@ -136,9 +141,10 @@ class AuthorizationAndSourceTests(unittest.TestCase):
         for key, value in [
             (("rev-parse", "HEAD"), b"9"*40),
             (("show", "-s", "--format=%P", COMMIT), b"9"*40),
-            (("show", "-s", "--format=%P", COMMIT), (d.BASE+" "+"9"*40).encode()),
+            (("show", "-s", "--format=%P", COMMIT), (d.REPAIR+" "+"9"*40).encode()),
             (("status", "--porcelain=v1", "--untracked-files=normal"), b"?? unexpected"),
             *[(("show", "-s", "--format=%P", child), b"9"*40) for child, _ in d.CHAIN],
+            *[(("show", "-s", "--format=%P", child), (parent+" "+"9"*40).encode()) for child,parent in d.CHAIN],
         ]:
             with self.subTest(key=key), patch.object(d, "git", side_effect=source_git(values={key: value})), self.assertRaises(ValueError):
                 d.source_guard(COMMIT)
@@ -156,11 +162,79 @@ class AuthorizationAndSourceTests(unittest.TestCase):
                     d.source_guard(COMMIT)
 
     def test_all_three_modes_must_remain_100644(self):
-        for path in d.FILES:
+        for path in d.SUPPORT_FILES:
             for mode in ("100755", "120000"):
                 key = ("ls-tree", COMMIT, "--", path)
                 with self.subTest(path=path, mode=mode), patch.object(d, "git", side_effect=source_git(values={key: (mode+" blob "+"0"*40+"\t"+path).encode()})), self.assertRaises(ValueError):
                     d.source_guard(COMMIT)
+
+    def test_reviewed_successor_constants_history_and_inventories_are_exact(self):
+        import apple_storekit_testflight_delivery as frozen
+        self.assertEqual(d.REPAIR,"17e36af1f5a8cc5f7f8ed927fb3e7fae758ee991")
+        self.assertEqual((d.SOURCE,d.DELIVERY,d.OWNER,d.PREFLIGHT,d.BASE,d.SIGNING,d.CMS),
+            ("f9fc818321970b8b7e29df17358daf87a7d20308","bd5b1feac696ba7db0e7d8d271b054df1d25850b",
+             "45bfe026b81f4928caceb9632cbf15e7ed842a25","13e73183cf3f257fbc9acd9a32d34d62b70ffb1e",
+             "4c95caed0d261fca1dbaf86fc926660661d0643b","db4df3949b1f02325b8869433bbbd16b234487db",
+             "cbe3c297099dbca9c6d376848157de0253aeae39"))
+        self.assertEqual(d.CHAIN,((d.REPAIR,d.CMS),(d.CMS,d.SIGNING),(d.SIGNING,d.BASE),
+            (d.BASE,d.PREFLIGHT),(d.PREFLIGHT,d.OWNER),(d.OWNER,d.DELIVERY),(d.DELIVERY,d.SOURCE)))
+        self.assertEqual(d.SUPPORT_FILES,{"tools/apple_storekit_signing_diagnostic.py",
+            "tests/storekit-signing-diagnostic.test.py","tests/storekit-testflight-delivery.test.py"})
+        self.assertEqual(d.DELIVERY_FILES,frozen.FILES)
+        self.assertEqual(d.PREFLIGHT_FILES,frozen.PREFLIGHT_FILES)
+        self.assertEqual(d.CMS_FILES,frozen.CMS_FILES)
+        self.assertEqual(d.HISTORY,frozen.HISTORICAL_TAGS)
+        self.assertEqual(d.HISTORICAL_INVENTORIES,(
+            (d.SOURCE,d.DELIVERY,"A",d.DELIVERY_FILES),(d.DELIVERY,d.OWNER,"M",d.DELIVERY_FILES),
+            (d.OWNER,d.PREFLIGHT,"A",d.PREFLIGHT_FILES),
+            (d.PREFLIGHT,d.BASE,"M",d.DELIVERY_FILES|{"tests/storekit-preflight-diagnostic.test.py"}),
+            (d.BASE,d.SIGNING,"A",d.FILES),(d.SIGNING,d.CMS,"A",d.CMS_FILES),
+            (d.CMS,d.REPAIR,"M",d.DELIVERY_FILES|{"tests/storekit-signing-diagnostic.test.py"})))
+        for child,parent in d.CHAIN:
+            self.assertEqual(d.git("show","-s","--format=%P",child).decode().strip(),parent)
+        for base,target,status,files in d.HISTORICAL_INVENTORIES:
+            rows=d.git("diff","--name-status","--no-renames",base,target).decode().splitlines()
+            self.assertEqual(set(rows),{status+"\t"+p for p in files})
+            self.assertEqual(len(rows),len(files))
+            for path in files:
+                self.assertEqual(d.git("ls-tree",target,"--",path).decode().split()[0],"100644")
+
+    def test_each_historical_inventory_and_mode_change_fails_closed(self):
+        for base,target,status,files in d.HISTORICAL_INVENTORIES:
+            rows=[status+"\t"+p for p in sorted(files)]
+            key=("diff","--name-status","--no-renames",base,target)
+            bad=[rows[:-1],rows+[rows[0]],rows+["M\tjs/gridly-paid-ui.mjs"],
+                 [("M" if status=="A" else "A")+"\t"+p for p in sorted(files)]]
+            for candidate in bad:
+                with self.subTest(target=target),patch.object(d,"git",side_effect=source_git(values={
+                        key:"\n".join(candidate).encode()})),self.assertRaises(ValueError):
+                    d.source_guard(COMMIT)
+            for path in files:
+                key=("ls-tree",target,"--",path)
+                for mode in ("100755","120000"):
+                    with self.subTest(target=target,path=path,mode=mode),patch.object(d,"git",side_effect=source_git(values={
+                            key:(mode+" blob "+"0"*40+"\t"+path).encode()})),self.assertRaises(ValueError):
+                        d.source_guard(COMMIT)
+
+    def test_only_source_authorization_changes_preserve_all_native_and_security_functions(self):
+        baseline=d.git("show",d.REPAIR+":tools/apple_storekit_signing_diagnostic.py").decode()
+        current=(ROOT/"tools/apple_storekit_signing_diagnostic.py").read_text()
+        functions=lambda text:{n.name:ast.dump(n) for n in ast.parse(text).body if isinstance(n,ast.FunctionDef)}
+        before,after=functions(baseline),functions(current)
+        self.assertEqual(set(before),set(after))
+        for name in before.keys()-{"source_guard"}:
+            self.assertEqual(before[name],after[name],name)
+        assignments=lambda text:{n.targets[0].id:n.value for n in ast.parse(text).body
+            if isinstance(n,ast.Assign) and isinstance(n.targets[0],ast.Name)}
+        before,after=assignments(baseline),assignments(current)
+        self.assertEqual(set(after)-set(before),{"SOURCE","DELIVERY","OWNER","PREFLIGHT","SIGNING","CMS","REPAIR",
+            "SUPPORT_FILES","DELIVERY_FILES","PREFLIGHT_FILES","CMS_FILES","HISTORICAL_INVENTORIES"})
+        for name,value in before.items():
+            if name=="CHAIN":
+                self.assertEqual(ast.dump(value),ast.dump(ast.Tuple(elts=after[name].elts[3:],ctx=ast.Load())))
+            elif name=="HISTORY":
+                self.assertEqual(ast.dump(value),ast.dump(ast.Dict(keys=after[name].keys[:4],values=after[name].values[:4])))
+            else:self.assertEqual(ast.dump(value),ast.dump(after[name]),name)
 
     def authorization_case(self, change=None, event_change=None, git_change=None):
         with tempfile.TemporaryDirectory(prefix="gridly-sign-auth-") as temporary:
@@ -740,7 +814,17 @@ class ExecutionAndWorkflowTests(unittest.TestCase):
         import fnmatch
         pattern = d.PREFIX.removeprefix("refs/tags/") + "*"
         for name in [*d.HISTORY, "codex/storekit-diagnostics"]:
-            self.assertFalse(fnmatch.fnmatchcase(name, pattern))
+            if fnmatch.fnmatchcase(name, pattern):
+                # The immutable old signing tag shares the filter, but its source
+                # and sole parent cannot authorize this exact repaired successor.
+                self.assertEqual(d.HISTORY[name][1],d.SIGNING)
+                old=d.HISTORY[name][1]
+                changes={("rev-parse","HEAD"):old.encode(),
+                         ("show","-s","--format=%P",old):d.BASE.encode()}
+                with patch.object(d,"git",side_effect=source_git(values=changes)),self.assertRaises(ValueError):
+                    d.source_guard(old)
+            else:
+                self.assertFalse(fnmatch.fnmatchcase(name, pattern))
         self.assertTrue(fnmatch.fnmatchcase(REF.removeprefix("refs/tags/"), pattern))
 
     def test_no_path_exports_or_parent_home_mutation(self):
@@ -780,9 +864,8 @@ class ExecutionAndWorkflowTests(unittest.TestCase):
             d.workspace(Path(tempfile.gettempdir()).anchor, "123456")
 
     def test_existing_tracked_runtime_workflows_and_baseline_are_unchanged(self):
-        checkpoint = "cbe3c297099dbca9c6d376848157de0253aeae39"
-        authorized = {".github/workflows/gridly-storekit-testflight-delivery.yml",
-                      "tools/apple_storekit_testflight_delivery.py",
+        checkpoint = "17e36af1f5a8cc5f7f8ed927fb3e7fae758ee991"
+        authorized = {"tools/apple_storekit_signing_diagnostic.py",
                       "tests/storekit-testflight-delivery.test.py",
                       "tests/storekit-signing-diagnostic.test.py"}
         def git(*args):
@@ -792,7 +875,7 @@ class ExecutionAndWorkflowTests(unittest.TestCase):
             self.assertFalse(staged)
             self.assertFalse(untracked)
             self.assertEqual(set(records), expected)
-            self.assertEqual(len(records), 4)
+            self.assertEqual(len(records), 3)
             self.assertEqual(modes, dict.fromkeys(authorized, "100644"))
             if head == checkpoint:
                 self.assertIsNone(parents)
@@ -813,6 +896,8 @@ class ExecutionAndWorkflowTests(unittest.TestCase):
         parents = None if precommit else git("show", "-s", "--format=%P", head)
         validate(head, parents, records, modes, dirty,
                  git("diff", "--cached", "--name-only"), git("ls-files", "--others", "--exclude-standard"))
+        if not precommit:
+            d.source_guard(head)
         # Negative cases exercise both exact candidate scope and postcommit cleanliness.
         valid = dict(head="1"*40, parents=checkpoint, records=sorted(expected),
                      modes=dict.fromkeys(authorized, "100644"), dirty=[], staged="", untracked="")
@@ -833,8 +918,9 @@ class ExecutionAndWorkflowTests(unittest.TestCase):
         for path in (".github/workflows/gridly-storekit-signing-diagnostic.yml",
                      "tools/apple_storekit_signing_diagnostic.py", "tests/storekit-signing-diagnostic.test.py"):
             historical = subprocess.check_output(["git","show",signing+":"+path],cwd=ROOT)
-            self.assertEqual(historical, subprocess.check_output(["git","show",checkpoint+":"+path],cwd=ROOT))
-            if path != "tests/storekit-signing-diagnostic.test.py":
+            historical_checkpoint = "cbe3c297099dbca9c6d376848157de0253aeae39" if path == "tests/storekit-signing-diagnostic.test.py" else checkpoint
+            self.assertEqual(historical, subprocess.check_output(["git","show",historical_checkpoint+":"+path],cwd=ROOT))
+            if path == ".github/workflows/gridly-storekit-signing-diagnostic.yml":
                 self.assertEqual((ROOT/path).read_bytes().replace(b"\r\n",b"\n"),historical)
         protected = [".github/workflows/gridly-apple-build-9.yml", "tools/apple_native_parity.py",
                      "ios/App/App/GridlyStoreKitPlugin.swift", "js/gridly-apple-storekit.mjs",

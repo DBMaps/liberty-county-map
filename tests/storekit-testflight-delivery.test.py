@@ -1112,19 +1112,75 @@ security() {
             for path in files:
                 historical = delivery.cert.git("show",commit+":"+path)
                 self.assertEqual(historical, delivery.cert.git("show",delivery.CMS_BASE+":"+path),path)
-                if path == "tests/storekit-signing-diagnostic.test.py":
-                    before,after = ast.parse(historical),ast.parse((ROOT/path).read_text())
-                    allowed = {"test_original_signing_commands_are_retained_in_order",
-                               "test_existing_tracked_runtime_workflows_and_baseline_are_unchanged"}
-                    def remove_aligned_methods(tree):
-                        for node in ast.walk(tree):
-                            if isinstance(node,ast.ClassDef):
-                                node.body = [n for n in node.body if not
-                                    (isinstance(n,ast.FunctionDef) and n.name in allowed)]
-                        return ast.dump(tree)
-                    self.assertEqual(remove_aligned_methods(before),remove_aligned_methods(after))
-                else:
+                if path not in {"tools/apple_storekit_signing_diagnostic.py","tests/storekit-signing-diagnostic.test.py"}:
                     self.assertEqual((ROOT/path).read_bytes().replace(b"\r\n",b"\n"),historical,path)
+        checkpoint="17e36af1f5a8cc5f7f8ed927fb3e7fae758ee991"
+        support={"tools/apple_storekit_signing_diagnostic.py","tests/storekit-signing-diagnostic.test.py",
+                 "tests/storekit-testflight-delivery.test.py"}
+        def git(*args):
+            return delivery.cert.git(*args).decode().strip()
+        rows=git("diff","--name-status","--no-renames",checkpoint).splitlines()
+        self.assertEqual(set(rows),{"M\t"+path for path in support})
+        self.assertEqual(len(rows),3)
+        self.assertFalse(git("diff","--cached","--name-only"))
+        self.assertFalse(git("ls-files","--others","--exclude-standard"))
+        head=git("rev-parse","HEAD")
+        if head==checkpoint:
+            self.assertEqual(rows,git("diff","--name-status","--no-renames","HEAD").splitlines())
+        else:
+            self.assertEqual(git("show","-s","--format=%P",head),checkpoint)
+            self.assertFalse(git("status","--porcelain=v1","--untracked-files=all"))
+        for path in support:
+            entry=git("ls-files","--stage","--",path).split()
+            self.assertEqual((entry[0],entry[2]),("100644","0"))
+            self.assertEqual(git("ls-tree",head,"--",path).split()[0],"100644")
+        # Preserve every historical blob; allow ONLY source authorization changes
+        # relative to the exact repaired checkpoint in the current helper.
+        helper="tools/apple_storekit_signing_diagnostic.py"
+        before=ast.parse(delivery.cert.git("show",checkpoint+":"+helper))
+        after=ast.parse((ROOT/helper).read_text())
+        auth_constants={"SOURCE","DELIVERY","OWNER","PREFLIGHT","SIGNING","CMS","REPAIR","SUPPORT_FILES",
+                        "DELIVERY_FILES","PREFLIGHT_FILES","CMS_FILES","HISTORICAL_INVENTORIES","CHAIN","HISTORY"}
+        def strip_authorization(tree):
+            tree=copy.deepcopy(tree)
+            tree.body=[node for node in tree.body if not
+                (isinstance(node,ast.FunctionDef) and node.name=="source_guard") and not
+                (isinstance(node,ast.Assign) and isinstance(node.targets[0],ast.Name)
+                 and node.targets[0].id in auth_constants)]
+            return ast.dump(tree)
+        self.assertEqual(strip_authorization(before),strip_authorization(after))
+        # Mutation checks prove native/security functions and controls stay protected.
+        for function in ("signing_script","run_signing","cleanup","authorization","authorize","emit","child_environment"):
+            mutant=copy.deepcopy(after)
+            node=next(n for n in mutant.body if isinstance(n,ast.FunctionDef) and n.name==function)
+            node.body.append(ast.Pass())
+            self.assertNotEqual(strip_authorization(before),strip_authorization(mutant),function)
+        mutant=copy.deepcopy(after)
+        node=next(n for n in mutant.body if isinstance(n,ast.Assign) and isinstance(n.targets[0],ast.Name)
+                  and n.targets[0].id=="INPUTS")
+        node.value=ast.Constant(value="UNAPPROVED_SECRET_CHANGE")
+        self.assertNotEqual(strip_authorization(before),strip_authorization(mutant))
+        tests="tests/storekit-signing-diagnostic.test.py"
+        before=ast.parse(delivery.cert.git("show",checkpoint+":"+tests))
+        after=ast.parse((ROOT/tests).read_text())
+        allowed={"source_git","test_exact_three_additions_and_all_history_pass",
+                 "test_exact_three_successor_modifications_and_all_history_pass",
+                 "test_extra_missing_renamed_modified_or_duplicate_inventory_fails",
+                 "test_extra_commits_merges_wrong_parents_and_dirty_source_fail",
+                 "test_all_three_modes_must_remain_100644",
+                 "test_existing_tracked_runtime_workflows_and_baseline_are_unchanged",
+                 "test_older_tags_and_branch_pushes_cannot_match_new_workflow",
+                 "test_reviewed_successor_constants_history_and_inventories_are_exact",
+                 "test_each_historical_inventory_and_mode_change_fails_closed",
+                 "test_only_source_authorization_changes_preserve_all_native_and_security_functions"}
+        def strip_source_expectations(tree):
+            tree=copy.deepcopy(tree)
+            tree.body=[n for n in tree.body if not (isinstance(n,ast.FunctionDef) and n.name in allowed)]
+            for node in ast.walk(tree):
+                if isinstance(node,ast.ClassDef):
+                    node.body=[n for n in node.body if not (isinstance(n,ast.FunctionDef) and n.name in allowed)]
+            return ast.dump(tree)
+        self.assertEqual(strip_source_expectations(before),strip_source_expectations(after))
 
     def test_one_direct_child_requires_all_four_reviewed_modified_files_only(self):
         self.assertEqual(delivery.REPAIR_FILES, delivery.FILES | {"tests/storekit-signing-diagnostic.test.py"})
