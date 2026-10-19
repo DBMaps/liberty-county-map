@@ -19,6 +19,26 @@ import apple_storekit_diagnostic_certification as cert
 
 SOURCE = "f9fc818321970b8b7e29df17358daf87a7d20308"
 DELIVERY_BASE = "bd5b1feac696ba7db0e7d8d271b054df1d25850b"
+OWNER_CORRECTION = "45bfe026b81f4928caceb9632cbf15e7ed842a25"
+PREFLIGHT_BASE = "13e73183cf3f257fbc9acd9a32d34d62b70ffb1e"
+PREFLIGHT_FILES = {
+    ".github/workflows/gridly-storekit-preflight-diagnostic.yml",
+    "tools/apple_storekit_preflight_diagnostic.py",
+    "tests/storekit-preflight-diagnostic.test.py",
+}
+PREFLIGHT_STAGES = (
+    "P01_SOURCE_SHA", "P02_XCODE_VERSION", "P03_SOURCE_GUARD",
+    "P04_CERTIFICATION_HISTORY", "P05_TAG_CHECKOUT", "P06_CLONE_SHA",
+    "P07_XCODE_HELP", "P08_INTERNAL_EXPORT_OPTION",
+)
+PREFLIGHT_CATEGORIES = {
+    "NONE", "DEPENDENCY_FAILED", "AUTHORIZATION_REJECTED", "SOURCE_SHA_MISMATCH",
+    "XCODE_COMMAND_FAILED", "XCODE26_REQUIRED", "DELIVERY_SOURCE_REJECTED",
+    "CERTIFICATION_EVIDENCE_REJECTED", "PREFLIGHT_REPORT_FAILED",
+    "TAG_CHECKOUT_REJECTED", "LOCAL_CLONE_FAILED", "CLONED_SHA_MISMATCH",
+    "CLONE_ENVIRONMENT_FAILED", "XCODE_HELP_FAILED", "INTERNAL_OPTION_NOT_RECOGNIZED",
+    "INTERNAL_FAILURE",
+}
 RUN = 39181592021
 REPOSITORY = "DBMaps/liberty-county-map"
 PREFIX = "refs/tags/gridly-storekit-testflight-deliver-15-"
@@ -27,6 +47,17 @@ FILES = {
     "tools/apple_storekit_testflight_delivery.py",
     "tests/storekit-testflight-delivery.test.py",
 }
+# Exactly one reviewed refinement after PREFLIGHT_BASE; no general exclusions.
+REFINEMENT_FILES = FILES | {"tests/storekit-preflight-diagnostic.test.py"}
+HISTORICAL_TAGS = {
+    "gridly-storekit-diagnostic-certify-15-" + SOURCE:
+        ("bb496cafcbeaf7d6aaf6574e6b5561ac242599fc", SOURCE),
+    "gridly-storekit-testflight-deliver-15-" + OWNER_CORRECTION:
+        ("15a2d8093f31ccaea515b715e604c803d89af469", OWNER_CORRECTION),
+    "gridly-storekit-preflight-15-" + PREFLIGHT_BASE:
+        ("41b9592697daf7898b66dd582b6da3af5dc8412d", PREFLIGHT_BASE),
+}
+
 CONFIRMATIONS = {
     "testflight_upload_authorized", "unused_build_number_confirmed",
     "baseline_exception_acknowledged", "testflight_group_settings_reviewed",
@@ -116,19 +147,36 @@ def authorize(ref, commit, event_path, attempt):
 
 def source_guard(commit, clean):
     require(re.fullmatch(r"[0-9a-f]{40}", commit or ""), "exact source SHA required")
-    require(cert.git("rev-parse", "HEAD").decode().strip() == commit and commit not in {SOURCE, DELIVERY_BASE}, "reviewed delivery correction commit required")
-    require(cert.git("show", "-s", "--format=%P", commit).decode().strip() == DELIVERY_BASE, "one reviewed correction directly on pinned delivery commit required")
-    require(cert.git("show", "-s", "--format=%P", DELIVERY_BASE).decode().strip() == SOURCE, "pinned delivery ancestry changed")
+    pinned = {SOURCE, DELIVERY_BASE, OWNER_CORRECTION, PREFLIGHT_BASE}
+    require(cert.git("rev-parse", "HEAD").decode().strip() == commit and commit not in pinned,
+            "new reviewed delivery-support commit required")
+    for child, parent in (
+        (commit, PREFLIGHT_BASE), (PREFLIGHT_BASE, OWNER_CORRECTION),
+        (OWNER_CORRECTION, DELIVERY_BASE), (DELIVERY_BASE, SOURCE),
+    ):
+        require(cert.git("show", "-s", "--format=%P", child).decode().strip() == parent,
+                "exact pinned delivery/preflight ancestry required; no extra commits or merges")
+    for name, (tag_object, target) in HISTORICAL_TAGS.items():
+        ref = "refs/tags/" + name
+        require(cert.git("rev-parse", "--verify", ref).decode().strip() == tag_object,
+                "historical authorization tag changed or missing")
+        require(cert.git("cat-file", "-t", ref).decode().strip() == "tag",
+                "historical annotated tag required")
+        require(cert.git("rev-parse", "--verify", ref + "^{}").decode().strip() == target,
+                "historical authorization target changed")
     subprocess.run(["git", "merge-base", "--is-ancestor", SOURCE, commit], check=True, stdout=subprocess.DEVNULL)
-    preparation = cert.git("diff", "--name-status", "--no-renames", SOURCE, DELIVERY_BASE).decode().splitlines()
-    require(set(preparation) == {"A\t" + path for path in FILES}, "pinned delivery preparation inventory changed")
-    correction = cert.git("diff", "--name-status", "--no-renames", DELIVERY_BASE, commit).decode().splitlines()
-    require(set(correction) == {"M\t" + path for path in FILES}, "correction must modify only the three reviewed delivery files")
-    records = cert.git("diff", "--name-status", "--no-renames", SOURCE, commit).decode().splitlines()
-    require(set(records) == {"A\t" + path for path in FILES}, "only three new delivery support files allowed; runtime frozen")
-    for path in FILES:
-        require(cert.git("ls-tree", commit, "--", path).decode().split()[0] == "100644", "delivery support file mode changed")
-    # Git diff catches tracked additions/deletions/modes as well as byte changes.
+    for base, target, status, inventory in (
+        (SOURCE, DELIVERY_BASE, "A", FILES),
+        (DELIVERY_BASE, OWNER_CORRECTION, "M", FILES),
+        (OWNER_CORRECTION, PREFLIGHT_BASE, "A", PREFLIGHT_FILES),
+        (PREFLIGHT_BASE, commit, "M", REFINEMENT_FILES),
+        (SOURCE, commit, "A", FILES | PREFLIGHT_FILES),
+    ):
+        records = cert.git("diff", "--name-status", "--no-renames", base, target).decode().splitlines()
+        require(set(records) == {status + "\t" + path for path in inventory} and len(records) == len(inventory),
+                "exact four-file refinement required; all other source frozen")
+    for path in FILES | PREFLIGHT_FILES:
+        require(cert.git("ls-tree", commit, "--", path).decode().split()[0] == "100644", "support file mode changed")
     require(not cert.git("diff", "--name-only", "HEAD"), "tracked working source changed")
     require(not cert.git("diff", "--cached", "--name-only"), "staged source changed")
     if clean:
@@ -160,6 +208,126 @@ def historical_evidence(get=public_json):
     artifacts = get(base + "/artifacts?per_page=100")
     require(artifacts.get("total_count") == 0 and artifacts.get("artifacts") == [], "unexpected historical artifact retention")
     return {"run": RUN, "source_commit": SOURCE, "attempt": 1, "status": "success", "artifacts": 0}
+
+
+def preflight_result(stage, passed, category):
+    require(stage in PREFLIGHT_STAGES and category in PREFLIGHT_CATEGORIES, "fixed preflight labels required")
+    require(type(passed) is bool and (passed == (category == "NONE")), "fixed preflight outcome required")
+    return {"stage": stage, "status": "PASS" if passed else "FAIL", "category": category}
+
+
+def emit_preflight(records, stream=None):
+    require(len(records) == len(PREFLIGHT_STAGES), "all preflight stages required")
+    fixed = []
+    for stage, record in zip(PREFLIGHT_STAGES, records):
+        require(isinstance(record, dict) and set(record) == {"stage", "status", "category"}, "fixed preflight schema required")
+        value = preflight_result(stage, record["status"] == "PASS", record["category"])
+        require(value == record, "fixed preflight values required")
+        fixed.append(value)
+    body = "".join(json.dumps(record, sort_keys=True) + "\n" for record in fixed)
+    if stream is not None:
+        stream.write(body)
+        stream.flush()
+    else:
+        # Only this validated data reaches the public descriptor. Child processes
+        # capture stdout/stderr and close inherited extra descriptors by default.
+        with os.fdopen(os.dup(3), "w", encoding="utf-8") as public:
+            public.write(body)
+            public.flush()
+
+
+def delivery_preflight(root, commit, output, github_env, environment=None, execute=subprocess.run):
+    environment = os.environ if environment is None else environment
+    records = {stage: preflight_result(stage, False, "DEPENDENCY_FAILED") for stage in PREFLIGHT_STAGES}
+
+    def command(stage, args, *, input=None, timeout=180):
+        completed = execute(args, check=False, capture_output=True, close_fds=True, input=input, timeout=timeout)
+        with (root / "logs" / (stage + ".log")).open("ab") as log:
+            log.write(completed.stdout or b"")
+            log.write(completed.stderr or b"")
+        return completed
+
+    def checked(stage, category, operation):
+        try:
+            value = operation()
+            records[stage] = preflight_result(stage, True, "NONE")
+            return value
+        except Exception:
+            records[stage] = preflight_result(stage, False, category)
+            return None
+
+    def success(completed):
+        require(completed.returncode == 0, "private command failed")
+        return completed.stdout
+
+    try:
+        authorization_guard(root, commit)  # Same unchanged 30-minute gate as before.
+    except Exception:
+        records["P01_SOURCE_SHA"] = preflight_result("P01_SOURCE_SHA", False, "AUTHORIZATION_REJECTED")
+        return list(records.values())
+
+    def identity():
+        require(re.fullmatch(r"[0-9a-f]{40}", commit or ""), "exact source required")
+        require(environment.get("GITHUB_SHA") == commit, "source/event mismatch")
+        require(Path(environment["GITHUB_WORKSPACE"]).resolve() == Path.cwd().resolve(), "workspace mismatch")
+        require(success(command("P01_SOURCE_SHA", ["git", "rev-parse", "HEAD"])).decode().strip() == commit, "checkout mismatch")
+    checked("P01_SOURCE_SHA", "SOURCE_SHA_MISMATCH", identity)
+    if records["P01_SOURCE_SHA"]["status"] != "PASS":
+        return list(records.values())
+
+    try:
+        version = success(command("P02_XCODE_VERSION", ["xcodebuild", "-version"], timeout=60))
+    except Exception:
+        records["P02_XCODE_VERSION"] = preflight_result("P02_XCODE_VERSION", False, "XCODE_COMMAND_FAILED")
+    else:
+        checked("P02_XCODE_VERSION", "XCODE26_REQUIRED", lambda:
+                success(command("P02_XCODE_VERSION", ["grep", "-E", "^Xcode 26([. ]|$)"], input=version, timeout=30)))
+
+    guard = checked("P03_SOURCE_GUARD", "DELIVERY_SOURCE_REJECTED", lambda: source_guard(commit, clean=True))
+    history = checked("P04_CERTIFICATION_HISTORY", "CERTIFICATION_EVIDENCE_REJECTED", historical_evidence)
+    if records["P03_SOURCE_GUARD"]["status"] == records["P04_CERTIFICATION_HISTORY"]["status"] == "PASS":
+        def persist():
+            require(output and Path(output).resolve().is_relative_to(root.resolve()), "private report required")
+            write_json(output, {**guard, "historical_certification": history})
+        checked("P04_CERTIFICATION_HISTORY", "PREFLIGHT_REPORT_FAILED", persist)
+
+    def tag_checkout():
+        ref = environment["GITHUB_REF"]
+        require(ref == PREFIX + commit and environment["GITHUB_REF_NAME"] == ref.removeprefix("refs/tags/"), "exact delivery tag required")
+        require(success(command("P05_TAG_CHECKOUT", ["git", "cat-file", "-t", ref])).strip() == b"tag", "annotated tag required")
+        require(success(command("P05_TAG_CHECKOUT", ["git", "rev-parse", ref + "^{commit}"])).decode().strip() == commit, "tag target mismatch")
+        require(command("P05_TAG_CHECKOUT", ["git", "symbolic-ref", "-q", "HEAD"]).returncode == 1, "detached tag checkout required")
+    checked("P05_TAG_CHECKOUT", "TAG_CHECKOUT_REJECTED", tag_checkout)
+
+    clone = root / "source"
+    if records["P03_SOURCE_GUARD"]["status"] == records["P05_TAG_CHECKOUT"]["status"] == "PASS":
+        checked("P06_CLONE_SHA", "LOCAL_CLONE_FAILED", lambda:
+                success(command("P06_CLONE_SHA", [
+                    "git", "clone", "--no-hardlinks", "--branch", environment["GITHUB_REF_NAME"],
+                    environment["GITHUB_WORKSPACE"], str(clone)
+                ])))
+        if records["P06_CLONE_SHA"]["status"] == "PASS":
+            checked("P06_CLONE_SHA", "CLONED_SHA_MISMATCH", lambda:
+                    require(success(command("P06_CLONE_SHA", ["git", "-C", str(clone), "rev-parse", "HEAD"])).decode().strip() == commit, "clone source mismatch"))
+        if records["P06_CLONE_SHA"]["status"] == "PASS":
+            def export_source():
+                require(github_env and not any(c in str(clone) for c in "\r\n"), "safe source export required")
+                with Path(github_env).open("a") as destination:
+                    destination.write("DELIVERY_SOURCE_DIR=" + str(clone) + "\n")
+            checked("P06_CLONE_SHA", "CLONE_ENVIRONMENT_FAILED", export_source)
+
+    help_path = root / "reports/xcode-help.txt"
+    def xcode_help():
+        completed = command("P07_XCODE_HELP", ["xcodebuild", "-help"], timeout=60)
+        help_path.write_bytes((completed.stdout or b"") + (completed.stderr or b""))
+        success(completed)
+    checked("P07_XCODE_HELP", "XCODE_HELP_FAILED", xcode_help)
+    if records["P07_XCODE_HELP"]["status"] == "PASS":
+        checked("P08_INTERNAL_EXPORT_OPTION", "INTERNAL_OPTION_NOT_RECOGNIZED", lambda:
+                success(command("P08_INTERNAL_EXPORT_OPTION", [
+                    "grep", "-Eq", "^[[:space:]]*testFlightInternalTestingOnly[[:space:]]*:", str(help_path)
+                ], timeout=30)))
+    return [records[stage] for stage in PREFLIGHT_STAGES]
 
 
 def authorization_guard(root, commit, now=None):
@@ -330,15 +498,22 @@ def main():
         result = finish(args.runner_temp, args.job_status)
         print(json.dumps(result, sort_keys=True))
         raise SystemExit(0 if result["certification"] == result["cleanup"] == "PASS" else 1)
+    if args.mode == "preflight":
+        records = [preflight_result(stage, False, "INTERNAL_FAILURE") for stage in PREFLIGHT_STAGES]
+        try:
+            root = cert.private_directory(args.runner_temp)
+            require(str(root) == os.environ.get("DIAGNOSTIC_PRIVATE_ROOT"), "private CI workspace required")
+            records = delivery_preflight(root, args.commit, args.output, args.github_env)
+        except BaseException:
+            pass  # Interrupts and unexpected setup failures cannot publish raw errors.
+        emit_preflight(records)
+        raise SystemExit(0 if all(record["status"] == "PASS" for record in records) else 1)
     root = cert.private_directory(args.runner_temp)
     require(str(root) == os.environ.get("DIAGNOSTIC_PRIVATE_ROOT"), "private CI workspace required")
     if args.mode == "authorize":
         result = authorize(args.ref, args.commit, args.event, args.attempt)
         with Path(args.github_env).open("a") as destination:
             destination.write("EXPECTED_COMMIT_SHA=" + args.commit + "\nDIAGNOSTIC_BUILD_NUMBER=15\n")
-    elif args.mode == "preflight":
-        authorization_guard(root, args.commit)
-        result = {**source_guard(args.commit, clean=True), "historical_certification": historical_evidence()}
     else:
         require(os.environ.get("RUNNER_OS") == "macOS" and os.environ.get("GITHUB_ACTIONS") == "true", "future authorized macOS workflow only")
         require(os.environ.get("HOME") == str(root / "home") and os.environ.get("CFFIXED_USER_HOME") == str(root / "home"), "private tool home required")

@@ -3,8 +3,9 @@ name: Gridly StoreKit Build 15 Internal TestFlight Delivery
 # LOCAL PREPARATION ONLY: do not push a tag until the resulting delivery commit is
 # reviewed and a NEW upload authorization is explicitly granted by the owner.
 # Separate annotated tag: gridly-storekit-testflight-deliver-15-<delivery-commit>
-# Source chain: certified f9fc8183 -> delivery bd5b1fea -> ONE reviewed support correction.
-# Exactly the same three delivery files may change; certified diagnostic runtime is frozen.
+# Pinned source chain: f9fc8183 -> bd5b1fea -> 45bfe026 -> 13e73183
+# -> ONE reviewed correction: three delivery files plus the preflight preservation test.
+# Preflight workflow/helper, historical tags and certified diagnostic runtime stay frozen.
 # Strict disabled-automatic-distribution JSON (unchanged; no omitted/default/extra fields):
 # {"delivery_commit":"<reviewed-40-hex>","certified_source_commit":"f9fc818321970b8b7e29df17358daf87a7d20308",
 #  "certification_run_id":39181592021,"diagnostic_build_number":"15",
@@ -81,17 +82,11 @@ jobs:
           set -euo pipefail
           set +x
           umask 077
+          # FD 3 carries only validated fixed stage records; raw output stays private.
+          exec 3>&1
           exec > "$DIAGNOSTIC_PRIVATE_ROOT/logs/step-2.log" 2>&1
           export TMPDIR="$DIAGNOSTIC_PRIVATE_ROOT/tmp/"
-          test "$EXPECTED_COMMIT_SHA" = "$GITHUB_SHA"
-          xcodebuild -version | grep -E '^Xcode 26([. ]|$)'
-          python3 -B tools/apple_storekit_testflight_delivery.py preflight --commit "$EXPECTED_COMMIT_SHA" --runner-temp "$RUNNER_TEMP" --output "$DIAGNOSTIC_PRIVATE_ROOT/reports/delivery-preflight.json"
-          # Build inside the marked private root: even generated runtime/config is removed.
-          git clone --no-hardlinks --branch "$GITHUB_REF_NAME" "$GITHUB_WORKSPACE" "$DIAGNOSTIC_PRIVATE_ROOT/source"
-          test "$(git -C "$DIAGNOSTIC_PRIVATE_ROOT/source" rev-parse HEAD)" = "$EXPECTED_COMMIT_SHA"
-          printf 'DELIVERY_SOURCE_DIR=%s\n' "$DIAGNOSTIC_PRIVATE_ROOT/source" >> "$GITHUB_ENV"
-          xcodebuild -help > "$DIAGNOSTIC_PRIVATE_ROOT/reports/xcode-help.txt" 2>&1
-          grep -Eq '^[[:space:]]*testFlightInternalTestingOnly[[:space:]]*:' "$DIAGNOSTIC_PRIVATE_ROOT/reports/xcode-help.txt"
+          python3 -B tools/apple_storekit_testflight_delivery.py preflight --commit "$EXPECTED_COMMIT_SHA" --runner-temp "$RUNNER_TEMP" --github-env "$GITHUB_ENV" --output "$DIAGNOSTIC_PRIVATE_ROOT/reports/delivery-preflight.json"
       - name: Set up Node
         uses: actions/setup-node@v4
         with:

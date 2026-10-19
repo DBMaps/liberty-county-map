@@ -511,19 +511,101 @@ class WorkflowAndPreservationTests(unittest.TestCase):
         self.assertEqual(d.SOURCE_COMMAND,"import sys;sys.path.insert(0,'tools');import apple_storekit_testflight_delivery as d;d.source_guard('"+d.DELIVERY_SOURCE+"',clean=True)")
         self.assertEqual(d.HISTORY_COMMAND,"import sys;sys.path.insert(0,'tools');import apple_storekit_testflight_delivery as d;d.historical_evidence()")
 
-    def test_original_delivery_certification_runtime_and_build14_unchanged(self):
-        paths=[
-            ".github/workflows/gridly-storekit-testflight-delivery.yml","tools/apple_storekit_testflight_delivery.py",
+    def test_historical_sources_immutable_and_only_exact_current_refinement_allowed(self):
+        certified = "f9fc818321970b8b7e29df17358daf87a7d20308"
+        preparation = "bd5b1feac696ba7db0e7d8d271b054df1d25850b"
+        owner = "45bfe026b81f4928caceb9632cbf15e7ed842a25"
+        previous = "13e73183cf3f257fbc9acd9a32d34d62b70ffb1e"
+        delivery_files = {
+            ".github/workflows/gridly-storekit-testflight-delivery.yml",
+            "tools/apple_storekit_testflight_delivery.py",
             "tests/storekit-testflight-delivery.test.py",
-            ".github/workflows/gridly-storekit-diagnostic-certification.yml","tools/apple_storekit_diagnostic_certification.py",
-            ".github/workflows/gridly-apple-build-9.yml","tools/apple_native_parity.py",
-            "ios/App/App/GridlyStoreKitPlugin.swift","ios/App/App/GridlyBridgeViewController.swift",
-            "js/gridly-apple-storekit.mjs","js/gridly-paid-access.mjs","js/gridly-paid-ui.mjs",
-            "js/gridly-entitlement.mjs","js/gridly-store-verification.mjs","tests/build13-native-pending-recovery.test.cjs",
+        }
+        refinement = delivery_files | {"tests/storekit-preflight-diagnostic.test.py"}
+        tags = {
+            "gridly-storekit-diagnostic-certify-15-" + certified:
+                ("bb496cafcbeaf7d6aaf6574e6b5561ac242599fc", certified),
+            "gridly-storekit-testflight-deliver-15-" + owner:
+                ("15a2d8093f31ccaea515b715e604c803d89af469", owner),
+            "gridly-storekit-preflight-15-" + previous:
+                ("41b9592697daf7898b66dd582b6da3af5dc8412d", previous),
+        }
+        def git(*args):
+            return subprocess.check_output(["git", *args], cwd=ROOT)
+        # A. Historical objects remain immutable and independently reproducible.
+        self.assertEqual(d.DELIVERY_SOURCE, owner)
+        for child, parent in ((previous, owner), (owner, preparation), (preparation, certified)):
+            self.assertEqual(git("show", "-s", "--format=%P", child).decode().strip(), parent)
+        for name, (tag_object, target) in tags.items():
+            ref = "refs/tags/" + name
+            self.assertEqual(git("rev-parse", "--verify", ref).decode().strip(), tag_object)
+            self.assertEqual(git("cat-file", "-t", ref).decode().strip(), "tag")
+            self.assertEqual(git("rev-parse", "--verify", ref + "^{}").decode().strip(), target)
+        for path in delivery_files:
+            self.assertEqual(git("show", previous + ":" + path), git("show", owner + ":" + path), path)
+        historical_preflight = "refs/tags/gridly-storekit-preflight-15-" + previous
+        for path in d.FILES:
+            self.assertEqual(git("show", historical_preflight + ":" + path),
+                             git("show", previous + ":" + path), path)
+        # The amended test is the ONLY preflight file allowed to differ now.
+        for path in d.FILES - {"tests/storekit-preflight-diagnostic.test.py"}:
+            self.assertEqual((ROOT/path).read_bytes().replace(b"\r\n", b"\n"),
+                             git("show", previous + ":" + path), path)
+
+        # B. This exact working candidate, or ONE clean direct child, only.
+        # Neither subsets nor arbitrary later commits can use this exception.
+        def check_refinement(records, modes, head, parents, dirty):
+            self.assertEqual(len(records), 4)
+            self.assertEqual(set(records), {"M\t" + path for path in refinement})
+            self.assertEqual(set(modes), refinement)
+            self.assertTrue(all(value == "100644" for value in modes.values()))
+            if head != previous:
+                self.assertEqual(parents, previous)
+                self.assertFalse(dirty)
+        records = git("diff", "--name-status", "--no-renames", previous).decode().splitlines()
+        head = git("rev-parse", "HEAD").decode().strip()
+        parents = git("show", "-s", "--format=%P", head).decode().strip()
+        modes = {}
+        for record in git("diff", "--raw", "--no-renames", previous).decode().splitlines():
+            metadata, path = record.split("\t")
+            modes[path] = metadata.split()[1]
+        dirty = git("status", "--porcelain=v1", "--untracked-files=normal")
+        self.assertFalse(git("ls-files", "--others", "--exclude-standard"))
+        check_refinement(records, modes, head, parents, dirty)
+        if head != previous:
+            committed = git("diff", "--name-status", "--no-renames", previous, head).decode().splitlines()
+            self.assertEqual(committed, records)
+        # Negative cases prove this is not a general protected-file exclusion.
+        good = ["M\t" + path for path in sorted(refinement)]
+        good_modes = dict.fromkeys(refinement, "100644")
+        for bad in (good[:-1], good + [good[0]],
+                    good + ["M\tjs/gridly-paid-ui.mjs"],
+                    good + ["M\t.github/workflows/gridly-storekit-preflight-diagnostic.yml"],
+                    ["A\t" + row[2:] for row in good]):
+            with self.subTest(inventory=bad), self.assertRaises(AssertionError):
+                check_refinement(bad, good_modes, previous, owner, b"")
+        for bad_modes, bad_parent, bad_dirty in (
+            ({**good_modes, next(iter(refinement)): "100755"}, previous, b""),
+            (good_modes, owner, b""), (good_modes, previous + " " + owner, b""),
+            (good_modes, previous, b" M js/gridly-paid-ui.mjs"),
+        ):
+            with self.subTest(parent=bad_parent, dirty=bad_dirty), self.assertRaises(AssertionError):
+                check_refinement(good, bad_modes, "1"*40, bad_parent, bad_dirty)
+        # All original release/certification/runtime/baseline assertions remain.
+        protected = [
+            ".github/workflows/gridly-storekit-diagnostic-certification.yml",
+            "tools/apple_storekit_diagnostic_certification.py",
+            ".github/workflows/gridly-apple-build-9.yml", "tools/apple_native_parity.py",
+            "ios/App/App/GridlyStoreKitPlugin.swift", "ios/App/App/GridlyBridgeViewController.swift",
+            "ios/App/App.xcodeproj/project.pbxproj", "android/app/build.gradle",
+            "js/gridly-apple-storekit.mjs", "js/gridly-paid-access.mjs", "js/gridly-paid-ui.mjs",
+            "js/gridly-entitlement.mjs", "js/gridly-store-verification.mjs",
+            "tests/storekit-diagnostics.test.mjs", "tests/storekit-diagnostics-native.test.py",
+            "tests/build13-native-pending-recovery.test.cjs",
         ]
-        for path in paths:
-            expected=subprocess.check_output(["git","show",d.DELIVERY_SOURCE+":"+path],cwd=ROOT)
-            self.assertEqual((ROOT/path).read_bytes().replace(b"\r\n",b"\n"),expected.replace(b"\r\n",b"\n"),path)
+        for path in protected:
+            self.assertEqual((ROOT/path).read_bytes().replace(b"\r\n", b"\n"),
+                             git("show", owner + ":" + path).replace(b"\r\n", b"\n"), path)
 
     def test_python_sources_parse_without_bytecode_or_execution(self):
         ast.parse(self.helper)

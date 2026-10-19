@@ -1,7 +1,9 @@
 """Local delivery gates: synthetic metadata/material only; never build, sign or call Apple."""
 import ast
 import copy
+import contextlib
 import hashlib
+import io
 import json
 import os
 import plistlib
@@ -37,25 +39,43 @@ def owner_automatic_authorization():
             }}
 
 
-def source_git(*, parent=delivery.DELIVERY_BASE, base_parent=delivery.SOURCE,
-               preparation=None, correction=None, net=None, mode="100644",
-               dirty=b"", staged=b"", untracked=b""):
+def source_git(*, parent=delivery.PREFLIGHT_BASE, base_parent=delivery.SOURCE,
+               owner_parent=delivery.DELIVERY_BASE, preflight_parent=delivery.OWNER_CORRECTION,
+               preparation=None, past_correction=None, preflight_inventory=None,
+               correction=None, net=None, mode="100644", dirty=b"", staged=b"", untracked=b"",
+               tag_object=None, tag_target=None, tag_type=None, missing_tag=None):
     additions = "\n".join("A\t" + path for path in sorted(delivery.FILES)).encode()
     modifications = "\n".join("M\t" + path for path in sorted(delivery.FILES)).encode()
+    refinement = "\n".join("M\t" + path for path in sorted(delivery.REFINEMENT_FILES)).encode()
+    preflight = "\n".join("A\t" + path for path in sorted(delivery.PREFLIGHT_FILES)).encode()
+    all_additions = "\n".join("A\t" + path for path in sorted(delivery.FILES | delivery.PREFLIGHT_FILES)).encode()
     values = {
         ("rev-parse", "HEAD"): COMMIT.encode(),
         ("show", "-s", "--format=%P", COMMIT): parent.encode(),
+        ("show", "-s", "--format=%P", delivery.PREFLIGHT_BASE): preflight_parent.encode(),
+        ("show", "-s", "--format=%P", delivery.OWNER_CORRECTION): owner_parent.encode(),
         ("show", "-s", "--format=%P", delivery.DELIVERY_BASE): base_parent.encode(),
         ("diff", "--name-status", "--no-renames", delivery.SOURCE, delivery.DELIVERY_BASE): additions if preparation is None else preparation,
-        ("diff", "--name-status", "--no-renames", delivery.DELIVERY_BASE, COMMIT): modifications if correction is None else correction,
-        ("diff", "--name-status", "--no-renames", delivery.SOURCE, COMMIT): additions if net is None else net,
+        ("diff", "--name-status", "--no-renames", delivery.DELIVERY_BASE, delivery.OWNER_CORRECTION): modifications if past_correction is None else past_correction,
+        ("diff", "--name-status", "--no-renames", delivery.OWNER_CORRECTION, delivery.PREFLIGHT_BASE): preflight if preflight_inventory is None else preflight_inventory,
+        ("diff", "--name-status", "--no-renames", delivery.PREFLIGHT_BASE, COMMIT): refinement if correction is None else correction,
+        ("diff", "--name-status", "--no-renames", delivery.SOURCE, COMMIT): all_additions if net is None else net,
         ("diff", "--name-only", "HEAD"): dirty,
         ("diff", "--cached", "--name-only"): staged,
         ("status", "--porcelain=v1", "--untracked-files=normal"): untracked,
     }
-    for path in delivery.FILES:
+    for path in delivery.FILES | delivery.PREFLIGHT_FILES:
         values[("ls-tree", COMMIT, "--", path)] = (mode + " blob " + "0"*40 + "\t" + path).encode()
-    return lambda *args: values[args]
+    for name, (original_object, original_target) in delivery.HISTORICAL_TAGS.items():
+        ref = "refs/tags/" + name
+        values[("rev-parse", "--verify", ref)] = (tag_object or original_object).encode()
+        values[("cat-file", "-t", ref)] = (tag_type or "tag").encode()
+        values[("rev-parse", "--verify", ref + "^{}")] = (tag_target or original_target).encode()
+    def git(*args):
+        if missing_tag and args == ("rev-parse", "--verify", "refs/tags/" + missing_tag):
+            raise subprocess.CalledProcessError(128, ["git", *args])
+        return values[args]
+    return git
 
 
 def event():
@@ -200,6 +220,15 @@ class AuthorizationTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             delivery.owner_authorization({**authorization(), "owner_checks_at": "yesterday"}, COMMIT, REF, NOW)
 
+    def test_exact_unchanged_thirty_minute_boundary_is_enforced(self):
+        self.assertEqual(delivery.OWNER_CHECK_TTL, 1800)
+        for value in (authorization(), owner_automatic_authorization()):
+            for moment in (NOW, NOW+1800):
+                self.assertEqual(delivery.owner_authorization(value, COMMIT, REF, moment), value)
+            for moment in (NOW-0.001, NOW+1800.001):
+                with self.assertRaises(ValueError):
+                    delivery.owner_authorization(value, COMMIT, REF, moment)
+
     def test_duplicate_annotation_keys_fail(self):
         with self.assertRaises(ValueError):
             json.loads('{"testflight_upload_authorized":true,"testflight_upload_authorized":false}', object_pairs_hook=delivery.cert.unique_json_object)
@@ -235,17 +264,19 @@ class SourceAndEvidenceTests(unittest.TestCase):
 
     def test_changed_runtime_or_inventory_or_modes_cannot_pass(self):
         additions = "\n".join("A\t" + path for path in sorted(delivery.FILES)).encode()
-        modifications = "\n".join("M\t" + path for path in sorted(delivery.FILES)).encode()
+        modifications = "\n".join("M\t" + path for path in sorted(delivery.REFINEMENT_FILES)).encode()
         for options in ({"correction": modifications+b"\nM\tjs/gridly-paid-ui.mjs"}, {"correction": b""},
                         {"correction": additions}, {"net": additions+b"\nM\tios/App/App/GridlyStoreKitPlugin.swift"},
-                        {"net": b""}, {"preparation": b""}, {"mode": "100755"}):
+                        {"net": b""}, {"preparation": b""}, {"past_correction": b""},
+                        {"preflight_inventory": b""}, {"correction": modifications+b"\nM\ttools/apple_storekit_preflight_diagnostic.py"},
+                        {"mode": "100755"}):
             with self.subTest(options=options), patch.object(delivery.cert, "git", side_effect=source_git(**options)), patch.object(delivery.subprocess, "run"), patch.object(delivery.cert, "original_contracts"), self.assertRaises(ValueError):
                 delivery.source_guard(COMMIT, True)
 
     def test_incorrect_checkout_and_unclean_source_fail(self):
         with patch.object(delivery.cert, "git", return_value=b"9"*40), self.assertRaises(ValueError):
             delivery.source_guard(COMMIT, True)
-        for old in (delivery.SOURCE, delivery.DELIVERY_BASE):
+        for old in (delivery.SOURCE, delivery.DELIVERY_BASE, delivery.OWNER_CORRECTION, delivery.PREFLIGHT_BASE):
             with self.subTest(old=old), self.assertRaises(ValueError):
                 delivery.source_guard(old, True)
         for options in ({"dirty": b"js/gridly-paid-ui.mjs"}, {"staged": b"js/gridly-paid-ui.mjs"},
@@ -256,7 +287,9 @@ class SourceAndEvidenceTests(unittest.TestCase):
     def test_additional_or_merged_delivery_ancestry_is_rejected(self):
         for options in ({"parent": "9"*40}, {"parent": delivery.SOURCE},
                         {"parent": delivery.DELIVERY_BASE + " " + "8"*40},
-                        {"base_parent": "7"*40}, {"base_parent": delivery.SOURCE + " " + "8"*40}):
+                        {"base_parent": "7"*40}, {"base_parent": delivery.SOURCE + " " + "8"*40},
+                        {"owner_parent": "7"*40}, {"preflight_parent": "8"*40},
+                        {"preflight_parent": delivery.OWNER_CORRECTION + " " + "8"*40}):
             with self.subTest(options=options), patch.object(delivery.cert, "git", side_effect=source_git(**options)), self.assertRaises(ValueError):
                 delivery.source_guard(COMMIT, True)
 
@@ -264,6 +297,40 @@ class SourceAndEvidenceTests(unittest.TestCase):
         self.assertEqual(delivery.cert.git("show", "-s", "--format=%P", delivery.DELIVERY_BASE).decode().strip(), delivery.SOURCE)
         self.assertEqual(delivery.SOURCE, "f9fc818321970b8b7e29df17358daf87a7d20308")
         self.assertEqual(delivery.RUN, 39181592021)
+        self.assertEqual(delivery.OWNER_CORRECTION, "45bfe026b81f4928caceb9632cbf15e7ed842a25")
+        self.assertEqual(delivery.PREFLIGHT_BASE, "13e73183cf3f257fbc9acd9a32d34d62b70ffb1e")
+        for child,parent in ((delivery.PREFLIGHT_BASE, delivery.OWNER_CORRECTION),
+                             (delivery.OWNER_CORRECTION, delivery.DELIVERY_BASE)):
+            self.assertEqual(delivery.cert.git("show","-s","--format=%P",child).decode().strip(),parent)
+        self.assertEqual(delivery.REFINEMENT_FILES, delivery.FILES | {"tests/storekit-preflight-diagnostic.test.py"})
+        for path in delivery.PREFLIGHT_FILES:
+            historical = delivery.cert.git("show", delivery.PREFLIGHT_BASE + ":" + path)
+            preflight_ref = "refs/tags/gridly-storekit-preflight-15-" + delivery.PREFLIGHT_BASE
+            self.assertEqual(historical, delivery.cert.git("show", preflight_ref + ":" + path))
+            if path != "tests/storekit-preflight-diagnostic.test.py":
+                self.assertEqual((ROOT/path).read_bytes().replace(b"\r\n", b"\n"), historical)
+        for name, (tag_object, target) in delivery.HISTORICAL_TAGS.items():
+            ref = "refs/tags/" + name
+            self.assertEqual(delivery.cert.git("rev-parse", "--verify", ref).decode().strip(), tag_object)
+            self.assertEqual(delivery.cert.git("cat-file", "-t", ref).decode().strip(), "tag")
+            self.assertEqual(delivery.cert.git("rev-parse", "--verify", ref + "^{}").decode().strip(), target)
+
+    def test_each_missing_modified_or_retargeted_historical_tag_fails_closed(self):
+        for name in delivery.HISTORICAL_TAGS:
+            for options in ({"missing_tag": name}, {"tag_object": "9"*40},
+                            {"tag_target": COMMIT}, {"tag_type": "commit"}):
+                with self.subTest(tag=name, options=options), patch.object(delivery.cert, "git", side_effect=source_git(**options)), patch.object(delivery.subprocess, "run"), patch.object(delivery.cert, "original_contracts"):
+                    with self.assertRaises((ValueError, subprocess.CalledProcessError)):
+                        delivery.source_guard(COMMIT, True)
+
+    def test_every_refinement_file_is_mandatory_and_duplicate_records_are_rejected(self):
+        records = ["M\t" + path for path in sorted(delivery.REFINEMENT_FILES)]
+        candidates = [records[:index] + records[index+1:] for index in range(4)]
+        candidates += [records + [records[0]], records + ["M\t.github/workflows/gridly-storekit-diagnostic-certification.yml"],
+                       records + ["M\t.github/workflows/gridly-storekit-preflight-diagnostic.yml"]]
+        for candidate in candidates:
+            with self.subTest(candidate=candidate), patch.object(delivery.cert, "git", side_effect=source_git(correction="\n".join(candidate).encode())), patch.object(delivery.subprocess, "run"), patch.object(delivery.cert, "original_contracts"), self.assertRaises(ValueError):
+                delivery.source_guard(COMMIT, True)
 
     def test_missing_or_unsuccessful_historical_certificate_fails(self):
         run = {"id": delivery.RUN, "head_sha": delivery.SOURCE, "run_attempt": 1, "status": "completed", "conclusion": "success",
@@ -409,6 +476,26 @@ class CertificationAndTransferTests(unittest.TestCase):
             delivery.transfer(self.root, COMMIT, self.ipa, **options)
         self.assertNotIn("--upload-app", calls)
 
+    def test_successfully_certified_but_expired_build_cannot_read_upload_credentials(self):
+        class NeverReadCredentials(dict):
+            def get(self,*args): raise AssertionError("credentials accessed after expiry")
+        delivery.time.time.return_value = NOW+1801
+        with patch.object(delivery,"api_token") as signer,patch.object(delivery.subprocess,"run") as execute,self.assertRaises(ValueError):
+            delivery.transfer(self.root, COMMIT, self.ipa, credentials=NeverReadCredentials())
+        signer.assert_not_called(); execute.assert_not_called()
+
+    def test_apple_validation_crossing_original_owner_deadline_blocks_upload(self):
+        calls,options=self.fake_upload()
+        original=options["execute"]
+        def expire(command,**kwargs):
+            original(command,**kwargs)
+            delivery.time.time.return_value=NOW+1801
+        options["execute"]=expire
+        with self.assertRaises(ValueError):
+            delivery.transfer(self.root,COMMIT,self.ipa,**options)
+        self.assertEqual(calls,["--validate-app"])
+        self.assertFalse((self.root/"reports/delivery-transfer.json").exists())
+
     def test_existing_build_prevents_upload(self):
         calls, options = self.fake_upload(existing=True)
         with self.assertRaises(ValueError): delivery.transfer(self.root, COMMIT, self.ipa, **options)
@@ -495,6 +582,18 @@ class AvailabilityAndCleanupTests(unittest.TestCase):
             self.assertEqual(result["cleanup"], "FAIL")
             self.assertEqual(result["certification"], "FAIL")
 
+    def test_accepted_upload_is_not_retroactively_rejected_by_expired_owner_timestamp(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root=delivery.cert.private_directory(temporary)
+            root.mkdir(); (root/".owned").write_text(delivery.cert.PRIVATE_MARKER)
+            fixture(root)
+            delivery.write_json(root/"reports/delivery-transfer.json",{"status":"ACCEPTED","source_commit":COMMIT,"build":"15"})
+            with patch.object(delivery.time,"time",return_value=NOW+3600):
+                result=delivery.finish(temporary,"success")
+            self.assertEqual(result["upload"],"ACCEPTED")
+            self.assertEqual(result["certification"],"PASS")
+            self.assertEqual(result["cleanup"],"PASS")
+
     def test_private_generated_source_signed_output_and_key_are_removed(self):
         with tempfile.TemporaryDirectory() as temporary:
             env = Path(temporary) / "env"
@@ -508,22 +607,276 @@ class AvailabilityAndCleanupTests(unittest.TestCase):
             self.assertFalse(root.exists())
 
 
+class DeliveryPreflightTests(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name)
+        self.ipa, self.guard = fixture(self.root)
+        (self.root / "logs").mkdir()
+        self.output = self.root / "reports/delivery-preflight.json"
+        self.output.unlink()
+        self.github_env = self.root / "github-env"
+        self.github_env.write_text("")
+        self.environment = {"GITHUB_SHA": COMMIT, "GITHUB_WORKSPACE": str(ROOT),
+                            "GITHUB_REF": REF, "GITHUB_REF_NAME": REF.removeprefix("refs/tags/")}
+        self.calls = []
+        self.failures = {}
+        self.history = {"run": delivery.RUN, "source_commit": delivery.SOURCE, "attempt": 1,
+                        "status": "success", "artifacts": 0}
+        self.addCleanup(patch.stopall)
+        self.source = patch.object(delivery, "source_guard", return_value=self.guard).start()
+        self.historical = patch.object(delivery, "historical_evidence", return_value=self.history).start()
+        patch.object(delivery.time, "time", return_value=NOW).start()
+
+    def execute(self, args, **options):
+        self.calls.append((args, options))
+        key = None
+        output = b""
+        if args == ["git", "rev-parse", "HEAD"]:
+            key = "identity"; output = (COMMIT + "\n").encode()
+        elif args == ["xcodebuild", "-version"]:
+            key = "version"; output = b"Xcode 26.6\nBuild version SYNTHETIC\n"
+        elif args[:2] == ["grep", "-E"]:
+            key = "version_match"
+            if key not in self.failures:
+                return subprocess.CompletedProcess(args, 0 if re.search(rb"^Xcode 26([. ]|$)", options["input"], re.M) else 1, b"", b"")
+        elif args == ["git", "cat-file", "-t", REF]:
+            key = "tag"; output = b"tag\n"
+        elif args == ["git", "rev-parse", REF + "^{commit}"]:
+            key = "tag_sha"; output = (COMMIT + "\n").encode()
+        elif args == ["git", "symbolic-ref", "-q", "HEAD"]:
+            return self.failures.get("attached", subprocess.CompletedProcess(args, 1, b"", b""))
+        elif args[:2] == ["git", "clone"]:
+            key = "clone"
+            if key not in self.failures:
+                (self.root / "source").mkdir()
+        elif args[:3] == ["git", "-C", str(self.root / "source")]:
+            key = "clone_sha"; output = (COMMIT + "\n").encode()
+        elif args == ["xcodebuild", "-help"]:
+            key = "help"; output = b"\n  testFlightInternalTestingOnly : Bool\n"
+        elif args[:2] == ["grep", "-Eq"]:
+            key = "option"
+            if key not in self.failures:
+                text = Path(args[-1]).read_text()
+                return subprocess.CompletedProcess(args, 0 if re.search(r"^[ \t]*testFlightInternalTestingOnly[ \t]*:", text, re.M) else 1, b"", b"")
+        else:
+            self.fail("unexpected command")
+        if key in self.failures:
+            action = self.failures[key]
+            if isinstance(action, BaseException): raise action
+            return action
+        return subprocess.CompletedProcess(args, 0, output, b"SYNTHETIC_PRIVATE_NEVER_PUBLIC")
+
+    def probes(self, **kwargs):
+        records = delivery.delivery_preflight(self.root, COMMIT, kwargs.get("output", self.output),
+                    kwargs.get("github_env", self.github_env), self.environment, execute=self.execute)
+        return {record["stage"]: record for record in records}
+
+    def test_all_eight_checks_and_original_private_report_pass(self):
+        records = self.probes()
+        self.assertEqual(list(records), list(delivery.PREFLIGHT_STAGES))
+        self.assertTrue(all(record["status"] == "PASS" for record in records.values()))
+        self.assertEqual(delivery.read_json(self.output), {**self.guard, "historical_certification": self.history})
+        self.assertEqual(self.github_env.read_text(), "DELIVERY_SOURCE_DIR=" + str(self.root / "source") + "\n")
+        self.source.assert_called_once_with(COMMIT, clean=True)
+        self.historical.assert_called_once_with()
+
+    def test_expired_preflight_owner_authorization_blocks_all_tooling(self):
+        delivery.time.time.return_value = NOW + 1801
+        records = self.probes()
+        self.assertEqual(records["P01_SOURCE_SHA"]["category"], "AUTHORIZATION_REJECTED")
+        self.assertFalse(self.calls); self.source.assert_not_called(); self.historical.assert_not_called()
+        self.assertTrue(all(records[stage]["category"] == "DEPENDENCY_FAILED" for stage in delivery.PREFLIGHT_STAGES[1:]))
+
+    def test_event_or_workspace_identity_mismatch_stops_independent_probes(self):
+        for key, value in [("GITHUB_SHA", "f"*40), ("GITHUB_WORKSPACE", str(self.root))]:
+            old = self.environment[key]; self.environment[key] = value
+            records = self.probes()
+            self.assertEqual(records["P01_SOURCE_SHA"]["category"], "SOURCE_SHA_MISMATCH")
+            self.assertFalse(self.calls)
+            self.environment[key] = old
+
+    def test_checkout_sha_mismatch_is_identified_before_xcode(self):
+        self.failures["identity"] = subprocess.CompletedProcess([], 0, b"wrong", b"PRIVATE")
+        records = self.probes()
+        self.assertEqual(records["P01_SOURCE_SHA"]["category"], "SOURCE_SHA_MISMATCH")
+        self.assertEqual(len(self.calls), 1)
+
+    def test_wrong_xcode_version_is_distinct_and_safe_independent_checks_continue(self):
+        self.failures["version"] = subprocess.CompletedProcess([], 0, b"Xcode 27.0\n", b"PRIVATE")
+        records = self.probes()
+        self.assertEqual(records["P02_XCODE_VERSION"]["category"], "XCODE26_REQUIRED")
+        self.assertEqual(records["P04_CERTIFICATION_HISTORY"]["status"], "PASS")
+        self.assertEqual(records["P07_XCODE_HELP"]["status"], "PASS")
+
+    def test_xcode_version_execution_failure_is_fixed(self):
+        self.failures["version"] = OSError("PRIVATE COMMAND/PATH NEVER PUBLIC")
+        records = self.probes()
+        self.assertEqual(records["P02_XCODE_VERSION"]["category"], "XCODE_COMMAND_FAILED")
+
+    def test_source_guard_failure_blocks_cloning_without_claiming_a_pass(self):
+        self.source.side_effect = ValueError("PRIVATE_SOURCE_DETAIL")
+        records = self.probes()
+        self.assertEqual(records["P03_SOURCE_GUARD"]["category"], "DELIVERY_SOURCE_REJECTED")
+        self.assertEqual(records["P06_CLONE_SHA"]["category"], "DEPENDENCY_FAILED")
+        self.assertFalse(any(args[:2] == ["git","clone"] for args,_ in self.calls))
+        self.assertEqual(records["P04_CERTIFICATION_HISTORY"]["status"], "PASS")
+
+    def test_historical_evidence_failure_is_identified(self):
+        self.historical.side_effect = ValueError("PRIVATE RESPONSE NEVER PUBLIC")
+        records = self.probes()
+        self.assertEqual(records["P04_CERTIFICATION_HISTORY"]["category"], "CERTIFICATION_EVIDENCE_REJECTED")
+        self.assertFalse(self.output.exists())
+        self.assertEqual(records["P07_XCODE_HELP"]["status"], "PASS")
+
+    def test_private_report_failure_is_identified_without_writing_outside_root(self):
+        outside = ROOT / "NOT_CREATED.json"
+        records = self.probes(output=outside)
+        self.assertEqual(records["P04_CERTIFICATION_HISTORY"]["category"], "PREFLIGHT_REPORT_FAILED")
+        self.assertFalse(outside.exists())
+
+    def test_tag_checkout_failure_blocks_clone(self):
+        self.failures["tag"] = subprocess.CompletedProcess([], 0, b"commit", b"PRIVATE")
+        records = self.probes()
+        self.assertEqual(records["P05_TAG_CHECKOUT"]["category"], "TAG_CHECKOUT_REJECTED")
+        self.assertEqual(records["P06_CLONE_SHA"]["category"], "DEPENDENCY_FAILED")
+
+    def test_wrong_tag_target_blocks_clone(self):
+        self.failures["tag_sha"] = subprocess.CompletedProcess([], 0, b"wrong", b"PRIVATE")
+        records = self.probes()
+        self.assertEqual(records["P05_TAG_CHECKOUT"]["category"], "TAG_CHECKOUT_REJECTED")
+
+    def test_attached_checkout_and_old_preflight_tag_cannot_pass(self):
+        self.failures["attached"] = subprocess.CompletedProcess([], 0, b"refs/heads/example", b"")
+        records = self.probes()
+        self.assertEqual(records["P05_TAG_CHECKOUT"]["category"], "TAG_CHECKOUT_REJECTED")
+        self.failures.clear()
+        self.environment["GITHUB_REF"] = "refs/tags/gridly-storekit-preflight-15-" + COMMIT
+        records = self.probes()
+        self.assertEqual(records["P05_TAG_CHECKOUT"]["category"], "TAG_CHECKOUT_REJECTED")
+
+    def test_clone_failure_and_timeout_remain_distinct_from_sha_mismatch(self):
+        for failure in (subprocess.CompletedProcess([], 1, b"PRIVATE", b"PRIVATE"),
+                        subprocess.TimeoutExpired("PRIVATE", 1, output=b"PRIVATE")):
+            self.failures["clone"] = failure
+            records = self.probes()
+            self.assertEqual(records["P06_CLONE_SHA"]["category"], "LOCAL_CLONE_FAILED")
+
+    def test_clone_sha_mismatch_is_identified(self):
+        self.failures["clone_sha"] = subprocess.CompletedProcess([], 0, b"wrong", b"PRIVATE")
+        records = self.probes()
+        self.assertEqual(records["P06_CLONE_SHA"]["category"], "CLONED_SHA_MISMATCH")
+        self.assertEqual(self.github_env.read_text(), "")
+
+    def test_clone_environment_export_failure_is_identified(self):
+        records = self.probes(github_env=None)
+        self.assertEqual(records["P06_CLONE_SHA"]["category"], "CLONE_ENVIRONMENT_FAILED")
+
+    def test_help_execution_failure_blocks_recognition_even_if_key_is_present(self):
+        self.failures["help"] = subprocess.CompletedProcess([], 1, b"testFlightInternalTestingOnly : Bool\n", b"PRIVATE")
+        records = self.probes()
+        self.assertEqual(records["P07_XCODE_HELP"]["category"], "XCODE_HELP_FAILED")
+        self.assertEqual(records["P08_INTERNAL_EXPORT_OPTION"]["category"], "DEPENDENCY_FAILED")
+
+    def test_missing_internal_option_is_independently_identified(self):
+        self.failures["help"] = subprocess.CompletedProcess([], 0, b"unrelated : Bool\n", b"PRIVATE")
+        records = self.probes()
+        self.assertEqual(records["P07_XCODE_HELP"]["status"], "PASS")
+        self.assertEqual(records["P08_INTERNAL_EXPORT_OPTION"]["category"], "INTERNAL_OPTION_NOT_RECOGNIZED")
+
+    def test_fixed_public_report_never_exposes_raw_output_or_private_paths(self):
+        self.failures["version"] = OSError("PRIVATE EXCEPTION NEVER PUBLIC")
+        records = self.probes()
+        public = io.StringIO()
+        delivery.emit_preflight(list(records.values()), stream=public)
+        values = [json.loads(line) for line in public.getvalue().splitlines()]
+        self.assertEqual(values, list(records.values()))
+        for token in ("PRIVATE", str(self.root), "Traceback", "Xcode 26.6"):
+            self.assertNotIn(token, public.getvalue())
+        self.assertTrue(any(b"SYNTHETIC_PRIVATE" in p.read_bytes() for p in (self.root/"logs").glob("*.log")))
+
+    def test_public_emitter_rejects_arbitrary_labels_fields_and_statuses_atomically(self):
+        valid = [delivery.preflight_result(stage, True, "NONE") for stage in delivery.PREFLIGHT_STAGES]
+        for change in ({"raw":"PRIVATE"}, {"category":"PRIVATE"}, {"stage":"PRIVATE"}, {"status":"PRIVATE"}):
+            records = copy.deepcopy(valid); records[-1].update(change)
+            public = io.StringIO()
+            with self.assertRaises(ValueError): delivery.emit_preflight(records, stream=public)
+            self.assertEqual(public.getvalue(), "")
+
+    def test_only_validated_records_reach_public_descriptor_three(self):
+        records = [delivery.preflight_result(stage, True, "NONE") for stage in delivery.PREFLIGHT_STAGES]
+        public = io.StringIO()
+        with patch.object(delivery.os,"dup",return_value=123) as duplicate, patch.object(delivery.os,"fdopen",return_value=contextlib.nullcontext(public)):
+            delivery.emit_preflight(records)
+        duplicate.assert_called_once_with(3)
+        self.assertEqual(len(public.getvalue().splitlines()),8)
+
+    def test_subprocesses_capture_raw_output_and_cannot_inherit_public_descriptor(self):
+        self.probes()
+        for args,options in self.calls:
+            self.assertIs(options["capture_output"],True)
+            self.assertIs(options["close_fds"],True)
+            self.assertIs(options["check"],False)
+            if args[0]=="xcodebuild":self.assertIn(args[1:],(["-version"],["-help"]))
+
+    def test_main_preflight_failure_never_reaches_transfer_or_credentials(self):
+        records=[delivery.preflight_result(stage,False,"INTERNAL_FAILURE") for stage in delivery.PREFLIGHT_STAGES]
+        argv=["tool","preflight","--runner-temp",str(self.root),"--commit",COMMIT,
+              "--output",str(self.output),"--github-env",str(self.github_env)]
+        with patch.object(sys,"argv",argv), patch.object(delivery.cert,"private_directory",return_value=self.root), patch.dict(delivery.os.environ,{"DIAGNOSTIC_PRIVATE_ROOT":str(self.root)}), patch.object(delivery,"delivery_preflight",return_value=records), patch.object(delivery,"emit_preflight") as public, patch.object(delivery,"transfer") as transfer:
+            with self.assertRaises(SystemExit) as stopped:delivery.main()
+        self.assertEqual(stopped.exception.code,1); transfer.assert_not_called(); public.assert_called_once_with(records)
+
+    def test_interrupted_preflight_produces_only_fixed_internal_failure_records(self):
+        argv=["tool","preflight","--runner-temp",str(self.root),"--commit",COMMIT]
+        with patch.object(sys,"argv",argv), patch.object(delivery.cert,"private_directory",return_value=self.root), patch.dict(delivery.os.environ,{"DIAGNOSTIC_PRIVATE_ROOT":str(self.root)}), patch.object(delivery,"delivery_preflight",side_effect=KeyboardInterrupt("PRIVATE")), patch.object(delivery,"emit_preflight") as public:
+            with self.assertRaises(SystemExit) as stopped:delivery.main()
+        self.assertEqual(stopped.exception.code,1)
+        self.assertTrue(all(record["category"]=="INTERNAL_FAILURE" for record in public.call_args.args[0]))
+
+
 class WorkflowTests(unittest.TestCase):
     def setUp(self):
         self.text = WORKFLOW.read_text()
 
     def test_unrelated_delivery_execution_and_security_functions_remain_unchanged(self):
-        baseline = delivery.cert.git("show", delivery.DELIVERY_BASE + ":tools/apple_storekit_testflight_delivery.py").decode()
+        baseline = delivery.cert.git("show", delivery.PREFLIGHT_BASE + ":tools/apple_storekit_testflight_delivery.py").decode()
         current = (ROOT / "tools/apple_storekit_testflight_delivery.py").read_text()
         functions = lambda source: {node.name: ast.dump(node) for node in ast.parse(source).body if isinstance(node, (ast.FunctionDef, ast.ClassDef))}
         before, after = functions(baseline), functions(current)
-        self.assertEqual(set(before), set(after))
-        for name in before.keys() - {"owner_authorization", "source_guard"}:
+        self.assertEqual(set(after) - set(before), {"preflight_result", "emit_preflight", "delivery_preflight"})
+        self.assertFalse(set(before) - set(after))
+        for name in before.keys() - {"source_guard", "main"}:
             self.assertEqual(after[name], before[name], name)
-        old_workflow = delivery.cert.git("show", delivery.DELIVERY_BASE + ":.github/workflows/gridly-storekit-testflight-delivery.yml").decode()
-        self.assertEqual(self.text.split("\non:\n", 1)[1], old_workflow.split("\non:\n", 1)[1])
+        constants = lambda source: {node.targets[0].id: ast.dump(node.value) for node in ast.parse(source).body
+                                    if isinstance(node, ast.Assign) and isinstance(node.targets[0], ast.Name)}
+        for name,value in constants(baseline).items():
+            self.assertEqual(constants(current)[name],value,name)
+        self.assertEqual(delivery.OWNER_CHECK_TTL, 1800)
+        old_workflow = delivery.cert.git("show", delivery.PREFLIGHT_BASE + ":.github/workflows/gridly-storekit-testflight-delivery.yml").decode()
+        def outside_preflight(text):
+            text=text.split("\non:\n",1)[1]
+            start=text.index("      - name: Verify source, build identity input and Xcode\n")
+            end=text.index("      - name: Set up Node\n",start)
+            return text[:start],text[end:]
+        self.assertEqual(outside_preflight(self.text),outside_preflight(old_workflow))
         self.assertIn("no_other_eligible_internal_users_confirmed", self.text)
         self.assertIn("BOTH", self.text)
+
+    def test_nonpreflight_cli_modes_are_bytecode_structurally_unchanged(self):
+        old=delivery.cert.git("show",delivery.PREFLIGHT_BASE+":tools/apple_storekit_testflight_delivery.py").decode()
+        new=(ROOT/"tools/apple_storekit_testflight_delivery.py").read_text()
+        def mode(node,value):
+            return isinstance(node,ast.If) and isinstance(node.test,ast.Compare) and ast.dump(node.test)==ast.dump(ast.parse("args.mode == "+repr(value),mode="eval").body)
+        def normalized(source):
+            function=next(node for node in ast.parse(source).body if isinstance(node,ast.FunctionDef) and node.name=="main")
+            function.body=[node for node in function.body if not mode(node,"preflight")]
+            for node in ast.walk(function):
+                if mode(node,"authorize") and len(node.orelse)==1 and mode(node.orelse[0],"preflight"):
+                    node.orelse=node.orelse[0].orelse
+            return ast.dump(function)
+        self.assertEqual(normalized(old),normalized(new))
 
     def test_only_separate_new_tag_can_trigger(self):
         trigger = self.text.split("\non:\n", 1)[1].split("\npermissions:", 1)[0]
@@ -535,7 +888,8 @@ class WorkflowTests(unittest.TestCase):
     def test_full_native_certification_precedes_upload_secret_access(self):
         self.assertLess(self.text.index("python3 -B tools/apple_storekit_diagnostic_certification.py certify"), self.text.index("ASC_PRIVATE_KEY_P8_BASE64:"))
         self.assertLess(self.text.index("apple_storekit_testflight_delivery.py authorize"), self.text.index("secrets."))
-        for value in ["macos-26", "'22'", "^Xcode 26", "GRIDLY_STOREKIT_DIAGNOSTICS", "tests/build14-native-lifecycle.test.py", "tests/apple_native_parity_test.py", "tests/storekit-diagnostics-native.test.py", "activation --build-number"]:
+        self.assertIn("^Xcode 26([. ]|$)", (ROOT / "tools/apple_storekit_testflight_delivery.py").read_text())
+        for value in ["macos-26", "'22'", "GRIDLY_STOREKIT_DIAGNOSTICS", "tests/build14-native-lifecycle.test.py", "tests/apple_native_parity_test.py", "tests/storekit-diagnostics-native.test.py", "activation --build-number"]:
             self.assertIn(value, self.text)
 
     def test_no_public_artifacts_cache_groups_release_or_old_workflow_changes(self):
@@ -545,14 +899,22 @@ class WorkflowTests(unittest.TestCase):
         self.assertIn("persist-credentials: false", self.text)
         self.assertIn("if: always()", self.text)
         self.assertIn("finish-public", self.text)
-        self.assertIn("git clone --no-hardlinks", self.text)
+        self.assertIn('"git", "clone", "--no-hardlinks", "--branch"', (ROOT / "tools/apple_storekit_testflight_delivery.py").read_text())
         self.assertIn('cd "$DELIVERY_SOURCE_DIR"', self.text)
 
     def test_all_sensitive_shell_blocks_redirect_before_commands(self):
         blocks = re.findall(r"        run: \|\n((?:(?:          .*)?\n)+)", self.text)
         self.assertEqual(len(blocks), 10)
-        for block in blocks[1:-1]:
-            self.assertRegex(block, r'^          set -euo pipefail\n          set \+x\n          umask 077\n          exec > "\$DIAGNOSTIC_PRIVATE_ROOT/logs/step-[1-8]\.log" 2>&1\n')
+        for index,block in enumerate(blocks[1:-1],1):
+            prefix='          set -euo pipefail\n          set +x\n          umask 077\n'
+            self.assertTrue(block.startswith(prefix))
+            rest=block[len(prefix):]
+            if index==2:
+                self.assertTrue(rest.startswith('          # FD 3 carries only validated fixed stage records; raw output stays private.\n          exec 3>&1\n'))
+                rest=rest.split('          exec 3>&1\n',1)[1]
+            self.assertRegex(rest, r'^          exec > "\$DIAGNOSTIC_PRIVATE_ROOT/logs/step-[1-8]\.log" 2>&1\n')
+        self.assertEqual(self.text.count("exec 3>&1"),1)
+        self.assertIn('--github-env "$GITHUB_ENV" --output',self.text)
         self.assertIn("testFlightInternalTestingOnly", self.text)
         self.assertIn("manageAppVersionAndBuildNumber", self.text)
 
