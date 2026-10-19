@@ -3,6 +3,7 @@ separately authorized macOS run. Local tests inject fakes; never load credential
 No tester/group/version/release mutation API exists here.
 """
 import argparse
+import contextlib
 import base64
 import datetime as dt
 import hashlib
@@ -38,6 +39,7 @@ P04_BASE = "40824c760a65b56b1b0056d1d9b90d571b7f47d4"
 ARCHIVE_BASE = "45ce66b98b44bd6cea67820124e695483e7a6b9b"
 EVIDENCE_BASE = "779d67c7b89569db7cacb6a253eff6da8d3f74ef"
 ENVIRONMENT_BASE = "b27d780e3148a903917b7a05595f17006f1ab8e0"
+TRANSFER_BASE = "2cca00a2248e9a0c04ef5173e3364709a517f31e"
 SIGNING_VERIFICATION_FILES = {
     "tools/apple_storekit_signing_diagnostic.py",
     "tests/storekit-signing-diagnostic.test.py",
@@ -98,7 +100,7 @@ FILES = {
 }
 # The historical four-file refinement is pinned at REFINEMENT_BASE.
 # REPAIR_FILES remains the pinned four-file CMS repair inventory.
-# Only one direct child of ENVIRONMENT_BASE may modify the three FILES; all older inventories stay pinned.
+# Only one direct child of TRANSFER_BASE may modify the three FILES; all older inventories stay pinned.
 REFINEMENT_FILES = FILES | {"tests/storekit-preflight-diagnostic.test.py"}
 REPAIR_FILES = FILES | {"tests/storekit-signing-diagnostic.test.py"}
 HISTORICAL_TAGS = {
@@ -124,6 +126,8 @@ HISTORICAL_TAGS = {
         ("69876691a5c1e996ac099edb492c75fbd6b99696", EVIDENCE_BASE),
     "gridly-storekit-testflight-deliver-15-" + ENVIRONMENT_BASE:
         ("c8a561e739bff54346c75864042d65b08b1b9b4e", ENVIRONMENT_BASE),
+    "gridly-storekit-testflight-deliver-15-" + TRANSFER_BASE:
+        ("7f756b44328fa46edccf8b4f4242460617382621", TRANSFER_BASE),
 }
 
 CONFIRMATIONS = {
@@ -216,11 +220,11 @@ def authorize(ref, commit, event_path, attempt):
 def source_guard(commit, clean):
     require(re.fullmatch(r"[0-9a-f]{40}", commit or ""), "exact source SHA required")
     pinned = {SOURCE, DELIVERY_BASE, OWNER_CORRECTION, PREFLIGHT_BASE, REFINEMENT_BASE,
-              SIGNING_BASE, CMS_BASE, CMS_REPAIR_BASE, SIGNING_VERIFIED_BASE, P04_BASE, ARCHIVE_BASE, EVIDENCE_BASE, ENVIRONMENT_BASE}
+              SIGNING_BASE, CMS_BASE, CMS_REPAIR_BASE, SIGNING_VERIFIED_BASE, P04_BASE, ARCHIVE_BASE, EVIDENCE_BASE, ENVIRONMENT_BASE, TRANSFER_BASE}
     require(cert.git("rev-parse", "HEAD").decode().strip() == commit and commit not in pinned,
             "new reviewed delivery-support commit required")
     for child, parent in (
-        (commit, ENVIRONMENT_BASE), (ENVIRONMENT_BASE, EVIDENCE_BASE), (EVIDENCE_BASE, ARCHIVE_BASE), (ARCHIVE_BASE, P04_BASE), (P04_BASE, SIGNING_VERIFIED_BASE),
+        (commit, TRANSFER_BASE), (TRANSFER_BASE, ENVIRONMENT_BASE), (ENVIRONMENT_BASE, EVIDENCE_BASE), (EVIDENCE_BASE, ARCHIVE_BASE), (ARCHIVE_BASE, P04_BASE), (P04_BASE, SIGNING_VERIFIED_BASE),
         (SIGNING_VERIFIED_BASE, CMS_REPAIR_BASE),
         (CMS_REPAIR_BASE, CMS_BASE), (CMS_BASE, SIGNING_BASE), (SIGNING_BASE, REFINEMENT_BASE),
         (REFINEMENT_BASE, PREFLIGHT_BASE), (PREFLIGHT_BASE, OWNER_CORRECTION),
@@ -250,12 +254,13 @@ def source_guard(commit, clean):
         (P04_BASE, ARCHIVE_BASE, "M", FILES),
         (ARCHIVE_BASE, EVIDENCE_BASE, "M", FILES),
         (EVIDENCE_BASE, ENVIRONMENT_BASE, "M", FILES),
-        (ENVIRONMENT_BASE, commit, "M", FILES),
+        (ENVIRONMENT_BASE, TRANSFER_BASE, "M", FILES),
+        (TRANSFER_BASE, commit, "M", FILES),
         (SOURCE, commit, "A", FILES | PREFLIGHT_FILES | SIGNING_FILES | CMS_FILES),
     ):
         records = cert.git("diff", "--name-status", "--no-renames", base, target).decode().splitlines()
         require(set(records) == {status + "\t" + path for path in inventory} and len(records) == len(inventory),
-                "exact historical inventories and three-file signing-environment correction required; all other source frozen")
+                "exact historical inventories and three-file delivery-reporting correction required; all other source frozen")
         for path in inventory:
             require(cert.git("ls-tree", target, "--", path).decode().split()[0] == "100644",
                     "historical or current support file mode changed")
@@ -609,8 +614,8 @@ def ready(root, commit, ipa):
     require(re.fullmatch(r"[0-9a-f]{64}", proof["ipa_sha256"]) and hashlib.sha256(ipa.read_bytes()).hexdigest() == proof["ipa_sha256"], "certified IPA bytes changed")
     regressions = read_json(reports / "storekit-diagnostic-regressions.json")
     require(regressions == cert.check_regressions(reports / "storekit-diagnostic-regressions.tap", regressions["exit_code"], True), "new regression")
-    export_guard(root / "DiagnosticExportOptions.plist")
-    export_guard(ipa.parent / "ExportOptions.plist")
+    verify_delivery_export(root / "DiagnosticExportOptions.plist", "INPUT")
+    verify_delivery_export(ipa.parent / "ExportOptions.plist", "OUTPUT")
     return proof, regressions
 
 
@@ -655,38 +660,203 @@ def unused_build(get):
     return {"build": "15", "version": "1.0.0", "unused": True}
 
 
+
+DELIVERY_STAGES = (
+    "D01_FINAL_LOCAL_VERIFICATION", "D02_CREDENTIAL_PRESENCE_FORMAT",
+    "D03_APPLE_VALIDATION", "D04_POST_VALIDATION_VERIFICATION",
+    "D05_LIVE_BUILD_AVAILABILITY", "D06_ACTUAL_UPLOAD",
+)
+DELIVERY_STAGE_FAILURES = {
+    "D01_FINAL_LOCAL_VERIFICATION": "LOCAL_VERIFICATION_REJECTED",
+    "D02_CREDENTIAL_PRESENCE_FORMAT": "CREDENTIAL_SETUP_REJECTED",
+    "D03_APPLE_VALIDATION": "APPLE_VALIDATION_FAILED",
+    "D04_POST_VALIDATION_VERIFICATION": "POST_VALIDATION_REJECTED",
+    "D05_LIVE_BUILD_AVAILABILITY": "BUILD_AVAILABILITY_FAILED",
+    "D06_ACTUAL_UPLOAD": "UPLOAD_FAILED_OR_UNCERTAIN",
+}
+DELIVERY_CATEGORIES = set(DELIVERY_STAGE_FAILURES.values()) | {
+    "NONE", "DEPENDENCY_FAILED", "DELIVERY_CONTEXT_REJECTED", "OWNER_AUTHORIZATION_EXPIRED",
+    "SOURCE_GUARD_REJECTED", "SIGNED_PROOF_REJECTED", "IPA_BYTES_CHANGED",
+    "CREDENTIAL_FORMAT_REJECTED", "CREDENTIAL_MATERIAL_REJECTED",
+    "API_TOKEN_GENERATION_FAILED", "BUILD_NOT_CONFIRMED_UNUSED", "PREVIOUS_UPLOAD_ATTEMPT",
+} | {
+    origin + "_EXPORT_" + reason
+    for origin in ("INPUT", "OUTPUT")
+    for reason in ("UNREADABLE", "INTERNAL_ONLY_MISSING", "INTERNAL_ONLY_REJECTED",
+                   "METHOD_MISSING", "METHOD_REJECTED", "DESTINATION_MISSING", "DESTINATION_REJECTED",
+                   "BUILD_NUMBER_MISSING", "BUILD_NUMBER_REJECTED")
+}
+
+
+class DeliveryCheckFailure(ValueError):
+    def __init__(self, category):
+        require(category in DELIVERY_CATEGORIES, "fixed delivery category required")
+        self.category = category
+        super().__init__(category)
+
+
+def verify_delivery_export(path, origin):
+    """Retain the exact export guard; diagnose only fixed key/type conditions."""
+    require(origin in {"INPUT", "OUTPUT"}, "fixed export origin required")
+    try:
+        return export_guard(path)
+    except Exception as error:
+        category = origin + "_EXPORT_UNREADABLE"
+        try:
+            require(Path(path).stat().st_size <= 65536, "bounded diagnostic plist required")
+            options = plistlib.loads(Path(path).read_bytes())
+            require(isinstance(options, dict), "dictionary required")
+            for key, expected, label in (
+                ("testFlightInternalTestingOnly", True, "INTERNAL_ONLY"),
+                ("method", "app-store-connect", "METHOD"), ("destination", "export", "DESTINATION"),
+                ("manageAppVersionAndBuildNumber", False, "BUILD_NUMBER")):
+                if key not in options:
+                    category = origin + "_EXPORT_" + label + "_MISSING"
+                    break
+                if (options[key] is not expected if type(expected) is bool else options[key] != expected):
+                    category = origin + "_EXPORT_" + label + "_REJECTED"
+                    break
+        except Exception:
+            pass  # No plist values, paths or parser errors may cross the boundary.
+        raise DeliveryCheckFailure(category) from error
+
+
+def delivery_failure_category(stage, error):
+    if isinstance(error, DeliveryCheckFailure):
+        return error.category
+    # Compare only our own fixed messages; never return exception text.
+    exact = {
+        "private tool home required": "DELIVERY_CONTEXT_REJECTED",
+        "future authorized macOS workflow only": "DELIVERY_CONTEXT_REJECTED",
+        "owner distribution/build checks expired": "OWNER_AUTHORIZATION_EXPIRED",
+        "exact historical inventories and three-file delivery-reporting correction required; all other source frozen": "SOURCE_GUARD_REJECTED",
+        "tracked working source changed": "SOURCE_GUARD_REJECTED",
+        "missing preflight/certification evidence": "SIGNED_PROOF_REJECTED",
+        "signed certification required": "SIGNED_PROOF_REJECTED",
+        "wrong signed identity": "SIGNED_PROOF_REJECTED",
+        "signed/parity proof incomplete": "SIGNED_PROOF_REJECTED",
+        "activation/web parity required": "SIGNED_PROOF_REJECTED",
+        "certified IPA bytes changed": "IPA_BYTES_CHANGED",
+        "IPA changed before upload": "IPA_BYTES_CHANGED",
+        "existing team API upload credentials required": "CREDENTIAL_FORMAT_REJECTED",
+        "existing API signing material required": "CREDENTIAL_MATERIAL_REJECTED",
+        "invalid signing response": "API_TOKEN_GENERATION_FAILED",
+        "Build 15 already exists or availability is undetermined": "BUILD_NOT_CONFIRMED_UNUSED",
+        "previous upload attempt; owner must investigate": "PREVIOUS_UPLOAD_ATTEMPT",
+    }
+    if stage == "D05_LIVE_BUILD_AVAILABILITY" and isinstance(error, subprocess.CalledProcessError) and isinstance(error.cmd, (list, tuple)) and error.cmd[:1] == ["node"]:
+        return "API_TOKEN_GENERATION_FAILED"
+    return exact.get(str(error), DELIVERY_STAGE_FAILURES[stage])
+
+
+@contextlib.contextmanager
+def delivery_stage(stage, progress):
+    require(stage in DELIVERY_STAGES, "fixed delivery stage required")
+    if progress is not None:
+        progress(stage, "RUNNING", "NONE")
+    try:
+        yield
+    except BaseException as error:
+        if progress is not None:
+            try:
+                progress(stage, "FAIL", delivery_failure_category(stage, error))
+            except Exception:
+                pass  # Reporting failure never resumes or retries the failed operation.
+        raise
+    else:
+        if progress is not None:
+            progress(stage, "PASS", "NONE")
+
+
+def emit_delivery(records):
+    require(isinstance(records, list) and len(records) == len(DELIVERY_STAGES), "complete fixed delivery report required")
+    stopped = False
+    for expected, record in zip(DELIVERY_STAGES, records):
+        require(isinstance(record, dict) and set(record) == {"stage", "status", "category"}
+                and record["stage"] == expected and record["status"] in {"PASS", "FAIL", "RUNNING", "NOT_RUN"}
+                and record["category"] in DELIVERY_CATEGORIES, "fixed delivery record required")
+        require(not stopped or record["status"] == "NOT_RUN", "dependent stage cannot execute")
+        if record["status"] == "PASS":
+            require(record["category"] == "NONE", "successful stage cannot have an error")
+        elif record["status"] == "NOT_RUN":
+            require(record["category"] == "DEPENDENCY_FAILED", "unexecuted stage required")
+            stopped = True
+        elif record["status"] == "RUNNING":
+            require(record["category"] == "NONE", "running stage cannot have an error")
+            stopped = True
+        else:
+            require(record["category"] not in {"NONE", "DEPENDENCY_FAILED"}, "fixed failure category required")
+            stopped = True
+    payload = json.dumps({"delivery_stages": records}, sort_keys=True).encode() + b"\n"
+    require(len(payload) <= 8192, "bounded public result required")
+    os.write(3, payload)
+
+
+def transfer_public(root, commit, ipa):
+    require(root.is_dir() and not root.is_symlink() and not (root / ".owned").is_symlink()
+            and (root / ".owned").read_text() == cert.PRIVATE_MARKER, "owned private root required")
+    reports = root / "reports"
+    require(reports.is_dir() and not reports.is_symlink(), "private reports required")
+    destination = reports / "delivery-stages.json"
+    require(not destination.exists() and not destination.is_symlink(), "one delivery report only")
+    records = [{"stage": stage, "status": "NOT_RUN", "category": "DEPENDENCY_FAILED"} for stage in DELIVERY_STAGES]
+    def progress(stage, status, category):
+        index = DELIVERY_STAGES.index(stage)
+        require(records[index]["status"] == ("NOT_RUN" if status == "RUNNING" else "RUNNING"),
+                "one execution per delivery stage")
+        candidate = [dict(record) for record in records]
+        candidate[index] = {"stage": stage, "status": status, "category": category}
+        # Validate atomically before private persistence or the public FD.
+        # Validation is performed by the same emitter; no raw child output uses FD 3.
+        require(not destination.is_symlink(), "private report leaf required")
+        emit_delivery(candidate)
+        write_json(destination, {"delivery_stages": candidate})
+        records[:] = candidate
+    def precheck(private, source, artifact):
+        require(os.environ.get("RUNNER_OS") == "macOS" and os.environ.get("GITHUB_ACTIONS") == "true", "future authorized macOS workflow only")
+        require(os.environ.get("HOME") == str(root / "home") and os.environ.get("CFFIXED_USER_HOME") == str(root / "home"), "private tool home required")
+        return ready(private, source, artifact)
+    return transfer(root, commit, ipa, precheck=precheck, progress=progress)
+
+
 def transfer(root, commit, ipa, precheck=ready, credentials=None, token_factory=api_token,
-             get=apple_get, execute=subprocess.run, clock=time.time):
-    """One validation then one upload; no retry after uncertain Apple acceptance."""
-    precheck(root, commit, ipa)
-    marker = root / "reports/delivery-transfer.json"
-    require(not marker.exists(), "previous upload attempt; owner must investigate")
-    # Credentials are first read only AFTER authorization, signed certification and parity.
-    values = os.environ if credentials is None else credentials
-    key, issuer = values.get("ASC_KEY_ID", ""), values.get("ASC_ISSUER_ID", "")
-    require(re.fullmatch(r"[A-Z0-9]{10}", key) and re.fullmatch(r"[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}", issuer), "existing team API upload credentials required")
-    key_path = root / "home/.appstoreconnect/private_keys" / ("AuthKey_" + key + ".p8")
-    key_path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
-    raw = base64.b64decode(values.get("ASC_PRIVATE_KEY_P8_BASE64", ""), validate=True)
-    require(raw.startswith(b"-----BEGIN PRIVATE KEY-----") and raw.rstrip().endswith(b"-----END PRIVATE KEY-----"), "existing API signing material required")
-    with key_path.open("xb") as stream:
-        stream.write(raw)
-    key_path.chmod(0o600)
-    command = ["xcrun", "altool", "--type", "ios", "--file", str(ipa), "--apiKey", key, "--apiIssuer", issuer]
-    execute([*command, "--validate-app"], check=True, cwd=root / "home")
-    # Recheck frozen source, owner settings TTL, IPA digest, all reports after validation.
-    current_proof, _ = precheck(root, commit, ipa)
-    check_started = clock()
-    token = token_factory(key, issuer, key_path)
-    unused = unused_build(lambda path: get(path, token))
-    authorization_guard(root, commit)
-    require(0 <= clock() - check_started <= 60, "build availability check expired")
-    require(hashlib.sha256(ipa.read_bytes()).hexdigest() == current_proof["ipa_sha256"], "IPA changed before upload")
-    write_json(root / "reports/delivery-availability.json", {**unused, "checked_at": int(clock())})
-    # No build/signing work or unrelated Apple operation between this GET and the upload.
-    write_json(marker, {"status": "ATTEMPTED", "source_commit": commit, "build": "15"})
-    execute([*command, "--upload-app"], check=True, cwd=root / "home")
-    write_json(marker, {"status": "ACCEPTED", "source_commit": commit, "build": "15"})
+             get=apple_get, execute=subprocess.run, clock=time.time, progress=None):
+    """One validation then one upload; fixed reporting never bypasses a gate."""
+    with delivery_stage("D01_FINAL_LOCAL_VERIFICATION", progress):
+        precheck(root, commit, ipa)
+        marker = root / "reports/delivery-transfer.json"
+        require(not marker.exists(), "previous upload attempt; owner must investigate")
+    with delivery_stage("D02_CREDENTIAL_PRESENCE_FORMAT", progress):
+        # Credentials are first read only AFTER authorization, signed certification and parity.
+        values = os.environ if credentials is None else credentials
+        key, issuer = values.get("ASC_KEY_ID", ""), values.get("ASC_ISSUER_ID", "")
+        require(re.fullmatch(r"[A-Z0-9]{10}", key) and re.fullmatch(r"[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}", issuer), "existing team API upload credentials required")
+        key_path = root / "home/.appstoreconnect/private_keys" / ("AuthKey_" + key + ".p8")
+        key_path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
+        raw = base64.b64decode(values.get("ASC_PRIVATE_KEY_P8_BASE64", ""), validate=True)
+        require(raw.startswith(b"-----BEGIN PRIVATE KEY-----") and raw.rstrip().endswith(b"-----END PRIVATE KEY-----"), "existing API signing material required")
+        with key_path.open("xb") as stream:
+            stream.write(raw)
+        key_path.chmod(0o600)
+        command = ["xcrun", "altool", "--type", "ios", "--file", str(ipa), "--apiKey", key, "--apiIssuer", issuer]
+    with delivery_stage("D03_APPLE_VALIDATION", progress):
+        execute([*command, "--validate-app"], check=True, cwd=root / "home")
+    with delivery_stage("D04_POST_VALIDATION_VERIFICATION", progress):
+        # Recheck frozen source, owner settings TTL, IPA digest, all reports after validation.
+        current_proof, _ = precheck(root, commit, ipa)
+    with delivery_stage("D05_LIVE_BUILD_AVAILABILITY", progress):
+        check_started = clock()
+        token = token_factory(key, issuer, key_path)
+        unused = unused_build(lambda path: get(path, token))
+        authorization_guard(root, commit)
+        require(0 <= clock() - check_started <= 60, "build availability check expired")
+        require(hashlib.sha256(ipa.read_bytes()).hexdigest() == current_proof["ipa_sha256"], "IPA changed before upload")
+        write_json(root / "reports/delivery-availability.json", {**unused, "checked_at": int(clock())})
+    with delivery_stage("D06_ACTUAL_UPLOAD", progress):
+        # No build/signing work or unrelated Apple operation between this GET and the upload.
+        write_json(marker, {"status": "ATTEMPTED", "source_commit": commit, "build": "15"})
+        execute([*command, "--upload-app"], check=True, cwd=root / "home")
+        write_json(marker, {"status": "ACCEPTED", "source_commit": commit, "build": "15"})
 
 
 
@@ -1232,9 +1402,7 @@ def main():
         with Path(args.github_env).open("a") as destination:
             destination.write("EXPECTED_COMMIT_SHA=" + args.commit + "\nDIAGNOSTIC_BUILD_NUMBER=15\n")
     else:
-        require(os.environ.get("RUNNER_OS") == "macOS" and os.environ.get("GITHUB_ACTIONS") == "true", "future authorized macOS workflow only")
-        require(os.environ.get("HOME") == str(root / "home") and os.environ.get("CFFIXED_USER_HOME") == str(root / "home"), "private tool home required")
-        transfer(root, args.commit, Path(args.ipa))
+        transfer_public(root, args.commit, Path(args.ipa))
         return
     require(args.output and Path(args.output).resolve().is_relative_to(root.resolve()), "private report required")
     write_json(args.output, result)

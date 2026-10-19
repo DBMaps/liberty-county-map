@@ -299,6 +299,8 @@ jobs:
           set -euo pipefail
           set +x
           umask 077
+          # FD 3 carries only fixed delivery stages; raw Apple output stays private.
+          exec 3>&1
           exec > "$DIAGNOSTIC_PRIVATE_ROOT/logs/step-8.log" 2>&1
           export TMPDIR="$DIAGNOSTIC_PRIVATE_ROOT/tmp/"
           cd "$DELIVERY_SOURCE_DIR"

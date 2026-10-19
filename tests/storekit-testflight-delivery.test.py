@@ -31,7 +31,56 @@ WORKFLOW = ROOT / ".github/workflows/gridly-storekit-testflight-delivery.yml"
 
 
 
+
+DELIVERY_REPORTING_FUNCTIONS = {
+    "DeliveryCheckFailure", "verify_delivery_export", "delivery_failure_category",
+    "delivery_stage", "emit_delivery", "transfer_public",
+}
+
+
+def normalize_delivery_reporting(source):
+    """Reverse only reviewed stage wrappers; new tests verify their live behavior."""
+    tree=ast.parse(source)
+    for function in (node for node in tree.body if isinstance(node,ast.FunctionDef)):
+        if function.name=="ready":
+            for node in ast.walk(function):
+                if isinstance(node,ast.Call) and isinstance(node.func,ast.Name) and node.func.id=="verify_delivery_export":
+                    assert len(node.args)==2 and ast.literal_eval(node.args[1]) in {"INPUT","OUTPUT"}
+                    node.func.id="export_guard";node.args=node.args[:1]
+        if function.name=="transfer" and function.args.args[-1].arg=="progress":
+            assert ast.literal_eval(function.args.defaults[-1]) is None
+            function.args.args=function.args.args[:-1];function.args.defaults=function.args.defaults[:-1]
+            wrappers=function.body[1:]
+            assert len(wrappers)==6
+            restored=[function.body[0]]
+            for stage,node in zip(delivery.DELIVERY_STAGES,wrappers):
+                assert isinstance(node,ast.With) and len(node.items)==1
+                call=node.items[0].context_expr
+                assert ast.dump(call)==ast.dump(ast.parse("delivery_stage("+repr(stage)+", progress)",mode="eval").body)
+                restored.extend(node.body)
+            restored[0]=ast.Expr(value=ast.Constant(value="One validation then one upload; no retry after uncertain Apple acceptance."))
+            function.body=restored
+        if function.name=="main":
+            for node in ast.walk(function):
+                if isinstance(node,ast.If) and len(node.orelse)==2 and isinstance(node.orelse[0],ast.Expr):
+                    call=node.orelse[0].value
+                    if isinstance(call,ast.Call) and isinstance(call.func,ast.Name) and call.func.id=="transfer_public":
+                        assert ast.unparse(call)=="transfer_public(root, args.commit, Path(args.ipa))"
+                        node.orelse=ast.parse('require(os.environ.get("RUNNER_OS") == "macOS" and os.environ.get("GITHUB_ACTIONS") == "true", "future authorized macOS workflow only")\nrequire(os.environ.get("HOME") == str(root / "home") and os.environ.get("CFFIXED_USER_HOME") == str(root / "home"), "private tool home required")\ntransfer(root, args.commit, Path(args.ipa))\nreturn').body
+    return ast.unparse(ast.fix_missing_locations(tree))
+
+
+def restore_delivery_reporting(text):
+    old=delivery.cert.git("show",delivery.TRANSFER_BASE+":.github/workflows/gridly-storekit-testflight-delivery.yml").decode()
+    line='          exec > "$DIAGNOSTIC_PRIVATE_ROOT/logs/step-8.log" 2>&1\n'
+    expected=old.replace(line,'          # FD 3 carries only fixed delivery stages; raw Apple output stays private.\n          exec 3>&1\n'+line,1)
+    if text==old:return old
+    if text!=expected:raise AssertionError("only fixed delivery FD 3 wrapper authorized")
+    return old
+
+
 def restore_signing_environment(text):
+    text=restore_delivery_reporting(text)
     old = delivery.cert.git("show", delivery.ENVIRONMENT_BASE + ":.github/workflows/gridly-storekit-testflight-delivery.yml").decode()
     expected = old
     for label in ("step-6", "step-7-1", "step-7-2", "step-7-3", "step-7-4", "step-7-5"):
@@ -78,7 +127,7 @@ def owner_automatic_authorization():
             }}
 
 
-def source_git(*, parent=delivery.ENVIRONMENT_BASE, base_parent=delivery.SOURCE,
+def source_git(*, parent=delivery.TRANSFER_BASE, base_parent=delivery.SOURCE,
                owner_parent=delivery.DELIVERY_BASE, preflight_parent=delivery.OWNER_CORRECTION,
                preparation=None, past_correction=None, preflight_inventory=None,
                historical_refinement=None, signing_inventory=None, cms_inventory=None,
@@ -89,6 +138,7 @@ def source_git(*, parent=delivery.ENVIRONMENT_BASE, base_parent=delivery.SOURCE,
                p04_parent=delivery.P04_BASE, p04_inventory=None,
                evidence_parent=delivery.ARCHIVE_BASE, archive_inventory=None,
                environment_parent=delivery.EVIDENCE_BASE, environment_inventory=None,
+               transfer_parent=delivery.ENVIRONMENT_BASE, transfer_inventory=None,
                correction=None, net=None, mode="100644", dirty=b"", staged=b"", untracked=b"",
                tag_object=None, tag_target=None, tag_type=None, missing_tag=None):
     additions = "\n".join("A\t" + path for path in sorted(delivery.FILES)).encode()
@@ -111,6 +161,7 @@ def source_git(*, parent=delivery.ENVIRONMENT_BASE, base_parent=delivery.SOURCE,
         ("show", "-s", "--format=%P", delivery.ARCHIVE_BASE): p04_parent.encode(),
         ("show", "-s", "--format=%P", delivery.EVIDENCE_BASE): evidence_parent.encode(),
         ("show", "-s", "--format=%P", delivery.ENVIRONMENT_BASE): environment_parent.encode(),
+        ("show", "-s", "--format=%P", delivery.TRANSFER_BASE): transfer_parent.encode(),
         ("show", "-s", "--format=%P", delivery.PREFLIGHT_BASE): preflight_parent.encode(),
         ("show", "-s", "--format=%P", delivery.OWNER_CORRECTION): owner_parent.encode(),
         ("show", "-s", "--format=%P", delivery.DELIVERY_BASE): base_parent.encode(),
@@ -128,7 +179,8 @@ def source_git(*, parent=delivery.ENVIRONMENT_BASE, base_parent=delivery.SOURCE,
         ("diff", "--name-status", "--no-renames", delivery.P04_BASE, delivery.ARCHIVE_BASE): modifications if p04_inventory is None else p04_inventory,
         ("diff", "--name-status", "--no-renames", delivery.ARCHIVE_BASE, delivery.EVIDENCE_BASE): modifications if archive_inventory is None else archive_inventory,
         ("diff", "--name-status", "--no-renames", delivery.EVIDENCE_BASE, delivery.ENVIRONMENT_BASE): modifications if environment_inventory is None else environment_inventory,
-        ("diff", "--name-status", "--no-renames", delivery.ENVIRONMENT_BASE, COMMIT): modifications if correction is None else correction,
+        ("diff", "--name-status", "--no-renames", delivery.ENVIRONMENT_BASE, delivery.TRANSFER_BASE): modifications if transfer_inventory is None else transfer_inventory,
+        ("diff", "--name-status", "--no-renames", delivery.TRANSFER_BASE, COMMIT): modifications if correction is None else correction,
         ("diff", "--name-status", "--no-renames", delivery.SOURCE, COMMIT): all_additions if net is None else net,
         ("diff", "--name-only", "HEAD"): dirty,
         ("diff", "--cached", "--name-only"): staged,
@@ -141,7 +193,7 @@ def source_git(*, parent=delivery.ENVIRONMENT_BASE, base_parent=delivery.SOURCE,
                          (delivery.SIGNING_VERIFIED_BASE,delivery.SIGNING_VERIFICATION_FILES),
                          (delivery.P04_BASE,delivery.DELIVERY_ALIGNMENT_FILES),
                          (delivery.ARCHIVE_BASE,delivery.FILES),
-                         (delivery.EVIDENCE_BASE,delivery.FILES), (delivery.ENVIRONMENT_BASE,delivery.FILES)):
+                         (delivery.EVIDENCE_BASE,delivery.FILES), (delivery.ENVIRONMENT_BASE,delivery.FILES), (delivery.TRANSFER_BASE,delivery.FILES)):
         for path in files:
             values[("ls-tree",target,"--",path)]=("100644 blob "+"0"*40+"\t"+path).encode()
     for path in delivery.FILES | delivery.PREFLIGHT_FILES | delivery.SIGNING_FILES | delivery.CMS_FILES:
@@ -1294,11 +1346,11 @@ class WorkflowTests(unittest.TestCase):
     def test_unrelated_delivery_execution_and_security_functions_remain_unchanged(self):
         baseline = delivery.cert.git("show", delivery.PREFLIGHT_BASE + ":tools/apple_storekit_testflight_delivery.py").decode()
         current = (ROOT / "tools/apple_storekit_testflight_delivery.py").read_text()
-        functions = lambda source: {node.name: ast.dump(node) for node in ast.parse(source).body if isinstance(node, (ast.FunctionDef, ast.ClassDef))}
+        functions = lambda source: {node.name: ast.dump(node) for node in ast.parse(normalize_delivery_reporting(source)).body if isinstance(node, (ast.FunctionDef, ast.ClassDef))}
         before, after = functions(baseline), functions(current)
         self.assertEqual(set(after) - set(before), {"preflight_result", "emit_preflight", "delivery_preflight",
                                                   "HistoryFailure", "HistoryNoRedirect", "history_context", "history_retry_delay", "cleanup_delivery",
-                                                  "classify_archive", "archive_report", "emit_archive", "cleanup_errno"} | {"owned_runner_directory", "runner_context", "capture_runner_context", "runner_native_environment", "runner_profile", "prepare_signing_context", "install_runner_profile", "verify_runner_profile_ownership", "restore_keychain_context"})
+                                                  "classify_archive", "archive_report", "emit_archive", "cleanup_errno"} | {"owned_runner_directory", "runner_context", "capture_runner_context", "runner_native_environment", "runner_profile", "prepare_signing_context", "install_runner_profile", "verify_runner_profile_ownership", "restore_keychain_context"} | DELIVERY_REPORTING_FUNCTIONS)
         self.assertFalse(set(before) - set(after))
         for name in before.keys() - {"source_guard", "main", "public_json", "historical_evidence", "finish"}:
             self.assertEqual(after[name], before[name], name)
@@ -1371,8 +1423,11 @@ class WorkflowTests(unittest.TestCase):
             if index==9:
                 self.assertTrue(rest.startswith('          # FD 3 carries only the fixed archive classification; raw output stays private.\n          exec 3>&1\n'))
                 rest=rest.split('          exec 3>&1\n',1)[1]
+            if index==12:
+                self.assertTrue(rest.startswith('          # FD 3 carries only fixed delivery stages; raw Apple output stays private.\n          exec 3>&1\n'))
+                rest=rest.split('          exec 3>&1\n',1)[1]
             self.assertRegex(rest, r'^          exec > "\$DIAGNOSTIC_PRIVATE_ROOT/logs/step-(?:[1-8]|7-[1-5])\.log" 2>&1\n')
-        self.assertEqual(self.text.count("exec 3>&1"),2)
+        self.assertEqual(self.text.count("exec 3>&1"),3)
         self.assertIn('--github-env "$GITHUB_ENV" --output',self.text)
         self.assertIn("testFlightInternalTestingOnly", self.text)
         self.assertIn("manageAppVersionAndBuildNumber", self.text)
@@ -1536,23 +1591,23 @@ security() {
     def test_existing_functions_and_controls_are_unchanged_outside_p04(self):
         before=delivery.cert.git("show",delivery.P04_BASE+":tools/apple_storekit_testflight_delivery.py").decode()
         after=(ROOT/"tools/apple_storekit_testflight_delivery.py").read_text()
-        functions=lambda text:{node.name:ast.dump(node) for node in ast.parse(text).body if isinstance(node,(ast.FunctionDef,ast.ClassDef))}
+        functions=lambda text:{node.name:ast.dump(node) for node in ast.parse(normalize_delivery_reporting(text)).body if isinstance(node,(ast.FunctionDef,ast.ClassDef))}
         original,current=functions(before),functions(after)
         self.assertEqual(set(current)-set(original),
                          {"HistoryFailure","HistoryNoRedirect","history_context","history_retry_delay","cleanup_delivery",
-                          "classify_archive","archive_report","emit_archive","cleanup_errno"} | {"owned_runner_directory", "runner_context", "capture_runner_context", "runner_native_environment", "runner_profile", "prepare_signing_context", "install_runner_profile", "verify_runner_profile_ownership", "restore_keychain_context"})
+                          "classify_archive","archive_report","emit_archive","cleanup_errno"} | {"owned_runner_directory", "runner_context", "capture_runner_context", "runner_native_environment", "runner_profile", "prepare_signing_context", "install_runner_profile", "verify_runner_profile_ownership", "restore_keychain_context"} | DELIVERY_REPORTING_FUNCTIONS)
         self.assertFalse(set(original)-set(current))
         for name in original.keys()-{"source_guard","public_json","historical_evidence","delivery_preflight","finish","main"}:
             self.assertEqual(original[name],current[name],name)
         nodes=lambda text:{n.targets[0].id:n.value for n in ast.parse(text).body
                            if isinstance(n,ast.Assign) and isinstance(n.targets[0],ast.Name)}
         old,new=nodes(before),nodes(after)
-        self.assertEqual(set(new)-set(old),{"P04_BASE","ARCHIVE_BASE","EVIDENCE_BASE","ENVIRONMENT_BASE","ARCHIVE_RULES","ARCHIVE_MAX_BYTES","ARCHIVE_STRUCTURED_STATES","HISTORY_CATEGORIES","HISTORY_ATTEMPTS",
+        self.assertEqual(set(new)-set(old),{"TRANSFER_BASE","DELIVERY_STAGES","DELIVERY_STAGE_FAILURES","DELIVERY_CATEGORIES","P04_BASE","ARCHIVE_BASE","EVIDENCE_BASE","ENVIRONMENT_BASE","ARCHIVE_RULES","ARCHIVE_MAX_BYTES","ARCHIVE_STRUCTURED_STATES","HISTORY_CATEGORIES","HISTORY_ATTEMPTS",
                          "HISTORY_WAIT_BUDGET","HISTORY_DEADLINE","HISTORY_TIMEOUT","HISTORY_MAX_BYTES"})
         for name,node in old.items():
             if name=="HISTORICAL_TAGS":
                 self.assertIsInstance(new[name],ast.Dict)
-                self.assertEqual(len(new[name].keys),11)
+                self.assertEqual(len(new[name].keys),12)
                 retained=ast.Dict(keys=new[name].keys[:7],values=new[name].values[:7])
                 self.assertEqual(ast.dump(node),ast.dump(retained))
             elif name=="PREFLIGHT_CATEGORIES":
@@ -1560,7 +1615,7 @@ security() {
             else:self.assertEqual(ast.dump(node),ast.dump(new[name]),name)
         self.assertEqual(delivery.OWNER_CHECK_TTL,1800)
 
-    def test_exact_reviewed_history_and_all_eleven_authorization_tags(self):
+    def test_exact_reviewed_history_and_all_twelve_authorization_tags(self):
         self.assertEqual(delivery.REFINEMENT_BASE,"4c95caed0d261fca1dbaf86fc926660661d0643b")
         self.assertEqual(delivery.SIGNING_BASE,"db4df3949b1f02325b8869433bbbd16b234487db")
         self.assertEqual(delivery.CMS_BASE,"cbe3c297099dbca9c6d376848157de0253aeae39")
@@ -1597,8 +1652,11 @@ security() {
         self.assertEqual(delivery.EVIDENCE_BASE,"779d67c7b89569db7cacb6a253eff6da8d3f74ef")
         self.assertEqual(delivery.ENVIRONMENT_BASE,"b27d780e3148a903917b7a05595f17006f1ab8e0")
         expected["gridly-storekit-testflight-deliver-15-"+delivery.ENVIRONMENT_BASE]=("c8a561e739bff54346c75864042d65b08b1b9b4e",delivery.ENVIRONMENT_BASE)
+        self.assertEqual(delivery.TRANSFER_BASE,"2cca00a2248e9a0c04ef5173e3364709a517f31e")
+        expected["gridly-storekit-testflight-deliver-15-"+delivery.TRANSFER_BASE]=("7f756b44328fa46edccf8b4f4242460617382621",delivery.TRANSFER_BASE)
         self.assertEqual(delivery.HISTORICAL_TAGS,expected)
-        for child,parent in ((delivery.ENVIRONMENT_BASE,delivery.EVIDENCE_BASE),
+        for child,parent in ((delivery.TRANSFER_BASE,delivery.ENVIRONMENT_BASE),
+                             (delivery.ENVIRONMENT_BASE,delivery.EVIDENCE_BASE),
                              (delivery.EVIDENCE_BASE,delivery.ARCHIVE_BASE),
                              (delivery.ARCHIVE_BASE,delivery.P04_BASE),
                              (delivery.P04_BASE,delivery.SIGNING_VERIFIED_BASE),
@@ -1612,7 +1670,7 @@ security() {
                 self.assertEqual(historical, delivery.cert.git("show",delivery.CMS_BASE+":"+path),path)
                 if path not in {"tools/apple_storekit_signing_diagnostic.py","tests/storekit-signing-diagnostic.test.py"}:
                     self.assertEqual((ROOT/path).read_bytes().replace(b"\r\n",b"\n"),historical,path)
-        checkpoint=delivery.ENVIRONMENT_BASE
+        checkpoint=delivery.TRANSFER_BASE
         support={".github/workflows/gridly-storekit-testflight-delivery.yml",
                  "tools/apple_storekit_testflight_delivery.py","tests/storekit-testflight-delivery.test.py"}
         def git(*args):
@@ -1729,7 +1787,7 @@ security() {
                     (delivery.SIGNING_VERIFIED_BASE,delivery.SIGNING_VERIFICATION_FILES),
                     (delivery.P04_BASE,delivery.DELIVERY_ALIGNMENT_FILES),
                          (delivery.ARCHIVE_BASE,delivery.FILES),
-                         (delivery.EVIDENCE_BASE,delivery.FILES), (delivery.ENVIRONMENT_BASE,delivery.FILES))
+                         (delivery.EVIDENCE_BASE,delivery.FILES), (delivery.ENVIRONMENT_BASE,delivery.FILES), (delivery.TRANSFER_BASE,delivery.FILES))
         valid=source_git()
         for target,files in historical:
             for path in files:
@@ -1914,7 +1972,7 @@ python3() {
     def test_cleanup_proof_logic_and_upload_path_remain_structurally_unchanged(self):
         old=delivery.cert.git("show",delivery.ARCHIVE_BASE+":tools/apple_storekit_testflight_delivery.py").decode()
         new=(ROOT/"tools/apple_storekit_testflight_delivery.py").read_text()
-        functions=lambda text:{n.name:n for n in ast.parse(text).body if isinstance(n,ast.FunctionDef)}
+        functions=lambda text:{n.name:n for n in ast.parse(normalize_delivery_reporting(text)).body if isinstance(n,ast.FunctionDef)}
         before,after=functions(old),functions(new)
         for name in before.keys()-{"source_guard","finish","main","cleanup_delivery"}:
             self.assertEqual(ast.dump(before[name]),ast.dump(after[name]),name)
@@ -2114,7 +2172,7 @@ def restore_archive_reporting(text):
 
 
 def normalize_archive_cli(source):
-    tree=ast.parse(source)
+    tree=ast.parse(normalize_delivery_reporting(source))
     main=next(n for n in tree.body if isinstance(n,ast.FunctionDef) and n.name=="main")
     for node in ast.walk(main):
         if isinstance(node,ast.If) and isinstance(node.test,ast.Compare) and ast.unparse(node.test) == "args.mode == 'private-init'":
@@ -2280,9 +2338,9 @@ class ArchiveErrorEvidenceTests(unittest.TestCase):
     def test_other_production_functions_and_cli_modes_are_unchanged(self):
         old=delivery.cert.git("show",delivery.EVIDENCE_BASE+":tools/apple_storekit_testflight_delivery.py").decode()
         new=(ROOT/"tools/apple_storekit_testflight_delivery.py").read_text()
-        functions=lambda text:{n.name:ast.dump(n) for n in ast.parse(text).body if isinstance(n,(ast.FunctionDef,ast.ClassDef))}
+        functions=lambda text:{n.name:ast.dump(n) for n in ast.parse(normalize_delivery_reporting(text)).body if isinstance(n,(ast.FunctionDef,ast.ClassDef))}
         before,after=functions(old),functions(new)
-        self.assertEqual(set(after)-set(before),{"classify_archive","archive_report","emit_archive","cleanup_errno"} | {"owned_runner_directory", "runner_context", "capture_runner_context", "runner_native_environment", "runner_profile", "prepare_signing_context", "install_runner_profile", "verify_runner_profile_ownership", "restore_keychain_context"})
+        self.assertEqual(set(after)-set(before),{"classify_archive","archive_report","emit_archive","cleanup_errno"} | {"owned_runner_directory", "runner_context", "capture_runner_context", "runner_native_environment", "runner_profile", "prepare_signing_context", "install_runner_profile", "verify_runner_profile_ownership", "restore_keychain_context"} | DELIVERY_REPORTING_FUNCTIONS)
         for name in before.keys()-{"source_guard","cleanup_delivery","main"}:
             self.assertEqual(before[name],after[name],name)
         normalized=functions(normalize_archive_cli(new))
@@ -2594,7 +2652,7 @@ class RunnerSigningEnvironmentTests(unittest.TestCase):
 
     def test_no_original_home_deletion_or_permission_broadening_exists(self):
         code=Path("tools/apple_storekit_testflight_delivery.py").read_text()
-        functions={n.name:ast.unparse(n) for n in ast.parse(code).body if isinstance(n,ast.FunctionDef)}
+        functions={n.name:ast.unparse(n) for n in ast.parse(normalize_delivery_reporting(code)).body if isinstance(n,ast.FunctionDef)}
         for name in ("cleanup_delivery","install_runner_profile","restore_keychain_context"):
             for forbidden in ("chmod(","chown(","chflags(","kill(","ignore_errors=True"):
                 self.assertNotIn(forbidden,functions[name])
@@ -2602,7 +2660,7 @@ class RunnerSigningEnvironmentTests(unittest.TestCase):
         self.assertIn('profile.open(\'xb\')',functions["install_runner_profile"])
 
     def test_actual_workflow_native_scope_keeps_upload_home_private_and_cms_explicit(self):
-        text=WORKFLOW.read_text()
+        text=restore_delivery_reporting(WORKFLOW.read_text())
         old=restore_signing_environment(text)
         self.assertEqual(text.count('. "$DIAGNOSTIC_PRIVATE_ROOT/runner-context.sh"'),7)
         signing=CmsSigningRepairTests.signing_body(text)
@@ -2617,7 +2675,7 @@ class RunnerSigningEnvironmentTests(unittest.TestCase):
     def test_capture_is_only_new_private_init_operation_and_transfer_contract_is_identical(self):
         old=delivery.cert.git("show",delivery.ENVIRONMENT_BASE+":tools/apple_storekit_testflight_delivery.py").decode()
         new=Path("tools/apple_storekit_testflight_delivery.py").read_text()
-        functions=lambda code:{n.name:ast.dump(n) for n in ast.parse(code).body if isinstance(n,ast.FunctionDef)}
+        functions=lambda code:{n.name:ast.dump(n) for n in ast.parse(normalize_delivery_reporting(code)).body if isinstance(n,ast.FunctionDef)}
         for name in functions(old).keys()-{"source_guard","cleanup_delivery","main"}:
             self.assertEqual(functions(old)[name],functions(new)[name],name)
         self.assertEqual(functions(normalize_archive_cli(old))["main"],functions(normalize_archive_cli(new))["main"])
@@ -2673,6 +2731,278 @@ test "$CFFIXED_USER_HOME" = "$outer_cf"
         for options in ({"environment_parent":"9"*40},{"environment_parent":delivery.EVIDENCE_BASE+" "+"8"*40},
                         {"environment_inventory":b""},{"environment_inventory":b"M\tjs/gridly-paid-ui.mjs"}):
             with self.subTest(options=options),patch.object(delivery.cert,"git",side_effect=source_git(**options)),patch.object(delivery.subprocess,"run"),patch.object(delivery.cert,"original_contracts"),self.assertRaises(ValueError):
+                delivery.source_guard(COMMIT,True)
+
+
+
+class DeliveryStageReportingTests(unittest.TestCase):
+    def setUp(self):
+        self.actual_source_guard=delivery.source_guard
+        CertificationAndTransferTests.setUp(self)
+    fake_upload=CertificationAndTransferTests.fake_upload
+    canary="SYNTHETIC_PRIVATE_TOKEN_PATH_NEVER_PUBLIC"
+
+    def exercise(self, *, fail=None, mutate=None, write_failure=None, environment=None):
+        (self.root/".owned").write_text(delivery.cert.PRIVATE_MARKER)
+        calls,options=self.fake_upload(existing=fail=="existing",fail=fail=="upload")
+        if mutate:mutate()
+        if fail=="credentials":options["credentials"]={}
+        if fail=="validation":
+            def execute(command,**kwargs):
+                calls.append(command[-1]);raise subprocess.CalledProcessError(2,command,stderr=self.canary)
+            options["execute"]=execute
+        if fail=="postcheck":
+            original=options["execute"]
+            def execute(command,**kwargs):
+                original(command,**kwargs);self.ipa.write_bytes(b"ALTERED")
+            options["execute"]=execute
+        if fail=="token":
+            def token(*args):raise subprocess.CalledProcessError(1,["node",self.canary],stderr=self.canary)
+            options["token_factory"]=token
+        if fail=="availability":
+            def get(*args):raise OSError(self.canary)
+            options["get"]=get
+        if fail=="expired":
+            original=options["get"]
+            def get(path,token):
+                result=original(path,token)
+                if path.startswith("/v1/builds?"):delivery.time.time.return_value=NOW+1801
+                return result
+            options["get"]=get
+        frames=[]
+        def write(fd,raw):
+            self.assertEqual(fd,3)
+            if write_failure==len(frames)+1:raise OSError(self.canary)
+            self.assertLessEqual(len(raw),8192)
+            self.assertNotIn(self.canary.encode(),raw)
+            self.assertNotIn(str(self.root).encode(),raw)
+            self.assertNotIn(b"PRIVATE KEY",raw)
+            frames.append(json.loads(raw))
+            return len(raw)
+        actual=delivery.transfer
+        def invoke(*args,**kwargs):return actual(*args,**kwargs,**options)
+        env={"RUNNER_OS":"macOS","GITHUB_ACTIONS":"true","HOME":str(self.root/"home"),"CFFIXED_USER_HOME":str(self.root/"home")}
+        if environment:env.update(environment)
+        error=None
+        with patch.object(delivery,"transfer",side_effect=invoke),patch.object(delivery.os,"write",side_effect=write),patch.dict(delivery.os.environ,env),contextlib.redirect_stdout(io.StringIO()) as out,contextlib.redirect_stderr(io.StringIO()) as err:
+            try:delivery.transfer_public(self.root,COMMIT,self.ipa)
+            except BaseException as caught:error=caught
+        self.assertEqual(out.getvalue()+err.getvalue(),"")
+        return calls,frames,error
+
+    def final(self,frames):
+        return frames[-1]["delivery_stages"]
+
+    def assert_boundary(self,frames,index,category):
+        records=self.final(frames)
+        self.assertEqual([row["stage"] for row in records],list(delivery.DELIVERY_STAGES))
+        self.assertEqual([row["status"] for row in records],["PASS"]*index+["FAIL"]+["NOT_RUN"]*(5-index))
+        self.assertEqual(records[index]["category"],category)
+
+    def test_success_reports_all_six_stages_in_order_and_one_upload(self):
+        calls,frames,error=self.exercise()
+        self.assertIsNone(error)
+        self.assertEqual(calls,["--validate-app","apps","builds","--upload-app"])
+        self.assertEqual(len(frames),12)
+        self.assertEqual([row["status"] for row in self.final(frames)],["PASS"]*6)
+        self.assertEqual(delivery.read_json(self.root/"reports/delivery-transfer.json")["status"],"ACCEPTED")
+        self.assertEqual(delivery.read_json(self.root/"reports/delivery-stages.json"),frames[-1])
+
+    def test_missing_signed_proof_stops_before_any_credential_access(self):
+        calls,frames,error=self.exercise(mutate=lambda:(self.root/"reports/storekit-diagnostic-certification.json").unlink())
+        self.assertIsInstance(error,FileNotFoundError);self.assertEqual(calls,[])
+        self.assert_boundary(frames,0,"LOCAL_VERIFICATION_REJECTED")
+
+    def test_local_private_home_guard_is_reported_before_credentials(self):
+        calls,frames,error=self.exercise(environment={"HOME":str(self.root/"unapproved")})
+        self.assertIsInstance(error,ValueError);self.assertEqual(calls,[])
+        self.assert_boundary(frames,0,"DELIVERY_CONTEXT_REJECTED")
+
+    def test_credential_presence_and_format_failure_is_separate_from_apple(self):
+        calls,frames,error=self.exercise(fail="credentials")
+        self.assertIsInstance(error,ValueError);self.assertEqual(calls,[])
+        self.assert_boundary(frames,1,"CREDENTIAL_FORMAT_REJECTED")
+
+    def test_apple_validation_failure_preserves_native_exception_and_blocks_availability(self):
+        calls,frames,error=self.exercise(fail="validation")
+        self.assertIsInstance(error,subprocess.CalledProcessError);self.assertEqual(error.returncode,2)
+        self.assertEqual(calls,["--validate-app"])
+        self.assert_boundary(frames,2,"APPLE_VALIDATION_FAILED")
+        self.assertFalse((self.root/"reports/delivery-transfer.json").exists())
+
+    def test_post_validation_ipa_mutation_is_reported_and_cannot_upload(self):
+        calls,frames,error=self.exercise(fail="postcheck")
+        self.assertIsInstance(error,ValueError);self.assertEqual(calls,["--validate-app"])
+        self.assert_boundary(frames,3,"IPA_BYTES_CHANGED")
+
+    def test_api_token_generation_failure_is_distinct_without_token_or_command_output(self):
+        calls,frames,error=self.exercise(fail="token")
+        self.assertIsInstance(error,subprocess.CalledProcessError);self.assertEqual(calls,["--validate-app"])
+        self.assert_boundary(frames,4,"API_TOKEN_GENERATION_FAILED")
+
+    def test_live_apple_availability_failure_blocks_upload(self):
+        calls,frames,error=self.exercise(fail="availability")
+        self.assertIsInstance(error,OSError);self.assertEqual(calls,["--validate-app"])
+        self.assert_boundary(frames,4,"BUILD_AVAILABILITY_FAILED")
+
+    def test_existing_build_fails_closed_and_reports_no_unused_attestation(self):
+        calls,frames,error=self.exercise(fail="existing")
+        self.assertIsInstance(error,ValueError);self.assertEqual(calls,["--validate-app","apps","builds"])
+        self.assert_boundary(frames,4,"BUILD_NOT_CONFIRMED_UNUSED")
+        self.assertFalse((self.root/"reports/delivery-availability.json").exists())
+
+    def test_expired_owner_authorization_after_live_check_still_blocks_upload(self):
+        calls,frames,error=self.exercise(fail="expired")
+        self.assertIsInstance(error,ValueError);self.assertNotIn("--upload-app",calls)
+        self.assert_boundary(frames,4,"OWNER_AUTHORIZATION_EXPIRED")
+
+    def test_upload_failure_is_uncertain_and_never_retried(self):
+        calls,frames,error=self.exercise(fail="upload")
+        self.assertIsInstance(error,subprocess.CalledProcessError)
+        self.assertEqual(calls.count("--upload-app"),1)
+        self.assert_boundary(frames,5,"UPLOAD_FAILED_OR_UNCERTAIN")
+        self.assertEqual(delivery.read_json(self.root/"reports/delivery-transfer.json")["status"],"ATTEMPTED")
+
+    def test_public_channel_failure_prevents_any_transport(self):
+        calls,frames,error=self.exercise(write_failure=1)
+        self.assertIsInstance(error,OSError);self.assertEqual(calls,[]);self.assertEqual(frames,[])
+
+    def test_post_acceptance_reporting_failure_preserves_acceptance_marker(self):
+        calls,frames,error=self.exercise(write_failure=12)
+        self.assertIsInstance(error,OSError);self.assertEqual(calls.count("--upload-app"),1)
+        self.assertEqual(delivery.read_json(self.root/"reports/delivery-transfer.json")["status"],"ACCEPTED")
+
+    def test_actual_output_sidecar_absence_is_not_misclassified_as_bad_credentials(self):
+        calls,frames,error=self.exercise(mutate=lambda:(self.ipa.parent/"ExportOptions.plist").unlink())
+        self.assertIsInstance(error,delivery.DeliveryCheckFailure);self.assertEqual(calls,[])
+        self.assert_boundary(frames,0,"OUTPUT_EXPORT_UNREADABLE")
+
+    def test_generated_missing_input_echo_keys_still_fail_but_identify_the_exact_key(self):
+        for key,label in (("testFlightInternalTestingOnly","INTERNAL_ONLY"),("method","METHOD"),("destination","DESTINATION"),("manageAppVersionAndBuildNumber","BUILD_NUMBER")):
+            for origin,path in (("INPUT",self.root/"DiagnosticExportOptions.plist"),("OUTPUT",self.ipa.parent/"ExportOptions.plist")):
+                options={"testFlightInternalTestingOnly":True,"method":"app-store-connect","destination":"export","manageAppVersionAndBuildNumber":False}
+                del options[key];path.write_bytes(plistlib.dumps(options))
+                with self.subTest(origin=origin,key=key),self.assertRaises(delivery.DeliveryCheckFailure) as failure:
+                    delivery.verify_delivery_export(path,origin)
+                self.assertEqual(failure.exception.category,origin+"_EXPORT_"+label+"_MISSING")
+
+    def test_generated_policy_contradictions_are_not_normalized_away(self):
+        options={"testFlightInternalTestingOnly":True,"method":"app-store-connect","destination":"export","manageAppVersionAndBuildNumber":False}
+        for key,value,label in (("testFlightInternalTestingOnly",False,"INTERNAL_ONLY"),("testFlightInternalTestingOnly",1,"INTERNAL_ONLY"),("method","ad-hoc","METHOD"),("destination","upload","DESTINATION"),("manageAppVersionAndBuildNumber",True,"BUILD_NUMBER"),("manageAppVersionAndBuildNumber",0,"BUILD_NUMBER")):
+            path=self.ipa.parent/"ExportOptions.plist";path.write_bytes(plistlib.dumps({**options,key:value}))
+            with self.subTest(key=key,value=value),self.assertRaises(delivery.DeliveryCheckFailure) as failure:
+                delivery.verify_delivery_export(path,"OUTPUT")
+            self.assertEqual(failure.exception.category,"OUTPUT_EXPORT_"+label+"_REJECTED")
+
+    def test_extra_xcode_keys_are_allowed_but_values_are_never_published(self):
+        options={"testFlightInternalTestingOnly":True,"method":"app-store-connect","destination":"export","manageAppVersionAndBuildNumber":False,"provisioningProfiles":{self.canary:self.canary},"teamID":self.canary}
+        path=self.ipa.parent/"ExportOptions.plist";path.write_bytes(plistlib.dumps(options))
+        self.assertTrue(delivery.verify_delivery_export(path,"OUTPUT"))
+
+    def test_malformed_or_oversized_sidecar_has_only_fixed_unreadable_category(self):
+        path=self.ipa.parent/"ExportOptions.plist"
+        for body in (self.canary.encode(),b"x"*65537):
+            path.write_bytes(body)
+            with self.assertRaises(delivery.DeliveryCheckFailure) as failure:delivery.verify_delivery_export(path,"OUTPUT")
+            self.assertEqual(failure.exception.category,"OUTPUT_EXPORT_UNREADABLE")
+
+    def test_public_emitter_rejects_private_or_contradictory_records_atomically(self):
+        base=[{"stage":stage,"status":"NOT_RUN","category":"DEPENDENCY_FAILED"} for stage in delivery.DELIVERY_STAGES]
+        for field in ("stage","status","category","private_path"):
+            rows=copy.deepcopy(base);rows[0][field]=self.canary
+            with self.subTest(field=field),patch.object(delivery.os,"write") as output,self.assertRaises(ValueError):
+                delivery.emit_delivery(rows)
+            output.assert_not_called()
+        for index in (0,3,5):
+            rows=copy.deepcopy(base);rows[index]={"stage":delivery.DELIVERY_STAGES[index],"status":"PASS","category":"NONE"}
+            if index==0:rows[0]["category"]="APPLE_VALIDATION_FAILED"
+            with patch.object(delivery.os,"write") as output,self.assertRaises(ValueError):delivery.emit_delivery(rows)
+            output.assert_not_called()
+
+    def test_failure_category_never_echoes_exception_or_native_command_values(self):
+        for stage in delivery.DELIVERY_STAGES:
+            value=delivery.delivery_failure_category(stage,ValueError(self.canary))
+            self.assertIn(value,delivery.DELIVERY_CATEGORIES)
+            self.assertNotIn(self.canary,value)
+        with self.assertRaises(ValueError):delivery.DeliveryCheckFailure(self.canary)
+
+    def test_ready_transfer_and_cli_guards_preserve_every_original_statement(self):
+        old=delivery.cert.git("show",delivery.TRANSFER_BASE+":tools/apple_storekit_testflight_delivery.py").decode()
+        current=(ROOT/"tools/apple_storekit_testflight_delivery.py").read_text()
+        functions=lambda code:{n.name:ast.dump(n) for n in ast.parse(code).body if isinstance(n,ast.FunctionDef)}
+        original,normalized=functions(old),functions(normalize_delivery_reporting(current))
+        for name in ("ready","transfer","export_guard","api_token","apple_get","unused_build","authorization_guard","cleanup_delivery","finish"):
+            self.assertEqual(original[name],normalized[name],name)
+        before=functions(normalize_archive_cli(old));after=functions(normalize_archive_cli(current))
+        self.assertEqual(before["main"],after["main"])
+
+    def test_original_private_home_guards_run_before_ready_in_public_wrapper(self):
+        source=(ROOT/"tools/apple_storekit_testflight_delivery.py").read_text()
+        function=next(n for n in ast.parse(source).body if isinstance(n,ast.FunctionDef) and n.name=="transfer_public")
+        precheck=next(n for n in function.body if isinstance(n,ast.FunctionDef) and n.name=="precheck")
+        self.assertEqual(len(precheck.body),3)
+        self.assertIn("RUNNER_OS",ast.unparse(precheck.body[0]))
+        self.assertIn("CFFIXED_USER_HOME",ast.unparse(precheck.body[1]))
+        self.assertEqual(ast.unparse(precheck.body[2]),"return ready(private, source, artifact)")
+
+    def test_workflow_delta_is_only_a_fixed_public_descriptor_inside_existing_step(self):
+        current=WORKFLOW.read_text()
+        original=delivery.cert.git("show",delivery.TRANSFER_BASE+":"+str(WORKFLOW.relative_to(ROOT)).replace("\\","/")).decode()
+        self.assertEqual(restore_delivery_reporting(current),original)
+        for mutant in (current.replace("exec 3>&1","exec 3>&2",1),current.replace("actions: read","actions: write",1),current.replace("testFlightInternalTestingOnly","REMOVED",1)):
+            with self.assertRaises(AssertionError):restore_delivery_reporting(mutant)
+
+
+    def test_missing_generated_destination_is_identified_before_credentials_or_apple(self):
+        def mutate():
+            path=self.ipa.parent/"ExportOptions.plist"
+            with path.open("rb") as stream:options=plistlib.load(stream)
+            del options["destination"];path.write_bytes(plistlib.dumps(options))
+        calls,frames,error=self.exercise(mutate=mutate)
+        self.assertIsInstance(error,delivery.DeliveryCheckFailure);self.assertEqual(calls,[])
+        self.assert_boundary(frames,0,"OUTPUT_EXPORT_DESTINATION_MISSING")
+        self.assertFalse((self.root/"home/.appstoreconnect").exists())
+
+    def test_controlled_input_identity_policy_is_never_bypassed(self):
+        def mutate():
+            path=self.root/"DiagnosticExportOptions.plist"
+            with path.open("rb") as stream:options=plistlib.load(stream)
+            options["manageAppVersionAndBuildNumber"]=True
+            path.write_bytes(plistlib.dumps(options))
+        calls,frames,error=self.exercise(mutate=mutate)
+        self.assertIsInstance(error,delivery.DeliveryCheckFailure);self.assertEqual(calls,[])
+        self.assert_boundary(frames,0,"INPUT_EXPORT_BUILD_NUMBER_REJECTED")
+
+    def test_existing_public_report_cannot_authorize_a_second_delivery_execution(self):
+        self.exercise()
+        calls,frames,error=self.exercise()
+        self.assertIsInstance(error,ValueError);self.assertEqual(calls,[]);self.assertEqual(frames,[])
+
+    def test_real_workflow_shell_keeps_raw_child_output_private_and_preserves_exit(self):
+        bash="C:/Program Files/Git/bin/bash.exe" if os.name=="nt" else "/bin/bash"
+        text=WORKFLOW.read_text()
+        step=text.split("      - name: Validate availability and deliver only the fully certified internal IPA\n",1)[1]
+        step=step.split("      - name: Remove all private outputs",1)[0]
+        body="\n".join(line[10:] for line in step.split("        run: |\n",1)[1].splitlines())+"\n"
+        export=self.root/"gridly-diagnostic-export";export.mkdir()
+        (export/"synthetic.ipa").write_bytes(b"NOT_A_REAL_IPA")
+        (self.root/"logs").mkdir()
+        environment={**os.environ,"DIAGNOSTIC_PRIVATE_ROOT":str(self.root).replace("\\","/"),
+                     "DELIVERY_SOURCE_DIR":str(self.root).replace("\\","/"),
+                     "RUNNER_TEMP":str(self.root).replace("\\","/"),"EXPECTED_COMMIT_SHA":COMMIT}
+        rows=[{"stage":stage,"status":"NOT_RUN","category":"DEPENDENCY_FAILED"} for stage in delivery.DELIVERY_STAGES]
+        rows[0]={"stage":delivery.DELIVERY_STAGES[0],"status":"FAIL","category":"LOCAL_VERIFICATION_REJECTED"}
+        frame=json.dumps({"delivery_stages":rows})
+        fake="python3() { printf '%s' '"+self.canary+"'; printf '%s\\n' '"+frame+"' >&3; return 73; }\n"
+        result=subprocess.run([bash,"--noprofile","--norc"],input=fake+body,text=True,capture_output=True,env=environment)
+        self.assertEqual(result.returncode,73)
+        self.assertNotIn(self.canary,result.stdout+result.stderr)
+        self.assertEqual(json.loads(result.stdout),{"delivery_stages":rows})
+        self.assertIn(self.canary,(self.root/"logs/step-8.log").read_text())
+
+    def test_exact_latest_parent_inventory_and_tag_protection_fail_closed(self):
+        for options in ({"transfer_parent":"9"*40},{"transfer_parent":delivery.ENVIRONMENT_BASE+" "+"8"*40},{"transfer_inventory":b""},{"transfer_inventory":b"M\tjs/gridly-paid-ui.mjs"}):
+            with self.subTest(options=options),patch.object(delivery,"source_guard",self.actual_source_guard),patch.object(delivery.cert,"git",side_effect=source_git(**options)),patch.object(delivery.subprocess,"run"),patch.object(delivery.cert,"original_contracts"),self.assertRaises(ValueError):
                 delivery.source_guard(COMMIT,True)
 
 
