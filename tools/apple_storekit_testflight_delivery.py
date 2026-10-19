@@ -24,6 +24,17 @@ PREFLIGHT_BASE = "13e73183cf3f257fbc9acd9a32d34d62b70ffb1e"
 REFINEMENT_BASE = "4c95caed0d261fca1dbaf86fc926660661d0643b"
 SIGNING_BASE = "db4df3949b1f02325b8869433bbbd16b234487db"
 CMS_BASE = "cbe3c297099dbca9c6d376848157de0253aeae39"
+CMS_REPAIR_BASE = "17e36af1f5a8cc5f7f8ed927fb3e7fae758ee991"
+SIGNING_VERIFIED_BASE = "b1e2b7a35dff887dfa4a464a19215b66893b0ee8"
+SIGNING_VERIFICATION_FILES = {
+    "tools/apple_storekit_signing_diagnostic.py",
+    "tests/storekit-signing-diagnostic.test.py",
+    "tests/storekit-testflight-delivery.test.py",
+}
+DELIVERY_ALIGNMENT_FILES = {
+    "tools/apple_storekit_testflight_delivery.py",
+    "tests/storekit-testflight-delivery.test.py",
+}
 SIGNING_FILES = {
     ".github/workflows/gridly-storekit-signing-diagnostic.yml",
     "tools/apple_storekit_signing_diagnostic.py",
@@ -61,7 +72,8 @@ FILES = {
     "tests/storekit-testflight-delivery.test.py",
 }
 # The historical four-file refinement is pinned at REFINEMENT_BASE.
-# Only one new direct child of CMS_BASE may modify exactly REPAIR_FILES.
+# REPAIR_FILES remains the pinned four-file CMS repair inventory.
+# Only one direct child of SIGNING_VERIFIED_BASE may modify DELIVERY_ALIGNMENT_FILES.
 REFINEMENT_FILES = FILES | {"tests/storekit-preflight-diagnostic.test.py"}
 REPAIR_FILES = FILES | {"tests/storekit-signing-diagnostic.test.py"}
 HISTORICAL_TAGS = {
@@ -77,6 +89,8 @@ HISTORICAL_TAGS = {
         ("ffa6924f2ec257f42a183f8f05daaccc66b85685", SIGNING_BASE),
     "gridly-storekit-cms-diagnostic-15-" + CMS_BASE:
         ("975205d798d31197be41fe505a417064b519b63f", CMS_BASE),
+    "gridly-storekit-signing-diagnostic-15-" + SIGNING_VERIFIED_BASE:
+        ("0ec2230f6c42b4212afa18bf71d3045a0c978be3", SIGNING_VERIFIED_BASE),
 }
 
 CONFIRMATIONS = {
@@ -168,11 +182,13 @@ def authorize(ref, commit, event_path, attempt):
 
 def source_guard(commit, clean):
     require(re.fullmatch(r"[0-9a-f]{40}", commit or ""), "exact source SHA required")
-    pinned = {SOURCE, DELIVERY_BASE, OWNER_CORRECTION, PREFLIGHT_BASE, REFINEMENT_BASE, SIGNING_BASE, CMS_BASE}
+    pinned = {SOURCE, DELIVERY_BASE, OWNER_CORRECTION, PREFLIGHT_BASE, REFINEMENT_BASE,
+              SIGNING_BASE, CMS_BASE, CMS_REPAIR_BASE, SIGNING_VERIFIED_BASE}
     require(cert.git("rev-parse", "HEAD").decode().strip() == commit and commit not in pinned,
             "new reviewed delivery-support commit required")
     for child, parent in (
-        (commit, CMS_BASE), (CMS_BASE, SIGNING_BASE), (SIGNING_BASE, REFINEMENT_BASE),
+        (commit, SIGNING_VERIFIED_BASE), (SIGNING_VERIFIED_BASE, CMS_REPAIR_BASE),
+        (CMS_REPAIR_BASE, CMS_BASE), (CMS_BASE, SIGNING_BASE), (SIGNING_BASE, REFINEMENT_BASE),
         (REFINEMENT_BASE, PREFLIGHT_BASE), (PREFLIGHT_BASE, OWNER_CORRECTION),
         (OWNER_CORRECTION, DELIVERY_BASE), (DELIVERY_BASE, SOURCE),
     ):
@@ -194,12 +210,17 @@ def source_guard(commit, clean):
         (PREFLIGHT_BASE, REFINEMENT_BASE, "M", REFINEMENT_FILES),
         (REFINEMENT_BASE, SIGNING_BASE, "A", SIGNING_FILES),
         (SIGNING_BASE, CMS_BASE, "A", CMS_FILES),
-        (CMS_BASE, commit, "M", REPAIR_FILES),
+        (CMS_BASE, CMS_REPAIR_BASE, "M", REPAIR_FILES),
+        (CMS_REPAIR_BASE, SIGNING_VERIFIED_BASE, "M", SIGNING_VERIFICATION_FILES),
+        (SIGNING_VERIFIED_BASE, commit, "M", DELIVERY_ALIGNMENT_FILES),
         (SOURCE, commit, "A", FILES | PREFLIGHT_FILES | SIGNING_FILES | CMS_FILES),
     ):
         records = cert.git("diff", "--name-status", "--no-renames", base, target).decode().splitlines()
         require(set(records) == {status + "\t" + path for path in inventory} and len(records) == len(inventory),
-                "exact historical inventories and four-file CMS repair required; all other source frozen")
+                "exact historical inventories and two-file delivery alignment required; all other source frozen")
+        for path in inventory:
+            require(cert.git("ls-tree", target, "--", path).decode().split()[0] == "100644",
+                    "historical or current support file mode changed")
     for path in FILES | PREFLIGHT_FILES | SIGNING_FILES | CMS_FILES:
         require(cert.git("ls-tree", commit, "--", path).decode().split()[0] == "100644", "support file mode changed")
     require(not cert.git("diff", "--name-only", "HEAD"), "tracked working source changed")

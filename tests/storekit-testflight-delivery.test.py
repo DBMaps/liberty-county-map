@@ -39,16 +39,20 @@ def owner_automatic_authorization():
             }}
 
 
-def source_git(*, parent=delivery.CMS_BASE, base_parent=delivery.SOURCE,
+def source_git(*, parent=delivery.SIGNING_VERIFIED_BASE, base_parent=delivery.SOURCE,
                owner_parent=delivery.DELIVERY_BASE, preflight_parent=delivery.OWNER_CORRECTION,
                preparation=None, past_correction=None, preflight_inventory=None,
                historical_refinement=None, signing_inventory=None, cms_inventory=None,
                refinement_parent=delivery.PREFLIGHT_BASE, signing_parent=delivery.REFINEMENT_BASE,
-               cms_parent=delivery.SIGNING_BASE, correction=None, net=None, mode="100644", dirty=b"", staged=b"", untracked=b"",
+               cms_parent=delivery.SIGNING_BASE, repair_parent=delivery.CMS_BASE,
+               verified_parent=delivery.CMS_REPAIR_BASE, repair_inventory=None, verification_inventory=None,
+               correction=None, net=None, mode="100644", dirty=b"", staged=b"", untracked=b"",
                tag_object=None, tag_target=None, tag_type=None, missing_tag=None):
     additions = "\n".join("A\t" + path for path in sorted(delivery.FILES)).encode()
     modifications = "\n".join("M\t" + path for path in sorted(delivery.FILES)).encode()
     repair = "\n".join("M\t" + path for path in sorted(delivery.REPAIR_FILES)).encode()
+    verification = "\n".join("M\t" + path for path in sorted(delivery.SIGNING_VERIFICATION_FILES)).encode()
+    alignment = "\n".join("M\t" + path for path in sorted(delivery.DELIVERY_ALIGNMENT_FILES)).encode()
     refinement = "\n".join("M\t" + path for path in sorted(delivery.REFINEMENT_FILES)).encode()
     preflight = "\n".join("A\t" + path for path in sorted(delivery.PREFLIGHT_FILES)).encode()
     all_additions = "\n".join("A\t" + path for path in sorted(delivery.FILES | delivery.PREFLIGHT_FILES | delivery.SIGNING_FILES | delivery.CMS_FILES)).encode()
@@ -58,6 +62,8 @@ def source_git(*, parent=delivery.CMS_BASE, base_parent=delivery.SOURCE,
         ("show", "-s", "--format=%P", delivery.REFINEMENT_BASE): refinement_parent.encode(),
         ("show", "-s", "--format=%P", delivery.SIGNING_BASE): signing_parent.encode(),
         ("show", "-s", "--format=%P", delivery.CMS_BASE): cms_parent.encode(),
+        ("show", "-s", "--format=%P", delivery.CMS_REPAIR_BASE): repair_parent.encode(),
+        ("show", "-s", "--format=%P", delivery.SIGNING_VERIFIED_BASE): verified_parent.encode(),
         ("show", "-s", "--format=%P", delivery.PREFLIGHT_BASE): preflight_parent.encode(),
         ("show", "-s", "--format=%P", delivery.OWNER_CORRECTION): owner_parent.encode(),
         ("show", "-s", "--format=%P", delivery.DELIVERY_BASE): base_parent.encode(),
@@ -69,12 +75,21 @@ def source_git(*, parent=delivery.CMS_BASE, base_parent=delivery.SOURCE,
             "\n".join("A\t" + path for path in sorted(delivery.SIGNING_FILES)).encode() if signing_inventory is None else signing_inventory,
         ("diff", "--name-status", "--no-renames", delivery.SIGNING_BASE, delivery.CMS_BASE):
             "\n".join("A\t" + path for path in sorted(delivery.CMS_FILES)).encode() if cms_inventory is None else cms_inventory,
-        ("diff", "--name-status", "--no-renames", delivery.CMS_BASE, COMMIT): repair if correction is None else correction,
+        ("diff", "--name-status", "--no-renames", delivery.CMS_BASE, delivery.CMS_REPAIR_BASE): repair if repair_inventory is None else repair_inventory,
+        ("diff", "--name-status", "--no-renames", delivery.CMS_REPAIR_BASE, delivery.SIGNING_VERIFIED_BASE): verification if verification_inventory is None else verification_inventory,
+        ("diff", "--name-status", "--no-renames", delivery.SIGNING_VERIFIED_BASE, COMMIT): alignment if correction is None else correction,
         ("diff", "--name-status", "--no-renames", delivery.SOURCE, COMMIT): all_additions if net is None else net,
         ("diff", "--name-only", "HEAD"): dirty,
         ("diff", "--cached", "--name-only"): staged,
         ("status", "--porcelain=v1", "--untracked-files=normal"): untracked,
     }
+    for target,files in ((delivery.DELIVERY_BASE,delivery.FILES),(delivery.OWNER_CORRECTION,delivery.FILES),
+                         (delivery.PREFLIGHT_BASE,delivery.PREFLIGHT_FILES),(delivery.REFINEMENT_BASE,delivery.REFINEMENT_FILES),
+                         (delivery.SIGNING_BASE,delivery.SIGNING_FILES),(delivery.CMS_BASE,delivery.CMS_FILES),
+                         (delivery.CMS_REPAIR_BASE,delivery.REPAIR_FILES),
+                         (delivery.SIGNING_VERIFIED_BASE,delivery.SIGNING_VERIFICATION_FILES)):
+        for path in files:
+            values[("ls-tree",target,"--",path)]=("100644 blob "+"0"*40+"\t"+path).encode()
     for path in delivery.FILES | delivery.PREFLIGHT_FILES | delivery.SIGNING_FILES | delivery.CMS_FILES:
         values[("ls-tree", COMMIT, "--", path)] = (mode + " blob " + "0"*40 + "\t" + path).encode()
     for name, (original_object, original_target) in delivery.HISTORICAL_TAGS.items():
@@ -288,7 +303,8 @@ class SourceAndEvidenceTests(unittest.TestCase):
         with patch.object(delivery.cert, "git", return_value=b"9"*40), self.assertRaises(ValueError):
             delivery.source_guard(COMMIT, True)
         for old in (delivery.SOURCE, delivery.DELIVERY_BASE, delivery.OWNER_CORRECTION, delivery.PREFLIGHT_BASE,
-                    delivery.REFINEMENT_BASE, delivery.SIGNING_BASE, delivery.CMS_BASE):
+                    delivery.REFINEMENT_BASE, delivery.SIGNING_BASE, delivery.CMS_BASE,
+                    delivery.CMS_REPAIR_BASE, delivery.SIGNING_VERIFIED_BASE):
             with self.subTest(old=old), self.assertRaises(ValueError):
                 delivery.source_guard(old, True)
         for options in ({"dirty": b"js/gridly-paid-ui.mjs"}, {"staged": b"js/gridly-paid-ui.mjs"},
@@ -303,7 +319,10 @@ class SourceAndEvidenceTests(unittest.TestCase):
                         {"owner_parent": "7"*40}, {"preflight_parent": "8"*40},
                         {"preflight_parent": delivery.OWNER_CORRECTION + " " + "8"*40},
                         {"refinement_parent": "8"*40}, {"signing_parent": "8"*40}, {"cms_parent": "8"*40},
-                        {"cms_parent": delivery.SIGNING_BASE + " " + "8"*40}):
+                        {"cms_parent": delivery.SIGNING_BASE + " " + "8"*40},
+                        {"repair_parent":"8"*40},{"verified_parent":"8"*40},
+                        {"repair_parent":delivery.CMS_BASE+" "+"8"*40},
+                        {"verified_parent":delivery.CMS_REPAIR_BASE+" "+"8"*40}):
             with self.subTest(options=options), patch.object(delivery.cert, "git", side_effect=source_git(**options)), self.assertRaises(ValueError):
                 delivery.source_guard(COMMIT, True)
 
@@ -1066,7 +1085,7 @@ security() {
         self.exercise_signing_boundary(implicit_mutant=True)
 
     def test_existing_functions_and_controls_are_unchanged_except_source_guard(self):
-        before=delivery.cert.git("show",delivery.CMS_BASE+":tools/apple_storekit_testflight_delivery.py").decode()
+        before=delivery.cert.git("show",delivery.SIGNING_VERIFIED_BASE+":tools/apple_storekit_testflight_delivery.py").decode()
         after=(ROOT/"tools/apple_storekit_testflight_delivery.py").read_text()
         functions=lambda text:{node.name:ast.dump(node) for node in ast.parse(text).body if isinstance(node,ast.FunctionDef)}
         original,current=functions(before),functions(after)
@@ -1076,20 +1095,26 @@ security() {
         nodes=lambda text:{n.targets[0].id:n.value for n in ast.parse(text).body
                            if isinstance(n,ast.Assign) and isinstance(n.targets[0],ast.Name)}
         old,new=nodes(before),nodes(after)
-        self.assertEqual(set(new)-set(old),{"REFINEMENT_BASE","SIGNING_BASE","CMS_BASE","SIGNING_FILES","CMS_FILES","REPAIR_FILES"})
+        self.assertEqual(set(new)-set(old),{"CMS_REPAIR_BASE","SIGNING_VERIFIED_BASE","SIGNING_VERIFICATION_FILES","DELIVERY_ALIGNMENT_FILES"})
         for name,node in old.items():
             if name=="HISTORICAL_TAGS":
                 self.assertIsInstance(new[name],ast.Dict)
-                self.assertEqual(len(new[name].keys),6)
-                retained=ast.Dict(keys=new[name].keys[:3],values=new[name].values[:3])
+                self.assertEqual(len(new[name].keys),7)
+                retained=ast.Dict(keys=new[name].keys[:6],values=new[name].values[:6])
                 self.assertEqual(ast.dump(node),ast.dump(retained))
             else:self.assertEqual(ast.dump(node),ast.dump(new[name]),name)
         self.assertEqual(delivery.OWNER_CHECK_TTL,1800)
 
-    def test_exact_reviewed_history_and_all_six_authorization_tags(self):
+    def test_exact_reviewed_history_and_all_seven_authorization_tags(self):
         self.assertEqual(delivery.REFINEMENT_BASE,"4c95caed0d261fca1dbaf86fc926660661d0643b")
         self.assertEqual(delivery.SIGNING_BASE,"db4df3949b1f02325b8869433bbbd16b234487db")
         self.assertEqual(delivery.CMS_BASE,"cbe3c297099dbca9c6d376848157de0253aeae39")
+        self.assertEqual(delivery.CMS_REPAIR_BASE,"17e36af1f5a8cc5f7f8ed927fb3e7fae758ee991")
+        self.assertEqual(delivery.SIGNING_VERIFIED_BASE,"b1e2b7a35dff887dfa4a464a19215b66893b0ee8")
+        self.assertEqual(delivery.SIGNING_VERIFICATION_FILES,{"tools/apple_storekit_signing_diagnostic.py",
+            "tests/storekit-signing-diagnostic.test.py","tests/storekit-testflight-delivery.test.py"})
+        self.assertEqual(delivery.DELIVERY_ALIGNMENT_FILES,{"tools/apple_storekit_testflight_delivery.py",
+            "tests/storekit-testflight-delivery.test.py"})
         expected={
             "gridly-storekit-diagnostic-certify-15-f9fc818321970b8b7e29df17358daf87a7d20308":
                 ("bb496cafcbeaf7d6aaf6574e6b5561ac242599fc",delivery.SOURCE),
@@ -1103,9 +1128,12 @@ security() {
                 ("ffa6924f2ec257f42a183f8f05daaccc66b85685",delivery.SIGNING_BASE),
             "gridly-storekit-cms-diagnostic-15-cbe3c297099dbca9c6d376848157de0253aeae39":
                 ("975205d798d31197be41fe505a417064b519b63f",delivery.CMS_BASE),
+            "gridly-storekit-signing-diagnostic-15-b1e2b7a35dff887dfa4a464a19215b66893b0ee8":
+                ("0ec2230f6c42b4212afa18bf71d3045a0c978be3",delivery.SIGNING_VERIFIED_BASE),
         }
         self.assertEqual(delivery.HISTORICAL_TAGS,expected)
-        for child,parent in ((delivery.CMS_BASE,delivery.SIGNING_BASE),(delivery.SIGNING_BASE,delivery.REFINEMENT_BASE),
+        for child,parent in ((delivery.SIGNING_VERIFIED_BASE,delivery.CMS_REPAIR_BASE),
+                             (delivery.CMS_REPAIR_BASE,delivery.CMS_BASE),(delivery.CMS_BASE,delivery.SIGNING_BASE),(delivery.SIGNING_BASE,delivery.REFINEMENT_BASE),
                              (delivery.REFINEMENT_BASE,delivery.PREFLIGHT_BASE)):
             self.assertEqual(delivery.cert.git("show","-s","--format=%P",child).decode().strip(),parent)
         for commit,files in ((delivery.SIGNING_BASE,delivery.SIGNING_FILES),(delivery.CMS_BASE,delivery.CMS_FILES)):
@@ -1114,14 +1142,13 @@ security() {
                 self.assertEqual(historical, delivery.cert.git("show",delivery.CMS_BASE+":"+path),path)
                 if path not in {"tools/apple_storekit_signing_diagnostic.py","tests/storekit-signing-diagnostic.test.py"}:
                     self.assertEqual((ROOT/path).read_bytes().replace(b"\r\n",b"\n"),historical,path)
-        checkpoint="17e36af1f5a8cc5f7f8ed927fb3e7fae758ee991"
-        support={"tools/apple_storekit_signing_diagnostic.py","tests/storekit-signing-diagnostic.test.py",
-                 "tests/storekit-testflight-delivery.test.py"}
+        checkpoint=delivery.SIGNING_VERIFIED_BASE
+        support={"tools/apple_storekit_testflight_delivery.py","tests/storekit-testflight-delivery.test.py"}
         def git(*args):
             return delivery.cert.git(*args).decode().strip()
         rows=git("diff","--name-status","--no-renames",checkpoint).splitlines()
         self.assertEqual(set(rows),{"M\t"+path for path in support})
-        self.assertEqual(len(rows),3)
+        self.assertEqual(len(rows),2)
         self.assertFalse(git("diff","--cached","--name-only"))
         self.assertFalse(git("ls-files","--others","--exclude-standard"))
         head=git("rev-parse","HEAD")
@@ -1130,15 +1157,19 @@ security() {
         else:
             self.assertEqual(git("show","-s","--format=%P",head),checkpoint)
             self.assertFalse(git("status","--porcelain=v1","--untracked-files=all"))
+            delivery.source_guard(head,True)
         for path in support:
             entry=git("ls-files","--stage","--",path).split()
             self.assertEqual((entry[0],entry[2]),("100644","0"))
             self.assertEqual(git("ls-tree",head,"--",path).split()[0],"100644")
-        # Preserve every historical blob; allow ONLY source authorization changes
-        # relative to the exact repaired checkpoint in the current helper.
+        # Keep the signed b1 checkpoint byte-identical in the current candidate.
+        # Its earlier three-file gate alignment is historical evidence only.
+        for path in ("tools/apple_storekit_signing_diagnostic.py","tests/storekit-signing-diagnostic.test.py"):
+            self.assertEqual((ROOT/path).read_bytes().replace(b"\r\n",b"\n"),
+                             delivery.cert.git("show",checkpoint+":"+path),path)
         helper="tools/apple_storekit_signing_diagnostic.py"
-        before=ast.parse(delivery.cert.git("show",checkpoint+":"+helper))
-        after=ast.parse((ROOT/helper).read_text())
+        before=ast.parse(delivery.cert.git("show",delivery.CMS_REPAIR_BASE+":"+helper))
+        after=ast.parse(delivery.cert.git("show",checkpoint+":"+helper))
         auth_constants={"SOURCE","DELIVERY","OWNER","PREFLIGHT","SIGNING","CMS","REPAIR","SUPPORT_FILES",
                         "DELIVERY_FILES","PREFLIGHT_FILES","CMS_FILES","HISTORICAL_INVENTORIES","CHAIN","HISTORY"}
         def strip_authorization(tree):
@@ -1161,8 +1192,8 @@ security() {
         node.value=ast.Constant(value="UNAPPROVED_SECRET_CHANGE")
         self.assertNotEqual(strip_authorization(before),strip_authorization(mutant))
         tests="tests/storekit-signing-diagnostic.test.py"
-        before=ast.parse(delivery.cert.git("show",checkpoint+":"+tests))
-        after=ast.parse((ROOT/tests).read_text())
+        before=ast.parse(delivery.cert.git("show",delivery.CMS_REPAIR_BASE+":"+tests))
+        after=ast.parse(delivery.cert.git("show",checkpoint+":"+tests))
         allowed={"source_git","test_exact_three_additions_and_all_history_pass",
                  "test_exact_three_successor_modifications_and_all_history_pass",
                  "test_extra_missing_renamed_modified_or_duplicate_inventory_fails",
@@ -1182,7 +1213,7 @@ security() {
             return ast.dump(tree)
         self.assertEqual(strip_source_expectations(before),strip_source_expectations(after))
 
-    def test_one_direct_child_requires_all_four_reviewed_modified_files_only(self):
+    def test_historical_cms_repair_requires_all_four_reviewed_files_only(self):
         self.assertEqual(delivery.REPAIR_FILES, delivery.FILES | {"tests/storekit-signing-diagnostic.test.py"})
         records=["M\t"+path for path in sorted(delivery.REPAIR_FILES)]
         bad=[records[:i]+records[i+1:] for i in range(4)]
@@ -1192,9 +1223,50 @@ security() {
                 records+["M\ttests/storekit-preflight-diagnostic.test.py"]]
         for candidate in bad:
             with self.subTest(candidate=candidate),patch.object(delivery.cert,"git",side_effect=source_git(
+                    repair_inventory="\n".join(candidate).encode())),patch.object(delivery.subprocess,"run"),\
+                    patch.object(delivery.cert,"original_contracts"),self.assertRaises(ValueError):
+                delivery.source_guard(COMMIT,True)
+
+    def test_one_verified_child_requires_exactly_two_modified_delivery_files(self):
+        records=["M\t"+p for p in sorted(delivery.DELIVERY_ALIGNMENT_FILES)]
+        candidates=[records[:-1],records[1:],records+[records[0]],
+                    ["A\t"+p for p in sorted(delivery.DELIVERY_ALIGNMENT_FILES)]]
+        for path in ("js/gridly-paid-ui.mjs","tools/apple_storekit_signing_diagnostic.py",
+                     "tests/storekit-signing-diagnostic.test.py",
+                     ".github/workflows/gridly-storekit-testflight-delivery.yml",
+                     ".github/workflows/gridly-apple-build-9.yml"):
+            candidates.append(records+["M\t"+path])
+        for candidate in candidates:
+            with self.subTest(candidate=candidate),patch.object(delivery.cert,"git",side_effect=source_git(
                     correction="\n".join(candidate).encode())),patch.object(delivery.subprocess,"run"),\
                     patch.object(delivery.cert,"original_contracts"),self.assertRaises(ValueError):
                 delivery.source_guard(COMMIT,True)
+
+    def test_signing_verification_inventory_and_each_historical_mode_fail_closed(self):
+        records=["M\t"+p for p in sorted(delivery.SIGNING_VERIFICATION_FILES)]
+        candidates=[records[:-1],records+[records[0]],records+["M\tjs/gridly-paid-ui.mjs"],
+                    ["A\t"+p for p in sorted(delivery.SIGNING_VERIFICATION_FILES)]]
+        for candidate in candidates:
+            with self.subTest(candidate=candidate),patch.object(delivery.cert,"git",side_effect=source_git(
+                    verification_inventory="\n".join(candidate).encode())),patch.object(delivery.subprocess,"run"),\
+                    patch.object(delivery.cert,"original_contracts"),self.assertRaises(ValueError):
+                delivery.source_guard(COMMIT,True)
+        historical=((delivery.DELIVERY_BASE,delivery.FILES),(delivery.OWNER_CORRECTION,delivery.FILES),
+                    (delivery.PREFLIGHT_BASE,delivery.PREFLIGHT_FILES),(delivery.REFINEMENT_BASE,delivery.REFINEMENT_FILES),
+                    (delivery.SIGNING_BASE,delivery.SIGNING_FILES),(delivery.CMS_BASE,delivery.CMS_FILES),
+                    (delivery.CMS_REPAIR_BASE,delivery.REPAIR_FILES),
+                    (delivery.SIGNING_VERIFIED_BASE,delivery.SIGNING_VERIFICATION_FILES))
+        valid=source_git()
+        for target,files in historical:
+            for path in files:
+                for mode in ("100755","120000"):
+                    def changed(*args):
+                        if args==("ls-tree",target,"--",path):
+                            return (mode+" blob "+"0"*40+"\t"+path).encode()
+                        return valid(*args)
+                    with self.subTest(target=target,path=path,mode=mode),patch.object(delivery.cert,"git",side_effect=changed),\
+                            patch.object(delivery.subprocess,"run"),patch.object(delivery.cert,"original_contracts"),self.assertRaises(ValueError):
+                        delivery.source_guard(COMMIT,True)
 
     def test_historical_signing_and_cms_inventory_changes_are_rejected(self):
         for options in ({"signing_inventory":b""},{"cms_inventory":b""},
