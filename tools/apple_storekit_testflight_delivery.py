@@ -8,6 +8,7 @@ import datetime as dt
 import hashlib
 import http.client
 import email.utils
+import errno
 import math
 import socket
 import urllib.error
@@ -35,6 +36,7 @@ CMS_REPAIR_BASE = "17e36af1f5a8cc5f7f8ed927fb3e7fae758ee991"
 SIGNING_VERIFIED_BASE = "b1e2b7a35dff887dfa4a464a19215b66893b0ee8"
 P04_BASE = "40824c760a65b56b1b0056d1d9b90d571b7f47d4"
 ARCHIVE_BASE = "45ce66b98b44bd6cea67820124e695483e7a6b9b"
+EVIDENCE_BASE = "779d67c7b89569db7cacb6a253eff6da8d3f74ef"
 SIGNING_VERIFICATION_FILES = {
     "tools/apple_storekit_signing_diagnostic.py",
     "tests/storekit-signing-diagnostic.test.py",
@@ -95,7 +97,7 @@ FILES = {
 }
 # The historical four-file refinement is pinned at REFINEMENT_BASE.
 # REPAIR_FILES remains the pinned four-file CMS repair inventory.
-# Only one direct child of ARCHIVE_BASE may modify the three FILES; all older inventories stay pinned.
+# Only one direct child of EVIDENCE_BASE may modify the three FILES; all older inventories stay pinned.
 REFINEMENT_FILES = FILES | {"tests/storekit-preflight-diagnostic.test.py"}
 REPAIR_FILES = FILES | {"tests/storekit-signing-diagnostic.test.py"}
 HISTORICAL_TAGS = {
@@ -117,6 +119,8 @@ HISTORICAL_TAGS = {
         ("06dbef1c5ae5f5250b536d8f3b6232487b114f56", P04_BASE),
     "gridly-storekit-testflight-deliver-15-" + ARCHIVE_BASE:
         ("e71cf11b1fbca960527ad019762a12cb68b25600", ARCHIVE_BASE),
+    "gridly-storekit-testflight-deliver-15-" + EVIDENCE_BASE:
+        ("69876691a5c1e996ac099edb492c75fbd6b99696", EVIDENCE_BASE),
 }
 
 CONFIRMATIONS = {
@@ -209,11 +213,11 @@ def authorize(ref, commit, event_path, attempt):
 def source_guard(commit, clean):
     require(re.fullmatch(r"[0-9a-f]{40}", commit or ""), "exact source SHA required")
     pinned = {SOURCE, DELIVERY_BASE, OWNER_CORRECTION, PREFLIGHT_BASE, REFINEMENT_BASE,
-              SIGNING_BASE, CMS_BASE, CMS_REPAIR_BASE, SIGNING_VERIFIED_BASE, P04_BASE, ARCHIVE_BASE}
+              SIGNING_BASE, CMS_BASE, CMS_REPAIR_BASE, SIGNING_VERIFIED_BASE, P04_BASE, ARCHIVE_BASE, EVIDENCE_BASE}
     require(cert.git("rev-parse", "HEAD").decode().strip() == commit and commit not in pinned,
             "new reviewed delivery-support commit required")
     for child, parent in (
-        (commit, ARCHIVE_BASE), (ARCHIVE_BASE, P04_BASE), (P04_BASE, SIGNING_VERIFIED_BASE),
+        (commit, EVIDENCE_BASE), (EVIDENCE_BASE, ARCHIVE_BASE), (ARCHIVE_BASE, P04_BASE), (P04_BASE, SIGNING_VERIFIED_BASE),
         (SIGNING_VERIFIED_BASE, CMS_REPAIR_BASE),
         (CMS_REPAIR_BASE, CMS_BASE), (CMS_BASE, SIGNING_BASE), (SIGNING_BASE, REFINEMENT_BASE),
         (REFINEMENT_BASE, PREFLIGHT_BASE), (PREFLIGHT_BASE, OWNER_CORRECTION),
@@ -241,7 +245,8 @@ def source_guard(commit, clean):
         (CMS_REPAIR_BASE, SIGNING_VERIFIED_BASE, "M", SIGNING_VERIFICATION_FILES),
         (SIGNING_VERIFIED_BASE, P04_BASE, "M", DELIVERY_ALIGNMENT_FILES),
         (P04_BASE, ARCHIVE_BASE, "M", FILES),
-        (ARCHIVE_BASE, commit, "M", FILES),
+        (ARCHIVE_BASE, EVIDENCE_BASE, "M", FILES),
+        (EVIDENCE_BASE, commit, "M", FILES),
         (SOURCE, commit, "A", FILES | PREFLIGHT_FILES | SIGNING_FILES | CMS_FILES),
     ):
         records = cert.git("diff", "--name-status", "--no-renames", base, target).decode().splitlines()
@@ -680,14 +685,159 @@ def transfer(root, commit, ipa, precheck=ready, credentials=None, token_factory=
     write_json(marker, {"status": "ACCEPTED", "source_commit": commit, "build": "15"})
 
 
+
+# Only fixed classifications cross the public boundary. No matching text is emitted.
+ARCHIVE_RULES = (
+    ("PROVISIONING_OR_SIGNING", "PROFILE_REJECTED", r"(?:error:.*(?:provisioning profile|no profiles for|requires a provisioning)|provisioning profile.*(?:doesn't|does not|expired|not include))"),
+    ("PROVISIONING_OR_SIGNING", "SIGNING_FAILED", r"(?:error:.*(?:code ?sign|signing certificate|signing identity)|command codesign failed)"),
+    ("MISSING_BUILD_INPUT", "BUILD_INPUT_MISSING", r"(?:build input files? cannot be found|error:.*(?:file not found|no such file or directory|unable to open base configuration|unable to load project))"),
+    ("SWIFT_COMPILATION", "SWIFT_COMPILER_FAILED", r"(?:\.swift:\d+(?::\d+)?:\s*(?:fatal )?error:|swift compiler error:|command swiftcompile failed|command swiftfrontend failed)"),
+    ("PACKAGE_DEPENDENCY", "DEPENDENCY_RESOLUTION_FAILED", r"(?:could not resolve package dependencies|failed to resolve dependencies|error:.*(?:missing package product|package resolution|package dependency))"),
+    ("SANDBOX_OR_FILESYSTEM", "SANDBOX_DENIED", r"(?:sandbox:.*deny|error:.*(?:operation not permitted|permission denied|read-only file system))"),
+    ("TOOLCHAIN_OR_SDK", "TOOLCHAIN_UNAVAILABLE", r"(?:xcodebuild: error:.*(?:sdk|toolchain|destination|platform)|error:.*(?:sdk.*(?:not found|cannot be located)|invalid active developer path))"),
+)
+ARCHIVE_MAX_BYTES = 1048576
+ARCHIVE_STRUCTURED_STATES = {"NOT_AVAILABLE", "READ", "UNREADABLE", "LIMIT_REACHED", "CONTEXT_REJECTED"}
+
+
+def classify_archive(text, exit_code, source="PRIVATE_TEXT", structured="NOT_AVAILABLE"):
+    require(type(exit_code) is int and 0 <= exit_code <= 255, "bounded exit status required")
+    require(source in {"NONE", "PRIVATE_TEXT", "STRUCTURED"} and structured in ARCHIVE_STRUCTURED_STATES,
+            "fixed evidence source required")
+    record = {"stage": "XCODE_ARCHIVE", "status": "PASS" if exit_code == 0 else "FAIL",
+              "exit_code": exit_code, "category": "NONE" if exit_code == 0 else "UNCLASSIFIED",
+              "reason": "NONE" if exit_code == 0 else "UNKNOWN",
+              "evidence_source": source, "structured_status": structured}
+    if exit_code:
+        # Input is bounded before regex matching; output is constants only.
+        for line in text[:ARCHIVE_MAX_BYTES].splitlines():
+            for category, reason, pattern in ARCHIVE_RULES:
+                if re.search(pattern, line[:8192], re.I):
+                    record.update(category=category, reason=reason)
+                    return record
+    return record
+
+
+def archive_report(runner_temp, exit_code):
+    """Read only existing private diagnostics; never add/change archive flags."""
+    unknown = classify_archive("", exit_code, "NONE")
+    try:
+        root = cert.private_directory(runner_temp)
+        require(root.is_dir() and not root.is_symlink(), "owned root required")
+        marker = root / ".owned"
+        require(marker.is_file() and not marker.is_symlink() and marker.read_text() == cert.PRIVATE_MARKER,
+                "owned root required")
+        require(str(root) == os.environ.get("DIAGNOSTIC_PRIVATE_ROOT"), "private CI context required")
+        logs = root / "logs"
+        require(logs.is_dir() and not logs.is_symlink(), "owned logs required")
+        if not exit_code:
+            return classify_archive("", 0, "NONE")
+        raw = logs / "archive-raw.log"
+        require(raw.is_file() and not raw.is_symlink(), "owned archive log required")
+        with raw.open("rb") as stream:
+            first = stream.read(ARCHIVE_MAX_BYTES // 2)
+            stream.seek(max(len(first), raw.stat().st_size - ARCHIVE_MAX_BYTES // 2))
+            tail = stream.read(ARCHIVE_MAX_BYTES // 2)
+        text = (first + b"\n" + tail).decode("utf-8", errors="replace")
+        # Only a bundle explicitly referenced by THIS archive log is eligible.
+        # No directory crawl or inference from timestamps/stale build results.
+        bundles, structured = [], "NOT_AVAILABLE"
+        for line in text.splitlines():
+            match = re.fullmatch(r"\s*Writing error result bundle to\s+(.+\.xcresult)\s*", line)
+            if match:
+                candidate = Path(match.group(1).strip().strip("'\\\""))
+                try:
+                    require(candidate.is_absolute() and candidate.resolve().is_relative_to(root), "private result required")
+                    for parent in (candidate, *candidate.parents):
+                        if parent == root:
+                            break
+                        require(not parent.is_symlink(), "linked result rejected")
+                    require(candidate.is_dir(), "result not available")
+                    bundles = [candidate]
+                except Exception:
+                    structured = "CONTEXT_REJECTED"
+                break
+        try:
+            if bundles:
+                structured = "UNREADABLE"
+                # Apple's documented legacy object format; unsupported versions/timeouts
+                # fail privately and fall back to bounded raw error classification.
+                output = logs / "archive-result-private.json"
+                with output.open("xb") as destination:
+                    result = subprocess.run(["xcrun", "xcresulttool", "get", "object", "--legacy",
+                                             "--path", str(bundles[0]), "--format", "json"],
+                                            stdout=destination, stderr=subprocess.DEVNULL, timeout=10, check=False)
+                if result.returncode == 0 and output.stat().st_size > ARCHIVE_MAX_BYTES:
+                    structured = "LIMIT_REACHED"
+                if result.returncode == 0 and output.stat().st_size <= ARCHIVE_MAX_BYTES:
+                    value = json.loads(output.read_bytes())
+                    messages, stack, count = [], [(value, 0)], 0
+                    while stack and count < 2048 and len(messages) < 32:
+                        item, depth = stack.pop(); count += 1
+                        if depth > 16:
+                            continue
+                        if isinstance(item, dict):
+                            errors = item.get("errorSummaries", {})
+                            for issue in errors.get("_values", [])[:32] if isinstance(errors, dict) else []:
+                                if isinstance(issue, dict):
+                                    kind = issue.get("issueType", {}).get("_value", "")
+                                    message = issue.get("message", {}).get("_value", "")
+                                    if isinstance(kind, str) and isinstance(message, str):
+                                        messages.append(kind[:256] + ": error: " + message[:4096])
+                            stack.extend((child, depth + 1) for child in list(item.values())[:128] if isinstance(child, (dict, list)))
+                        elif isinstance(item, list):
+                            stack.extend((child, depth + 1) for child in item[:128] if isinstance(child, (dict, list)))
+                    structured = "READ"
+                    record = classify_archive("\n".join(messages), exit_code, "STRUCTURED", structured)
+                    if record["reason"] != "UNKNOWN":
+                        return record
+        except Exception:
+            structured = "UNREADABLE"
+        return classify_archive(text, exit_code, "PRIVATE_TEXT", structured)
+    except Exception:
+        # A malformed/unreadable optional result bundle must not publish errors or
+        # alter the archive status. UNKNOWN is truthful and fail-closed.
+        unknown["structured_status"] = "CONTEXT_REJECTED"
+        return unknown
+
+
+def emit_archive(record):
+    require(set(record) == {"stage", "status", "exit_code", "category", "reason", "evidence_source", "structured_status"},
+            "fixed archive schema required")
+    allowed = {("NONE", "NONE"), ("UNCLASSIFIED", "UNKNOWN")} | {(a, b) for a, b, _ in ARCHIVE_RULES}
+    require(record["stage"] == "XCODE_ARCHIVE" and (record["category"], record["reason"]) in allowed,
+            "fixed archive category required")
+    require(type(record["exit_code"]) is int and 0 <= record["exit_code"] <= 255
+            and record["status"] == ("PASS" if record["exit_code"] == 0 else "FAIL"),
+            "archive status mismatch")
+    require((record["exit_code"] == 0) == (record["category"] == "NONE" and record["reason"] == "NONE"),
+            "archive classification mismatch")
+    require(record["evidence_source"] in {"NONE", "PRIVATE_TEXT", "STRUCTURED"}
+            and record["structured_status"] in ARCHIVE_STRUCTURED_STATES, "fixed archive evidence required")
+    os.write(3, (json.dumps(record, sort_keys=True) + "\n").encode())
+
+
+def cleanup_errno(error):
+    code = getattr(error, "errno", None)
+    for name in ("EACCES", "EPERM", "EBUSY", "ETXTBSY", "ENOTEMPTY", "EEXIST", "ENOENT", "EROFS"):
+        if code == getattr(errno, name):
+            return name
+    return "UNKNOWN"
+
+
 def cleanup_delivery(runner_temp):
     """Only owned delivery resources; independent fixed results, never raw output."""
     stages = {name: {"status": "NOT_RUN", "category": "DEPENDENCY_FAILED"} for name in (
         "C01_OWNERSHIP", "C02_PROFILE", "C03_KEYCHAIN", "C04_WORKSPACE", "C05_ABSENCE")}
     resources = dict.fromkeys(("workspace", "profile", "keychain"), "UNVERIFIED")
     raw = []
+    root_identity = None
+    workspace_details = {"error_code": "NONE", "retry_status": "NOT_ATTEMPTED", "retry_error_code": "NONE"}
+    stages["C04_WORKSPACE"].update(workspace_details)
     def record(name, success, category):
         stages[name] = {"status": "PASS" if success else "FAIL", "category": category}
+        if name == "C04_WORKSPACE":
+            stages[name].update(workspace_details)
     def absent(path):
         # lstat distinguishes absence from unreadability and dangling symlinks.
         try:
@@ -700,18 +850,26 @@ def cleanup_delivery(runner_temp):
         marker = root / ".owned"
         require(marker.is_file() and not marker.is_symlink()
                 and marker.read_text() == cert.PRIVATE_MARKER, "unowned workspace")
-    def private_details():
+        current = root.stat()
+        require(root_identity is None or (current.st_dev, current.st_ino) == root_identity,
+                "workspace identity changed")
+        if hasattr(os, "getuid"):
+            require(current.st_uid == os.getuid(), "workspace owner changed")
+    def private_details(name="cleanup-private.log"):
         # Exclusive creation prevents following an existing log leaf. No public IO.
         try:
+            owned()
             logs = root / "logs"
             if logs.is_dir() and not logs.is_symlink():
-                with (logs / "cleanup-private.log").open("xb") as target:
+                with (logs / name).open("xb") as target:
                     target.write(b"\n".join(raw))
         except Exception:
             pass  # Private logging cannot bypass removal or certify cleanup.
     try:
         root = cert.private_directory(runner_temp)
         owned()
+        initial = root.stat()
+        root_identity = (initial.st_dev, initial.st_ino)
         require(Path.home() == root / "home", "private delivery home required")
         profile = Path.home() / "Library/MobileDevice/Provisioning Profiles" / (cert.release.PROFILE_UUID + ".mobileprovision")
         keychain = root / "signing.keychain-db"
@@ -775,9 +933,28 @@ def cleanup_delivery(runner_temp):
         workspace_category = "REMOVAL_FAILED"
         shutil.rmtree(root)
         workspace_category = "ABSENCE_UNVERIFIED"
+        workspace_details["retry_status"] = "NOT_NEEDED"
         record("C04_WORKSPACE", absent(root), "ABSENCE_VERIFIED" if absent(root) else "RESOURCE_REMAINS")
     except Exception as error:
         raw.append(str(error).encode())
+        workspace_details["error_code"] = cleanup_errno(error)
+        # At most ONE retry, only for transient busy/nonempty errors. Never chmod,
+        # clear immutable flags, kill processes, follow links or expand the root.
+        if workspace_category == "REMOVAL_FAILED" and workspace_details["error_code"] in {"EBUSY", "ENOTEMPTY"}:
+            try:
+                owned()  # Same inode/owner/marker immediately before another deletion.
+                workspace_details["retry_status"] = "ATTEMPTED"
+                time.sleep(0.25)
+                owned()
+                shutil.rmtree(root)
+                workspace_details["retry_status"] = "SUCCEEDED"
+            except Exception as retry_error:
+                raw.append(str(retry_error).encode())
+                workspace_details["retry_error_code"] = cleanup_errno(retry_error)
+                workspace_details["retry_status"] = ("BLOCKED_OWNERSHIP" if
+                    workspace_details["retry_status"] != "ATTEMPTED" else "FAILED")
+        private_details("cleanup-removal-private.log")
+        # The first operation failure stays FAIL even if the retry removed all files.
         record("C04_WORKSPACE", False, workspace_category)
     # Final filesystem checks run independently, even after earlier exceptions.
     for name, path in (("workspace", root), ("profile", profile), ("keychain", keychain)):
@@ -832,8 +1009,8 @@ def finish(runner_temp, job_status):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("mode", choices=["private-init", "authorize", "preflight", "transfer", "finish-public"])
-    for name in ("runner-temp", "github-env", "ref", "commit", "event", "attempt", "output", "ipa", "job-status"):
+    parser.add_argument("mode", choices=["private-init", "authorize", "preflight", "transfer", "finish-public", "archive-public"])
+    for name in ("runner-temp", "github-env", "ref", "commit", "event", "attempt", "output", "ipa", "job-status", "archive-exit"):
         parser.add_argument("--" + name)
     args = parser.parse_args()
     if args.mode == "private-init":
@@ -852,6 +1029,9 @@ def main():
         result = finish(args.runner_temp, args.job_status)
         print(json.dumps(result, sort_keys=True))
         raise SystemExit(0 if result["certification"] == result["cleanup"] == "PASS" else 1)
+    if args.mode == "archive-public":
+        emit_archive(archive_report(args.runner_temp, int(args.archive_exit)))
+        return
     if args.mode == "preflight":
         records = [preflight_result(stage, False, "INTERNAL_FAILURE") for stage in PREFLIGHT_STAGES]
         try:

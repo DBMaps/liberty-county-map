@@ -1,6 +1,7 @@
 """Local delivery gates: synthetic metadata/material only; never build, sign or call Apple."""
 import ast
 import copy
+import errno
 import contextlib
 import hashlib
 import io
@@ -53,7 +54,7 @@ def owner_automatic_authorization():
             }}
 
 
-def source_git(*, parent=delivery.ARCHIVE_BASE, base_parent=delivery.SOURCE,
+def source_git(*, parent=delivery.EVIDENCE_BASE, base_parent=delivery.SOURCE,
                owner_parent=delivery.DELIVERY_BASE, preflight_parent=delivery.OWNER_CORRECTION,
                preparation=None, past_correction=None, preflight_inventory=None,
                historical_refinement=None, signing_inventory=None, cms_inventory=None,
@@ -62,6 +63,7 @@ def source_git(*, parent=delivery.ARCHIVE_BASE, base_parent=delivery.SOURCE,
                verified_parent=delivery.CMS_REPAIR_BASE, alignment_parent=delivery.SIGNING_VERIFIED_BASE,
                alignment_inventory=None, repair_inventory=None, verification_inventory=None,
                p04_parent=delivery.P04_BASE, p04_inventory=None,
+               evidence_parent=delivery.ARCHIVE_BASE, archive_inventory=None,
                correction=None, net=None, mode="100644", dirty=b"", staged=b"", untracked=b"",
                tag_object=None, tag_target=None, tag_type=None, missing_tag=None):
     additions = "\n".join("A\t" + path for path in sorted(delivery.FILES)).encode()
@@ -82,6 +84,7 @@ def source_git(*, parent=delivery.ARCHIVE_BASE, base_parent=delivery.SOURCE,
         ("show", "-s", "--format=%P", delivery.SIGNING_VERIFIED_BASE): verified_parent.encode(),
         ("show", "-s", "--format=%P", delivery.P04_BASE): alignment_parent.encode(),
         ("show", "-s", "--format=%P", delivery.ARCHIVE_BASE): p04_parent.encode(),
+        ("show", "-s", "--format=%P", delivery.EVIDENCE_BASE): evidence_parent.encode(),
         ("show", "-s", "--format=%P", delivery.PREFLIGHT_BASE): preflight_parent.encode(),
         ("show", "-s", "--format=%P", delivery.OWNER_CORRECTION): owner_parent.encode(),
         ("show", "-s", "--format=%P", delivery.DELIVERY_BASE): base_parent.encode(),
@@ -97,7 +100,8 @@ def source_git(*, parent=delivery.ARCHIVE_BASE, base_parent=delivery.SOURCE,
         ("diff", "--name-status", "--no-renames", delivery.CMS_REPAIR_BASE, delivery.SIGNING_VERIFIED_BASE): verification if verification_inventory is None else verification_inventory,
         ("diff", "--name-status", "--no-renames", delivery.SIGNING_VERIFIED_BASE, delivery.P04_BASE): alignment if alignment_inventory is None else alignment_inventory,
         ("diff", "--name-status", "--no-renames", delivery.P04_BASE, delivery.ARCHIVE_BASE): modifications if p04_inventory is None else p04_inventory,
-        ("diff", "--name-status", "--no-renames", delivery.ARCHIVE_BASE, COMMIT): modifications if correction is None else correction,
+        ("diff", "--name-status", "--no-renames", delivery.ARCHIVE_BASE, delivery.EVIDENCE_BASE): modifications if archive_inventory is None else archive_inventory,
+        ("diff", "--name-status", "--no-renames", delivery.EVIDENCE_BASE, COMMIT): modifications if correction is None else correction,
         ("diff", "--name-status", "--no-renames", delivery.SOURCE, COMMIT): all_additions if net is None else net,
         ("diff", "--name-only", "HEAD"): dirty,
         ("diff", "--cached", "--name-only"): staged,
@@ -109,7 +113,8 @@ def source_git(*, parent=delivery.ARCHIVE_BASE, base_parent=delivery.SOURCE,
                          (delivery.CMS_REPAIR_BASE,delivery.REPAIR_FILES),
                          (delivery.SIGNING_VERIFIED_BASE,delivery.SIGNING_VERIFICATION_FILES),
                          (delivery.P04_BASE,delivery.DELIVERY_ALIGNMENT_FILES),
-                         (delivery.ARCHIVE_BASE,delivery.FILES)):
+                         (delivery.ARCHIVE_BASE,delivery.FILES),
+                         (delivery.EVIDENCE_BASE,delivery.FILES)):
         for path in files:
             values[("ls-tree",target,"--",path)]=("100644 blob "+"0"*40+"\t"+path).encode()
     for path in delivery.FILES | delivery.PREFLIGHT_FILES | delivery.SIGNING_FILES | delivery.CMS_FILES:
@@ -326,7 +331,7 @@ class SourceAndEvidenceTests(unittest.TestCase):
             delivery.source_guard(COMMIT, True)
         for old in (delivery.SOURCE, delivery.DELIVERY_BASE, delivery.OWNER_CORRECTION, delivery.PREFLIGHT_BASE,
                     delivery.REFINEMENT_BASE, delivery.SIGNING_BASE, delivery.CMS_BASE,
-                    delivery.CMS_REPAIR_BASE, delivery.SIGNING_VERIFIED_BASE, delivery.P04_BASE, delivery.ARCHIVE_BASE):
+                    delivery.CMS_REPAIR_BASE, delivery.SIGNING_VERIFIED_BASE, delivery.P04_BASE, delivery.ARCHIVE_BASE, delivery.EVIDENCE_BASE):
             with self.subTest(old=old), self.assertRaises(ValueError):
                 delivery.source_guard(old, True)
         for options in ({"dirty": b"js/gridly-paid-ui.mjs"}, {"staged": b"js/gridly-paid-ui.mjs"},
@@ -1265,7 +1270,8 @@ class WorkflowTests(unittest.TestCase):
         functions = lambda source: {node.name: ast.dump(node) for node in ast.parse(source).body if isinstance(node, (ast.FunctionDef, ast.ClassDef))}
         before, after = functions(baseline), functions(current)
         self.assertEqual(set(after) - set(before), {"preflight_result", "emit_preflight", "delivery_preflight",
-                                                  "HistoryFailure", "HistoryNoRedirect", "history_context", "history_retry_delay", "cleanup_delivery"})
+                                                  "HistoryFailure", "HistoryNoRedirect", "history_context", "history_retry_delay", "cleanup_delivery",
+                                                  "classify_archive", "archive_report", "emit_archive", "cleanup_errno"})
         self.assertFalse(set(before) - set(after))
         for name in before.keys() - {"source_guard", "main", "public_json", "historical_evidence", "finish"}:
             self.assertEqual(after[name], before[name], name)
@@ -1293,7 +1299,7 @@ class WorkflowTests(unittest.TestCase):
         def mode(node,value):
             return isinstance(node,ast.If) and isinstance(node.test,ast.Compare) and ast.dump(node.test)==ast.dump(ast.parse("args.mode == "+repr(value),mode="eval").body)
         def normalized(source):
-            function=next(node for node in ast.parse(source).body if isinstance(node,ast.FunctionDef) and node.name=="main")
+            function=next(node for node in ast.parse(normalize_archive_cli(source)).body if isinstance(node,ast.FunctionDef) and node.name=="main")
             function.body=[node for node in function.body if not mode(node,"preflight")]
             for node in ast.walk(function):
                 if mode(node,"authorize") and len(node.orelse)==1 and mode(node.orelse[0],"preflight"):
@@ -1335,8 +1341,11 @@ class WorkflowTests(unittest.TestCase):
             if index==2:
                 self.assertTrue(rest.startswith('          # FD 3 carries only validated fixed stage records; raw output stays private.\n          exec 3>&1\n'))
                 rest=rest.split('          exec 3>&1\n',1)[1]
+            if index==9:
+                self.assertTrue(rest.startswith('          # FD 3 carries only the fixed archive classification; raw output stays private.\n          exec 3>&1\n'))
+                rest=rest.split('          exec 3>&1\n',1)[1]
             self.assertRegex(rest, r'^          exec > "\$DIAGNOSTIC_PRIVATE_ROOT/logs/step-(?:[1-8]|7-[1-5])\.log" 2>&1\n')
-        self.assertEqual(self.text.count("exec 3>&1"),1)
+        self.assertEqual(self.text.count("exec 3>&1"),2)
         self.assertIn('--github-env "$GITHUB_ENV" --output',self.text)
         self.assertIn("testFlightInternalTestingOnly", self.text)
         self.assertIn("manageAppVersionAndBuildNumber", self.text)
@@ -1503,19 +1512,20 @@ security() {
         functions=lambda text:{node.name:ast.dump(node) for node in ast.parse(text).body if isinstance(node,(ast.FunctionDef,ast.ClassDef))}
         original,current=functions(before),functions(after)
         self.assertEqual(set(current)-set(original),
-                         {"HistoryFailure","HistoryNoRedirect","history_context","history_retry_delay","cleanup_delivery"})
+                         {"HistoryFailure","HistoryNoRedirect","history_context","history_retry_delay","cleanup_delivery",
+                          "classify_archive","archive_report","emit_archive","cleanup_errno"})
         self.assertFalse(set(original)-set(current))
-        for name in original.keys()-{"source_guard","public_json","historical_evidence","delivery_preflight","finish"}:
+        for name in original.keys()-{"source_guard","public_json","historical_evidence","delivery_preflight","finish","main"}:
             self.assertEqual(original[name],current[name],name)
         nodes=lambda text:{n.targets[0].id:n.value for n in ast.parse(text).body
                            if isinstance(n,ast.Assign) and isinstance(n.targets[0],ast.Name)}
         old,new=nodes(before),nodes(after)
-        self.assertEqual(set(new)-set(old),{"P04_BASE","ARCHIVE_BASE","HISTORY_CATEGORIES","HISTORY_ATTEMPTS",
+        self.assertEqual(set(new)-set(old),{"P04_BASE","ARCHIVE_BASE","EVIDENCE_BASE","ARCHIVE_RULES","ARCHIVE_MAX_BYTES","ARCHIVE_STRUCTURED_STATES","HISTORY_CATEGORIES","HISTORY_ATTEMPTS",
                          "HISTORY_WAIT_BUDGET","HISTORY_DEADLINE","HISTORY_TIMEOUT","HISTORY_MAX_BYTES"})
         for name,node in old.items():
             if name=="HISTORICAL_TAGS":
                 self.assertIsInstance(new[name],ast.Dict)
-                self.assertEqual(len(new[name].keys),9)
+                self.assertEqual(len(new[name].keys),10)
                 retained=ast.Dict(keys=new[name].keys[:7],values=new[name].values[:7])
                 self.assertEqual(ast.dump(node),ast.dump(retained))
             elif name=="PREFLIGHT_CATEGORIES":
@@ -1523,7 +1533,7 @@ security() {
             else:self.assertEqual(ast.dump(node),ast.dump(new[name]),name)
         self.assertEqual(delivery.OWNER_CHECK_TTL,1800)
 
-    def test_exact_reviewed_history_and_all_nine_authorization_tags(self):
+    def test_exact_reviewed_history_and_all_ten_authorization_tags(self):
         self.assertEqual(delivery.REFINEMENT_BASE,"4c95caed0d261fca1dbaf86fc926660661d0643b")
         self.assertEqual(delivery.SIGNING_BASE,"db4df3949b1f02325b8869433bbbd16b234487db")
         self.assertEqual(delivery.CMS_BASE,"cbe3c297099dbca9c6d376848157de0253aeae39")
@@ -1555,8 +1565,12 @@ security() {
         expected["gridly-storekit-testflight-deliver-15-45ce66b98b44bd6cea67820124e695483e7a6b9b"]=(
             "e71cf11b1fbca960527ad019762a12cb68b25600",delivery.ARCHIVE_BASE)
         self.assertEqual(delivery.ARCHIVE_BASE,"45ce66b98b44bd6cea67820124e695483e7a6b9b")
+        expected["gridly-storekit-testflight-deliver-15-779d67c7b89569db7cacb6a253eff6da8d3f74ef"]=(
+            "69876691a5c1e996ac099edb492c75fbd6b99696",delivery.EVIDENCE_BASE)
+        self.assertEqual(delivery.EVIDENCE_BASE,"779d67c7b89569db7cacb6a253eff6da8d3f74ef")
         self.assertEqual(delivery.HISTORICAL_TAGS,expected)
-        for child,parent in ((delivery.ARCHIVE_BASE,delivery.P04_BASE),
+        for child,parent in ((delivery.EVIDENCE_BASE,delivery.ARCHIVE_BASE),
+                             (delivery.ARCHIVE_BASE,delivery.P04_BASE),
                              (delivery.P04_BASE,delivery.SIGNING_VERIFIED_BASE),
                              (delivery.SIGNING_VERIFIED_BASE,delivery.CMS_REPAIR_BASE),
                              (delivery.CMS_REPAIR_BASE,delivery.CMS_BASE),(delivery.CMS_BASE,delivery.SIGNING_BASE),(delivery.SIGNING_BASE,delivery.REFINEMENT_BASE),
@@ -1568,7 +1582,7 @@ security() {
                 self.assertEqual(historical, delivery.cert.git("show",delivery.CMS_BASE+":"+path),path)
                 if path not in {"tools/apple_storekit_signing_diagnostic.py","tests/storekit-signing-diagnostic.test.py"}:
                     self.assertEqual((ROOT/path).read_bytes().replace(b"\r\n",b"\n"),historical,path)
-        checkpoint=delivery.ARCHIVE_BASE
+        checkpoint=delivery.EVIDENCE_BASE
         support={".github/workflows/gridly-storekit-testflight-delivery.yml",
                  "tools/apple_storekit_testflight_delivery.py","tests/storekit-testflight-delivery.test.py"}
         def git(*args):
@@ -1684,7 +1698,8 @@ security() {
                     (delivery.CMS_REPAIR_BASE,delivery.REPAIR_FILES),
                     (delivery.SIGNING_VERIFIED_BASE,delivery.SIGNING_VERIFICATION_FILES),
                     (delivery.P04_BASE,delivery.DELIVERY_ALIGNMENT_FILES),
-                         (delivery.ARCHIVE_BASE,delivery.FILES))
+                         (delivery.ARCHIVE_BASE,delivery.FILES),
+                         (delivery.EVIDENCE_BASE,delivery.FILES))
         valid=source_git()
         for target,files in historical:
             for path in files:
@@ -1724,6 +1739,7 @@ def archive_stages(text):
 
 def restore_archive_block(text):
     """Reverse ONLY the reviewed split after checking every private command byte."""
+    text = restore_archive_reporting(text)
     start, end, blocks = archive_stages(text)
     historical = delivery.cert.git("show", delivery.ARCHIVE_BASE + ":" + str(WORKFLOW.relative_to(ROOT)).replace("\\","/")).decode()
     old_start = historical.index("      - name: Archive and export isolated diagnostic artifact locally\n")
@@ -1789,7 +1805,7 @@ class ArchiveStageVisibilityTests(unittest.TestCase):
             environment={**os.environ,"DIAGNOSTIC_PRIVATE_ROOT":posix(root),
                          "DELIVERY_SOURCE_DIR":posix(root/"source"),"DIAGNOSTIC_BUILD_NUMBER":"15",
                          "EXPECTED_COMMIT_SHA":COMMIT,"TEAM_ID":"SYNTHETIC","PROFILE_NAME":"SYNTHETIC",
-                         "TRACE":posix(root/"trace"),"FAKE_ID":identity,"FAIL_STAGE":str(failed)}
+                         "TRACE":posix(root/"trace"),"FAKE_ID":identity,"FAIL_STAGE":str(failed),"RUNNER_TEMP":posix(root)}
             fakes=r"""
 security() {
   printf 'identity\n' >> "$TRACE"
@@ -1814,6 +1830,7 @@ xcodebuild() {
 }
 awk() { printf 'filter\n' >> "$TRACE"; command awk "$@"; }
 python3() {
+  case " $* " in *" archive-public "*) return 0 ;; esac
   printf 'certification\n' >> "$TRACE"
   printf 'SYNTHETIC_PRIVATE_ERROR\n' >&2
   if [ "$FAIL_STAGE" = 5 ]; then return 68; fi
@@ -1868,8 +1885,11 @@ python3() {
         new=(ROOT/"tools/apple_storekit_testflight_delivery.py").read_text()
         functions=lambda text:{n.name:n for n in ast.parse(text).body if isinstance(n,ast.FunctionDef)}
         before,after=functions(old),functions(new)
-        for name in before.keys()-{"source_guard","finish"}:
+        for name in before.keys()-{"source_guard","finish","main"}:
             self.assertEqual(ast.dump(before[name]),ast.dump(after[name]),name)
+        old_main=next(n for n in ast.parse(normalize_archive_cli(old)).body if isinstance(n,ast.FunctionDef) and n.name=="main")
+        new_main=next(n for n in ast.parse(normalize_archive_cli(new)).body if isinstance(n,ast.FunctionDef) and n.name=="main")
+        self.assertEqual(ast.dump(old_main),ast.dump(new_main))
         # Only the cleanup delegate/reporting block is replaced inside finish;
         # final evidence validation, accepted-upload truth and fail-closed gate stay exact.
         before=copy.deepcopy(before["finish"]);after=copy.deepcopy(after["finish"])
@@ -2014,10 +2034,15 @@ class CleanupStageVisibilityTests(unittest.TestCase):
         for mode in ("success","unowned","profile_failed","wrong_marker","delete_failed","failed_but_absent",
                      "registry_failed","tree_failed","tree_failed_but_absent","ownership_changed"):
             result,_,_=self.run_case(mode)
-            for record in result["stages"].values():
-                self.assertEqual(set(record),{"status","category"})
+            for name,record in result["stages"].items():
+                self.assertEqual(set(record),{"status","category"} | (
+                    {"error_code","retry_status","retry_error_code"} if name=="C04_WORKSPACE" else set()))
                 self.assertIn(record["status"],statuses)
                 self.assertIn(record["category"],categories)
+                if name=="C04_WORKSPACE":
+                    self.assertIn(record["error_code"],{"NONE","UNKNOWN","EACCES","EPERM","EBUSY","ETXTBSY","ENOTEMPTY","EEXIST","ENOENT","EROFS"})
+                    self.assertIn(record["retry_status"],{"NOT_ATTEMPTED","NOT_NEEDED","ATTEMPTED","SUCCEEDED","FAILED","BLOCKED_OWNERSHIP"})
+                    self.assertIn(record["retry_error_code"],{"NONE","UNKNOWN","EACCES","EPERM","EBUSY","ETXTBSY","ENOTEMPTY","EEXIST","ENOENT","EROFS"})
 
     def test_wrong_private_home_cannot_delete_outside_owned_tree(self):
         with tempfile.TemporaryDirectory() as temporary:
@@ -2035,6 +2060,285 @@ class CleanupStageVisibilityTests(unittest.TestCase):
             with self.subTest(options=options),patch.object(delivery.cert,"git",side_effect=source_git(**options)), \
                     patch.object(delivery.subprocess,"run"),patch.object(delivery.cert,"original_contracts"),self.assertRaises(ValueError):
                 delivery.source_guard(COMMIT,True)
+
+
+def restore_archive_reporting(text):
+    """Validate and reverse only the new reporting shell wrapper."""
+    marker="      - name: Xcode archive\n";end_marker="      - name: Internal-only IPA export\n"
+    start=text.index(marker);end=text.index(end_marker,start)
+    old=delivery.cert.git("show",delivery.EVIDENCE_BASE+":"+str(WORKFLOW.relative_to(ROOT)).replace("\\","/")).decode()
+    original=old[old.index(marker):old.index(end_marker,old.index(marker))]
+    expected=original.replace(
+        '          exec > "$DIAGNOSTIC_PRIVATE_ROOT/logs/step-7-3.log" 2>&1',
+        '          # FD 3 carries only the fixed archive classification; raw output stays private.\n'
+        '          exec 3>&1\n          exec > "$DIAGNOSTIC_PRIVATE_ROOT/logs/step-7-3.log" 2>&1',1)
+    expected=expected.replace("          xcodebuild -project","          archive_status=0\n          xcodebuild -project",1)
+    expected=expected.replace('PROVISIONING_PROFILE_SPECIFIER="$PROFILE_NAME" archive\n',
+        'PROVISIONING_PROFILE_SPECIFIER="$PROFILE_NAME" archive > "$DIAGNOSTIC_PRIVATE_ROOT/logs/archive-raw.log" 2>&1 || archive_status=$?\n',1)
+    expected+=('          python3 -B tools/apple_storekit_testflight_delivery.py archive-public --runner-temp "$RUNNER_TEMP" --archive-exit "$archive_status" || true\n'
+               '          exit "$archive_status"\n')
+    assert text[start:end]==expected,"archive build/signing arguments or reporting exit contract changed"
+    return text[:start]+original+text[end:]
+
+
+def normalize_archive_cli(source):
+    tree=ast.parse(source)
+    main=next(n for n in tree.body if isinstance(n,ast.FunctionDef) and n.name=="main")
+    main.body=[n for n in main.body if not (isinstance(n,ast.If) and ast.dump(n.test)==
+        ast.dump(ast.parse('args.mode == "archive-public"',mode="eval").body))]
+    for node in ast.walk(main):
+        if isinstance(node,ast.Call) and isinstance(node.func,ast.Attribute) and node.func.attr=="add_argument":
+            for keyword in node.keywords:
+                if keyword.arg=="choices" and isinstance(keyword.value,ast.List):
+                    keyword.value.elts=[v for v in keyword.value.elts if not (isinstance(v,ast.Constant) and v.value=="archive-public")]
+        if isinstance(node,ast.For) and isinstance(node.target,ast.Name) and node.target.id=="name" and isinstance(node.iter,ast.Tuple):
+            node.iter.elts=[v for v in node.iter.elts if not (isinstance(v,ast.Constant) and v.value=="archive-exit")]
+    return ast.unparse(tree)
+
+
+class ArchiveErrorEvidenceTests(unittest.TestCase):
+    canary="/private/SYNTHETIC_SECRET_PATH/credential-CANARY-token"
+    examples=(
+        ("error: No profiles for 'com.synthetic' were found.", "PROVISIONING_OR_SIGNING","PROFILE_REJECTED"),
+        ("error: Code signing identity is unavailable.", "PROVISIONING_OR_SIGNING","SIGNING_FAILED"),
+        ("error: Build input file cannot be found: ", "MISSING_BUILD_INPUT","BUILD_INPUT_MISSING"),
+        (".swift:12:5: error: cannot find private symbol in scope", "SWIFT_COMPILATION","SWIFT_COMPILER_FAILED"),
+        ("xcodebuild: error: Could not resolve package dependencies:", "PACKAGE_DEPENDENCY","DEPENDENCY_RESOLUTION_FAILED"),
+        ("Sandbox: swift-frontend(123) deny(1) file-write-create ", "SANDBOX_OR_FILESYSTEM","SANDBOX_DENIED"),
+        ("error: Permission denied: ", "SANDBOX_OR_FILESYSTEM","SANDBOX_DENIED"),
+        ("xcodebuild: error: SDK iphoneos cannot be located", "TOOLCHAIN_OR_SDK","TOOLCHAIN_UNAVAILABLE"),
+    )
+
+    def test_each_allowlisted_class_never_echoes_private_lines(self):
+        for example,category,reason in self.examples:
+            with self.subTest(category=category):
+                record=delivery.classify_archive(example+self.canary,65)
+                self.assertEqual((record["category"],record["reason"]),(category,reason))
+                self.assertEqual(record["exit_code"],65)
+                self.assertNotIn("CANARY",json.dumps(record));self.assertNotIn("/private",json.dumps(record))
+
+    def test_unknown_error_is_unknown_and_retains_original_exit(self):
+        record=delivery.classify_archive("error: opaque "+self.canary,65)
+        self.assertEqual((record["category"],record["reason"]),("UNCLASSIFIED","UNKNOWN"))
+        self.assertEqual(record["status"],"FAIL")
+        self.assertEqual(record["exit_code"],65)
+
+    def test_success_cannot_inherit_error_class_from_unrelated_log(self):
+        record=delivery.classify_archive("error: Permission denied "+self.canary,0)
+        self.assertEqual((record["status"],record["category"],record["reason"]),("PASS","NONE","NONE"))
+
+    def test_input_and_output_are_bounded(self):
+        record=delivery.classify_archive("x"*delivery.ARCHIVE_MAX_BYTES+"\nerror: Code signing "+self.canary,65)
+        self.assertEqual(record["reason"],"UNKNOWN")
+        self.assertLess(len(json.dumps(record)),400)
+
+    def test_raw_log_prefers_private_error_evidence_and_no_native_tool_without_bundle(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root=delivery.cert.private_directory(temporary);(root/"logs").mkdir(parents=True)
+            (root/".owned").write_text(delivery.cert.PRIVATE_MARKER)
+            (root/"logs/archive-raw.log").write_text("error: Build input file cannot be found: "+self.canary)
+            with patch.dict(os.environ,{"DIAGNOSTIC_PRIVATE_ROOT":str(root)}),patch.object(delivery.subprocess,"run") as native:
+                record=delivery.archive_report(temporary,65)
+            native.assert_not_called()
+            self.assertEqual(record["reason"],"BUILD_INPUT_MISSING")
+            self.assertEqual(record["evidence_source"],"PRIVATE_TEXT")
+            self.assertNotIn("CANARY",json.dumps(record))
+
+    def structured_case(self, bad=False, timeout=False):
+        with tempfile.TemporaryDirectory() as temporary:
+            root=delivery.cert.private_directory(temporary);(root/"logs").mkdir(parents=True)
+            (root/"tmp/result.xcresult").mkdir(parents=True)
+            (root/".owned").write_text(delivery.cert.PRIVATE_MARKER)
+            (root/"logs/archive-raw.log").write_text("Writing error result bundle to "+str(root/"tmp/result.xcresult")+
+                "\nerror: Code signing identity missing: "+self.canary)
+            def native(args,**kwargs):
+                self.assertEqual(args,["xcrun","xcresulttool","get","object","--legacy","--path",str(root/"tmp/result.xcresult"),"--format","json"])
+                self.assertEqual(kwargs["timeout"],10)
+                self.assertEqual(kwargs["stderr"],subprocess.DEVNULL)
+                if timeout:raise subprocess.TimeoutExpired(args,10)
+                data=b"INVALID "+self.canary.encode() if bad else json.dumps({
+                    "issues":{"errorSummaries":{"_values":[{"issueType":{"_value":"Swift Compiler Error"},
+                    "message":{"_value":"unknown symbol "+self.canary}}]}}}).encode()
+                kwargs["stdout"].write(data)
+                return subprocess.CompletedProcess(args,0)
+            with patch.dict(os.environ,{"DIAGNOSTIC_PRIVATE_ROOT":str(root)}),patch.object(delivery.subprocess,"run",side_effect=native):
+                return delivery.archive_report(temporary,65)
+
+    def test_existing_structured_diagnostic_is_preferred_without_changing_archive(self):
+        record=self.structured_case()
+        self.assertEqual(record["reason"],"SWIFT_COMPILER_FAILED")
+        self.assertEqual(record["evidence_source"],"STRUCTURED")
+        self.assertEqual(record["structured_status"],"READ")
+        self.assertNotIn("CANARY",json.dumps(record))
+
+    def test_unreferenced_result_bundle_cannot_be_attributed_to_archive(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root=delivery.cert.private_directory(temporary);(root/"logs").mkdir(parents=True)
+            (root/"tmp/stale.xcresult").mkdir(parents=True)
+            (root/".owned").write_text(delivery.cert.PRIVATE_MARKER)
+            (root/"logs/archive-raw.log").write_text("error: Build input file cannot be found: "+self.canary)
+            with patch.dict(os.environ,{"DIAGNOSTIC_PRIVATE_ROOT":str(root)}),patch.object(delivery.subprocess,"run") as native:
+                record=delivery.archive_report(temporary,65)
+            native.assert_not_called()
+            self.assertEqual(record["reason"],"BUILD_INPUT_MISSING")
+            self.assertEqual(record["structured_status"],"NOT_AVAILABLE")
+
+    def test_malformed_structured_output_falls_back_to_private_log(self):
+        record=self.structured_case(bad=True)
+        self.assertEqual(record["reason"],"SIGNING_FAILED")
+        self.assertEqual(record["structured_status"],"UNREADABLE")
+
+    def test_structured_tool_timeout_does_not_hide_raw_error_or_exit(self):
+        record=self.structured_case(timeout=True)
+        self.assertEqual(record["reason"],"SIGNING_FAILED")
+        self.assertEqual(record["exit_code"],65)
+
+    def test_unowned_context_fails_closed_without_invoking_tools(self):
+        with tempfile.TemporaryDirectory() as temporary,patch.object(delivery.subprocess,"run") as native:
+            result=delivery.archive_report(temporary,65)
+        native.assert_not_called()
+        self.assertEqual(result["reason"],"UNKNOWN")
+        self.assertEqual(result["structured_status"],"CONTEXT_REJECTED")
+
+    def test_emitter_only_accepts_fixed_schema_and_values(self):
+        valid=delivery.classify_archive("error: Permission denied "+self.canary,65)
+        with patch.object(delivery.os,"write") as output:
+            delivery.emit_archive(valid)
+        fd,raw=output.call_args.args
+        self.assertEqual(fd,3);self.assertNotIn(b"CANARY",raw)
+        for mutant in ({**valid,"reason":self.canary},{**valid,"path":self.canary},
+                       {**valid,"exit_code":self.canary},{**valid,"evidence_source":self.canary},
+                       {**valid,"structured_status":self.canary}):
+            with patch.object(delivery.os,"write") as output,self.assertRaises(ValueError):
+                delivery.emit_archive(mutant)
+            output.assert_not_called()
+
+    def test_archive_error_reporting_cannot_change_native_exit_or_allow_downstream(self):
+        bash="C:/Program Files/Git/bin/bash.exe" if os.name=="nt" else "/bin/bash"
+        _,_,blocks=archive_stages(WORKFLOW.read_text())
+        body="\n".join(line[10:] for line in blocks[2].split("        run: |\n",1)[1].splitlines())+"\n"
+        for native_status in (0,65,74):
+            with self.subTest(status=native_status),tempfile.TemporaryDirectory() as temporary:
+                root=Path(temporary);(root/"logs").mkdir()
+                env={**os.environ,"DIAGNOSTIC_PRIVATE_ROOT":str(root).replace("\\","/"),
+                     "DELIVERY_SOURCE_DIR":str(root).replace("\\","/"),"DIAGNOSTIC_BUILD_NUMBER":"15",
+                     "TEAM_ID":"SYNTHETIC","PROFILE_NAME":"SYNTHETIC","RUNNER_TEMP":str(root).replace("\\","/"),
+                     "NATIVE_STATUS":str(native_status)}
+                fakes='xcodebuild() { printf SYNTHETIC_PRIVATE_CANARY; return "$NATIVE_STATUS"; }\npython3() { printf SYNTHETIC_PRIVATE_CANARY; return 99; }\n'
+                result=subprocess.run([bash],input=fakes+body,text=True,capture_output=True,env=env)
+                self.assertEqual(result.returncode,native_status)
+                self.assertEqual(result.stdout+result.stderr,"")
+                self.assertEqual((root/"logs/archive-raw.log").read_text(),"SYNTHETIC_PRIVATE_CANARY")
+
+    def test_only_archive_reporting_shell_wrapper_changed_after_verified_checkpoint(self):
+        old=delivery.cert.git("show",delivery.EVIDENCE_BASE+":"+str(WORKFLOW.relative_to(ROOT)).replace("\\","/")).decode()
+        self.assertEqual(restore_archive_reporting(WORKFLOW.read_text()),old)
+        self.assertNotIn("-resultBundlePath",WORKFLOW.read_text())
+        self.assertNotRegex(WORKFLOW.read_text(),r"uses:.*(?:upload-artifact|cache)")
+
+    def test_other_production_functions_and_cli_modes_are_unchanged(self):
+        old=delivery.cert.git("show",delivery.EVIDENCE_BASE+":tools/apple_storekit_testflight_delivery.py").decode()
+        new=(ROOT/"tools/apple_storekit_testflight_delivery.py").read_text()
+        functions=lambda text:{n.name:ast.dump(n) for n in ast.parse(text).body if isinstance(n,(ast.FunctionDef,ast.ClassDef))}
+        before,after=functions(old),functions(new)
+        self.assertEqual(set(after)-set(before),{"classify_archive","archive_report","emit_archive","cleanup_errno"})
+        for name in before.keys()-{"source_guard","cleanup_delivery","main"}:
+            self.assertEqual(before[name],after[name],name)
+        normalized=functions(normalize_archive_cli(new))
+        self.assertEqual(normalized["main"],before["main"])
+
+    def test_latest_archive_history_inventory_and_parent_fail_closed(self):
+        for options in ({"evidence_parent":"9"*40},{"evidence_parent":delivery.ARCHIVE_BASE+" "+"8"*40},
+                        {"archive_inventory":b""},{"archive_inventory":b"M\tjs/gridly-paid-ui.mjs"}):
+            with self.subTest(options=options),patch.object(delivery.cert,"git",side_effect=source_git(**options)), \
+                    patch.object(delivery.subprocess,"run"),patch.object(delivery.cert,"original_contracts"),self.assertRaises(ValueError):
+                delivery.source_guard(COMMIT,True)
+
+
+class CleanupErrorRecoveryTests(unittest.TestCase):
+    def exercise(self, error_number, *, retry_fails=False, partial=False, mutate=False):
+        with tempfile.TemporaryDirectory() as temporary:
+            root=delivery.cert.private_directory(temporary);(root/"home").mkdir(parents=True)
+            (root/"logs").mkdir();(root/".owned").write_text(delivery.cert.PRIVATE_MARKER)
+            (root/"writer-output").write_text("SYNTHETIC_CANARY")
+            real_tree=delivery.shutil.rmtree
+            calls=[]
+            def tree(target):
+                self.assertEqual(target,root)
+                self.assertTrue(target.resolve().is_relative_to(Path(temporary).resolve()))
+                calls.append(target)
+                if len(calls)==1:
+                    # Simulate an active writer or partial removal, entirely in this fixture.
+                    if error_number==errno.ENOTEMPTY:(root/"late-write").write_text("SYNTHETIC_CANARY")
+                    if partial:(root/".owned").unlink()
+                    if mutate:(root/".owned").write_text("UNOWNED")
+                    raise OSError(error_number,"SYNTHETIC_PRIVATE_ERROR",str(root/"SYNTHETIC_SECRET_PATH"))
+                if retry_fails:raise OSError(error_number,"SYNTHETIC_PRIVATE_RETRY_ERROR")
+                real_tree(target)
+            with patch.object(delivery.Path,"home",return_value=root/"home"), \
+                    patch.object(delivery.subprocess,"run",return_value=subprocess.CompletedProcess([],0,b"",b"")), \
+                    patch.object(delivery.shutil,"rmtree",side_effect=tree),patch.object(delivery.time,"sleep") as sleep:
+                result=delivery.cleanup_delivery(temporary)
+            self.assertNotIn("SYNTHETIC",json.dumps(result))
+            self.assertNotIn(str(root),json.dumps(result))
+            self.assertEqual(result["status"],"FAIL") # First error is never turned green.
+            return result,len(calls),sleep.call_count,root.exists()
+
+    def test_permission_denied_is_classified_without_permission_changes_or_retry(self):
+        for code,name in ((errno.EACCES,"EACCES"),(errno.EPERM,"EPERM"),(errno.EROFS,"EROFS")):
+            with self.subTest(code=code):
+                result,calls,sleeps,exists=self.exercise(code)
+                detail=result["stages"]["C04_WORKSPACE"]
+                self.assertEqual(detail["error_code"],name)
+                self.assertEqual(detail["retry_status"],"NOT_ATTEMPTED")
+                self.assertEqual((calls,sleeps,exists),(1,0,True))
+                self.assertEqual(result["stages"]["C05_ABSENCE"]["category"],"RESOURCE_REMAINS")
+
+    def test_busy_and_concurrent_nonempty_retry_once_with_sticky_failure(self):
+        for code,name in ((errno.EBUSY,"EBUSY"),(errno.ENOTEMPTY,"ENOTEMPTY")):
+            with self.subTest(code=code):
+                result,calls,sleeps,exists=self.exercise(code)
+                detail=result["stages"]["C04_WORKSPACE"]
+                self.assertEqual((detail["status"],detail["error_code"],detail["retry_status"]),("FAIL",name,"SUCCEEDED"))
+                self.assertEqual((calls,sleeps,exists),(2,1,False))
+                self.assertEqual(result["stages"]["C05_ABSENCE"]["category"],"ABSENT_WITH_PRIOR_FAILURE")
+                self.assertTrue(all(v=="ABSENT" for v in result["resources"].values()))
+
+    def test_persistent_busy_failure_never_retries_more_than_once(self):
+        result,calls,sleeps,exists=self.exercise(errno.EBUSY,retry_fails=True)
+        detail=result["stages"]["C04_WORKSPACE"]
+        self.assertEqual((calls,sleeps,exists),(2,1,True))
+        self.assertEqual((detail["retry_status"],detail["retry_error_code"]),("FAILED","EBUSY"))
+
+    def test_partial_removal_of_ownership_marker_blocks_retry(self):
+        result,calls,sleeps,exists=self.exercise(errno.ENOTEMPTY,partial=True)
+        detail=result["stages"]["C04_WORKSPACE"]
+        self.assertEqual(detail["retry_status"],"BLOCKED_OWNERSHIP")
+        self.assertEqual((calls,sleeps,exists),(1,0,True))
+
+    def test_changed_ownership_marker_blocks_retry(self):
+        result,calls,sleeps,exists=self.exercise(errno.EBUSY,mutate=True)
+        self.assertEqual(result["stages"]["C04_WORKSPACE"]["retry_status"],"BLOCKED_OWNERSHIP")
+        self.assertEqual((calls,sleeps,exists),(1,0,True))
+
+    def test_unknown_exception_never_publishes_message_or_tries_speculative_repair(self):
+        result,calls,sleeps,exists=self.exercise(errno.EIO)
+        self.assertEqual(result["stages"]["C04_WORKSPACE"]["error_code"],"UNKNOWN")
+        self.assertEqual((calls,sleeps,exists),(1,0,True))
+
+    def test_errno_classification_cannot_echo_path_message_or_arbitrary_errno(self):
+        self.assertEqual(delivery.cleanup_errno(ValueError("PRIVATE_CANARY")),"UNKNOWN")
+        self.assertEqual(delivery.cleanup_errno(OSError(99999,"PRIVATE_CANARY","PRIVATE_PATH")),"UNKNOWN")
+        self.assertEqual(delivery.cleanup_errno(OSError(errno.ENOENT,"PRIVATE_CANARY")),"ENOENT")
+
+    def test_cleanup_does_not_chmod_clear_flags_kill_processes_or_expand_paths(self):
+        source=ast.unparse(next(n for n in ast.parse((ROOT/"tools/apple_storekit_testflight_delivery.py").read_text()).body
+                               if isinstance(n,ast.FunctionDef) and n.name=="cleanup_delivery"))
+        for forbidden in ("chmod(","chown(","chflags(","kill(","pkill","sudo","ignore_errors=True"):
+            self.assertNotIn(forbidden,source)
+        self.assertEqual(source.count("shutil.rmtree(root)"),2)
+        self.assertIn("root_identity",source)
+        self.assertIn('{"EBUSY", "ENOTEMPTY"}'.replace('"',"'"),source)
 
 
 if __name__ == "__main__":
