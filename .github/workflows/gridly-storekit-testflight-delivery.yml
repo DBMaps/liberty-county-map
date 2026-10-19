@@ -40,6 +40,7 @@ on:
 
 permissions:
   contents: read
+  actions: read
 
 jobs:
   deliver-internal-testflight:
@@ -78,6 +79,8 @@ jobs:
           export TMPDIR="$DIAGNOSTIC_PRIVATE_ROOT/tmp/"
           python3 -B tools/apple_storekit_testflight_delivery.py authorize --ref "$GITHUB_REF" --commit "$GITHUB_SHA" --event "$GITHUB_EVENT_PATH" --attempt "$GITHUB_RUN_ATTEMPT" --runner-temp "$RUNNER_TEMP" --github-env "$GITHUB_ENV" --output "$DIAGNOSTIC_PRIVATE_ROOT/reports/delivery-authorization.json"
       - name: Verify source, build identity input and Xcode
+        env:
+          GRIDLY_HISTORY_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail

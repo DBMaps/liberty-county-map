@@ -12,6 +12,10 @@ import subprocess
 import sys
 import tempfile
 import unittest
+import email.message
+import email.utils
+import socket
+import urllib.error
 from pathlib import Path
 from unittest.mock import patch
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools"))
@@ -23,6 +27,16 @@ NOW = 1792364400
 STAMP = delivery.dt.datetime.fromtimestamp(NOW, delivery.dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 ROOT = Path(__file__).resolve().parents[1]
 WORKFLOW = ROOT / ".github/workflows/gridly-storekit-testflight-delivery.yml"
+
+
+def without_p04_auth(text):
+    permission = "permissions:\n  contents: read\n  actions: read\n"
+    scoped = ("      - name: Verify source, build identity input and Xcode\n"
+              "        env:\n          GRIDLY_HISTORY_TOKEN: ${{ github.token }}\n")
+    if text.count(permission)!=1 or text.count(scoped)!=1:
+        raise AssertionError("exact P04-only token binding and read permissions required")
+    return text.replace(permission,"permissions:\n  contents: read\n",1).replace(
+        scoped,"      - name: Verify source, build identity input and Xcode\n",1)
 
 
 def authorization():
@@ -39,13 +53,14 @@ def owner_automatic_authorization():
             }}
 
 
-def source_git(*, parent=delivery.SIGNING_VERIFIED_BASE, base_parent=delivery.SOURCE,
+def source_git(*, parent=delivery.P04_BASE, base_parent=delivery.SOURCE,
                owner_parent=delivery.DELIVERY_BASE, preflight_parent=delivery.OWNER_CORRECTION,
                preparation=None, past_correction=None, preflight_inventory=None,
                historical_refinement=None, signing_inventory=None, cms_inventory=None,
                refinement_parent=delivery.PREFLIGHT_BASE, signing_parent=delivery.REFINEMENT_BASE,
                cms_parent=delivery.SIGNING_BASE, repair_parent=delivery.CMS_BASE,
-               verified_parent=delivery.CMS_REPAIR_BASE, repair_inventory=None, verification_inventory=None,
+               verified_parent=delivery.CMS_REPAIR_BASE, alignment_parent=delivery.SIGNING_VERIFIED_BASE,
+               alignment_inventory=None, repair_inventory=None, verification_inventory=None,
                correction=None, net=None, mode="100644", dirty=b"", staged=b"", untracked=b"",
                tag_object=None, tag_target=None, tag_type=None, missing_tag=None):
     additions = "\n".join("A\t" + path for path in sorted(delivery.FILES)).encode()
@@ -64,6 +79,7 @@ def source_git(*, parent=delivery.SIGNING_VERIFIED_BASE, base_parent=delivery.SO
         ("show", "-s", "--format=%P", delivery.CMS_BASE): cms_parent.encode(),
         ("show", "-s", "--format=%P", delivery.CMS_REPAIR_BASE): repair_parent.encode(),
         ("show", "-s", "--format=%P", delivery.SIGNING_VERIFIED_BASE): verified_parent.encode(),
+        ("show", "-s", "--format=%P", delivery.P04_BASE): alignment_parent.encode(),
         ("show", "-s", "--format=%P", delivery.PREFLIGHT_BASE): preflight_parent.encode(),
         ("show", "-s", "--format=%P", delivery.OWNER_CORRECTION): owner_parent.encode(),
         ("show", "-s", "--format=%P", delivery.DELIVERY_BASE): base_parent.encode(),
@@ -77,7 +93,8 @@ def source_git(*, parent=delivery.SIGNING_VERIFIED_BASE, base_parent=delivery.SO
             "\n".join("A\t" + path for path in sorted(delivery.CMS_FILES)).encode() if cms_inventory is None else cms_inventory,
         ("diff", "--name-status", "--no-renames", delivery.CMS_BASE, delivery.CMS_REPAIR_BASE): repair if repair_inventory is None else repair_inventory,
         ("diff", "--name-status", "--no-renames", delivery.CMS_REPAIR_BASE, delivery.SIGNING_VERIFIED_BASE): verification if verification_inventory is None else verification_inventory,
-        ("diff", "--name-status", "--no-renames", delivery.SIGNING_VERIFIED_BASE, COMMIT): alignment if correction is None else correction,
+        ("diff", "--name-status", "--no-renames", delivery.SIGNING_VERIFIED_BASE, delivery.P04_BASE): alignment if alignment_inventory is None else alignment_inventory,
+        ("diff", "--name-status", "--no-renames", delivery.P04_BASE, COMMIT): modifications if correction is None else correction,
         ("diff", "--name-status", "--no-renames", delivery.SOURCE, COMMIT): all_additions if net is None else net,
         ("diff", "--name-only", "HEAD"): dirty,
         ("diff", "--cached", "--name-only"): staged,
@@ -87,7 +104,8 @@ def source_git(*, parent=delivery.SIGNING_VERIFIED_BASE, base_parent=delivery.SO
                          (delivery.PREFLIGHT_BASE,delivery.PREFLIGHT_FILES),(delivery.REFINEMENT_BASE,delivery.REFINEMENT_FILES),
                          (delivery.SIGNING_BASE,delivery.SIGNING_FILES),(delivery.CMS_BASE,delivery.CMS_FILES),
                          (delivery.CMS_REPAIR_BASE,delivery.REPAIR_FILES),
-                         (delivery.SIGNING_VERIFIED_BASE,delivery.SIGNING_VERIFICATION_FILES)):
+                         (delivery.SIGNING_VERIFIED_BASE,delivery.SIGNING_VERIFICATION_FILES),
+                         (delivery.P04_BASE,delivery.DELIVERY_ALIGNMENT_FILES)):
         for path in files:
             values[("ls-tree",target,"--",path)]=("100644 blob "+"0"*40+"\t"+path).encode()
     for path in delivery.FILES | delivery.PREFLIGHT_FILES | delivery.SIGNING_FILES | delivery.CMS_FILES:
@@ -304,7 +322,7 @@ class SourceAndEvidenceTests(unittest.TestCase):
             delivery.source_guard(COMMIT, True)
         for old in (delivery.SOURCE, delivery.DELIVERY_BASE, delivery.OWNER_CORRECTION, delivery.PREFLIGHT_BASE,
                     delivery.REFINEMENT_BASE, delivery.SIGNING_BASE, delivery.CMS_BASE,
-                    delivery.CMS_REPAIR_BASE, delivery.SIGNING_VERIFIED_BASE):
+                    delivery.CMS_REPAIR_BASE, delivery.SIGNING_VERIFIED_BASE, delivery.P04_BASE):
             with self.subTest(old=old), self.assertRaises(ValueError):
                 delivery.source_guard(old, True)
         for options in ({"dirty": b"js/gridly-paid-ui.mjs"}, {"staged": b"js/gridly-paid-ui.mjs"},
@@ -320,7 +338,8 @@ class SourceAndEvidenceTests(unittest.TestCase):
                         {"preflight_parent": delivery.OWNER_CORRECTION + " " + "8"*40},
                         {"refinement_parent": "8"*40}, {"signing_parent": "8"*40}, {"cms_parent": "8"*40},
                         {"cms_parent": delivery.SIGNING_BASE + " " + "8"*40},
-                        {"repair_parent":"8"*40},{"verified_parent":"8"*40},
+                        {"repair_parent":"8"*40},{"verified_parent":"8"*40},{"alignment_parent":"8"*40},
+                        {"alignment_parent":delivery.SIGNING_VERIFIED_BASE+" "+"8"*40},
                         {"repair_parent":delivery.CMS_BASE+" "+"8"*40},
                         {"verified_parent":delivery.CMS_REPAIR_BASE+" "+"8"*40}):
             with self.subTest(options=options), patch.object(delivery.cert, "git", side_effect=source_git(**options)), self.assertRaises(ValueError):
@@ -713,7 +732,9 @@ class DeliveryPreflightTests(unittest.TestCase):
         self.assertEqual(delivery.read_json(self.output), {**self.guard, "historical_certification": self.history})
         self.assertEqual(self.github_env.read_text(), "DELIVERY_SOURCE_DIR=" + str(self.root / "source") + "\n")
         self.source.assert_called_once_with(COMMIT, clean=True)
-        self.historical.assert_called_once_with()
+        self.historical.assert_called_once_with(token=None,environment={key:self.environment.get(key) for key in (
+            "GITHUB_ACTIONS","RUNNER_OS","GITHUB_REPOSITORY","GITHUB_EVENT_NAME",
+            "GITHUB_RUN_ATTEMPT","GITHUB_SHA","GITHUB_REF","GITHUB_API_URL")})
 
     def test_expired_preflight_owner_authorization_blocks_all_tooling(self):
         delivery.time.time.return_value = NOW + 1801
@@ -756,10 +777,10 @@ class DeliveryPreflightTests(unittest.TestCase):
         self.assertFalse(any(args[:2] == ["git","clone"] for args,_ in self.calls))
         self.assertEqual(records["P04_CERTIFICATION_HISTORY"]["status"], "PASS")
 
-    def test_historical_evidence_failure_is_identified(self):
+    def test_unexpected_history_exception_is_internal_failure_not_evidence_mismatch(self):
         self.historical.side_effect = ValueError("PRIVATE RESPONSE NEVER PUBLIC")
         records = self.probes()
-        self.assertEqual(records["P04_CERTIFICATION_HISTORY"]["category"], "CERTIFICATION_EVIDENCE_REJECTED")
+        self.assertEqual(records["P04_CERTIFICATION_HISTORY"]["category"], "INTERNAL_FAILURE")
         self.assertFalse(self.output.exists())
         self.assertEqual(records["P07_XCODE_HELP"]["status"], "PASS")
 
@@ -868,6 +889,346 @@ class DeliveryPreflightTests(unittest.TestCase):
         self.assertEqual(stopped.exception.code,1)
         self.assertTrue(all(record["category"]=="INTERNAL_FAILURE" for record in public.call_args.args[0]))
 
+    def test_history_token_is_removed_before_authorization_and_all_child_commands(self):
+        self.environment["GRIDLY_HISTORY_TOKEN"]="SYNTHETIC_TOKEN_NEVER_PUBLIC"
+        original=self.execute
+        def checked(args,**options):
+            self.assertNotIn("GRIDLY_HISTORY_TOKEN",self.environment)
+            return original(args,**options)
+        with patch.object(delivery,"authorization_guard",wraps=delivery.authorization_guard) as owner:
+            delivery.delivery_preflight(self.root,COMMIT,self.output,self.github_env,
+                                        environment=self.environment,execute=checked)
+        self.assertNotIn("GRIDLY_HISTORY_TOKEN",self.environment)
+        self.assertEqual(self.historical.call_args.kwargs["token"],"SYNTHETIC_TOKEN_NEVER_PUBLIC")
+        self.assertNotIn("GRIDLY_HISTORY_TOKEN",self.historical.call_args.kwargs["environment"])
+        self.assertNotIn("SYNTHETIC_TOKEN_NEVER_PUBLIC",self.github_env.read_text())
+
+    def test_process_environment_token_is_not_inherited_by_child_tools(self):
+        environment={**self.environment,"GRIDLY_HISTORY_TOKEN":"SYNTHETIC_TOKEN_NEVER_PUBLIC"}
+        original=self.execute
+        def checked(args,**options):
+            self.assertNotIn("GRIDLY_HISTORY_TOKEN",os.environ)
+            return original(args,**options)
+        with patch.dict(os.environ,environment,clear=True):
+            records=delivery.delivery_preflight(self.root,COMMIT,self.output,self.github_env,execute=checked)
+            self.assertNotIn("GRIDLY_HISTORY_TOKEN",os.environ)
+        self.assertTrue(all(record["status"]=="PASS" for record in records))
+        self.assertNotIn("SYNTHETIC_TOKEN_NEVER_PUBLIC",self.github_env.read_text())
+
+    def test_each_history_retrieval_category_is_preserved_without_raw_output(self):
+        for category in delivery.HISTORY_CATEGORIES:
+            self.historical.side_effect=delivery.HistoryFailure(category)
+            records=self.probes()
+            self.assertEqual(records["P04_CERTIFICATION_HISTORY"]["category"],category)
+            self.assertFalse(self.output.exists())
+            self.assertEqual(records["P05_TAG_CHECKOUT"]["status"],"PASS")
+
+
+class HistoryRetrievalTests(unittest.TestCase):
+    """Synthetic HTTP responses only: never read a token or contact GitHub."""
+    def setUp(self):
+        self.token="SYNTHETIC_TOKEN_NEVER_PUBLIC"
+        self.environment={"GITHUB_ACTIONS":"true","RUNNER_OS":"macOS",
+            "GITHUB_REPOSITORY":delivery.REPOSITORY,"GITHUB_EVENT_NAME":"push",
+            "GITHUB_RUN_ATTEMPT":"1","GITHUB_SHA":COMMIT,"GITHUB_REF":REF,
+            "GITHUB_API_URL":"https://api.github.com"}
+        self.base="https://api.github.com/repos/"+delivery.REPOSITORY+"/actions/runs/"+str(delivery.RUN)
+        self.urls=[self.base,self.base+"/attempts/1/jobs?per_page=100",self.base+"/artifacts?per_page=100"]
+        self.responses=[
+            {"id":delivery.RUN,"head_sha":delivery.SOURCE,"run_attempt":1,"status":"completed",
+             "conclusion":"success","path":".github/workflows/gridly-storekit-diagnostic-certification.yml",
+             "event":"push","head_branch":"gridly-storekit-diagnostic-certify-15-"+delivery.SOURCE},
+            {"total_count":1,"jobs":[{"name":"certify-storekit-diagnostics","conclusion":"success",
+                                     "steps":[{"conclusion":"success"},{"conclusion":"success"}]}]},
+            {"total_count":0,"artifacts":[]}]
+        self.queue=[];self.requests=[];self.waits=[];self.elapsed=0
+
+    def response(self,value=None,*,raw=None,headers=None,url=None,status=200):
+        result=io.BytesIO(json.dumps({} if value is None else value).encode() if raw is None else raw)
+        result.status=status
+        result.headers=email.message.Message()
+        for key,item in ({"Content-Type":"application/json"} if headers is None else headers).items():
+            result.headers[key]=item
+        result.geturl=lambda:url or self.requests[-1][0].full_url
+        return result
+
+    def error(self,code,headers=None,body=b'{"message":"PRIVATE_RAW_ERROR_NEVER_PUBLIC"}'):
+        fields=email.message.Message()
+        for key,value in (headers or {}).items():fields[key]=value
+        return urllib.error.HTTPError(self.base,code,"PRIVATE_RAW_ERROR_NEVER_PUBLIC",fields,io.BytesIO(body))
+
+    def open(self,request,timeout):
+        self.requests.append((request,timeout,self.elapsed))
+        self.assertLessEqual(timeout,delivery.HISTORY_TIMEOUT)
+        if not self.queue:raise AssertionError("unexpected HTTP request")
+        result=self.queue.pop(0)
+        if isinstance(result,Exception):raise result
+        return result
+
+    def sleep(self,delay):
+        self.assertGreater(delay,0)
+        self.waits.append(delay);self.elapsed+=delay
+
+    def fetch(self,url=None,**changes):
+        options={"token":self.token,"environment":self.environment,"open_request":self.open,
+                 "sleep":self.sleep,"clock":lambda:NOW+self.elapsed,"monotonic":lambda:self.elapsed}
+        options.update(changes)
+        return delivery.public_json(self.base if url is None else url,**options)
+
+    def rejected(self,category,operation):
+        output,error=io.StringIO(),io.StringIO()
+        with contextlib.redirect_stdout(output),contextlib.redirect_stderr(error),self.assertRaises(delivery.HistoryFailure) as caught:
+            operation()
+        self.assertEqual(caught.exception.category,category)
+        self.assertEqual(str(caught.exception),category)
+        self.assertEqual(output.getvalue()+error.getvalue(),"")
+        for private in (self.token,"PRIVATE_RAW","/private/","Bearer","Traceback"):
+            self.assertNotIn(private,str(caught.exception))
+
+    def test_all_three_live_responses_are_authenticated_pinned_and_verified(self):
+        self.queue=[self.response(value) for value in self.responses]
+        result=delivery.historical_evidence(self.fetch)
+        self.assertEqual(result,{"run":delivery.RUN,"source_commit":delivery.SOURCE,
+                                 "attempt":1,"status":"success","artifacts":0})
+        self.assertEqual([r.full_url for r,_,_ in self.requests],self.urls)
+        self.assertEqual(self.waits,[])
+        for request,timeout,_ in self.requests:
+            self.assertEqual(request.get_method(),"GET")
+            self.assertEqual(request.get_header("Authorization"),"Bearer "+self.token)
+            self.assertEqual(request.get_header("X-github-api-version"),"2022-11-28")
+            self.assertEqual(timeout,10)
+
+    def test_default_historical_helper_uses_authenticated_transport_for_every_response(self):
+        self.queue=[self.response(v) for v in self.responses]
+        fake=type("PrivateOpener",(),{"open":lambda _,request,timeout:self.open(request,timeout)})()
+        with patch.object(delivery.urllib.request,"build_opener",return_value=fake) as build:
+            result=delivery.historical_evidence(token=self.token,environment=self.environment)
+        self.assertEqual(result["status"],"success")
+        self.assertEqual(build.call_count,3)
+        self.assertEqual([r.full_url for r,_,_ in self.requests],self.urls)
+
+    def test_every_original_evidence_identity_or_conclusion_mismatch_is_rejected_without_retry(self):
+        mutations=[(0,{"id":0}),(0,{"head_sha":COMMIT}),(0,{"run_attempt":2}),
+            (0,{"status":"in_progress"}),(0,{"conclusion":"failure"}),(0,{"path":"other.yml"}),
+            (0,{"event":"workflow_dispatch"}),(0,{"head_branch":"wrong-tag"}),
+            (1,{"total_count":2}),(1,{"jobs":[]}),
+            (1,{"jobs":[{"name":"other-job","conclusion":"success","steps":[{"conclusion":"success"}]}]}),
+            (1,{"jobs":[{"name":"certify-storekit-diagnostics","conclusion":"failure","steps":[{"conclusion":"success"}]}]}),
+            (1,{"jobs":[{"name":"certify-storekit-diagnostics","conclusion":"success","steps":[{"conclusion":"skipped"}]}]}),
+            (2,{"total_count":1}),(2,{"artifacts":[{"id":"SYNTHETIC"}]})]
+        for index,change in mutations:
+            with self.subTest(index=index,change=change):
+                values=copy.deepcopy(self.responses);values[index].update(change)
+                self.queue=[self.response(v) for v in values];self.requests=[];self.waits=[]
+                self.rejected("CERTIFICATION_EVIDENCE_REJECTED",lambda:delivery.historical_evidence(self.fetch))
+                self.assertEqual(len(self.requests),index+1);self.assertFalse(self.waits)
+
+    def test_missing_or_incomplete_response_fields_fail_closed(self):
+        mutations=[(0,"id",None),(0,"run_attempt",True),(0,"head_sha",{}),
+                   (1,"total_count","1"),(1,"jobs",{}),(1,"jobs",[{}]),
+                   (1,"jobs",[{"name":"certify-storekit-diagnostics","conclusion":"success","steps":[]}]),
+                   (1,"jobs",[{"name":"certify-storekit-diagnostics","conclusion":"success","steps":[{}]}]),
+                   (2,"total_count",False),(2,"artifacts",None)]
+        for index,key,value in mutations:
+            with self.subTest(index=index,key=key):
+                values=copy.deepcopy(self.responses);values[index][key]=value
+                self.requests=[];self.queue=[self.response(v) for v in values]
+                self.rejected("CERTIFICATION_RESPONSE_INVALID",lambda:delivery.historical_evidence(self.fetch))
+        for index,fields in enumerate(self.responses):
+            for key in fields:
+                values=copy.deepcopy(self.responses);del values[index][key]
+                self.requests=[];self.queue=[self.response(v) for v in values]
+                self.rejected("CERTIFICATION_RESPONSE_INVALID",lambda:delivery.historical_evidence(self.fetch))
+
+    def test_missing_or_malformed_token_cannot_open_a_request(self):
+        for token in (None,"","contains space","x\nPRIVATE",1,"nonascii\u00e9"):
+            with self.subTest(token=token):
+                self.rejected("CERTIFICATION_AUTH_FAILED",lambda:self.fetch(token=token))
+        self.assertEqual(self.requests,[])
+
+    def test_wrong_or_missing_actions_context_cannot_access_token_transport(self):
+        for key in self.environment:
+            for value in (None,"wrong"):
+                candidate={**self.environment,key:value}
+                with self.subTest(key=key,value=value):
+                    self.rejected("CERTIFICATION_CONTEXT_REJECTED",lambda:self.fetch(environment=candidate))
+        self.assertEqual(self.requests,[])
+
+    def test_unexpected_urls_cannot_receive_authorization(self):
+        for url in (self.base+"/logs",self.base+"/attempts/2/jobs?per_page=100",
+                    self.base+"?extra=1",self.base+"/artifacts?per_page=1",self.base+"#fragment",
+                    self.base.replace("api.github.com","other.invalid"),
+                    self.base.replace(delivery.REPOSITORY,"other/repository"),
+                    self.base.replace(str(delivery.RUN),"1"),self.base.replace("https:","http:")):
+            self.rejected("CERTIFICATION_CONTEXT_REJECTED",lambda:self.fetch(url))
+        self.assertEqual(self.requests,[])
+
+    def test_missing_actions_permission_and_invalid_authentication_are_not_retried(self):
+        for status in (401,403):
+            self.requests=[];self.queue=[self.error(status)]
+            self.rejected("CERTIFICATION_AUTH_FAILED",self.fetch)
+            self.assertEqual(len(self.requests),1);self.assertFalse(self.waits)
+
+    def test_redirect_cannot_forward_token_and_changed_response_url_is_rejected(self):
+        self.assertIsNone(delivery.HistoryNoRedirect().redirect_request(None,None,302,"PRIVATE",{},"https://other.invalid"))
+        for status in (301,302,307,308):
+            self.requests=[];self.queue=[self.error(status,{"Location":"https://other.invalid"})]
+            self.rejected("CERTIFICATION_CONTEXT_REJECTED",self.fetch)
+            self.assertEqual(len(self.requests),1)
+        self.queue=[self.response({},url="https://other.invalid")]
+        self.rejected("CERTIFICATION_CONTEXT_REJECTED",self.fetch)
+
+    def test_default_transport_disables_proxy_and_redirect_and_has_no_global_opener(self):
+        fake=type("PrivateOpener",(),{"open":lambda _,request,timeout:self.open(request,timeout)})()
+        self.queue=[self.response({})]
+        with patch.object(delivery.urllib.request,"build_opener",return_value=fake) as build:
+            self.fetch(open_request=None)
+        self.assertEqual(len(build.call_args.args),2)
+        self.assertIsInstance(build.call_args.args[0],delivery.urllib.request.ProxyHandler)
+        self.assertEqual(build.call_args.args[0].proxies,{})
+        self.assertIsInstance(build.call_args.args[1],delivery.HistoryNoRedirect)
+
+    def test_primary_rate_limit_waits_past_reset_and_retry_after_before_retry(self):
+        self.queue=[self.error(403,{"Retry-After":"2","X-RateLimit-Remaining":"0",
+                                  "X-RateLimit-Reset":str(NOW+7)}),self.response({})]
+        self.fetch()
+        self.assertEqual(self.waits,[8])
+        self.assertEqual([elapsed for _,_,elapsed in self.requests],[0,8])
+
+    def test_retry_after_http_date_is_respected(self):
+        date=email.utils.format_datetime(delivery.dt.datetime.fromtimestamp(NOW+5,delivery.dt.timezone.utc),usegmt=True)
+        self.queue=[self.error(429,{"Retry-After":date}),self.response({})]
+        self.fetch();self.assertEqual(self.waits,[5])
+
+    def test_secondary_limit_without_headers_waits_at_least_one_minute(self):
+        for status in (403,429):
+            self.requests=[];self.waits=[];self.elapsed=0
+            self.queue=[self.error(status,body=b'{"message":"You have exceeded a secondary rate limit."}'),self.response({})]
+            self.fetch()
+            self.assertEqual(self.waits,[60])
+            self.assertEqual([elapsed for _,_,elapsed in self.requests],[0,60])
+
+    def test_rate_limit_past_reset_never_causes_immediate_retry(self):
+        self.queue=[self.error(429,{"Retry-After":"0","X-RateLimit-Remaining":"0",
+                                  "X-RateLimit-Reset":str(NOW-1)}),self.response({})]
+        self.fetch();self.assertEqual(self.waits,[1])
+
+    def test_rate_limit_over_budget_or_invalid_instructions_stop_without_retry(self):
+        for headers in ({"Retry-After":"66"},{"Retry-After":"invalid"},{"Retry-After":"-1"},
+                        {"X-RateLimit-Remaining":"0","X-RateLimit-Reset":str(NOW+500)},
+                        {"X-RateLimit-Remaining":"0"},{"X-RateLimit-Remaining":"0","X-RateLimit-Reset":"invalid"}):
+            self.requests=[];self.queue=[self.error(429,headers)]
+            self.rejected("CERTIFICATION_RATE_LIMITED",self.fetch)
+            self.assertEqual(len(self.requests),1);self.assertFalse(self.waits)
+
+    def test_repeated_rate_limit_stops_at_wait_budget(self):
+        self.queue=[self.error(429),self.error(429),self.response({})]
+        self.rejected("CERTIFICATION_RATE_LIMITED",self.fetch)
+        self.assertEqual(len(self.requests),2);self.assertEqual(self.waits,[60])
+
+    def test_temporary_server_failures_retry_with_fixed_exponential_bounds(self):
+        for status in (500,502,503,504):
+            self.requests=[];self.waits=[];self.elapsed=0
+            self.queue=[self.error(status),self.error(status),self.response({"validated":"synthetic"})]
+            self.assertEqual(self.fetch(),{"validated":"synthetic"})
+            self.assertEqual(self.waits,[1,2]);self.assertEqual(len(self.requests),3)
+
+    def test_persistent_availability_failure_is_fixed_and_bounded(self):
+        self.queue=[self.error(503),self.error(503),self.error(503)]
+        self.rejected("CERTIFICATION_API_UNAVAILABLE",self.fetch)
+        self.assertEqual(len(self.requests),3);self.assertEqual(self.waits,[1,2])
+
+    def test_temporary_server_retry_after_cannot_be_ignored(self):
+        self.queue=[self.error(503,{"Retry-After":"4"}),self.response({})]
+        self.fetch();self.assertEqual(self.waits,[4])
+
+    def test_timeout_recovery_and_exhaustion_are_distinct_from_api_failure(self):
+        self.queue=[socket.timeout("PRIVATE_RAW"),urllib.error.URLError(socket.timeout("PRIVATE_RAW")),self.response({})]
+        self.fetch();self.assertEqual(self.waits,[1,2])
+        self.requests=[];self.waits=[];self.elapsed=0
+        self.queue=[socket.timeout("PRIVATE_RAW") for _ in range(3)]
+        self.rejected("CERTIFICATION_NETWORK_TIMEOUT",self.fetch)
+        self.assertEqual(len(self.requests),3)
+
+    def test_non_timeout_network_and_nontransient_http_failures_are_not_retried(self):
+        for failure,category in ((urllib.error.URLError("PRIVATE_DNS"),"CERTIFICATION_NETWORK_FAILED"),
+                                 (OSError("PRIVATE_TLS"),"CERTIFICATION_NETWORK_FAILED"),
+                                 (self.error(404),"CERTIFICATION_API_REJECTED"),
+                                 (self.error(422),"CERTIFICATION_API_REJECTED"),
+                                 (self.error(501),"CERTIFICATION_API_REJECTED")):
+            self.requests=[];self.queue=[failure]
+            self.rejected(category,self.fetch)
+            self.assertEqual(len(self.requests),1);self.assertFalse(self.waits)
+
+    def test_overall_request_deadline_prevents_more_requests(self):
+        self.queue=[self.error(503)]
+        times=iter([0,0,90])
+        self.rejected("CERTIFICATION_API_UNAVAILABLE",lambda:self.fetch(monotonic=lambda:next(times)))
+        self.assertEqual(len(self.requests),1);self.assertFalse(self.waits)
+
+    def test_malformed_json_duplicate_keys_wrong_type_content_and_pagination_are_not_retried(self):
+        for raw in (b"PRIVATE_NOT_JSON",b'{"id":1,"id":2}',b"[]",b"null",b"\xff"):
+            self.requests=[];self.queue=[self.response(raw=raw)]
+            self.rejected("CERTIFICATION_RESPONSE_INVALID",self.fetch)
+            self.assertEqual(len(self.requests),1);self.assertFalse(self.waits)
+        for headers in ({"Content-Type":"text/html"},{"Content-Type":"application/json","Link":"PRIVATE_NEXT_URL"},{}):
+            self.requests=[];self.queue=[self.response({},headers=headers)]
+            self.rejected("CERTIFICATION_RESPONSE_INVALID",self.fetch)
+            self.assertEqual(len(self.requests),1)
+
+    def test_truncated_http_body_and_declared_length_mismatch_are_incomplete_response(self):
+        self.queue=[delivery.http.client.IncompleteRead(b"PRIVATE_PARTIAL_BODY",100)]
+        self.rejected("CERTIFICATION_RESPONSE_INVALID",self.fetch)
+        for length in ("100","invalid","-1"):
+            self.requests=[];self.queue=[self.response({},headers={
+                "Content-Type":"application/json","Content-Length":length})]
+            self.rejected("CERTIFICATION_RESPONSE_INVALID",self.fetch)
+            self.assertEqual(len(self.requests),1)
+        self.requests=[];self.queue=[self.response({},headers={
+            "Content-Type":"application/json","Content-Length":"2"})]
+        self.assertEqual(self.fetch(),{})
+
+    def test_oversized_response_is_not_accepted_or_printed(self):
+        self.queue=[self.response(raw=b" "* (delivery.HISTORY_MAX_BYTES+1))]
+        self.rejected("CERTIFICATION_RESPONSE_INVALID",self.fetch)
+
+    def test_all_fixed_failure_categories_reach_only_validated_preflight_output(self):
+        self.assertEqual(delivery.HISTORY_CATEGORIES,{
+            "CERTIFICATION_EVIDENCE_REJECTED","CERTIFICATION_AUTH_FAILED",
+            "CERTIFICATION_RATE_LIMITED","CERTIFICATION_API_UNAVAILABLE",
+            "CERTIFICATION_NETWORK_TIMEOUT","CERTIFICATION_RESPONSE_INVALID",
+            "CERTIFICATION_CONTEXT_REJECTED","CERTIFICATION_NETWORK_FAILED","CERTIFICATION_API_REJECTED"})
+        for category in delivery.HISTORY_CATEGORIES:
+            record=delivery.preflight_result("P04_CERTIFICATION_HISTORY",False,category)
+            self.assertEqual(record["category"],category)
+        with self.assertRaises(ValueError):delivery.HistoryFailure("PRIVATE_RAW")
+
+    def test_workflow_changes_are_exactly_read_permission_and_step_scoped_builtin_token(self):
+        text=WORKFLOW.read_text()
+        before=delivery.cert.git("show",delivery.P04_BASE+":.github/workflows/gridly-storekit-testflight-delivery.yml").decode()
+        self.assertEqual(without_p04_auth(text),before)
+        self.assertEqual(text.count("GRIDLY_HISTORY_TOKEN:"),1)
+        self.assertEqual(text.count("github.token"),1)
+        self.assertNotIn("GITHUB_TOKEN:",text)
+        self.assertNotRegex(text,r"actions:\s*write|contents:\s*write|permissions:\s*write-all")
+        step=text[text.index("      - name: Verify source, build identity input and Xcode\n"):text.index("      - name: Set up Node\n")]
+        self.assertIn("GRIDLY_HISTORY_TOKEN:",step)
+        self.assertLess(text.index("apple_storekit_testflight_delivery.py authorize"),text.index("GRIDLY_HISTORY_TOKEN:"))
+        for mutant in (text.replace("actions: read","actions: write"),text.replace("contents: read","contents: write")):
+            with self.assertRaises(AssertionError):without_p04_auth(mutant)
+
+    def test_one_new_child_requires_all_three_authorized_files_and_modes(self):
+        records=["M\t"+path for path in sorted(delivery.FILES)]
+        candidates=[records[:i]+records[i+1:] for i in range(3)]
+        candidates += [records+[records[0]],["A\t"+p for p in sorted(delivery.FILES)],
+                       records+["M\tjs/gridly-paid-ui.mjs"],records+["M\ttools/apple_storekit_signing_diagnostic.py"]]
+        for candidate in candidates:
+            with self.subTest(candidate=candidate),patch.object(delivery.cert,"git",side_effect=source_git(
+                    correction="\n".join(candidate).encode())),patch.object(delivery.subprocess,"run"),\
+                    patch.object(delivery.cert,"original_contracts"),self.assertRaises(ValueError):
+                delivery.source_guard(COMMIT,True)
+
+
 
 class WorkflowTests(unittest.TestCase):
     def setUp(self):
@@ -878,9 +1239,10 @@ class WorkflowTests(unittest.TestCase):
         current = (ROOT / "tools/apple_storekit_testflight_delivery.py").read_text()
         functions = lambda source: {node.name: ast.dump(node) for node in ast.parse(source).body if isinstance(node, (ast.FunctionDef, ast.ClassDef))}
         before, after = functions(baseline), functions(current)
-        self.assertEqual(set(after) - set(before), {"preflight_result", "emit_preflight", "delivery_preflight"})
+        self.assertEqual(set(after) - set(before), {"preflight_result", "emit_preflight", "delivery_preflight",
+                                                  "HistoryFailure", "HistoryNoRedirect", "history_context", "history_retry_delay"})
         self.assertFalse(set(before) - set(after))
-        for name in before.keys() - {"source_guard", "main"}:
+        for name in before.keys() - {"source_guard", "main", "public_json", "historical_evidence"}:
             self.assertEqual(after[name], before[name], name)
         constants = lambda source: {node.targets[0].id: ast.dump(node.value) for node in ast.parse(source).body
                                     if isinstance(node, ast.Assign) and isinstance(node.targets[0], ast.Name)}
@@ -896,7 +1258,7 @@ class WorkflowTests(unittest.TestCase):
         old_cms = 'security cms -D -i "$DIAGNOSTIC_PRIVATE_ROOT/distribution.mobileprovision" > "$DIAGNOSTIC_PRIVATE_ROOT/profile.plist"'
         new_cms = 'security cms -D -k "$DIAGNOSTIC_PRIVATE_ROOT/signing.keychain-db" -i "$DIAGNOSTIC_PRIVATE_ROOT/distribution.mobileprovision" > "$DIAGNOSTIC_PRIVATE_ROOT/profile.plist"'
         self.assertEqual(old_workflow.count(old_cms), 1)
-        self.assertEqual(outside_preflight(self.text),outside_preflight(old_workflow.replace(old_cms,new_cms)))
+        self.assertEqual(outside_preflight(without_p04_auth(self.text)),outside_preflight(old_workflow.replace(old_cms,new_cms)))
         self.assertIn("no_other_eligible_internal_users_confirmed", self.text)
         self.assertIn("BOTH", self.text)
 
@@ -980,7 +1342,7 @@ class CmsSigningRepairTests(unittest.TestCase):
         self.assertEqual(previous.count(self.old_cms), 1)
         self.assertEqual(current.count(self.new_cms), 1)
         self.assertNotIn(self.old_cms, current)
-        self.assertEqual(current.split("\non:\n",1)[1],
+        self.assertEqual(without_p04_auth(current).split("\non:\n",1)[1],
                          previous.replace(self.old_cms,self.new_cms).split("\non:\n",1)[1])
         self.assertEqual(self.signing_body(current), self.signing_body(previous).replace(self.old_cms,self.new_cms))
 
@@ -1084,28 +1446,57 @@ security() {
     def test_synthetic_boundary_detects_an_implicit_keychain_fallback(self):
         self.exercise_signing_boundary(implicit_mutant=True)
 
-    def test_existing_functions_and_controls_are_unchanged_except_source_guard(self):
-        before=delivery.cert.git("show",delivery.SIGNING_VERIFIED_BASE+":tools/apple_storekit_testflight_delivery.py").decode()
+    def test_preflight_tooling_and_persist_gates_are_unchanged_outside_history_boundary(self):
+        before=ast.parse(delivery.cert.git("show",delivery.P04_BASE+":tools/apple_storekit_testflight_delivery.py"))
+        after=ast.parse((ROOT/"tools/apple_storekit_testflight_delivery.py").read_text())
+        original=next(n for n in before.body if isinstance(n,ast.FunctionDef) and n.name=="delivery_preflight")
+        current=next(n for n in after.body if isinstance(n,ast.FunctionDef) and n.name=="delivery_preflight")
+        current.body=[n for n in current.body if not (
+            isinstance(n,ast.Assign) and isinstance(n.targets[0],ast.Name)
+            and n.targets[0].id in {"history_token","history_environment"})]
+        checked=next(n for n in current.body if isinstance(n,ast.FunctionDef) and n.name=="checked")
+        handler=next(n for n in ast.walk(checked) if isinstance(n,ast.ExceptHandler))
+        self.assertEqual(handler.name,"failure")
+        fixed=ast.parse('if stage == "P04_CERTIFICATION_HISTORY" and isinstance(failure, HistoryFailure):\n    category = failure.category').body[0]
+        self.assertEqual(ast.dump(handler.body[0]),ast.dump(fixed))
+        handler.name=None;handler.body=handler.body[1:]
+        history=next(n for n in current.body if isinstance(n,ast.Assign)
+                     and isinstance(n.targets[0],ast.Name) and n.targets[0].id=="history")
+        expected=ast.parse('checked("P04_CERTIFICATION_HISTORY", "INTERNAL_FAILURE", lambda: historical_evidence(token=history_token, environment=history_environment))',mode="eval").body
+        self.assertEqual(ast.dump(history.value),ast.dump(expected))
+        history.value=ast.parse('checked("P04_CERTIFICATION_HISTORY", "CERTIFICATION_EVIDENCE_REJECTED", historical_evidence)',mode="eval").body
+        self.assertEqual(ast.dump(current),ast.dump(original))
+        # A mutation to any other preflight command, dependency or report must fail.
+        changed=copy.deepcopy(current);changed.body.append(ast.Pass())
+        self.assertNotEqual(ast.dump(changed),ast.dump(original))
+
+    def test_existing_functions_and_controls_are_unchanged_outside_p04(self):
+        before=delivery.cert.git("show",delivery.P04_BASE+":tools/apple_storekit_testflight_delivery.py").decode()
         after=(ROOT/"tools/apple_storekit_testflight_delivery.py").read_text()
-        functions=lambda text:{node.name:ast.dump(node) for node in ast.parse(text).body if isinstance(node,ast.FunctionDef)}
+        functions=lambda text:{node.name:ast.dump(node) for node in ast.parse(text).body if isinstance(node,(ast.FunctionDef,ast.ClassDef))}
         original,current=functions(before),functions(after)
-        self.assertEqual(set(original),set(current))
-        for name in original.keys()-{"source_guard"}:
+        self.assertEqual(set(current)-set(original),
+                         {"HistoryFailure","HistoryNoRedirect","history_context","history_retry_delay"})
+        self.assertFalse(set(original)-set(current))
+        for name in original.keys()-{"source_guard","public_json","historical_evidence","delivery_preflight"}:
             self.assertEqual(original[name],current[name],name)
         nodes=lambda text:{n.targets[0].id:n.value for n in ast.parse(text).body
                            if isinstance(n,ast.Assign) and isinstance(n.targets[0],ast.Name)}
         old,new=nodes(before),nodes(after)
-        self.assertEqual(set(new)-set(old),{"CMS_REPAIR_BASE","SIGNING_VERIFIED_BASE","SIGNING_VERIFICATION_FILES","DELIVERY_ALIGNMENT_FILES"})
+        self.assertEqual(set(new)-set(old),{"P04_BASE","HISTORY_CATEGORIES","HISTORY_ATTEMPTS",
+                         "HISTORY_WAIT_BUDGET","HISTORY_DEADLINE","HISTORY_TIMEOUT","HISTORY_MAX_BYTES"})
         for name,node in old.items():
             if name=="HISTORICAL_TAGS":
                 self.assertIsInstance(new[name],ast.Dict)
-                self.assertEqual(len(new[name].keys),7)
-                retained=ast.Dict(keys=new[name].keys[:6],values=new[name].values[:6])
+                self.assertEqual(len(new[name].keys),8)
+                retained=ast.Dict(keys=new[name].keys[:7],values=new[name].values[:7])
                 self.assertEqual(ast.dump(node),ast.dump(retained))
+            elif name=="PREFLIGHT_CATEGORIES":
+                self.assertEqual(delivery.PREFLIGHT_CATEGORIES,ast.literal_eval(node)|delivery.HISTORY_CATEGORIES)
             else:self.assertEqual(ast.dump(node),ast.dump(new[name]),name)
         self.assertEqual(delivery.OWNER_CHECK_TTL,1800)
 
-    def test_exact_reviewed_history_and_all_seven_authorization_tags(self):
+    def test_exact_reviewed_history_and_all_eight_authorization_tags(self):
         self.assertEqual(delivery.REFINEMENT_BASE,"4c95caed0d261fca1dbaf86fc926660661d0643b")
         self.assertEqual(delivery.SIGNING_BASE,"db4df3949b1f02325b8869433bbbd16b234487db")
         self.assertEqual(delivery.CMS_BASE,"cbe3c297099dbca9c6d376848157de0253aeae39")
@@ -1131,8 +1522,12 @@ security() {
             "gridly-storekit-signing-diagnostic-15-b1e2b7a35dff887dfa4a464a19215b66893b0ee8":
                 ("0ec2230f6c42b4212afa18bf71d3045a0c978be3",delivery.SIGNING_VERIFIED_BASE),
         }
+        expected["gridly-storekit-testflight-deliver-15-40824c760a65b56b1b0056d1d9b90d571b7f47d4"]=(
+            "06dbef1c5ae5f5250b536d8f3b6232487b114f56",delivery.P04_BASE)
+        self.assertEqual(delivery.P04_BASE,"40824c760a65b56b1b0056d1d9b90d571b7f47d4")
         self.assertEqual(delivery.HISTORICAL_TAGS,expected)
-        for child,parent in ((delivery.SIGNING_VERIFIED_BASE,delivery.CMS_REPAIR_BASE),
+        for child,parent in ((delivery.P04_BASE,delivery.SIGNING_VERIFIED_BASE),
+                             (delivery.SIGNING_VERIFIED_BASE,delivery.CMS_REPAIR_BASE),
                              (delivery.CMS_REPAIR_BASE,delivery.CMS_BASE),(delivery.CMS_BASE,delivery.SIGNING_BASE),(delivery.SIGNING_BASE,delivery.REFINEMENT_BASE),
                              (delivery.REFINEMENT_BASE,delivery.PREFLIGHT_BASE)):
             self.assertEqual(delivery.cert.git("show","-s","--format=%P",child).decode().strip(),parent)
@@ -1142,13 +1537,14 @@ security() {
                 self.assertEqual(historical, delivery.cert.git("show",delivery.CMS_BASE+":"+path),path)
                 if path not in {"tools/apple_storekit_signing_diagnostic.py","tests/storekit-signing-diagnostic.test.py"}:
                     self.assertEqual((ROOT/path).read_bytes().replace(b"\r\n",b"\n"),historical,path)
-        checkpoint=delivery.SIGNING_VERIFIED_BASE
-        support={"tools/apple_storekit_testflight_delivery.py","tests/storekit-testflight-delivery.test.py"}
+        checkpoint=delivery.P04_BASE
+        support={".github/workflows/gridly-storekit-testflight-delivery.yml",
+                 "tools/apple_storekit_testflight_delivery.py","tests/storekit-testflight-delivery.test.py"}
         def git(*args):
             return delivery.cert.git(*args).decode().strip()
         rows=git("diff","--name-status","--no-renames",checkpoint).splitlines()
         self.assertEqual(set(rows),{"M\t"+path for path in support})
-        self.assertEqual(len(rows),2)
+        self.assertEqual(len(rows),3)
         self.assertFalse(git("diff","--cached","--name-only"))
         self.assertFalse(git("ls-files","--others","--exclude-standard"))
         head=git("rev-parse","HEAD")
@@ -1227,7 +1623,7 @@ security() {
                     patch.object(delivery.cert,"original_contracts"),self.assertRaises(ValueError):
                 delivery.source_guard(COMMIT,True)
 
-    def test_one_verified_child_requires_exactly_two_modified_delivery_files(self):
+    def test_historical_alignment_requires_exactly_two_modified_delivery_files(self):
         records=["M\t"+p for p in sorted(delivery.DELIVERY_ALIGNMENT_FILES)]
         candidates=[records[:-1],records[1:],records+[records[0]],
                     ["A\t"+p for p in sorted(delivery.DELIVERY_ALIGNMENT_FILES)]]
@@ -1238,7 +1634,7 @@ security() {
             candidates.append(records+["M\t"+path])
         for candidate in candidates:
             with self.subTest(candidate=candidate),patch.object(delivery.cert,"git",side_effect=source_git(
-                    correction="\n".join(candidate).encode())),patch.object(delivery.subprocess,"run"),\
+                    alignment_inventory="\n".join(candidate).encode())),patch.object(delivery.subprocess,"run"),\
                     patch.object(delivery.cert,"original_contracts"),self.assertRaises(ValueError):
                 delivery.source_guard(COMMIT,True)
 
@@ -1255,7 +1651,8 @@ security() {
                     (delivery.PREFLIGHT_BASE,delivery.PREFLIGHT_FILES),(delivery.REFINEMENT_BASE,delivery.REFINEMENT_FILES),
                     (delivery.SIGNING_BASE,delivery.SIGNING_FILES),(delivery.CMS_BASE,delivery.CMS_FILES),
                     (delivery.CMS_REPAIR_BASE,delivery.REPAIR_FILES),
-                    (delivery.SIGNING_VERIFIED_BASE,delivery.SIGNING_VERIFICATION_FILES))
+                    (delivery.SIGNING_VERIFIED_BASE,delivery.SIGNING_VERIFICATION_FILES),
+                    (delivery.P04_BASE,delivery.DELIVERY_ALIGNMENT_FILES))
         valid=source_git()
         for target,files in historical:
             for path in files:

@@ -6,6 +6,11 @@ import argparse
 import base64
 import datetime as dt
 import hashlib
+import http.client
+import email.utils
+import math
+import socket
+import urllib.error
 import json
 import os
 import plistlib
@@ -26,6 +31,7 @@ SIGNING_BASE = "db4df3949b1f02325b8869433bbbd16b234487db"
 CMS_BASE = "cbe3c297099dbca9c6d376848157de0253aeae39"
 CMS_REPAIR_BASE = "17e36af1f5a8cc5f7f8ed927fb3e7fae758ee991"
 SIGNING_VERIFIED_BASE = "b1e2b7a35dff887dfa4a464a19215b66893b0ee8"
+P04_BASE = "40824c760a65b56b1b0056d1d9b90d571b7f47d4"
 SIGNING_VERIFICATION_FILES = {
     "tools/apple_storekit_signing_diagnostic.py",
     "tests/storekit-signing-diagnostic.test.py",
@@ -63,6 +69,19 @@ PREFLIGHT_CATEGORIES = {
     "CLONE_ENVIRONMENT_FAILED", "XCODE_HELP_FAILED", "INTERNAL_OPTION_NOT_RECOGNIZED",
     "INTERNAL_FAILURE",
 }
+HISTORY_CATEGORIES = {
+    "CERTIFICATION_EVIDENCE_REJECTED", "CERTIFICATION_AUTH_FAILED",
+    "CERTIFICATION_RATE_LIMITED", "CERTIFICATION_API_UNAVAILABLE",
+    "CERTIFICATION_NETWORK_TIMEOUT", "CERTIFICATION_RESPONSE_INVALID",
+    "CERTIFICATION_CONTEXT_REJECTED", "CERTIFICATION_NETWORK_FAILED",
+    "CERTIFICATION_API_REJECTED",
+}
+PREFLIGHT_CATEGORIES = PREFLIGHT_CATEGORIES | HISTORY_CATEGORIES
+HISTORY_ATTEMPTS = 3
+HISTORY_WAIT_BUDGET = 65
+HISTORY_DEADLINE = 90
+HISTORY_TIMEOUT = 10
+HISTORY_MAX_BYTES = 1048576
 RUN = 39181592021
 REPOSITORY = "DBMaps/liberty-county-map"
 PREFIX = "refs/tags/gridly-storekit-testflight-deliver-15-"
@@ -73,7 +92,7 @@ FILES = {
 }
 # The historical four-file refinement is pinned at REFINEMENT_BASE.
 # REPAIR_FILES remains the pinned four-file CMS repair inventory.
-# Only one direct child of SIGNING_VERIFIED_BASE may modify DELIVERY_ALIGNMENT_FILES.
+# Only one direct child of P04_BASE may modify the three FILES; all older inventories stay pinned.
 REFINEMENT_FILES = FILES | {"tests/storekit-preflight-diagnostic.test.py"}
 REPAIR_FILES = FILES | {"tests/storekit-signing-diagnostic.test.py"}
 HISTORICAL_TAGS = {
@@ -91,6 +110,8 @@ HISTORICAL_TAGS = {
         ("975205d798d31197be41fe505a417064b519b63f", CMS_BASE),
     "gridly-storekit-signing-diagnostic-15-" + SIGNING_VERIFIED_BASE:
         ("0ec2230f6c42b4212afa18bf71d3045a0c978be3", SIGNING_VERIFIED_BASE),
+    "gridly-storekit-testflight-deliver-15-" + P04_BASE:
+        ("06dbef1c5ae5f5250b536d8f3b6232487b114f56", P04_BASE),
 }
 
 CONFIRMATIONS = {
@@ -183,11 +204,12 @@ def authorize(ref, commit, event_path, attempt):
 def source_guard(commit, clean):
     require(re.fullmatch(r"[0-9a-f]{40}", commit or ""), "exact source SHA required")
     pinned = {SOURCE, DELIVERY_BASE, OWNER_CORRECTION, PREFLIGHT_BASE, REFINEMENT_BASE,
-              SIGNING_BASE, CMS_BASE, CMS_REPAIR_BASE, SIGNING_VERIFIED_BASE}
+              SIGNING_BASE, CMS_BASE, CMS_REPAIR_BASE, SIGNING_VERIFIED_BASE, P04_BASE}
     require(cert.git("rev-parse", "HEAD").decode().strip() == commit and commit not in pinned,
             "new reviewed delivery-support commit required")
     for child, parent in (
-        (commit, SIGNING_VERIFIED_BASE), (SIGNING_VERIFIED_BASE, CMS_REPAIR_BASE),
+        (commit, P04_BASE), (P04_BASE, SIGNING_VERIFIED_BASE),
+        (SIGNING_VERIFIED_BASE, CMS_REPAIR_BASE),
         (CMS_REPAIR_BASE, CMS_BASE), (CMS_BASE, SIGNING_BASE), (SIGNING_BASE, REFINEMENT_BASE),
         (REFINEMENT_BASE, PREFLIGHT_BASE), (PREFLIGHT_BASE, OWNER_CORRECTION),
         (OWNER_CORRECTION, DELIVERY_BASE), (DELIVERY_BASE, SOURCE),
@@ -212,12 +234,13 @@ def source_guard(commit, clean):
         (SIGNING_BASE, CMS_BASE, "A", CMS_FILES),
         (CMS_BASE, CMS_REPAIR_BASE, "M", REPAIR_FILES),
         (CMS_REPAIR_BASE, SIGNING_VERIFIED_BASE, "M", SIGNING_VERIFICATION_FILES),
-        (SIGNING_VERIFIED_BASE, commit, "M", DELIVERY_ALIGNMENT_FILES),
+        (SIGNING_VERIFIED_BASE, P04_BASE, "M", DELIVERY_ALIGNMENT_FILES),
+        (P04_BASE, commit, "M", FILES),
         (SOURCE, commit, "A", FILES | PREFLIGHT_FILES | SIGNING_FILES | CMS_FILES),
     ):
         records = cert.git("diff", "--name-status", "--no-renames", base, target).decode().splitlines()
         require(set(records) == {status + "\t" + path for path in inventory} and len(records) == len(inventory),
-                "exact historical inventories and two-file delivery alignment required; all other source frozen")
+                "exact historical inventories and three-file P04 support correction required; all other source frozen")
         for path in inventory:
             require(cert.git("ls-tree", target, "--", path).decode().split()[0] == "100644",
                     "historical or current support file mode changed")
@@ -232,27 +255,181 @@ def source_guard(commit, clean):
             "runtime_unchanged": True, "original_contracts_unchanged": True}
 
 
-def public_json(url):
-    require(url.startswith("https://api.github.com/repos/" + REPOSITORY + "/actions/"), "unexpected evidence URL")
-    with urllib.request.urlopen(urllib.request.Request(url, headers={"Accept": "application/vnd.github+json"}), timeout=30) as response:
-        require(response.status == 200, "certification evidence unavailable")
-        return json.load(response)
+class HistoryFailure(ValueError):
+    """Only an allowlisted category crosses the private retrieval boundary."""
+    def __init__(self, category):
+        require(category in HISTORY_CATEGORIES, "fixed history category required")
+        self.category = category
+        super().__init__(category)
 
 
-def historical_evidence(get=public_json):
+class HistoryNoRedirect(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, request, response, code, message, headers, new_url):
+        return None  # A moved endpoint needs review; never forward the token.
+
+
+def history_context(token, environment):
+    sha = environment.get("GITHUB_SHA", "")
+    valid = (environment.get("GITHUB_ACTIONS") == "true"
+             and environment.get("RUNNER_OS") == "macOS"
+             and environment.get("GITHUB_REPOSITORY") == REPOSITORY
+             and environment.get("GITHUB_EVENT_NAME") == "push"
+             and environment.get("GITHUB_RUN_ATTEMPT") == "1"
+             and isinstance(sha, str) and re.fullmatch(r"[0-9a-f]{40}", sha)
+             and environment.get("GITHUB_REF") == PREFIX + sha
+             and environment.get("GITHUB_API_URL") == "https://api.github.com")
+    if not valid:
+        raise HistoryFailure("CERTIFICATION_CONTEXT_REJECTED")
+    if not isinstance(token, str) or not token or not token.isascii() or any(c.isspace() or ord(c) < 33 or ord(c) == 127 for c in token):
+        raise HistoryFailure("CERTIFICATION_AUTH_FAILED")
+
+
+def history_retry_delay(headers, limited, attempt, now):
+    # GitHub: honor Retry-After, AND an exhausted primary-limit reset. Without
+    # either, a secondary-limit retry must wait at least one minute.
+    retry = headers.get("Retry-After")
+    remaining = headers.get("X-RateLimit-Remaining")
+    reset = headers.get("X-RateLimit-Reset")
+    delay = 60 * (2 ** attempt) if limited else 2 ** attempt
+    if retry is not None:
+        try:
+            if re.fullmatch(r"[0-9]+", retry):
+                delay = int(retry)
+            else:
+                stamp = email.utils.parsedate_to_datetime(retry)
+                require(stamp.tzinfo is not None, "UTC retry time required")
+                delay = stamp.timestamp() - now
+            require(math.isfinite(delay), "finite retry time required")
+        except (ValueError, TypeError, OverflowError):
+            return None  # Do not guess around malformed server instructions.
+    if remaining == "0":
+        if not isinstance(reset, str) or not re.fullmatch(r"[0-9]+", reset):
+            return None
+        delay = max(delay, int(reset) - now + 1)
+    return max(1, delay)  # No immediate rate-limit retry, even for a past date.
+
+
+def public_json(url, *, token=None, environment=None, open_request=None,
+                sleep=time.sleep, clock=time.time, monotonic=time.monotonic):
     base = "https://api.github.com/repos/" + REPOSITORY + "/actions/runs/" + str(RUN)
-    run = get(base)
-    require(run.get("id") == RUN and run.get("head_sha") == SOURCE and run.get("run_attempt") == 1, "wrong historical source/run")
-    require(run.get("status") == "completed" and run.get("conclusion") == "success", "missing successful historical certification")
-    require(run.get("path") == ".github/workflows/gridly-storekit-diagnostic-certification.yml", "wrong certification workflow")
-    require(run.get("event") == "push" and run.get("head_branch") == "gridly-storekit-diagnostic-certify-15-" + SOURCE, "wrong historical tag")
-    jobs = get(base + "/attempts/1/jobs?per_page=100")
-    require(jobs.get("total_count") == 1 and len(jobs.get("jobs", [])) == 1, "incomplete certification jobs")
+    if url not in {base, base + "/attempts/1/jobs?per_page=100", base + "/artifacts?per_page=100"}:
+        raise HistoryFailure("CERTIFICATION_CONTEXT_REJECTED")
+    history_context(token, {} if environment is None else environment)
+    if open_request is None:
+        # No redirect, cookie handler, proxy, or global opener can forward credentials.
+        open_request = urllib.request.build_opener(
+            urllib.request.ProxyHandler({}), HistoryNoRedirect()).open
+    started, waited = monotonic(), 0
+    category = "CERTIFICATION_API_UNAVAILABLE"
+    for attempt in range(HISTORY_ATTEMPTS):
+        remaining = HISTORY_DEADLINE - (monotonic() - started)
+        if remaining <= 0:
+            raise HistoryFailure(category)
+        request = urllib.request.Request(url, method="GET", headers={
+            "Accept": "application/vnd.github+json", "Authorization": "Bearer " + token,
+            "X-GitHub-Api-Version": "2022-11-28", "User-Agent": "Gridly-P04-certification-evidence",
+        })
+        headers, limited = {}, False
+        try:
+            with open_request(request, timeout=min(HISTORY_TIMEOUT, remaining)) as response:
+                if response.geturl() != url:
+                    raise HistoryFailure("CERTIFICATION_CONTEXT_REJECTED")
+                if response.status != 200:
+                    raise HistoryFailure("CERTIFICATION_API_REJECTED")
+                if (response.headers.get("Content-Type", "").split(";")[0].strip() != "application/json"
+                        or response.headers.get("Link")):
+                    raise HistoryFailure("CERTIFICATION_RESPONSE_INVALID")
+                body = response.read(HISTORY_MAX_BYTES + 1)
+                length = response.headers.get("Content-Length")
+                if (len(body) > HISTORY_MAX_BYTES or (length is not None and (
+                        not re.fullmatch(r"[0-9]+", length) or int(length) != len(body)))):
+                    raise HistoryFailure("CERTIFICATION_RESPONSE_INVALID")
+                try:
+                    value = json.loads(body, object_pairs_hook=cert.unique_json_object)
+                except (ValueError, UnicodeError, TypeError):
+                    raise HistoryFailure("CERTIFICATION_RESPONSE_INVALID") from None
+                if not isinstance(value, dict):
+                    raise HistoryFailure("CERTIFICATION_RESPONSE_INVALID")
+                if monotonic() - started >= HISTORY_DEADLINE:
+                    raise HistoryFailure("CERTIFICATION_NETWORK_TIMEOUT")
+                return value
+        except urllib.error.HTTPError as failure:
+            code, headers = failure.code, failure.headers
+            # Only a bounded message inspection identifies a secondary limit when
+            # GitHub supplies no retry header. Neither body nor exception is logged.
+            limited = code == 429 or (code == 403 and (
+                headers.get("Retry-After") is not None or headers.get("X-RateLimit-Remaining") == "0"))
+            if code == 403 and not limited:
+                try:
+                    message = json.loads(failure.read(HISTORY_MAX_BYTES + 1)).get("message", "")
+                    limited = isinstance(message, str) and "rate limit" in message.lower()
+                except (ValueError, TypeError, AttributeError, OSError):
+                    pass
+            failure.close()
+            if limited:
+                category = "CERTIFICATION_RATE_LIMITED"
+            elif code in {401, 403}:
+                raise HistoryFailure("CERTIFICATION_AUTH_FAILED") from None
+            elif code in {500, 502, 503, 504}:
+                category = "CERTIFICATION_API_UNAVAILABLE"
+            elif 300 <= code < 400:
+                raise HistoryFailure("CERTIFICATION_CONTEXT_REJECTED") from None
+            else:
+                raise HistoryFailure("CERTIFICATION_API_REJECTED") from None
+        except http.client.IncompleteRead:
+            raise HistoryFailure("CERTIFICATION_RESPONSE_INVALID") from None
+        except (TimeoutError, socket.timeout):
+            category = "CERTIFICATION_NETWORK_TIMEOUT"
+        except urllib.error.URLError as failure:
+            if isinstance(failure.reason, (TimeoutError, socket.timeout)):
+                category = "CERTIFICATION_NETWORK_TIMEOUT"
+            else:
+                raise HistoryFailure("CERTIFICATION_NETWORK_FAILED") from None
+        except OSError:
+            raise HistoryFailure("CERTIFICATION_NETWORK_FAILED") from None
+        if attempt + 1 >= HISTORY_ATTEMPTS:
+            raise HistoryFailure(category) from None
+        delay = history_retry_delay(headers, limited, attempt, clock())
+        if (delay is None or waited + delay > HISTORY_WAIT_BUDGET
+                or monotonic() - started + delay >= HISTORY_DEADLINE):
+            raise HistoryFailure(category) from None
+        sleep(delay)
+        waited += delay
+    raise HistoryFailure(category)
+
+
+def historical_evidence(get=None, *, token=None, environment=None):
+    if get is None:
+        get = lambda url: public_json(url, token=token, environment=environment)
+    base = "https://api.github.com/repos/" + REPOSITORY + "/actions/runs/" + str(RUN)
+
+    def response(url, fields):
+        value = get(url)
+        if not isinstance(value, dict) or not all(key in value and type(value[key]) is kind for key, kind in fields.items()):
+            raise HistoryFailure("CERTIFICATION_RESPONSE_INVALID")
+        return value
+
+    def matches(value):
+        if not value:
+            raise HistoryFailure("CERTIFICATION_EVIDENCE_REJECTED")
+
+    run = response(base, {"id": int, "head_sha": str, "run_attempt": int, "status": str,
+                          "conclusion": str, "path": str, "event": str, "head_branch": str})
+    matches(run["id"] == RUN and run["head_sha"] == SOURCE and run["run_attempt"] == 1)
+    matches(run["status"] == "completed" and run["conclusion"] == "success")
+    matches(run["path"] == ".github/workflows/gridly-storekit-diagnostic-certification.yml")
+    matches(run["event"] == "push" and run["head_branch"] == "gridly-storekit-diagnostic-certify-15-" + SOURCE)
+    jobs = response(base + "/attempts/1/jobs?per_page=100", {"total_count": int, "jobs": list})
+    matches(jobs["total_count"] == 1 and len(jobs["jobs"]) == 1)
     job = jobs["jobs"][0]
-    require(job.get("name") == "certify-storekit-diagnostics" and job.get("conclusion") == "success", "native certification failed")
-    require(job.get("steps") and all(step.get("conclusion") == "success" for step in job["steps"]), "incomplete native certification")
-    artifacts = get(base + "/artifacts?per_page=100")
-    require(artifacts.get("total_count") == 0 and artifacts.get("artifacts") == [], "unexpected historical artifact retention")
+    if (not isinstance(job, dict) or not all(type(job.get(key)) is str for key in ("name", "conclusion"))
+            or not isinstance(job.get("steps"), list) or not job["steps"]
+            or not all(isinstance(step, dict) and type(step.get("conclusion")) is str for step in job["steps"])):
+        raise HistoryFailure("CERTIFICATION_RESPONSE_INVALID")
+    matches(job["name"] == "certify-storekit-diagnostics" and job["conclusion"] == "success")
+    matches(all(step["conclusion"] == "success" for step in job["steps"]))
+    artifacts = response(base + "/artifacts?per_page=100", {"total_count": int, "artifacts": list})
+    matches(artifacts["total_count"] == 0 and artifacts["artifacts"] == [])
     return {"run": RUN, "source_commit": SOURCE, "attempt": 1, "status": "success", "artifacts": 0}
 
 
@@ -284,6 +461,12 @@ def emit_preflight(records, stream=None):
 
 def delivery_preflight(root, commit, output, github_env, environment=None, execute=subprocess.run):
     environment = os.environ if environment is None else environment
+    # Remove the step-scoped token BEFORE authorization or any child tool starts.
+    # It stays only in this helper's historical-request closure, never GITHUB_ENV.
+    history_token = environment.pop("GRIDLY_HISTORY_TOKEN", None)
+    history_environment = {key: environment.get(key) for key in (
+        "GITHUB_ACTIONS", "RUNNER_OS", "GITHUB_REPOSITORY", "GITHUB_EVENT_NAME",
+        "GITHUB_RUN_ATTEMPT", "GITHUB_SHA", "GITHUB_REF", "GITHUB_API_URL")}
     records = {stage: preflight_result(stage, False, "DEPENDENCY_FAILED") for stage in PREFLIGHT_STAGES}
 
     def command(stage, args, *, input=None, timeout=180):
@@ -298,7 +481,9 @@ def delivery_preflight(root, commit, output, github_env, environment=None, execu
             value = operation()
             records[stage] = preflight_result(stage, True, "NONE")
             return value
-        except Exception:
+        except Exception as failure:
+            if stage == "P04_CERTIFICATION_HISTORY" and isinstance(failure, HistoryFailure):
+                category = failure.category
             records[stage] = preflight_result(stage, False, category)
             return None
 
@@ -330,7 +515,8 @@ def delivery_preflight(root, commit, output, github_env, environment=None, execu
                 success(command("P02_XCODE_VERSION", ["grep", "-E", "^Xcode 26([. ]|$)"], input=version, timeout=30)))
 
     guard = checked("P03_SOURCE_GUARD", "DELIVERY_SOURCE_REJECTED", lambda: source_guard(commit, clean=True))
-    history = checked("P04_CERTIFICATION_HISTORY", "CERTIFICATION_EVIDENCE_REJECTED", historical_evidence)
+    history = checked("P04_CERTIFICATION_HISTORY", "INTERNAL_FAILURE",
+                      lambda: historical_evidence(token=history_token, environment=history_environment))
     if records["P03_SOURCE_GUARD"]["status"] == records["P04_CERTIFICATION_HISTORY"]["status"] == "PASS":
         def persist():
             require(output and Path(output).resolve().is_relative_to(root.resolve()), "private report required")
