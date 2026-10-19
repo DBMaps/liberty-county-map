@@ -1,4 +1,5 @@
 """Local delivery gates: synthetic metadata/material only; never build, sign or call Apple."""
+import ast
 import copy
 import hashlib
 import json
@@ -26,6 +27,35 @@ def authorization():
     return {**dict.fromkeys(delivery.CONFIRMATIONS, True), "delivery_commit": COMMIT,
             "certified_source_commit": delivery.SOURCE, "certification_run_id": delivery.RUN,
             "diagnostic_build_number": "15", "owner_checks_at": STAMP}
+
+
+def owner_automatic_authorization():
+    return {**authorization(), "testflight_auto_distribution_disabled": False,
+            delivery.OWNER_AUTO_FIELD: {
+                **dict.fromkeys(delivery.OWNER_AUTO_CONFIRMATIONS, True),
+                "group_name": "Gridly Internal", "authorized_owner_account_count": 2,
+            }}
+
+
+def source_git(*, parent=delivery.DELIVERY_BASE, base_parent=delivery.SOURCE,
+               preparation=None, correction=None, net=None, mode="100644",
+               dirty=b"", staged=b"", untracked=b""):
+    additions = "\n".join("A\t" + path for path in sorted(delivery.FILES)).encode()
+    modifications = "\n".join("M\t" + path for path in sorted(delivery.FILES)).encode()
+    values = {
+        ("rev-parse", "HEAD"): COMMIT.encode(),
+        ("show", "-s", "--format=%P", COMMIT): parent.encode(),
+        ("show", "-s", "--format=%P", delivery.DELIVERY_BASE): base_parent.encode(),
+        ("diff", "--name-status", "--no-renames", delivery.SOURCE, delivery.DELIVERY_BASE): additions if preparation is None else preparation,
+        ("diff", "--name-status", "--no-renames", delivery.DELIVERY_BASE, COMMIT): modifications if correction is None else correction,
+        ("diff", "--name-status", "--no-renames", delivery.SOURCE, COMMIT): additions if net is None else net,
+        ("diff", "--name-only", "HEAD"): dirty,
+        ("diff", "--cached", "--name-only"): staged,
+        ("status", "--porcelain=v1", "--untracked-files=normal"): untracked,
+    }
+    for path in delivery.FILES:
+        values[("ls-tree", COMMIT, "--", path)] = (mode + " blob " + "0"*40 + "\t" + path).encode()
+    return lambda *args: values[args]
 
 
 def event():
@@ -68,6 +98,76 @@ def fixture(root):
 class AuthorizationTests(unittest.TestCase):
     def test_exact_independent_authorization_passes(self):
         self.assertEqual(delivery.owner_authorization(authorization(), COMMIT, REF, NOW), authorization())
+
+    def test_owner_only_automatic_distribution_requires_explicit_complete_authorization(self):
+        candidate = owner_automatic_authorization()
+        self.assertEqual(delivery.owner_authorization(candidate, COMMIT, REF, NOW), candidate)
+        self.assertIs(candidate["testflight_auto_distribution_disabled"], False)
+        self.assertEqual(candidate[delivery.OWNER_AUTO_FIELD]["authorized_owner_account_count"], 2)
+
+    def test_owner_only_missing_false_nonboolean_or_extra_nested_confirmations_fail(self):
+        required = delivery.OWNER_AUTO_CONFIRMATIONS | {"group_name", "authorized_owner_account_count"}
+        for field in required:
+            candidate = owner_automatic_authorization()
+            del candidate[delivery.OWNER_AUTO_FIELD][field]
+            with self.subTest(missing=field), self.assertRaises(ValueError):
+                delivery.owner_authorization(candidate, COMMIT, REF, NOW)
+        for field in delivery.OWNER_AUTO_CONFIRMATIONS:
+            for value in (False, None, 0, 1, "true"):
+                candidate = owner_automatic_authorization()
+                candidate[delivery.OWNER_AUTO_FIELD][field] = value
+                with self.subTest(field=field, value=value), self.assertRaises(ValueError):
+                    delivery.owner_authorization(candidate, COMMIT, REF, NOW)
+        candidate = owner_automatic_authorization()
+        candidate[delivery.OWNER_AUTO_FIELD]["email"] = "SYNTHETIC_PRIVATE_NEVER_LOG"
+        with self.assertRaises(ValueError):
+            delivery.owner_authorization(candidate, COMMIT, REF, NOW)
+
+    def test_owner_only_other_account_counts_or_groups_are_rejected(self):
+        for field, values in [("authorized_owner_account_count", (0, 1, 3, True, 2.0, "2", None)),
+                              ("group_name", ("Other Internal", "External", "", None))]:
+            for value in values:
+                candidate = owner_automatic_authorization()
+                candidate[delivery.OWNER_AUTO_FIELD][field] = value
+                with self.subTest(field=field, value=value), self.assertRaises(ValueError):
+                    delivery.owner_authorization(candidate, COMMIT, REF, NOW)
+
+    def test_disabled_and_owner_automatic_modes_cannot_be_mixed_or_implicitly_enabled(self):
+        for value in (True, 0, 1, None, "false"):
+            candidate = {**owner_automatic_authorization(), "testflight_auto_distribution_disabled": value}
+            with self.subTest(value=value), self.assertRaises(ValueError):
+                delivery.owner_authorization(candidate, COMMIT, REF, NOW)
+        with self.assertRaises(ValueError):
+            delivery.owner_authorization({**authorization(), "testflight_auto_distribution_disabled": False}, COMMIT, REF, NOW)
+        for incomplete in (None, False, True, {}, []):
+            candidate = {**owner_automatic_authorization(), delivery.OWNER_AUTO_FIELD: incomplete}
+            with self.subTest(incomplete=incomplete), self.assertRaises(ValueError):
+                delivery.owner_authorization(candidate, COMMIT, REF, NOW)
+
+    def test_owner_only_common_publication_and_access_confirmations_remain_required(self):
+        for field in delivery.CONFIRMATIONS - {"testflight_auto_distribution_disabled"}:
+            for value in (False, None, 1, "true"):
+                candidate = {**owner_automatic_authorization(), field: value}
+                with self.subTest(field=field, value=value), self.assertRaises(ValueError):
+                    delivery.owner_authorization(candidate, COMMIT, REF, NOW)
+
+    def test_owner_only_expired_future_incomplete_and_wrong_identity_authorizations_fail(self):
+        for now in (NOW-1, NOW+1801):
+            with self.assertRaises(ValueError):
+                delivery.owner_authorization(owner_automatic_authorization(), COMMIT, REF, now)
+        for field, value in [("delivery_commit", "2"*40), ("certified_source_commit", delivery.DELIVERY_BASE),
+                              ("certification_run_id", 0), ("diagnostic_build_number", "14"), ("owner_checks_at", None)]:
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                delivery.owner_authorization({**owner_automatic_authorization(), field: value}, COMMIT, REF, NOW)
+        candidate = owner_automatic_authorization()
+        del candidate["owner_checks_at"]
+        with self.assertRaises(ValueError):
+            delivery.owner_authorization(candidate, COMMIT, REF, NOW)
+
+    def test_duplicate_owner_only_confirmation_is_rejected(self):
+        text = json.dumps(owner_automatic_authorization()).replace('"authorized": true', '"authorized": true, "authorized": false')
+        with self.assertRaises(ValueError):
+            json.loads(text, object_pairs_hook=delivery.cert.unique_json_object)
 
     def test_each_missing_false_or_nonboolean_confirmation_fails(self):
         for field in delivery.CONFIRMATIONS:
@@ -129,33 +229,41 @@ class AuthorizationTests(unittest.TestCase):
 
 
 class SourceAndEvidenceTests(unittest.TestCase):
+    def test_exact_pinned_additional_correction_passes_without_runtime_changes(self):
+        with patch.object(delivery.cert, "git", side_effect=source_git()), patch.object(delivery.subprocess, "run"), patch.object(delivery.cert, "original_contracts"):
+            self.assertTrue(delivery.source_guard(COMMIT, True)["runtime_unchanged"])
+
     def test_changed_runtime_or_inventory_or_modes_cannot_pass(self):
-        records = "\n".join("A\t" + path for path in sorted(delivery.FILES)).encode()
-        for records_to_test, valid in [(records, True), (records+b"\nM\tjs/gridly-paid-ui.mjs", False),
-                                       (records.replace(b"A\ttools/", b"M\ttools/"), False), (b"", False)]:
-            def git(*args):
-                if args == ("rev-parse", "HEAD"): return COMMIT.encode()
-                if args[:2] == ("show", "-s"): return delivery.SOURCE.encode()
-                if args[:2] == ("diff", "--name-status"): return records_to_test
-                return b""
-            with self.subTest(records=records_to_test), patch.object(delivery.cert, "git", side_effect=git), patch.object(delivery.subprocess, "run"), patch.object(delivery.cert, "original_contracts"):
-                if valid:
-                    self.assertTrue(delivery.source_guard(COMMIT, True)["runtime_unchanged"])
-                else:
-                    with self.assertRaises(ValueError): delivery.source_guard(COMMIT, True)
+        additions = "\n".join("A\t" + path for path in sorted(delivery.FILES)).encode()
+        modifications = "\n".join("M\t" + path for path in sorted(delivery.FILES)).encode()
+        for options in ({"correction": modifications+b"\nM\tjs/gridly-paid-ui.mjs"}, {"correction": b""},
+                        {"correction": additions}, {"net": additions+b"\nM\tios/App/App/GridlyStoreKitPlugin.swift"},
+                        {"net": b""}, {"preparation": b""}, {"mode": "100755"}):
+            with self.subTest(options=options), patch.object(delivery.cert, "git", side_effect=source_git(**options)), patch.object(delivery.subprocess, "run"), patch.object(delivery.cert, "original_contracts"), self.assertRaises(ValueError):
+                delivery.source_guard(COMMIT, True)
 
     def test_incorrect_checkout_and_unclean_source_fail(self):
         with patch.object(delivery.cert, "git", return_value=b"9"*40), self.assertRaises(ValueError):
             delivery.source_guard(COMMIT, True)
-        with self.assertRaises(ValueError):
-            delivery.source_guard(delivery.SOURCE, True)
+        for old in (delivery.SOURCE, delivery.DELIVERY_BASE):
+            with self.subTest(old=old), self.assertRaises(ValueError):
+                delivery.source_guard(old, True)
+        for options in ({"dirty": b"js/gridly-paid-ui.mjs"}, {"staged": b"js/gridly-paid-ui.mjs"},
+                        {"untracked": b"?? unexpected.txt"}):
+            with self.subTest(options=options), patch.object(delivery.cert, "git", side_effect=source_git(**options)), patch.object(delivery.subprocess, "run"), patch.object(delivery.cert, "original_contracts"), self.assertRaises(ValueError):
+                delivery.source_guard(COMMIT, True)
 
     def test_additional_or_merged_delivery_ancestry_is_rejected(self):
-        for parents in ("9"*40, delivery.SOURCE + " " + "8"*40):
-            def git(*args):
-                return COMMIT.encode() if args == ("rev-parse", "HEAD") else parents.encode()
-            with self.subTest(parents=parents), patch.object(delivery.cert, "git", side_effect=git), self.assertRaises(ValueError):
+        for options in ({"parent": "9"*40}, {"parent": delivery.SOURCE},
+                        {"parent": delivery.DELIVERY_BASE + " " + "8"*40},
+                        {"base_parent": "7"*40}, {"base_parent": delivery.SOURCE + " " + "8"*40}):
+            with self.subTest(options=options), patch.object(delivery.cert, "git", side_effect=source_git(**options)), self.assertRaises(ValueError):
                 delivery.source_guard(COMMIT, True)
+
+    def test_pinned_real_preparation_and_historical_source_remain_exact(self):
+        self.assertEqual(delivery.cert.git("show", "-s", "--format=%P", delivery.DELIVERY_BASE).decode().strip(), delivery.SOURCE)
+        self.assertEqual(delivery.SOURCE, "f9fc818321970b8b7e29df17358daf87a7d20308")
+        self.assertEqual(delivery.RUN, 39181592021)
 
     def test_missing_or_unsuccessful_historical_certificate_fails(self):
         run = {"id": delivery.RUN, "head_sha": delivery.SOURCE, "run_attempt": 1, "status": "completed", "conclusion": "success",
@@ -255,6 +363,51 @@ class CertificationAndTransferTests(unittest.TestCase):
         self.assertEqual(delivery.read_json(self.root / "reports/delivery-transfer.json")["status"], "ACCEPTED")
         with self.assertRaises(ValueError): delivery.transfer(self.root, COMMIT, self.ipa, **options)
         self.assertEqual(calls.count("--upload-app"), 1)
+
+    def test_owner_only_authorization_uses_same_signed_ipa_and_transport_with_no_group_operations(self):
+        report = self.root / "reports/delivery-authorization.json"
+        authorization_report = delivery.read_json(report)
+        authorization_report["authorization"] = owner_automatic_authorization()
+        delivery.write_json(report, authorization_report)
+        before = self.ipa.read_bytes()
+        calls, options = self.fake_upload()
+        delivery.transfer(self.root, COMMIT, self.ipa, **options)
+        self.assertEqual(calls, ["--validate-app", "apps", "builds", "--upload-app"])
+        self.assertEqual(self.ipa.read_bytes(), before)
+
+    def test_unapproved_owner_only_access_is_rejected_before_credentials_or_transport(self):
+        report = self.root / "reports/delivery-authorization.json"
+        class NeverReadCredentials(dict):
+            def get(self, *args): raise AssertionError("credentials accessed before owner-only eligibility")
+        for field in ("no_other_eligible_internal_users_confirmed", "both_accounts_owned_by_owner",
+                      "automatic_availability_to_both_accounts_acknowledged"):
+            candidate = owner_automatic_authorization()
+            candidate[delivery.OWNER_AUTO_FIELD][field] = False
+            value = delivery.read_json(report)
+            value["authorization"] = candidate
+            delivery.write_json(report, value)
+            calls, options = self.fake_upload()
+            options["credentials"] = NeverReadCredentials()
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                delivery.transfer(self.root, COMMIT, self.ipa, **options)
+            self.assertEqual(calls, [])
+
+    def test_owner_only_eligibility_expiring_after_live_build_check_prevents_upload(self):
+        report = self.root / "reports/delivery-authorization.json"
+        value = delivery.read_json(report)
+        value["authorization"] = owner_automatic_authorization()
+        delivery.write_json(report, value)
+        calls, options = self.fake_upload()
+        get = options["get"]
+        def expire(path, token):
+            result = get(path, token)
+            if path.startswith("/v1/builds?"):
+                delivery.time.time.return_value = NOW + 1801
+            return result
+        options["get"] = expire
+        with self.assertRaises(ValueError):
+            delivery.transfer(self.root, COMMIT, self.ipa, **options)
+        self.assertNotIn("--upload-app", calls)
 
     def test_existing_build_prevents_upload(self):
         calls, options = self.fake_upload(existing=True)
@@ -358,6 +511,19 @@ class AvailabilityAndCleanupTests(unittest.TestCase):
 class WorkflowTests(unittest.TestCase):
     def setUp(self):
         self.text = WORKFLOW.read_text()
+
+    def test_unrelated_delivery_execution_and_security_functions_remain_unchanged(self):
+        baseline = delivery.cert.git("show", delivery.DELIVERY_BASE + ":tools/apple_storekit_testflight_delivery.py").decode()
+        current = (ROOT / "tools/apple_storekit_testflight_delivery.py").read_text()
+        functions = lambda source: {node.name: ast.dump(node) for node in ast.parse(source).body if isinstance(node, (ast.FunctionDef, ast.ClassDef))}
+        before, after = functions(baseline), functions(current)
+        self.assertEqual(set(before), set(after))
+        for name in before.keys() - {"owner_authorization", "source_guard"}:
+            self.assertEqual(after[name], before[name], name)
+        old_workflow = delivery.cert.git("show", delivery.DELIVERY_BASE + ":.github/workflows/gridly-storekit-testflight-delivery.yml").decode()
+        self.assertEqual(self.text.split("\non:\n", 1)[1], old_workflow.split("\non:\n", 1)[1])
+        self.assertIn("no_other_eligible_internal_users_confirmed", self.text)
+        self.assertIn("BOTH", self.text)
 
     def test_only_separate_new_tag_can_trigger(self):
         trigger = self.text.split("\non:\n", 1)[1].split("\npermissions:", 1)[0]

@@ -3,13 +3,28 @@ name: Gridly StoreKit Build 15 Internal TestFlight Delivery
 # LOCAL PREPARATION ONLY: do not push a tag until the resulting delivery commit is
 # reviewed and a NEW upload authorization is explicitly granted by the owner.
 # Separate annotated tag: gridly-storekit-testflight-deliver-15-<delivery-commit>
-# Exact JSON annotation (no omitted/default/extra fields):
+# Source chain: certified f9fc8183 -> delivery bd5b1fea -> ONE reviewed support correction.
+# Exactly the same three delivery files may change; certified diagnostic runtime is frozen.
+# Strict disabled-automatic-distribution JSON (unchanged; no omitted/default/extra fields):
 # {"delivery_commit":"<reviewed-40-hex>","certified_source_commit":"f9fc818321970b8b7e29df17358daf87a7d20308",
 #  "certification_run_id":39181592021,"diagnostic_build_number":"15",
 #  "testflight_upload_authorized":true,"unused_build_number_confirmed":true,
 #  "baseline_exception_acknowledged":true,"testflight_group_settings_reviewed":true,
 #  "testflight_auto_distribution_disabled":true,"app_store_connect_users_access_reviewed":true,
 #  "no_unapproved_internal_access_confirmed":true,"owner_checks_at":"<UTC YYYY-MM-DDTHH:MM:SSZ>"}
+# Alternative OWNER-ONLY automatic distribution: use all the fields above, set
+# "testflight_auto_distribution_disabled":false, and add exactly this object:
+# "owner_only_automatic_distribution":{
+#   "authorized":true,"group_name":"Gridly Internal","authorized_owner_account_count":2,
+#   "both_accounts_owned_by_owner":true,
+#   "automatic_availability_to_both_accounts_acknowledged":true,
+#   "no_other_eligible_internal_users_confirmed":true}
+# This acknowledges that Build 15 may become available automatically to BOTH
+# authorized owner accounts. Do not record account names, email addresses or identifiers.
+# A true disabled flag plus this object is contradictory and is rejected.
+# owner_checks_at must freshly cover both accounts, every internal group and ALL
+# eligible App Store Connect users, including the built-in App Store Connect Users group.
+# Existing group membership alone is insufficient. No tester/group change is performed.
 # Owner checks expire after 30 minutes, including the rebuild and Apple validation.
 # The existing certification tag cannot activate this workflow. No dispatch or branch trigger.
 # Only writers authorized by the owner may push the new annotated delivery tag.

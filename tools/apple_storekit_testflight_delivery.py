@@ -18,6 +18,7 @@ from pathlib import Path
 import apple_storekit_diagnostic_certification as cert
 
 SOURCE = "f9fc818321970b8b7e29df17358daf87a7d20308"
+DELIVERY_BASE = "bd5b1feac696ba7db0e7d8d271b054df1d25850b"
 RUN = 39181592021
 REPOSITORY = "DBMaps/liberty-county-map"
 PREFIX = "refs/tags/gridly-storekit-testflight-deliver-15-"
@@ -32,6 +33,14 @@ CONFIRMATIONS = {
     "testflight_auto_distribution_disabled", "app_store_connect_users_access_reviewed",
     "no_unapproved_internal_access_confirmed",
 }
+OWNER_AUTO_FIELD = "owner_only_automatic_distribution"
+OWNER_AUTO_CONFIRMATIONS = {
+    "authorized", "both_accounts_owned_by_owner",
+    "automatic_availability_to_both_accounts_acknowledged",
+    "no_other_eligible_internal_users_confirmed",
+}
+# The same timestamp covers group settings, both owner accounts and ALL eligible
+# internal App Store Connect users, including access outside Gridly Internal.
 # Owner settings/unused-build attestations must still be fresh immediately before upload.
 OWNER_CHECK_TTL = 1800
 
@@ -55,13 +64,27 @@ def owner_authorization(value, commit, ref, now=None):
         "delivery_commit", "certified_source_commit", "certification_run_id",
         "diagnostic_build_number", "owner_checks_at",
     }
-    require(isinstance(value, dict) and set(value) == fields, "exact owner authorization required")
+    require(isinstance(value, dict) and set(value) in (fields, fields | {OWNER_AUTO_FIELD}), "exact owner authorization required")
     require(isinstance(commit, str) and re.fullmatch(r"[0-9a-f]{40}", commit), "exact delivery commit required")
     require(ref == PREFIX + commit, "separate delivery authorization tag required")
     require(value["delivery_commit"] == commit and value["certified_source_commit"] == SOURCE, "wrong source")
     require(type(value["certification_run_id"]) is int and value["certification_run_id"] == RUN, "wrong certification run")
     require(value["diagnostic_build_number"] == "15", "only unused diagnostic Build 15 allowed")
-    require(all(value[key] is True for key in CONFIRMATIONS), "explicit confirmations required")
+    common = CONFIRMATIONS - {"testflight_auto_distribution_disabled"}
+    require(all(value[key] is True for key in common), "explicit confirmations required")
+    if OWNER_AUTO_FIELD in value:
+        require(value["testflight_auto_distribution_disabled"] is False, "contradictory automatic distribution authorization")
+        automatic = value[OWNER_AUTO_FIELD]
+        require(isinstance(automatic, dict) and set(automatic) == OWNER_AUTO_CONFIRMATIONS | {
+            "group_name", "authorized_owner_account_count"
+        }, "complete owner-only automatic distribution authorization required")
+        require(all(automatic[key] is True for key in OWNER_AUTO_CONFIRMATIONS), "owner-only automatic distribution confirmations required")
+        require(automatic["group_name"] == "Gridly Internal", "only the reviewed internal group allowed")
+        require(type(automatic["authorized_owner_account_count"]) is int and automatic["authorized_owner_account_count"] == 2,
+                "exactly the two authorized owner accounts required")
+    else:
+        # Backward-compatible strict option: no automatic-distribution exception.
+        require(value["testflight_auto_distribution_disabled"] is True, "automatic distribution must be disabled or explicitly owner-only")
     stamp = value["owner_checks_at"]
     require(isinstance(stamp, str) and re.fullmatch(r"\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ", stamp), "UTC owner check time required")
     checked = dt.datetime.strptime(stamp, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=dt.timezone.utc).timestamp()
@@ -93,11 +116,18 @@ def authorize(ref, commit, event_path, attempt):
 
 def source_guard(commit, clean):
     require(re.fullmatch(r"[0-9a-f]{40}", commit or ""), "exact source SHA required")
-    require(cert.git("rev-parse", "HEAD").decode().strip() == commit and commit != SOURCE, "reviewed delivery support commit required")
-    require(cert.git("show", "-s", "--format=%P", commit).decode().strip() == SOURCE, "one reviewed delivery commit directly on certified source required")
+    require(cert.git("rev-parse", "HEAD").decode().strip() == commit and commit not in {SOURCE, DELIVERY_BASE}, "reviewed delivery correction commit required")
+    require(cert.git("show", "-s", "--format=%P", commit).decode().strip() == DELIVERY_BASE, "one reviewed correction directly on pinned delivery commit required")
+    require(cert.git("show", "-s", "--format=%P", DELIVERY_BASE).decode().strip() == SOURCE, "pinned delivery ancestry changed")
     subprocess.run(["git", "merge-base", "--is-ancestor", SOURCE, commit], check=True, stdout=subprocess.DEVNULL)
+    preparation = cert.git("diff", "--name-status", "--no-renames", SOURCE, DELIVERY_BASE).decode().splitlines()
+    require(set(preparation) == {"A\t" + path for path in FILES}, "pinned delivery preparation inventory changed")
+    correction = cert.git("diff", "--name-status", "--no-renames", DELIVERY_BASE, commit).decode().splitlines()
+    require(set(correction) == {"M\t" + path for path in FILES}, "correction must modify only the three reviewed delivery files")
     records = cert.git("diff", "--name-status", "--no-renames", SOURCE, commit).decode().splitlines()
     require(set(records) == {"A\t" + path for path in FILES}, "only three new delivery support files allowed; runtime frozen")
+    for path in FILES:
+        require(cert.git("ls-tree", commit, "--", path).decode().split()[0] == "100644", "delivery support file mode changed")
     # Git diff catches tracked additions/deletions/modes as well as byte changes.
     require(not cert.git("diff", "--name-only", "HEAD"), "tracked working source changed")
     require(not cert.git("diff", "--cached", "--name-only"), "staged source changed")
