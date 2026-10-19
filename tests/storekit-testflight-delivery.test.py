@@ -53,7 +53,7 @@ def owner_automatic_authorization():
             }}
 
 
-def source_git(*, parent=delivery.P04_BASE, base_parent=delivery.SOURCE,
+def source_git(*, parent=delivery.ARCHIVE_BASE, base_parent=delivery.SOURCE,
                owner_parent=delivery.DELIVERY_BASE, preflight_parent=delivery.OWNER_CORRECTION,
                preparation=None, past_correction=None, preflight_inventory=None,
                historical_refinement=None, signing_inventory=None, cms_inventory=None,
@@ -61,6 +61,7 @@ def source_git(*, parent=delivery.P04_BASE, base_parent=delivery.SOURCE,
                cms_parent=delivery.SIGNING_BASE, repair_parent=delivery.CMS_BASE,
                verified_parent=delivery.CMS_REPAIR_BASE, alignment_parent=delivery.SIGNING_VERIFIED_BASE,
                alignment_inventory=None, repair_inventory=None, verification_inventory=None,
+               p04_parent=delivery.P04_BASE, p04_inventory=None,
                correction=None, net=None, mode="100644", dirty=b"", staged=b"", untracked=b"",
                tag_object=None, tag_target=None, tag_type=None, missing_tag=None):
     additions = "\n".join("A\t" + path for path in sorted(delivery.FILES)).encode()
@@ -80,6 +81,7 @@ def source_git(*, parent=delivery.P04_BASE, base_parent=delivery.SOURCE,
         ("show", "-s", "--format=%P", delivery.CMS_REPAIR_BASE): repair_parent.encode(),
         ("show", "-s", "--format=%P", delivery.SIGNING_VERIFIED_BASE): verified_parent.encode(),
         ("show", "-s", "--format=%P", delivery.P04_BASE): alignment_parent.encode(),
+        ("show", "-s", "--format=%P", delivery.ARCHIVE_BASE): p04_parent.encode(),
         ("show", "-s", "--format=%P", delivery.PREFLIGHT_BASE): preflight_parent.encode(),
         ("show", "-s", "--format=%P", delivery.OWNER_CORRECTION): owner_parent.encode(),
         ("show", "-s", "--format=%P", delivery.DELIVERY_BASE): base_parent.encode(),
@@ -94,7 +96,8 @@ def source_git(*, parent=delivery.P04_BASE, base_parent=delivery.SOURCE,
         ("diff", "--name-status", "--no-renames", delivery.CMS_BASE, delivery.CMS_REPAIR_BASE): repair if repair_inventory is None else repair_inventory,
         ("diff", "--name-status", "--no-renames", delivery.CMS_REPAIR_BASE, delivery.SIGNING_VERIFIED_BASE): verification if verification_inventory is None else verification_inventory,
         ("diff", "--name-status", "--no-renames", delivery.SIGNING_VERIFIED_BASE, delivery.P04_BASE): alignment if alignment_inventory is None else alignment_inventory,
-        ("diff", "--name-status", "--no-renames", delivery.P04_BASE, COMMIT): modifications if correction is None else correction,
+        ("diff", "--name-status", "--no-renames", delivery.P04_BASE, delivery.ARCHIVE_BASE): modifications if p04_inventory is None else p04_inventory,
+        ("diff", "--name-status", "--no-renames", delivery.ARCHIVE_BASE, COMMIT): modifications if correction is None else correction,
         ("diff", "--name-status", "--no-renames", delivery.SOURCE, COMMIT): all_additions if net is None else net,
         ("diff", "--name-only", "HEAD"): dirty,
         ("diff", "--cached", "--name-only"): staged,
@@ -105,7 +108,8 @@ def source_git(*, parent=delivery.P04_BASE, base_parent=delivery.SOURCE,
                          (delivery.SIGNING_BASE,delivery.SIGNING_FILES),(delivery.CMS_BASE,delivery.CMS_FILES),
                          (delivery.CMS_REPAIR_BASE,delivery.REPAIR_FILES),
                          (delivery.SIGNING_VERIFIED_BASE,delivery.SIGNING_VERIFICATION_FILES),
-                         (delivery.P04_BASE,delivery.DELIVERY_ALIGNMENT_FILES)):
+                         (delivery.P04_BASE,delivery.DELIVERY_ALIGNMENT_FILES),
+                         (delivery.ARCHIVE_BASE,delivery.FILES)):
         for path in files:
             values[("ls-tree",target,"--",path)]=("100644 blob "+"0"*40+"\t"+path).encode()
     for path in delivery.FILES | delivery.PREFLIGHT_FILES | delivery.SIGNING_FILES | delivery.CMS_FILES:
@@ -322,7 +326,7 @@ class SourceAndEvidenceTests(unittest.TestCase):
             delivery.source_guard(COMMIT, True)
         for old in (delivery.SOURCE, delivery.DELIVERY_BASE, delivery.OWNER_CORRECTION, delivery.PREFLIGHT_BASE,
                     delivery.REFINEMENT_BASE, delivery.SIGNING_BASE, delivery.CMS_BASE,
-                    delivery.CMS_REPAIR_BASE, delivery.SIGNING_VERIFIED_BASE, delivery.P04_BASE):
+                    delivery.CMS_REPAIR_BASE, delivery.SIGNING_VERIFIED_BASE, delivery.P04_BASE, delivery.ARCHIVE_BASE):
             with self.subTest(old=old), self.assertRaises(ValueError):
                 delivery.source_guard(old, True)
         for options in ({"dirty": b"js/gridly-paid-ui.mjs"}, {"staged": b"js/gridly-paid-ui.mjs"},
@@ -614,7 +618,8 @@ class AvailabilityAndCleanupTests(unittest.TestCase):
             root.mkdir(); (root / ".owned").write_text(delivery.cert.PRIVATE_MARKER)
             (root / "reports").mkdir()
             delivery.write_json(root / "reports/delivery-transfer.json", {"status": "ACCEPTED", "source_commit": "PRIVATE NEVER PRINT", "build": "15"})
-            with patch.object(delivery.cert, "cleanup_private", return_value=False):
+            with patch.object(delivery, "cleanup_delivery", return_value={
+                    "status":"FAIL","stages":{},"resources":dict.fromkeys(("workspace","profile","keychain"),"UNVERIFIED")}):
                 result = delivery.finish(temporary, "success")
             self.assertEqual(result["certification"], "FAIL")
             self.assertEqual(result["cleanup"], "FAIL")
@@ -627,7 +632,8 @@ class AvailabilityAndCleanupTests(unittest.TestCase):
             (root / ".owned").write_text(delivery.cert.PRIVATE_MARKER)
             fixture(root)
             delivery.write_json(root / "reports/delivery-transfer.json", {"status": "ACCEPTED", "source_commit": COMMIT, "build": "15"})
-            with patch.object(delivery.cert, "cleanup_private", return_value=False):
+            with patch.object(delivery, "cleanup_delivery", return_value={
+                    "status":"FAIL","stages":{},"resources":dict.fromkeys(("workspace","profile","keychain"),"UNVERIFIED")}):
                 result = delivery.finish(temporary, "success")
             self.assertEqual(result["upload"], "ACCEPTED")
             self.assertEqual(result["regressions"], "BASELINE_EXCEPTION")
@@ -640,8 +646,25 @@ class AvailabilityAndCleanupTests(unittest.TestCase):
             root.mkdir(); (root/".owned").write_text(delivery.cert.PRIVATE_MARKER)
             fixture(root)
             delivery.write_json(root/"reports/delivery-transfer.json",{"status":"ACCEPTED","source_commit":COMMIT,"build":"15"})
-            with patch.object(delivery.time,"time",return_value=NOW+3600):
+            real_run = subprocess.run
+            protected = [".github/workflows/gridly-apple-build-9.yml",
+                         "tools/apple_native_parity.py", *delivery.cert.BASELINE_INPUTS]
+            expected_git = [["git", "show", delivery.cert.BASE + ":" + path] for path in protected]
+            git_calls, native_calls = [], []
+            def synthetic_native(args, *positional, **keywords):
+                if args == ["security", "list-keychains", "-d", "user"]:
+                    native_calls.append(args)
+                    return subprocess.CompletedProcess(args, 0, b"", b"")
+                if args in expected_git:
+                    git_calls.append(args)
+                    return real_run(args, *positional, **keywords)
+                self.fail("unexpected subprocess command in accepted-upload fixture")
+            with patch.object(delivery.time,"time",return_value=NOW+3600), \
+                    patch.object(delivery.Path,"home",return_value=root/"home"), \
+                    patch.object(delivery.subprocess,"run",side_effect=synthetic_native):
                 result=delivery.finish(temporary,"success")
+            self.assertCountEqual(git_calls, expected_git)
+            self.assertEqual(native_calls, [["security", "list-keychains", "-d", "user"]])
             self.assertEqual(result["upload"],"ACCEPTED")
             self.assertEqual(result["certification"],"PASS")
             self.assertEqual(result["cleanup"],"PASS")
@@ -653,7 +676,9 @@ class AvailabilityAndCleanupTests(unittest.TestCase):
             root = delivery.cert.private_directory(temporary)
             for name in ("home/.appstoreconnect/private_keys/synthetic.p8", "source/www/config.json", "archive/App.app/file", "export/synthetic.ipa", "logs/raw.log", "reports/private.json"):
                 path = root / name; path.parent.mkdir(parents=True, exist_ok=True); path.write_text("SYNTHETIC_PRIVATE")
-            result = delivery.finish(temporary, "failure")
+            with patch.object(delivery.Path,"home",return_value=root/"home"), \
+                    patch.object(delivery.subprocess,"run",return_value=subprocess.CompletedProcess([],0,b"",b"")):
+                result = delivery.finish(temporary, "failure")
             self.assertEqual(result["cleanup"], "PASS")
             self.assertEqual(result["certification"], "FAIL")
             self.assertFalse(root.exists())
@@ -1206,7 +1231,7 @@ class HistoryRetrievalTests(unittest.TestCase):
     def test_workflow_changes_are_exactly_read_permission_and_step_scoped_builtin_token(self):
         text=WORKFLOW.read_text()
         before=delivery.cert.git("show",delivery.P04_BASE+":.github/workflows/gridly-storekit-testflight-delivery.yml").decode()
-        self.assertEqual(without_p04_auth(text),before)
+        self.assertEqual(without_p04_auth(restore_archive_block(text)),before)
         self.assertEqual(text.count("GRIDLY_HISTORY_TOKEN:"),1)
         self.assertEqual(text.count("github.token"),1)
         self.assertNotIn("GITHUB_TOKEN:",text)
@@ -1240,9 +1265,9 @@ class WorkflowTests(unittest.TestCase):
         functions = lambda source: {node.name: ast.dump(node) for node in ast.parse(source).body if isinstance(node, (ast.FunctionDef, ast.ClassDef))}
         before, after = functions(baseline), functions(current)
         self.assertEqual(set(after) - set(before), {"preflight_result", "emit_preflight", "delivery_preflight",
-                                                  "HistoryFailure", "HistoryNoRedirect", "history_context", "history_retry_delay"})
+                                                  "HistoryFailure", "HistoryNoRedirect", "history_context", "history_retry_delay", "cleanup_delivery"})
         self.assertFalse(set(before) - set(after))
-        for name in before.keys() - {"source_guard", "main", "public_json", "historical_evidence"}:
+        for name in before.keys() - {"source_guard", "main", "public_json", "historical_evidence", "finish"}:
             self.assertEqual(after[name], before[name], name)
         constants = lambda source: {node.targets[0].id: ast.dump(node.value) for node in ast.parse(source).body
                                     if isinstance(node, ast.Assign) and isinstance(node.targets[0], ast.Name)}
@@ -1258,7 +1283,7 @@ class WorkflowTests(unittest.TestCase):
         old_cms = 'security cms -D -i "$DIAGNOSTIC_PRIVATE_ROOT/distribution.mobileprovision" > "$DIAGNOSTIC_PRIVATE_ROOT/profile.plist"'
         new_cms = 'security cms -D -k "$DIAGNOSTIC_PRIVATE_ROOT/signing.keychain-db" -i "$DIAGNOSTIC_PRIVATE_ROOT/distribution.mobileprovision" > "$DIAGNOSTIC_PRIVATE_ROOT/profile.plist"'
         self.assertEqual(old_workflow.count(old_cms), 1)
-        self.assertEqual(outside_preflight(without_p04_auth(self.text)),outside_preflight(old_workflow.replace(old_cms,new_cms)))
+        self.assertEqual(outside_preflight(without_p04_auth(restore_archive_block(self.text))),outside_preflight(old_workflow.replace(old_cms,new_cms)))
         self.assertIn("no_other_eligible_internal_users_confirmed", self.text)
         self.assertIn("BOTH", self.text)
 
@@ -1302,7 +1327,7 @@ class WorkflowTests(unittest.TestCase):
 
     def test_all_sensitive_shell_blocks_redirect_before_commands(self):
         blocks = re.findall(r"        run: \|\n((?:(?:          .*)?\n)+)", self.text)
-        self.assertEqual(len(blocks), 10)
+        self.assertEqual(len(blocks), 14)
         for index,block in enumerate(blocks[1:-1],1):
             prefix='          set -euo pipefail\n          set +x\n          umask 077\n'
             self.assertTrue(block.startswith(prefix))
@@ -1310,7 +1335,7 @@ class WorkflowTests(unittest.TestCase):
             if index==2:
                 self.assertTrue(rest.startswith('          # FD 3 carries only validated fixed stage records; raw output stays private.\n          exec 3>&1\n'))
                 rest=rest.split('          exec 3>&1\n',1)[1]
-            self.assertRegex(rest, r'^          exec > "\$DIAGNOSTIC_PRIVATE_ROOT/logs/step-[1-8]\.log" 2>&1\n')
+            self.assertRegex(rest, r'^          exec > "\$DIAGNOSTIC_PRIVATE_ROOT/logs/step-(?:[1-8]|7-[1-5])\.log" 2>&1\n')
         self.assertEqual(self.text.count("exec 3>&1"),1)
         self.assertIn('--github-env "$GITHUB_ENV" --output',self.text)
         self.assertIn("testFlightInternalTestingOnly", self.text)
@@ -1332,7 +1357,9 @@ class CmsSigningRepairTests(unittest.TestCase):
     @staticmethod
     def signing_body(text):
         start = text.index("      - name: Install distribution signing\n")
-        end = text.index("      - name: Archive and export", start)
+        candidates = [text.find("      - name: " + name, start) for name in
+                      ("Archive and export", "Signing identity precheck")]
+        end = min(index for index in candidates if index >= 0)
         block = text[start:end].split("        run: |\n", 1)[1]
         return "\n".join(line[10:] for line in block.splitlines()) + "\n"
 
@@ -1342,7 +1369,7 @@ class CmsSigningRepairTests(unittest.TestCase):
         self.assertEqual(previous.count(self.old_cms), 1)
         self.assertEqual(current.count(self.new_cms), 1)
         self.assertNotIn(self.old_cms, current)
-        self.assertEqual(without_p04_auth(current).split("\non:\n",1)[1],
+        self.assertEqual(without_p04_auth(restore_archive_block(current)).split("\non:\n",1)[1],
                          previous.replace(self.old_cms,self.new_cms).split("\non:\n",1)[1])
         self.assertEqual(self.signing_body(current), self.signing_body(previous).replace(self.old_cms,self.new_cms))
 
@@ -1476,19 +1503,19 @@ security() {
         functions=lambda text:{node.name:ast.dump(node) for node in ast.parse(text).body if isinstance(node,(ast.FunctionDef,ast.ClassDef))}
         original,current=functions(before),functions(after)
         self.assertEqual(set(current)-set(original),
-                         {"HistoryFailure","HistoryNoRedirect","history_context","history_retry_delay"})
+                         {"HistoryFailure","HistoryNoRedirect","history_context","history_retry_delay","cleanup_delivery"})
         self.assertFalse(set(original)-set(current))
-        for name in original.keys()-{"source_guard","public_json","historical_evidence","delivery_preflight"}:
+        for name in original.keys()-{"source_guard","public_json","historical_evidence","delivery_preflight","finish"}:
             self.assertEqual(original[name],current[name],name)
         nodes=lambda text:{n.targets[0].id:n.value for n in ast.parse(text).body
                            if isinstance(n,ast.Assign) and isinstance(n.targets[0],ast.Name)}
         old,new=nodes(before),nodes(after)
-        self.assertEqual(set(new)-set(old),{"P04_BASE","HISTORY_CATEGORIES","HISTORY_ATTEMPTS",
+        self.assertEqual(set(new)-set(old),{"P04_BASE","ARCHIVE_BASE","HISTORY_CATEGORIES","HISTORY_ATTEMPTS",
                          "HISTORY_WAIT_BUDGET","HISTORY_DEADLINE","HISTORY_TIMEOUT","HISTORY_MAX_BYTES"})
         for name,node in old.items():
             if name=="HISTORICAL_TAGS":
                 self.assertIsInstance(new[name],ast.Dict)
-                self.assertEqual(len(new[name].keys),8)
+                self.assertEqual(len(new[name].keys),9)
                 retained=ast.Dict(keys=new[name].keys[:7],values=new[name].values[:7])
                 self.assertEqual(ast.dump(node),ast.dump(retained))
             elif name=="PREFLIGHT_CATEGORIES":
@@ -1496,7 +1523,7 @@ security() {
             else:self.assertEqual(ast.dump(node),ast.dump(new[name]),name)
         self.assertEqual(delivery.OWNER_CHECK_TTL,1800)
 
-    def test_exact_reviewed_history_and_all_eight_authorization_tags(self):
+    def test_exact_reviewed_history_and_all_nine_authorization_tags(self):
         self.assertEqual(delivery.REFINEMENT_BASE,"4c95caed0d261fca1dbaf86fc926660661d0643b")
         self.assertEqual(delivery.SIGNING_BASE,"db4df3949b1f02325b8869433bbbd16b234487db")
         self.assertEqual(delivery.CMS_BASE,"cbe3c297099dbca9c6d376848157de0253aeae39")
@@ -1525,8 +1552,12 @@ security() {
         expected["gridly-storekit-testflight-deliver-15-40824c760a65b56b1b0056d1d9b90d571b7f47d4"]=(
             "06dbef1c5ae5f5250b536d8f3b6232487b114f56",delivery.P04_BASE)
         self.assertEqual(delivery.P04_BASE,"40824c760a65b56b1b0056d1d9b90d571b7f47d4")
+        expected["gridly-storekit-testflight-deliver-15-45ce66b98b44bd6cea67820124e695483e7a6b9b"]=(
+            "e71cf11b1fbca960527ad019762a12cb68b25600",delivery.ARCHIVE_BASE)
+        self.assertEqual(delivery.ARCHIVE_BASE,"45ce66b98b44bd6cea67820124e695483e7a6b9b")
         self.assertEqual(delivery.HISTORICAL_TAGS,expected)
-        for child,parent in ((delivery.P04_BASE,delivery.SIGNING_VERIFIED_BASE),
+        for child,parent in ((delivery.ARCHIVE_BASE,delivery.P04_BASE),
+                             (delivery.P04_BASE,delivery.SIGNING_VERIFIED_BASE),
                              (delivery.SIGNING_VERIFIED_BASE,delivery.CMS_REPAIR_BASE),
                              (delivery.CMS_REPAIR_BASE,delivery.CMS_BASE),(delivery.CMS_BASE,delivery.SIGNING_BASE),(delivery.SIGNING_BASE,delivery.REFINEMENT_BASE),
                              (delivery.REFINEMENT_BASE,delivery.PREFLIGHT_BASE)):
@@ -1537,7 +1568,7 @@ security() {
                 self.assertEqual(historical, delivery.cert.git("show",delivery.CMS_BASE+":"+path),path)
                 if path not in {"tools/apple_storekit_signing_diagnostic.py","tests/storekit-signing-diagnostic.test.py"}:
                     self.assertEqual((ROOT/path).read_bytes().replace(b"\r\n",b"\n"),historical,path)
-        checkpoint=delivery.P04_BASE
+        checkpoint=delivery.ARCHIVE_BASE
         support={".github/workflows/gridly-storekit-testflight-delivery.yml",
                  "tools/apple_storekit_testflight_delivery.py","tests/storekit-testflight-delivery.test.py"}
         def git(*args):
@@ -1652,7 +1683,8 @@ security() {
                     (delivery.SIGNING_BASE,delivery.SIGNING_FILES),(delivery.CMS_BASE,delivery.CMS_FILES),
                     (delivery.CMS_REPAIR_BASE,delivery.REPAIR_FILES),
                     (delivery.SIGNING_VERIFIED_BASE,delivery.SIGNING_VERIFICATION_FILES),
-                    (delivery.P04_BASE,delivery.DELIVERY_ALIGNMENT_FILES))
+                    (delivery.P04_BASE,delivery.DELIVERY_ALIGNMENT_FILES),
+                         (delivery.ARCHIVE_BASE,delivery.FILES))
         valid=source_git()
         for target,files in historical:
             for path in files:
@@ -1670,6 +1702,337 @@ security() {
                         {"signing_inventory":b"A\tjs/gridly-paid-ui.mjs"},
                         {"cms_inventory":b"M\ttools/apple_storekit_cms_diagnostic.py"}):
             with self.subTest(options=options),patch.object(delivery.cert,"git",side_effect=source_git(**options)),\
+                    patch.object(delivery.subprocess,"run"),patch.object(delivery.cert,"original_contracts"),self.assertRaises(ValueError):
+                delivery.source_guard(COMMIT,True)
+
+
+ARCHIVE_NAMES = ("Signing identity precheck", "Xcode build-settings query", "Xcode archive",
+                 "Internal-only IPA export", "Signed IPA certification")
+
+
+def archive_stages(text):
+    start = text.index("      - name: " + ARCHIVE_NAMES[0] + "\n")
+    end = text.index("      - name: Validate availability and deliver only", start)
+    blocks = re.split(r"(?=      - name: )", text[start:end])[1:]
+    if len(blocks) != 5:
+        raise AssertionError("exactly five native Actions stages required")
+    for name, block in zip(ARCHIVE_NAMES, blocks):
+        if not block.startswith("      - name: " + name + "\n        shell: bash\n        run: |\n"):
+            raise AssertionError("default success gating and exact stage order required")
+    return start, end, blocks
+
+
+def restore_archive_block(text):
+    """Reverse ONLY the reviewed split after checking every private command byte."""
+    start, end, blocks = archive_stages(text)
+    historical = delivery.cert.git("show", delivery.ARCHIVE_BASE + ":" + str(WORKFLOW.relative_to(ROOT)).replace("\\","/")).decode()
+    old_start = historical.index("      - name: Archive and export isolated diagnostic artifact locally\n")
+    old_end = historical.index("      - name: Validate availability and deliver only", old_start)
+    original = historical[old_start:old_end]
+    original_body = original.split("        run: |\n",1)[1]
+    common = ('          set -euo pipefail\n          set +x\n          umask 077\n'
+              '          exec > "$DIAGNOSTIC_PRIVATE_ROOT/logs/step-7.log" 2>&1\n'
+              '          cd "$DELIVERY_SOURCE_DIR"\n          export TMPDIR="$DIAGNOSTIC_PRIVATE_ROOT/tmp/"\n')
+    assert original_body.startswith(common)
+    commands=[]
+    archive_line='          archive="$DIAGNOSTIC_PRIVATE_ROOT/Gridly-StoreKit-Diagnostic-$DIAGNOSTIC_BUILD_NUMBER.xcarchive"\n'
+    for index,block in enumerate(blocks,1):
+        body=block.split("        run: |\n",1)[1]
+        prefix=common.replace("step-7.log","step-7-"+str(index)+".log")
+        assert body.startswith(prefix)
+        body=body[len(prefix):]
+        if index in (3,4,5):
+            assert body.startswith(archive_line)
+            body=body[len(archive_line):]
+        if index==2:
+            assert body.startswith("          xcode_status=0\n")
+            body=body.removeprefix("          xcode_status=0\n")
+            capture=(' > "$DIAGNOSTIC_PRIVATE_ROOT/logs/build-settings-raw.log" 2>&1 || xcode_status=$?\n'
+                     '          if [ "$xcode_status" -ne 0 ]; then exit "$xcode_status"; fi\n          awk ')
+            assert body.count(capture)==1
+            body=body.replace(capture," 2>&1 | \\\n            awk ",1)
+            raw=' "$DIAGNOSTIC_PRIVATE_ROOT/logs/build-settings-raw.log" > '
+            assert body.count(raw)==1
+            body=body.replace(raw," > ",1)
+            body=archive_line+body
+        commands.append(body)
+    assert common+"".join(commands)==original_body, "archive commands, settings filter or export policy changed"
+    return text[:start]+original+text[end:]
+
+
+class ArchiveStageVisibilityTests(unittest.TestCase):
+    def test_exact_stage_split_preserves_every_original_command_and_other_workflow_bytes(self):
+        before=delivery.cert.git("show",delivery.ARCHIVE_BASE+":"+str(WORKFLOW.relative_to(ROOT)).replace("\\","/")).decode()
+        self.assertEqual(restore_archive_block(WORKFLOW.read_text()),before)
+
+    def test_all_five_stages_and_upload_use_native_default_success_gating(self):
+        text=WORKFLOW.read_text()
+        start,end,blocks=archive_stages(text)
+        transfer=text[end:text.index("      - name: Remove all private outputs",end)]
+        for block in [*blocks,transfer]:
+            self.assertNotIn("continue-on-error",block)
+            self.assertNotIn("        if:",block)
+            self.assertIn("          set -euo pipefail\n",block)
+        self.assertLess(text.index(ARCHIVE_NAMES[-1]),text.index("ASC_PRIVATE_KEY_P8_BASE64:"))
+
+    def exercise(self, failed):
+        # Execute real workflow Bash boundaries with shell-function fakes ONLY.
+        # No native tools, real signed material, application build or Apple API.
+        bash="C:/Program Files/Git/bin/bash.exe" if os.name=="nt" else "/bin/bash"
+        _,_,blocks=archive_stages(WORKFLOW.read_text())
+        identity=re.search(r"grep -Fq '([^']+)'",blocks[0]).group(1)
+        with tempfile.TemporaryDirectory() as temporary:
+            root=Path(temporary)
+            for name in ("logs","reports","source","tmp"):
+                (root/name).mkdir()
+            posix=lambda path:str(path).replace("\\","/")
+            environment={**os.environ,"DIAGNOSTIC_PRIVATE_ROOT":posix(root),
+                         "DELIVERY_SOURCE_DIR":posix(root/"source"),"DIAGNOSTIC_BUILD_NUMBER":"15",
+                         "EXPECTED_COMMIT_SHA":COMMIT,"TEAM_ID":"SYNTHETIC","PROFILE_NAME":"SYNTHETIC",
+                         "TRACE":posix(root/"trace"),"FAKE_ID":identity,"FAIL_STAGE":str(failed)}
+            fakes=r"""
+security() {
+  printf 'identity\n' >> "$TRACE"
+  printf '%s\n' "$FAKE_ID"
+  printf 'SYNTHETIC_PRIVATE_ERROR\n' >&2
+  if [ "$FAIL_STAGE" = 1 ]; then return 37; fi
+}
+xcodebuild() {
+  local phase=archive stage=3 code=66
+  case " $* " in
+    *" -showBuildSettings "*) phase=settings; stage=2; code=65 ;;
+    *" -exportArchive "*) phase=export; stage=4; code=67 ;;
+  esac
+  printf '%s\n' "$phase" >> "$TRACE"
+  printf 'Build settings for action build and target App:\n CURRENT_PROJECT_VERSION = 15\n'
+  printf 'SYNTHETIC_PRIVATE_ERROR\n' >&2
+  if [ "$FAIL_STAGE" = "$stage" ]; then return "$code"; fi
+  if [ "$stage" = 4 ]; then
+    mkdir "$DIAGNOSTIC_PRIVATE_ROOT/gridly-diagnostic-export"
+    printf SYNTHETIC > "$DIAGNOSTIC_PRIVATE_ROOT/gridly-diagnostic-export/synthetic.ipa"
+  fi
+}
+awk() { printf 'filter\n' >> "$TRACE"; command awk "$@"; }
+python3() {
+  printf 'certification\n' >> "$TRACE"
+  printf 'SYNTHETIC_PRIVATE_ERROR\n' >&2
+  if [ "$FAIL_STAGE" = 5 ]; then return 68; fi
+}
+"""
+            results=[]
+            for block in blocks:
+                body="\n".join(line[10:] for line in block.split("        run: |\n",1)[1].splitlines())+"\n"
+                result=subprocess.run([bash],input=fakes+body,text=True,env=environment,capture_output=True)
+                results.append(result.returncode)
+                self.assertEqual(result.stdout,"")
+                self.assertEqual(result.stderr,"")
+                if result.returncode:
+                    break  # Actions default success() semantics, verified above.
+            trace=(root/"trace").read_text().splitlines()
+            return results,trace,(root/"reports/storekit-diagnostic-build-settings.txt").exists()
+
+    def test_each_first_failure_retains_real_exit_and_blocks_all_later_stages(self):
+        codes=(37,65,66,67,68)
+        traces=[["identity"],["identity","settings"],["identity","settings","filter","archive"],
+                ["identity","settings","filter","archive","export"],
+                ["identity","settings","filter","archive","export","certification"]]
+        for stage,code in enumerate(codes,1):
+            with self.subTest(stage=stage):
+                results,trace,settings=self.exercise(stage)
+                self.assertEqual(results,[0]*(stage-1)+[code])
+                self.assertEqual(trace,traces[stage-1])
+                self.assertEqual(settings,stage>=3)
+
+    def test_success_runs_all_five_boundaries_in_original_order(self):
+        results,trace,settings=self.exercise(0)
+        self.assertEqual(results,[0]*5)
+        self.assertEqual(trace,["identity","settings","filter","archive","export","certification"])
+        self.assertTrue(settings)
+
+    def test_settings_capture_cannot_be_replaced_by_a_successful_pipeline(self):
+        text=WORKFLOW.read_text()
+        mutant=text.replace(' || xcode_status=$?\n',' | cat\n',1)
+        with self.assertRaises(AssertionError):restore_archive_block(mutant)
+
+    def test_native_or_export_command_mutations_cannot_pass_preservation(self):
+        text=WORKFLOW.read_text()
+        for old,new in (("-destination 'generic/platform=iOS'","-destination OTHER"),
+                        ("<key>testFlightInternalTestingOnly</key><true/>",
+                         "<key>testFlightInternalTestingOnly</key><false/>"),
+                        ("CURRENT_PROJECT_VERSION=\"$DIAGNOSTIC_BUILD_NUMBER\"","CURRENT_PROJECT_VERSION=16")):
+            with self.subTest(old=old),self.assertRaises(AssertionError):
+                restore_archive_block(text.replace(old,new,1))
+
+    def test_cleanup_proof_logic_and_upload_path_remain_structurally_unchanged(self):
+        old=delivery.cert.git("show",delivery.ARCHIVE_BASE+":tools/apple_storekit_testflight_delivery.py").decode()
+        new=(ROOT/"tools/apple_storekit_testflight_delivery.py").read_text()
+        functions=lambda text:{n.name:n for n in ast.parse(text).body if isinstance(n,ast.FunctionDef)}
+        before,after=functions(old),functions(new)
+        for name in before.keys()-{"source_guard","finish"}:
+            self.assertEqual(ast.dump(before[name]),ast.dump(after[name]),name)
+        # Only the cleanup delegate/reporting block is replaced inside finish;
+        # final evidence validation, accepted-upload truth and fail-closed gate stay exact.
+        before=copy.deepcopy(before["finish"]);after=copy.deepcopy(after["finish"])
+        old_cleanup=next(i for i,n in enumerate(before.body) if isinstance(n,ast.Try)
+                         and "cleanup_private" in ast.unparse(n))
+        new_cleanup=next(i for i,n in enumerate(after.body) if isinstance(n,ast.Assign)
+                         and isinstance(n.value,ast.Call) and getattr(n.value.func,"id","")=="cleanup_delivery")
+        self.assertEqual(ast.dump(ast.Module(body=before.body[:old_cleanup],type_ignores=[])),
+                         ast.dump(ast.Module(body=after.body[:new_cleanup],type_ignores=[])))
+        self.assertEqual(ast.dump(ast.Module(body=before.body[old_cleanup+1:],type_ignores=[])),
+                         ast.dump(ast.Module(body=after.body[new_cleanup+4:],type_ignores=[])))
+
+
+class CleanupStageVisibilityTests(unittest.TestCase):
+    def run_case(self, mode="success"):
+        with tempfile.TemporaryDirectory() as temporary:
+            root=delivery.cert.private_directory(temporary)
+            (root/"home").mkdir(parents=True)
+            (root/"logs").mkdir()
+            (root/".owned").write_text(delivery.cert.PRIVATE_MARKER)
+            profile=root/"home/Library/MobileDevice/Provisioning Profiles"/(delivery.cert.release.PROFILE_UUID+".mobileprovision")
+            profile.parent.mkdir(parents=True)
+            profile.write_text("SYNTHETIC_PRIVATE_PROFILE")
+            (root/"installed-profile").write_text(str(profile))
+            keychain=root/"signing.keychain-db";keychain.write_text("SYNTHETIC_PRIVATE_KEYCHAIN")
+            if mode=="wrong_marker":(root/"installed-profile").write_text(str(root/"unapproved"))
+            if mode=="unowned":(root/".owned").write_text("WRONG")
+            real_unlink=Path.unlink;real_rmtree=delivery.shutil.rmtree
+            calls=[]
+            def native(args,**kwargs):
+                calls.append(args[:2])
+                if args[:2]==["security","delete-keychain"]:
+                    if mode not in ("delete_failed","registry_failed"):
+                        real_unlink(keychain)
+                    return subprocess.CompletedProcess(args,1 if mode in ("delete_failed","failed_but_absent") else 0,b"",b"SYNTHETIC_PRIVATE_ERROR")
+                self.assertEqual(args,["security","list-keychains","-d","user"])
+                if mode=="ownership_changed":(root/".owned").write_text("WRONG")
+                remains=mode=="delete_failed"
+                return subprocess.CompletedProcess(args,1 if mode=="registry_failed" else 0,
+                       json.dumps(str(keychain)).encode() if remains else b"",b"SYNTHETIC_PRIVATE_ERROR")
+            def unlink(path,*a,**kw):
+                if path==profile and mode=="profile_failed":raise OSError("SYNTHETIC_PRIVATE_ERROR")
+                return real_unlink(path,*a,**kw)
+            def tree(path):
+                self.assertEqual(path,root)
+                if mode=="tree_failed":raise OSError("SYNTHETIC_PRIVATE_ERROR")
+                real_rmtree(path)
+                if mode=="tree_failed_but_absent":raise OSError("SYNTHETIC_PRIVATE_ERROR")
+            stdout,stderr=io.StringIO(),io.StringIO()
+            with patch.object(delivery.Path,"home",return_value=root/"home"), \
+                    patch.object(delivery.subprocess,"run",side_effect=native), \
+                    patch.object(delivery.shutil,"rmtree",side_effect=tree), \
+                    patch.object(delivery.Path,"unlink",new=unlink), \
+                    contextlib.redirect_stdout(stdout),contextlib.redirect_stderr(stderr):
+                result=delivery.cleanup_delivery(temporary)
+            self.assertEqual(stdout.getvalue()+stderr.getvalue(),"")
+            self.assertNotIn("SYNTHETIC",json.dumps(result))
+            self.assertNotIn(str(root),json.dumps(result))
+            return result,calls,root.exists()
+
+    def test_independent_success_proves_all_five_stages_and_all_resources_absent(self):
+        result,calls,exists=self.run_case()
+        self.assertEqual(result["status"],"PASS")
+        self.assertEqual(len(result["stages"]),5)
+        self.assertTrue(all(r["status"]=="PASS" for r in result["stages"].values()))
+        self.assertEqual(result["resources"],dict.fromkeys(("workspace","profile","keychain"),"ABSENT"))
+        self.assertEqual(calls,[["security","delete-keychain"],["security","list-keychains"]])
+        self.assertFalse(exists)
+
+    def test_unowned_workspace_never_deletes_or_queries_native_resources(self):
+        result,calls,exists=self.run_case("unowned")
+        self.assertEqual(result["status"],"FAIL")
+        self.assertEqual(result["stages"]["C01_OWNERSHIP"]["category"],"OWNERSHIP_UNVERIFIED")
+        self.assertEqual(result["stages"]["C02_PROFILE"]["status"],"NOT_RUN")
+        self.assertTrue(all(value=="UNVERIFIED" for value in result["resources"].values()))
+        self.assertEqual(calls,[])
+        self.assertTrue(exists)
+
+    def test_profile_removal_failure_remains_visible_after_tree_success(self):
+        result,_,exists=self.run_case("profile_failed")
+        self.assertEqual(result["status"],"FAIL")
+        self.assertEqual(result["stages"]["C02_PROFILE"],{"status":"FAIL","category":"REMOVAL_FAILED"})
+        self.assertEqual(result["stages"]["C04_WORKSPACE"]["status"],"PASS")
+        self.assertEqual(result["stages"]["C05_ABSENCE"],{"status":"PASS","category":"ABSENT_WITH_PRIOR_FAILURE"})
+        self.assertFalse(exists)
+
+    def test_wrong_profile_marker_is_rejected_even_after_owned_tree_removal(self):
+        result,_,exists=self.run_case("wrong_marker")
+        self.assertEqual(result["status"],"FAIL")
+        self.assertEqual(result["stages"]["C02_PROFILE"]["category"],"OWNERSHIP_UNVERIFIED")
+        self.assertFalse(exists)
+
+    def test_native_deletion_failure_cannot_be_hidden_by_filesystem_absence(self):
+        result,_,exists=self.run_case("delete_failed")
+        self.assertEqual(result["status"],"FAIL")
+        self.assertEqual(result["resources"]["keychain"],"UNVERIFIED")
+        self.assertEqual(result["stages"]["C03_KEYCHAIN"]["category"],"RESOURCE_REMAINS")
+        self.assertEqual(result["stages"]["C05_ABSENCE"]["category"],"ABSENCE_UNVERIFIED")
+        self.assertFalse(exists)
+
+    def test_failed_native_operation_is_observable_when_absence_is_independently_verified(self):
+        result,_,_=self.run_case("failed_but_absent")
+        self.assertEqual(result["status"],"FAIL")
+        self.assertEqual(result["stages"]["C03_KEYCHAIN"]["category"],"OPERATION_FAILED_BUT_ABSENT")
+        self.assertEqual(result["stages"]["C05_ABSENCE"]["category"],"ABSENT_WITH_PRIOR_FAILURE")
+
+    def test_registry_query_failure_never_certifies_keychain_absence(self):
+        result,_,exists=self.run_case("registry_failed")
+        self.assertEqual(result["status"],"FAIL")
+        self.assertEqual(result["resources"]["keychain"],"UNVERIFIED")
+        self.assertEqual(result["stages"]["C03_KEYCHAIN"]["category"],"ABSENCE_UNVERIFIED")
+        self.assertFalse(exists)
+
+    def test_workspace_removal_failure_and_actual_remaining_resources_are_separate(self):
+        result,_,exists=self.run_case("tree_failed")
+        self.assertEqual(result["status"],"FAIL")
+        self.assertEqual(result["stages"]["C04_WORKSPACE"]["category"],"REMOVAL_FAILED")
+        self.assertEqual(result["resources"]["workspace"],"PRESENT")
+        self.assertEqual(result["resources"]["profile"],"ABSENT")
+        self.assertEqual(result["resources"]["keychain"],"ABSENT")
+        self.assertEqual(result["stages"]["C05_ABSENCE"]["category"],"RESOURCE_REMAINS")
+        self.assertTrue(exists)
+
+    def test_workspace_operation_error_with_final_absence_remains_a_failure(self):
+        result,_,exists=self.run_case("tree_failed_but_absent")
+        self.assertEqual(result["status"],"FAIL")
+        self.assertEqual(result["stages"]["C04_WORKSPACE"]["category"],"REMOVAL_FAILED")
+        self.assertEqual(result["stages"]["C05_ABSENCE"]["category"],"ABSENT_WITH_PRIOR_FAILURE")
+        self.assertFalse(exists)
+
+    def test_ownership_is_rechecked_immediately_before_recursive_removal(self):
+        result,_,exists=self.run_case("ownership_changed")
+        self.assertEqual(result["status"],"FAIL")
+        self.assertEqual(result["stages"]["C04_WORKSPACE"]["category"],"OWNERSHIP_UNVERIFIED")
+        self.assertTrue(exists)
+
+    def test_fixed_public_schema_has_no_path_raw_error_or_arbitrary_category(self):
+        statuses={"PASS","FAIL","NOT_RUN"}
+        categories={"DEPENDENCY_FAILED","OWNERSHIP_VERIFIED","OWNERSHIP_UNVERIFIED",
+                    "ABSENCE_VERIFIED","REMOVAL_FAILED","ABSENCE_UNVERIFIED","RESOURCE_REMAINS",
+                    "OPERATION_FAILED_BUT_ABSENT","REMOVAL_FAILED_ABSENCE_UNVERIFIED","ABSENT_WITH_PRIOR_FAILURE"}
+        for mode in ("success","unowned","profile_failed","wrong_marker","delete_failed","failed_but_absent",
+                     "registry_failed","tree_failed","tree_failed_but_absent","ownership_changed"):
+            result,_,_=self.run_case(mode)
+            for record in result["stages"].values():
+                self.assertEqual(set(record),{"status","category"})
+                self.assertIn(record["status"],statuses)
+                self.assertIn(record["category"],categories)
+
+    def test_wrong_private_home_cannot_delete_outside_owned_tree(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root=delivery.cert.private_directory(temporary);root.mkdir()
+            (root/".owned").write_text(delivery.cert.PRIVATE_MARKER)
+            with patch.object(delivery.Path,"home",return_value=Path(temporary)/"unrelated"), \
+                    patch.object(delivery.subprocess,"run") as native,patch.object(delivery.shutil,"rmtree") as tree:
+                result=delivery.cleanup_delivery(temporary)
+            self.assertEqual(result["status"],"FAIL")
+            native.assert_not_called();tree.assert_not_called()
+
+    def test_latest_p04_parent_inventory_and_mode_remain_pinned(self):
+        for options in ({"p04_parent":"9"*40},{"p04_parent":delivery.P04_BASE+" "+"8"*40},
+                        {"p04_inventory":b""},{"p04_inventory":b"M\tjs/gridly-paid-ui.mjs"}):
+            with self.subTest(options=options),patch.object(delivery.cert,"git",side_effect=source_git(**options)), \
                     patch.object(delivery.subprocess,"run"),patch.object(delivery.cert,"original_contracts"),self.assertRaises(ValueError):
                 delivery.source_guard(COMMIT,True)
 

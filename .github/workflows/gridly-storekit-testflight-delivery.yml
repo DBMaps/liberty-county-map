@@ -199,28 +199,58 @@ jobs:
           cp "$DIAGNOSTIC_PRIVATE_ROOT/distribution.mobileprovision" "$profile_path"
           { printf 'PROFILE_NAME=%s\n' "$PROFILE_NAME"; printf 'TEAM_ID=%s\n' "$TEAM_ID"; } >> "$GITHUB_ENV"
           rm -f "$DIAGNOSTIC_PRIVATE_ROOT/distribution.mobileprovision" "$DIAGNOSTIC_PRIVATE_ROOT/profile.plist"
-      - name: Archive and export isolated diagnostic artifact locally
+      - name: Signing identity precheck
         shell: bash
         run: |
           set -euo pipefail
           set +x
           umask 077
-          exec > "$DIAGNOSTIC_PRIVATE_ROOT/logs/step-7.log" 2>&1
+          exec > "$DIAGNOSTIC_PRIVATE_ROOT/logs/step-7-1.log" 2>&1
           cd "$DELIVERY_SOURCE_DIR"
           export TMPDIR="$DIAGNOSTIC_PRIVATE_ROOT/tmp/"
           security find-identity -v -p codesigning "$DIAGNOSTIC_PRIVATE_ROOT/signing.keychain-db" | grep -Fq '1264FCB7434D20490824D05F959D90D3825EA45C "Apple Distribution: DJ Burns Collective LLC (2XSH6R7K37)"'
-          archive="$DIAGNOSTIC_PRIVATE_ROOT/Gridly-StoreKit-Diagnostic-$DIAGNOSTIC_BUILD_NUMBER.xcarchive"
+      - name: Xcode build-settings query
+        shell: bash
+        run: |
+          set -euo pipefail
+          set +x
+          umask 077
+          exec > "$DIAGNOSTIC_PRIVATE_ROOT/logs/step-7-2.log" 2>&1
+          cd "$DELIVERY_SOURCE_DIR"
+          export TMPDIR="$DIAGNOSTIC_PRIVATE_ROOT/tmp/"
+          xcode_status=0
           xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release -destination 'generic/platform=iOS' \
             -derivedDataPath "$DIAGNOSTIC_PRIVATE_ROOT/gridly-storekit-diagnostic-derived-data" -clonedSourcePackagesDirPath "$DIAGNOSTIC_PRIVATE_ROOT/source-packages" \
             -showBuildSettings CURRENT_PROJECT_VERSION="$DIAGNOSTIC_BUILD_NUMBER" MARKETING_VERSION=1.0.0 \
             SWIFT_ACTIVE_COMPILATION_CONDITIONS='$(inherited) GRIDLY_STOREKIT_DIAGNOSTICS' \
-            DEVELOPMENT_TEAM="$TEAM_ID" CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY="Apple Distribution" PROVISIONING_PROFILE_SPECIFIER="$PROFILE_NAME" 2>&1 | \
-            awk -F ' = ' '/^Build settings for action .* and target App:$/ { in_app=1; next } /^Build settings for action .* and target / { in_app=0 } in_app && NF >= 2 { key=$1; sub(/^[[:space:]]+/, "", key); if (key ~ /^(CURRENT_PROJECT_VERSION|MARKETING_VERSION|SWIFT_ACTIVE_COMPILATION_CONDITIONS|CODE_SIGN_IDENTITY|CODE_SIGN_STYLE|DEVELOPMENT_TEAM|PROVISIONING_PROFILE_SPECIFIER|PRODUCT_BUNDLE_IDENTIFIER)$/) print key " = " $2 }' > "$DIAGNOSTIC_PRIVATE_ROOT/reports/storekit-diagnostic-build-settings.txt"
+            DEVELOPMENT_TEAM="$TEAM_ID" CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY="Apple Distribution" PROVISIONING_PROFILE_SPECIFIER="$PROFILE_NAME" > "$DIAGNOSTIC_PRIVATE_ROOT/logs/build-settings-raw.log" 2>&1 || xcode_status=$?
+          if [ "$xcode_status" -ne 0 ]; then exit "$xcode_status"; fi
+          awk -F ' = ' '/^Build settings for action .* and target App:$/ { in_app=1; next } /^Build settings for action .* and target / { in_app=0 } in_app && NF >= 2 { key=$1; sub(/^[[:space:]]+/, "", key); if (key ~ /^(CURRENT_PROJECT_VERSION|MARKETING_VERSION|SWIFT_ACTIVE_COMPILATION_CONDITIONS|CODE_SIGN_IDENTITY|CODE_SIGN_STYLE|DEVELOPMENT_TEAM|PROVISIONING_PROFILE_SPECIFIER|PRODUCT_BUNDLE_IDENTIFIER)$/) print key " = " $2 }' "$DIAGNOSTIC_PRIVATE_ROOT/logs/build-settings-raw.log" > "$DIAGNOSTIC_PRIVATE_ROOT/reports/storekit-diagnostic-build-settings.txt"
+      - name: Xcode archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          set +x
+          umask 077
+          exec > "$DIAGNOSTIC_PRIVATE_ROOT/logs/step-7-3.log" 2>&1
+          cd "$DELIVERY_SOURCE_DIR"
+          export TMPDIR="$DIAGNOSTIC_PRIVATE_ROOT/tmp/"
+          archive="$DIAGNOSTIC_PRIVATE_ROOT/Gridly-StoreKit-Diagnostic-$DIAGNOSTIC_BUILD_NUMBER.xcarchive"
           xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release -destination 'generic/platform=iOS' \
             -derivedDataPath "$DIAGNOSTIC_PRIVATE_ROOT/gridly-storekit-diagnostic-derived-data" -clonedSourcePackagesDirPath "$DIAGNOSTIC_PRIVATE_ROOT/source-packages" -archivePath "$archive" \
             CURRENT_PROJECT_VERSION="$DIAGNOSTIC_BUILD_NUMBER" MARKETING_VERSION=1.0.0 \
             SWIFT_ACTIVE_COMPILATION_CONDITIONS='$(inherited) GRIDLY_STOREKIT_DIAGNOSTICS' \
             DEVELOPMENT_TEAM="$TEAM_ID" CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY="Apple Distribution" PROVISIONING_PROFILE_SPECIFIER="$PROFILE_NAME" archive
+      - name: Internal-only IPA export
+        shell: bash
+        run: |
+          set -euo pipefail
+          set +x
+          umask 077
+          exec > "$DIAGNOSTIC_PRIVATE_ROOT/logs/step-7-4.log" 2>&1
+          cd "$DELIVERY_SOURCE_DIR"
+          export TMPDIR="$DIAGNOSTIC_PRIVATE_ROOT/tmp/"
+          archive="$DIAGNOSTIC_PRIVATE_ROOT/Gridly-StoreKit-Diagnostic-$DIAGNOSTIC_BUILD_NUMBER.xcarchive"
           cat > "$DIAGNOSTIC_PRIVATE_ROOT/DiagnosticExportOptions.plist" <<EOF
           <?xml version="1.0" encoding="UTF-8"?>
           <plist version="1.0"><dict>
@@ -234,6 +264,16 @@ jobs:
           </dict></plist>
           EOF
           xcodebuild -exportArchive -archivePath "$archive" -exportOptionsPlist "$DIAGNOSTIC_PRIVATE_ROOT/DiagnosticExportOptions.plist" -exportPath "$DIAGNOSTIC_PRIVATE_ROOT/gridly-diagnostic-export"
+      - name: Signed IPA certification
+        shell: bash
+        run: |
+          set -euo pipefail
+          set +x
+          umask 077
+          exec > "$DIAGNOSTIC_PRIVATE_ROOT/logs/step-7-5.log" 2>&1
+          cd "$DELIVERY_SOURCE_DIR"
+          export TMPDIR="$DIAGNOSTIC_PRIVATE_ROOT/tmp/"
+          archive="$DIAGNOSTIC_PRIVATE_ROOT/Gridly-StoreKit-Diagnostic-$DIAGNOSTIC_BUILD_NUMBER.xcarchive"
           ipa=$(find "$DIAGNOSTIC_PRIVATE_ROOT/gridly-diagnostic-export" -maxdepth 1 -name '*.ipa' -print -quit)
           test -n "$ipa" && test -f "$ipa"
           python3 -B tools/apple_storekit_diagnostic_certification.py certify \

@@ -16,6 +16,8 @@ import os
 import plistlib
 import re
 import subprocess
+import shutil
+import shlex
 import time
 import urllib.parse
 import urllib.request
@@ -32,6 +34,7 @@ CMS_BASE = "cbe3c297099dbca9c6d376848157de0253aeae39"
 CMS_REPAIR_BASE = "17e36af1f5a8cc5f7f8ed927fb3e7fae758ee991"
 SIGNING_VERIFIED_BASE = "b1e2b7a35dff887dfa4a464a19215b66893b0ee8"
 P04_BASE = "40824c760a65b56b1b0056d1d9b90d571b7f47d4"
+ARCHIVE_BASE = "45ce66b98b44bd6cea67820124e695483e7a6b9b"
 SIGNING_VERIFICATION_FILES = {
     "tools/apple_storekit_signing_diagnostic.py",
     "tests/storekit-signing-diagnostic.test.py",
@@ -92,7 +95,7 @@ FILES = {
 }
 # The historical four-file refinement is pinned at REFINEMENT_BASE.
 # REPAIR_FILES remains the pinned four-file CMS repair inventory.
-# Only one direct child of P04_BASE may modify the three FILES; all older inventories stay pinned.
+# Only one direct child of ARCHIVE_BASE may modify the three FILES; all older inventories stay pinned.
 REFINEMENT_FILES = FILES | {"tests/storekit-preflight-diagnostic.test.py"}
 REPAIR_FILES = FILES | {"tests/storekit-signing-diagnostic.test.py"}
 HISTORICAL_TAGS = {
@@ -112,6 +115,8 @@ HISTORICAL_TAGS = {
         ("0ec2230f6c42b4212afa18bf71d3045a0c978be3", SIGNING_VERIFIED_BASE),
     "gridly-storekit-testflight-deliver-15-" + P04_BASE:
         ("06dbef1c5ae5f5250b536d8f3b6232487b114f56", P04_BASE),
+    "gridly-storekit-testflight-deliver-15-" + ARCHIVE_BASE:
+        ("e71cf11b1fbca960527ad019762a12cb68b25600", ARCHIVE_BASE),
 }
 
 CONFIRMATIONS = {
@@ -204,11 +209,11 @@ def authorize(ref, commit, event_path, attempt):
 def source_guard(commit, clean):
     require(re.fullmatch(r"[0-9a-f]{40}", commit or ""), "exact source SHA required")
     pinned = {SOURCE, DELIVERY_BASE, OWNER_CORRECTION, PREFLIGHT_BASE, REFINEMENT_BASE,
-              SIGNING_BASE, CMS_BASE, CMS_REPAIR_BASE, SIGNING_VERIFIED_BASE, P04_BASE}
+              SIGNING_BASE, CMS_BASE, CMS_REPAIR_BASE, SIGNING_VERIFIED_BASE, P04_BASE, ARCHIVE_BASE}
     require(cert.git("rev-parse", "HEAD").decode().strip() == commit and commit not in pinned,
             "new reviewed delivery-support commit required")
     for child, parent in (
-        (commit, P04_BASE), (P04_BASE, SIGNING_VERIFIED_BASE),
+        (commit, ARCHIVE_BASE), (ARCHIVE_BASE, P04_BASE), (P04_BASE, SIGNING_VERIFIED_BASE),
         (SIGNING_VERIFIED_BASE, CMS_REPAIR_BASE),
         (CMS_REPAIR_BASE, CMS_BASE), (CMS_BASE, SIGNING_BASE), (SIGNING_BASE, REFINEMENT_BASE),
         (REFINEMENT_BASE, PREFLIGHT_BASE), (PREFLIGHT_BASE, OWNER_CORRECTION),
@@ -235,12 +240,13 @@ def source_guard(commit, clean):
         (CMS_BASE, CMS_REPAIR_BASE, "M", REPAIR_FILES),
         (CMS_REPAIR_BASE, SIGNING_VERIFIED_BASE, "M", SIGNING_VERIFICATION_FILES),
         (SIGNING_VERIFIED_BASE, P04_BASE, "M", DELIVERY_ALIGNMENT_FILES),
-        (P04_BASE, commit, "M", FILES),
+        (P04_BASE, ARCHIVE_BASE, "M", FILES),
+        (ARCHIVE_BASE, commit, "M", FILES),
         (SOURCE, commit, "A", FILES | PREFLIGHT_FILES | SIGNING_FILES | CMS_FILES),
     ):
         records = cert.git("diff", "--name-status", "--no-renames", base, target).decode().splitlines()
         require(set(records) == {status + "\t" + path for path in inventory} and len(records) == len(inventory),
-                "exact historical inventories and three-file P04 support correction required; all other source frozen")
+                "exact historical inventories and three-file archive/cleanup support correction required; all other source frozen")
         for path in inventory:
             require(cert.git("ls-tree", target, "--", path).decode().split()[0] == "100644",
                     "historical or current support file mode changed")
@@ -674,6 +680,122 @@ def transfer(root, commit, ipa, precheck=ready, credentials=None, token_factory=
     write_json(marker, {"status": "ACCEPTED", "source_commit": commit, "build": "15"})
 
 
+def cleanup_delivery(runner_temp):
+    """Only owned delivery resources; independent fixed results, never raw output."""
+    stages = {name: {"status": "NOT_RUN", "category": "DEPENDENCY_FAILED"} for name in (
+        "C01_OWNERSHIP", "C02_PROFILE", "C03_KEYCHAIN", "C04_WORKSPACE", "C05_ABSENCE")}
+    resources = dict.fromkeys(("workspace", "profile", "keychain"), "UNVERIFIED")
+    raw = []
+    def record(name, success, category):
+        stages[name] = {"status": "PASS" if success else "FAIL", "category": category}
+    def absent(path):
+        # lstat distinguishes absence from unreadability and dangling symlinks.
+        try:
+            path.lstat()
+        except FileNotFoundError:
+            return True
+        return False
+    def owned():
+        require(root.is_dir() and not root.is_symlink(), "unowned workspace")
+        marker = root / ".owned"
+        require(marker.is_file() and not marker.is_symlink()
+                and marker.read_text() == cert.PRIVATE_MARKER, "unowned workspace")
+    def private_details():
+        # Exclusive creation prevents following an existing log leaf. No public IO.
+        try:
+            logs = root / "logs"
+            if logs.is_dir() and not logs.is_symlink():
+                with (logs / "cleanup-private.log").open("xb") as target:
+                    target.write(b"\n".join(raw))
+        except Exception:
+            pass  # Private logging cannot bypass removal or certify cleanup.
+    try:
+        root = cert.private_directory(runner_temp)
+        owned()
+        require(Path.home() == root / "home", "private delivery home required")
+        profile = Path.home() / "Library/MobileDevice/Provisioning Profiles" / (cert.release.PROFILE_UUID + ".mobileprovision")
+        keychain = root / "signing.keychain-db"
+        # Never traverse symlinked profile ancestors or remove an unowned target.
+        for parent in (profile.parent, *profile.parents):
+            if parent == root:
+                break
+            require(not parent.is_symlink(), "unsafe profile parent")
+        record("C01_OWNERSHIP", True, "OWNERSHIP_VERIFIED")
+    except Exception as error:
+        raw.append(str(error).encode())
+        record("C01_OWNERSHIP", False, "OWNERSHIP_UNVERIFIED")
+        record("C05_ABSENCE", False, "ABSENCE_UNVERIFIED")
+        return {"status": "FAIL", "stages": stages, "resources": resources}
+    profile_category = "OWNERSHIP_UNVERIFIED"
+    try:
+        marker = root / "installed-profile"
+        if not absent(marker):
+            require(marker.is_file() and not marker.is_symlink(), "unsafe profile marker")
+            require(Path(marker.read_text()) == profile and not profile.is_symlink(), "wrong installed profile")
+            profile_category = "REMOVAL_FAILED"
+            profile.unlink(missing_ok=True)
+        profile_category = "ABSENCE_UNVERIFIED"
+        require(absent(profile), "profile remains or lacks installation ownership")
+        record("C02_PROFILE", True, "ABSENCE_VERIFIED")
+    except Exception as error:
+        raw.append(str(error).encode())
+        record("C02_PROFILE", False, profile_category)
+    native_absent = False
+    delete_failed = False
+    keychain_category = "OWNERSHIP_UNVERIFIED"
+    try:
+        require(not keychain.is_symlink(), "unsafe keychain")
+        if not absent(keychain):
+            keychain_category = "REMOVAL_FAILED"
+            deleted = subprocess.run(["security", "delete-keychain", str(keychain)],
+                                     check=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            raw.extend((deleted.stdout, deleted.stderr))
+            delete_failed = deleted.returncode != 0
+        # Query while the private HOME still exists. Tree removal must not erase
+        # the ability to distinguish a native keychain registration from a file.
+        keychain_category = "REMOVAL_FAILED_ABSENCE_UNVERIFIED" if delete_failed else "ABSENCE_UNVERIFIED"
+        listed = subprocess.run(["security", "list-keychains", "-d", "user"],
+                                check=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        raw.extend((listed.stdout, listed.stderr))
+        require(listed.returncode == 0, "native absence unverified")
+        names = shlex.split(listed.stdout.decode())
+        require(all(Path(name).is_absolute() for name in names), "invalid native listing")
+        native_absent = str(keychain) not in names
+        keychain_category = "RESOURCE_REMAINS"
+        require(native_absent and absent(keychain), "keychain remains")
+        record("C03_KEYCHAIN", not delete_failed,
+               "OPERATION_FAILED_BUT_ABSENT" if delete_failed else "ABSENCE_VERIFIED")
+    except Exception as error:
+        raw.append(str(error).encode())
+        record("C03_KEYCHAIN", False, keychain_category)
+    private_details()
+    workspace_category = "OWNERSHIP_UNVERIFIED"
+    try:
+        owned()  # Recheck immediately before the sole recursive deletion.
+        workspace_category = "REMOVAL_FAILED"
+        shutil.rmtree(root)
+        workspace_category = "ABSENCE_UNVERIFIED"
+        record("C04_WORKSPACE", absent(root), "ABSENCE_VERIFIED" if absent(root) else "RESOURCE_REMAINS")
+    except Exception as error:
+        raw.append(str(error).encode())
+        record("C04_WORKSPACE", False, workspace_category)
+    # Final filesystem checks run independently, even after earlier exceptions.
+    for name, path in (("workspace", root), ("profile", profile), ("keychain", keychain)):
+        try:
+            resources[name] = "ABSENT" if absent(path) else "PRESENT"
+        except Exception as error:
+            raw.append(str(error).encode())
+        if name == "keychain" and not native_absent:
+            resources[name] = "UNVERIFIED" if resources[name] == "ABSENT" else resources[name]
+    all_absent = all(value == "ABSENT" for value in resources.values())
+    prior_ok = all(value["status"] == "PASS" for name, value in stages.items() if name != "C05_ABSENCE")
+    category = ("ABSENCE_VERIFIED" if prior_ok else "ABSENT_WITH_PRIOR_FAILURE") if all_absent else (
+        "ABSENCE_UNVERIFIED" if "UNVERIFIED" in resources.values() else "RESOURCE_REMAINS")
+    record("C05_ABSENCE", all_absent, category)
+    return {"status": "PASS" if all_absent and prior_ok else "FAIL",
+            "stages": stages, "resources": resources}
+
+
 def finish(runner_temp, job_status):
     result = {"certification": "FAIL", "upload": "NOT_ATTEMPTED", "cleanup": "FAIL",
               "regressions": "NOT_CERTIFIED", "public_artifacts": "DISABLED",
@@ -698,11 +820,11 @@ def finish(runner_temp, job_status):
             result["certification"] = "PASS"
     except Exception:
         pass  # Never echo exception text, report fields, key identifiers or Apple output.
-    try:
-        if cert.cleanup_private(runner_temp):
-            result["cleanup"] = "PASS"
-    except Exception:
-        pass
+    # Fixed schema only; no raw exception or resource path may cross this boundary.
+    cleanup = cleanup_delivery(runner_temp)
+    result["cleanup"] = cleanup["status"]
+    result["cleanup_stages"] = cleanup["stages"]
+    result["resource_absence"] = cleanup["resources"]
     if result["cleanup"] != "PASS":
         result["certification"] = "FAIL"
     return result
