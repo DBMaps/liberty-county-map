@@ -230,14 +230,105 @@ def activation_report_expected(report, number):
     return {"build_number": number, "policy_sha256": release.sha256(policy.encode()), "cases": expected, "all_passed": True}
 
 
+
+PRIVATE_DIRECTORY = "gridly-storekit-private"
+PRIVATE_MARKER = "gridly-storekit-certification-v1\n"
+
+
+def private_directory(runner_temp):
+    parent = Path(runner_temp).resolve(strict=True)
+    assert parent.is_dir() and str(parent) not in ("/", "\\"), "runner temporary directory required"
+    root = parent / PRIVATE_DIRECTORY
+    assert not root.is_symlink() and not any(character in str(root) for character in "\r\n"), "unsafe private directory"
+    return root
+
+
+def prepare_private(runner_temp, github_env):
+    root = private_directory(runner_temp)
+    root.mkdir(mode=0o700)  # Never reuse a directory from a previous attempt.
+    (root / ".owned").write_text(PRIVATE_MARKER)
+    for name in ("logs", "reports", "tmp"):
+        (root / name).mkdir(mode=0o700)
+    with Path(github_env).open("a") as destination:
+        destination.write("DIAGNOSTIC_PRIVATE_ROOT=" + str(root) + "\n")
+    return {"status": "prepared"}
+
+
+def cleanup_private(runner_temp):
+    """Only this run's marked directory and its exact installed profile are removable."""
+    root = private_directory(runner_temp)
+    if not root.exists():
+        return True
+    assert (root / ".owned").is_file() and not (root / ".owned").is_symlink() and (root / ".owned").read_text() == PRIVATE_MARKER, "refuse unowned cleanup"
+    clean = True
+    try:
+        marker = root / "installed-profile"
+        if marker.exists():
+            installed = Path(marker.read_text())
+            expected = Path.home() / "Library/MobileDevice/Provisioning Profiles" / (release.PROFILE_UUID + ".mobileprovision")
+            assert installed == expected and not installed.is_symlink(), "refuse unrelated profile removal"
+            installed.unlink(missing_ok=True)
+    except Exception:
+        clean = False
+    try:
+        keychain = root / "signing.keychain-db"
+        if keychain.exists():
+            subprocess.run(["security", "delete-keychain", str(keychain)], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    except Exception:
+        clean = False
+    try:
+        shutil.rmtree(root)
+    except Exception:
+        clean = False
+    return clean and not root.exists()
+
+
+def finish_public(runner_temp, job_status):
+    """Never return raw report fields, exception text, paths, signing facts or logs."""
+    result = {"certification": "FAIL", "regressions": "NOT_CERTIFIED", "cleanup": "FAIL", "artifact_upload": "DISABLED", "distribution": "DISABLED"}
+    try:
+        root = private_directory(runner_temp)
+        assert (root / ".owned").is_file() and not (root / ".owned").is_symlink() and (root / ".owned").read_text() == PRIVATE_MARKER
+        assert job_status == "success"
+        reports = root / "reports"
+        authorization = json.loads((reports / "storekit-diagnostic-authorization.json").read_text())
+        preflight_report = json.loads((reports / "storekit-diagnostic-preflight.json").read_text())
+        certificate = json.loads((reports / "storekit-diagnostic-certification.json").read_text())
+        regressions = json.loads((reports / "storekit-diagnostic-regressions.json").read_text())
+        commit, number = authorization["source_commit"], build_number(authorization["build"])
+        assert re.fullmatch(r"[0-9a-f]{40}", commit)
+        assert authorization["authorization_tag"] == TAG_PREFIX + number + "-" + commit
+        assert all(authorization[field] is True for field in ("certification_authorized", "unused_build_number_confirmed", "baseline_exception_acknowledged"))
+        assert preflight_report["source_commit"] == certificate["source_commit"] == commit
+        assert preflight_report["build"] == certificate["build"] == number
+        assert certificate["status"] == "certified" and certificate["distribution_performed"] is False
+        assert preflight_report["original_contracts_unchanged"] is certificate["original_contracts_unchanged"] is certificate["signed_artifacts_unchanged"] is True
+        assert certificate["activation"] == activation_report_expected({}, number)
+        assert regressions == check_regressions(reports / "storekit-diagnostic-regressions.tap", regressions["exit_code"], True)
+        result["regressions"] = "BASELINE_EXCEPTION" if regressions["status"] == "baseline_exception" else "PASS"
+        result["certification"] = "PASS"
+    except Exception:
+        pass  # No error text or report content may reach public logs.
+    try:
+        if cleanup_private(runner_temp):
+            result["cleanup"] = "PASS"
+    except Exception:
+        pass
+    if result["cleanup"] != "PASS":
+        result["certification"] = "FAIL"
+    return result
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("mode", choices=["authorize-tag", "preflight", "regressions", "activation", "certify"])
+    parser.add_argument("mode", choices=["private-init", "finish-public", "authorize-tag", "preflight", "regressions", "activation", "certify"])
     parser.add_argument("--build-number")
     parser.add_argument("--commit")
     parser.add_argument("--ref")
     parser.add_argument("--github-env")
-    parser.add_argument("--output", required=True)
+    parser.add_argument("--output")
+    parser.add_argument("--runner-temp")
+    parser.add_argument("--job-status")
     parser.add_argument("--tap")
     parser.add_argument("--exit-code", type=int)
     parser.add_argument("--baseline-acknowledged", action="store_true")
@@ -247,6 +338,15 @@ def main():
     parser.add_argument("--settings")
     parser.add_argument("--activation-report")
     args = parser.parse_args()
+    if args.mode == "private-init":
+        prepare_private(args.runner_temp, args.github_env)
+        print('{"private_workspace":"PREPARED"}')
+        return
+    if args.mode == "finish-public":
+        result = finish_public(args.runner_temp, args.job_status)
+        print(json.dumps(result, sort_keys=True))
+        raise SystemExit(0 if result["certification"] == result["cleanup"] == "PASS" else 1)
+    assert args.output, "local report destination required"
     if args.mode == "authorize-tag":
         result = authorize_tag(args.ref, args.commit)
         assert args.github_env, "GitHub environment output required"

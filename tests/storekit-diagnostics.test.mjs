@@ -263,17 +263,19 @@ test('isolated workflow requires a deliberate certification tag and contains no 
  const workflow=readFileSync('.github/workflows/gridly-storekit-diagnostic-certification.yml','utf8');
  assert.match(workflow,/on:\n  push:\n    tags:\n      - 'gridly-storekit-diagnostic-certify-\*'\n\npermissions:/);
  assert.doesNotMatch(workflow,/^  (workflow_dispatch|pull_request|schedule|workflow_run|repository_dispatch):|^    branches:|\$\{\{ inputs\./m);
- for(const gate of ["github.repository == 'DBMaps/liberty-county-map'",'github.event.repository.private',"github.event_name == 'push'",'github.event.created == true','github.event.deleted == false','github.event.forced == false',"startsWith(github.ref, 'refs/tags/gridly-storekit-diagnostic-certify-')",'unused_build_number_confirmed','baseline_exception_acknowledged','certification_authorized'])assert.ok(workflow.includes(gate));
+ for(const gate of ["github.repository == 'DBMaps/liberty-county-map'","github.event_name == 'push'",'github.event.created == true','github.event.deleted == false','github.event.forced == false',"startsWith(github.ref, 'refs/tags/gridly-storekit-diagnostic-certify-')",'unused_build_number_confirmed','baseline_exception_acknowledged','certification_authorized'])assert.ok(workflow.includes(gate));
  assert.match(workflow,/ref: \$\{\{ github.sha \}\}/);assert.match(workflow,/fetch-depth: 0/);assert.match(workflow,/persist-credentials: false/);
  assert.match(workflow,/authorize-tag --ref "\$GITHUB_REF" --commit "\$GITHUB_SHA" --github-env "\$GITHUB_ENV"/);
  assert.ok(workflow.indexOf('authorize-tag')<workflow.indexOf('certification.py preflight'));
  assert.ok(workflow.indexOf('certification.py preflight')<workflow.indexOf('secrets.'));
- assert.match(workflow,/name: gridly-storekit-diagnostic-certification-\$\{\{ env.DIAGNOSTIC_BUILD_NUMBER \}\}/);
+ assert.doesNotMatch(workflow,/github\.event\.repository\.private|upload-artifact|actions\/cache|cache:|retention-days:/);
+ assert.match(workflow,/private-init --runner-temp "\$RUNNER_TEMP" --github-env "\$GITHUB_ENV"/);
+ assert.match(workflow,/if: always\(\)[\s\S]*finish-public --runner-temp "\$RUNNER_TEMP" --job-status "\$CERTIFICATION_JOB_STATUS"/);
  assert.match(workflow,/runs-on: macos-26/);assert.match(workflow,/node-version: '22'/);assert.match(workflow,/\^Xcode 26/);
  assert.match(workflow,/SWIFT_ACTIVE_COMPILATION_CONDITIONS='\$\(inherited\) GRIDLY_STOREKIT_DIAGNOSTICS'/);
  assert.doesNotMatch(workflow,/CURRENT_PROJECT_VERSION=\d|--upload-app|--validate-app|altool|notarytool|ASC_PRIVATE_KEY|APPLE_ID_USERNAME|fastlane|pilot upload|gh api/);
  assert.match(workflow,/<key>destination<\/key><string>export<\/string>/);
- assert.match(workflow,/gridly-storekit-diagnostic-certification-/);assert.match(workflow,/regression_exit=\$\?/);assert.match(workflow,/--baseline-acknowledged/);
+ assert.match(workflow,/regression_exit=\$\?/);assert.match(workflow,/--baseline-acknowledged/);
  const {execFileSync}=requireForDiagnostics('node:child_process');
  for(const path of ['.github/workflows/gridly-apple-build-9.yml','tools/apple_native_parity.py'])assert.equal(readFileSync(path,'utf8').replace(/\r\n/g,'\n'),execFileSync('git',['show','e0b51235:'+path]).toString().replace(/\r\n/g,'\n'));
  const bash=process.platform==='win32'?'C:/Program Files/Git/bin/bash.exe':'bash';
@@ -359,4 +361,111 @@ for options in ({'event':'c'*40},{'head':'c'*40},{'branch':'c'*40},{'kind':'comm
 print('strict certification-tag authorization PASS')
 `;
  assert.match(execFileSync(python,['-B','-c',checks],{encoding:'utf8'}),/authorization PASS/);
+});
+
+
+test('public certification keeps all command output private and has no artifact or cache publication path',()=>{
+ const workflow=readFileSync('.github/workflows/gridly-storekit-diagnostic-certification.yml','utf8');
+ const {execFileSync,spawnSync}=requireForDiagnostics('node:child_process');
+ const {mkdtempSync,mkdirSync,rmSync}=requireForDiagnostics('node:fs');
+ const {tmpdir}=requireForDiagnostics('node:os');const {join}=requireForDiagnostics('node:path');
+ const root=mkdtempSync(join(tmpdir(),'gridly-private-output-test-'));
+ const bash=process.platform==='win32'?'C:/Program Files/Git/bin/bash.exe':'bash';
+ try{
+  mkdirSync(join(root,'logs'));mkdirSync(join(root,'tmp'));
+  const blocks=[...workflow.matchAll(/^        run: \|\n((?:          .*\n|\n)+)/gm)].map(match=>match[1].replace(/^          /gm,''));
+  const privateBlocks=blocks.filter(body=>body.includes('exec > "$DIAGNOSTIC_PRIVATE_ROOT/logs/'));
+  assert.equal(blocks.length,9);assert.equal(privateBlocks.length,7);
+  for(const body of privateBlocks){
+   assert.ok(body.startsWith('set -euo pipefail\nset +x\numask 077\nexec > '));
+   const boundary='export TMPDIR="$DIAGNOSTIC_PRIVATE_ROOT/tmp/"\n';
+   assert.ok(body.includes(boundary));const prefix=body.split(boundary)[0]+boundary;
+   const result=spawnSync(bash,['--noprofile','--norc','-e','-o','pipefail','-c',prefix+"printf 'SYNTHETIC_PRIVATE_STDOUT'; printf 'SYNTHETIC_PRIVATE_STDERR' >&2; false\n"],{encoding:'utf8',env:{...process.env,DIAGNOSTIC_PRIVATE_ROOT:root.replace(/\\/g,'/')}});
+   assert.equal(result.status,1);assert.equal(result.stdout,'');assert.equal(result.stderr,'');
+   const log=body.match(/logs\/(step-\d+\.log)/)[1];assert.match(readFileSync(join(root,'logs',log),'utf8'),/SYNTHETIC_PRIVATE_STDOUT.*SYNTHETIC_PRIVATE_STDERR/s);
+  }
+  assert.equal(blocks.filter(body=>!body.includes('exec > ')).length,2);
+  for(const body of blocks.filter(body=>!body.includes('exec > ')))assert.match(body,/certification\.py (private-init|finish-public) /);
+  assert.doesNotMatch(workflow,/upload-artifact|actions\/cache|cache:|retention-days:|tee |set -x|cat "\$DIAGNOSTIC_PRIVATE_ROOT\/reports/);
+  for(const command of ['security create-keychain','security import','xcodebuild -exportArchive','certification.py certify'])assert.ok(privateBlocks.some(body=>body.includes(command)));
+  assert.match(workflow,/profile_path=.*Provisioning Profiles\/\$PROFILE_UUID\.mobileprovision/);
+  assert.match(workflow,/printf '%s' "\$profile_path" > "\$DIAGNOSTIC_PRIVATE_ROOT\/installed-profile"/);
+ }finally{rmSync(root,{recursive:true,force:true});}
+});
+
+test('public result exposes fixed statuses only and cleans signed fixtures on success, failure and cancellation',()=>{
+ const {execFileSync}=requireForDiagnostics('node:child_process');const python=process.env.GRIDLY_TEST_PYTHON??'python3';
+ const checks=String.raw`
+import contextlib, io, json, subprocess, sys, tempfile
+from pathlib import Path
+from unittest.mock import patch, Mock
+sys.path.insert(0,'tools')
+import apple_storekit_diagnostic_certification as cert
+secret='SYNTHETIC_PRIVATE_VALUE_NEVER_PUBLIC'
+number='999999999' # policy fixture only, not a selected build
+commit='a'*40
+expected_keys={'certification','regressions','cleanup','artifact_upload','distribution'}
+real_run=subprocess.run
+def route_security(mock):
+    def run(command,*args,**kwargs):
+        if command[0]=='security': return mock(command,*args,**kwargs)
+        return real_run(command,*args,**kwargs)
+    return run
+def seed(parent, reports=True):
+    env=parent/'github-env'
+    cert.prepare_private(parent,env)
+    root=cert.private_directory(parent)
+    assert env.read_text()=='DIAGNOSTIC_PRIVATE_ROOT='+str(root)+'\n'
+    (root/'signed.ipa').write_text(secret)
+    (root/'logs/raw.log').write_text(secret)
+    if reports:
+        authorization={'source_commit':commit,'build':number,'authorization_tag':cert.TAG_PREFIX+number+'-'+commit,'certification_authorized':True,'unused_build_number_confirmed':True,'baseline_exception_acknowledged':True}
+        preflight={'source_commit':commit,'build':number,'original_contracts_unchanged':True}
+        certificate={'status':'certified','source_commit':commit,'build':number,'original_contracts_unchanged':True,'signed_artifacts_unchanged':True,'distribution_performed':False,'activation':cert.activation_report_expected({},number),'private_details':secret}
+        tap=root/'reports/storekit-diagnostic-regressions.tap'
+        tap.write_text('TAP version 13\nok 1 - good\nnot ok 2 - '+cert.FAILURE+'\n1..2\n# tests 2\n# fail 1\n# cancelled 0\n# skipped 0\n# todo 0\n# '+secret+'\n')
+        regressions=cert.check_regressions(tap,1,True)
+        for name,value in [('authorization',authorization),('preflight',preflight),('certification',certificate),('regressions',regressions)]:
+            (root/('reports/storekit-diagnostic-'+name+'.json')).write_text(json.dumps(value))
+    return root
+for status in ('success','failure','cancelled'):
+    with tempfile.TemporaryDirectory(prefix='gridly-private-lifecycle-') as temporary:
+        parent=Path(temporary);root=seed(parent)
+        home=parent/'synthetic-home'
+        installed=home/'Library/MobileDevice/Provisioning Profiles'/(cert.release.PROFILE_UUID+'.mobileprovision')
+        installed.parent.mkdir(parents=True);installed.write_text(secret)
+        (root/'installed-profile').write_text(str(installed))
+        (root/'signing.keychain-db').write_text(secret)
+        security=Mock()
+        with patch.object(Path,'home',return_value=home),patch.object(cert.subprocess,'run',side_effect=route_security(security)):
+            result=cert.finish_public(parent,status)
+            security.assert_called_once_with(['security','delete-keychain',str(root/'signing.keychain-db')],check=True,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+        assert set(result)==expected_keys and secret not in json.dumps(result)
+        assert result['certification']==('PASS' if status=='success' else 'FAIL')
+        assert result['regressions']==('BASELINE_EXCEPTION' if status=='success' else 'NOT_CERTIFIED')
+        assert result['cleanup']=='PASS' and result['artifact_upload']==result['distribution']=='DISABLED'
+        assert not root.exists() and not installed.exists()
+with tempfile.TemporaryDirectory(prefix='gridly-cleanup-failure-') as temporary:
+    parent=Path(temporary);root=seed(parent);(root/'signing.keychain-db').write_text(secret)
+    with patch.object(cert.subprocess,'run',side_effect=route_security(Mock(side_effect=RuntimeError(secret)))):
+        result=cert.finish_public(parent,'success')
+    assert result['certification']==result['cleanup']=='FAIL' and secret not in json.dumps(result)
+    assert not root.exists()
+with tempfile.TemporaryDirectory(prefix='gridly-cleanup-boundary-') as temporary:
+    parent=Path(temporary);root=seed(parent,False);outside=parent/'unrelated-profile';outside.write_text(secret)
+    (root/'installed-profile').write_text(str(outside))
+    assert cert.cleanup_private(parent) is False and outside.read_text()==secret and not root.exists()
+    root.mkdir();(root/'unrelated').write_text(secret)
+    try: cert.cleanup_private(parent)
+    except AssertionError: pass
+    else: raise AssertionError('unowned directory removed')
+    assert root.exists()
+with tempfile.TemporaryDirectory(prefix='gridly-public-cli-') as temporary:
+    parent=Path(temporary);root=seed(parent,False)
+    result=subprocess.run([sys.executable,'-B','tools/apple_storekit_diagnostic_certification.py','finish-public','--runner-temp',str(parent),'--job-status','failure'],capture_output=True,text=True)
+    assert result.returncode==1 and result.stderr=='' and secret not in result.stdout
+    assert set(json.loads(result.stdout))==expected_keys and not root.exists()
+print('private cleanup boundaries and sanitized public result PASS')
+`;
+ assert.match(execFileSync(python,['-B','-c',checks],{encoding:'utf8'}),/public result PASS/);
 });

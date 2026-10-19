@@ -9,6 +9,8 @@ name: Gridly StoreKit Diagnostic Certification Only
 #  "certification_authorized":true}
 # The tagged commit must equal the pushed codex/storekit-diagnostics branch head.
 # Ordinary branch pushes, PRs and tag updates/deletions cannot run certification.
+# Public repository: no artifact/cache uploads; raw output stays on this ephemeral runner.
+# The final always() step reports fixed statuses and removes private outputs/signing material.
 on:
   push:
     tags:
@@ -19,9 +21,12 @@ permissions:
 
 jobs:
   certify-storekit-diagnostics:
-    if: ${{ github.repository == 'DBMaps/liberty-county-map' && github.event.repository.private && github.event_name == 'push' && github.event.created == true && github.event.deleted == false && github.event.forced == false && startsWith(github.ref, 'refs/tags/gridly-storekit-diagnostic-certify-') }}
+    if: ${{ github.repository == 'DBMaps/liberty-county-map' && github.event_name == 'push' && github.event.created == true && github.event.deleted == false && github.event.forced == false && startsWith(github.ref, 'refs/tags/gridly-storekit-diagnostic-certify-') }}
     runs-on: macos-26
     timeout-minutes: 90
+    defaults:
+      run:
+        shell: bash --noprofile --norc -e -o pipefail {0}
     env:
       PYTHONDONTWRITEBYTECODE: '1'
     steps:
@@ -31,58 +36,83 @@ jobs:
           ref: ${{ github.sha }}
           fetch-depth: 0
           persist-credentials: false
+      - name: Prepare private runner-local workspace
+        shell: bash
+        run: |
+          set -euo pipefail
+          set +x
+          umask 077
+          python3 -B tools/apple_storekit_diagnostic_certification.py private-init --runner-temp "$RUNNER_TEMP" --github-env "$GITHUB_ENV"
       - name: Validate explicit owner authorization before build or secret access
         shell: bash
         run: |
           set -euo pipefail
-          python3 -B tools/apple_storekit_diagnostic_certification.py authorize-tag --ref "$GITHUB_REF" --commit "$GITHUB_SHA" --github-env "$GITHUB_ENV" --output .artifacts/storekit-diagnostic-authorization.json
+          set +x
+          umask 077
+          exec > "$DIAGNOSTIC_PRIVATE_ROOT/logs/step-1.log" 2>&1
+          export TMPDIR="$DIAGNOSTIC_PRIVATE_ROOT/tmp/"
+          python3 -B tools/apple_storekit_diagnostic_certification.py authorize-tag --ref "$GITHUB_REF" --commit "$GITHUB_SHA" --github-env "$GITHUB_ENV" --output "$DIAGNOSTIC_PRIVATE_ROOT/reports/storekit-diagnostic-authorization.json"
       - name: Verify source, build identity input and Xcode
         shell: bash
         run: |
           set -euo pipefail
+          set +x
+          umask 077
+          exec > "$DIAGNOSTIC_PRIVATE_ROOT/logs/step-2.log" 2>&1
+          export TMPDIR="$DIAGNOSTIC_PRIVATE_ROOT/tmp/"
           test "$EXPECTED_COMMIT_SHA" = "$GITHUB_SHA"
           xcodebuild -version | grep -E '^Xcode 26([. ]|$)'
-          python3 -B tools/apple_storekit_diagnostic_certification.py preflight --commit "$EXPECTED_COMMIT_SHA" --build-number "$DIAGNOSTIC_BUILD_NUMBER" --output .artifacts/storekit-diagnostic-preflight.json
+          python3 -B tools/apple_storekit_diagnostic_certification.py preflight --commit "$EXPECTED_COMMIT_SHA" --build-number "$DIAGNOSTIC_BUILD_NUMBER" --output "$DIAGNOSTIC_PRIVATE_ROOT/reports/storekit-diagnostic-preflight.json"
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: npm
       - name: Execute regressions and record any exact acknowledged baseline exception
         shell: bash
         run: |
           set -euo pipefail
+          set +x
+          umask 077
+          exec > "$DIAGNOSTIC_PRIVATE_ROOT/logs/step-3.log" 2>&1
+          export TMPDIR="$DIAGNOSTIC_PRIVATE_ROOT/tmp/"
           npm ci
           npx playwright install msedge
           set +e
-          node --test --test-reporter=tap tests/storekit-diagnostics.test.mjs tests/build13-native-pending-recovery.test.cjs tests/paid-report-authorization.test.mjs tests/lp24465-paid-access.test.mjs tests/build11-pending-report-recovery.test.cjs tests/lp24463-apple-storekit.test.mjs tests/native-packaging.test.mjs tests/lp24466s-settings-restore.test.mjs tests/lp24466s-admitted-runtime.test.mjs > .artifacts/storekit-diagnostic-regressions.tap 2>&1
+          node --test --test-reporter=tap tests/storekit-diagnostics.test.mjs tests/build13-native-pending-recovery.test.cjs tests/paid-report-authorization.test.mjs tests/lp24465-paid-access.test.mjs tests/build11-pending-report-recovery.test.cjs tests/lp24463-apple-storekit.test.mjs tests/native-packaging.test.mjs tests/lp24466s-settings-restore.test.mjs tests/lp24466s-admitted-runtime.test.mjs > "$DIAGNOSTIC_PRIVATE_ROOT/reports/storekit-diagnostic-regressions.tap" 2>&1
           regression_exit=$?
           set -e
-          python3 -B tools/apple_storekit_diagnostic_certification.py regressions --tap .artifacts/storekit-diagnostic-regressions.tap --exit-code "$regression_exit" --baseline-acknowledged --output .artifacts/storekit-diagnostic-regressions.json
-          cat .artifacts/storekit-diagnostic-regressions.json
+          python3 -B tools/apple_storekit_diagnostic_certification.py regressions --tap "$DIAGNOSTIC_PRIVATE_ROOT/reports/storekit-diagnostic-regressions.tap" --exit-code "$regression_exit" --baseline-acknowledged --output "$DIAGNOSTIC_PRIVATE_ROOT/reports/storekit-diagnostic-regressions.json"
       - name: Native lifecycle, diagnostic helper and parity tests
         shell: bash
         run: |
           set -euo pipefail
+          set +x
+          umask 077
+          exec > "$DIAGNOSTIC_PRIVATE_ROOT/logs/step-4.log" 2>&1
+          export TMPDIR="$DIAGNOSTIC_PRIVATE_ROOT/tmp/"
           python3 -B tests/build14-native-lifecycle.test.py
           python3 -B tests/storekit-diagnostics-native.test.py
           python3 -B tests/apple_native_parity_test.py
-          python3 -B tools/apple_storekit_diagnostic_certification.py activation --build-number "$DIAGNOSTIC_BUILD_NUMBER" --output .artifacts/storekit-diagnostic-activation.json
+          python3 -B tools/apple_storekit_diagnostic_certification.py activation --build-number "$DIAGNOSTIC_BUILD_NUMBER" --output "$DIAGNOSTIC_PRIVATE_ROOT/reports/storekit-diagnostic-activation.json"
       - name: Stage governed runtime and synchronize iOS
         shell: bash
         env:
           GRIDLY_NATIVE_PROVIDER_CONFIG_BASE64: ${{ secrets.GRIDLY_NATIVE_PROVIDER_CONFIG_BASE64 }}
         run: |
           set -euo pipefail
+          set +x
+          umask 077
+          exec > "$DIAGNOSTIC_PRIVATE_ROOT/logs/step-5.log" 2>&1
+          export TMPDIR="$DIAGNOSTIC_PRIVATE_ROOT/tmp/"
           test -n "$GRIDLY_NATIVE_PROVIDER_CONFIG_BASE64"
-          trap 'rm -f "$RUNNER_TEMP/diagnostic-native-provider-config.json"' EXIT
-          printf '%s' "$GRIDLY_NATIVE_PROVIDER_CONFIG_BASE64" | base64 -D > "$RUNNER_TEMP/diagnostic-native-provider-config.json"
+          trap 'rm -f "$DIAGNOSTIC_PRIVATE_ROOT/diagnostic-native-provider-config.json"' EXIT
+          printf '%s' "$GRIDLY_NATIVE_PROVIDER_CONFIG_BASE64" | base64 -D > "$DIAGNOSTIC_PRIVATE_ROOT/diagnostic-native-provider-config.json"
           npm run build:native-assets
-          node tools/native-web.mjs --runtime-config-file "$RUNNER_TEMP/diagnostic-native-provider-config.json" --report-file .artifacts/storekit-diagnostic-native-web.json
-          node tools/native-web.mjs --verify --report-file .artifacts/storekit-diagnostic-native-web.json
+          node tools/native-web.mjs --runtime-config-file "$DIAGNOSTIC_PRIVATE_ROOT/diagnostic-native-provider-config.json" --report-file "$DIAGNOSTIC_PRIVATE_ROOT/reports/storekit-diagnostic-native-web.json"
+          node tools/native-web.mjs --verify --report-file "$DIAGNOSTIC_PRIVATE_ROOT/reports/storekit-diagnostic-native-web.json"
           npx cap sync ios
           if test -f ios/App/Podfile; then (cd ios/App && pod install); fi
-          xcodebuild -resolvePackageDependencies -project ios/App/App.xcodeproj -scheme App
+          xcodebuild -resolvePackageDependencies -project ios/App/App.xcodeproj -scheme App -derivedDataPath "$DIAGNOSTIC_PRIVATE_ROOT/gridly-storekit-diagnostic-derived-data" -clonedSourcePackagesDirPath "$DIAGNOSTIC_PRIVATE_ROOT/source-packages"
       - name: Install distribution signing
         shell: bash
         env:
@@ -91,58 +121,73 @@ jobs:
           APPLE_PROVISION_PROFILE_BASE64: ${{ secrets.APPLE_PROVISION_PROFILE_BASE64 }}
         run: |
           set -euo pipefail
+          set +x
+          umask 077
+          exec > "$DIAGNOSTIC_PRIVATE_ROOT/logs/step-6.log" 2>&1
+          export TMPDIR="$DIAGNOSTIC_PRIVATE_ROOT/tmp/"
           umask 077
           cleanup_signing_material() {
-            rm -f "$RUNNER_TEMP/distribution-private.key" "$RUNNER_TEMP/distribution-cert.pem" "$RUNNER_TEMP/distribution.p12"
+            rm -f "$DIAGNOSTIC_PRIVATE_ROOT/distribution-private.key" "$DIAGNOSTIC_PRIVATE_ROOT/distribution-cert.pem" "$DIAGNOSTIC_PRIVATE_ROOT/distribution.p12"
             unset TEMP_P12_PASSWORD KEYCHAIN_PASSWORD
           }
           trap cleanup_signing_material EXIT
           test -n "$APPLE_DIST_PRIVATE_KEY_PEM_BASE64" && test -n "$APPLE_DIST_CERT_PEM_BASE64" && test -n "$APPLE_PROVISION_PROFILE_BASE64"
-          printf '%s' "$APPLE_DIST_PRIVATE_KEY_PEM_BASE64" | base64 -D > "$RUNNER_TEMP/distribution-private.key"
-          printf '%s' "$APPLE_DIST_CERT_PEM_BASE64" | base64 -D > "$RUNNER_TEMP/distribution-cert.pem"
-          printf '%s' "$APPLE_PROVISION_PROFILE_BASE64" | base64 -D > "$RUNNER_TEMP/distribution.mobileprovision"
-          KEY_PUBLIC_SHA=$(openssl pkey -in "$RUNNER_TEMP/distribution-private.key" -pubout -outform DER | shasum -a 256 | awk '{print $1}')
-          CERT_PUBLIC_SHA=$(openssl x509 -in "$RUNNER_TEMP/distribution-cert.pem" -pubkey -noout | openssl pkey -pubin -outform DER | shasum -a 256 | awk '{print $1}')
+          printf '%s' "$APPLE_DIST_PRIVATE_KEY_PEM_BASE64" | base64 -D > "$DIAGNOSTIC_PRIVATE_ROOT/distribution-private.key"
+          printf '%s' "$APPLE_DIST_CERT_PEM_BASE64" | base64 -D > "$DIAGNOSTIC_PRIVATE_ROOT/distribution-cert.pem"
+          printf '%s' "$APPLE_PROVISION_PROFILE_BASE64" | base64 -D > "$DIAGNOSTIC_PRIVATE_ROOT/distribution.mobileprovision"
+          KEY_PUBLIC_SHA=$(openssl pkey -in "$DIAGNOSTIC_PRIVATE_ROOT/distribution-private.key" -pubout -outform DER | shasum -a 256 | awk '{print $1}')
+          CERT_PUBLIC_SHA=$(openssl x509 -in "$DIAGNOSTIC_PRIVATE_ROOT/distribution-cert.pem" -pubkey -noout | openssl pkey -pubin -outform DER | shasum -a 256 | awk '{print $1}')
           test -n "$KEY_PUBLIC_SHA" && test "$KEY_PUBLIC_SHA" = "$CERT_PUBLIC_SHA"
           openssl version
           TEMP_P12_PASSWORD="$(openssl rand -hex 32)"
           export TEMP_P12_PASSWORD
-          openssl pkcs12 -export -legacy -inkey "$RUNNER_TEMP/distribution-private.key" -in "$RUNNER_TEMP/distribution-cert.pem" \
-            -out "$RUNNER_TEMP/distribution.p12" -passout env:TEMP_P12_PASSWORD
-          openssl pkcs12 -legacy -in "$RUNNER_TEMP/distribution.p12" -passin env:TEMP_P12_PASSWORD -info -noout >/dev/null 2>&1
+          openssl pkcs12 -export -legacy -inkey "$DIAGNOSTIC_PRIVATE_ROOT/distribution-private.key" -in "$DIAGNOSTIC_PRIVATE_ROOT/distribution-cert.pem" \
+            -out "$DIAGNOSTIC_PRIVATE_ROOT/distribution.p12" -passout env:TEMP_P12_PASSWORD
+          openssl pkcs12 -legacy -in "$DIAGNOSTIC_PRIVATE_ROOT/distribution.p12" -passin env:TEMP_P12_PASSWORD -info -noout >/dev/null 2>&1
           KEYCHAIN_PASSWORD="$(openssl rand -base64 32)"
-          security create-keychain -p "$KEYCHAIN_PASSWORD" gridly-storekit-diagnostics.keychain
-          security unlock-keychain -p "$KEYCHAIN_PASSWORD" gridly-storekit-diagnostics.keychain
-          security import "$RUNNER_TEMP/distribution.p12" -k gridly-storekit-diagnostics.keychain -P "$TEMP_P12_PASSWORD" -T /usr/bin/codesign
-          security set-key-partition-list -S apple-tool:,apple: -s -k "$KEYCHAIN_PASSWORD" gridly-storekit-diagnostics.keychain >/dev/null
-          security list-keychains -d user -s gridly-storekit-diagnostics.keychain
-          security cms -D -i "$RUNNER_TEMP/distribution.mobileprovision" > "$RUNNER_TEMP/profile.plist"
-          PROFILE_NAME=$(/usr/libexec/PlistBuddy -c 'Print :Name' "$RUNNER_TEMP/profile.plist")
-          PROFILE_UUID=$(/usr/libexec/PlistBuddy -c 'Print :UUID' "$RUNNER_TEMP/profile.plist")
-          TEAM_ID=$(/usr/libexec/PlistBuddy -c 'Print :TeamIdentifier:0' "$RUNNER_TEMP/profile.plist")
-          APP_ID=$(/usr/libexec/PlistBuddy -c 'Print :Entitlements:application-identifier' "$RUNNER_TEMP/profile.plist")
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$DIAGNOSTIC_PRIVATE_ROOT/signing.keychain-db"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$DIAGNOSTIC_PRIVATE_ROOT/signing.keychain-db"
+          security import "$DIAGNOSTIC_PRIVATE_ROOT/distribution.p12" -k "$DIAGNOSTIC_PRIVATE_ROOT/signing.keychain-db" -P "$TEMP_P12_PASSWORD" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple: -s -k "$KEYCHAIN_PASSWORD" "$DIAGNOSTIC_PRIVATE_ROOT/signing.keychain-db" >/dev/null
+          security list-keychains -d user -s "$DIAGNOSTIC_PRIVATE_ROOT/signing.keychain-db"
+          security cms -D -i "$DIAGNOSTIC_PRIVATE_ROOT/distribution.mobileprovision" > "$DIAGNOSTIC_PRIVATE_ROOT/profile.plist"
+          PROFILE_NAME=$(/usr/libexec/PlistBuddy -c 'Print :Name' "$DIAGNOSTIC_PRIVATE_ROOT/profile.plist")
+          PROFILE_UUID=$(/usr/libexec/PlistBuddy -c 'Print :UUID' "$DIAGNOSTIC_PRIVATE_ROOT/profile.plist")
+          TEAM_ID=$(/usr/libexec/PlistBuddy -c 'Print :TeamIdentifier:0' "$DIAGNOSTIC_PRIVATE_ROOT/profile.plist")
+          APP_ID=$(/usr/libexec/PlistBuddy -c 'Print :Entitlements:application-identifier' "$DIAGNOSTIC_PRIVATE_ROOT/profile.plist")
           test "$APP_ID" = "$TEAM_ID.com.gridlygo.gridly"
+          test "$PROFILE_NAME" = 'Gridly App Store Build 9'
+          test "$TEAM_ID" = '2XSH6R7K37'
+          test "$PROFILE_UUID" = "$(python3 -B -c 'import sys; sys.path.insert(0,"tools"); import apple_native_parity as release; print(release.PROFILE_UUID)')"
           mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
-          cp "$RUNNER_TEMP/distribution.mobileprovision" "$HOME/Library/MobileDevice/Provisioning Profiles/$PROFILE_UUID.mobileprovision"
+          profile_path="$HOME/Library/MobileDevice/Provisioning Profiles/$PROFILE_UUID.mobileprovision"
+          test ! -e "$profile_path"
+          printf '%s' "$profile_path" > "$DIAGNOSTIC_PRIVATE_ROOT/installed-profile"
+          cp "$DIAGNOSTIC_PRIVATE_ROOT/distribution.mobileprovision" "$profile_path"
           { printf 'PROFILE_NAME=%s\n' "$PROFILE_NAME"; printf 'TEAM_ID=%s\n' "$TEAM_ID"; } >> "$GITHUB_ENV"
-          rm -f "$RUNNER_TEMP/distribution.mobileprovision" "$RUNNER_TEMP/profile.plist"
+          rm -f "$DIAGNOSTIC_PRIVATE_ROOT/distribution.mobileprovision" "$DIAGNOSTIC_PRIVATE_ROOT/profile.plist"
       - name: Archive and export isolated diagnostic artifact locally
         shell: bash
         run: |
           set -euo pipefail
-          security find-identity -v -p codesigning gridly-storekit-diagnostics.keychain | grep -Fq '1264FCB7434D20490824D05F959D90D3825EA45C "Apple Distribution: DJ Burns Collective LLC (2XSH6R7K37)"'
-          archive="$RUNNER_TEMP/Gridly-StoreKit-Diagnostic-$DIAGNOSTIC_BUILD_NUMBER.xcarchive"
+          set +x
+          umask 077
+          exec > "$DIAGNOSTIC_PRIVATE_ROOT/logs/step-7.log" 2>&1
+          export TMPDIR="$DIAGNOSTIC_PRIVATE_ROOT/tmp/"
+          security find-identity -v -p codesigning "$DIAGNOSTIC_PRIVATE_ROOT/signing.keychain-db" | grep -Fq '1264FCB7434D20490824D05F959D90D3825EA45C "Apple Distribution: DJ Burns Collective LLC (2XSH6R7K37)"'
+          archive="$DIAGNOSTIC_PRIVATE_ROOT/Gridly-StoreKit-Diagnostic-$DIAGNOSTIC_BUILD_NUMBER.xcarchive"
           xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release -destination 'generic/platform=iOS' \
+            -derivedDataPath "$DIAGNOSTIC_PRIVATE_ROOT/gridly-storekit-diagnostic-derived-data" -clonedSourcePackagesDirPath "$DIAGNOSTIC_PRIVATE_ROOT/source-packages" \
             -showBuildSettings CURRENT_PROJECT_VERSION="$DIAGNOSTIC_BUILD_NUMBER" MARKETING_VERSION=1.0.0 \
             SWIFT_ACTIVE_COMPILATION_CONDITIONS='$(inherited) GRIDLY_STOREKIT_DIAGNOSTICS' \
             DEVELOPMENT_TEAM="$TEAM_ID" CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY="Apple Distribution" PROVISIONING_PROFILE_SPECIFIER="$PROFILE_NAME" 2>&1 | \
-            awk -F ' = ' '/^Build settings for action .* and target App:$/ { in_app=1; next } /^Build settings for action .* and target / { in_app=0 } in_app && NF >= 2 { key=$1; sub(/^[[:space:]]+/, "", key); if (key ~ /^(CURRENT_PROJECT_VERSION|MARKETING_VERSION|SWIFT_ACTIVE_COMPILATION_CONDITIONS|CODE_SIGN_IDENTITY|CODE_SIGN_STYLE|DEVELOPMENT_TEAM|PROVISIONING_PROFILE_SPECIFIER|PRODUCT_BUNDLE_IDENTIFIER)$/) print key " = " $2 }' > .artifacts/storekit-diagnostic-build-settings.txt
+            awk -F ' = ' '/^Build settings for action .* and target App:$/ { in_app=1; next } /^Build settings for action .* and target / { in_app=0 } in_app && NF >= 2 { key=$1; sub(/^[[:space:]]+/, "", key); if (key ~ /^(CURRENT_PROJECT_VERSION|MARKETING_VERSION|SWIFT_ACTIVE_COMPILATION_CONDITIONS|CODE_SIGN_IDENTITY|CODE_SIGN_STYLE|DEVELOPMENT_TEAM|PROVISIONING_PROFILE_SPECIFIER|PRODUCT_BUNDLE_IDENTIFIER)$/) print key " = " $2 }' > "$DIAGNOSTIC_PRIVATE_ROOT/reports/storekit-diagnostic-build-settings.txt"
           xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release -destination 'generic/platform=iOS' \
-            -derivedDataPath "$RUNNER_TEMP/gridly-storekit-diagnostic-derived-data" -archivePath "$archive" \
+            -derivedDataPath "$DIAGNOSTIC_PRIVATE_ROOT/gridly-storekit-diagnostic-derived-data" -clonedSourcePackagesDirPath "$DIAGNOSTIC_PRIVATE_ROOT/source-packages" -archivePath "$archive" \
             CURRENT_PROJECT_VERSION="$DIAGNOSTIC_BUILD_NUMBER" MARKETING_VERSION=1.0.0 \
             SWIFT_ACTIVE_COMPILATION_CONDITIONS='$(inherited) GRIDLY_STOREKIT_DIAGNOSTICS' \
             DEVELOPMENT_TEAM="$TEAM_ID" CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY="Apple Distribution" PROVISIONING_PROFILE_SPECIFIER="$PROFILE_NAME" archive
-          cat > "$RUNNER_TEMP/DiagnosticExportOptions.plist" <<EOF
+          cat > "$DIAGNOSTIC_PRIVATE_ROOT/DiagnosticExportOptions.plist" <<EOF
           <?xml version="1.0" encoding="UTF-8"?>
           <plist version="1.0"><dict>
             <key>method</key><string>app-store-connect</string>
@@ -152,30 +197,20 @@ jobs:
             <key>provisioningProfiles</key><dict><key>com.gridlygo.gridly</key><string>$PROFILE_NAME</string></dict>
           </dict></plist>
           EOF
-          xcodebuild -exportArchive -archivePath "$archive" -exportOptionsPlist "$RUNNER_TEMP/DiagnosticExportOptions.plist" -exportPath "$RUNNER_TEMP/gridly-diagnostic-export"
-          ipa=$(find "$RUNNER_TEMP/gridly-diagnostic-export" -maxdepth 1 -name '*.ipa' -print -quit)
+          xcodebuild -exportArchive -archivePath "$archive" -exportOptionsPlist "$DIAGNOSTIC_PRIVATE_ROOT/DiagnosticExportOptions.plist" -exportPath "$DIAGNOSTIC_PRIVATE_ROOT/gridly-diagnostic-export"
+          ipa=$(find "$DIAGNOSTIC_PRIVATE_ROOT/gridly-diagnostic-export" -maxdepth 1 -name '*.ipa' -print -quit)
           test -n "$ipa" && test -f "$ipa"
           python3 -B tools/apple_storekit_diagnostic_certification.py certify \
             --app "$archive/Products/Applications/App.app" --ipa "$ipa" \
             --build-number "$DIAGNOSTIC_BUILD_NUMBER" --commit "$EXPECTED_COMMIT_SHA" \
-            --web-report .artifacts/storekit-diagnostic-native-web.json --settings .artifacts/storekit-diagnostic-build-settings.txt \
-            --activation-report .artifacts/storekit-diagnostic-activation.json --output .artifacts/storekit-diagnostic-certification.json
-      - name: Retain diagnostic certification artifacts in GitHub only
-        if: ${{ success() && github.event.repository.private }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: gridly-storekit-diagnostic-certification-${{ env.DIAGNOSTIC_BUILD_NUMBER }}-${{ github.run_id }}
-          path: |
-            ${{ runner.temp }}/gridly-diagnostic-export/*.ipa
-            ${{ runner.temp }}/Gridly-StoreKit-Diagnostic-*.xcarchive
-            .artifacts/storekit-diagnostic-*.json
-            .artifacts/storekit-diagnostic-*.txt
-            .artifacts/storekit-diagnostic-regressions.tap
-          retention-days: 3
-          if-no-files-found: error
-      - name: Remove diagnostic signing material
+            --web-report "$DIAGNOSTIC_PRIVATE_ROOT/reports/storekit-diagnostic-native-web.json" --settings "$DIAGNOSTIC_PRIVATE_ROOT/reports/storekit-diagnostic-build-settings.txt" \
+            --activation-report "$DIAGNOSTIC_PRIVATE_ROOT/reports/storekit-diagnostic-activation.json" --output "$DIAGNOSTIC_PRIVATE_ROOT/reports/storekit-diagnostic-certification.json"
+      - name: Remove private outputs and report sanitized certification result
         if: always()
         shell: bash
+        env:
+          CERTIFICATION_JOB_STATUS: ${{ job.status }}
         run: |
-          rm -f "$RUNNER_TEMP/diagnostic-native-provider-config.json" "$RUNNER_TEMP/distribution-private.key" "$RUNNER_TEMP/distribution-cert.pem" "$RUNNER_TEMP/distribution.p12" "$RUNNER_TEMP/distribution.mobileprovision" "$RUNNER_TEMP/profile.plist" "$RUNNER_TEMP/DiagnosticExportOptions.plist"
-          security delete-keychain gridly-storekit-diagnostics.keychain 2>/dev/null || true
+          set -euo pipefail
+          set +x
+          python3 -B tools/apple_storekit_diagnostic_certification.py finish-public --runner-temp "$RUNNER_TEMP" --job-status "$CERTIFICATION_JOB_STATUS"
