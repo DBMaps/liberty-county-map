@@ -40,6 +40,7 @@ ARCHIVE_BASE = "45ce66b98b44bd6cea67820124e695483e7a6b9b"
 EVIDENCE_BASE = "779d67c7b89569db7cacb6a253eff6da8d3f74ef"
 ENVIRONMENT_BASE = "b27d780e3148a903917b7a05595f17006f1ab8e0"
 TRANSFER_BASE = "2cca00a2248e9a0c04ef5173e3364709a517f31e"
+AUTH_BASE = "03620e25ed19fc70ab9e493627fb84c4b9a3617c"
 SIGNING_VERIFICATION_FILES = {
     "tools/apple_storekit_signing_diagnostic.py",
     "tests/storekit-signing-diagnostic.test.py",
@@ -100,7 +101,7 @@ FILES = {
 }
 # The historical four-file refinement is pinned at REFINEMENT_BASE.
 # REPAIR_FILES remains the pinned four-file CMS repair inventory.
-# Only one direct child of TRANSFER_BASE may modify the three FILES; all older inventories stay pinned.
+# Only one direct child of AUTH_BASE may modify the three FILES; all older inventories stay pinned.
 REFINEMENT_FILES = FILES | {"tests/storekit-preflight-diagnostic.test.py"}
 REPAIR_FILES = FILES | {"tests/storekit-signing-diagnostic.test.py"}
 HISTORICAL_TAGS = {
@@ -128,6 +129,8 @@ HISTORICAL_TAGS = {
         ("c8a561e739bff54346c75864042d65b08b1b9b4e", ENVIRONMENT_BASE),
     "gridly-storekit-testflight-deliver-15-" + TRANSFER_BASE:
         ("7f756b44328fa46edccf8b4f4242460617382621", TRANSFER_BASE),
+    "gridly-storekit-testflight-deliver-15-" + AUTH_BASE:
+        ("4e9510666f0a51bdc9209a877e6dd420677abb7d", AUTH_BASE),
 }
 
 CONFIRMATIONS = {
@@ -146,6 +149,13 @@ OWNER_AUTO_CONFIRMATIONS = {
 # internal App Store Connect users, including access outside Gridly Internal.
 # Owner settings/unused-build attestations must still be fresh immediately before upload.
 OWNER_CHECK_TTL = 1800
+APPLE_ID_AUTH_FIELD = "apple_id_upload_authorization"
+UI_UNUSED_METHOD = "OWNER_AND_INDEPENDENT_APP_STORE_CONNECT_UI"
+UI_UNUSED_CONFIRMATIONS = {
+    "authorized", "owner_verified_unused", "independent_verified_unused",
+    "build_uploads_reviewed", "testflight_all_builds_reviewed",
+    "no_pending_or_uncertain_uploads", "exclusive_upload_window_acknowledged",
+}
 
 
 def require(value, reason):
@@ -167,7 +177,7 @@ def owner_authorization(value, commit, ref, now=None):
         "delivery_commit", "certified_source_commit", "certification_run_id",
         "diagnostic_build_number", "owner_checks_at",
     }
-    require(isinstance(value, dict) and set(value) in (fields, fields | {OWNER_AUTO_FIELD}), "exact owner authorization required")
+    require(isinstance(value, dict) and set(value) - {APPLE_ID_AUTH_FIELD} in (fields, fields | {OWNER_AUTO_FIELD}), "exact owner authorization required")
     require(isinstance(commit, str) and re.fullmatch(r"[0-9a-f]{40}", commit), "exact delivery commit required")
     require(ref == PREFIX + commit, "separate delivery authorization tag required")
     require(value["delivery_commit"] == commit and value["certified_source_commit"] == SOURCE, "wrong source")
@@ -193,7 +203,47 @@ def owner_authorization(value, commit, ref, now=None):
     checked = dt.datetime.strptime(stamp, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=dt.timezone.utc).timestamp()
     age = (time.time() if now is None else now) - checked
     require(0 <= age <= OWNER_CHECK_TTL, "owner distribution/build checks expired")
+    if APPLE_ID_AUTH_FIELD in value:
+        ui_unused_build(value, now)
     return value
+
+
+def ui_unused_build(authorization, now=None):
+    """Explicit owner-approved UI evidence, never an invented live API response."""
+    evidence = authorization.get(APPLE_ID_AUTH_FIELD)
+    require(isinstance(evidence, dict) and set(evidence) == UI_UNUSED_CONFIRMATIONS | {
+        "method", "owner_checked_at", "independent_checked_at",
+    }, "complete independent UI build evidence required")
+    require(evidence["method"] == UI_UNUSED_METHOD
+            and all(evidence[key] is True for key in UI_UNUSED_CONFIRMATIONS),
+            "independent UI unused-build confirmations required")
+    require(evidence["owner_checked_at"] == authorization["owner_checks_at"],
+            "UI owner check must match the owner authorization")
+    moment = time.time() if now is None else now
+    for name in ("owner_checked_at", "independent_checked_at"):
+        stamp = evidence[name]
+        require(isinstance(stamp, str) and re.fullmatch(r"\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ", stamp),
+                "genuine UTC UI evidence time required")
+        checked = dt.datetime.strptime(stamp, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=dt.timezone.utc).timestamp()
+        require(0 <= moment - checked <= OWNER_CHECK_TTL, "independent UI build evidence expired")
+    # Private receipt states the evidence source truthfully. No Apple query is claimed.
+    return {"build": "15", "version": "1.0.0", "unused": True, "verification_method": UI_UNUSED_METHOD,
+            "owner_checked_at": evidence["owner_checked_at"],
+            "independent_checked_at": evidence["independent_checked_at"]}
+
+
+def apple_id_command(root, ipa, values):
+    username = values.get("APPLE_ID_USERNAME", "")
+    password = values.get("APPLE_APP_SPECIFIC_PASSWORD", "")
+    require(isinstance(username, str) and 0 < len(username) <= 320
+            and username == username.strip() and not any(char.isspace() or ord(char) < 32 for char in username)
+            and isinstance(password, str) and 0 < len(password) <= 1024
+            and password == password.strip() and not any(char in password for char in "\r\n\0"),
+            "existing Apple ID upload credentials required")
+    # The supported @env form keeps the password out of argv and exception commands.
+    command = ["xcrun", "altool", "--type", "ios", "--file", str(ipa),
+               "--username", username, "--password", "@env:APPLE_APP_SPECIFIC_PASSWORD"]
+    return command, {"env": {**os.environ, "APPLE_APP_SPECIFIC_PASSWORD": password}}
 
 
 def event_gate(event, ref, commit, attempt, tag_object):
@@ -214,17 +264,19 @@ def authorize(ref, commit, event_path, attempt):
     event_gate(read_json(event_path), ref, commit, attempt, cert.git("rev-parse", "--verify", ref).decode().strip())
     value = json.loads(annotation, object_pairs_hook=cert.unique_json_object)
     owner_authorization(value, commit, ref)
+    if os.environ.get("GRIDLY_UPLOAD_AUTHENTICATION") == "APPLE_ID":
+        require(APPLE_ID_AUTH_FIELD in value, "explicit Apple ID UI authorization required")
     return {"authorization": value, "ref": ref, "source_commit": commit, "build": "15"}
 
 
 def source_guard(commit, clean):
     require(re.fullmatch(r"[0-9a-f]{40}", commit or ""), "exact source SHA required")
     pinned = {SOURCE, DELIVERY_BASE, OWNER_CORRECTION, PREFLIGHT_BASE, REFINEMENT_BASE,
-              SIGNING_BASE, CMS_BASE, CMS_REPAIR_BASE, SIGNING_VERIFIED_BASE, P04_BASE, ARCHIVE_BASE, EVIDENCE_BASE, ENVIRONMENT_BASE, TRANSFER_BASE}
+              SIGNING_BASE, CMS_BASE, CMS_REPAIR_BASE, SIGNING_VERIFIED_BASE, P04_BASE, ARCHIVE_BASE, EVIDENCE_BASE, ENVIRONMENT_BASE, TRANSFER_BASE, AUTH_BASE}
     require(cert.git("rev-parse", "HEAD").decode().strip() == commit and commit not in pinned,
             "new reviewed delivery-support commit required")
     for child, parent in (
-        (commit, TRANSFER_BASE), (TRANSFER_BASE, ENVIRONMENT_BASE), (ENVIRONMENT_BASE, EVIDENCE_BASE), (EVIDENCE_BASE, ARCHIVE_BASE), (ARCHIVE_BASE, P04_BASE), (P04_BASE, SIGNING_VERIFIED_BASE),
+        (commit, AUTH_BASE), (AUTH_BASE, TRANSFER_BASE), (TRANSFER_BASE, ENVIRONMENT_BASE), (ENVIRONMENT_BASE, EVIDENCE_BASE), (EVIDENCE_BASE, ARCHIVE_BASE), (ARCHIVE_BASE, P04_BASE), (P04_BASE, SIGNING_VERIFIED_BASE),
         (SIGNING_VERIFIED_BASE, CMS_REPAIR_BASE),
         (CMS_REPAIR_BASE, CMS_BASE), (CMS_BASE, SIGNING_BASE), (SIGNING_BASE, REFINEMENT_BASE),
         (REFINEMENT_BASE, PREFLIGHT_BASE), (PREFLIGHT_BASE, OWNER_CORRECTION),
@@ -255,12 +307,13 @@ def source_guard(commit, clean):
         (ARCHIVE_BASE, EVIDENCE_BASE, "M", FILES),
         (EVIDENCE_BASE, ENVIRONMENT_BASE, "M", FILES),
         (ENVIRONMENT_BASE, TRANSFER_BASE, "M", FILES),
-        (TRANSFER_BASE, commit, "M", FILES),
+        (TRANSFER_BASE, AUTH_BASE, "M", FILES),
+        (AUTH_BASE, commit, "M", FILES),
         (SOURCE, commit, "A", FILES | PREFLIGHT_FILES | SIGNING_FILES | CMS_FILES),
     ):
         records = cert.git("diff", "--name-status", "--no-renames", base, target).decode().splitlines()
         require(set(records) == {status + "\t" + path for path in inventory} and len(records) == len(inventory),
-                "exact historical inventories and three-file delivery-reporting correction required; all other source frozen")
+                "exact historical inventories and three-file Apple ID delivery correction required; all other source frozen")
         for path in inventory:
             require(cert.git("ls-tree", target, "--", path).decode().split()[0] == "100644",
                     "historical or current support file mode changed")
@@ -679,6 +732,7 @@ DELIVERY_CATEGORIES = set(DELIVERY_STAGE_FAILURES.values()) | {
     "SOURCE_GUARD_REJECTED", "SIGNED_PROOF_REJECTED", "IPA_BYTES_CHANGED",
     "CREDENTIAL_FORMAT_REJECTED", "CREDENTIAL_MATERIAL_REJECTED",
     "API_TOKEN_GENERATION_FAILED", "BUILD_NOT_CONFIRMED_UNUSED", "PREVIOUS_UPLOAD_ATTEMPT",
+    "APPLE_ID_CREDENTIALS_REJECTED", "UI_BUILD_EVIDENCE_REJECTED", "APPLE_ID_AUTHORIZATION_REJECTED",
 } | {
     origin + "_EXPORT_" + reason
     for origin in ("INPUT", "OUTPUT")
@@ -729,7 +783,7 @@ def delivery_failure_category(stage, error):
         "private tool home required": "DELIVERY_CONTEXT_REJECTED",
         "future authorized macOS workflow only": "DELIVERY_CONTEXT_REJECTED",
         "owner distribution/build checks expired": "OWNER_AUTHORIZATION_EXPIRED",
-        "exact historical inventories and three-file delivery-reporting correction required; all other source frozen": "SOURCE_GUARD_REJECTED",
+        "exact historical inventories and three-file Apple ID delivery correction required; all other source frozen": "SOURCE_GUARD_REJECTED",
         "tracked working source changed": "SOURCE_GUARD_REJECTED",
         "missing preflight/certification evidence": "SIGNED_PROOF_REJECTED",
         "signed certification required": "SIGNED_PROOF_REJECTED",
@@ -739,6 +793,13 @@ def delivery_failure_category(stage, error):
         "certified IPA bytes changed": "IPA_BYTES_CHANGED",
         "IPA changed before upload": "IPA_BYTES_CHANGED",
         "existing team API upload credentials required": "CREDENTIAL_FORMAT_REJECTED",
+        "existing Apple ID upload credentials required": "APPLE_ID_CREDENTIALS_REJECTED",
+        "explicit Apple ID UI authorization required": "APPLE_ID_AUTHORIZATION_REJECTED",
+        "complete independent UI build evidence required": "UI_BUILD_EVIDENCE_REJECTED",
+        "independent UI unused-build confirmations required": "UI_BUILD_EVIDENCE_REJECTED",
+        "UI owner check must match the owner authorization": "UI_BUILD_EVIDENCE_REJECTED",
+        "genuine UTC UI evidence time required": "UI_BUILD_EVIDENCE_REJECTED",
+        "independent UI build evidence expired": "UI_BUILD_EVIDENCE_REJECTED",
         "existing API signing material required": "CREDENTIAL_MATERIAL_REJECTED",
         "invalid signing response": "API_TOKEN_GENERATION_FAILED",
         "Build 15 already exists or availability is undetermined": "BUILD_NOT_CONFIRMED_UNUSED",
@@ -829,33 +890,46 @@ def transfer(root, commit, ipa, precheck=ready, credentials=None, token_factory=
     with delivery_stage("D02_CREDENTIAL_PRESENCE_FORMAT", progress):
         # Credentials are first read only AFTER authorization, signed certification and parity.
         values = os.environ if credentials is None else credentials
-        key, issuer = values.get("ASC_KEY_ID", ""), values.get("ASC_ISSUER_ID", "")
-        require(re.fullmatch(r"[A-Z0-9]{10}", key) and re.fullmatch(r"[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}", issuer), "existing team API upload credentials required")
-        key_path = root / "home/.appstoreconnect/private_keys" / ("AuthKey_" + key + ".p8")
-        key_path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
-        raw = base64.b64decode(values.get("ASC_PRIVATE_KEY_P8_BASE64", ""), validate=True)
-        require(raw.startswith(b"-----BEGIN PRIVATE KEY-----") and raw.rstrip().endswith(b"-----END PRIVATE KEY-----"), "existing API signing material required")
-        with key_path.open("xb") as stream:
-            stream.write(raw)
-        key_path.chmod(0o600)
-        command = ["xcrun", "altool", "--type", "ios", "--file", str(ipa), "--apiKey", key, "--apiIssuer", issuer]
+        authorization = authorization_guard(root, commit)
+        apple_id_mode = APPLE_ID_AUTH_FIELD in authorization
+        require(os.environ.get("GRIDLY_UPLOAD_AUTHENTICATION") != "APPLE_ID" or apple_id_mode,
+                "explicit Apple ID UI authorization required")
+        transport_options = {}
+        if apple_id_mode:
+            command, transport_options = apple_id_command(root, ipa, values)
+        else:
+            key, issuer = values.get("ASC_KEY_ID", ""), values.get("ASC_ISSUER_ID", "")
+            require(re.fullmatch(r"[A-Z0-9]{10}", key) and re.fullmatch(r"[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}", issuer), "existing team API upload credentials required")
+            key_path = root / "home/.appstoreconnect/private_keys" / ("AuthKey_" + key + ".p8")
+            key_path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
+            raw = base64.b64decode(values.get("ASC_PRIVATE_KEY_P8_BASE64", ""), validate=True)
+            require(raw.startswith(b"-----BEGIN PRIVATE KEY-----") and raw.rstrip().endswith(b"-----END PRIVATE KEY-----"), "existing API signing material required")
+            with key_path.open("xb") as stream:
+                stream.write(raw)
+            key_path.chmod(0o600)
+            command = ["xcrun", "altool", "--type", "ios", "--file", str(ipa), "--apiKey", key, "--apiIssuer", issuer]
     with delivery_stage("D03_APPLE_VALIDATION", progress):
-        execute([*command, "--validate-app"], check=True, cwd=root / "home")
+        execute([*command, "--validate-app"], check=True, cwd=root / "home", **transport_options)
     with delivery_stage("D04_POST_VALIDATION_VERIFICATION", progress):
         # Recheck frozen source, owner settings TTL, IPA digest, all reports after validation.
         current_proof, _ = precheck(root, commit, ipa)
     with delivery_stage("D05_LIVE_BUILD_AVAILABILITY", progress):
         check_started = clock()
-        token = token_factory(key, issuer, key_path)
-        unused = unused_build(lambda path: get(path, token))
+        if apple_id_mode:
+            # D05 retains its historical name; this mode verifies fresh UI evidence,
+            # not authenticated API availability. The owner explicitly approved this change.
+            unused = ui_unused_build(authorization_guard(root, commit), now=clock())
+        else:
+            token = token_factory(key, issuer, key_path)
+            unused = unused_build(lambda path: get(path, token))
         authorization_guard(root, commit)
         require(0 <= clock() - check_started <= 60, "build availability check expired")
         require(hashlib.sha256(ipa.read_bytes()).hexdigest() == current_proof["ipa_sha256"], "IPA changed before upload")
         write_json(root / "reports/delivery-availability.json", {**unused, "checked_at": int(clock())})
     with delivery_stage("D06_ACTUAL_UPLOAD", progress):
-        # No build/signing work or unrelated Apple operation between this GET and the upload.
+        # No build/signing work or unrelated Apple operation between this final unused-build gate and the upload.
         write_json(marker, {"status": "ATTEMPTED", "source_commit": commit, "build": "15"})
-        execute([*command, "--upload-app"], check=True, cwd=root / "home")
+        execute([*command, "--upload-app"], check=True, cwd=root / "home", **transport_options)
         write_json(marker, {"status": "ACCEPTED", "source_commit": commit, "build": "15"})
 
 

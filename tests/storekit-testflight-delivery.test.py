@@ -34,13 +34,67 @@ WORKFLOW = ROOT / ".github/workflows/gridly-storekit-testflight-delivery.yml"
 
 DELIVERY_REPORTING_FUNCTIONS = {
     "DeliveryCheckFailure", "verify_delivery_export", "delivery_failure_category",
-    "delivery_stage", "emit_delivery", "transfer_public",
+    "delivery_stage", "emit_delivery", "transfer_public", "ui_unused_build", "apple_id_command",
 }
+
+
+APPLE_ID_WORKFLOW_COMMENT = '# Apple ID delivery uses ONLY the two existing Apple ID secrets, never an API key.\n# REQUIRED additional annotation field: "apple_id_upload_authorization":{\n# "authorized":true,"method":"OWNER_AND_INDEPENDENT_APP_STORE_CONNECT_UI",\n# "owner_checked_at":"<same genuine UTC time as owner_checks_at>",\n# "independent_checked_at":"<genuine independent read-only UI check UTC time>",\n# "owner_verified_unused":true,"independent_verified_unused":true,\n# "build_uploads_reviewed":true,"testflight_all_builds_reviewed":true,\n# "no_pending_or_uncertain_uploads":true,"exclusive_upload_window_acknowledged":true}\n# The owner AND an independent reviewer must actually inspect App Store Connect\n# Build Uploads and all TestFlight builds before tagging; never fabricate evidence.\n# Both checks must remain within 1,800 seconds through the pre-upload gate.\n# D05\'s historical stage name now covers this explicit UI-evidence mode, not an API query.\n# No validation result alone is treated as proof that Build 15 is unused.\n# Do not include account identities, screenshots, raw Apple output or secrets in the tag.\n'
+
+
+def normalize_apple_id_delivery(source):
+    """Reverse only the explicitly reviewed Apple ID/UI additions for old-contract checks."""
+    tree = ast.parse(source)
+    for function in (n for n in tree.body if isinstance(n, ast.FunctionDef)):
+        if function.name == "owner_authorization":
+            for node in ast.walk(function):
+                if isinstance(node, ast.Compare) and isinstance(node.left, ast.BinOp) and ast.unparse(node.left) == "set(value) - {APPLE_ID_AUTH_FIELD}":
+                    node.left = node.left.left
+            removable = ast.parse("if APPLE_ID_AUTH_FIELD in value:\n    ui_unused_build(value, now)").body[0]
+            function.body = [n for n in function.body if ast.dump(n) != ast.dump(removable)]
+        if function.name == "authorize":
+            removable = ast.parse('if os.environ.get("GRIDLY_UPLOAD_AUTHENTICATION") == "APPLE_ID":\n    require(APPLE_ID_AUTH_FIELD in value, "explicit Apple ID UI authorization required")').body[0]
+            function.body = [n for n in function.body if ast.dump(n) != ast.dump(removable)]
+        if function.name == "transfer" and function.args.args[-1].arg == "progress":
+            credentials = function.body[2]
+            if any(isinstance(n, ast.If) and ast.unparse(n.test) == "apple_id_mode" for n in credentials.body):
+                branch = credentials.body[-1]
+                assert isinstance(branch, ast.If) and ast.unparse(branch.test) == "apple_id_mode"
+                expected = ast.parse('authorization = authorization_guard(root, commit)\napple_id_mode = APPLE_ID_AUTH_FIELD in authorization\nrequire(os.environ.get("GRIDLY_UPLOAD_AUTHENTICATION") != "APPLE_ID" or apple_id_mode, "explicit Apple ID UI authorization required")\ntransport_options = {}').body
+                assert [ast.dump(n) for n in credentials.body[1:-1]] == [ast.dump(n) for n in expected]
+                assert ast.dump(branch.body[0]) == ast.dump(ast.parse("command, transport_options = apple_id_command(root, ipa, values)").body[0])
+                credentials.body = credentials.body[:1] + branch.orelse
+                availability = function.body[5]
+                branch = availability.body[1]
+                assert isinstance(branch, ast.If) and ast.unparse(branch.test) == "apple_id_mode"
+                assert ast.dump(branch.body[0]) == ast.dump(ast.parse("unused = ui_unused_build(authorization_guard(root, commit), now=clock())").body[0])
+                availability.body = availability.body[:1] + branch.orelse + availability.body[2:]
+                for index in (3, 6):
+                    call = function.body[index].body[-2 if index == 6 else 0].value
+                    assert isinstance(call, ast.Call) and call.func.id == "execute"
+                    assert ast.dump(call.keywords[-1]) == ast.dump(ast.keyword(arg=None, value=ast.Name(id="transport_options",ctx=ast.Load())))
+                    call.keywords = call.keywords[:-1]
+    return ast.unparse(ast.fix_missing_locations(tree))
+
+
+def restore_apple_id_workflow(text):
+    old = delivery.cert.git("show", delivery.AUTH_BASE + ":.github/workflows/gridly-storekit-testflight-delivery.yml").decode()
+    comment = APPLE_ID_WORKFLOW_COMMENT
+    expected = old.replace("\n\n# LOCAL PREPARATION", "\n\n" + comment + "\n# LOCAL PREPARATION", 1)
+    expected = expected.replace("      PYTHONDONTWRITEBYTECODE: '1'", "      PYTHONDONTWRITEBYTECODE: '1'\n      GRIDLY_UPLOAD_AUTHENTICATION: 'APPLE_ID'", 1)
+    expected = expected.replace(
+        "          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}\n          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}\n          ASC_PRIVATE_KEY_P8_BASE64: ${{ secrets.ASC_PRIVATE_KEY_P8_BASE64 }}",
+        "          APPLE_ID_USERNAME: ${{ secrets.APPLE_ID_USERNAME }}\n          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}", 1)
+    historical = delivery.cert.git("show", delivery.TRANSFER_BASE + ":.github/workflows/gridly-storekit-testflight-delivery.yml").decode()
+    if text in (old, historical):
+        return text  # Exact pinned input also permits idempotent historical normalization.
+    if text != expected:
+        raise AssertionError("only reviewed Apple ID bindings, mode and UI contract comments authorized")
+    return old
 
 
 def normalize_delivery_reporting(source):
     """Reverse only reviewed stage wrappers; new tests verify their live behavior."""
-    tree=ast.parse(source)
+    tree=ast.parse(normalize_apple_id_delivery(source))
     for function in (node for node in tree.body if isinstance(node,ast.FunctionDef)):
         if function.name=="ready":
             for node in ast.walk(function):
@@ -71,6 +125,7 @@ def normalize_delivery_reporting(source):
 
 
 def restore_delivery_reporting(text):
+    text=restore_apple_id_workflow(text)
     old=delivery.cert.git("show",delivery.TRANSFER_BASE+":.github/workflows/gridly-storekit-testflight-delivery.yml").decode()
     line='          exec > "$DIAGNOSTIC_PRIVATE_ROOT/logs/step-8.log" 2>&1\n'
     expected=old.replace(line,'          # FD 3 carries only fixed delivery stages; raw Apple output stays private.\n          exec 3>&1\n'+line,1)
@@ -127,7 +182,7 @@ def owner_automatic_authorization():
             }}
 
 
-def source_git(*, parent=delivery.TRANSFER_BASE, base_parent=delivery.SOURCE,
+def source_git(*, parent=delivery.AUTH_BASE, base_parent=delivery.SOURCE,
                owner_parent=delivery.DELIVERY_BASE, preflight_parent=delivery.OWNER_CORRECTION,
                preparation=None, past_correction=None, preflight_inventory=None,
                historical_refinement=None, signing_inventory=None, cms_inventory=None,
@@ -139,6 +194,7 @@ def source_git(*, parent=delivery.TRANSFER_BASE, base_parent=delivery.SOURCE,
                evidence_parent=delivery.ARCHIVE_BASE, archive_inventory=None,
                environment_parent=delivery.EVIDENCE_BASE, environment_inventory=None,
                transfer_parent=delivery.ENVIRONMENT_BASE, transfer_inventory=None,
+               auth_parent=delivery.TRANSFER_BASE, auth_inventory=None,
                correction=None, net=None, mode="100644", dirty=b"", staged=b"", untracked=b"",
                tag_object=None, tag_target=None, tag_type=None, missing_tag=None):
     additions = "\n".join("A\t" + path for path in sorted(delivery.FILES)).encode()
@@ -162,6 +218,7 @@ def source_git(*, parent=delivery.TRANSFER_BASE, base_parent=delivery.SOURCE,
         ("show", "-s", "--format=%P", delivery.EVIDENCE_BASE): evidence_parent.encode(),
         ("show", "-s", "--format=%P", delivery.ENVIRONMENT_BASE): environment_parent.encode(),
         ("show", "-s", "--format=%P", delivery.TRANSFER_BASE): transfer_parent.encode(),
+        ("show", "-s", "--format=%P", delivery.AUTH_BASE): auth_parent.encode(),
         ("show", "-s", "--format=%P", delivery.PREFLIGHT_BASE): preflight_parent.encode(),
         ("show", "-s", "--format=%P", delivery.OWNER_CORRECTION): owner_parent.encode(),
         ("show", "-s", "--format=%P", delivery.DELIVERY_BASE): base_parent.encode(),
@@ -180,7 +237,8 @@ def source_git(*, parent=delivery.TRANSFER_BASE, base_parent=delivery.SOURCE,
         ("diff", "--name-status", "--no-renames", delivery.ARCHIVE_BASE, delivery.EVIDENCE_BASE): modifications if archive_inventory is None else archive_inventory,
         ("diff", "--name-status", "--no-renames", delivery.EVIDENCE_BASE, delivery.ENVIRONMENT_BASE): modifications if environment_inventory is None else environment_inventory,
         ("diff", "--name-status", "--no-renames", delivery.ENVIRONMENT_BASE, delivery.TRANSFER_BASE): modifications if transfer_inventory is None else transfer_inventory,
-        ("diff", "--name-status", "--no-renames", delivery.TRANSFER_BASE, COMMIT): modifications if correction is None else correction,
+        ("diff", "--name-status", "--no-renames", delivery.TRANSFER_BASE, delivery.AUTH_BASE): modifications if auth_inventory is None else auth_inventory,
+        ("diff", "--name-status", "--no-renames", delivery.AUTH_BASE, COMMIT): modifications if correction is None else correction,
         ("diff", "--name-status", "--no-renames", delivery.SOURCE, COMMIT): all_additions if net is None else net,
         ("diff", "--name-only", "HEAD"): dirty,
         ("diff", "--cached", "--name-only"): staged,
@@ -193,7 +251,7 @@ def source_git(*, parent=delivery.TRANSFER_BASE, base_parent=delivery.SOURCE,
                          (delivery.SIGNING_VERIFIED_BASE,delivery.SIGNING_VERIFICATION_FILES),
                          (delivery.P04_BASE,delivery.DELIVERY_ALIGNMENT_FILES),
                          (delivery.ARCHIVE_BASE,delivery.FILES),
-                         (delivery.EVIDENCE_BASE,delivery.FILES), (delivery.ENVIRONMENT_BASE,delivery.FILES), (delivery.TRANSFER_BASE,delivery.FILES)):
+                         (delivery.EVIDENCE_BASE,delivery.FILES), (delivery.ENVIRONMENT_BASE,delivery.FILES), (delivery.TRANSFER_BASE,delivery.FILES), (delivery.AUTH_BASE,delivery.FILES)):
         for path in files:
             values[("ls-tree",target,"--",path)]=("100644 blob "+"0"*40+"\t"+path).encode()
     for path in delivery.FILES | delivery.PREFLIGHT_FILES | delivery.SIGNING_FILES | delivery.CMS_FILES:
@@ -1394,7 +1452,7 @@ class WorkflowTests(unittest.TestCase):
         self.assertNotIn("repository.private", self.text)
 
     def test_full_native_certification_precedes_upload_secret_access(self):
-        self.assertLess(self.text.index("python3 -B tools/apple_storekit_diagnostic_certification.py certify"), self.text.index("ASC_PRIVATE_KEY_P8_BASE64:"))
+        self.assertLess(self.text.index("python3 -B tools/apple_storekit_diagnostic_certification.py certify"), self.text.index("APPLE_APP_SPECIFIC_PASSWORD:"))
         self.assertLess(self.text.index("apple_storekit_testflight_delivery.py authorize"), self.text.index("secrets."))
         self.assertIn("^Xcode 26([. ]|$)", (ROOT / "tools/apple_storekit_testflight_delivery.py").read_text())
         for value in ["macos-26", "'22'", "GRIDLY_STOREKIT_DIAGNOSTICS", "tests/build14-native-lifecycle.test.py", "tests/apple_native_parity_test.py", "tests/storekit-diagnostics-native.test.py", "activation --build-number"]:
@@ -1602,12 +1660,12 @@ security() {
         nodes=lambda text:{n.targets[0].id:n.value for n in ast.parse(text).body
                            if isinstance(n,ast.Assign) and isinstance(n.targets[0],ast.Name)}
         old,new=nodes(before),nodes(after)
-        self.assertEqual(set(new)-set(old),{"TRANSFER_BASE","DELIVERY_STAGES","DELIVERY_STAGE_FAILURES","DELIVERY_CATEGORIES","P04_BASE","ARCHIVE_BASE","EVIDENCE_BASE","ENVIRONMENT_BASE","ARCHIVE_RULES","ARCHIVE_MAX_BYTES","ARCHIVE_STRUCTURED_STATES","HISTORY_CATEGORIES","HISTORY_ATTEMPTS",
+        self.assertEqual(set(new)-set(old),{"AUTH_BASE","APPLE_ID_AUTH_FIELD","UI_UNUSED_METHOD","UI_UNUSED_CONFIRMATIONS","TRANSFER_BASE","DELIVERY_STAGES","DELIVERY_STAGE_FAILURES","DELIVERY_CATEGORIES","P04_BASE","ARCHIVE_BASE","EVIDENCE_BASE","ENVIRONMENT_BASE","ARCHIVE_RULES","ARCHIVE_MAX_BYTES","ARCHIVE_STRUCTURED_STATES","HISTORY_CATEGORIES","HISTORY_ATTEMPTS",
                          "HISTORY_WAIT_BUDGET","HISTORY_DEADLINE","HISTORY_TIMEOUT","HISTORY_MAX_BYTES"})
         for name,node in old.items():
             if name=="HISTORICAL_TAGS":
                 self.assertIsInstance(new[name],ast.Dict)
-                self.assertEqual(len(new[name].keys),12)
+                self.assertEqual(len(new[name].keys),13)
                 retained=ast.Dict(keys=new[name].keys[:7],values=new[name].values[:7])
                 self.assertEqual(ast.dump(node),ast.dump(retained))
             elif name=="PREFLIGHT_CATEGORIES":
@@ -1615,7 +1673,7 @@ security() {
             else:self.assertEqual(ast.dump(node),ast.dump(new[name]),name)
         self.assertEqual(delivery.OWNER_CHECK_TTL,1800)
 
-    def test_exact_reviewed_history_and_all_twelve_authorization_tags(self):
+    def test_exact_reviewed_history_and_all_thirteen_authorization_tags(self):
         self.assertEqual(delivery.REFINEMENT_BASE,"4c95caed0d261fca1dbaf86fc926660661d0643b")
         self.assertEqual(delivery.SIGNING_BASE,"db4df3949b1f02325b8869433bbbd16b234487db")
         self.assertEqual(delivery.CMS_BASE,"cbe3c297099dbca9c6d376848157de0253aeae39")
@@ -1654,8 +1712,11 @@ security() {
         expected["gridly-storekit-testflight-deliver-15-"+delivery.ENVIRONMENT_BASE]=("c8a561e739bff54346c75864042d65b08b1b9b4e",delivery.ENVIRONMENT_BASE)
         self.assertEqual(delivery.TRANSFER_BASE,"2cca00a2248e9a0c04ef5173e3364709a517f31e")
         expected["gridly-storekit-testflight-deliver-15-"+delivery.TRANSFER_BASE]=("7f756b44328fa46edccf8b4f4242460617382621",delivery.TRANSFER_BASE)
+        self.assertEqual(delivery.AUTH_BASE,"03620e25ed19fc70ab9e493627fb84c4b9a3617c")
+        expected["gridly-storekit-testflight-deliver-15-"+delivery.AUTH_BASE]=("4e9510666f0a51bdc9209a877e6dd420677abb7d",delivery.AUTH_BASE)
         self.assertEqual(delivery.HISTORICAL_TAGS,expected)
-        for child,parent in ((delivery.TRANSFER_BASE,delivery.ENVIRONMENT_BASE),
+        for child,parent in ((delivery.AUTH_BASE,delivery.TRANSFER_BASE),
+                             (delivery.TRANSFER_BASE,delivery.ENVIRONMENT_BASE),
                              (delivery.ENVIRONMENT_BASE,delivery.EVIDENCE_BASE),
                              (delivery.EVIDENCE_BASE,delivery.ARCHIVE_BASE),
                              (delivery.ARCHIVE_BASE,delivery.P04_BASE),
@@ -1670,7 +1731,7 @@ security() {
                 self.assertEqual(historical, delivery.cert.git("show",delivery.CMS_BASE+":"+path),path)
                 if path not in {"tools/apple_storekit_signing_diagnostic.py","tests/storekit-signing-diagnostic.test.py"}:
                     self.assertEqual((ROOT/path).read_bytes().replace(b"\r\n",b"\n"),historical,path)
-        checkpoint=delivery.TRANSFER_BASE
+        checkpoint=delivery.AUTH_BASE
         support={".github/workflows/gridly-storekit-testflight-delivery.yml",
                  "tools/apple_storekit_testflight_delivery.py","tests/storekit-testflight-delivery.test.py"}
         def git(*args):
@@ -1787,7 +1848,7 @@ security() {
                     (delivery.SIGNING_VERIFIED_BASE,delivery.SIGNING_VERIFICATION_FILES),
                     (delivery.P04_BASE,delivery.DELIVERY_ALIGNMENT_FILES),
                          (delivery.ARCHIVE_BASE,delivery.FILES),
-                         (delivery.EVIDENCE_BASE,delivery.FILES), (delivery.ENVIRONMENT_BASE,delivery.FILES), (delivery.TRANSFER_BASE,delivery.FILES))
+                         (delivery.EVIDENCE_BASE,delivery.FILES), (delivery.ENVIRONMENT_BASE,delivery.FILES), (delivery.TRANSFER_BASE,delivery.FILES), (delivery.AUTH_BASE,delivery.FILES))
         valid=source_git()
         for target,files in historical:
             for path in files:
@@ -1877,7 +1938,7 @@ class ArchiveStageVisibilityTests(unittest.TestCase):
             self.assertNotIn("continue-on-error",block)
             self.assertNotIn("        if:",block)
             self.assertIn("          set -euo pipefail\n",block)
-        self.assertLess(text.index(ARCHIVE_NAMES[-1]),text.index("ASC_PRIVATE_KEY_P8_BASE64:"))
+        self.assertLess(text.index(ARCHIVE_NAMES[-1]),text.index("APPLE_APP_SPECIFIC_PASSWORD:"))
 
     def exercise(self, failed):
         # Execute real workflow Bash boundaries with shell-function fakes ONLY.
@@ -3004,6 +3065,295 @@ class DeliveryStageReportingTests(unittest.TestCase):
         for options in ({"transfer_parent":"9"*40},{"transfer_parent":delivery.ENVIRONMENT_BASE+" "+"8"*40},{"transfer_inventory":b""},{"transfer_inventory":b"M\tjs/gridly-paid-ui.mjs"}):
             with self.subTest(options=options),patch.object(delivery,"source_guard",self.actual_source_guard),patch.object(delivery.cert,"git",side_effect=source_git(**options)),patch.object(delivery.subprocess,"run"),patch.object(delivery.cert,"original_contracts"),self.assertRaises(ValueError):
                 delivery.source_guard(COMMIT,True)
+
+
+class AppleIdDeliveryTests(unittest.TestCase):
+    def setUp(self):
+        self.actual_source_guard = delivery.source_guard
+        CertificationAndTransferTests.setUp(self)
+
+    def bind(self):
+        value = owner_automatic_authorization()
+        value[delivery.APPLE_ID_AUTH_FIELD] = {
+            **dict.fromkeys(delivery.UI_UNUSED_CONFIRMATIONS, True),
+            "method": delivery.UI_UNUSED_METHOD, "owner_checked_at": STAMP, "independent_checked_at": STAMP,
+        }
+        self.save(value)
+        return value
+
+    def save(self, value):
+        delivery.write_json(self.root / "reports/delivery-authorization.json",
+                            {"authorization": value, "ref": REF, "source_commit": COMMIT, "build": "15"})
+
+    def exercise(self, *, value=None, credentials=None, failure=None, on_progress=None):
+        self.save(self.bind() if value is None else value)
+        calls, stages = [], []
+        secret = "SYNTHETIC_NOT_A_REAL_PASSWORD"
+        class OnlyExistingAppleSecrets(dict):
+            def get(values, key, default=None):
+                self.assertIn(key, {"APPLE_ID_USERNAME", "APPLE_APP_SPECIFIC_PASSWORD"})
+                return super().get(key, default)
+        supplied = OnlyExistingAppleSecrets(APPLE_ID_USERNAME="synthetic@example.invalid",
+                                            APPLE_APP_SPECIFIC_PASSWORD=secret) if credentials is None else credentials
+        def execute(command, **options):
+            calls.append(command[-1])
+            self.assertEqual(command[:6], ["xcrun", "altool", "--type", "ios", "--file", str(self.ipa)])
+            self.assertEqual(command[-3:-1], ["--password", "@env:APPLE_APP_SPECIFIC_PASSWORD"])
+            self.assertNotIn(secret, command)
+            self.assertEqual(options["env"]["APPLE_APP_SPECIFIC_PASSWORD"], secret)
+            self.assertEqual(options["cwd"], self.root / "home")
+            self.assertIs(options["check"], True)
+            if failure == "validation" or failure == "upload" and command[-1] == "--upload-app":
+                raise subprocess.CalledProcessError(1, command, stderr="SYNTHETIC_PRIVATE_NEVER_PUBLIC")
+            if failure == "expiry_after_validation":
+                delivery.time.time.return_value = NOW + 1801
+            if failure == "changed_ipa":
+                self.ipa.write_bytes(b"ALTERED")
+        def no_api(*args):
+            self.fail("Apple ID mode attempted API credential/token/query use")
+        def progress(stage, status, category):
+            stages.append((stage, status, category))
+            if on_progress:
+                on_progress(stage, status)
+        error = None
+        with patch.dict(os.environ, {"GRIDLY_UPLOAD_AUTHENTICATION": "APPLE_ID"}):
+            try:
+                delivery.transfer(self.root, COMMIT, self.ipa, credentials=supplied,
+                                  token_factory=no_api, get=no_api, execute=execute, clock=lambda: NOW, progress=progress)
+            except Exception as caught:
+                error = caught
+        return calls, stages, error
+
+    def test_exact_owner_and_independent_ui_evidence_is_accepted_and_labeled_truthfully(self):
+        value = self.bind()
+        self.assertEqual(delivery.owner_authorization(value, COMMIT, REF, NOW), value)
+        receipt = delivery.ui_unused_build(value, NOW)
+        self.assertEqual(receipt["verification_method"], delivery.UI_UNUSED_METHOD)
+        self.assertEqual(receipt["build"], "15")
+        self.assertEqual(receipt["version"], "1.0.0")
+        self.assertTrue(receipt["unused"])
+
+    def test_every_missing_false_nonboolean_or_extra_ui_confirmation_fails(self):
+        for field in delivery.UI_UNUSED_CONFIRMATIONS:
+            for invalid in (False, 0, 1, None, "true"):
+                value = self.bind()
+                value[delivery.APPLE_ID_AUTH_FIELD][field] = invalid
+                with self.subTest(field=field, invalid=invalid), self.assertRaises(ValueError):
+                    delivery.owner_authorization(value, COMMIT, REF, NOW)
+            value = self.bind()
+            del value[delivery.APPLE_ID_AUTH_FIELD][field]
+            with self.assertRaises(ValueError):
+                delivery.owner_authorization(value, COMMIT, REF, NOW)
+        value = self.bind()
+        value[delivery.APPLE_ID_AUTH_FIELD]["private_account"] = "NEVER_PUBLIC"
+        with self.assertRaises(ValueError):
+            delivery.owner_authorization(value, COMMIT, REF, NOW)
+
+    def test_missing_independent_check_cannot_be_replaced_by_owner_attestation(self):
+        for invalid in (None, False, {}, [], {"authorized": True}):
+            value = self.bind()
+            value[delivery.APPLE_ID_AUTH_FIELD] = invalid
+            with self.subTest(invalid=invalid), self.assertRaises(ValueError):
+                delivery.owner_authorization(value, COMMIT, REF, NOW)
+
+    def test_wrong_evidence_method_cannot_claim_an_api_or_validation_result(self):
+        for method in ("API", "APPLE_VALIDATION", "", None):
+            value = self.bind()
+            value[delivery.APPLE_ID_AUTH_FIELD]["method"] = method
+            with self.assertRaises(ValueError):
+                delivery.owner_authorization(value, COMMIT, REF, NOW)
+
+    def test_both_ui_timestamps_must_be_genuine_fresh_utc_and_not_future(self):
+        for field in ("owner_checked_at", "independent_checked_at"):
+            for invalid in ("yesterday", None, STAMP.replace("Z", "+00:00"), "2026-99-99T99:99:99Z"):
+                value = self.bind()
+                value[delivery.APPLE_ID_AUTH_FIELD][field] = invalid
+                with self.subTest(field=field, invalid=invalid), self.assertRaises(ValueError):
+                    delivery.owner_authorization(value, COMMIT, REF, NOW)
+        value = self.bind()
+        for moment in (NOW - .001, NOW + 1800.001):
+            with self.assertRaises(ValueError):
+                delivery.owner_authorization(value, COMMIT, REF, moment)
+        self.assertEqual(delivery.owner_authorization(value, COMMIT, REF, NOW + 1800), value)
+
+    def test_independent_timestamp_expiry_is_checked_separately_from_owner(self):
+        value = self.bind()
+        value[delivery.APPLE_ID_AUTH_FIELD]["independent_checked_at"] = delivery.dt.datetime.fromtimestamp(
+            NOW - 1801, delivery.dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+        with self.assertRaises(ValueError):
+            delivery.owner_authorization(value, COMMIT, REF, NOW)
+
+    def test_owner_ui_timestamp_must_match_the_access_authorization(self):
+        value = self.bind()
+        value[delivery.APPLE_ID_AUTH_FIELD]["owner_checked_at"] = delivery.dt.datetime.fromtimestamp(
+            NOW - 1, delivery.dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+        with self.assertRaises(ValueError):
+            delivery.owner_authorization(value, COMMIT, REF, NOW)
+
+    def test_duplicate_ui_annotation_keys_are_rejected(self):
+        text = json.dumps(self.bind()).replace('"independent_verified_unused": true',
+                                               '"independent_verified_unused": true, "independent_verified_unused": false')
+        with self.assertRaises(ValueError):
+            json.loads(text, object_pairs_hook=delivery.cert.unique_json_object)
+
+    def test_no_pending_or_uncertain_upload_or_exclusive_window_cannot_be_omitted(self):
+        for name in ("no_pending_or_uncertain_uploads", "exclusive_upload_window_acknowledged"):
+            value = self.bind()
+            value[delivery.APPLE_ID_AUTH_FIELD][name] = False
+            calls, stages, error = self.exercise(value=value)
+            self.assertIsInstance(error, ValueError)
+            self.assertEqual(calls, [])
+            self.assertEqual(stages[-1][0:2], (delivery.DELIVERY_STAGES[0], "FAIL"))
+
+    def test_annotated_authorization_requires_ui_evidence_before_build_and_secrets(self):
+        value = self.bind()
+        values = {
+            ("rev-parse", "HEAD"): COMMIT.encode(),
+            ("rev-parse", "--verify", delivery.cert.DIAGNOSTIC_BRANCH): COMMIT.encode(),
+            ("cat-file", "-t", REF): b"tag",
+            ("rev-parse", "--verify", REF): b"5" * 40,
+        }
+        def annotate(candidate):
+            values[("cat-file", "-p", REF)] = (
+                "object " + COMMIT + "\ntype commit\ntag " + REF.removeprefix("refs/tags/")
+                + "\ntagger Synthetic\n\n" + json.dumps(candidate)).encode()
+        with patch.dict(os.environ, {"GRIDLY_UPLOAD_AUTHENTICATION": "APPLE_ID"}), patch.object(
+                delivery.cert, "git", side_effect=lambda *args: values[args]), patch.object(
+                delivery, "read_json", return_value=event()), patch.object(delivery, "apple_id_command") as credentials:
+            annotate(value)
+            self.assertEqual(delivery.authorize(REF, COMMIT, "synthetic", "1")["authorization"], value)
+            del value[delivery.APPLE_ID_AUTH_FIELD]
+            annotate(value)
+            with self.assertRaisesRegex(ValueError, "explicit Apple ID UI authorization required"):
+                delivery.authorize(REF, COMMIT, "synthetic", "1")
+            credentials.assert_not_called()
+
+    def test_only_existing_apple_secrets_validate_then_upload_once_without_api(self):
+        before = self.ipa.read_bytes()
+        calls, stages, error = self.exercise()
+        self.assertIsNone(error)
+        self.assertEqual(calls, ["--validate-app", "--upload-app"])
+        self.assertEqual(self.ipa.read_bytes(), before)
+        self.assertEqual([r[0] for r in stages if r[1] == "PASS"], list(delivery.DELIVERY_STAGES))
+        self.assertFalse((self.root / "home/.appstoreconnect").exists())
+        receipt = delivery.read_json(self.root / "reports/delivery-availability.json")
+        self.assertEqual(receipt["verification_method"], delivery.UI_UNUSED_METHOD)
+        self.assertEqual(delivery.read_json(self.root / "reports/delivery-transfer.json")["status"], "ACCEPTED")
+
+    def test_missing_ui_authorization_in_workflow_mode_never_reads_api_credentials(self):
+        calls, stages, error = self.exercise(value=owner_automatic_authorization())
+        self.assertIsInstance(error, ValueError)
+        self.assertEqual(calls, [])
+        self.assertEqual(stages[-1], (delivery.DELIVERY_STAGES[1], "FAIL", "APPLE_ID_AUTHORIZATION_REJECTED"))
+
+    def test_missing_or_bad_apple_secret_cannot_fall_back_to_api(self):
+        for values in ({}, {"APPLE_ID_USERNAME": "synthetic@example.invalid"},
+                       {"APPLE_APP_SPECIFIC_PASSWORD": "synthetic"},
+                       {"APPLE_ID_USERNAME": "synthetic@example.invalid\n", "APPLE_APP_SPECIFIC_PASSWORD": "synthetic"},
+                       {"APPLE_ID_USERNAME": "synthetic@example.invalid", "APPLE_APP_SPECIFIC_PASSWORD": "synthetic\n"}):
+            calls, stages, error = self.exercise(credentials=values)
+            self.assertIsInstance(error, ValueError)
+            self.assertEqual(calls, [])
+            self.assertEqual(stages[-1], (delivery.DELIVERY_STAGES[1], "FAIL", "APPLE_ID_CREDENTIALS_REJECTED"))
+
+    def test_apple_validation_failure_never_reaches_unused_receipt_or_upload(self):
+        calls, stages, error = self.exercise(failure="validation")
+        self.assertIsInstance(error, subprocess.CalledProcessError)
+        self.assertEqual(calls, ["--validate-app"])
+        self.assertEqual(stages[-1][0:2], (delivery.DELIVERY_STAGES[2], "FAIL"))
+        self.assertFalse((self.root / "reports/delivery-transfer.json").exists())
+
+    def test_expired_owner_checks_after_apple_validation_block_upload(self):
+        calls, stages, error = self.exercise(failure="expiry_after_validation")
+        self.assertIsInstance(error, ValueError)
+        self.assertEqual(calls, ["--validate-app"])
+        self.assertEqual(stages[-1][0:2], (delivery.DELIVERY_STAGES[3], "FAIL"))
+
+    def test_ui_evidence_is_rechecked_after_post_validation_and_immediately_before_upload(self):
+        def expire(stage, status):
+            if stage == delivery.DELIVERY_STAGES[4] and status == "RUNNING":
+                delivery.time.time.return_value = NOW + 1801
+        calls, stages, error = self.exercise(on_progress=expire)
+        self.assertIsInstance(error, ValueError)
+        self.assertEqual(calls, ["--validate-app"])
+        self.assertEqual(stages[-1][0:2], (delivery.DELIVERY_STAGES[4], "FAIL"))
+        self.assertFalse((self.root / "reports/delivery-transfer.json").exists())
+
+    def test_signed_ipa_mutation_still_blocks_upload(self):
+        calls, stages, error = self.exercise(failure="changed_ipa")
+        self.assertIsInstance(error, ValueError)
+        self.assertEqual(calls, ["--validate-app"])
+        self.assertEqual(stages[-1][2], "IPA_BYTES_CHANGED")
+
+    def test_uncertain_apple_id_upload_is_recorded_and_never_retried(self):
+        calls, stages, error = self.exercise(failure="upload")
+        self.assertIsInstance(error, subprocess.CalledProcessError)
+        self.assertEqual(calls.count("--upload-app"), 1)
+        self.assertEqual(delivery.read_json(self.root / "reports/delivery-transfer.json")["status"], "ATTEMPTED")
+        self.assertEqual(stages[-1][2], "UPLOAD_FAILED_OR_UNCERTAIN")
+        calls, stages, error = self.exercise()
+        self.assertIsInstance(error, ValueError)
+        self.assertEqual(calls, [])
+
+    def test_owner_only_access_and_public_release_holds_remain_mandatory(self):
+        for field in ("no_unapproved_internal_access_confirmed", "testflight_upload_authorized"):
+            value = self.bind()
+            value[field] = False
+            calls, stages, error = self.exercise(value=value)
+            self.assertIsInstance(error, ValueError)
+            self.assertEqual(calls, [])
+        value = self.bind()
+        value[delivery.OWNER_AUTO_FIELD]["authorized_owner_account_count"] = 3
+        calls, stages, error = self.exercise(value=value)
+        self.assertIsInstance(error, ValueError)
+        self.assertEqual(calls, [])
+
+    def test_public_error_categories_never_include_credentials_or_private_exceptions(self):
+        for message, category in (
+            ("existing Apple ID upload credentials required", "APPLE_ID_CREDENTIALS_REJECTED"),
+            ("complete independent UI build evidence required", "UI_BUILD_EVIDENCE_REJECTED"),
+            ("independent UI build evidence expired", "UI_BUILD_EVIDENCE_REJECTED")):
+            self.assertEqual(delivery.delivery_failure_category(delivery.DELIVERY_STAGES[1], ValueError(message)), category)
+        self.assertEqual(delivery.delivery_failure_category(delivery.DELIVERY_STAGES[2], ValueError("SYNTHETIC_PASSWORD")),
+                         "APPLE_VALIDATION_FAILED")
+
+    def test_workflow_only_binds_existing_apple_upload_secrets_after_signed_certification(self):
+        text = WORKFLOW.read_text()
+        begin = text.index("      - name: Validate availability and deliver only")
+        block = text[begin:text.index("      - name: Remove all private outputs", begin)]
+        self.assertIn("APPLE_ID_USERNAME: ${{ secrets.APPLE_ID_USERNAME }}", block)
+        self.assertIn("APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}", block)
+        self.assertNotIn("ASC_KEY", block)
+        self.assertNotIn("ASC_ISSUER", block)
+        self.assertNotIn("ASC_PRIVATE", block)
+        self.assertIn("GRIDLY_UPLOAD_AUTHENTICATION: 'APPLE_ID'", text)
+        self.assertLess(text.index("apple_storekit_testflight_delivery.py authorize"), text.index("secrets."))
+        self.assertLess(text.index("apple_storekit_diagnostic_certification.py certify"), begin)
+        self.assertEqual(restore_apple_id_workflow(text), delivery.cert.git(
+            "show", delivery.AUTH_BASE + ":.github/workflows/gridly-storekit-testflight-delivery.yml").decode())
+        self.assertEqual(restore_delivery_reporting(restore_delivery_reporting(text)), restore_delivery_reporting(text))
+        for mutant in (text.replace("GRIDLY_UPLOAD_AUTHENTICATION: 'APPLE_ID'", "GRIDLY_UPLOAD_AUTHENTICATION: 'API'"),
+                       text.replace("secrets.APPLE_APP_SPECIFIC_PASSWORD", "secrets.UNREVIEWED_PASSWORD")):
+            with self.assertRaises(AssertionError):
+                restore_apple_id_workflow(mutant)
+
+    def test_cleanup_and_native_signing_functions_are_identical_to_reviewed_source(self):
+        old = delivery.cert.git("show", delivery.AUTH_BASE + ":tools/apple_storekit_testflight_delivery.py").decode()
+        current = (ROOT / "tools/apple_storekit_testflight_delivery.py").read_text()
+        functions = lambda text: {n.name: ast.dump(n) for n in ast.parse(text).body if isinstance(n, ast.FunctionDef)}
+        before, after = functions(old), functions(current)
+        for name in ("cleanup_delivery", "cleanup_errno", "finish", "ready", "export_guard",
+                     "prepare_signing_context", "install_runner_profile", "restore_keychain_context",
+                     "archive_report", "api_token", "apple_get", "unused_build"):
+            self.assertEqual(before[name], after[name], name)
+
+    def test_new_direct_parent_and_its_inventory_are_pinned(self):
+        for options in ({"auth_parent": "9" * 40}, {"auth_parent": delivery.TRANSFER_BASE + " " + "8" * 40},
+                        {"auth_inventory": b""}, {"auth_inventory": b"M\tjs/gridly-paid-ui.mjs"}):
+            with patch.object(delivery, "source_guard", self.actual_source_guard), patch.object(
+                    delivery.cert, "git", side_effect=source_git(**options)), patch.object(delivery.subprocess, "run"), patch.object(
+                    delivery.cert, "original_contracts"), self.assertRaises(ValueError):
+                delivery.source_guard(COMMIT, True)
 
 
 if __name__ == "__main__":

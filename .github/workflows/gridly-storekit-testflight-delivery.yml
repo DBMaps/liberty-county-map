@@ -1,5 +1,20 @@
 name: Gridly StoreKit Build 15 Internal TestFlight Delivery
 
+# Apple ID delivery uses ONLY the two existing Apple ID secrets, never an API key.
+# REQUIRED additional annotation field: "apple_id_upload_authorization":{
+# "authorized":true,"method":"OWNER_AND_INDEPENDENT_APP_STORE_CONNECT_UI",
+# "owner_checked_at":"<same genuine UTC time as owner_checks_at>",
+# "independent_checked_at":"<genuine independent read-only UI check UTC time>",
+# "owner_verified_unused":true,"independent_verified_unused":true,
+# "build_uploads_reviewed":true,"testflight_all_builds_reviewed":true,
+# "no_pending_or_uncertain_uploads":true,"exclusive_upload_window_acknowledged":true}
+# The owner AND an independent reviewer must actually inspect App Store Connect
+# Build Uploads and all TestFlight builds before tagging; never fabricate evidence.
+# Both checks must remain within 1,800 seconds through the pre-upload gate.
+# D05's historical stage name now covers this explicit UI-evidence mode, not an API query.
+# No validation result alone is treated as proof that Build 15 is unused.
+# Do not include account identities, screenshots, raw Apple output or secrets in the tag.
+
 # LOCAL PREPARATION ONLY: do not push a tag until the resulting delivery commit is
 # reviewed and a NEW upload authorization is explicitly granted by the owner.
 # Separate annotated tag: gridly-storekit-testflight-deliver-15-<delivery-commit>
@@ -55,6 +70,7 @@ jobs:
         shell: bash --noprofile --norc -e -o pipefail {0}
     env:
       PYTHONDONTWRITEBYTECODE: '1'
+      GRIDLY_UPLOAD_AUTHENTICATION: 'APPLE_ID'
     steps:
       - name: Checkout exact reviewed diagnostic candidate
         uses: actions/checkout@v4
@@ -292,9 +308,8 @@ jobs:
       - name: Validate availability and deliver only the fully certified internal IPA
         shell: bash
         env:
-          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
-          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
-          ASC_PRIVATE_KEY_P8_BASE64: ${{ secrets.ASC_PRIVATE_KEY_P8_BASE64 }}
+          APPLE_ID_USERNAME: ${{ secrets.APPLE_ID_USERNAME }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
         run: |
           set -euo pipefail
           set +x
