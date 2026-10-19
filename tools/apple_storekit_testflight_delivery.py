@@ -41,6 +41,11 @@ EVIDENCE_BASE = "779d67c7b89569db7cacb6a253eff6da8d3f74ef"
 ENVIRONMENT_BASE = "b27d780e3148a903917b7a05595f17006f1ab8e0"
 TRANSFER_BASE = "2cca00a2248e9a0c04ef5173e3364709a517f31e"
 AUTH_BASE = "03620e25ed19fc70ab9e493627fb84c4b9a3617c"
+APPLE_ID_BASE = "0c17376475cf76798d553e7b9717543056df1595"
+TEST_MODE_FILES = {
+    "tools/apple_storekit_testflight_delivery.py",
+    "tests/storekit-testflight-delivery.test.py",
+}
 SIGNING_VERIFICATION_FILES = {
     "tools/apple_storekit_signing_diagnostic.py",
     "tests/storekit-signing-diagnostic.test.py",
@@ -101,7 +106,8 @@ FILES = {
 }
 # The historical four-file refinement is pinned at REFINEMENT_BASE.
 # REPAIR_FILES remains the pinned four-file CMS repair inventory.
-# Only one direct child of AUTH_BASE may modify the three FILES; all older inventories stay pinned.
+# The three-file Apple ID correction is pinned at APPLE_ID_BASE.
+# Permit one direct-child test-mode correction of TEST_MODE_FILES only; older inventories stay pinned.
 REFINEMENT_FILES = FILES | {"tests/storekit-preflight-diagnostic.test.py"}
 REPAIR_FILES = FILES | {"tests/storekit-signing-diagnostic.test.py"}
 HISTORICAL_TAGS = {
@@ -131,6 +137,8 @@ HISTORICAL_TAGS = {
         ("7f756b44328fa46edccf8b4f4242460617382621", TRANSFER_BASE),
     "gridly-storekit-testflight-deliver-15-" + AUTH_BASE:
         ("4e9510666f0a51bdc9209a877e6dd420677abb7d", AUTH_BASE),
+    "gridly-storekit-testflight-deliver-15-" + APPLE_ID_BASE:
+        ("554bcf82c8b6aae6e99a610ace4b2d4977c0e999", APPLE_ID_BASE),
 }
 
 CONFIRMATIONS = {
@@ -272,11 +280,11 @@ def authorize(ref, commit, event_path, attempt):
 def source_guard(commit, clean):
     require(re.fullmatch(r"[0-9a-f]{40}", commit or ""), "exact source SHA required")
     pinned = {SOURCE, DELIVERY_BASE, OWNER_CORRECTION, PREFLIGHT_BASE, REFINEMENT_BASE,
-              SIGNING_BASE, CMS_BASE, CMS_REPAIR_BASE, SIGNING_VERIFIED_BASE, P04_BASE, ARCHIVE_BASE, EVIDENCE_BASE, ENVIRONMENT_BASE, TRANSFER_BASE, AUTH_BASE}
+              SIGNING_BASE, CMS_BASE, CMS_REPAIR_BASE, SIGNING_VERIFIED_BASE, P04_BASE, ARCHIVE_BASE, EVIDENCE_BASE, ENVIRONMENT_BASE, TRANSFER_BASE, AUTH_BASE, APPLE_ID_BASE}
     require(cert.git("rev-parse", "HEAD").decode().strip() == commit and commit not in pinned,
             "new reviewed delivery-support commit required")
     for child, parent in (
-        (commit, AUTH_BASE), (AUTH_BASE, TRANSFER_BASE), (TRANSFER_BASE, ENVIRONMENT_BASE), (ENVIRONMENT_BASE, EVIDENCE_BASE), (EVIDENCE_BASE, ARCHIVE_BASE), (ARCHIVE_BASE, P04_BASE), (P04_BASE, SIGNING_VERIFIED_BASE),
+        (commit, APPLE_ID_BASE), (APPLE_ID_BASE, AUTH_BASE), (AUTH_BASE, TRANSFER_BASE), (TRANSFER_BASE, ENVIRONMENT_BASE), (ENVIRONMENT_BASE, EVIDENCE_BASE), (EVIDENCE_BASE, ARCHIVE_BASE), (ARCHIVE_BASE, P04_BASE), (P04_BASE, SIGNING_VERIFIED_BASE),
         (SIGNING_VERIFIED_BASE, CMS_REPAIR_BASE),
         (CMS_REPAIR_BASE, CMS_BASE), (CMS_BASE, SIGNING_BASE), (SIGNING_BASE, REFINEMENT_BASE),
         (REFINEMENT_BASE, PREFLIGHT_BASE), (PREFLIGHT_BASE, OWNER_CORRECTION),
@@ -308,7 +316,8 @@ def source_guard(commit, clean):
         (EVIDENCE_BASE, ENVIRONMENT_BASE, "M", FILES),
         (ENVIRONMENT_BASE, TRANSFER_BASE, "M", FILES),
         (TRANSFER_BASE, AUTH_BASE, "M", FILES),
-        (AUTH_BASE, commit, "M", FILES),
+        (AUTH_BASE, APPLE_ID_BASE, "M", FILES),
+        (APPLE_ID_BASE, commit, "M", TEST_MODE_FILES),
         (SOURCE, commit, "A", FILES | PREFLIGHT_FILES | SIGNING_FILES | CMS_FILES),
     ):
         records = cert.git("diff", "--name-status", "--no-renames", base, target).decode().splitlines()

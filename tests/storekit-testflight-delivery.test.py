@@ -182,7 +182,7 @@ def owner_automatic_authorization():
             }}
 
 
-def source_git(*, parent=delivery.AUTH_BASE, base_parent=delivery.SOURCE,
+def source_git(*, parent=delivery.APPLE_ID_BASE, base_parent=delivery.SOURCE,
                owner_parent=delivery.DELIVERY_BASE, preflight_parent=delivery.OWNER_CORRECTION,
                preparation=None, past_correction=None, preflight_inventory=None,
                historical_refinement=None, signing_inventory=None, cms_inventory=None,
@@ -195,10 +195,12 @@ def source_git(*, parent=delivery.AUTH_BASE, base_parent=delivery.SOURCE,
                environment_parent=delivery.EVIDENCE_BASE, environment_inventory=None,
                transfer_parent=delivery.ENVIRONMENT_BASE, transfer_inventory=None,
                auth_parent=delivery.TRANSFER_BASE, auth_inventory=None,
+               apple_id_parent=delivery.AUTH_BASE, apple_id_inventory=None,
                correction=None, net=None, mode="100644", dirty=b"", staged=b"", untracked=b"",
                tag_object=None, tag_target=None, tag_type=None, missing_tag=None):
     additions = "\n".join("A\t" + path for path in sorted(delivery.FILES)).encode()
     modifications = "\n".join("M\t" + path for path in sorted(delivery.FILES)).encode()
+    test_mode = "\n".join("M\t" + path for path in sorted(delivery.TEST_MODE_FILES)).encode()
     repair = "\n".join("M\t" + path for path in sorted(delivery.REPAIR_FILES)).encode()
     verification = "\n".join("M\t" + path for path in sorted(delivery.SIGNING_VERIFICATION_FILES)).encode()
     alignment = "\n".join("M\t" + path for path in sorted(delivery.DELIVERY_ALIGNMENT_FILES)).encode()
@@ -219,6 +221,7 @@ def source_git(*, parent=delivery.AUTH_BASE, base_parent=delivery.SOURCE,
         ("show", "-s", "--format=%P", delivery.ENVIRONMENT_BASE): environment_parent.encode(),
         ("show", "-s", "--format=%P", delivery.TRANSFER_BASE): transfer_parent.encode(),
         ("show", "-s", "--format=%P", delivery.AUTH_BASE): auth_parent.encode(),
+        ("show", "-s", "--format=%P", delivery.APPLE_ID_BASE): apple_id_parent.encode(),
         ("show", "-s", "--format=%P", delivery.PREFLIGHT_BASE): preflight_parent.encode(),
         ("show", "-s", "--format=%P", delivery.OWNER_CORRECTION): owner_parent.encode(),
         ("show", "-s", "--format=%P", delivery.DELIVERY_BASE): base_parent.encode(),
@@ -238,7 +241,8 @@ def source_git(*, parent=delivery.AUTH_BASE, base_parent=delivery.SOURCE,
         ("diff", "--name-status", "--no-renames", delivery.EVIDENCE_BASE, delivery.ENVIRONMENT_BASE): modifications if environment_inventory is None else environment_inventory,
         ("diff", "--name-status", "--no-renames", delivery.ENVIRONMENT_BASE, delivery.TRANSFER_BASE): modifications if transfer_inventory is None else transfer_inventory,
         ("diff", "--name-status", "--no-renames", delivery.TRANSFER_BASE, delivery.AUTH_BASE): modifications if auth_inventory is None else auth_inventory,
-        ("diff", "--name-status", "--no-renames", delivery.AUTH_BASE, COMMIT): modifications if correction is None else correction,
+        ("diff", "--name-status", "--no-renames", delivery.AUTH_BASE, delivery.APPLE_ID_BASE): modifications if apple_id_inventory is None else apple_id_inventory,
+        ("diff", "--name-status", "--no-renames", delivery.APPLE_ID_BASE, COMMIT): test_mode if correction is None else correction,
         ("diff", "--name-status", "--no-renames", delivery.SOURCE, COMMIT): all_additions if net is None else net,
         ("diff", "--name-only", "HEAD"): dirty,
         ("diff", "--cached", "--name-only"): staged,
@@ -251,7 +255,7 @@ def source_git(*, parent=delivery.AUTH_BASE, base_parent=delivery.SOURCE,
                          (delivery.SIGNING_VERIFIED_BASE,delivery.SIGNING_VERIFICATION_FILES),
                          (delivery.P04_BASE,delivery.DELIVERY_ALIGNMENT_FILES),
                          (delivery.ARCHIVE_BASE,delivery.FILES),
-                         (delivery.EVIDENCE_BASE,delivery.FILES), (delivery.ENVIRONMENT_BASE,delivery.FILES), (delivery.TRANSFER_BASE,delivery.FILES), (delivery.AUTH_BASE,delivery.FILES)):
+                         (delivery.EVIDENCE_BASE,delivery.FILES), (delivery.ENVIRONMENT_BASE,delivery.FILES), (delivery.TRANSFER_BASE,delivery.FILES), (delivery.AUTH_BASE,delivery.FILES), (delivery.APPLE_ID_BASE,delivery.FILES)):
         for path in files:
             values[("ls-tree",target,"--",path)]=("100644 blob "+"0"*40+"\t"+path).encode()
     for path in delivery.FILES | delivery.PREFLIGHT_FILES | delivery.SIGNING_FILES | delivery.CMS_FILES:
@@ -305,7 +309,50 @@ def fixture(root):
     return ipa, guard
 
 
-class AuthorizationTests(unittest.TestCase):
+class SyntheticDeliveryTestCase(unittest.TestCase):
+    """Select synthetic mode for the whole case, then restore the caller's environment."""
+    upload_authentication = "API"
+
+    def run(self, result=None):
+        # A context manager is not stopped by fixtures' patch.stopall() cleanup.
+        with patch.dict(os.environ, {"GRIDLY_UPLOAD_AUTHENTICATION": self.upload_authentication}):
+            return super().run(result)
+
+
+class SyntheticModeIsolationTests(SyntheticDeliveryTestCase):
+    def test_legacy_case_uses_api_under_inherited_apple_id_and_restores_environment(self):
+        class Probe(SyntheticDeliveryTestCase):
+            def runTest(probe):
+                probe.assertEqual(os.environ["GRIDLY_UPLOAD_AUTHENTICATION"], "API")
+                patch.dict(os.environ, {"SYNTHETIC_MODE_CANARY": "temporary"}).start()
+                patch.stopall()
+                probe.assertEqual(os.environ["GRIDLY_UPLOAD_AUTHENTICATION"], "API")
+        for inherited in ("APPLE_ID", None):
+            with self.subTest(inherited=inherited), patch.dict(os.environ):
+                os.environ.pop("GRIDLY_UPLOAD_AUTHENTICATION", None)
+                if inherited is not None:
+                    os.environ["GRIDLY_UPLOAD_AUTHENTICATION"] = inherited
+                result = unittest.TestResult()
+                Probe().run(result)
+                self.assertTrue(result.wasSuccessful(), result.errors + result.failures)
+                self.assertEqual(result.testsRun, 1)
+                self.assertEqual(os.environ.get("GRIDLY_UPLOAD_AUTHENTICATION"), inherited)
+                self.assertNotIn("SYNTHETIC_MODE_CANARY", os.environ)
+
+    def test_mode_restores_after_a_failing_synthetic_case(self):
+        class Probe(SyntheticDeliveryTestCase):
+            def runTest(probe):
+                probe.assertEqual(os.environ["GRIDLY_UPLOAD_AUTHENTICATION"], "API")
+                probe.fail("synthetic failure")
+        with patch.dict(os.environ, {"GRIDLY_UPLOAD_AUTHENTICATION": "APPLE_ID"}):
+            result = unittest.TestResult()
+            Probe().run(result)
+            self.assertEqual(len(result.failures), 1)
+            self.assertFalse(result.errors)
+            self.assertEqual(os.environ["GRIDLY_UPLOAD_AUTHENTICATION"], "APPLE_ID")
+
+
+class AuthorizationTests(SyntheticDeliveryTestCase):
     def test_exact_independent_authorization_passes(self):
         self.assertEqual(delivery.owner_authorization(authorization(), COMMIT, REF, NOW), authorization())
 
@@ -447,7 +494,7 @@ class AuthorizationTests(unittest.TestCase):
                     delivery.authorize(REF, COMMIT, "synthetic", "1")
 
 
-class SourceAndEvidenceTests(unittest.TestCase):
+class SourceAndEvidenceTests(SyntheticDeliveryTestCase):
     def test_exact_pinned_additional_correction_passes_without_runtime_changes(self):
         with patch.object(delivery.cert, "git", side_effect=source_git()), patch.object(delivery.subprocess, "run"), patch.object(delivery.cert, "original_contracts"):
             self.assertTrue(delivery.source_guard(COMMIT, True)["runtime_unchanged"])
@@ -557,7 +604,7 @@ class SourceAndEvidenceTests(unittest.TestCase):
             self.assertEqual((ROOT / path).read_bytes().replace(b"\r\n", b"\n"), delivery.cert.git("show", delivery.SOURCE + ":" + path).replace(b"\r\n", b"\n"), path)
 
 
-class CertificationAndTransferTests(unittest.TestCase):
+class CertificationAndTransferTests(SyntheticDeliveryTestCase):
     def setUp(self):
         self.temporary = tempfile.TemporaryDirectory()
         self.addCleanup(self.temporary.cleanup)
@@ -740,7 +787,7 @@ class CertificationAndTransferTests(unittest.TestCase):
         signer.assert_not_called(); execute.assert_not_called()
 
 
-class AvailabilityAndCleanupTests(unittest.TestCase):
+class AvailabilityAndCleanupTests(SyntheticDeliveryTestCase):
     def test_wrong_app_ambiguous_builds_and_pagination_fail_closed(self):
         for apps, builds in [({}, {}), ({"data": []}, {}), ({"data": [], "errors": [{"code": "synthetic"}]}, {}), ({"data": [{"id": "123", "type": "apps", "attributes": {"bundleId": "other.app"}}]}, {}),
                             ({"data": [{"id": "123", "type": "apps", "attributes": {"bundleId": delivery.cert.release.BUNDLE}}]}, {}),
@@ -826,7 +873,7 @@ class AvailabilityAndCleanupTests(unittest.TestCase):
             self.assertFalse(root.exists())
 
 
-class DeliveryPreflightTests(unittest.TestCase):
+class DeliveryPreflightTests(SyntheticDeliveryTestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
@@ -1091,7 +1138,7 @@ class DeliveryPreflightTests(unittest.TestCase):
             self.assertEqual(records["P05_TAG_CHECKOUT"]["status"],"PASS")
 
 
-class HistoryRetrievalTests(unittest.TestCase):
+class HistoryRetrievalTests(SyntheticDeliveryTestCase):
     """Synthetic HTTP responses only: never read a token or contact GitHub."""
     def setUp(self):
         self.token="SYNTHETIC_TOKEN_NEVER_PUBLIC"
@@ -1384,10 +1431,10 @@ class HistoryRetrievalTests(unittest.TestCase):
         for mutant in (text.replace("actions: read","actions: write"),text.replace("contents: read","contents: write")):
             with self.assertRaises(AssertionError):without_p04_auth(mutant)
 
-    def test_one_new_child_requires_all_three_authorized_files_and_modes(self):
-        records=["M\t"+path for path in sorted(delivery.FILES)]
-        candidates=[records[:i]+records[i+1:] for i in range(3)]
-        candidates += [records+[records[0]],["A\t"+p for p in sorted(delivery.FILES)],
+    def test_one_new_child_requires_exactly_two_test_mode_files_and_modes(self):
+        records=["M\t"+path for path in sorted(delivery.TEST_MODE_FILES)]
+        candidates=[records[:i]+records[i+1:] for i in range(len(records))]
+        candidates += [records+[records[0]],["A\t"+p for p in sorted(delivery.TEST_MODE_FILES)],
                        records+["M\tjs/gridly-paid-ui.mjs"],records+["M\ttools/apple_storekit_signing_diagnostic.py"]]
         for candidate in candidates:
             with self.subTest(candidate=candidate),patch.object(delivery.cert,"git",side_effect=source_git(
@@ -1397,7 +1444,7 @@ class HistoryRetrievalTests(unittest.TestCase):
 
 
 
-class WorkflowTests(unittest.TestCase):
+class WorkflowTests(SyntheticDeliveryTestCase):
     def setUp(self):
         self.text = WORKFLOW.read_text()
 
@@ -1499,7 +1546,7 @@ class WorkflowTests(unittest.TestCase):
 
 
 
-class CmsSigningRepairTests(unittest.TestCase):
+class CmsSigningRepairTests(SyntheticDeliveryTestCase):
     old_cms = 'security cms -D -i "$DIAGNOSTIC_PRIVATE_ROOT/distribution.mobileprovision" > "$DIAGNOSTIC_PRIVATE_ROOT/profile.plist"'
     new_cms = 'security cms -D -k "$DIAGNOSTIC_PRIVATE_ROOT/signing.keychain-db" -i "$DIAGNOSTIC_PRIVATE_ROOT/distribution.mobileprovision" > "$DIAGNOSTIC_PRIVATE_ROOT/profile.plist"'
 
@@ -1660,12 +1707,12 @@ security() {
         nodes=lambda text:{n.targets[0].id:n.value for n in ast.parse(text).body
                            if isinstance(n,ast.Assign) and isinstance(n.targets[0],ast.Name)}
         old,new=nodes(before),nodes(after)
-        self.assertEqual(set(new)-set(old),{"AUTH_BASE","APPLE_ID_AUTH_FIELD","UI_UNUSED_METHOD","UI_UNUSED_CONFIRMATIONS","TRANSFER_BASE","DELIVERY_STAGES","DELIVERY_STAGE_FAILURES","DELIVERY_CATEGORIES","P04_BASE","ARCHIVE_BASE","EVIDENCE_BASE","ENVIRONMENT_BASE","ARCHIVE_RULES","ARCHIVE_MAX_BYTES","ARCHIVE_STRUCTURED_STATES","HISTORY_CATEGORIES","HISTORY_ATTEMPTS",
+        self.assertEqual(set(new)-set(old),{"APPLE_ID_BASE","TEST_MODE_FILES","AUTH_BASE","APPLE_ID_AUTH_FIELD","UI_UNUSED_METHOD","UI_UNUSED_CONFIRMATIONS","TRANSFER_BASE","DELIVERY_STAGES","DELIVERY_STAGE_FAILURES","DELIVERY_CATEGORIES","P04_BASE","ARCHIVE_BASE","EVIDENCE_BASE","ENVIRONMENT_BASE","ARCHIVE_RULES","ARCHIVE_MAX_BYTES","ARCHIVE_STRUCTURED_STATES","HISTORY_CATEGORIES","HISTORY_ATTEMPTS",
                          "HISTORY_WAIT_BUDGET","HISTORY_DEADLINE","HISTORY_TIMEOUT","HISTORY_MAX_BYTES"})
         for name,node in old.items():
             if name=="HISTORICAL_TAGS":
                 self.assertIsInstance(new[name],ast.Dict)
-                self.assertEqual(len(new[name].keys),13)
+                self.assertEqual(len(new[name].keys),14)
                 retained=ast.Dict(keys=new[name].keys[:7],values=new[name].values[:7])
                 self.assertEqual(ast.dump(node),ast.dump(retained))
             elif name=="PREFLIGHT_CATEGORIES":
@@ -1673,7 +1720,7 @@ security() {
             else:self.assertEqual(ast.dump(node),ast.dump(new[name]),name)
         self.assertEqual(delivery.OWNER_CHECK_TTL,1800)
 
-    def test_exact_reviewed_history_and_all_thirteen_authorization_tags(self):
+    def test_exact_reviewed_history_and_all_fourteen_authorization_tags(self):
         self.assertEqual(delivery.REFINEMENT_BASE,"4c95caed0d261fca1dbaf86fc926660661d0643b")
         self.assertEqual(delivery.SIGNING_BASE,"db4df3949b1f02325b8869433bbbd16b234487db")
         self.assertEqual(delivery.CMS_BASE,"cbe3c297099dbca9c6d376848157de0253aeae39")
@@ -1714,8 +1761,10 @@ security() {
         expected["gridly-storekit-testflight-deliver-15-"+delivery.TRANSFER_BASE]=("7f756b44328fa46edccf8b4f4242460617382621",delivery.TRANSFER_BASE)
         self.assertEqual(delivery.AUTH_BASE,"03620e25ed19fc70ab9e493627fb84c4b9a3617c")
         expected["gridly-storekit-testflight-deliver-15-"+delivery.AUTH_BASE]=("4e9510666f0a51bdc9209a877e6dd420677abb7d",delivery.AUTH_BASE)
+        self.assertEqual(delivery.APPLE_ID_BASE,"0c17376475cf76798d553e7b9717543056df1595")
+        expected["gridly-storekit-testflight-deliver-15-"+delivery.APPLE_ID_BASE]=("554bcf82c8b6aae6e99a610ace4b2d4977c0e999",delivery.APPLE_ID_BASE)
         self.assertEqual(delivery.HISTORICAL_TAGS,expected)
-        for child,parent in ((delivery.AUTH_BASE,delivery.TRANSFER_BASE),
+        for child,parent in ((delivery.APPLE_ID_BASE,delivery.AUTH_BASE), (delivery.AUTH_BASE,delivery.TRANSFER_BASE),
                              (delivery.TRANSFER_BASE,delivery.ENVIRONMENT_BASE),
                              (delivery.ENVIRONMENT_BASE,delivery.EVIDENCE_BASE),
                              (delivery.EVIDENCE_BASE,delivery.ARCHIVE_BASE),
@@ -1731,14 +1780,14 @@ security() {
                 self.assertEqual(historical, delivery.cert.git("show",delivery.CMS_BASE+":"+path),path)
                 if path not in {"tools/apple_storekit_signing_diagnostic.py","tests/storekit-signing-diagnostic.test.py"}:
                     self.assertEqual((ROOT/path).read_bytes().replace(b"\r\n",b"\n"),historical,path)
-        checkpoint=delivery.AUTH_BASE
-        support={".github/workflows/gridly-storekit-testflight-delivery.yml",
-                 "tools/apple_storekit_testflight_delivery.py","tests/storekit-testflight-delivery.test.py"}
+        checkpoint=delivery.APPLE_ID_BASE
+        support={"tools/apple_storekit_testflight_delivery.py","tests/storekit-testflight-delivery.test.py"}
+        self.assertEqual(support,delivery.TEST_MODE_FILES)
         def git(*args):
             return delivery.cert.git(*args).decode().strip()
         rows=git("diff","--name-status","--no-renames",checkpoint).splitlines()
         self.assertEqual(set(rows),{"M\t"+path for path in support})
-        self.assertEqual(len(rows),3)
+        self.assertEqual(len(rows),2)
         self.assertFalse(git("diff","--cached","--name-only"))
         self.assertFalse(git("ls-files","--others","--exclude-standard"))
         head=git("rev-parse","HEAD")
@@ -1848,7 +1897,7 @@ security() {
                     (delivery.SIGNING_VERIFIED_BASE,delivery.SIGNING_VERIFICATION_FILES),
                     (delivery.P04_BASE,delivery.DELIVERY_ALIGNMENT_FILES),
                          (delivery.ARCHIVE_BASE,delivery.FILES),
-                         (delivery.EVIDENCE_BASE,delivery.FILES), (delivery.ENVIRONMENT_BASE,delivery.FILES), (delivery.TRANSFER_BASE,delivery.FILES), (delivery.AUTH_BASE,delivery.FILES))
+                         (delivery.EVIDENCE_BASE,delivery.FILES), (delivery.ENVIRONMENT_BASE,delivery.FILES), (delivery.TRANSFER_BASE,delivery.FILES), (delivery.AUTH_BASE,delivery.FILES), (delivery.APPLE_ID_BASE,delivery.FILES))
         valid=source_git()
         for target,files in historical:
             for path in files:
@@ -1925,7 +1974,7 @@ def restore_archive_block(text):
     return text[:start]+original+text[end:]
 
 
-class ArchiveStageVisibilityTests(unittest.TestCase):
+class ArchiveStageVisibilityTests(SyntheticDeliveryTestCase):
     def test_exact_stage_split_preserves_every_original_command_and_other_workflow_bytes(self):
         before=delivery.cert.git("show",delivery.ARCHIVE_BASE+":"+str(WORKFLOW.relative_to(ROOT)).replace("\\","/")).decode()
         self.assertEqual(restore_archive_block(WORKFLOW.read_text()),before)
@@ -2053,7 +2102,7 @@ python3() {
                          ast.dump(ast.Module(body=after.body[new_cleanup+4:],type_ignores=[])))
 
 
-class CleanupStageVisibilityTests(unittest.TestCase):
+class CleanupStageVisibilityTests(SyntheticDeliveryTestCase):
     def run_case(self, mode="success"):
         with tempfile.TemporaryDirectory() as temporary:
             root=delivery.cert.private_directory(temporary)
@@ -2256,7 +2305,7 @@ def normalize_archive_cli(source):
     return ast.unparse(tree)
 
 
-class ArchiveErrorEvidenceTests(unittest.TestCase):
+class ArchiveErrorEvidenceTests(SyntheticDeliveryTestCase):
     canary="/private/SYNTHETIC_SECRET_PATH/credential-CANARY-token"
     examples=(
         ("error: No profiles for 'com.synthetic' were found.", "PROVISIONING_OR_SIGNING","PROFILE_REJECTED"),
@@ -2415,7 +2464,7 @@ class ArchiveErrorEvidenceTests(unittest.TestCase):
                 delivery.source_guard(COMMIT,True)
 
 
-class CleanupErrorRecoveryTests(unittest.TestCase):
+class CleanupErrorRecoveryTests(SyntheticDeliveryTestCase):
     def exercise(self, error_number, *, retry_fails=False, partial=False, mutate=False):
         with tempfile.TemporaryDirectory() as temporary:
             root=delivery.cert.private_directory(temporary);(root/"home").mkdir(parents=True)
@@ -2502,7 +2551,7 @@ class CleanupErrorRecoveryTests(unittest.TestCase):
 
 
 
-class RunnerSigningEnvironmentTests(unittest.TestCase):
+class RunnerSigningEnvironmentTests(SyntheticDeliveryTestCase):
     @contextlib.contextmanager
     def context(self, cf=False):
         with tempfile.TemporaryDirectory() as temporary:
@@ -2796,7 +2845,7 @@ test "$CFFIXED_USER_HOME" = "$outer_cf"
 
 
 
-class DeliveryStageReportingTests(unittest.TestCase):
+class DeliveryStageReportingTests(SyntheticDeliveryTestCase):
     def setUp(self):
         self.actual_source_guard=delivery.source_guard
         CertificationAndTransferTests.setUp(self)
@@ -3067,7 +3116,12 @@ class DeliveryStageReportingTests(unittest.TestCase):
                 delivery.source_guard(COMMIT,True)
 
 
-class AppleIdDeliveryTests(unittest.TestCase):
+class AppleIdDeliveryTests(SyntheticDeliveryTestCase):
+    upload_authentication = "APPLE_ID"
+
+    def test_explicit_apple_id_cases_keep_production_mode(self):
+        self.assertEqual(os.environ["GRIDLY_UPLOAD_AUTHENTICATION"], "APPLE_ID")
+
     def setUp(self):
         self.actual_source_guard = delivery.source_guard
         CertificationAndTransferTests.setUp(self)
@@ -3355,6 +3409,31 @@ class AppleIdDeliveryTests(unittest.TestCase):
                     delivery.cert, "original_contracts"), self.assertRaises(ValueError):
                 delivery.source_guard(COMMIT, True)
 
+
+    def test_test_mode_parent_and_inventory_fail_closed(self):
+        records = ["M\t" + path for path in sorted(delivery.TEST_MODE_FILES)]
+        bad = ({"parent": delivery.AUTH_BASE}, {"parent": delivery.APPLE_ID_BASE + " " + "8" * 40},
+               {"apple_id_parent": "9" * 40}, {"apple_id_parent": delivery.AUTH_BASE + " " + "8" * 40},
+               {"apple_id_inventory": b""}, {"apple_id_inventory": b"M\tjs/gridly-paid-ui.mjs"},
+               {"correction": "\n".join(records + ["M\t.github/workflows/gridly-storekit-testflight-delivery.yml"]).encode()})
+        for options in bad:
+            with self.subTest(options=options), patch.object(delivery, "source_guard", self.actual_source_guard), patch.object(
+                    delivery.cert, "git", side_effect=source_git(**options)), patch.object(
+                    delivery.subprocess, "run"), patch.object(delivery.cert, "original_contracts"), self.assertRaises(ValueError):
+                delivery.source_guard(COMMIT, True)
+
+    def test_test_mode_correction_changes_no_production_function_except_source_guard(self):
+        old = delivery.cert.git("show", delivery.APPLE_ID_BASE + ":tools/apple_storekit_testflight_delivery.py").decode()
+        current = (ROOT / "tools/apple_storekit_testflight_delivery.py").read_text()
+        functions = lambda text: {n.name: ast.dump(n) for n in ast.parse(text).body if isinstance(n, (ast.FunctionDef, ast.ClassDef))}
+        before, after = functions(old), functions(current)
+        self.assertEqual(before.keys(), after.keys())
+        for name in before.keys() - {"source_guard"}:
+            self.assertEqual(before[name], after[name], name)
+        self.assertEqual(WORKFLOW.read_bytes().replace(b"\r\n", b"\n"),
+                         delivery.cert.git("show", delivery.APPLE_ID_BASE + ":.github/workflows/gridly-storekit-testflight-delivery.yml"))
+        self.assertEqual(delivery.TEST_MODE_FILES, {
+            "tools/apple_storekit_testflight_delivery.py", "tests/storekit-testflight-delivery.test.py"})
 
 if __name__ == "__main__":
     unittest.main()
