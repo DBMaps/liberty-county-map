@@ -1,0 +1,68 @@
+name: Gridly Build 15 CMS Provisioning Diagnostic
+
+# LOCAL PREPARATION ONLY. No execution is authorized by this source change.
+# Future annotated tag: gridly-storekit-cms-diagnostic-15-<exact-reviewed-commit>
+# Exact JSON annotation, no additional fields:
+# {"cms_diagnostic_commit":"<exact-reviewed-40-hex>",
+#  "signing_source_commit":"db4df3949b1f02325b8869433bbbd16b234487db",
+#  "failed_signing_run_id":39202397418,"cms_only_authorized":true,
+#  "provisioning_profile_access_authorized":true,
+#  "home_context_comparison_authorized":true,
+#  "temporary_keychain_context_comparison_authorized":true,
+#  "no_application_build_or_upload_confirmed":true}
+# Accept one direct child of the pinned source, adding ONLY these three files.
+# All security cms imports target an owned disposable empty keychain (-k).
+# Original runner HOME/CFFIXED_USER_HOME are preserved in one subprocess context.
+# Search-list comparison uses a temporary restricted list and verifies restoration.
+# No distribution identity/private key is loaded. No default-keychain mutation.
+# No application build, Apple API, upload, artifacts, caches or store operations.
+on:
+  push:
+    tags:
+      - 'gridly-storekit-cms-diagnostic-15-*'
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose-storekit-cms:
+    if: ${{ github.repository == 'DBMaps/liberty-county-map' && github.event_name == 'push' && github.event.created == true && github.event.deleted == false && github.event.forced == false && github.run_attempt == 1 && startsWith(github.ref, 'refs/tags/gridly-storekit-cms-diagnostic-15-') }}
+    runs-on: macos-26
+    timeout-minutes: 15
+    concurrency:
+      group: gridly-build-15-cms-only
+      cancel-in-progress: false
+    defaults:
+      run:
+        shell: bash --noprofile --norc -e -o pipefail {0}
+    steps:
+      - name: Checkout exact reviewed CMS-only source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Validate separate owner authorization before profile access
+        run: |
+          set -euo pipefail
+          set +x
+          umask 077
+          python3 -B tools/apple_storekit_cms_diagnostic.py prepare 2>/dev/null
+      - name: Compare the single profile under isolated CMS contexts once
+        id: cms_once
+        env:
+          APPLE_PROVISION_PROFILE_BASE64: ${{ secrets.APPLE_PROVISION_PROFILE_BASE64 }}
+        run: |
+          set -euo pipefail
+          set +x
+          umask 077
+          python3 -B tools/apple_storekit_cms_diagnostic.py compare 2>/dev/null
+      - name: Independently restore native context and remove owned private data
+        if: always()
+        env:
+          CMS_STEP_OUTCOME: ${{ steps.cms_once.outcome }}
+        run: |
+          set -euo pipefail
+          set +x
+          umask 077
+          python3 -B tools/apple_storekit_cms_diagnostic.py cleanup 2>/dev/null
