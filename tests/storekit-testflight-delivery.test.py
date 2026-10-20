@@ -297,7 +297,8 @@ def owner_automatic_authorization():
             }}
 
 
-def source_git(*, parent=delivery.UPLOADER_REPAIR_BASE, repair_base_parent=delivery.FAILED_AUTH_BASE,
+def source_git(*, parent=delivery.UPLOADER_CERTIFICATION_BASE, repair_base_parent=delivery.FAILED_AUTH_BASE,
+               certification_parent=delivery.UPLOADER_REPAIR_BASE, certification_inventory=None,
                repair_base_inventory=None, failed_auth_parent=delivery.SOLO_OWNER_FIX_BASE, failed_auth_inventory=None,
                solo_fix_parent=delivery.SOLO_OWNER_ATTEST_BASE,
                solo_attest_parent=delivery.SOLO_OWNER_BASE,
@@ -334,6 +335,7 @@ def source_git(*, parent=delivery.UPLOADER_REPAIR_BASE, repair_base_parent=deliv
     values = {
         ("rev-parse", "HEAD"): COMMIT.encode(),
         ("show", "-s", "--format=%P", COMMIT): parent.encode(),
+        ("show", "-s", "--format=%P", delivery.UPLOADER_CERTIFICATION_BASE): certification_parent.encode(),
         ("show", "-s", "--format=%P", delivery.UPLOADER_REPAIR_BASE): repair_base_parent.encode(),
         ("rev-parse", "--verify", delivery.PREFIX + delivery.UPLOADER_REPAIR_BASE): b"ea2d9158e9b0a0b1e0035947f15e2d3cef79173c",
         ("cat-file", "-t", delivery.PREFIX + delivery.UPLOADER_REPAIR_BASE): b"tag",
@@ -383,7 +385,8 @@ def source_git(*, parent=delivery.UPLOADER_REPAIR_BASE, repair_base_parent=deliv
         ("diff", "--name-status", "--no-renames", delivery.SOLO_OWNER_ATTEST_BASE, delivery.SOLO_OWNER_FIX_BASE): test_mode if solo_fix_inventory is None else solo_fix_inventory,
         ("diff", "--name-status", "--no-renames", delivery.SOLO_OWNER_FIX_BASE, delivery.FAILED_AUTH_BASE): test_mode if failed_auth_inventory is None else failed_auth_inventory,
         ("diff", "--name-status", "--no-renames", delivery.FAILED_AUTH_BASE, delivery.UPLOADER_REPAIR_BASE): test_mode if repair_base_inventory is None else repair_base_inventory,
-        ("diff", "--name-status", "--no-renames", delivery.UPLOADER_REPAIR_BASE, COMMIT): test_mode if correction is None else correction,
+        ("diff", "--name-status", "--no-renames", delivery.UPLOADER_REPAIR_BASE, delivery.UPLOADER_CERTIFICATION_BASE): test_mode if certification_inventory is None else certification_inventory,
+        ("diff", "--name-status", "--no-renames", delivery.UPLOADER_CERTIFICATION_BASE, COMMIT): test_mode if correction is None else correction,
         ("diff", "--name-status", "--no-renames", delivery.SOURCE, COMMIT): all_additions if net is None else net,
         ("diff", "--name-only", "HEAD"): dirty,
         ("diff", "--cached", "--name-only"): staged,
@@ -404,7 +407,7 @@ def source_git(*, parent=delivery.UPLOADER_REPAIR_BASE, repair_base_parent=deliv
     for path in delivery.TEST_MODE_FILES | delivery.SAFETY_FILES:
         values[("ls-tree", delivery.CERTIFIED_BASE, "--", path)] = ("100644 blob " + "0"*40 + "\t" + path).encode()
     for path in delivery.TEST_MODE_FILES:
-        for checkpoint in (delivery.SOLO_OWNER_BASE, delivery.SOLO_OWNER_ATTEST_BASE, delivery.SOLO_OWNER_FIX_BASE, delivery.FAILED_AUTH_BASE, delivery.UPLOADER_REPAIR_BASE):
+        for checkpoint in (delivery.SOLO_OWNER_BASE, delivery.SOLO_OWNER_ATTEST_BASE, delivery.SOLO_OWNER_FIX_BASE, delivery.FAILED_AUTH_BASE, delivery.UPLOADER_REPAIR_BASE, delivery.UPLOADER_CERTIFICATION_BASE):
             values[("ls-tree", checkpoint, "--", path)] = ("100644 blob " + "0"*40 + "\t" + path).encode()
     for path in delivery.FILES | delivery.PREFLIGHT_FILES | delivery.SIGNING_FILES | delivery.CMS_FILES | delivery.SAFETY_FILES:
         values[("ls-tree", COMMIT, "--", path)] = (mode + " blob " + "0"*40 + "\t" + path).encode()
@@ -438,16 +441,18 @@ def upload_action(command):
     return '--upload-package' if '--upload-package' in command else command[-1]
 
 
-def synthetic_transport_query(command, options):
+def synthetic_transport_query(command, options, *, help_output=None, provider_output=None):
     """Synthetic Apple schema/capabilities only. Never execute a tool or network call."""
-    if '--help' in command:
+    if command == ['xcrun', 'altool', '--help']:
         options['stdout'].write(b'--upload-package --apple-id --bundle-id --bundle-version '
-            b'--bundle-short-version-string --asc-public-id --list-providers')
+            b'--bundle-short-version-string --asc-public-id --list-providers'
+            if help_output is None else help_output)
         return True
-    if '--list-providers' in command:
+    if command[:5] == ['xcrun', 'altool', '--list-providers', '--output-format', 'json']:
         options['stdout'].write(json.dumps({'providers': [
             {'PublicID': '00000000-0000-0000-0000-000000000001',
-             'WWDRTeamID': delivery.cert.release.TEAM}]}).encode())
+             'WWDRTeamID': delivery.cert.release.TEAM}]}).encode()
+             if provider_output is None else provider_output)
         return True
     return False
 
@@ -777,7 +782,7 @@ class CertificationAndTransferTests(SyntheticDeliveryTestCase):
     def setUp(self):
         self.temporary = tempfile.TemporaryDirectory()
         self.addCleanup(self.temporary.cleanup)
-        self.root = Path(self.temporary.name)
+        self.root = Path(self.temporary.name).resolve(strict=True)
         self.ipa, self.guard = fixture(self.root)
         self.addCleanup(patch.stopall)
         patch.object(delivery, "source_guard", return_value=self.guard).start()
@@ -821,8 +826,10 @@ class CertificationAndTransferTests(SyntheticDeliveryTestCase):
         (self.root / "reports/storekit-diagnostic-regressions.tap").write_text("not ok 1 - NEW FAILURE\n# tests 1\n# fail 1\n")
         with self.assertRaises(AssertionError): delivery.ready(self.root, COMMIT, self.ipa)
 
-    def fake_upload(self, *, existing=False, fail=False):
+    def fake_upload(self, *, existing=False, fail=False, prerequisites=None):
         calls = []
+        self.transport_queries = []
+        self.transport_commands = []
         def get(path, token):
             self.assertEqual(token, "SYNTHETIC_NOT_A_JWT")
             calls.append("apps" if path.startswith("/v1/apps?") else "builds")
@@ -830,7 +837,10 @@ class CertificationAndTransferTests(SyntheticDeliveryTestCase):
                 return {"data": [{"id": "123", "type": "apps", "attributes": {"bundleId": delivery.cert.release.BUNDLE}}]}
             return {"data": [{"id": "synthetic"}] if existing else []}
         def execute(command, **options):
-            if synthetic_transport_query(command, options): return
+            if synthetic_transport_query(command, options, **(prerequisites or {})):
+                self.transport_queries.append((list(command), dict(options)))
+                return
+            self.transport_commands.append(list(command))
             action = upload_action(command)
             calls.append(action)
             if fail and action == "--upload-package": raise subprocess.CalledProcessError(1, command, stderr="PRIVATE NEVER PRINT")
@@ -1879,7 +1889,7 @@ security() {
         nodes=lambda text:{n.targets[0].id:n.value for n in ast.parse(text).body
                            if isinstance(n,ast.Assign) and isinstance(n.targets[0],ast.Name)}
         old,new=nodes(before),nodes(after)
-        self.assertEqual(set(new)-set(old),{"UPLOADER_REPAIR_BASE","_UPLOAD_RUN","CERTIFIED_BASE","SOLO_OWNER_BASE","SOLO_OWNER_ATTEST_BASE","SOLO_OWNER_FIX_BASE","FAILED_AUTH_BASE","FAILED_AUTH_TAG","FAILED_AUTH_TAG_OBJECT","SOLO_OWNER_UI_METHOD","SOLO_OWNER_UI_CONFIRMATIONS","PRIOR_ATTEMPT_FIELD","PRIOR_ATTEMPT_RUN","PRIOR_ATTEMPT_CONFIRMATIONS","SAFETY_FILES","UPLOAD_BASE","UPLOAD_ERROR_CATEGORIES","APPLE_ID_BASE","TEST_MODE_FILES","AUTH_BASE","APPLE_ID_AUTH_FIELD","UI_UNUSED_METHOD","UI_UNUSED_CONFIRMATIONS","TRANSFER_BASE","DELIVERY_STAGES","DELIVERY_STAGE_FAILURES","DELIVERY_CATEGORIES","P04_BASE","ARCHIVE_BASE","EVIDENCE_BASE","ENVIRONMENT_BASE","ARCHIVE_RULES","ARCHIVE_MAX_BYTES","ARCHIVE_STRUCTURED_STATES","HISTORY_CATEGORIES","HISTORY_ATTEMPTS",
+        self.assertEqual(set(new)-set(old),{"UPLOADER_CERTIFICATION_BASE","UPLOADER_REPAIR_BASE","_UPLOAD_RUN","CERTIFIED_BASE","SOLO_OWNER_BASE","SOLO_OWNER_ATTEST_BASE","SOLO_OWNER_FIX_BASE","FAILED_AUTH_BASE","FAILED_AUTH_TAG","FAILED_AUTH_TAG_OBJECT","SOLO_OWNER_UI_METHOD","SOLO_OWNER_UI_CONFIRMATIONS","PRIOR_ATTEMPT_FIELD","PRIOR_ATTEMPT_RUN","PRIOR_ATTEMPT_CONFIRMATIONS","SAFETY_FILES","UPLOAD_BASE","UPLOAD_ERROR_CATEGORIES","APPLE_ID_BASE","TEST_MODE_FILES","AUTH_BASE","APPLE_ID_AUTH_FIELD","UI_UNUSED_METHOD","UI_UNUSED_CONFIRMATIONS","TRANSFER_BASE","DELIVERY_STAGES","DELIVERY_STAGE_FAILURES","DELIVERY_CATEGORIES","P04_BASE","ARCHIVE_BASE","EVIDENCE_BASE","ENVIRONMENT_BASE","ARCHIVE_RULES","ARCHIVE_MAX_BYTES","ARCHIVE_STRUCTURED_STATES","HISTORY_CATEGORIES","HISTORY_ATTEMPTS",
                          "HISTORY_WAIT_BUDGET","HISTORY_DEADLINE","HISTORY_TIMEOUT","HISTORY_MAX_BYTES"})
         for name,node in old.items():
             if name=="HISTORICAL_TAGS":
@@ -1980,7 +1990,7 @@ security() {
         self.assertFalse(git("ls-files","--others","--exclude-standard"))
         head=git("rev-parse","HEAD")
         self.assertFalse(git("status","--porcelain=v1","--untracked-files=all"))
-        self.assertEqual(git("show","-s","--format=%P",head),delivery.UPLOADER_REPAIR_BASE)
+        self.assertEqual(git("show","-s","--format=%P",head),delivery.UPLOADER_CERTIFICATION_BASE)
         delivery.source_guard(head,True)
         for path in support:
             entry=git("ls-files","--stage","--",path).split()
@@ -4281,7 +4291,7 @@ class SupportedPackageUploaderTests(SyntheticDeliveryTestCase):
     def setUp(self):
         self.temporary = tempfile.TemporaryDirectory()
         self.addCleanup(self.temporary.cleanup)
-        self.root = Path(self.temporary.name)
+        self.root = Path(self.temporary.name).resolve(strict=True)
         self.ipa, _ = fixture(self.root)
         self.command, self.options = delivery.apple_id_command(self.root, self.ipa, {
             'APPLE_ID_USERNAME': 'synthetic@example.invalid',
@@ -4433,14 +4443,19 @@ class SupportedPackageUploaderTests(SyntheticDeliveryTestCase):
             self.assertEqual(before[name], normalized[name], name)
         self.assertEqual(delivery.UPLOADER_REPAIR_BASE, 'b66348762e10bf47031f2297963345cf18088b83')
         head = delivery.cert.git('rev-parse', 'HEAD').decode().strip()
-        if head != delivery.UPLOADER_REPAIR_BASE:
+        if head != delivery.UPLOADER_CERTIFICATION_BASE:
             self.assertEqual(delivery.cert.git('show', '-s', '--format=%P', head).decode().strip(),
-                             delivery.UPLOADER_REPAIR_BASE)
+                             delivery.UPLOADER_CERTIFICATION_BASE)
         changed = delivery.cert.git('diff', '--name-only', delivery.UPLOADER_REPAIR_BASE).decode().splitlines()
         self.assertEqual(set(changed), delivery.TEST_MODE_FILES)
 
     def test_new_parent_inventory_and_failed_delivery_tag_are_frozen(self):
-        for options in ({'parent': delivery.FAILED_AUTH_BASE}, {'repair_base_parent': '9'*40},
+        for options in ({'parent': delivery.UPLOADER_REPAIR_BASE},
+                        {'parent': delivery.FAILED_AUTH_BASE}, {'repair_base_parent': '9'*40},
+                        {'certification_parent': '9'*40},
+                        {'certification_parent': delivery.UPLOADER_REPAIR_BASE+' '+'9'*40},
+                        {'certification_inventory': b''},
+                        {'certification_inventory': b'M\tjs/gridly-paid-ui.mjs'},
                         {'repair_base_inventory': b''}, {'correction': b'M\tjs/gridly-paid-ui.mjs'},
                         {'dirty': b'changed'}, {'mode': '100755'}):
             with self.subTest(options=options), patch.object(delivery.cert, 'git', side_effect=source_git(**options)), \
@@ -4456,6 +4471,100 @@ class SupportedPackageUploaderTests(SyntheticDeliveryTestCase):
                  patch.object(delivery.subprocess, 'run'), patch.object(delivery.cert, 'original_contracts'), \
                  self.assertRaises(ValueError):
                 delivery.source_guard(COMMIT, True)
+
+
+class SharedPackagePreflightTests(SyntheticDeliveryTestCase):
+    """Exercise the real preflight through shared, strictly synthetic executors."""
+    setUp = CertificationAndTransferTests.setUp
+    fake_upload = CertificationAndTransferTests.fake_upload
+
+    def test_legacy_api_credentials_keyfile_and_availability_contract_remain_intact(self):
+        calls, options = self.fake_upload()
+        class OnlyApiCredentials(dict):
+            def get(values, key, default=None):
+                self.assertIn(key, {'ASC_KEY_ID', 'ASC_ISSUER_ID', 'ASC_PRIVATE_KEY_P8_BASE64'})
+                return super().get(key, default)
+        options['credentials'] = OnlyApiCredentials(options['credentials'])
+        with contextlib.redirect_stdout(io.StringIO()) as out, contextlib.redirect_stderr(io.StringIO()) as err:
+            delivery.transfer(self.root, COMMIT, self.ipa, **options)
+        self.assertEqual(out.getvalue()+err.getvalue(), '')
+        self.assertEqual(calls, ['--validate-app', 'apps', 'builds', '--upload-package'])
+        self.assertEqual(len(self.transport_queries), 2)
+        help_command, help_options = self.transport_queries[0]
+        provider_command, _ = self.transport_queries[1]
+        auth = ['--apiKey', 'SYNTHETIC1', '--apiIssuer', '00000000-0000-0000-0000-000000000000']
+        self.assertEqual(help_command, ['xcrun', 'altool', '--help'])
+        self.assertNotIn('ASC_PRIVATE_KEY_P8_BASE64', help_options['env'])
+        self.assertNotIn('APPLE_APP_SPECIFIC_PASSWORD', help_options['env'])
+        self.assertEqual(provider_command, ['xcrun', 'altool', '--list-providers', '--output-format', 'json', *auth])
+        for command in self.transport_commands:
+            self.assertIn('--apiKey', command)
+            start = command.index('--apiKey')
+            self.assertEqual(command[start:start+4], auth)
+            self.assertNotIn('--username', command)
+            self.assertNotIn('--password', command)
+        key = self.root/'home/.appstoreconnect/private_keys/AuthKey_SYNTHETIC1.p8'
+        self.assertEqual(key.read_bytes(), b'-----BEGIN PRIVATE KEY-----\nNOT_A_REAL_KEY\n-----END PRIVATE KEY-----')
+
+    def test_invalid_shared_prerequisites_block_before_validation_or_upload(self):
+        for prerequisites in ({'help_output': b''}, {'help_output': b'--upload-app'},
+                              {'provider_output': b''}, {'provider_output': b'PRIVATE_INVALID_JSON'},
+                              {'provider_output': b'{}'}, {'provider_output': b'{"providers": []}'}):
+            with self.subTest(prerequisites=prerequisites):
+                # Each loop is a new synthetic credential setup, never a transport retry.
+                (self.root/'home/.appstoreconnect/private_keys/AuthKey_SYNTHETIC1.p8').unlink(missing_ok=True)
+                calls, options = self.fake_upload(prerequisites=prerequisites)
+                with contextlib.redirect_stdout(io.StringIO()) as out, contextlib.redirect_stderr(io.StringIO()) as err:
+                    with self.assertRaises(ValueError) as caught:
+                        delivery.transfer(self.root, COMMIT, self.ipa, **options)
+                self.assertEqual(calls, [])
+                self.assertEqual(self.transport_commands, [])
+                self.assertTrue(self.transport_queries)
+                self.assertNotIn('PRIVATE', str(caught.exception))
+                self.assertEqual(out.getvalue()+err.getvalue(), '')
+                self.assertFalse((self.root/'reports/delivery-transfer.json').exists())
+
+    def test_shared_multiple_provider_selection_is_verified_before_upload(self):
+        selected = '00000000-0000-0000-0000-000000000001'
+        other = '00000000-0000-0000-0000-000000000002'
+        response = json.dumps({'providers': [
+            {'PublicID': selected, 'WWDRTeamID': delivery.cert.release.TEAM},
+            {'PublicID': other, 'WWDRTeamID': 'OTHERTEAM1'}]}).encode()
+        with patch.dict(os.environ):
+            for invalid in (None, other, '00000000-0000-0000-0000-000000000003'):
+                os.environ.pop('GRIDLY_APPLE_PROVIDER_PUBLIC_ID', None)
+                if invalid is not None: os.environ['GRIDLY_APPLE_PROVIDER_PUBLIC_ID'] = invalid
+                (self.root/'home/.appstoreconnect/private_keys/AuthKey_SYNTHETIC1.p8').unlink(missing_ok=True)
+                calls, options = self.fake_upload(prerequisites={'provider_output': response})
+                with self.subTest(selection=invalid), self.assertRaises(ValueError):
+                    delivery.transfer(self.root, COMMIT, self.ipa, **options)
+                self.assertEqual(calls, [])
+                self.assertFalse((self.root/'reports/delivery-transfer.json').exists())
+            os.environ['GRIDLY_APPLE_PROVIDER_PUBLIC_ID'] = selected
+            (self.root/'home/.appstoreconnect/private_keys/AuthKey_SYNTHETIC1.p8').unlink()
+            calls, options = self.fake_upload(prerequisites={'provider_output': response})
+            delivery.transfer(self.root, COMMIT, self.ipa, **options)
+        self.assertEqual(calls, ['--validate-app', 'apps', 'builds', '--upload-package'])
+        command = self.transport_commands[-1]
+        self.assertEqual(command[command.index('--asc-public-id')+1], selected)
+
+    def test_canonical_fixture_does_not_bypass_production_parent_symlink_rejection(self):
+        self.assertEqual(self.root, self.root.resolve(strict=True))
+        original = Path.is_symlink
+        def linked(path): return path == self.root.parent or original(path)
+        with patch.object(Path, 'is_symlink', new=linked), self.assertRaisesRegex(ValueError, 'symlinked runner parent'):
+            delivery.private_upload_environment(self.root, {})
+
+    def test_correction_preserves_every_production_function_except_source_guard(self):
+        before = delivery.cert.git('show', delivery.UPLOADER_CERTIFICATION_BASE+
+                                   ':tools/apple_storekit_testflight_delivery.py').decode()
+        after = (ROOT/'tools/apple_storekit_testflight_delivery.py').read_text()
+        functions = lambda source: {node.name: ast.dump(node) for node in ast.parse(source).body
+                                   if isinstance(node, (ast.FunctionDef, ast.ClassDef))}
+        old, new = functions(before), functions(after)
+        self.assertEqual(old.keys(), new.keys())
+        for name in old.keys()-{'source_guard'}:
+            self.assertEqual(old[name], new[name], name)
 
 
 if __name__ == "__main__":
