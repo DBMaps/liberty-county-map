@@ -62,6 +62,7 @@ DELIVERY_RECOVERY_TEST_BASE = "cb1f6e7b373bc0f9b9018c705dc94842cefa3d04"
 INSTALLED_ALTOOL_BASE = "3ec05f8bbdc37bdff58d45a03164128d80177eeb"
 CONSUMED_SETUP_TAG = "refs/tags/gridly-storekit-testflight-deliver-15-" + INSTALLED_ALTOOL_BASE
 CONSUMED_SETUP_TAG_OBJECT = "bfcf0f05b0886cd69ddc3586d350f339c7a2534d"
+SUCCESSOR_BASE = "956f73bf5e70820befee9c2a592679318b4a367c"
 SECOND_UNCERTAIN_RUN = 39457019380
 SECOND_UNCERTAIN_TAG = "refs/tags/gridly-storekit-testflight-deliver-15-" + UPLOADER_REPAIR_BASE
 SECOND_UNCERTAIN_TAG_OBJECT = "ea2d9158e9b0a0b1e0035947f15e2d3cef79173c"
@@ -209,6 +210,19 @@ PRIOR_ATTEMPT_CONFIRMATIONS = {
     "no_other_unresolved_uploads_confirmed",
     "exception_not_previously_used_confirmed",
 }
+SUCCESSOR_FIELD = "consumed_pre_upload_recovery"
+SUCCESSOR_CONFIRMATIONS = {
+    "authorized", "consumed_attempt_reviewed", "cleanup_failure_acknowledged",
+    "one_additional_attempt_authorized",
+}
+CONSUMED_SETUP_OUTCOME = {
+    "run_id": 39512682867, "tag": CONSUMED_SETUP_TAG,
+    "tag_object": CONSUMED_SETUP_TAG_OBJECT, "source_commit": INSTALLED_ALTOOL_BASE,
+    "archive": "PASS", "signing": "PASS", "export": "PASS", "ipa_certification": "PASS",
+    "D02": "CREDENTIAL_SETUP_REJECTED", "D03": "NOT_RUN", "D04": "NOT_RUN",
+    "D05": "NOT_RUN", "D06": "NOT_RUN", "upload": "NOT_ATTEMPTED",
+    "cleanup": "PRIVATE_HOME_EACCES",
+}
 
 
 def require(value, reason):
@@ -293,6 +307,8 @@ def ui_unused_build(authorization, now=None):
 def prior_attempt_evidence(authorization, now=None):
     """One acknowledged historical uncertainty; never manufacture Apple acceptance."""
     evidence = authorization.get(APPLE_ID_AUTH_FIELD)
+    if isinstance(evidence, dict) and isinstance(evidence.get(PRIOR_ATTEMPT_FIELD), dict) and SUCCESSOR_FIELD in evidence[PRIOR_ATTEMPT_FIELD]:
+        return successor_attempt_evidence(authorization, now)
     require(isinstance(evidence, dict) and set(evidence) == SOLO_OWNER_UI_CONFIRMATIONS | {
         "method", "owner_checked_at", PRIOR_ATTEMPT_FIELD,
     }, "complete prior-attempt owner UI evidence required")
@@ -339,7 +355,49 @@ def prior_attempt_evidence(authorization, now=None):
             "owner_checked_at": evidence["owner_checked_at"]}
 
 
-def prior_attempt_slot(ref, commit):
+def successor_recovery(value):
+    """Only this consumed pre-upload attempt; no claim that older uploads failed."""
+    require(isinstance(value, dict) and set(value) == SUCCESSOR_CONFIRMATIONS | {
+        "consumed_attempt", "earlier_attempts", "certified_uploader_commit",
+        "uploader_certification_run_id"}, "exact consumed-attempt successor approval required")
+    require(all(value[key] is True for key in SUCCESSOR_CONFIRMATIONS),
+            "explicit successor owner confirmations required")
+    require(isinstance(value["consumed_attempt"], dict)
+            and type(value["consumed_attempt"].get("run_id")) is int
+            and value["consumed_attempt"] == CONSUMED_SETUP_OUTCOME,
+            "exact consumed tag and pre-upload outcome required")
+    require(isinstance(value["earlier_attempts"], list)
+            and all(isinstance(attempt, dict) and type(attempt.get("run_id")) is int
+                    for attempt in value["earlier_attempts"])
+            and value["earlier_attempts"] == [
+        {"run_id": run, "apple_acceptance": "UNKNOWN"}
+        for run in (PRIOR_ATTEMPT_RUN, SECOND_UNCERTAIN_RUN)],
+        "both older Apple acceptance outcomes must remain individually unknown")
+    require(value["certified_uploader_commit"] == SUCCESSOR_BASE
+            and type(value["uploader_certification_run_id"]) is int
+            and value["uploader_certification_run_id"] == 39515579844,
+            "exact macOS-certified uploader required")
+    return value
+
+
+def successor_attempt_evidence(authorization, now=None):
+    evidence = authorization[APPLE_ID_AUTH_FIELD]
+    exception = evidence[PRIOR_ATTEMPT_FIELD]
+    successor = successor_recovery(exception[SUCCESSOR_FIELD])
+    require(authorization.get("delivery_commit") not in {SUCCESSOR_BASE, INSTALLED_ALTOOL_BASE},
+            "new reviewed successor commit required")
+    # Reuse every existing owner, duplicate-risk, identity and freshness check.
+    # Remove only the exact successor field from a copy; the authorization is immutable.
+    legacy = {**authorization, APPLE_ID_AUTH_FIELD: {**evidence, PRIOR_ATTEMPT_FIELD: {
+        key: value for key, value in exception.items() if key != SUCCESSOR_FIELD}}}
+    receipt = prior_attempt_evidence(legacy, now)
+    return {**receipt, "processing_build_visible": False,
+            "consumed_pre_upload_attempt": dict(successor["consumed_attempt"]),
+            "earlier_attempts": [dict(attempt) for attempt in successor["earlier_attempts"]],
+            "one_additional_attempt_authorized": True}
+
+
+def prior_attempt_slot(ref, commit, recovery=None):
     """Preserved tag history consumes this exception even if that run fails early."""
     require(ref == PREFIX + commit and commit != CERTIFIED_BASE, "exact one-time delivery tag required")
     refs = cert.git("rev-parse", "--symbolic-full-name", "--tags=" + PREFIX.removeprefix("refs/tags/") + "*").decode().splitlines()
@@ -353,6 +411,20 @@ def prior_attempt_slot(ref, commit):
             and cert.git("rev-parse", "--verify", SECOND_UNCERTAIN_TAG + "^{}").decode().strip() == UPLOADER_REPAIR_BASE,
             "previous signed-IPA upload uncertainty must remain pinned")
     expected = {"refs/tags/" + name for name in HISTORICAL_TAGS if ("refs/tags/" + name).startswith(PREFIX)} | {FAILED_AUTH_TAG, SECOND_UNCERTAIN_TAG, ref}
+    if recovery is not None:
+        successor_recovery(recovery)
+        historical = {"refs/tags/" + name for name in HISTORICAL_TAGS
+                      if ("refs/tags/" + name).startswith(PREFIX)} | {FAILED_AUTH_TAG, SECOND_UNCERTAIN_TAG}
+        require(ref not in historical | {CONSUMED_SETUP_TAG} and commit != SUCCESSOR_BASE,
+                "fresh successor tag required; historical tags cannot be reused")
+        require(cert.git("cat-file", "-t", CONSUMED_SETUP_TAG).decode().strip() == "tag"
+                and cert.git("rev-parse", "--verify", CONSUMED_SETUP_TAG).decode().strip() == CONSUMED_SETUP_TAG_OBJECT
+                and cert.git("rev-parse", "--verify", CONSUMED_SETUP_TAG + "^{}").decode().strip() == INSTALLED_ALTOOL_BASE,
+                "consumed pre-upload delivery tag changed or missing")
+        require(cert.git("cat-file", "-t", ref).decode().strip() == "tag"
+                and cert.git("rev-parse", "--verify", ref + "^{}").decode().strip() == commit,
+                "new annotated tag must target reviewed successor commit")
+        expected |= {CONSUMED_SETUP_TAG}
     require(set(refs) == expected and len(refs) == len(expected),
             "prior-attempt exception already consumed or new delivery attempt unresolved")
 
@@ -502,7 +574,7 @@ def authorize(ref, commit, event_path, attempt):
     value = json.loads(annotation, object_pairs_hook=cert.unique_json_object)
     owner_authorization(value, commit, ref)
     if PRIOR_ATTEMPT_FIELD in value.get(APPLE_ID_AUTH_FIELD, {}):
-        prior_attempt_slot(ref, commit)
+        prior_attempt_slot(ref, commit, value[APPLE_ID_AUTH_FIELD][PRIOR_ATTEMPT_FIELD].get(SUCCESSOR_FIELD))
     if os.environ.get("GRIDLY_UPLOAD_AUTHENTICATION") == "APPLE_ID":
         require(APPLE_ID_AUTH_FIELD in value, "explicit Apple ID UI authorization required")
     return {"authorization": value, "ref": ref, "source_commit": commit, "build": "15"}
@@ -511,11 +583,11 @@ def authorize(ref, commit, event_path, attempt):
 def source_guard(commit, clean):
     require(re.fullmatch(r"[0-9a-f]{40}", commit or ""), "exact source SHA required")
     pinned = {SOURCE, DELIVERY_BASE, OWNER_CORRECTION, PREFLIGHT_BASE, REFINEMENT_BASE,
-              SIGNING_BASE, CMS_BASE, CMS_REPAIR_BASE, SIGNING_VERIFIED_BASE, P04_BASE, ARCHIVE_BASE, EVIDENCE_BASE, ENVIRONMENT_BASE, TRANSFER_BASE, AUTH_BASE, APPLE_ID_BASE, UPLOAD_BASE, CERTIFIED_BASE, SOLO_OWNER_BASE, SOLO_OWNER_ATTEST_BASE, SOLO_OWNER_FIX_BASE, FAILED_AUTH_BASE, UPLOADER_REPAIR_BASE, UPLOADER_CERTIFICATION_BASE, TEAM_ID_REPAIR_BASE, DELIVERY_RESUME_BASE, DELIVERY_RECOVERY_TEST_BASE, INSTALLED_ALTOOL_BASE}
+              SIGNING_BASE, CMS_BASE, CMS_REPAIR_BASE, SIGNING_VERIFIED_BASE, P04_BASE, ARCHIVE_BASE, EVIDENCE_BASE, ENVIRONMENT_BASE, TRANSFER_BASE, AUTH_BASE, APPLE_ID_BASE, UPLOAD_BASE, CERTIFIED_BASE, SOLO_OWNER_BASE, SOLO_OWNER_ATTEST_BASE, SOLO_OWNER_FIX_BASE, FAILED_AUTH_BASE, UPLOADER_REPAIR_BASE, UPLOADER_CERTIFICATION_BASE, TEAM_ID_REPAIR_BASE, DELIVERY_RESUME_BASE, DELIVERY_RECOVERY_TEST_BASE, INSTALLED_ALTOOL_BASE, SUCCESSOR_BASE}
     require(cert.git("rev-parse", "HEAD").decode().strip() == commit and commit not in pinned,
             "new reviewed delivery-support commit required")
     for child, parent in (
-        (commit, INSTALLED_ALTOOL_BASE), (INSTALLED_ALTOOL_BASE, DELIVERY_RECOVERY_TEST_BASE), (DELIVERY_RECOVERY_TEST_BASE, DELIVERY_RESUME_BASE), (DELIVERY_RESUME_BASE, TEAM_ID_REPAIR_BASE), (TEAM_ID_REPAIR_BASE, UPLOADER_CERTIFICATION_BASE), (UPLOADER_CERTIFICATION_BASE, UPLOADER_REPAIR_BASE), (UPLOADER_REPAIR_BASE, FAILED_AUTH_BASE), (FAILED_AUTH_BASE, SOLO_OWNER_FIX_BASE), (SOLO_OWNER_FIX_BASE, SOLO_OWNER_ATTEST_BASE),
+        (commit, SUCCESSOR_BASE), (SUCCESSOR_BASE, INSTALLED_ALTOOL_BASE), (INSTALLED_ALTOOL_BASE, DELIVERY_RECOVERY_TEST_BASE), (DELIVERY_RECOVERY_TEST_BASE, DELIVERY_RESUME_BASE), (DELIVERY_RESUME_BASE, TEAM_ID_REPAIR_BASE), (TEAM_ID_REPAIR_BASE, UPLOADER_CERTIFICATION_BASE), (UPLOADER_CERTIFICATION_BASE, UPLOADER_REPAIR_BASE), (UPLOADER_REPAIR_BASE, FAILED_AUTH_BASE), (FAILED_AUTH_BASE, SOLO_OWNER_FIX_BASE), (SOLO_OWNER_FIX_BASE, SOLO_OWNER_ATTEST_BASE),
         (SOLO_OWNER_ATTEST_BASE, SOLO_OWNER_BASE), (SOLO_OWNER_BASE, CERTIFIED_BASE), (CERTIFIED_BASE, UPLOAD_BASE), (UPLOAD_BASE, APPLE_ID_BASE), (APPLE_ID_BASE, AUTH_BASE), (AUTH_BASE, TRANSFER_BASE), (TRANSFER_BASE, ENVIRONMENT_BASE), (ENVIRONMENT_BASE, EVIDENCE_BASE), (EVIDENCE_BASE, ARCHIVE_BASE), (ARCHIVE_BASE, P04_BASE), (P04_BASE, SIGNING_VERIFIED_BASE),
         (SIGNING_VERIFIED_BASE, CMS_REPAIR_BASE),
         (CMS_REPAIR_BASE, CMS_BASE), (CMS_BASE, SIGNING_BASE), (SIGNING_BASE, REFINEMENT_BASE),
@@ -563,7 +635,8 @@ def source_guard(commit, clean):
         (TEAM_ID_REPAIR_BASE, DELIVERY_RESUME_BASE, "M", TEST_MODE_FILES),
         (DELIVERY_RESUME_BASE, DELIVERY_RECOVERY_TEST_BASE, "M", TEST_MODE_FILES),
         (DELIVERY_RECOVERY_TEST_BASE, INSTALLED_ALTOOL_BASE, "M", TEST_MODE_FILES),
-        (INSTALLED_ALTOOL_BASE, commit, "M", TEST_MODE_FILES),
+        (INSTALLED_ALTOOL_BASE, SUCCESSOR_BASE, "M", TEST_MODE_FILES),
+        (SUCCESSOR_BASE, commit, "M", TEST_MODE_FILES),
         (SOURCE, commit, "A", FILES | PREFLIGHT_FILES | SIGNING_FILES | CMS_FILES | SAFETY_FILES),
     ):
         records = cert.git("diff", "--name-status", "--no-renames", base, target).decode().splitlines()
@@ -901,7 +974,7 @@ def authorization_guard(root, commit, now=None):
     require(report["source_commit"] == commit and report["build"] == "15", "wrong authorization report")
     value = owner_authorization(report["authorization"], commit, report["ref"], now)
     if PRIOR_ATTEMPT_FIELD in value.get(APPLE_ID_AUTH_FIELD, {}):
-        prior_attempt_slot(report["ref"], commit)
+        prior_attempt_slot(report["ref"], commit, value[APPLE_ID_AUTH_FIELD][PRIOR_ATTEMPT_FIELD].get(SUCCESSOR_FIELD))
     return value
 
 

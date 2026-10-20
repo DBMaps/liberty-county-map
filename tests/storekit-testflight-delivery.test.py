@@ -43,8 +43,50 @@ DELIVERY_REPORTING_FUNCTIONS = {
 APPLE_ID_WORKFLOW_COMMENT = '# Apple ID delivery uses ONLY the two existing Apple ID secrets, never an API key.\n# REQUIRED additional annotation field: "apple_id_upload_authorization":{\n# "authorized":true,"method":"OWNER_AND_INDEPENDENT_APP_STORE_CONNECT_UI",\n# "owner_checked_at":"<same genuine UTC time as owner_checks_at>",\n# "independent_checked_at":"<genuine independent read-only UI check UTC time>",\n# "owner_verified_unused":true,"independent_verified_unused":true,\n# "build_uploads_reviewed":true,"testflight_all_builds_reviewed":true,\n# "no_pending_or_uncertain_uploads":true,"exclusive_upload_window_acknowledged":true}\n# The owner AND an independent reviewer must actually inspect App Store Connect\n# Build Uploads and all TestFlight builds before tagging; never fabricate evidence.\n# Both checks must remain within 1,800 seconds through the pre-upload gate.\n# D05\'s historical stage name now covers this explicit UI-evidence mode, not an API query.\n# No validation result alone is treated as proof that Build 15 is unused.\n# Do not include account identities, screenshots, raw Apple output or secrets in the tag.\n'
 
 
+def normalize_authorization_successor(text):
+    """Reverse exact successor gates only; independently freeze the certified transport."""
+    if 'def successor_recovery(' not in text:
+        return text
+    replacements = (
+        ('    if isinstance(evidence, dict) and isinstance(evidence.get(PRIOR_ATTEMPT_FIELD), dict) and SUCCESSOR_FIELD in evidence[PRIOR_ATTEMPT_FIELD]:\n        return successor_attempt_evidence(authorization, now)\n', ''),
+        ('prior_attempt_slot(ref, commit, value[APPLE_ID_AUTH_FIELD][PRIOR_ATTEMPT_FIELD].get(SUCCESSOR_FIELD))', 'prior_attempt_slot(ref, commit)'),
+        ('prior_attempt_slot(report["ref"], commit, value[APPLE_ID_AUTH_FIELD][PRIOR_ATTEMPT_FIELD].get(SUCCESSOR_FIELD))', 'prior_attempt_slot(report["ref"], commit)'),
+        ('def prior_attempt_slot(ref, commit, recovery=None):', 'def prior_attempt_slot(ref, commit):'),
+    )
+    for current, previous in replacements:
+        assert text.count(current) == 1, current
+        text = text.replace(current, previous, 1)
+    expected = ast.parse('''if recovery is not None:
+    successor_recovery(recovery)
+    historical = {"refs/tags/" + name for name in HISTORICAL_TAGS
+                  if ("refs/tags/" + name).startswith(PREFIX)} | {FAILED_AUTH_TAG, SECOND_UNCERTAIN_TAG}
+    require(ref not in historical | {CONSUMED_SETUP_TAG} and commit != SUCCESSOR_BASE,
+            "fresh successor tag required; historical tags cannot be reused")
+    require(cert.git("cat-file", "-t", CONSUMED_SETUP_TAG).decode().strip() == "tag"
+            and cert.git("rev-parse", "--verify", CONSUMED_SETUP_TAG).decode().strip() == CONSUMED_SETUP_TAG_OBJECT
+            and cert.git("rev-parse", "--verify", CONSUMED_SETUP_TAG + "^{}").decode().strip() == INSTALLED_ALTOOL_BASE,
+            "consumed pre-upload delivery tag changed or missing")
+    require(cert.git("cat-file", "-t", ref).decode().strip() == "tag"
+            and cert.git("rev-parse", "--verify", ref + "^{}").decode().strip() == commit,
+            "new annotated tag must target reviewed successor commit")
+    expected |= {CONSUMED_SETUP_TAG}
+''').body[0]
+    tree = ast.parse(text)
+    slot = next(n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name == 'prior_attempt_slot')
+    branches = [n for n in slot.body if isinstance(n, ast.If) and ast.dump(n.test) == ast.dump(expected.test)]
+    assert len(branches) == 1 and ast.dump(branches[0]) == ast.dump(expected)
+    removed = branches + [n for n in tree.body if isinstance(n, ast.FunctionDef)
+                          and n.name in {'successor_recovery', 'successor_attempt_evidence'}]
+    assert len(removed) == 3
+    lines = text.splitlines(keepends=True)
+    for node in sorted(removed, key=lambda n: n.lineno, reverse=True):
+        del lines[node.lineno-1:node.end_lineno]
+    return ''.join(lines)
+
+
 def normalize_installed_altool(text):
     """Reverse only exact new Apple-command and cleanup call deltas for old checks."""
+    text = normalize_authorization_successor(text)
     if 'def repair_owned_home_modes(' not in text:
         return text
     pairs = (
@@ -319,7 +361,8 @@ def owner_automatic_authorization():
             }}
 
 
-def source_git(*, parent=delivery.INSTALLED_ALTOOL_BASE,
+def source_git(*, parent=delivery.SUCCESSOR_BASE,
+               successor_parent=delivery.INSTALLED_ALTOOL_BASE, successor_inventory=None,
                installed_parent=delivery.DELIVERY_RECOVERY_TEST_BASE, installed_inventory=None,
                recovery_parent=delivery.DELIVERY_RESUME_BASE, recovery_inventory=None,
                resume_parent=delivery.TEAM_ID_REPAIR_BASE, resume_inventory=None,
@@ -361,6 +404,7 @@ def source_git(*, parent=delivery.INSTALLED_ALTOOL_BASE,
     values = {
         ("rev-parse", "HEAD"): COMMIT.encode(),
         ("show", "-s", "--format=%P", COMMIT): parent.encode(),
+        ("show", "-s", "--format=%P", delivery.SUCCESSOR_BASE): successor_parent.encode(),
         ("show", "-s", "--format=%P", delivery.INSTALLED_ALTOOL_BASE): installed_parent.encode(),
         ("cat-file", "-t", delivery.CONSUMED_SETUP_TAG): b"tag",
         ("rev-parse", "--verify", delivery.CONSUMED_SETUP_TAG): delivery.CONSUMED_SETUP_TAG_OBJECT.encode(),
@@ -423,7 +467,8 @@ def source_git(*, parent=delivery.INSTALLED_ALTOOL_BASE,
         ("diff", "--name-status", "--no-renames", delivery.TEAM_ID_REPAIR_BASE, delivery.DELIVERY_RESUME_BASE): test_mode if resume_inventory is None else resume_inventory,
         ("diff", "--name-status", "--no-renames", delivery.DELIVERY_RESUME_BASE, delivery.DELIVERY_RECOVERY_TEST_BASE): test_mode if recovery_inventory is None else recovery_inventory,
         ("diff", "--name-status", "--no-renames", delivery.DELIVERY_RECOVERY_TEST_BASE, delivery.INSTALLED_ALTOOL_BASE): test_mode if installed_inventory is None else installed_inventory,
-        ("diff", "--name-status", "--no-renames", delivery.INSTALLED_ALTOOL_BASE, COMMIT): test_mode if correction is None else correction,
+        ("diff", "--name-status", "--no-renames", delivery.INSTALLED_ALTOOL_BASE, delivery.SUCCESSOR_BASE): test_mode if successor_inventory is None else successor_inventory,
+        ("diff", "--name-status", "--no-renames", delivery.SUCCESSOR_BASE, COMMIT): test_mode if correction is None else correction,
         ("diff", "--name-status", "--no-renames", delivery.SOURCE, COMMIT): all_additions if net is None else net,
         ("diff", "--name-only", "HEAD"): dirty,
         ("diff", "--cached", "--name-only"): staged,
@@ -444,7 +489,7 @@ def source_git(*, parent=delivery.INSTALLED_ALTOOL_BASE,
     for path in delivery.TEST_MODE_FILES | delivery.SAFETY_FILES:
         values[("ls-tree", delivery.CERTIFIED_BASE, "--", path)] = ("100644 blob " + "0"*40 + "\t" + path).encode()
     for path in delivery.TEST_MODE_FILES:
-        for checkpoint in (delivery.SOLO_OWNER_BASE, delivery.SOLO_OWNER_ATTEST_BASE, delivery.SOLO_OWNER_FIX_BASE, delivery.FAILED_AUTH_BASE, delivery.UPLOADER_REPAIR_BASE, delivery.UPLOADER_CERTIFICATION_BASE, delivery.TEAM_ID_REPAIR_BASE, delivery.DELIVERY_RESUME_BASE, delivery.DELIVERY_RECOVERY_TEST_BASE, delivery.INSTALLED_ALTOOL_BASE):
+        for checkpoint in (delivery.SOLO_OWNER_BASE, delivery.SOLO_OWNER_ATTEST_BASE, delivery.SOLO_OWNER_FIX_BASE, delivery.FAILED_AUTH_BASE, delivery.UPLOADER_REPAIR_BASE, delivery.UPLOADER_CERTIFICATION_BASE, delivery.TEAM_ID_REPAIR_BASE, delivery.DELIVERY_RESUME_BASE, delivery.DELIVERY_RECOVERY_TEST_BASE, delivery.INSTALLED_ALTOOL_BASE, delivery.SUCCESSOR_BASE):
             values[("ls-tree", checkpoint, "--", path)] = ("100644 blob " + "0"*40 + "\t" + path).encode()
     for path in delivery.FILES | delivery.PREFLIGHT_FILES | delivery.SIGNING_FILES | delivery.CMS_FILES | delivery.SAFETY_FILES:
         values[("ls-tree", COMMIT, "--", path)] = (mode + " blob " + "0"*40 + "\t" + path).encode()
@@ -1922,7 +1967,7 @@ security() {
         nodes=lambda text:{n.targets[0].id:n.value for n in ast.parse(text).body
                            if isinstance(n,ast.Assign) and isinstance(n.targets[0],ast.Name)}
         old,new=nodes(before),nodes(after)
-        self.assertEqual(set(new)-set(old),{"INSTALLED_ALTOOL_BASE","CONSUMED_SETUP_TAG","CONSUMED_SETUP_TAG_OBJECT","TEAM_ID_REPAIR_BASE","DELIVERY_RESUME_BASE","DELIVERY_RECOVERY_TEST_BASE","SECOND_UNCERTAIN_RUN","SECOND_UNCERTAIN_TAG","SECOND_UNCERTAIN_TAG_OBJECT","UPLOADER_CERTIFICATION_BASE","UPLOADER_REPAIR_BASE","_UPLOAD_RUN","CERTIFIED_BASE","SOLO_OWNER_BASE","SOLO_OWNER_ATTEST_BASE","SOLO_OWNER_FIX_BASE","FAILED_AUTH_BASE","FAILED_AUTH_TAG","FAILED_AUTH_TAG_OBJECT","SOLO_OWNER_UI_METHOD","SOLO_OWNER_UI_CONFIRMATIONS","PRIOR_ATTEMPT_FIELD","PRIOR_ATTEMPT_RUN","PRIOR_ATTEMPT_CONFIRMATIONS","SAFETY_FILES","UPLOAD_BASE","UPLOAD_ERROR_CATEGORIES","APPLE_ID_BASE","TEST_MODE_FILES","AUTH_BASE","APPLE_ID_AUTH_FIELD","UI_UNUSED_METHOD","UI_UNUSED_CONFIRMATIONS","TRANSFER_BASE","DELIVERY_STAGES","DELIVERY_STAGE_FAILURES","DELIVERY_CATEGORIES","P04_BASE","ARCHIVE_BASE","EVIDENCE_BASE","ENVIRONMENT_BASE","ARCHIVE_RULES","ARCHIVE_MAX_BYTES","ARCHIVE_STRUCTURED_STATES","HISTORY_CATEGORIES","HISTORY_ATTEMPTS",
+        self.assertEqual(set(new)-set(old),{"SUCCESSOR_BASE","SUCCESSOR_FIELD","SUCCESSOR_CONFIRMATIONS","CONSUMED_SETUP_OUTCOME","INSTALLED_ALTOOL_BASE","CONSUMED_SETUP_TAG","CONSUMED_SETUP_TAG_OBJECT","TEAM_ID_REPAIR_BASE","DELIVERY_RESUME_BASE","DELIVERY_RECOVERY_TEST_BASE","SECOND_UNCERTAIN_RUN","SECOND_UNCERTAIN_TAG","SECOND_UNCERTAIN_TAG_OBJECT","UPLOADER_CERTIFICATION_BASE","UPLOADER_REPAIR_BASE","_UPLOAD_RUN","CERTIFIED_BASE","SOLO_OWNER_BASE","SOLO_OWNER_ATTEST_BASE","SOLO_OWNER_FIX_BASE","FAILED_AUTH_BASE","FAILED_AUTH_TAG","FAILED_AUTH_TAG_OBJECT","SOLO_OWNER_UI_METHOD","SOLO_OWNER_UI_CONFIRMATIONS","PRIOR_ATTEMPT_FIELD","PRIOR_ATTEMPT_RUN","PRIOR_ATTEMPT_CONFIRMATIONS","SAFETY_FILES","UPLOAD_BASE","UPLOAD_ERROR_CATEGORIES","APPLE_ID_BASE","TEST_MODE_FILES","AUTH_BASE","APPLE_ID_AUTH_FIELD","UI_UNUSED_METHOD","UI_UNUSED_CONFIRMATIONS","TRANSFER_BASE","DELIVERY_STAGES","DELIVERY_STAGE_FAILURES","DELIVERY_CATEGORIES","P04_BASE","ARCHIVE_BASE","EVIDENCE_BASE","ENVIRONMENT_BASE","ARCHIVE_RULES","ARCHIVE_MAX_BYTES","ARCHIVE_STRUCTURED_STATES","HISTORY_CATEGORIES","HISTORY_ATTEMPTS",
                          "HISTORY_WAIT_BUDGET","HISTORY_DEADLINE","HISTORY_TIMEOUT","HISTORY_MAX_BYTES"})
         for name,node in old.items():
             if name=="HISTORICAL_TAGS":
@@ -2023,7 +2068,7 @@ security() {
         self.assertFalse(git("ls-files","--others","--exclude-standard"))
         head=git("rev-parse","HEAD")
         self.assertFalse(git("status","--porcelain=v1","--untracked-files=all"))
-        self.assertEqual(git("show","-s","--format=%P",head),delivery.INSTALLED_ALTOOL_BASE)
+        self.assertEqual(git("show","-s","--format=%P",head),delivery.SUCCESSOR_BASE)
         delivery.source_guard(head,True)
         for path in support:
             entry=git("ls-files","--stage","--",path).split()
@@ -4341,7 +4386,7 @@ class PriorAttemptExceptionTests(SyntheticDeliveryTestCase):
     def test_normalizer_rejects_changed_optional_gate_calls(self):
         text=(ROOT/'tools/apple_storekit_testflight_delivery.py').read_text()
         for before,after in (('return prior_attempt_evidence(authorization, now)','return prior_attempt_evidence({}, now)'),
-                             ('        prior_attempt_slot(ref, commit)','        prior_attempt_slot(ref, "UNAPPROVED")')):
+                             ('        prior_attempt_slot(ref, commit, value[APPLE_ID_AUTH_FIELD][PRIOR_ATTEMPT_FIELD].get(SUCCESSOR_FIELD))','        prior_attempt_slot(ref, "UNAPPROVED")')):
             with self.subTest(before=before),self.assertRaises(AssertionError):normalize_prior_attempt(text.replace(before,after,1))
 
     def test_sigabrt_delivery_tag_cannot_reuse_the_consumed_upload_exception(self):
@@ -4495,9 +4540,9 @@ class SupportedPackageUploaderTests(SyntheticDeliveryTestCase):
             self.assertEqual(before[name], normalized[name], name)
         self.assertEqual(delivery.UPLOADER_REPAIR_BASE, 'b66348762e10bf47031f2297963345cf18088b83')
         head = delivery.cert.git('rev-parse', 'HEAD').decode().strip()
-        if head != delivery.INSTALLED_ALTOOL_BASE:
+        if head != delivery.SUCCESSOR_BASE:
             self.assertEqual(delivery.cert.git('show', '-s', '--format=%P', head).decode().strip(),
-                             delivery.INSTALLED_ALTOOL_BASE)
+                             delivery.SUCCESSOR_BASE)
         changed = delivery.cert.git('diff', '--name-only', delivery.UPLOADER_REPAIR_BASE).decode().splitlines()
         self.assertEqual(set(changed), delivery.TEST_MODE_FILES)
 
@@ -4708,13 +4753,214 @@ class InstalledAltoolCompatibilityTests(SyntheticDeliveryTestCase):
     def test_scope_preserves_signing_authorization_and_upload_failure_semantics(self):
         old = delivery.cert.git('show',delivery.INSTALLED_ALTOOL_BASE+':tools/apple_storekit_testflight_delivery.py').decode()
         current = (ROOT/'tools/apple_storekit_testflight_delivery.py').read_text()
-        functions = lambda code: {n.name:ast.dump(n) for n in ast.parse(code).body if isinstance(n,(ast.FunctionDef,ast.ClassDef))}
+        functions = lambda code: {n.name:ast.dump(n) for n in ast.parse(normalize_authorization_successor(code)).body if isinstance(n,(ast.FunctionDef,ast.ClassDef))}
         before, after = functions(old), functions(current)
         self.assertEqual(after.keys()-before.keys(), {'repair_owned_home_modes'})
         changed = {'source_guard','apple_id_command','private_upload_environment','run_upload_process','prepare_package_upload','remove_owned_workspace','transfer'}
         self.assertEqual({name for name in before if before[name] != after[name]}, changed)
         self.assertEqual(before['transfer'], functions(normalize_installed_altool(current))['transfer'])
         self.assertEqual(delivery.cert.release.BUNDLE, 'com.gridlygo.gridly')
+
+
+class ConsumedAuthorizationSuccessorTests(SyntheticDeliveryTestCase):
+    """All approvals and Apple UI observations here are synthetic fixtures."""
+    upload_authentication = 'APPLE_ID'
+    save = AppleIdDeliveryTests.save
+    exercise = AppleIdDeliveryTests.exercise
+    exception = PriorAttemptExceptionTests.exception
+
+    def setUp(self):
+        PriorAttemptExceptionTests.setUp(self)
+        self.tags.append(delivery.CONSUMED_SETUP_TAG)
+        previous = delivery.cert.git
+        self.tag_values = {
+            ('cat-file','-t',delivery.CONSUMED_SETUP_TAG): b'tag',
+            ('rev-parse','--verify',delivery.CONSUMED_SETUP_TAG): delivery.CONSUMED_SETUP_TAG_OBJECT.encode(),
+            ('rev-parse','--verify',delivery.CONSUMED_SETUP_TAG+'^{}'): delivery.INSTALLED_ALTOOL_BASE.encode(),
+            ('cat-file','-t',REF): b'tag',
+            ('rev-parse','--verify',REF+'^{}'): COMMIT.encode(),
+        }
+        patch.object(delivery.cert, 'git', side_effect=lambda *args:
+                     self.tag_values[args] if args in self.tag_values else previous(*args)).start()
+
+    def bind(self):
+        value = PriorAttemptExceptionTests.bind(self)
+        self.exception(value)[delivery.SUCCESSOR_FIELD] = {
+            **dict.fromkeys(delivery.SUCCESSOR_CONFIRMATIONS, True),
+            'consumed_attempt': copy.deepcopy(delivery.CONSUMED_SETUP_OUTCOME),
+            'earlier_attempts': [{'run_id': run, 'apple_acceptance': 'UNKNOWN'}
+                                 for run in (39315841160, 39457019380)],
+            'certified_uploader_commit': delivery.SUCCESSOR_BASE,
+            'uploader_certification_run_id': 39515579844,
+        }
+        self.save(value)
+        return value
+
+    def recovery(self, value): return self.exception(value)[delivery.SUCCESSOR_FIELD]
+
+    def test_exact_pre_upload_outcome_and_both_unknowns_are_preserved_without_mutation(self):
+        value = self.bind(); original = copy.deepcopy(value)
+        delivery.owner_authorization(value, COMMIT, REF, NOW)
+        receipt = delivery.ui_unused_build(value, NOW)
+        self.assertEqual(original, value)
+        self.assertEqual(receipt['historical_transport_acceptance'], 'UNKNOWN')
+        self.assertEqual(receipt['earlier_attempts'], [
+            {'run_id':39315841160,'apple_acceptance':'UNKNOWN'},
+            {'run_id':39457019380,'apple_acceptance':'UNKNOWN'}])
+        outcome = receipt['consumed_pre_upload_attempt']
+        self.assertEqual(outcome['run_id'], 39512682867)
+        self.assertEqual(outcome['tag_object'], 'bfcf0f05b0886cd69ddc3586d350f339c7a2534d')
+        self.assertEqual(outcome['source_commit'], '3ec05f8bbdc37bdff58d45a03164128d80177eeb')
+        for key in ('archive','signing','export','ipa_certification'): self.assertEqual(outcome[key], 'PASS')
+        self.assertEqual(outcome['D02'], 'CREDENTIAL_SETUP_REJECTED')
+        for key in ('D03','D04','D05','D06'): self.assertEqual(outcome[key], 'NOT_RUN')
+        self.assertEqual(outcome['upload'], 'NOT_ATTEMPTED')
+        self.assertEqual(outcome['cleanup'], 'PRIVATE_HOME_EACCES')
+        self.assertNotIn('unused', receipt)
+        self.assertIs(value['unused_build_number_confirmed'], False)
+        self.assertIs(value[delivery.APPLE_ID_AUTH_FIELD]['no_pending_or_uncertain_uploads'], False)
+
+    def test_every_successor_approval_is_required_strict_boolean_and_exact_schema(self):
+        for key in delivery.SUCCESSOR_CONFIRMATIONS:
+            for invalid in (False, None, 0, 1, 'true'):
+                value = self.bind(); self.recovery(value)[key] = invalid
+                with self.subTest(key=key,invalid=invalid), self.assertRaises(ValueError):
+                    delivery.owner_authorization(value, COMMIT, REF, NOW)
+        for key in list(self.recovery(self.bind())):
+            value = self.bind(); del self.recovery(value)[key]
+            with self.subTest(missing=key), self.assertRaises(ValueError):
+                delivery.owner_authorization(value, COMMIT, REF, NOW)
+        value = self.bind(); self.recovery(value)['extra'] = True
+        with self.assertRaises(ValueError): delivery.owner_authorization(value, COMMIT, REF, NOW)
+
+    def test_altered_consumed_tag_or_outcome_and_uncertainty_laundering_are_rejected(self):
+        for key in delivery.CONSUMED_SETUP_OUTCOME:
+            value = self.bind(); self.recovery(value)['consumed_attempt'][key] = 'ALTERED'
+            with self.subTest(key=key), self.assertRaises(ValueError):
+                delivery.owner_authorization(value, COMMIT, REF, NOW)
+        for index in (0,1):
+            for key, invalid in (('apple_acceptance','ACCEPTED'), ('apple_acceptance','NOT_ATTEMPTED'),
+                                 ('run_id',float((39315841160,39457019380)[index])), ('run_id',True)):
+                value = self.bind(); self.recovery(value)['earlier_attempts'][index][key] = invalid
+                with self.subTest(index=index,key=key,invalid=invalid), self.assertRaises(ValueError):
+                    delivery.owner_authorization(value, COMMIT, REF, NOW)
+        for field, invalid in (('certified_uploader_commit',delivery.INSTALLED_ALTOOL_BASE),
+                               ('uploader_certification_run_id',39515579844.0)):
+            value = self.bind(); self.recovery(value)[field] = invalid
+            with self.assertRaises(ValueError): delivery.owner_authorization(value, COMMIT, REF, NOW)
+        value = self.bind(); self.recovery(value)['consumed_attempt']['run_id'] = 39512682867.0
+        with self.assertRaises(ValueError): delivery.owner_authorization(value, COMMIT, REF, NOW)
+
+    def test_fresh_app_store_checks_duplicate_risk_and_explicit_upload_approval_remain_mandatory(self):
+        for key in delivery.PRIOR_ATTEMPT_CONFIRMATIONS:
+            value = self.bind(); self.exception(value)[key] = False
+            calls, _, error = self.exercise(value=value)
+            with self.subTest(key=key): self.assertIsInstance(error, ValueError); self.assertEqual(calls, [])
+        for key in ('testflight_upload_authorized','no_unapproved_internal_access_confirmed'):
+            value = self.bind(); value[key] = False
+            calls, _, error = self.exercise(value=value)
+            self.assertIsInstance(error, ValueError); self.assertEqual(calls, [])
+        for offset in (-1801,1):
+            value = self.bind()
+            stamp = delivery.dt.datetime.fromtimestamp(NOW+offset,delivery.dt.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
+            value['owner_checks_at'] = value[delivery.APPLE_ID_AUTH_FIELD]['owner_checked_at'] = stamp
+            calls, _, error = self.exercise(value=value)
+            self.assertIsInstance(error, ValueError); self.assertEqual(calls, [])
+        delivery.owner_authorization(self.bind(), COMMIT, REF, NOW+1800)
+
+    def test_missing_successor_approval_cannot_reuse_consumed_legacy_allowance(self):
+        value = self.bind(); del self.exception(value)[delivery.SUCCESSOR_FIELD]
+        calls, _, error = self.exercise(value=value)
+        self.assertIsInstance(error, ValueError); self.assertEqual(calls, [])
+
+    def test_exactly_one_mocked_upload_keeps_credentials_private_and_prevents_reinvocation(self):
+        with contextlib.redirect_stdout(io.StringIO()) as out, contextlib.redirect_stderr(io.StringIO()) as err:
+            calls, _, error = self.exercise()
+        self.assertIsNone(error); self.assertEqual(calls, ['--validate-app','--upload-package'])
+        self.assertEqual(out.getvalue()+err.getvalue(), '')
+        receipt = delivery.read_json(self.root/'reports/delivery-availability.json')
+        self.assertEqual(receipt['consumed_pre_upload_attempt']['upload'], 'NOT_ATTEMPTED')
+        self.assertNotIn('SYNTHETIC_NOT_A_REAL_PASSWORD', json.dumps(receipt))
+        calls, _, error = self.exercise()
+        self.assertIsInstance(error, ValueError); self.assertEqual(calls, [])
+
+    def test_new_uncertainty_or_expiry_after_validation_blocks_upload(self):
+        for mutation in ('processing','expired'):
+            value = self.bind()
+            def change(stage, status):
+                if stage == 'D05_LIVE_BUILD_AVAILABILITY' and status == 'RUNNING':
+                    if mutation == 'processing':
+                        self.exception(value)['owner_verified_no_processing_build'] = False
+                        self.save(value)
+                    else: delivery.time.time.return_value = NOW+1801
+            calls, _, error = self.exercise(value=value, on_progress=change)
+            self.assertIsInstance(error, ValueError); self.assertEqual(calls, ['--validate-app'])
+            delivery.time.time.return_value = NOW
+
+    def test_each_missing_duplicate_or_additional_tag_blocks_another_attempt_even_before_upload(self):
+        original = list(self.tags)
+        for mutation in ('extra','duplicate','missing_current','missing_consumed','missing_old_unknown'):
+            self.tags = list(original)
+            if mutation == 'extra': self.tags.append(delivery.PREFIX+'9'*40)
+            elif mutation == 'duplicate': self.tags.append(REF)
+            elif mutation == 'missing_current': self.tags.remove(REF)
+            elif mutation == 'missing_consumed': self.tags.remove(delivery.CONSUMED_SETUP_TAG)
+            else: self.tags.remove(delivery.SECOND_UNCERTAIN_TAG)
+            calls, _, error = self.exercise()
+            with self.subTest(mutation=mutation): self.assertIsInstance(error, ValueError); self.assertEqual(calls, [])
+            self.assertFalse((self.root/'reports/delivery-transfer.json').exists())
+        self.tags = original
+
+    def test_consumed_object_and_new_annotated_target_are_immutable(self):
+        for command in self.tag_values:
+            original = self.tag_values[command]; self.tag_values[command] = b'ALTERED'
+            with self.subTest(command=command), self.assertRaises(ValueError):
+                delivery.prior_attempt_slot(REF, COMMIT, self.recovery(self.bind()))
+            self.tag_values[command] = original
+        for ref, commit in ((delivery.CONSUMED_SETUP_TAG,delivery.INSTALLED_ALTOOL_BASE),
+                            (delivery.SECOND_UNCERTAIN_TAG,delivery.UPLOADER_REPAIR_BASE),
+                            (delivery.PREFIX+delivery.SUCCESSOR_BASE,delivery.SUCCESSOR_BASE)):
+            with self.assertRaises(ValueError): delivery.prior_attempt_slot(ref, commit, self.recovery(self.bind()))
+
+    def test_fresh_nonforced_annotated_event_attempt_one_and_exact_branch_are_required(self):
+        value = self.bind()
+        self.tag_values.update({('rev-parse','HEAD'):COMMIT.encode(),
+            ('rev-parse','--verify',delivery.cert.DIAGNOSTIC_BRANCH):COMMIT.encode(),
+            ('rev-parse','--verify',REF):b'5'*40,
+            ('cat-file','-p',REF):('object '+COMMIT+'\ntype commit\ntag '+REF.removeprefix('refs/tags/')+
+                '\ntagger Synthetic\n\n'+json.dumps(value)).encode()})
+        with patch.object(delivery,'read_json',return_value=event()), patch.object(delivery,'apple_id_command') as credentials:
+            self.assertEqual(delivery.authorize(REF,COMMIT,'synthetic','1')['authorization'], value)
+            with self.assertRaises(ValueError): delivery.authorize(REF,COMMIT,'synthetic','2')
+            for key, invalid in (('created',False),('deleted',True),('forced',True)):
+                bad = event(); bad[key] = invalid
+                with patch.object(delivery,'read_json',return_value=bad), self.assertRaises(ValueError):
+                    delivery.authorize(REF,COMMIT,'synthetic','1')
+            self.tag_values[('rev-parse','--verify',delivery.cert.DIAGNOSTIC_BRANCH)] = b'9'*40
+            with self.assertRaises(ValueError): delivery.authorize(REF,COMMIT,'synthetic','1')
+            credentials.assert_not_called()
+
+    def test_successor_requires_exact_parent_two_files_and_all_frozen_history(self):
+        for options in ({}, {'parent':delivery.INSTALLED_ALTOOL_BASE}, {'successor_parent':'9'*40},
+                        {'successor_parent':delivery.INSTALLED_ALTOOL_BASE+' '+'9'*40},
+                        {'successor_inventory':b''}, {'correction':b'M\tjs/gridly-paid-ui.mjs'},
+                        {'dirty':b'changed'}, {'mode':'100755'},
+                        {'missing_tag':delivery.CONSUMED_SETUP_TAG.removeprefix('refs/tags/')}):
+            with self.subTest(options=options), patch.object(delivery,'source_guard',self.actual_source_guard), patch.object(delivery.cert,'git',side_effect=source_git(**options)), patch.object(delivery.subprocess,'run'), patch.object(delivery.cert,'original_contracts'):
+                if options:
+                    with self.assertRaises((ValueError,subprocess.CalledProcessError)): delivery.source_guard(COMMIT,True)
+                else: self.assertTrue(delivery.source_guard(COMMIT,True)['runtime_unchanged'])
+
+    def test_certified_uploader_environment_cleanup_and_signing_are_identical(self):
+        before = self.actual_git('show',delivery.SUCCESSOR_BASE+':tools/apple_storekit_testflight_delivery.py').decode()
+        after = (ROOT/'tools/apple_storekit_testflight_delivery.py').read_text()
+        functions = lambda code: {n.name:ast.dump(n) for n in ast.parse(code).body if isinstance(n,(ast.FunctionDef,ast.ClassDef))}
+        old, new = functions(before), functions(after)
+        self.assertEqual(new.keys()-old.keys(), {'successor_recovery','successor_attempt_evidence'})
+        self.assertEqual({name for name in old if old[name] != new[name]},
+                         {'source_guard','prior_attempt_evidence','prior_attempt_slot','authorize','authorization_guard'})
+        restored = functions(normalize_authorization_successor(after))
+        for name in old.keys()-{'source_guard'}: self.assertEqual(old[name], restored[name], name)
 
 
 if __name__ == "__main__":
