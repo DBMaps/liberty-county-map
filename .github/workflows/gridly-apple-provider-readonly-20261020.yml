@@ -18,8 +18,8 @@ jobs:
       github.event.deleted == false &&
       github.event.forced == false &&
       github.run_attempt == 1 &&
-      github.event.before == 'c84b02eaa1b394f327887210441ece8cd9bfb3b5' &&
-      github.event.head_commit.message == 'Fallback to safe plain-text Apple provider listing'
+      github.event.before == '40a6ce185e705fea533957b5c52b7d9a53b0e9de' &&
+      github.event.head_commit.message == 'Diagnose provider schema and team-id support without uploading'
     runs-on: macos-26
     timeout-minutes: 7
     steps:
@@ -51,6 +51,20 @@ jobs:
           if not username or not password or any(c in username + password for c in '\r\n\x00'):
               result('APPLE_CREDENTIALS_UNAVAILABLE')
 
+          # Check whether the installed uploader supports team selection directly.
+          # Help is a local-only operation. Print flags, never raw tool output.
+          try:
+              help_result = subprocess.run(['xcrun', 'altool', '--help'],
+                                           stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                           timeout=30, check=False)
+          except (OSError, subprocess.TimeoutExpired):
+              result('ALTOOL_HELP_UNAVAILABLE')
+          help_bytes = help_result.stdout + help_result.stderr
+          print('ALTOOL_SUPPORTS_TEAM_ID=' + str(b'--team-id' in help_bytes).lower(), flush=True)
+          print('ALTOOL_SUPPORTS_PROVIDER_PUBLIC_ID=' + str(
+              b'--provider-public-id' in help_bytes or b'--asc-public-id' in help_bytes
+          ).lower(), flush=True)
+
           # The password is never passed as an argument or printed.
           command = ['xcrun', 'altool', '--list-providers', '--legacy', '--output-format', 'json',
                      '--username', username, '--password', '@env:APPLE_APP_SPECIFIC_PASSWORD']
@@ -71,7 +85,15 @@ jobs:
           except (ValueError, UnicodeError):
               result('PROVIDER_RESPONSE_UNRECOGNIZED')
           if not isinstance(data, dict):
+              print('PROVIDER_JSON_ROOT_CLASS=' + ('LIST' if isinstance(data, list) else 'OTHER'), flush=True)
               result('PROVIDER_ROOT_NOT_OBJECT')
+          recognized = ('providers','provider','data','result','message','success-message',
+                        'status','metadata','providerInfo','providerList','teams','team',
+                        'tool-version','os-version','error','errors')
+          print('PROVIDER_JSON_SCHEMA_FLAGS=' + ','.join(
+              key for key in recognized if key in data), flush=True)
+          print('PROVIDER_JSON_KEY_COUNT=' + str(min(len(data), 200)), flush=True)
+          print('PROVIDER_JSON_OUTPUT_BYTES=' + str(min(len(attempt.stdout), 1048576)), flush=True)
           if 'errors' in data or 'product-errors' in data:
               result('PROVIDER_RESPONSE_REJECTED')
           providers = data.get('providers')
@@ -103,6 +125,10 @@ jobs:
                   if after and re.fullmatch(r'[A-Z0-9]{10}', after[0]):
                       providers.append({'PublicID': match.group(1),
                                         'WWDRTeamID': after[0]})
+              print('PROVIDER_PLAIN_OUTPUT_BYTES=' + str(min(len(plain.stdout), 1048576)), flush=True)
+              print('PROVIDER_PLAIN_HEADER_PRESENT=' + str(
+                  'WWDRTeamID' in listing or 'ProviderShortname' in listing).lower(), flush=True)
+              print('PROVIDER_PLAIN_UUID_COUNT=' + str(min(len(pattern.findall(listing)), 101)), flush=True)
               if providers:
                   print('PROVIDER_EVIDENCE_FORMAT=PLAIN_TEXT', flush=True)
               else:
