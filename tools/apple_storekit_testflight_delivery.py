@@ -56,6 +56,7 @@ FAILED_AUTH_TAG = "refs/tags/gridly-storekit-testflight-deliver-15-" + FAILED_AU
 FAILED_AUTH_TAG_OBJECT = "900887b07a73fa3014173610cd0eba28db66a481"
 UPLOADER_REPAIR_BASE = "b66348762e10bf47031f2297963345cf18088b83"
 UPLOADER_CERTIFICATION_BASE = "9fefb24f0e9f945cc5167d25b8f2634f83d17f95"
+TEAM_ID_REPAIR_BASE = "8934b648d884a07c0957c1b9ece8b90459189674"
 _UPLOAD_RUN = subprocess.run
 TEST_MODE_FILES = {
     "tools/apple_storekit_testflight_delivery.py",
@@ -426,12 +427,13 @@ def package_provider(public, selected):
 
 
 def prepare_package_upload(root, command, ipa, execute, **options):
-    """Read-only capability/provider checks before validation or upload intent."""
+    """Local help only; bind the confirmed team before validation/upload intent."""
     require(command[:6] == ["xcrun", "altool", "--type", "ios", "--file", str(ipa)],
             "exact IPA validation command required")
     auth = command[6:]
     invoke = run_upload_process if execute is _UPLOAD_RUN else execute
     try:
+        require(cert.release.TEAM == "2XSH6R7K37", "certified signing team mismatch")
         private_upload_environment(root, {})
         owned_runner_directory(root / "logs")
         # No credential flags or secret environment values are needed for local help.
@@ -444,24 +446,16 @@ def prepare_package_upload(root, command, ipa, execute, **options):
             output.seek(0)
             help_text = output.read().decode("utf-8", errors="strict")
         for flag in ("--upload-package", "--apple-id", "--bundle-id", "--bundle-version",
-                     "--bundle-short-version-string", "--asc-public-id", "--list-providers"):
+                     "--bundle-short-version-string", "--team-id"):
             require(re.search(r"(?<![\w-])" + re.escape(flag) + r"(?![\w-])", help_text),
                     "installed altool upload-package syntax unsupported")
-        with tempfile.TemporaryFile(dir=root / "logs") as output:
-            invoke(["xcrun", "altool", "--list-providers", "--output-format", "json", *auth],
-                   check=True, cwd=root / "home", stdout=output, stderr=subprocess.STDOUT,
-                   timeout=30, **options)
-            require(output.tell() <= 1048576, "provider response too large")
-            output.seek(0)
-            providers = json.loads(output.read(), object_pairs_hook=cert.unique_json_object)
-        provider = package_provider(providers, os.environ.get("GRIDLY_APPLE_PROVIDER_PUBLIC_ID"))
     except BaseException:
         # No raw help, account metadata, paths or credential-bearing command escapes.
-        raise ValueError("uploader capability/provider verification failed; no upload permitted") from None
+        raise ValueError("uploader local capability verification failed; no upload permitted") from None
     return ["xcrun", "altool", "--upload-package", str(ipa), "--type", "ios",
             "--apple-id", "6814845611", "--bundle-id", "com.gridlygo.gridly",
             "--bundle-short-version-string", "1.0.0", "--bundle-version", "15",
-            *(["--asc-public-id", provider] if provider else []), *auth]
+            "--team-id", "2XSH6R7K37", *auth]
 
 
 def event_gate(event, ref, commit, attempt, tag_object):
@@ -492,11 +486,11 @@ def authorize(ref, commit, event_path, attempt):
 def source_guard(commit, clean):
     require(re.fullmatch(r"[0-9a-f]{40}", commit or ""), "exact source SHA required")
     pinned = {SOURCE, DELIVERY_BASE, OWNER_CORRECTION, PREFLIGHT_BASE, REFINEMENT_BASE,
-              SIGNING_BASE, CMS_BASE, CMS_REPAIR_BASE, SIGNING_VERIFIED_BASE, P04_BASE, ARCHIVE_BASE, EVIDENCE_BASE, ENVIRONMENT_BASE, TRANSFER_BASE, AUTH_BASE, APPLE_ID_BASE, UPLOAD_BASE, CERTIFIED_BASE, SOLO_OWNER_BASE, SOLO_OWNER_ATTEST_BASE, SOLO_OWNER_FIX_BASE, FAILED_AUTH_BASE, UPLOADER_REPAIR_BASE, UPLOADER_CERTIFICATION_BASE}
+              SIGNING_BASE, CMS_BASE, CMS_REPAIR_BASE, SIGNING_VERIFIED_BASE, P04_BASE, ARCHIVE_BASE, EVIDENCE_BASE, ENVIRONMENT_BASE, TRANSFER_BASE, AUTH_BASE, APPLE_ID_BASE, UPLOAD_BASE, CERTIFIED_BASE, SOLO_OWNER_BASE, SOLO_OWNER_ATTEST_BASE, SOLO_OWNER_FIX_BASE, FAILED_AUTH_BASE, UPLOADER_REPAIR_BASE, UPLOADER_CERTIFICATION_BASE, TEAM_ID_REPAIR_BASE}
     require(cert.git("rev-parse", "HEAD").decode().strip() == commit and commit not in pinned,
             "new reviewed delivery-support commit required")
     for child, parent in (
-        (commit, UPLOADER_CERTIFICATION_BASE), (UPLOADER_CERTIFICATION_BASE, UPLOADER_REPAIR_BASE), (UPLOADER_REPAIR_BASE, FAILED_AUTH_BASE), (FAILED_AUTH_BASE, SOLO_OWNER_FIX_BASE), (SOLO_OWNER_FIX_BASE, SOLO_OWNER_ATTEST_BASE),
+        (commit, TEAM_ID_REPAIR_BASE), (TEAM_ID_REPAIR_BASE, UPLOADER_CERTIFICATION_BASE), (UPLOADER_CERTIFICATION_BASE, UPLOADER_REPAIR_BASE), (UPLOADER_REPAIR_BASE, FAILED_AUTH_BASE), (FAILED_AUTH_BASE, SOLO_OWNER_FIX_BASE), (SOLO_OWNER_FIX_BASE, SOLO_OWNER_ATTEST_BASE),
         (SOLO_OWNER_ATTEST_BASE, SOLO_OWNER_BASE), (SOLO_OWNER_BASE, CERTIFIED_BASE), (CERTIFIED_BASE, UPLOAD_BASE), (UPLOAD_BASE, APPLE_ID_BASE), (APPLE_ID_BASE, AUTH_BASE), (AUTH_BASE, TRANSFER_BASE), (TRANSFER_BASE, ENVIRONMENT_BASE), (ENVIRONMENT_BASE, EVIDENCE_BASE), (EVIDENCE_BASE, ARCHIVE_BASE), (ARCHIVE_BASE, P04_BASE), (P04_BASE, SIGNING_VERIFIED_BASE),
         (SIGNING_VERIFIED_BASE, CMS_REPAIR_BASE),
         (CMS_REPAIR_BASE, CMS_BASE), (CMS_BASE, SIGNING_BASE), (SIGNING_BASE, REFINEMENT_BASE),
@@ -539,7 +533,8 @@ def source_guard(commit, clean):
         (SOLO_OWNER_FIX_BASE, FAILED_AUTH_BASE, "M", TEST_MODE_FILES),
         (FAILED_AUTH_BASE, UPLOADER_REPAIR_BASE, "M", TEST_MODE_FILES),
         (UPLOADER_REPAIR_BASE, UPLOADER_CERTIFICATION_BASE, "M", TEST_MODE_FILES),
-        (UPLOADER_CERTIFICATION_BASE, commit, "M", TEST_MODE_FILES),
+        (UPLOADER_CERTIFICATION_BASE, TEAM_ID_REPAIR_BASE, "M", TEST_MODE_FILES),
+        (TEAM_ID_REPAIR_BASE, commit, "M", TEST_MODE_FILES),
         (SOURCE, commit, "A", FILES | PREFLIGHT_FILES | SIGNING_FILES | CMS_FILES | SAFETY_FILES),
     ):
         records = cert.git("diff", "--name-status", "--no-renames", base, target).decode().splitlines()
