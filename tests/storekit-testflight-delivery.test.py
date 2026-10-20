@@ -33,6 +33,8 @@ WORKFLOW = ROOT / ".github/workflows/gridly-storekit-testflight-delivery.yml"
 
 
 DELIVERY_REPORTING_FUNCTIONS = {
+    "classify_upload_error", "execute_upload", "write_upload_status", "upload_diagnostics",
+    "upload_once", "remove_owned_workspace",
     "DeliveryCheckFailure", "verify_delivery_export", "delivery_failure_category",
     "delivery_stage", "emit_delivery", "transfer_public", "ui_unused_build", "apple_id_command",
 }
@@ -41,9 +43,57 @@ DELIVERY_REPORTING_FUNCTIONS = {
 APPLE_ID_WORKFLOW_COMMENT = '# Apple ID delivery uses ONLY the two existing Apple ID secrets, never an API key.\n# REQUIRED additional annotation field: "apple_id_upload_authorization":{\n# "authorized":true,"method":"OWNER_AND_INDEPENDENT_APP_STORE_CONNECT_UI",\n# "owner_checked_at":"<same genuine UTC time as owner_checks_at>",\n# "independent_checked_at":"<genuine independent read-only UI check UTC time>",\n# "owner_verified_unused":true,"independent_verified_unused":true,\n# "build_uploads_reviewed":true,"testflight_all_builds_reviewed":true,\n# "no_pending_or_uncertain_uploads":true,"exclusive_upload_window_acknowledged":true}\n# The owner AND an independent reviewer must actually inspect App Store Connect\n# Build Uploads and all TestFlight builds before tagging; never fabricate evidence.\n# Both checks must remain within 1,800 seconds through the pre-upload gate.\n# D05\'s historical stage name now covers this explicit UI-evidence mode, not an API query.\n# No validation result alone is treated as proof that Build 15 is unused.\n# Do not include account identities, screenshots, raw Apple output or secrets in the tag.\n'
 
 
+def normalize_recovery(source):
+    """Reverse exact reviewed AST deltas; also accept already-normalized input."""
+    if "def upload_once(" not in source:
+        return source
+    tree=ast.parse(source)
+    current=ast.parse('upload_once(root, commit, [*command, "--upload-app"], execute, **transport_options)').body[0]
+    previous=ast.parse('write_json(marker, {"status": "ATTEMPTED", "source_commit": commit, "build": "15"})\nexecute_upload(root, [*command, "--upload-app"], execute, **transport_options)\nwrite_json(marker, {"status": "ACCEPTED", "source_commit": commit, "build": "15"})').body
+    remove=ast.parse('remove_owned_workspace(root, owned, workspace_details)',mode='eval').body
+    legacy_remove=ast.parse('shutil.rmtree(root)',mode='eval').body
+    addition=ast.parse("""if "uploader_outcome" in transfer_report:
+    result["upload_diagnostics"] = upload_diagnostics(transfer_report)
+    if transfer_report["status"] == "ACCEPTED":
+        require(result["upload_diagnostics"]["uploader_outcome"] == "RETURNED_ZERO"
+                and result["upload_diagnostics"]["uploader_exit_code"] == 0, "incomplete upload process evidence")
+        result["upload"] = "UPLOADER_SUCCEEDED_APPLE_UNCONFIRMED"
+""").body[0]
+    condition=ast.parse('job_status == "success" and result["upload"] in {"ACCEPTED", "UPLOADER_SUCCEEDED_APPLE_UNCONFIRMED"}',mode='eval').body
+    legacy_condition=ast.parse('job_status == "success" and result["upload"] == "ACCEPTED"',mode='eval').body
+    for function in (n for n in tree.body if isinstance(n,ast.FunctionDef)):
+        if function.name=='transfer':
+            for node in ast.walk(function):
+                if isinstance(node,ast.With):
+                    body=[]
+                    for item in node.body:
+                        if isinstance(item,ast.Expr) and isinstance(item.value,ast.Call) and getattr(item.value.func,'id','')=='upload_once':
+                            assert ast.dump(item)==ast.dump(current)
+                            body.extend(copy.deepcopy(previous))
+                        else:body.append(item)
+                    node.body=body
+        if function.name=='cleanup_delivery':
+            for node in ast.walk(function):
+                if isinstance(node,ast.Expr) and isinstance(node.value,ast.Call) and getattr(node.value.func,'id','')=='remove_owned_workspace':
+                    assert ast.dump(node.value)==ast.dump(remove)
+                    node.value=copy.deepcopy(legacy_remove)
+        if function.name=='finish':
+            for node in ast.walk(function):
+                if hasattr(node,"body") and isinstance(node.body,list):
+                    body=[]
+                    for item in node.body:
+                        if isinstance(item,ast.If) and ast.dump(item.test)==ast.dump(addition.test):
+                            assert ast.dump(item)==ast.dump(addition)
+                        else:body.append(item)
+                    node.body=body
+                if isinstance(node,ast.Call) and getattr(node.func,'id','')=='require' and node.args and ast.dump(node.args[0])==ast.dump(condition):
+                    node.args[0]=copy.deepcopy(legacy_condition)
+    return ast.unparse(ast.fix_missing_locations(tree))
+
+
 def normalize_apple_id_delivery(source):
     """Reverse only the explicitly reviewed Apple ID/UI additions for old-contract checks."""
-    tree = ast.parse(source)
+    tree = ast.parse(normalize_recovery(source))
     for function in (n for n in tree.body if isinstance(n, ast.FunctionDef)):
         if function.name == "owner_authorization":
             for node in ast.walk(function):
@@ -54,7 +104,15 @@ def normalize_apple_id_delivery(source):
         if function.name == "authorize":
             removable = ast.parse('if os.environ.get("GRIDLY_UPLOAD_AUTHENTICATION") == "APPLE_ID":\n    require(APPLE_ID_AUTH_FIELD in value, "explicit Apple ID UI authorization required")').body[0]
             function.body = [n for n in function.body if ast.dump(n) != ast.dump(removable)]
+        if function.name == "delivery_failure_category":
+            removable = ast.parse('if stage == "D06_ACTUAL_UPLOAD" and isinstance(error, subprocess.CalledProcessError):\n    category = getattr(error, "gridly_upload_category", None)\n    if category in UPLOAD_ERROR_CATEGORIES:\n        return category\n').body[0]
+            function.body = [n for n in function.body if ast.dump(n) != ast.dump(removable)]
         if function.name == "transfer" and function.args.args[-1].arg == "progress":
+            current = ast.parse('execute_upload(root, [*command, "--upload-app"], execute, **transport_options)').body[0]
+            previous = ast.parse('execute([*command, "--upload-app"], check=True, cwd=root / "home", **transport_options)').body[0]
+            for block in function.body:
+                if isinstance(block, ast.With):
+                    block.body = [previous if ast.dump(n) == ast.dump(current) else n for n in block.body]
             credentials = function.body[2]
             if any(isinstance(n, ast.If) and ast.unparse(n.test) == "apple_id_mode" for n in credentials.body):
                 branch = credentials.body[-1]
@@ -73,6 +131,10 @@ def normalize_apple_id_delivery(source):
                     assert isinstance(call, ast.Call) and call.func.id == "execute"
                     assert ast.dump(call.keywords[-1]) == ast.dump(ast.keyword(arg=None, value=ast.Name(id="transport_options",ctx=ast.Load())))
                     call.keywords = call.keywords[:-1]
+    for node in tree.body:
+        if isinstance(node, ast.Assign) and any(isinstance(n, ast.Name) and n.id == "DELIVERY_CATEGORIES" for n in node.targets):
+            if isinstance(node.value, ast.BinOp) and isinstance(node.value.right, ast.Name) and node.value.right.id == "UPLOAD_ERROR_CATEGORIES":
+                node.value = node.value.left
     return ast.unparse(ast.fix_missing_locations(tree))
 
 
@@ -182,7 +244,7 @@ def owner_automatic_authorization():
             }}
 
 
-def source_git(*, parent=delivery.APPLE_ID_BASE, base_parent=delivery.SOURCE,
+def source_git(*, parent=delivery.UPLOAD_BASE, base_parent=delivery.SOURCE,
                owner_parent=delivery.DELIVERY_BASE, preflight_parent=delivery.OWNER_CORRECTION,
                preparation=None, past_correction=None, preflight_inventory=None,
                historical_refinement=None, signing_inventory=None, cms_inventory=None,
@@ -196,17 +258,19 @@ def source_git(*, parent=delivery.APPLE_ID_BASE, base_parent=delivery.SOURCE,
                transfer_parent=delivery.ENVIRONMENT_BASE, transfer_inventory=None,
                auth_parent=delivery.TRANSFER_BASE, auth_inventory=None,
                apple_id_parent=delivery.AUTH_BASE, apple_id_inventory=None,
+               upload_parent=delivery.APPLE_ID_BASE, upload_inventory=None,
                correction=None, net=None, mode="100644", dirty=b"", staged=b"", untracked=b"",
                tag_object=None, tag_target=None, tag_type=None, missing_tag=None):
     additions = "\n".join("A\t" + path for path in sorted(delivery.FILES)).encode()
     modifications = "\n".join("M\t" + path for path in sorted(delivery.FILES)).encode()
     test_mode = "\n".join("M\t" + path for path in sorted(delivery.TEST_MODE_FILES)).encode()
+    safety = test_mode + b"\n" + "\n".join("A\t" + path for path in sorted(delivery.SAFETY_FILES)).encode()
     repair = "\n".join("M\t" + path for path in sorted(delivery.REPAIR_FILES)).encode()
     verification = "\n".join("M\t" + path for path in sorted(delivery.SIGNING_VERIFICATION_FILES)).encode()
     alignment = "\n".join("M\t" + path for path in sorted(delivery.DELIVERY_ALIGNMENT_FILES)).encode()
     refinement = "\n".join("M\t" + path for path in sorted(delivery.REFINEMENT_FILES)).encode()
     preflight = "\n".join("A\t" + path for path in sorted(delivery.PREFLIGHT_FILES)).encode()
-    all_additions = "\n".join("A\t" + path for path in sorted(delivery.FILES | delivery.PREFLIGHT_FILES | delivery.SIGNING_FILES | delivery.CMS_FILES)).encode()
+    all_additions = "\n".join("A\t" + path for path in sorted(delivery.FILES | delivery.PREFLIGHT_FILES | delivery.SIGNING_FILES | delivery.CMS_FILES | delivery.SAFETY_FILES)).encode()
     values = {
         ("rev-parse", "HEAD"): COMMIT.encode(),
         ("show", "-s", "--format=%P", COMMIT): parent.encode(),
@@ -222,6 +286,7 @@ def source_git(*, parent=delivery.APPLE_ID_BASE, base_parent=delivery.SOURCE,
         ("show", "-s", "--format=%P", delivery.TRANSFER_BASE): transfer_parent.encode(),
         ("show", "-s", "--format=%P", delivery.AUTH_BASE): auth_parent.encode(),
         ("show", "-s", "--format=%P", delivery.APPLE_ID_BASE): apple_id_parent.encode(),
+        ("show", "-s", "--format=%P", delivery.UPLOAD_BASE): upload_parent.encode(),
         ("show", "-s", "--format=%P", delivery.PREFLIGHT_BASE): preflight_parent.encode(),
         ("show", "-s", "--format=%P", delivery.OWNER_CORRECTION): owner_parent.encode(),
         ("show", "-s", "--format=%P", delivery.DELIVERY_BASE): base_parent.encode(),
@@ -242,7 +307,8 @@ def source_git(*, parent=delivery.APPLE_ID_BASE, base_parent=delivery.SOURCE,
         ("diff", "--name-status", "--no-renames", delivery.ENVIRONMENT_BASE, delivery.TRANSFER_BASE): modifications if transfer_inventory is None else transfer_inventory,
         ("diff", "--name-status", "--no-renames", delivery.TRANSFER_BASE, delivery.AUTH_BASE): modifications if auth_inventory is None else auth_inventory,
         ("diff", "--name-status", "--no-renames", delivery.AUTH_BASE, delivery.APPLE_ID_BASE): modifications if apple_id_inventory is None else apple_id_inventory,
-        ("diff", "--name-status", "--no-renames", delivery.APPLE_ID_BASE, COMMIT): test_mode if correction is None else correction,
+        ("diff", "--name-status", "--no-renames", delivery.APPLE_ID_BASE, delivery.UPLOAD_BASE): test_mode if upload_inventory is None else upload_inventory,
+        ("diff", "--name-status", "--no-renames", delivery.UPLOAD_BASE, COMMIT): safety if correction is None else correction,
         ("diff", "--name-status", "--no-renames", delivery.SOURCE, COMMIT): all_additions if net is None else net,
         ("diff", "--name-only", "HEAD"): dirty,
         ("diff", "--cached", "--name-only"): staged,
@@ -258,7 +324,9 @@ def source_git(*, parent=delivery.APPLE_ID_BASE, base_parent=delivery.SOURCE,
                          (delivery.EVIDENCE_BASE,delivery.FILES), (delivery.ENVIRONMENT_BASE,delivery.FILES), (delivery.TRANSFER_BASE,delivery.FILES), (delivery.AUTH_BASE,delivery.FILES), (delivery.APPLE_ID_BASE,delivery.FILES)):
         for path in files:
             values[("ls-tree",target,"--",path)]=("100644 blob "+"0"*40+"\t"+path).encode()
-    for path in delivery.FILES | delivery.PREFLIGHT_FILES | delivery.SIGNING_FILES | delivery.CMS_FILES:
+    for path in delivery.TEST_MODE_FILES:
+        values[("ls-tree", delivery.UPLOAD_BASE, "--", path)] = ("100644 blob " + "0"*40 + "\t" + path).encode()
+    for path in delivery.FILES | delivery.PREFLIGHT_FILES | delivery.SIGNING_FILES | delivery.CMS_FILES | delivery.SAFETY_FILES:
         values[("ls-tree", COMMIT, "--", path)] = (mode + " blob " + "0"*40 + "\t" + path).encode()
     for name, (original_object, original_target) in delivery.HISTORICAL_TAGS.items():
         ref = "refs/tags/" + name
@@ -287,6 +355,8 @@ def proof(ipa):
 
 
 def fixture(root):
+    (root / ".owned").write_text(delivery.cert.PRIVATE_MARKER)
+    (root / "logs").mkdir(mode=0o700)
     (root / "reports").mkdir()
     (root / "home").mkdir()
     (root / "export").mkdir()
@@ -879,7 +949,7 @@ class DeliveryPreflightTests(SyntheticDeliveryTestCase):
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
         self.ipa, self.guard = fixture(self.root)
-        (self.root / "logs").mkdir()
+        (self.root / "logs").mkdir(exist_ok=True)
         self.output = self.root / "reports/delivery-preflight.json"
         self.output.unlink()
         self.github_env = self.root / "github-env"
@@ -1707,12 +1777,12 @@ security() {
         nodes=lambda text:{n.targets[0].id:n.value for n in ast.parse(text).body
                            if isinstance(n,ast.Assign) and isinstance(n.targets[0],ast.Name)}
         old,new=nodes(before),nodes(after)
-        self.assertEqual(set(new)-set(old),{"APPLE_ID_BASE","TEST_MODE_FILES","AUTH_BASE","APPLE_ID_AUTH_FIELD","UI_UNUSED_METHOD","UI_UNUSED_CONFIRMATIONS","TRANSFER_BASE","DELIVERY_STAGES","DELIVERY_STAGE_FAILURES","DELIVERY_CATEGORIES","P04_BASE","ARCHIVE_BASE","EVIDENCE_BASE","ENVIRONMENT_BASE","ARCHIVE_RULES","ARCHIVE_MAX_BYTES","ARCHIVE_STRUCTURED_STATES","HISTORY_CATEGORIES","HISTORY_ATTEMPTS",
+        self.assertEqual(set(new)-set(old),{"SAFETY_FILES","UPLOAD_BASE","UPLOAD_ERROR_CATEGORIES","APPLE_ID_BASE","TEST_MODE_FILES","AUTH_BASE","APPLE_ID_AUTH_FIELD","UI_UNUSED_METHOD","UI_UNUSED_CONFIRMATIONS","TRANSFER_BASE","DELIVERY_STAGES","DELIVERY_STAGE_FAILURES","DELIVERY_CATEGORIES","P04_BASE","ARCHIVE_BASE","EVIDENCE_BASE","ENVIRONMENT_BASE","ARCHIVE_RULES","ARCHIVE_MAX_BYTES","ARCHIVE_STRUCTURED_STATES","HISTORY_CATEGORIES","HISTORY_ATTEMPTS",
                          "HISTORY_WAIT_BUDGET","HISTORY_DEADLINE","HISTORY_TIMEOUT","HISTORY_MAX_BYTES"})
         for name,node in old.items():
             if name=="HISTORICAL_TAGS":
                 self.assertIsInstance(new[name],ast.Dict)
-                self.assertEqual(len(new[name].keys),14)
+                self.assertEqual(len(new[name].keys),15)
                 retained=ast.Dict(keys=new[name].keys[:7],values=new[name].values[:7])
                 self.assertEqual(ast.dump(node),ast.dump(retained))
             elif name=="PREFLIGHT_CATEGORIES":
@@ -1720,7 +1790,7 @@ security() {
             else:self.assertEqual(ast.dump(node),ast.dump(new[name]),name)
         self.assertEqual(delivery.OWNER_CHECK_TTL,1800)
 
-    def test_exact_reviewed_history_and_all_fourteen_authorization_tags(self):
+    def test_exact_reviewed_history_and_all_fifteen_authorization_tags(self):
         self.assertEqual(delivery.REFINEMENT_BASE,"4c95caed0d261fca1dbaf86fc926660661d0643b")
         self.assertEqual(delivery.SIGNING_BASE,"db4df3949b1f02325b8869433bbbd16b234487db")
         self.assertEqual(delivery.CMS_BASE,"cbe3c297099dbca9c6d376848157de0253aeae39")
@@ -1763,8 +1833,10 @@ security() {
         expected["gridly-storekit-testflight-deliver-15-"+delivery.AUTH_BASE]=("4e9510666f0a51bdc9209a877e6dd420677abb7d",delivery.AUTH_BASE)
         self.assertEqual(delivery.APPLE_ID_BASE,"0c17376475cf76798d553e7b9717543056df1595")
         expected["gridly-storekit-testflight-deliver-15-"+delivery.APPLE_ID_BASE]=("554bcf82c8b6aae6e99a610ace4b2d4977c0e999",delivery.APPLE_ID_BASE)
+        self.assertEqual(delivery.UPLOAD_BASE,"54cbf359ac73225d0354491409533d1ea613d885")
+        expected["gridly-storekit-testflight-deliver-15-"+delivery.UPLOAD_BASE]=("5d23842099145de5b955f4d0e21efa5a60a2a82f",delivery.UPLOAD_BASE)
         self.assertEqual(delivery.HISTORICAL_TAGS,expected)
-        for child,parent in ((delivery.APPLE_ID_BASE,delivery.AUTH_BASE), (delivery.AUTH_BASE,delivery.TRANSFER_BASE),
+        for child,parent in ((delivery.UPLOAD_BASE,delivery.APPLE_ID_BASE), (delivery.APPLE_ID_BASE,delivery.AUTH_BASE), (delivery.AUTH_BASE,delivery.TRANSFER_BASE),
                              (delivery.TRANSFER_BASE,delivery.ENVIRONMENT_BASE),
                              (delivery.ENVIRONMENT_BASE,delivery.EVIDENCE_BASE),
                              (delivery.EVIDENCE_BASE,delivery.ARCHIVE_BASE),
@@ -1780,20 +1852,24 @@ security() {
                 self.assertEqual(historical, delivery.cert.git("show",delivery.CMS_BASE+":"+path),path)
                 if path not in {"tools/apple_storekit_signing_diagnostic.py","tests/storekit-signing-diagnostic.test.py"}:
                     self.assertEqual((ROOT/path).read_bytes().replace(b"\r\n",b"\n"),historical,path)
-        checkpoint=delivery.APPLE_ID_BASE
+        checkpoint=delivery.UPLOAD_BASE
         support={"tools/apple_storekit_testflight_delivery.py","tests/storekit-testflight-delivery.test.py"}
         self.assertEqual(support,delivery.TEST_MODE_FILES)
         def git(*args):
             return delivery.cert.git(*args).decode().strip()
         rows=git("diff","--name-status","--no-renames",checkpoint).splitlines()
-        self.assertEqual(set(rows),{"M\t"+path for path in support})
-        self.assertEqual(len(rows),2)
+        self.assertEqual(delivery.SAFETY_FILES,{".github/workflows/gridly-storekit-macos-safety-tests.yml"})
         self.assertFalse(git("diff","--cached","--name-only"))
-        self.assertFalse(git("ls-files","--others","--exclude-standard"))
         head=git("rev-parse","HEAD")
         if head==checkpoint:
+            self.assertEqual(set(rows),{"M\t"+path for path in support})
+            self.assertEqual(len(rows),2)
+            self.assertEqual(set(git("ls-files","--others","--exclude-standard").splitlines()),delivery.SAFETY_FILES)
             self.assertEqual(rows,git("diff","--name-status","--no-renames","HEAD").splitlines())
         else:
+            self.assertEqual(set(rows),{"M\t"+path for path in support}|{"A\t"+path for path in delivery.SAFETY_FILES})
+            self.assertEqual(len(rows),3)
+            self.assertFalse(git("ls-files","--others","--exclude-standard"))
             self.assertEqual(git("show","-s","--format=%P",head),checkpoint)
             self.assertFalse(git("status","--porcelain=v1","--untracked-files=all"))
             delivery.source_guard(head,True)
@@ -2140,7 +2216,7 @@ class CleanupStageVisibilityTests(SyntheticDeliveryTestCase):
             stdout,stderr=io.StringIO(),io.StringIO()
             with patch.object(delivery.Path,"home",return_value=root/"home"), \
                     patch.object(delivery.subprocess,"run",side_effect=native), \
-                    patch.object(delivery.shutil,"rmtree",side_effect=tree), \
+                    patch.object(delivery,"remove_owned_workspace",side_effect=lambda target, owned, details: tree(target)), \
                     patch.object(delivery.Path,"unlink",new=unlink), \
                     contextlib.redirect_stdout(stdout),contextlib.redirect_stderr(stderr):
                 result=delivery.cleanup_delivery(temporary)
@@ -2486,7 +2562,7 @@ class CleanupErrorRecoveryTests(SyntheticDeliveryTestCase):
                 real_tree(target)
             with patch.object(delivery.Path,"home",return_value=root/"home"), \
                     patch.object(delivery.subprocess,"run",return_value=subprocess.CompletedProcess([],0,b"",b"")), \
-                    patch.object(delivery.shutil,"rmtree",side_effect=tree),patch.object(delivery.time,"sleep") as sleep:
+                    patch.object(delivery,"remove_owned_workspace",side_effect=lambda target, owned, details: tree(target)),patch.object(delivery.time,"sleep") as sleep:
                 result=delivery.cleanup_delivery(temporary)
             self.assertNotIn("SYNTHETIC",json.dumps(result))
             self.assertNotIn(str(root),json.dumps(result))
@@ -2545,7 +2621,7 @@ class CleanupErrorRecoveryTests(SyntheticDeliveryTestCase):
                                if isinstance(n,ast.FunctionDef) and n.name=="cleanup_delivery"))
         for forbidden in ("chmod(","chown(","chflags(","kill(","pkill","sudo","ignore_errors=True"):
             self.assertNotIn(forbidden,source)
-        self.assertEqual(source.count("shutil.rmtree(root)"),2)
+        self.assertEqual(source.count("remove_owned_workspace(root, owned, workspace_details)"),2)
         self.assertIn("root_identity",source)
         self.assertIn('{"EBUSY", "ENOTEMPTY"}'.replace('"',"'"),source)
 
@@ -2970,7 +3046,7 @@ class DeliveryStageReportingTests(SyntheticDeliveryTestCase):
         calls,frames,error=self.exercise(fail="upload")
         self.assertIsInstance(error,subprocess.CalledProcessError)
         self.assertEqual(calls.count("--upload-app"),1)
-        self.assert_boundary(frames,5,"UPLOAD_FAILED_OR_UNCERTAIN")
+        self.assert_boundary(frames,5,"UPLOAD_NO_TOOL_OUTPUT")
         self.assertEqual(delivery.read_json(self.root/"reports/delivery-transfer.json")["status"],"ATTEMPTED")
 
     def test_public_channel_failure_prevents_any_transport(self):
@@ -3096,7 +3172,7 @@ class DeliveryStageReportingTests(SyntheticDeliveryTestCase):
         body="\n".join(line[10:] for line in step.split("        run: |\n",1)[1].splitlines())+"\n"
         export=self.root/"gridly-diagnostic-export";export.mkdir()
         (export/"synthetic.ipa").write_bytes(b"NOT_A_REAL_IPA")
-        (self.root/"logs").mkdir()
+        (self.root/"logs").mkdir(exist_ok=True)
         environment={**os.environ,"DIAGNOSTIC_PRIVATE_ROOT":str(self.root).replace("\\","/"),
                      "DELIVERY_SOURCE_DIR":str(self.root).replace("\\","/"),
                      "RUNNER_TEMP":str(self.root).replace("\\","/"),"EXPECTED_COMMIT_SHA":COMMIT}
@@ -3344,7 +3420,7 @@ class AppleIdDeliveryTests(SyntheticDeliveryTestCase):
         self.assertIsInstance(error, subprocess.CalledProcessError)
         self.assertEqual(calls.count("--upload-app"), 1)
         self.assertEqual(delivery.read_json(self.root / "reports/delivery-transfer.json")["status"], "ATTEMPTED")
-        self.assertEqual(stages[-1][2], "UPLOAD_FAILED_OR_UNCERTAIN")
+        self.assertEqual(stages[-1][2], "UPLOAD_NO_TOOL_OUTPUT")
         calls, stages, error = self.exercise()
         self.assertIsInstance(error, ValueError)
         self.assertEqual(calls, [])
@@ -3395,7 +3471,7 @@ class AppleIdDeliveryTests(SyntheticDeliveryTestCase):
         old = delivery.cert.git("show", delivery.AUTH_BASE + ":tools/apple_storekit_testflight_delivery.py").decode()
         current = (ROOT / "tools/apple_storekit_testflight_delivery.py").read_text()
         functions = lambda text: {n.name: ast.dump(n) for n in ast.parse(text).body if isinstance(n, ast.FunctionDef)}
-        before, after = functions(old), functions(current)
+        before, after = functions(old), functions(normalize_recovery(current))
         for name in ("cleanup_delivery", "cleanup_errno", "finish", "ready", "export_guard",
                      "prepare_signing_context", "install_runner_profile", "restore_keychain_context",
                      "archive_report", "api_token", "apple_get", "unused_build"):
@@ -3424,7 +3500,7 @@ class AppleIdDeliveryTests(SyntheticDeliveryTestCase):
 
     def test_test_mode_correction_changes_no_production_function_except_source_guard(self):
         old = delivery.cert.git("show", delivery.APPLE_ID_BASE + ":tools/apple_storekit_testflight_delivery.py").decode()
-        current = (ROOT / "tools/apple_storekit_testflight_delivery.py").read_text()
+        current = delivery.cert.git("show", delivery.UPLOAD_BASE + ":tools/apple_storekit_testflight_delivery.py").decode()
         functions = lambda text: {n.name: ast.dump(n) for n in ast.parse(text).body if isinstance(n, (ast.FunctionDef, ast.ClassDef))}
         before, after = functions(old), functions(current)
         self.assertEqual(before.keys(), after.keys())
@@ -3434,6 +3510,431 @@ class AppleIdDeliveryTests(SyntheticDeliveryTestCase):
                          delivery.cert.git("show", delivery.APPLE_ID_BASE + ":.github/workflows/gridly-storekit-testflight-delivery.yml"))
         self.assertEqual(delivery.TEST_MODE_FILES, {
             "tools/apple_storekit_testflight_delivery.py", "tests/storekit-testflight-delivery.test.py"})
+
+class UploadFailureTests(SyntheticDeliveryTestCase):
+    cases = (
+        (b"Authentication failed CANARY", "UPLOAD_AUTHENTICATION_REJECTED"),
+        (b"Redundant Binary Upload CANARY", "UPLOAD_BUILD_ALREADY_PRESENT"),
+        (b"Build number has already been used CANARY", "UPLOAD_BUILD_ALREADY_PRESENT"),
+        (b"ERROR ITMS-90035 CANARY", "UPLOAD_APPLE_PACKAGE_REJECTED"),
+        (b"File CANARY does not exist", "UPLOAD_LOCAL_FILE_UNREADABLE"),
+        (b"Connection reset CANARY", "UPLOAD_TRANSPORT_OR_SERVICE_UNCERTAIN"),
+        (b"HTTP status 503 CANARY", "UPLOAD_TRANSPORT_OR_SERVICE_UNCERTAIN"),
+        (b"", "UPLOAD_NO_TOOL_OUTPUT"),
+        (b"CANARY unknown error", "UPLOAD_UNCLASSIFIED_TOOL_ERROR"),
+    )
+
+    def test_fixed_categories_never_return_raw_output(self):
+        for raw, expected in self.cases:
+            with self.subTest(expected=expected):
+                self.assertEqual(delivery.classify_upload_error(raw), expected)
+                self.assertNotIn("CANARY", delivery.classify_upload_error(raw))
+                self.assertIn(expected, delivery.DELIVERY_CATEGORIES)
+        self.assertEqual(delivery.classify_upload_error(b"Authentication failed" + b"x"*65536),
+                         "UPLOAD_UNCLASSIFIED_TOOL_ERROR")
+
+    def test_upload_runs_once_and_output_is_private_and_removed(self):
+        for raw, expected in self.cases:
+            with self.subTest(expected=expected), tempfile.TemporaryDirectory() as directory:
+                root=Path(directory); fixture(root); calls=[]; streams=[]
+                command=["xcrun","altool","--username","synthetic@example.invalid","--password","@env:APPLE_APP_SPECIFIC_PASSWORD","--upload-app"]
+                def execute(cmd, **options):
+                    calls.append(cmd); private=options["stdout"]; streams.append(private)
+                    self.assertEqual(options["stderr"],subprocess.STDOUT)
+                    self.assertIs(options["check"],True)
+                    self.assertEqual(options["cwd"],root/"home")
+                    private.write(raw)
+                    raise subprocess.CalledProcessError(1,cmd)
+                with contextlib.redirect_stdout(io.StringIO()) as out, contextlib.redirect_stderr(io.StringIO()) as err:
+                    with self.assertRaises(subprocess.CalledProcessError) as failure:
+                        delivery.execute_upload(root,command,execute,env={"APPLE_APP_SPECIFIC_PASSWORD":"SYNTHETIC_SECRET"})
+                self.assertEqual(calls,[command])
+                self.assertEqual(out.getvalue()+err.getvalue(),"")
+                self.assertEqual(delivery.delivery_failure_category("D06_ACTUAL_UPLOAD",failure.exception),expected)
+                self.assertIsNone(failure.exception.stdout); self.assertIsNone(failure.exception.stderr)
+                self.assertTrue(streams[0].closed)
+                self.assertEqual(list((root/"logs").iterdir()),[])
+
+    def test_success_keeps_exact_proven_command_and_password_environment(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);fixture(root);calls=[]
+            command=["xcrun","altool","--upload-app"]
+            def execute(cmd, **options):
+                calls.append(cmd);self.assertEqual(options["env"],{"APPLE_APP_SPECIFIC_PASSWORD":"SYNTHETIC_SECRET"})
+            delivery.execute_upload(root,command,execute,env={"APPLE_APP_SPECIFIC_PASSWORD":"SYNTHETIC_SECRET"})
+            self.assertEqual(calls,[command]);self.assertEqual(list((root/"logs").iterdir()),[])
+
+    def test_unowned_log_directory_cannot_run_upload(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory)/"owned";root.mkdir();fixture(root)
+            (root/".owned").unlink()
+            with patch.object(delivery.subprocess,"run") as execute,self.assertRaises(ValueError):
+                delivery.execute_upload(root,["xcrun","altool","--upload-app"],execute)
+            execute.assert_not_called()
+
+    def test_current_upload_parent_inventory_and_tag_fail_closed(self):
+        for options in ({"parent":delivery.APPLE_ID_BASE},{"parent":delivery.UPLOAD_BASE+" "+"9"*40},
+                        {"upload_parent":"9"*40},{"upload_inventory":b""},
+                        {"upload_inventory":b"M\tjs/gridly-paid-ui.mjs"},
+                        {"missing_tag":"gridly-storekit-testflight-deliver-15-"+delivery.UPLOAD_BASE}):
+            with self.subTest(options=options),patch.object(delivery.cert,"git",side_effect=source_git(**options)),patch.object(
+                    delivery.subprocess,"run"),patch.object(delivery.cert,"original_contracts"),self.assertRaises((ValueError,subprocess.CalledProcessError)):
+                delivery.source_guard(COMMIT,True)
+
+    def test_only_d06_output_handling_and_source_guard_changed(self):
+        old=delivery.cert.git("show",delivery.UPLOAD_BASE+":tools/apple_storekit_testflight_delivery.py").decode()
+        current=(ROOT/"tools/apple_storekit_testflight_delivery.py").read_text()
+        funcs=lambda value:{n.name:ast.dump(n) for n in ast.parse(value).body if isinstance(n,(ast.FunctionDef,ast.ClassDef))}
+        before,after=funcs(old),funcs(current)
+        self.assertEqual(set(after)-set(before),{"classify_upload_error","execute_upload","write_upload_status","upload_diagnostics","upload_once","remove_owned_workspace"})
+        for name in before.keys()-{"source_guard","transfer","delivery_failure_category","cleanup_delivery","finish"}:
+            self.assertEqual(before[name],after[name],name)
+        normalized=funcs(normalize_apple_id_delivery(current))
+        normalized_old=funcs(normalize_apple_id_delivery(old))
+        self.assertEqual(normalized["transfer"],normalized_old["transfer"])
+        self.assertEqual(normalized["delivery_failure_category"],normalized_old["delivery_failure_category"])
+        restored=funcs(normalize_recovery(current))
+        for name in ("cleanup_delivery","finish"):
+            self.assertEqual(restored[name],before[name],name)
+        self.assertEqual(WORKFLOW.read_bytes().replace(b"\r\n",b"\n"),
+                         delivery.cert.git("show",delivery.UPLOAD_BASE+":.github/workflows/gridly-storekit-testflight-delivery.yml"))
+
+
+
+class UploadRecoveryReliabilityTests(SyntheticDeliveryTestCase):
+    def setUp(self):
+        self.temp=tempfile.TemporaryDirectory(); self.addCleanup(self.temp.cleanup)
+        self.root=Path(self.temp.name);self.ipa,self.guard=fixture(self.root)
+        self.command=['xcrun','altool','--username','SYNTHETIC_PRIVATE_USER','--upload-app']
+        self.marker=self.root/'reports/delivery-transfer.json'
+
+    def run_upload(self, error=None):
+        calls=[]
+        def execute(command, **options):
+            calls.append(command)
+            options['stdout'].write(b'SYNTHETIC_PRIVATE_OUTPUT Authentication failed')
+            if error is not None:raise error
+            return subprocess.CompletedProcess(command,0)
+        caught=None
+        with contextlib.redirect_stdout(io.StringIO()) as out, contextlib.redirect_stderr(io.StringIO()) as err:
+            try:delivery.upload_once(self.root,COMMIT,self.command,execute)
+            except BaseException as value:caught=value
+        self.assertEqual(out.getvalue()+err.getvalue(),'')
+        self.assertEqual(calls,[self.command])
+        if caught is not None:
+            self.assertNotIn('SYNTHETIC_PRIVATE',str(caught))
+        return caught
+
+    def test_process_success_atomically_records_zero_not_independent_apple_processing(self):
+        self.assertIsNone(self.run_upload())
+        value=delivery.read_json(self.marker)
+        self.assertEqual(value['status'],'ACCEPTED')
+        self.assertEqual(value['uploader_outcome'],'RETURNED_ZERO')
+        self.assertEqual(value['uploader_exit_code'],0)
+        self.assertEqual(value['apple_processing'],'NOT_VERIFIED')
+        self.assertFalse(list(self.marker.parent.glob('.upload-status-*')))
+
+    def test_nonzero_exit_and_classification_are_sanitized_and_persisted(self):
+        error=self.run_upload(subprocess.CalledProcessError(23,self.command,output=b'SYNTHETIC_PRIVATE_OUTPUT',stderr=b'SYNTHETIC_PRIVATE_ERROR'))
+        self.assertIsInstance(error,subprocess.CalledProcessError)
+        self.assertEqual(error.returncode,23)
+        self.assertIsNone(error.stdout);self.assertIsNone(error.stderr)
+        self.assertEqual(error.cmd,['xcrun','altool','--upload-app'])
+        self.assertEqual(delivery.delivery_failure_category('D06_ACTUAL_UPLOAD',error),'UPLOAD_AUTHENTICATION_REJECTED')
+        value=delivery.read_json(self.marker)
+        self.assertEqual((value['status'],value['uploader_outcome'],value['uploader_exit_code']),('ATTEMPTED','RETURNED_NONZERO',23))
+        self.assertNotIn('SYNTHETIC_PRIVATE',json.dumps(value))
+
+    def test_process_invocation_failure_is_fixed_and_uncertain(self):
+        error=self.run_upload(FileNotFoundError(errno.ENOENT,'SYNTHETIC_PRIVATE_ERROR','SYNTHETIC_PRIVATE_PATH'))
+        self.assertEqual(error.category,'UPLOAD_PROCESS_INVOCATION_FAILED')
+        self.assertEqual(delivery.read_json(self.marker)['uploader_outcome'],'INVOCATION_FAILED')
+
+    def test_timeout_and_interrupt_never_become_success_or_retry(self):
+        for error,category,outcome in (
+            (subprocess.TimeoutExpired(self.command,1,output=b'SYNTHETIC_PRIVATE_OUTPUT'),'UPLOAD_PROCESS_TIMEOUT_UNCERTAIN','TIMED_OUT_UNCERTAIN'),
+            (KeyboardInterrupt('SYNTHETIC_PRIVATE_INTERRUPT'),'UPLOAD_PROCESS_INTERRUPTED_UNCERTAIN','INTERRUPTED_UNCERTAIN'),
+            (SystemExit('SYNTHETIC_PRIVATE_INTERRUPT'),'UPLOAD_PROCESS_INTERRUPTED_UNCERTAIN','INTERRUPTED_UNCERTAIN')):
+            with self.subTest(category=category):
+                self.marker.unlink(missing_ok=True)  # Independent synthetic scenario, never a real retry.
+                caught=self.run_upload(error)
+                self.assertEqual(caught.category,category)
+                value=delivery.read_json(self.marker)
+                self.assertEqual((value['status'],value['uploader_outcome']),('ATTEMPTED',outcome))
+
+    def test_signal_termination_stays_uncertain(self):
+        error=self.run_upload(subprocess.CalledProcessError(-15,self.command))
+        self.assertEqual(delivery.delivery_failure_category('D06_ACTUAL_UPLOAD',error),'UPLOAD_PROCESS_SIGNALED_UNCERTAIN')
+        self.assertEqual(delivery.read_json(self.marker)['uploader_exit_code'],-15)
+
+    def test_failure_to_record_attempt_prevents_process_invocation(self):
+        with patch.object(delivery,'write_upload_status',side_effect=PermissionError('SYNTHETIC_PRIVATE')),patch.object(delivery,'execute_upload') as execute:
+            with self.assertRaises(delivery.DeliveryCheckFailure) as error:
+                delivery.upload_once(self.root,COMMIT,self.command,execute)
+        self.assertEqual(error.exception.category,'UPLOAD_ATTEMPT_STATUS_FAILED');execute.assert_not_called()
+
+    def test_process_zero_but_acceptance_record_failure_preserves_attempt_marker(self):
+        replace=delivery.os.replace;calls=[]
+        def atomic(src,dst):
+            calls.append(1)
+            if len(calls)==2:raise PermissionError('SYNTHETIC_PRIVATE_PATH')
+            return replace(src,dst)
+        with patch.object(delivery.os,'replace',side_effect=atomic):error=self.run_upload()
+        self.assertEqual(error.category,'UPLOAD_SUCCESS_STATUS_PERSISTENCE_FAILED')
+        self.assertEqual(delivery.read_json(self.marker)['status'],'ATTEMPTED')
+        self.assertEqual(delivery.read_json(self.marker)['uploader_outcome'],'UNDETERMINED')
+        self.assertFalse(list(self.marker.parent.glob('.upload-status-*')))
+
+    def test_failed_process_status_persistence_is_separate_and_still_uncertain(self):
+        write=delivery.write_upload_status;calls=[]
+        def record(root,value):
+            calls.append(1)
+            if len(calls)==2:raise PermissionError('SYNTHETIC_PRIVATE')
+            return write(root,value)
+        with patch.object(delivery,'write_upload_status',side_effect=record):
+            error=self.run_upload(subprocess.CalledProcessError(7,self.command))
+        self.assertEqual(error.category,'UPLOAD_FAILURE_STATUS_PERSISTENCE_FAILED')
+        self.assertEqual(delivery.read_json(self.marker)['status'],'ATTEMPTED')
+
+    def test_capture_setup_failure_does_not_invoke_uploader(self):
+        with patch.object(delivery.tempfile,'TemporaryFile',side_effect=PermissionError('SYNTHETIC_PRIVATE')),patch.object(delivery.subprocess,'run') as execute:
+            with self.assertRaises(delivery.DeliveryCheckFailure) as error:
+                delivery.upload_once(self.root,COMMIT,self.command,execute)
+        self.assertEqual(error.exception.category,'UPLOAD_OUTPUT_CAPTURE_FAILED');execute.assert_not_called()
+        self.assertEqual(delivery.read_json(self.marker)['uploader_outcome'],'OUTPUT_SETUP_FAILED')
+
+    def test_new_summary_distinguishes_process_success_from_apple_confirmation(self):
+        self.run_upload()
+        clean={'status':'PASS','stages':{},'resources':{}}
+        with patch.object(delivery.cert,'private_directory',return_value=self.root),patch.object(delivery,'cleanup_delivery',return_value=clean):
+            result=delivery.finish('unused','success')
+        self.assertEqual(result['upload'],'UPLOADER_SUCCEEDED_APPLE_UNCONFIRMED')
+        self.assertEqual(result['upload_diagnostics']['apple_processing'],'NOT_VERIFIED')
+        self.assertEqual(result['certification'],'PASS')
+
+    def test_existing_attempt_blocks_every_second_invocation(self):
+        self.run_upload()
+        with patch.object(delivery, "execute_upload") as execute,self.assertRaises(ValueError):
+            delivery.upload_once(self.root,COMMIT,self.command,execute)
+        execute.assert_not_called()
+
+    def test_unexpected_process_exception_never_exposes_raw_message(self):
+        error=self.run_upload(RuntimeError("SYNTHETIC_PRIVATE_ERROR"))
+        self.assertEqual(error.category,"UPLOAD_PROCESS_OUTCOME_UNCERTAIN")
+        self.assertEqual(delivery.read_json(self.marker)["status"],"ATTEMPTED")
+
+    def test_mocked_status_symlink_blocks_upload_without_reading_target(self):
+        original=Path.is_symlink
+        def linked(path):return path==self.marker or original(path)
+        with patch.object(Path,"is_symlink",new=linked),patch.object(delivery,"execute_upload") as execute,self.assertRaises(ValueError):
+            delivery.upload_once(self.root,COMMIT,self.command,execute)
+        execute.assert_not_called()
+
+    def test_status_marker_symlink_cannot_overwrite_external_file(self):
+        outside=self.root/'outside-canary';outside.write_text('SYNTHETIC_PRIVATE')
+        try:self.marker.symlink_to(outside)
+        except OSError:self.skipTest('Windows symlink privilege unavailable')
+        with patch.object(delivery,'execute_upload') as execute,self.assertRaises(delivery.DeliveryCheckFailure):
+            delivery.upload_once(self.root,COMMIT,self.command,execute)
+        execute.assert_not_called();self.assertEqual(outside.read_text(),'SYNTHETIC_PRIVATE')
+
+    def test_recovery_normalization_is_idempotent_and_rejects_gate_mutations(self):
+        current=(ROOT/"tools/apple_storekit_testflight_delivery.py").read_text()
+        normalized=normalize_recovery(current)
+        self.assertEqual(normalize_recovery(normalized),normalized)
+        for before,after in (("        upload_once(root, commit,", '        upload_once(root, "UNAPPROVED",'),
+                             ("remove_owned_workspace(root, owned, workspace_details)","remove_owned_workspace(root, None, workspace_details)"),
+                             ('result["upload_diagnostics"] = upload_diagnostics(transfer_report)', 'result["upload_diagnostics"] = upload_diagnostics({})')):
+            mutant=current.replace(before,after,1)
+            with self.subTest(before=before),self.assertRaises(AssertionError):normalize_recovery(mutant)
+
+    def test_unknown_process_fields_cannot_enter_summary(self):
+        result=delivery.upload_diagnostics({'uploader_outcome':'SYNTHETIC_PRIVATE','uploader_exit_code':'SYNTHETIC_PRIVATE','apple_processing':'ACCEPTED'})
+        self.assertEqual(result,{'uploader_outcome':'UNDETERMINED','uploader_exit_code':None,'apple_processing':'NOT_VERIFIED'})
+
+
+class OwnedWorkspaceRecoveryTests(SyntheticDeliveryTestCase):
+    @contextlib.contextmanager
+    def workspace(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root=delivery.cert.private_directory(temporary);root.mkdir()
+            (root/'.owned').write_text(delivery.cert.PRIVATE_MARKER)
+            (root/'home').mkdir();(root/'home/child').write_text('SYNTHETIC_PRIVATE')
+            identity=(root.stat().st_dev,root.stat().st_ino)
+            def owned():
+                delivery.require(root.is_dir() and not root.is_symlink() and (root/'.owned').is_file()
+                    and not (root/'.owned').is_symlink() and (root/'.owned').read_text()==delivery.cert.PRIVATE_MARKER
+                    and (root.stat().st_dev,root.stat().st_ino)==identity,'unowned workspace')
+            yield root,owned,{}
+
+    def test_owned_tree_is_removed_without_touching_sibling(self):
+        with self.workspace() as (root,owned,details):
+            outside=root.parent/'outside';outside.write_text('SYNTHETIC_PRIVATE')
+            delivery.remove_owned_workspace(root,owned,details)
+            self.assertFalse(root.exists());self.assertEqual(outside.read_text(),'SYNTHETIC_PRIVATE')
+            self.assertEqual(details['operation'],'REMOVE_WORKSPACE_ROOT')
+
+    def test_eacces_keeps_marker_and_reports_exact_operation_without_paths(self):
+        with self.workspace() as (root,owned,details):
+            def denied(path,**options):
+                error=PermissionError(errno.EACCES,'SYNTHETIC_PRIVATE',str(path/'child'))
+                options['onerror'](delivery.os.unlink,path/'child',(PermissionError,error,None))
+            with patch.object(delivery.shutil,'rmtree',side_effect=denied) as remove:
+                with self.assertRaises(PermissionError):delivery.remove_owned_workspace(root,owned,details)
+            self.assertEqual(remove.call_count,1)
+            self.assertEqual(details,{'operation':'REMOVE_FILE','resource_class':'PRIVATE_HOME'})
+            self.assertEqual((root/'.owned').read_text(),delivery.cert.PRIVATE_MARKER)
+            self.assertTrue(root.exists());self.assertNotIn('SYNTHETIC_PRIVATE',json.dumps(details))
+
+    def test_partial_child_removal_can_be_reentered_with_intact_ownership(self):
+        with self.workspace() as (root,owned,details):
+            remove=delivery.shutil.rmtree
+            def partial(path,**options):
+                (path/'child').unlink()
+                raise PermissionError(errno.EACCES,'SYNTHETIC_PRIVATE')
+            with patch.object(delivery.shutil,'rmtree',side_effect=partial):
+                with self.assertRaises(PermissionError):delivery.remove_owned_workspace(root,owned,details)
+            self.assertTrue((root/'.owned').is_file())
+            delivery.remove_owned_workspace(root,owned,details)
+            self.assertFalse(root.exists())
+
+    def test_missing_or_invalid_marker_cannot_delete_owned_children(self):
+        for kind in ('missing','invalid'):
+            with self.subTest(kind=kind),self.workspace() as (root,owned,details):
+                if kind=='missing':(root/'.owned').unlink()
+                else:(root/'.owned').write_text('INVALID')
+                with patch.object(delivery.shutil,'rmtree') as remove,self.assertRaises(ValueError):
+                    delivery.remove_owned_workspace(root,owned,details)
+                remove.assert_not_called();self.assertTrue((root/'home/child').exists())
+
+    def test_directory_link_target_remains_untouched(self):
+        with self.workspace() as (root,owned,details):
+            outside=root.parent/'outside';outside.mkdir();(outside/'canary').write_text('SYNTHETIC_PRIVATE')
+            try:(root/'link').symlink_to(outside,target_is_directory=True)
+            except OSError:self.skipTest('Windows symlink privilege unavailable')
+            delivery.remove_owned_workspace(root,owned,details)
+            self.assertFalse(root.exists());self.assertEqual((outside/'canary').read_text(),'SYNTHETIC_PRIVATE')
+
+    def test_mocked_marker_symlink_blocks_deletion_without_target_access(self):
+        with self.workspace() as (root,owned,details):
+            original=Path.is_symlink
+            def linked(path):return path==root/".owned" or original(path)
+            with patch.object(Path,"is_symlink",new=linked),patch.object(delivery.shutil,"rmtree") as remove,self.assertRaises(ValueError):
+                delivery.remove_owned_workspace(root,owned,details)
+            remove.assert_not_called();self.assertTrue((root/"home/child").exists())
+
+    def test_mocked_root_symlink_blocks_deletion(self):
+        with self.workspace() as (root,owned,details):
+            original=Path.is_symlink
+            def linked(path):return path==root or original(path)
+            with patch.object(Path,"is_symlink",new=linked),patch.object(delivery.shutil,"rmtree") as remove,self.assertRaises(ValueError):
+                delivery.remove_owned_workspace(root,owned,details)
+            remove.assert_not_called();self.assertTrue((root/"home/child").exists())
+
+    def test_mocked_child_link_is_unlinked_without_recursive_traversal(self):
+        with self.workspace() as (root,owned,details):
+            link=root/"link";link.write_text("SYNTHETIC_LINK")
+            original=Path.lstat; visited=[];remove=delivery.shutil.rmtree
+            def linked(path,*args,**options):
+                value=original(path,*args,**options)
+                if path==link:
+                    values=list(value);values[0]=delivery.stat.S_IFLNK|0o700
+                    return delivery.os.stat_result(values)
+                return value
+            def tree(path,**options):
+                visited.append(path);return remove(path,**options)
+            with patch.object(Path,"lstat",new=linked),patch.object(delivery.shutil,"rmtree",side_effect=tree):
+                delivery.remove_owned_workspace(root,owned,details)
+            self.assertNotIn(link,visited);self.assertFalse(root.exists())
+
+    def test_root_link_is_rejected_without_traversing_target(self):
+        with self.workspace() as (root,owned,details):
+            linked=root.parent/'linked'
+            try:linked.symlink_to(root,target_is_directory=True)
+            except OSError:self.skipTest('Windows symlink privilege unavailable')
+            def reject():delivery.require(not linked.is_symlink(),'unowned workspace')
+            with patch.object(delivery.shutil,'rmtree') as remove,self.assertRaises(ValueError):
+                delivery.remove_owned_workspace(linked,reject,details)
+            remove.assert_not_called();self.assertTrue((root/'home/child').exists())
+
+    def test_cleanup_integration_reports_eacces_and_independent_absence_truthfully(self):
+        with self.workspace() as (root,owned,details):
+            def denied(path,**options):
+                error=PermissionError(errno.EACCES,'SYNTHETIC_PRIVATE')
+                options['onerror'](delivery.os.scandir,path,(PermissionError,error,None))
+            with patch.object(delivery.Path,'home',return_value=root/'home'),patch.object(delivery.subprocess,'run',return_value=subprocess.CompletedProcess([],0,b'',b'')),patch.object(delivery.shutil,'rmtree',side_effect=denied) as remove,patch.object(delivery.time,'sleep') as sleep:
+                result=delivery.cleanup_delivery(root.parent)
+            self.assertEqual(result['stages']['C04_WORKSPACE']['error_code'],'EACCES')
+            self.assertEqual(result['stages']['C04_WORKSPACE']['operation'],'LIST_DIRECTORY')
+            self.assertEqual(result['stages']['C04_WORKSPACE']['resource_class'],'PRIVATE_HOME')
+            self.assertEqual(result['stages']['C04_WORKSPACE']['retry_status'],'NOT_ATTEMPTED')
+            self.assertEqual(result['stages']['C05_ABSENCE']['category'],'RESOURCE_REMAINS')
+            self.assertEqual(result['resources'],{'workspace':'PRESENT','profile':'ABSENT','keychain':'ABSENT'})
+            self.assertEqual(remove.call_count,1);sleep.assert_not_called()
+            self.assertNotIn('SYNTHETIC_PRIVATE',json.dumps(result))
+
+    def test_no_permission_changes_and_only_authorized_cleanup_calls(self):
+        body=ast.unparse(next(n for n in ast.parse((ROOT/'tools/apple_storekit_testflight_delivery.py').read_text()).body if isinstance(n,ast.FunctionDef) and n.name=='remove_owned_workspace'))
+        for forbidden in ('chmod(', 'chown(', 'chflags(', 'kill(', 'sudo', 'ignore_errors=True'):
+            self.assertNotIn(forbidden,body)
+        self.assertEqual(body.count('shutil.rmtree('),1)
+        self.assertIn("child.name == '.owned'",body)
+
+
+
+class MacosSafetyWorkflowTests(SyntheticDeliveryTestCase):
+    def setUp(self):
+        self.text=(ROOT/next(iter(delivery.SAFETY_FILES))).read_text()
+
+    def test_only_exact_diagnostic_branch_push_can_start_test_job(self):
+        trigger=self.text.split("\non:\n",1)[1].split("\npermissions:",1)[0]
+        self.assertEqual(trigger,"  push:\n    branches:\n      - 'codex/storekit-diagnostics'\n")
+        for forbidden in ("workflow_dispatch:","workflow_run:","workflow_call:","pull_request:","tags:","branches-ignore:"):
+            self.assertNotIn(forbidden,trigger)
+        self.assertIn("github.ref == 'refs/heads/codex/storekit-diagnostics'",self.text)
+        self.assertIn("github.run_attempt == 1",self.text)
+
+    def test_workflow_has_exact_checkout_and_read_only_no_secret_context(self):
+        self.assertIn("permissions:\n  contents: read\n",self.text)
+        self.assertEqual(self.text.count("uses:"),1)
+        for required in ("runs-on: macos-26","uses: actions/checkout@v4","ref: ${{ github.sha }}",
+                         "fetch-depth: 0","fetch-tags: true","persist-credentials: false"):
+            self.assertIn(required,self.text)
+        for forbidden in ("secrets.","github.token","environment:","id-token:","write", "upload-artifact", "cache:","continue-on-error", "certification_authorized", "testflight_upload_authorized"):
+            self.assertNotIn(forbidden,self.text)
+
+    def test_only_existing_synthetic_suite_runs_in_both_modes_with_live_guards(self):
+        self.assertIn('for mode in ("UNSET", "APPLE_ID"):',self.text)
+        self.assertIn('tests/storekit-testflight-delivery.test.py',self.text)
+        self.assertIn('sys.addaudithook(guard)',self.text)
+        self.assertIn('socket.connect',self.text)
+        self.assertIn('socket.getaddrinfo',self.text)
+        self.assertIn('LIVE_PROCESS_BLOCKED',self.text)
+        self.assertIn('unittest.TextTestRunner(verbosity=2)',self.text)
+        self.assertNotIn('tools/apple_storekit_testflight_delivery.py ',self.text)
+        self.assertNotIn('--upload-app',self.text)
+        self.assertNotIn('--validate-app',self.text)
+        self.assertNotIn('xcodebuild',self.text)
+        self.assertNotIn('subprocess.run(',self.text)
+        self.assertNotIn('subprocess.check_output(',self.text)
+
+    def test_test_workflow_shell_and_embedded_python_parse_without_execution(self):
+        block=self.text.split('        run: |\n',1)[1]
+        body='\n'.join(line[10:] for line in block.splitlines())+'\n'
+        python=body.split("python3 -B - <<'PY'\n",1)[1].rsplit('\nPY',1)[0]
+        ast.parse(python)
+        bash='C:/Program Files/Git/bin/bash.exe' if os.name=='nt' else '/bin/bash'
+        subprocess.run([bash,'-n'],input=body,text=True,check=True,capture_output=True)
+
+    def test_source_guard_requires_exact_mixed_three_file_inventory(self):
+        expected={"M\t"+path for path in delivery.TEST_MODE_FILES}|{"A\t"+path for path in delivery.SAFETY_FILES}
+        valid='\n'.join(sorted(expected)).encode()
+        for rows in (b'',valid+b'\nM\tjs/gridly-paid-ui.mjs',
+                     valid.replace(b'A\t.github',b'M\t.github'),
+                     valid+b'\n'+valid.splitlines()[0],
+                     '\n'.join(sorted(expected-{"A\t"+next(iter(delivery.SAFETY_FILES))})).encode()):
+            with self.subTest(rows=rows),patch.object(delivery.cert,'git',side_effect=source_git(correction=rows)),patch.object(delivery.subprocess,'run'),patch.object(delivery.cert,'original_contracts'),self.assertRaises(ValueError):
+                delivery.source_guard(COMMIT,True)
 
 if __name__ == "__main__":
     unittest.main()

@@ -21,6 +21,8 @@ import subprocess
 import shutil
 import shlex
 import time
+import tempfile
+import stat
 import urllib.parse
 import urllib.request
 from pathlib import Path
@@ -42,10 +44,12 @@ ENVIRONMENT_BASE = "b27d780e3148a903917b7a05595f17006f1ab8e0"
 TRANSFER_BASE = "2cca00a2248e9a0c04ef5173e3364709a517f31e"
 AUTH_BASE = "03620e25ed19fc70ab9e493627fb84c4b9a3617c"
 APPLE_ID_BASE = "0c17376475cf76798d553e7b9717543056df1595"
+UPLOAD_BASE = "54cbf359ac73225d0354491409533d1ea613d885"
 TEST_MODE_FILES = {
     "tools/apple_storekit_testflight_delivery.py",
     "tests/storekit-testflight-delivery.test.py",
 }
+SAFETY_FILES = {".github/workflows/gridly-storekit-macos-safety-tests.yml"}
 SIGNING_VERIFICATION_FILES = {
     "tools/apple_storekit_signing_diagnostic.py",
     "tests/storekit-signing-diagnostic.test.py",
@@ -107,7 +111,9 @@ FILES = {
 # The historical four-file refinement is pinned at REFINEMENT_BASE.
 # REPAIR_FILES remains the pinned four-file CMS repair inventory.
 # The three-file Apple ID correction is pinned at APPLE_ID_BASE.
-# Permit one direct-child test-mode correction of TEST_MODE_FILES only; older inventories stay pinned.
+# The test-mode correction is pinned at UPLOAD_BASE. Permit one direct-child
+# upload-reporting correction of the two support files plus one isolated test workflow;
+# older inventories and all delivery workflow bytes stay pinned.
 REFINEMENT_FILES = FILES | {"tests/storekit-preflight-diagnostic.test.py"}
 REPAIR_FILES = FILES | {"tests/storekit-signing-diagnostic.test.py"}
 HISTORICAL_TAGS = {
@@ -139,6 +145,8 @@ HISTORICAL_TAGS = {
         ("4e9510666f0a51bdc9209a877e6dd420677abb7d", AUTH_BASE),
     "gridly-storekit-testflight-deliver-15-" + APPLE_ID_BASE:
         ("554bcf82c8b6aae6e99a610ace4b2d4977c0e999", APPLE_ID_BASE),
+    "gridly-storekit-testflight-deliver-15-" + UPLOAD_BASE:
+        ("5d23842099145de5b955f4d0e21efa5a60a2a82f", UPLOAD_BASE),
 }
 
 CONFIRMATIONS = {
@@ -280,11 +288,11 @@ def authorize(ref, commit, event_path, attempt):
 def source_guard(commit, clean):
     require(re.fullmatch(r"[0-9a-f]{40}", commit or ""), "exact source SHA required")
     pinned = {SOURCE, DELIVERY_BASE, OWNER_CORRECTION, PREFLIGHT_BASE, REFINEMENT_BASE,
-              SIGNING_BASE, CMS_BASE, CMS_REPAIR_BASE, SIGNING_VERIFIED_BASE, P04_BASE, ARCHIVE_BASE, EVIDENCE_BASE, ENVIRONMENT_BASE, TRANSFER_BASE, AUTH_BASE, APPLE_ID_BASE}
+              SIGNING_BASE, CMS_BASE, CMS_REPAIR_BASE, SIGNING_VERIFIED_BASE, P04_BASE, ARCHIVE_BASE, EVIDENCE_BASE, ENVIRONMENT_BASE, TRANSFER_BASE, AUTH_BASE, APPLE_ID_BASE, UPLOAD_BASE}
     require(cert.git("rev-parse", "HEAD").decode().strip() == commit and commit not in pinned,
             "new reviewed delivery-support commit required")
     for child, parent in (
-        (commit, APPLE_ID_BASE), (APPLE_ID_BASE, AUTH_BASE), (AUTH_BASE, TRANSFER_BASE), (TRANSFER_BASE, ENVIRONMENT_BASE), (ENVIRONMENT_BASE, EVIDENCE_BASE), (EVIDENCE_BASE, ARCHIVE_BASE), (ARCHIVE_BASE, P04_BASE), (P04_BASE, SIGNING_VERIFIED_BASE),
+        (commit, UPLOAD_BASE), (UPLOAD_BASE, APPLE_ID_BASE), (APPLE_ID_BASE, AUTH_BASE), (AUTH_BASE, TRANSFER_BASE), (TRANSFER_BASE, ENVIRONMENT_BASE), (ENVIRONMENT_BASE, EVIDENCE_BASE), (EVIDENCE_BASE, ARCHIVE_BASE), (ARCHIVE_BASE, P04_BASE), (P04_BASE, SIGNING_VERIFIED_BASE),
         (SIGNING_VERIFIED_BASE, CMS_REPAIR_BASE),
         (CMS_REPAIR_BASE, CMS_BASE), (CMS_BASE, SIGNING_BASE), (SIGNING_BASE, REFINEMENT_BASE),
         (REFINEMENT_BASE, PREFLIGHT_BASE), (PREFLIGHT_BASE, OWNER_CORRECTION),
@@ -317,8 +325,8 @@ def source_guard(commit, clean):
         (ENVIRONMENT_BASE, TRANSFER_BASE, "M", FILES),
         (TRANSFER_BASE, AUTH_BASE, "M", FILES),
         (AUTH_BASE, APPLE_ID_BASE, "M", FILES),
-        (APPLE_ID_BASE, commit, "M", TEST_MODE_FILES),
-        (SOURCE, commit, "A", FILES | PREFLIGHT_FILES | SIGNING_FILES | CMS_FILES),
+        (APPLE_ID_BASE, UPLOAD_BASE, "M", TEST_MODE_FILES),
+        (SOURCE, commit, "A", FILES | PREFLIGHT_FILES | SIGNING_FILES | CMS_FILES | SAFETY_FILES),
     ):
         records = cert.git("diff", "--name-status", "--no-renames", base, target).decode().splitlines()
         require(set(records) == {status + "\t" + path for path in inventory} and len(records) == len(inventory),
@@ -326,7 +334,11 @@ def source_guard(commit, clean):
         for path in inventory:
             require(cert.git("ls-tree", target, "--", path).decode().split()[0] == "100644",
                     "historical or current support file mode changed")
-    for path in FILES | PREFLIGHT_FILES | SIGNING_FILES | CMS_FILES:
+    records = cert.git("diff", "--name-status", "--no-renames", UPLOAD_BASE, commit).decode().splitlines()
+    expected = {"M\t" + path for path in TEST_MODE_FILES} | {"A\t" + path for path in SAFETY_FILES}
+    require(set(records) == expected and len(records) == len(expected),
+            "exact two delivery repairs and one test-only workflow required")
+    for path in FILES | PREFLIGHT_FILES | SIGNING_FILES | CMS_FILES | SAFETY_FILES:
         require(cert.git("ls-tree", commit, "--", path).decode().split()[0] == "100644", "support file mode changed")
     require(not cert.git("diff", "--name-only", "HEAD"), "tracked working source changed")
     require(not cert.git("diff", "--cached", "--name-only"), "staged source changed")
@@ -736,6 +748,17 @@ DELIVERY_STAGE_FAILURES = {
     "D05_LIVE_BUILD_AVAILABILITY": "BUILD_AVAILABILITY_FAILED",
     "D06_ACTUAL_UPLOAD": "UPLOAD_FAILED_OR_UNCERTAIN",
 }
+UPLOAD_ERROR_CATEGORIES = {
+    "UPLOAD_PROCESS_INVOCATION_FAILED", "UPLOAD_PROCESS_TIMEOUT_UNCERTAIN",
+    "UPLOAD_PROCESS_INTERRUPTED_UNCERTAIN", "UPLOAD_PROCESS_SIGNALED_UNCERTAIN",
+    "UPLOAD_OUTPUT_CAPTURE_FAILED", "UPLOAD_OUTPUT_FINALIZATION_UNCERTAIN",
+    "UPLOAD_PROCESS_OUTCOME_UNCERTAIN", "UPLOAD_ATTEMPT_STATUS_FAILED",
+    "UPLOAD_FAILURE_STATUS_PERSISTENCE_FAILED", "UPLOAD_SUCCESS_STATUS_PERSISTENCE_FAILED",
+    "UPLOAD_AUTHENTICATION_REJECTED", "UPLOAD_BUILD_ALREADY_PRESENT",
+    "UPLOAD_APPLE_PACKAGE_REJECTED", "UPLOAD_LOCAL_FILE_UNREADABLE",
+    "UPLOAD_TRANSPORT_OR_SERVICE_UNCERTAIN", "UPLOAD_NO_TOOL_OUTPUT",
+    "UPLOAD_UNCLASSIFIED_TOOL_ERROR",
+}
 DELIVERY_CATEGORIES = set(DELIVERY_STAGE_FAILURES.values()) | {
     "NONE", "DEPENDENCY_FAILED", "DELIVERY_CONTEXT_REJECTED", "OWNER_AUTHORIZATION_EXPIRED",
     "SOURCE_GUARD_REJECTED", "SIGNED_PROOF_REJECTED", "IPA_BYTES_CHANGED",
@@ -748,7 +771,7 @@ DELIVERY_CATEGORIES = set(DELIVERY_STAGE_FAILURES.values()) | {
     for reason in ("UNREADABLE", "INTERNAL_ONLY_MISSING", "INTERNAL_ONLY_REJECTED",
                    "METHOD_MISSING", "METHOD_REJECTED", "DESTINATION_MISSING", "DESTINATION_REJECTED",
                    "BUILD_NUMBER_MISSING", "BUILD_NUMBER_REJECTED")
-}
+} | UPLOAD_ERROR_CATEGORIES
 
 
 class DeliveryCheckFailure(ValueError):
@@ -785,6 +808,10 @@ def verify_delivery_export(path, origin):
 
 
 def delivery_failure_category(stage, error):
+    if stage == "D06_ACTUAL_UPLOAD" and isinstance(error, subprocess.CalledProcessError):
+        category = getattr(error, "gridly_upload_category", None)
+        if category in UPLOAD_ERROR_CATEGORIES:
+            return category
     if isinstance(error, DeliveryCheckFailure):
         return error.category
     # Compare only our own fixed messages; never return exception text.
@@ -889,6 +916,134 @@ def transfer_public(root, commit, ipa):
     return transfer(root, commit, ipa, precheck=precheck, progress=progress)
 
 
+def classify_upload_error(raw):
+    """Return a fixed class only; never publish matched text, IDs, paths or codes."""
+    text = raw[-65536:].decode("utf-8", errors="replace")
+    if not text.strip():
+        return "UPLOAD_NO_TOOL_OUTPUT"
+    for category, pattern in (
+        ("UPLOAD_AUTHENTICATION_REJECTED", r"unable to authenticate|authentication failed|invalid (?:user ?name|password)|app-specific password.*(?:invalid|required|incorrect)"),
+        ("UPLOAD_BUILD_ALREADY_PRESENT", r"redundant binary upload|duplicate build|build (?:number|version).*already (?:been )?used|bundle version.*must be higher"),
+        ("UPLOAD_LOCAL_FILE_UNREADABLE", r"file.*(?:does not exist|could not be found|cannot be read)|no such file or directory"),
+        ("UPLOAD_TRANSPORT_OR_SERVICE_UNCERTAIN", r"timed? out|connection (?:reset|refused|lost)|network connection|service unavailable|temporarily unavailable|http (?:status )?50[0234]"),
+        ("UPLOAD_APPLE_PACKAGE_REJECTED", r"(?:error[ :]+)?ITMS-\d+|asset validation failed|invalid bundle|invalid signature"),
+    ):
+        if re.search(pattern, text, re.IGNORECASE):
+            return category
+    return "UPLOAD_UNCLASSIFIED_TOOL_ERROR"
+
+
+def execute_upload(root, command, execute, **options):
+    """One invocation; private output and sanitized exceptions, never an Apple receipt."""
+    marker, logs = root / ".owned", root / "logs"
+    require(root.is_dir() and not root.is_symlink() and marker.is_file() and not marker.is_symlink()
+            and marker.read_text() == cert.PRIVATE_MARKER and logs.is_dir() and not logs.is_symlink(),
+            "owned private upload output required")
+    if hasattr(os, "getuid"):
+        require(root.stat().st_uid == logs.stat().st_uid == os.getuid(), "owned private upload output required")
+    try:
+        private = tempfile.TemporaryFile(mode="w+b", dir=logs)
+    except Exception:
+        raise DeliveryCheckFailure("UPLOAD_OUTPUT_CAPTURE_FAILED") from None
+    try:
+        with private:
+            try:
+                return execute(command, check=True, cwd=root / "home", stdout=private,
+                               stderr=subprocess.STDOUT, **options)
+            except subprocess.CalledProcessError as error:
+                private.seek(0, 2)
+                private.seek(max(0, private.tell() - 65536))
+                category = classify_upload_error(private.read(65536))
+                code = error.returncode if type(error.returncode) is int and -255 <= error.returncode <= 65535 else None
+                if code is not None and code < 0:
+                    category = "UPLOAD_PROCESS_SIGNALED_UNCERTAIN"
+                safe = subprocess.CalledProcessError(code, ["xcrun", "altool", "--upload-app"])
+                safe.gridly_upload_category = category
+                raise safe from None
+            except subprocess.TimeoutExpired:
+                raise DeliveryCheckFailure("UPLOAD_PROCESS_TIMEOUT_UNCERTAIN") from None
+            except (KeyboardInterrupt, SystemExit):
+                raise DeliveryCheckFailure("UPLOAD_PROCESS_INTERRUPTED_UNCERTAIN") from None
+            except OSError:
+                raise DeliveryCheckFailure("UPLOAD_PROCESS_INVOCATION_FAILED") from None
+            except Exception:
+                raise DeliveryCheckFailure("UPLOAD_PROCESS_OUTCOME_UNCERTAIN") from None
+    except (subprocess.CalledProcessError, DeliveryCheckFailure):
+        raise
+    except BaseException:
+        raise DeliveryCheckFailure("UPLOAD_OUTPUT_FINALIZATION_UNCERTAIN") from None
+
+
+def write_upload_status(root, value):
+    """Atomic local state only; not an Apple acceptance or processing receipt."""
+    marker, reports = root / ".owned", root / "reports"
+    require(root.is_dir() and not root.is_symlink() and marker.is_file() and not marker.is_symlink()
+            and marker.read_text() == cert.PRIVATE_MARKER and reports.is_dir() and not reports.is_symlink(),
+            "owned private upload status required")
+    if hasattr(os, "getuid"):
+        require(root.stat().st_uid == reports.stat().st_uid == os.getuid(), "owned private upload status required")
+    destination = reports / "delivery-transfer.json"
+    require(not destination.is_symlink(), "owned private upload status required")
+    temporary = None
+    try:
+        with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", dir=reports,
+                                         prefix=".upload-status-", delete=False) as stream:
+            temporary = Path(stream.name)
+            stream.write(json.dumps(value, sort_keys=True) + "\n")
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(temporary, destination)
+    finally:
+        if temporary is not None:
+            temporary.unlink(missing_ok=True)
+
+
+def upload_diagnostics(record):
+    """Allowlisted process facts only; neither raw output nor private identifiers."""
+    outcomes = {"NOT_STARTED", "RETURNED_ZERO", "RETURNED_NONZERO", "INVOCATION_FAILED",
+                "TIMED_OUT_UNCERTAIN", "INTERRUPTED_UNCERTAIN", "OUTPUT_SETUP_FAILED", "UNDETERMINED"}
+    outcome = record.get("uploader_outcome")
+    code = record.get("uploader_exit_code")
+    return {"uploader_outcome": outcome if isinstance(outcome, str) and outcome in outcomes else "UNDETERMINED",
+            "uploader_exit_code": code if type(code) is int and -255 <= code <= 65535 else None,
+            "apple_processing": "NOT_VERIFIED"}
+
+
+def upload_once(root, commit, command, execute, **options):
+    """Persist intent before one invocation. Every uncertain result prevents reuse."""
+    marker = root / "reports/delivery-transfer.json"
+    require(not marker.exists() and not marker.is_symlink(), "previous upload attempt; owner must investigate")
+    record = {"status": "ATTEMPTED", "source_commit": commit, "build": "15",
+              "uploader_outcome": "UNDETERMINED", "uploader_exit_code": None,
+              "apple_processing": "NOT_VERIFIED"}
+    try:
+        write_upload_status(root, record)
+    except BaseException:
+        raise DeliveryCheckFailure("UPLOAD_ATTEMPT_STATUS_FAILED") from None
+    try:
+        execute_upload(root, command, execute, **options)
+    except BaseException as error:
+        outcome = {"UPLOAD_PROCESS_INVOCATION_FAILED": "INVOCATION_FAILED",
+                   "UPLOAD_PROCESS_TIMEOUT_UNCERTAIN": "TIMED_OUT_UNCERTAIN",
+                   "UPLOAD_PROCESS_INTERRUPTED_UNCERTAIN": "INTERRUPTED_UNCERTAIN",
+                   "UPLOAD_OUTPUT_CAPTURE_FAILED": "OUTPUT_SETUP_FAILED"}.get(getattr(error, "category", None), "UNDETERMINED")
+        code = None
+        if isinstance(error, subprocess.CalledProcessError):
+            outcome, code = "RETURNED_NONZERO", error.returncode
+        record.update(upload_diagnostics({"uploader_outcome": outcome, "uploader_exit_code": code}))
+        try:
+            write_upload_status(root, record)
+        except BaseException:
+            raise DeliveryCheckFailure("UPLOAD_FAILURE_STATUS_PERSISTENCE_FAILED") from None
+        raise
+    record.update(status="ACCEPTED", uploader_outcome="RETURNED_ZERO", uploader_exit_code=0)
+    # ACCEPTED is the legacy local marker, not independent Apple-side processing.
+    try:
+        write_upload_status(root, record)
+    except BaseException:
+        raise DeliveryCheckFailure("UPLOAD_SUCCESS_STATUS_PERSISTENCE_FAILED") from None
+
+
 def transfer(root, commit, ipa, precheck=ready, credentials=None, token_factory=api_token,
              get=apple_get, execute=subprocess.run, clock=time.time, progress=None):
     """One validation then one upload; fixed reporting never bypasses a gate."""
@@ -937,9 +1092,7 @@ def transfer(root, commit, ipa, precheck=ready, credentials=None, token_factory=
         write_json(root / "reports/delivery-availability.json", {**unused, "checked_at": int(clock())})
     with delivery_stage("D06_ACTUAL_UPLOAD", progress):
         # No build/signing work or unrelated Apple operation between this final unused-build gate and the upload.
-        write_json(marker, {"status": "ATTEMPTED", "source_commit": commit, "build": "15"})
-        execute([*command, "--upload-app"], check=True, cwd=root / "home", **transport_options)
-        write_json(marker, {"status": "ACCEPTED", "source_commit": commit, "build": "15"})
+        upload_once(root, commit, [*command, "--upload-app"], execute, **transport_options)
 
 
 
@@ -1230,6 +1383,53 @@ def cleanup_errno(error):
     return "UNKNOWN"
 
 
+def remove_owned_workspace(root, owned, details):
+    """Keep the ownership marker until all other owned contents are removed."""
+    def resource(path):
+        try:
+            parts = Path(path).relative_to(root).parts
+        except ValueError:
+            return "UNDETERMINED"
+        if not parts:
+            return "WORKSPACE_ROOT"
+        return {"home": "PRIVATE_HOME", "logs": "PRIVATE_LOGS", "reports": "PRIVATE_REPORTS",
+                "tmp": "PRIVATE_TEMP", "source": "PRIVATE_SOURCE", ".owned": "OWNERSHIP_MARKER"}.get(parts[0], "OTHER_OWNED_ENTRY")
+    def failed(function, path, info):
+        details["operation"] = {"unlink": "REMOVE_FILE", "rmdir": "REMOVE_DIRECTORY",
+                                "scandir": "LIST_DIRECTORY", "open": "OPEN_DIRECTORY"}.get(
+                                    getattr(function, "__name__", ""), "REMOVE_TREE")
+        details["resource_class"] = resource(path)
+        if isinstance(info[1], FileNotFoundError):
+            return
+        raise info[1]
+    owned()
+    details.update(operation="LIST_DIRECTORY", resource_class="WORKSPACE_ROOT")
+    for child in list(root.iterdir()):
+        owned()
+        if child.name == ".owned":
+            continue
+        details.update(operation="INSPECT_ENTRY", resource_class=resource(child))
+        try:
+            entry = child.lstat()
+        except FileNotFoundError:
+            continue
+        if stat.S_ISLNK(entry.st_mode):
+            details["operation"] = "REMOVE_LINK"
+            child.unlink(missing_ok=True)  # The target is never traversed.
+        elif stat.S_ISDIR(entry.st_mode):
+            require(not (getattr(entry, "st_file_attributes", 0) & 0x400), "reparse directory rejected")
+            details["operation"] = "REMOVE_TREE"
+            shutil.rmtree(child, onerror=failed)
+        else:
+            details["operation"] = "REMOVE_FILE"
+            child.unlink(missing_ok=True)
+    owned()
+    details.update(operation="REMOVE_OWNERSHIP_MARKER", resource_class="OWNERSHIP_MARKER")
+    (root / ".owned").unlink()
+    details.update(operation="REMOVE_WORKSPACE_ROOT", resource_class="WORKSPACE_ROOT")
+    root.rmdir()
+
+
 def cleanup_delivery(runner_temp):
     """Only owned delivery resources; independent fixed results, never raw output."""
     stages = {name: {"status": "NOT_RUN", "category": "DEPENDENCY_FAILED"} for name in (
@@ -1353,7 +1553,7 @@ def cleanup_delivery(runner_temp):
     try:
         owned()  # Recheck immediately before the sole recursive deletion.
         workspace_category = "REMOVAL_FAILED"
-        shutil.rmtree(root)
+        remove_owned_workspace(root, owned, workspace_details)
         workspace_category = "ABSENCE_UNVERIFIED"
         workspace_details["retry_status"] = "NOT_NEEDED"
         record("C04_WORKSPACE", absent(root), "ABSENCE_VERIFIED" if absent(root) else "RESOURCE_REMAINS")
@@ -1368,7 +1568,7 @@ def cleanup_delivery(runner_temp):
                 workspace_details["retry_status"] = "ATTEMPTED"
                 time.sleep(0.25)
                 owned()
-                shutil.rmtree(root)
+                remove_owned_workspace(root, owned, workspace_details)
                 workspace_details["retry_status"] = "SUCCEEDED"
             except Exception as retry_error:
                 raw.append(str(retry_error).encode())
@@ -1415,7 +1615,13 @@ def finish(runner_temp, job_status):
             result["regressions"] = "BASELINE_EXCEPTION" if regressions["status"] == "baseline_exception" else "PASS"
             if transfer_report["status"] == "ACCEPTED":
                 result["upload"] = "ACCEPTED"
-            require(job_status == "success" and result["upload"] == "ACCEPTED", "incomplete delivery")
+            if "uploader_outcome" in transfer_report:
+                result["upload_diagnostics"] = upload_diagnostics(transfer_report)
+                if transfer_report["status"] == "ACCEPTED":
+                    require(result["upload_diagnostics"]["uploader_outcome"] == "RETURNED_ZERO"
+                            and result["upload_diagnostics"]["uploader_exit_code"] == 0, "incomplete upload process evidence")
+                    result["upload"] = "UPLOADER_SUCCEEDED_APPLE_UNCONFIRMED"
+            require(job_status == "success" and result["upload"] in {"ACCEPTED", "UPLOADER_SUCCEEDED_APPLE_UNCONFIRMED"}, "incomplete delivery")
             result["certification"] = "PASS"
     except Exception:
         pass  # Never echo exception text, report fields, key identifiers or Apple output.
