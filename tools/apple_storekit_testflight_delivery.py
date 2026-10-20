@@ -59,6 +59,9 @@ UPLOADER_CERTIFICATION_BASE = "9fefb24f0e9f945cc5167d25b8f2634f83d17f95"
 TEAM_ID_REPAIR_BASE = "8934b648d884a07c0957c1b9ece8b90459189674"
 DELIVERY_RESUME_BASE = "ab83301e60b753151901608b304ae74e77c1c7aa"
 DELIVERY_RECOVERY_TEST_BASE = "cb1f6e7b373bc0f9b9018c705dc94842cefa3d04"
+INSTALLED_ALTOOL_BASE = "3ec05f8bbdc37bdff58d45a03164128d80177eeb"
+CONSUMED_SETUP_TAG = "refs/tags/gridly-storekit-testflight-deliver-15-" + INSTALLED_ALTOOL_BASE
+CONSUMED_SETUP_TAG_OBJECT = "bfcf0f05b0886cd69ddc3586d350f339c7a2534d"
 SECOND_UNCERTAIN_RUN = 39457019380
 SECOND_UNCERTAIN_TAG = "refs/tags/gridly-storekit-testflight-deliver-15-" + UPLOADER_REPAIR_BASE
 SECOND_UNCERTAIN_TAG_OBJECT = "ea2d9158e9b0a0b1e0035947f15e2d3cef79173c"
@@ -363,25 +366,32 @@ def apple_id_command(root, ipa, values):
             and password == password.strip() and not any(char in password for char in "\r\n\0"),
             "existing Apple ID upload credentials required")
     # The supported @env form keeps the password out of argv and exception commands.
-    command = ["xcrun", "altool", "--type", "ios", "--file", str(ipa),
+    command = ["xcrun", "altool", "--platform", "ios", "--file", str(ipa),
                "--username", username, "--password", "@env:APPLE_APP_SPECIFIC_PASSWORD"]
-    return command, {"env": {**os.environ, "APPLE_APP_SPECIFIC_PASSWORD": password}}
+    return command, {"env": private_upload_environment(root, {
+        **os.environ, "APPLE_APP_SPECIFIC_PASSWORD": password})}
 
 
-def private_upload_environment(root, environment):
-    """Keep native and Java scratch state in the owned workspace, per child only."""
+def private_upload_environment(root, environment, *, native=True):
+    """Restore verified native HOME for altool; keep scratch/output private per child."""
     require((root / ".owned").is_file() and not (root / ".owned").is_symlink()
             and (root / ".owned").read_text() == cert.PRIVATE_MARKER, "owned upload workspace required")
     for directory in (root, root / "home", root / "tmp"):
         owned_runner_directory(directory)
     result = dict(environment)
-    result.update(HOME=str(root / "home"), CFFIXED_USER_HOME=str(root / "home"),
-                  TMPDIR=str(root / "tmp"),
-                  JAVA_TOOL_OPTIONS='-Duser.home="' + str(root / "home")
-                  + '" -Djava.io.tmpdir="' + str(root / "tmp") + '"')
-    # Other JVM injection variables can override the private directories above.
-    result.pop("_JAVA_OPTIONS", None)
-    result.pop("JDK_JAVA_OPTIONS", None)
+    if not native:
+        # API authentication still locates its private key under the owned HOME.
+        result.update(HOME=str(root / "home"), CFFIXED_USER_HOME=str(root / "home"),
+                      TMPDIR=str(root / "tmp"), JAVA_TOOL_OPTIONS='-Duser.home="' + str(root / "home")
+                      + '" -Djava.io.tmpdir="' + str(root / "tmp") + '"')
+        result.pop("_JAVA_OPTIONS", None)
+        result.pop("JDK_JAVA_OPTIONS", None)
+        return result
+    context = runner_context(root)
+    result.update(HOME=context["home"], TMPDIR=str(root / "tmp"))
+    # Match the ordinary Build 14 native runtime, without injected CF/JVM homes.
+    for name in ("CFFIXED_USER_HOME", "JAVA_TOOL_OPTIONS", "_JAVA_OPTIONS", "JDK_JAVA_OPTIONS"):
+        result.pop(name, None)
     return result
 
 
@@ -389,7 +399,8 @@ def run_upload_process(command, *, check, cwd, timeout=900, **options):
     """Own a new macOS process group; bound and reap it on every exit path."""
     require(sys.platform == "darwin", "macOS uploader process isolation required")
     root = Path(cwd).parent
-    options["env"] = private_upload_environment(root, options.get("env", os.environ))
+    options["env"] = private_upload_environment(root, options.get("env", os.environ),
+                                               native="--apiKey" not in command)
     process = subprocess.Popen(command, cwd=cwd, start_new_session=True, **options)
     try:
         code = process.wait(timeout=timeout)
@@ -441,8 +452,8 @@ def package_provider(public, selected):
 
 
 def prepare_package_upload(root, command, ipa, execute, **options):
-    """Local help only; bind the confirmed team before validation/upload intent."""
-    require(command[:6] == ["xcrun", "altool", "--type", "ios", "--file", str(ipa)],
+    """Local help only; use the installed package syntax and certified app identity."""
+    require(command[:6] == ["xcrun", "altool", "--platform", "ios", "--file", str(ipa)],
             "exact IPA validation command required")
     auth = command[6:]
     invoke = run_upload_process if execute is _UPLOAD_RUN else execute
@@ -459,17 +470,17 @@ def prepare_package_upload(root, command, ipa, execute, **options):
             require(output.tell() <= 1048576, "uploader help too large")
             output.seek(0)
             help_text = output.read().decode("utf-8", errors="strict")
-        for flag in ("--upload-package", "--apple-id", "--bundle-id", "--bundle-version",
-                     "--bundle-short-version-string", "--team-id"):
+        for flag in ("--upload-package", "--platform", "--apple-id", "--bundle-version",
+                     "--bundle-short-version-string", *(auth[::2])):
             require(re.search(r"(?<![\w-])" + re.escape(flag) + r"(?![\w-])", help_text),
                     "installed altool upload-package syntax unsupported")
     except BaseException:
         # No raw help, account metadata, paths or credential-bearing command escapes.
         raise ValueError("uploader local capability verification failed; no upload permitted") from None
-    return ["xcrun", "altool", "--upload-package", str(ipa), "--type", "ios",
-            "--apple-id", "6814845611", "--bundle-id", "com.gridlygo.gridly",
+    return ["xcrun", "altool", "--upload-package", str(ipa), "--platform", "ios",
+            "--apple-id", "6814845611",
             "--bundle-short-version-string", "1.0.0", "--bundle-version", "15",
-            "--team-id", "2XSH6R7K37", *auth]
+            *auth]
 
 
 def event_gate(event, ref, commit, attempt, tag_object):
@@ -500,11 +511,11 @@ def authorize(ref, commit, event_path, attempt):
 def source_guard(commit, clean):
     require(re.fullmatch(r"[0-9a-f]{40}", commit or ""), "exact source SHA required")
     pinned = {SOURCE, DELIVERY_BASE, OWNER_CORRECTION, PREFLIGHT_BASE, REFINEMENT_BASE,
-              SIGNING_BASE, CMS_BASE, CMS_REPAIR_BASE, SIGNING_VERIFIED_BASE, P04_BASE, ARCHIVE_BASE, EVIDENCE_BASE, ENVIRONMENT_BASE, TRANSFER_BASE, AUTH_BASE, APPLE_ID_BASE, UPLOAD_BASE, CERTIFIED_BASE, SOLO_OWNER_BASE, SOLO_OWNER_ATTEST_BASE, SOLO_OWNER_FIX_BASE, FAILED_AUTH_BASE, UPLOADER_REPAIR_BASE, UPLOADER_CERTIFICATION_BASE, TEAM_ID_REPAIR_BASE, DELIVERY_RESUME_BASE, DELIVERY_RECOVERY_TEST_BASE}
+              SIGNING_BASE, CMS_BASE, CMS_REPAIR_BASE, SIGNING_VERIFIED_BASE, P04_BASE, ARCHIVE_BASE, EVIDENCE_BASE, ENVIRONMENT_BASE, TRANSFER_BASE, AUTH_BASE, APPLE_ID_BASE, UPLOAD_BASE, CERTIFIED_BASE, SOLO_OWNER_BASE, SOLO_OWNER_ATTEST_BASE, SOLO_OWNER_FIX_BASE, FAILED_AUTH_BASE, UPLOADER_REPAIR_BASE, UPLOADER_CERTIFICATION_BASE, TEAM_ID_REPAIR_BASE, DELIVERY_RESUME_BASE, DELIVERY_RECOVERY_TEST_BASE, INSTALLED_ALTOOL_BASE}
     require(cert.git("rev-parse", "HEAD").decode().strip() == commit and commit not in pinned,
             "new reviewed delivery-support commit required")
     for child, parent in (
-        (commit, DELIVERY_RECOVERY_TEST_BASE), (DELIVERY_RECOVERY_TEST_BASE, DELIVERY_RESUME_BASE), (DELIVERY_RESUME_BASE, TEAM_ID_REPAIR_BASE), (TEAM_ID_REPAIR_BASE, UPLOADER_CERTIFICATION_BASE), (UPLOADER_CERTIFICATION_BASE, UPLOADER_REPAIR_BASE), (UPLOADER_REPAIR_BASE, FAILED_AUTH_BASE), (FAILED_AUTH_BASE, SOLO_OWNER_FIX_BASE), (SOLO_OWNER_FIX_BASE, SOLO_OWNER_ATTEST_BASE),
+        (commit, INSTALLED_ALTOOL_BASE), (INSTALLED_ALTOOL_BASE, DELIVERY_RECOVERY_TEST_BASE), (DELIVERY_RECOVERY_TEST_BASE, DELIVERY_RESUME_BASE), (DELIVERY_RESUME_BASE, TEAM_ID_REPAIR_BASE), (TEAM_ID_REPAIR_BASE, UPLOADER_CERTIFICATION_BASE), (UPLOADER_CERTIFICATION_BASE, UPLOADER_REPAIR_BASE), (UPLOADER_REPAIR_BASE, FAILED_AUTH_BASE), (FAILED_AUTH_BASE, SOLO_OWNER_FIX_BASE), (SOLO_OWNER_FIX_BASE, SOLO_OWNER_ATTEST_BASE),
         (SOLO_OWNER_ATTEST_BASE, SOLO_OWNER_BASE), (SOLO_OWNER_BASE, CERTIFIED_BASE), (CERTIFIED_BASE, UPLOAD_BASE), (UPLOAD_BASE, APPLE_ID_BASE), (APPLE_ID_BASE, AUTH_BASE), (AUTH_BASE, TRANSFER_BASE), (TRANSFER_BASE, ENVIRONMENT_BASE), (ENVIRONMENT_BASE, EVIDENCE_BASE), (EVIDENCE_BASE, ARCHIVE_BASE), (ARCHIVE_BASE, P04_BASE), (P04_BASE, SIGNING_VERIFIED_BASE),
         (SIGNING_VERIFIED_BASE, CMS_REPAIR_BASE),
         (CMS_REPAIR_BASE, CMS_BASE), (CMS_BASE, SIGNING_BASE), (SIGNING_BASE, REFINEMENT_BASE),
@@ -514,6 +525,7 @@ def source_guard(commit, clean):
         require(cert.git("show", "-s", "--format=%P", child).decode().strip() == parent,
                 "exact pinned delivery/preflight ancestry required; no extra commits or merges")
     for name, (tag_object, target) in {**HISTORICAL_TAGS,
+        CONSUMED_SETUP_TAG.removeprefix("refs/tags/"): (CONSUMED_SETUP_TAG_OBJECT, INSTALLED_ALTOOL_BASE),
         "gridly-storekit-testflight-deliver-15-" + UPLOADER_REPAIR_BASE:
             ("ea2d9158e9b0a0b1e0035947f15e2d3cef79173c", UPLOADER_REPAIR_BASE)}.items():
         ref = "refs/tags/" + name
@@ -550,7 +562,8 @@ def source_guard(commit, clean):
         (UPLOADER_CERTIFICATION_BASE, TEAM_ID_REPAIR_BASE, "M", TEST_MODE_FILES),
         (TEAM_ID_REPAIR_BASE, DELIVERY_RESUME_BASE, "M", TEST_MODE_FILES),
         (DELIVERY_RESUME_BASE, DELIVERY_RECOVERY_TEST_BASE, "M", TEST_MODE_FILES),
-        (DELIVERY_RECOVERY_TEST_BASE, commit, "M", TEST_MODE_FILES),
+        (DELIVERY_RECOVERY_TEST_BASE, INSTALLED_ALTOOL_BASE, "M", TEST_MODE_FILES),
+        (INSTALLED_ALTOOL_BASE, commit, "M", TEST_MODE_FILES),
         (SOURCE, commit, "A", FILES | PREFLIGHT_FILES | SIGNING_FILES | CMS_FILES | SAFETY_FILES),
     ):
         records = cert.git("diff", "--name-status", "--no-renames", base, target).decode().splitlines()
@@ -1301,7 +1314,7 @@ def transfer(root, commit, ipa, precheck=ready, credentials=None, token_factory=
             with key_path.open("xb") as stream:
                 stream.write(raw)
             key_path.chmod(0o600)
-            command = ["xcrun", "altool", "--type", "ios", "--file", str(ipa), "--apiKey", key, "--apiIssuer", issuer]
+            command = ["xcrun", "altool", "--platform", "ios", "--file", str(ipa), "--apiKey", key, "--apiIssuer", issuer]
         upload_command = prepare_package_upload(root, command, ipa, execute, **transport_options)
     with delivery_stage("D03_APPLE_VALIDATION", progress):
         execute([*command, "--validate-app"], check=True, cwd=root / "home", **transport_options)
@@ -1614,6 +1627,48 @@ def cleanup_errno(error):
     return "UNKNOWN"
 
 
+def repair_owned_home_modes(root, owned):
+    """Only restore owner rwx on verified private-home directory descriptors.
+
+    Build tools can leave copied directories read-only. This does not clear ACLs,
+    flags, change owners, traverse links, or repair an unexplained EACCES.
+    """
+    if os.name != "posix":
+        return
+    owned()
+    def visit(parent, name):
+        entry = os.stat(name, dir_fd=parent, follow_symlinks=False)
+        if not stat.S_ISDIR(entry.st_mode):
+            return
+        require(entry.st_uid == os.getuid(), "private directory owner changed")
+        require(entry.st_dev == opened.st_dev, "private directory filesystem changed")
+        descriptor = os.open(name, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW, dir_fd=parent)
+        try:
+            current = os.fstat(descriptor)
+            require((current.st_dev, current.st_ino, current.st_uid) ==
+                    (entry.st_dev, entry.st_ino, entry.st_uid), "private directory identity changed")
+            owned()
+            if current.st_mode & 0o700 != 0o700:
+                os.fchmod(descriptor, stat.S_IMODE(current.st_mode) | 0o700)
+            for child in os.listdir(descriptor):
+                visit(descriptor, child)
+        finally:
+            os.close(descriptor)
+    descriptor = os.open(root, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+    try:
+        owned()
+        identity = root.stat()
+        opened = os.fstat(descriptor)
+        require((opened.st_dev, opened.st_ino, opened.st_uid) ==
+                (identity.st_dev, identity.st_ino, identity.st_uid), "workspace identity changed")
+        try:
+            visit(descriptor, "home")
+        except FileNotFoundError:
+            pass  # A prior bounded removal may already have removed private HOME.
+    finally:
+        os.close(descriptor)
+
+
 def remove_owned_workspace(root, owned, details):
     """Keep the ownership marker until all other owned contents are removed."""
     def resource(path):
@@ -1634,6 +1689,8 @@ def remove_owned_workspace(root, owned, details):
             return
         raise info[1]
     owned()
+    details.update(operation="CHECK_DIRECTORY_MODES", resource_class="PRIVATE_HOME")
+    repair_owned_home_modes(root, owned)
     details.update(operation="LIST_DIRECTORY", resource_class="WORKSPACE_ROOT")
     for child in list(root.iterdir()):
         owned()

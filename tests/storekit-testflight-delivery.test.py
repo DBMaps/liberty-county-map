@@ -43,12 +43,34 @@ DELIVERY_REPORTING_FUNCTIONS = {
 APPLE_ID_WORKFLOW_COMMENT = '# Apple ID delivery uses ONLY the two existing Apple ID secrets, never an API key.\n# REQUIRED additional annotation field: "apple_id_upload_authorization":{\n# "authorized":true,"method":"OWNER_AND_INDEPENDENT_APP_STORE_CONNECT_UI",\n# "owner_checked_at":"<same genuine UTC time as owner_checks_at>",\n# "independent_checked_at":"<genuine independent read-only UI check UTC time>",\n# "owner_verified_unused":true,"independent_verified_unused":true,\n# "build_uploads_reviewed":true,"testflight_all_builds_reviewed":true,\n# "no_pending_or_uncertain_uploads":true,"exclusive_upload_window_acknowledged":true}\n# The owner AND an independent reviewer must actually inspect App Store Connect\n# Build Uploads and all TestFlight builds before tagging; never fabricate evidence.\n# Both checks must remain within 1,800 seconds through the pre-upload gate.\n# D05\'s historical stage name now covers this explicit UI-evidence mode, not an API query.\n# No validation result alone is treated as proof that Build 15 is unused.\n# Do not include account identities, screenshots, raw Apple output or secrets in the tag.\n'
 
 
+def normalize_installed_altool(text):
+    """Reverse only exact new Apple-command and cleanup call deltas for old checks."""
+    if 'def repair_owned_home_modes(' not in text:
+        return text
+    pairs = (
+        ('command = ["xcrun", "altool", "--platform", "ios", "--file", str(ipa),',
+         'command = ["xcrun", "altool", "--type", "ios", "--file", str(ipa),'),
+        ('return command, {"env": private_upload_environment(root, {\n        **os.environ, "APPLE_APP_SPECIFIC_PASSWORD": password})}',
+         'return command, {"env": {**os.environ, "APPLE_APP_SPECIFIC_PASSWORD": password}}'),
+        ('    details.update(operation="CHECK_DIRECTORY_MODES", resource_class="PRIVATE_HOME")\n    repair_owned_home_modes(root, owned)\n', ''),
+    )
+    for current, previous in pairs:
+        count = 2 if current.startswith('command = [') else 1
+        assert text.count(current) == count, current
+        text = text.replace(current, previous, count)
+    tree = ast.parse(text)
+    helper = next(n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name == 'repair_owned_home_modes')
+    lines = text.splitlines(keepends=True)
+    return ''.join(lines[:helper.lineno-1]+lines[helper.end_lineno:])
+
+
 def normalize_uploader_repair(source):
     """Reverse exact transport call deltas for the older historical comparisons.
 
     The new transport and unchanged authorization functions are tested separately.
     Never substitute whole functions or fetch replacement implementations.
     """
+    source = normalize_installed_altool(source)
     if 'def prepare_package_upload(' not in source:
         return source
     replacements = (
@@ -297,7 +319,8 @@ def owner_automatic_authorization():
             }}
 
 
-def source_git(*, parent=delivery.DELIVERY_RECOVERY_TEST_BASE,
+def source_git(*, parent=delivery.INSTALLED_ALTOOL_BASE,
+               installed_parent=delivery.DELIVERY_RECOVERY_TEST_BASE, installed_inventory=None,
                recovery_parent=delivery.DELIVERY_RESUME_BASE, recovery_inventory=None,
                resume_parent=delivery.TEAM_ID_REPAIR_BASE, resume_inventory=None,
                team_id_parent=delivery.UPLOADER_CERTIFICATION_BASE, team_id_inventory=None, repair_base_parent=delivery.FAILED_AUTH_BASE,
@@ -338,6 +361,10 @@ def source_git(*, parent=delivery.DELIVERY_RECOVERY_TEST_BASE,
     values = {
         ("rev-parse", "HEAD"): COMMIT.encode(),
         ("show", "-s", "--format=%P", COMMIT): parent.encode(),
+        ("show", "-s", "--format=%P", delivery.INSTALLED_ALTOOL_BASE): installed_parent.encode(),
+        ("cat-file", "-t", delivery.CONSUMED_SETUP_TAG): b"tag",
+        ("rev-parse", "--verify", delivery.CONSUMED_SETUP_TAG): delivery.CONSUMED_SETUP_TAG_OBJECT.encode(),
+        ("rev-parse", "--verify", delivery.CONSUMED_SETUP_TAG+"^{}"): delivery.INSTALLED_ALTOOL_BASE.encode(),
         ("show", "-s", "--format=%P", delivery.DELIVERY_RECOVERY_TEST_BASE): recovery_parent.encode(),
         ("show", "-s", "--format=%P", delivery.DELIVERY_RESUME_BASE): resume_parent.encode(),
         ("show", "-s", "--format=%P", delivery.TEAM_ID_REPAIR_BASE): team_id_parent.encode(),
@@ -395,7 +422,8 @@ def source_git(*, parent=delivery.DELIVERY_RECOVERY_TEST_BASE,
         ("diff", "--name-status", "--no-renames", delivery.UPLOADER_CERTIFICATION_BASE, delivery.TEAM_ID_REPAIR_BASE): test_mode if team_id_inventory is None else team_id_inventory,
         ("diff", "--name-status", "--no-renames", delivery.TEAM_ID_REPAIR_BASE, delivery.DELIVERY_RESUME_BASE): test_mode if resume_inventory is None else resume_inventory,
         ("diff", "--name-status", "--no-renames", delivery.DELIVERY_RESUME_BASE, delivery.DELIVERY_RECOVERY_TEST_BASE): test_mode if recovery_inventory is None else recovery_inventory,
-        ("diff", "--name-status", "--no-renames", delivery.DELIVERY_RECOVERY_TEST_BASE, COMMIT): test_mode if correction is None else correction,
+        ("diff", "--name-status", "--no-renames", delivery.DELIVERY_RECOVERY_TEST_BASE, delivery.INSTALLED_ALTOOL_BASE): test_mode if installed_inventory is None else installed_inventory,
+        ("diff", "--name-status", "--no-renames", delivery.INSTALLED_ALTOOL_BASE, COMMIT): test_mode if correction is None else correction,
         ("diff", "--name-status", "--no-renames", delivery.SOURCE, COMMIT): all_additions if net is None else net,
         ("diff", "--name-only", "HEAD"): dirty,
         ("diff", "--cached", "--name-only"): staged,
@@ -416,7 +444,7 @@ def source_git(*, parent=delivery.DELIVERY_RECOVERY_TEST_BASE,
     for path in delivery.TEST_MODE_FILES | delivery.SAFETY_FILES:
         values[("ls-tree", delivery.CERTIFIED_BASE, "--", path)] = ("100644 blob " + "0"*40 + "\t" + path).encode()
     for path in delivery.TEST_MODE_FILES:
-        for checkpoint in (delivery.SOLO_OWNER_BASE, delivery.SOLO_OWNER_ATTEST_BASE, delivery.SOLO_OWNER_FIX_BASE, delivery.FAILED_AUTH_BASE, delivery.UPLOADER_REPAIR_BASE, delivery.UPLOADER_CERTIFICATION_BASE, delivery.TEAM_ID_REPAIR_BASE, delivery.DELIVERY_RESUME_BASE, delivery.DELIVERY_RECOVERY_TEST_BASE):
+        for checkpoint in (delivery.SOLO_OWNER_BASE, delivery.SOLO_OWNER_ATTEST_BASE, delivery.SOLO_OWNER_FIX_BASE, delivery.FAILED_AUTH_BASE, delivery.UPLOADER_REPAIR_BASE, delivery.UPLOADER_CERTIFICATION_BASE, delivery.TEAM_ID_REPAIR_BASE, delivery.DELIVERY_RESUME_BASE, delivery.DELIVERY_RECOVERY_TEST_BASE, delivery.INSTALLED_ALTOOL_BASE):
             values[("ls-tree", checkpoint, "--", path)] = ("100644 blob " + "0"*40 + "\t" + path).encode()
     for path in delivery.FILES | delivery.PREFLIGHT_FILES | delivery.SIGNING_FILES | delivery.CMS_FILES | delivery.SAFETY_FILES:
         values[("ls-tree", COMMIT, "--", path)] = (mode + " blob " + "0"*40 + "\t" + path).encode()
@@ -453,8 +481,8 @@ def upload_action(command):
 def synthetic_transport_query(command, options, *, help_output=None):
     """Only local help is permitted; no provider or other Apple request is faked."""
     if command == ['xcrun', 'altool', '--help']:
-        options['stdout'].write(b'--upload-package --apple-id --bundle-id --bundle-version '
-            b'--bundle-short-version-string --team-id' if help_output is None else help_output)
+        options['stdout'].write(b'--upload-package --platform --apple-id --bundle-version '
+            b'--bundle-short-version-string --username --password --apiKey --apiIssuer' if help_output is None else help_output)
         return True
     return False
 
@@ -465,6 +493,9 @@ def fixture(root):
     (root / "reports").mkdir()
     (root / "home").mkdir()
     (root / "tmp").mkdir()
+    native_home = root.parent.resolve(strict=True)
+    delivery.write_json(root / "runner-context.json", {"home": str(native_home),
+        "identity": delivery.owned_runner_directory(native_home), "cf_home": None})
     (root / "export").mkdir()
     ipa = root / "export/synthetic.ipa"
     ipa.write_bytes(b"NOT_AN_APP_OR_SIGNED_IPA")
@@ -1891,7 +1922,7 @@ security() {
         nodes=lambda text:{n.targets[0].id:n.value for n in ast.parse(text).body
                            if isinstance(n,ast.Assign) and isinstance(n.targets[0],ast.Name)}
         old,new=nodes(before),nodes(after)
-        self.assertEqual(set(new)-set(old),{"TEAM_ID_REPAIR_BASE","DELIVERY_RESUME_BASE","DELIVERY_RECOVERY_TEST_BASE","SECOND_UNCERTAIN_RUN","SECOND_UNCERTAIN_TAG","SECOND_UNCERTAIN_TAG_OBJECT","UPLOADER_CERTIFICATION_BASE","UPLOADER_REPAIR_BASE","_UPLOAD_RUN","CERTIFIED_BASE","SOLO_OWNER_BASE","SOLO_OWNER_ATTEST_BASE","SOLO_OWNER_FIX_BASE","FAILED_AUTH_BASE","FAILED_AUTH_TAG","FAILED_AUTH_TAG_OBJECT","SOLO_OWNER_UI_METHOD","SOLO_OWNER_UI_CONFIRMATIONS","PRIOR_ATTEMPT_FIELD","PRIOR_ATTEMPT_RUN","PRIOR_ATTEMPT_CONFIRMATIONS","SAFETY_FILES","UPLOAD_BASE","UPLOAD_ERROR_CATEGORIES","APPLE_ID_BASE","TEST_MODE_FILES","AUTH_BASE","APPLE_ID_AUTH_FIELD","UI_UNUSED_METHOD","UI_UNUSED_CONFIRMATIONS","TRANSFER_BASE","DELIVERY_STAGES","DELIVERY_STAGE_FAILURES","DELIVERY_CATEGORIES","P04_BASE","ARCHIVE_BASE","EVIDENCE_BASE","ENVIRONMENT_BASE","ARCHIVE_RULES","ARCHIVE_MAX_BYTES","ARCHIVE_STRUCTURED_STATES","HISTORY_CATEGORIES","HISTORY_ATTEMPTS",
+        self.assertEqual(set(new)-set(old),{"INSTALLED_ALTOOL_BASE","CONSUMED_SETUP_TAG","CONSUMED_SETUP_TAG_OBJECT","TEAM_ID_REPAIR_BASE","DELIVERY_RESUME_BASE","DELIVERY_RECOVERY_TEST_BASE","SECOND_UNCERTAIN_RUN","SECOND_UNCERTAIN_TAG","SECOND_UNCERTAIN_TAG_OBJECT","UPLOADER_CERTIFICATION_BASE","UPLOADER_REPAIR_BASE","_UPLOAD_RUN","CERTIFIED_BASE","SOLO_OWNER_BASE","SOLO_OWNER_ATTEST_BASE","SOLO_OWNER_FIX_BASE","FAILED_AUTH_BASE","FAILED_AUTH_TAG","FAILED_AUTH_TAG_OBJECT","SOLO_OWNER_UI_METHOD","SOLO_OWNER_UI_CONFIRMATIONS","PRIOR_ATTEMPT_FIELD","PRIOR_ATTEMPT_RUN","PRIOR_ATTEMPT_CONFIRMATIONS","SAFETY_FILES","UPLOAD_BASE","UPLOAD_ERROR_CATEGORIES","APPLE_ID_BASE","TEST_MODE_FILES","AUTH_BASE","APPLE_ID_AUTH_FIELD","UI_UNUSED_METHOD","UI_UNUSED_CONFIRMATIONS","TRANSFER_BASE","DELIVERY_STAGES","DELIVERY_STAGE_FAILURES","DELIVERY_CATEGORIES","P04_BASE","ARCHIVE_BASE","EVIDENCE_BASE","ENVIRONMENT_BASE","ARCHIVE_RULES","ARCHIVE_MAX_BYTES","ARCHIVE_STRUCTURED_STATES","HISTORY_CATEGORIES","HISTORY_ATTEMPTS",
                          "HISTORY_WAIT_BUDGET","HISTORY_DEADLINE","HISTORY_TIMEOUT","HISTORY_MAX_BYTES"})
         for name,node in old.items():
             if name=="HISTORICAL_TAGS":
@@ -1992,7 +2023,7 @@ security() {
         self.assertFalse(git("ls-files","--others","--exclude-standard"))
         head=git("rev-parse","HEAD")
         self.assertFalse(git("status","--porcelain=v1","--untracked-files=all"))
-        self.assertEqual(git("show","-s","--format=%P",head),delivery.DELIVERY_RECOVERY_TEST_BASE)
+        self.assertEqual(git("show","-s","--format=%P",head),delivery.INSTALLED_ALTOOL_BASE)
         delivery.source_guard(head,True)
         for path in support:
             entry=git("ls-files","--stage","--",path).split()
@@ -3351,7 +3382,7 @@ class AppleIdDeliveryTests(SyntheticDeliveryTestCase):
         def execute(command, **options):
             if synthetic_transport_query(command, options): return
             calls.append(upload_action(command))
-            self.assertEqual(command[:6], (["xcrun", "altool", "--upload-package", str(self.ipa), "--type", "ios"] if "--upload-package" in command else ["xcrun", "altool", "--type", "ios", "--file", str(self.ipa)]))
+            self.assertEqual(command[:6], (["xcrun", "altool", "--upload-package", str(self.ipa), "--platform", "ios"] if "--upload-package" in command else ["xcrun", "altool", "--platform", "ios", "--file", str(self.ipa)]))
             self.assertEqual(command[-2:] if "--upload-package" in command else command[-3:-1], ["--password", "@env:APPLE_APP_SPECIFIC_PASSWORD"])
             self.assertNotIn(secret, command)
             self.assertEqual(options["env"]["APPLE_APP_SPECIFIC_PASSWORD"], secret)
@@ -3594,7 +3625,7 @@ class AppleIdDeliveryTests(SyntheticDeliveryTestCase):
     def test_cleanup_and_native_signing_functions_are_identical_to_reviewed_source(self):
         old = delivery.cert.git("show", delivery.AUTH_BASE + ":tools/apple_storekit_testflight_delivery.py").decode()
         current = (ROOT / "tools/apple_storekit_testflight_delivery.py").read_text()
-        functions = lambda text: {n.name: ast.dump(n) for n in ast.parse(text).body if isinstance(n, ast.FunctionDef)}
+        functions = lambda text: {n.name: ast.dump(n) for n in ast.parse(normalize_installed_altool(text)).body if isinstance(n, ast.FunctionDef)}
         before, after = functions(old), functions(normalize_recovery(current))
         for name in ("cleanup_delivery", "cleanup_errno", "finish", "ready", "export_guard",
                      "prepare_signing_context", "install_runner_profile", "restore_keychain_context",
@@ -4352,9 +4383,9 @@ class SupportedPackageUploaderTests(SyntheticDeliveryTestCase):
     def test_supported_ipa_command_has_exact_identity_and_env_password(self):
         command, calls = self.prepare()
         self.assertEqual(command, ['xcrun', 'altool', '--upload-package', str(self.ipa),
-            '--type', 'ios', '--apple-id', '6814845611', '--bundle-id', 'com.gridlygo.gridly',
+            '--platform', 'ios', '--apple-id', '6814845611',
             '--bundle-short-version-string', '1.0.0', '--bundle-version', '15',
-            '--team-id', '2XSH6R7K37', '--username', 'synthetic@example.invalid',
+            '--username', 'synthetic@example.invalid',
             '--password', '@env:APPLE_APP_SPECIFIC_PASSWORD'])
         self.assertNotIn('--file', command)
         self.assertNotIn('--asc-public-id', command)
@@ -4366,15 +4397,15 @@ class SupportedPackageUploaderTests(SyntheticDeliveryTestCase):
         self.assertEqual(list((self.root/'logs').iterdir()), [])
         self.assertFalse((self.root/'reports/delivery-transfer.json').exists())
 
-    def test_fixed_team_does_not_depend_on_provider_selection_or_discovery(self):
+    def test_installed_command_does_not_invent_provider_or_use_team_flags(self):
         for selection in ('', 'INVALID_PRIVATE_PROVIDER', '00000000-0000-0000-0000-000000000001'):
             with self.subTest(selection=selection), patch.dict(os.environ, {'GRIDLY_APPLE_PROVIDER_PUBLIC_ID': selection}), patch.object(delivery, 'package_provider', side_effect=AssertionError('DISCOVERY_FORBIDDEN')):
                 command, calls = self.prepare()
-            self.assertEqual(command[command.index('--team-id')+1], '2XSH6R7K37')
+            self.assertEqual(command[command.index('--platform')+1], 'ios')
             self.assertEqual(len(calls), 1)
 
-    def test_required_team_flag_and_certified_team_identity_fail_closed(self):
-        supported = b'--upload-package --apple-id --bundle-id --bundle-version --bundle-short-version-string --team-id'
+    def test_required_installed_flags_and_certified_team_identity_fail_closed(self):
+        supported = b'--upload-package --platform --apple-id --bundle-version --bundle-short-version-string --username --password'
         for flag in supported.split():
             with self.subTest(missing=flag), self.assertRaisesRegex(ValueError, 'no upload permitted'):
                 self.prepare(help_text=supported.replace(flag, b''))
@@ -4401,11 +4432,10 @@ class SupportedPackageUploaderTests(SyntheticDeliveryTestCase):
         before = dict(original)
         result = delivery.private_upload_environment(self.root, original)
         self.assertEqual(original, before)
-        self.assertEqual(result['HOME'], str(self.root/'home'))
-        self.assertEqual(result['CFFIXED_USER_HOME'], str(self.root/'home'))
+        self.assertEqual(result['HOME'], str(self.root.parent))
+        self.assertNotIn('CFFIXED_USER_HOME', result)
         self.assertEqual(result['TMPDIR'], str(self.root/'tmp'))
-        self.assertIn('-Duser.home="'+str(self.root/'home')+'"', result['JAVA_TOOL_OPTIONS'])
-        self.assertIn('-Djava.io.tmpdir="'+str(self.root/'tmp')+'"', result['JAVA_TOOL_OPTIONS'])
+        self.assertNotIn('JAVA_TOOL_OPTIONS', result)
         self.assertEqual(result['APPLE_APP_SPECIFIC_PASSWORD'], 'SYNTHETIC_SECRET')
         self.assertNotIn('_JAVA_OPTIONS', result)
         self.assertNotIn('JDK_JAVA_OPTIONS', result)
@@ -4453,7 +4483,7 @@ class SupportedPackageUploaderTests(SyntheticDeliveryTestCase):
         baseline = delivery.cert.git('show', delivery.UPLOADER_REPAIR_BASE +
                                      ':tools/apple_storekit_testflight_delivery.py').decode()
         current = (ROOT/'tools/apple_storekit_testflight_delivery.py').read_text()
-        functions = lambda source: {node.name: ast.dump(node) for node in ast.parse(source).body
+        functions = lambda source: {node.name: ast.dump(node) for node in ast.parse(normalize_installed_altool(source)).body
                                    if isinstance(node, (ast.FunctionDef, ast.ClassDef))}
         before, after = functions(baseline), functions(current)
         self.assertEqual(set(after)-set(before), {'private_upload_environment', 'run_upload_process',
@@ -4465,9 +4495,9 @@ class SupportedPackageUploaderTests(SyntheticDeliveryTestCase):
             self.assertEqual(before[name], normalized[name], name)
         self.assertEqual(delivery.UPLOADER_REPAIR_BASE, 'b66348762e10bf47031f2297963345cf18088b83')
         head = delivery.cert.git('rev-parse', 'HEAD').decode().strip()
-        if head != delivery.DELIVERY_RECOVERY_TEST_BASE:
+        if head != delivery.INSTALLED_ALTOOL_BASE:
             self.assertEqual(delivery.cert.git('show', '-s', '--format=%P', head).decode().strip(),
-                             delivery.DELIVERY_RECOVERY_TEST_BASE)
+                             delivery.INSTALLED_ALTOOL_BASE)
         changed = delivery.cert.git('diff', '--name-only', delivery.UPLOADER_REPAIR_BASE).decode().splitlines()
         self.assertEqual(set(changed), delivery.TEST_MODE_FILES)
 
@@ -4548,14 +4578,14 @@ class SharedPackagePreflightTests(SyntheticDeliveryTestCase):
                 self.assertEqual(out.getvalue()+err.getvalue(), '')
                 self.assertFalse((self.root/'reports/delivery-transfer.json').exists())
 
-    def test_shared_preflight_performs_only_local_help_and_uses_confirmed_team(self):
+    def test_shared_preflight_performs_only_local_help_and_uses_supported_platform(self):
         calls, options = self.fake_upload()
         with patch.object(delivery, 'package_provider', side_effect=AssertionError('DISCOVERY_FORBIDDEN')):
             delivery.transfer(self.root, COMMIT, self.ipa, **options)
         self.assertEqual(calls, ['--validate-app', 'apps', 'builds', '--upload-package'])
         self.assertEqual([command for command, _ in self.transport_queries], [['xcrun', 'altool', '--help']])
         command = self.transport_commands[-1]
-        self.assertEqual(command[command.index('--team-id')+1], '2XSH6R7K37')
+        self.assertEqual(command[command.index('--platform')+1], 'ios')
         self.assertNotIn('--asc-public-id', command)
         self.assertNotIn('--list-providers', command)
 
@@ -4570,12 +4600,121 @@ class SharedPackagePreflightTests(SyntheticDeliveryTestCase):
         before = delivery.cert.git('show', delivery.TEAM_ID_REPAIR_BASE+
                                    ':tools/apple_storekit_testflight_delivery.py').decode()
         after = (ROOT/'tools/apple_storekit_testflight_delivery.py').read_text()
-        functions = lambda source: {node.name: ast.dump(node) for node in ast.parse(source).body
+        functions = lambda source: {node.name: ast.dump(node) for node in ast.parse(normalize_installed_altool(source)).body
                                    if isinstance(node, (ast.FunctionDef, ast.ClassDef))}
         old, new = functions(before), functions(after)
         self.assertEqual(old.keys(), new.keys())
-        for name in old.keys()-{'source_guard', 'prepare_package_upload', 'prior_attempt_evidence', 'prior_attempt_slot'}:
+        for name in old.keys()-{'source_guard', 'prepare_package_upload', 'private_upload_environment', 'run_upload_process', 'prior_attempt_evidence', 'prior_attempt_slot'}:
             self.assertEqual(old[name], new[name], name)
+
+
+class InstalledAltoolCompatibilityTests(SyntheticDeliveryTestCase):
+    setUp = SupportedPackageUploaderTests.setUp
+    prepare = SupportedPackageUploaderTests.prepare
+
+    def test_actual_advertised_flags_suffice_without_legacy_flags(self):
+        help_text = b'--upload-package --platform --provider-public-id --apple-id --bundle-version --bundle-short-version-string --username --password'
+        command, calls = self.prepare(help_text=help_text)
+        self.assertEqual(len(calls), 1)
+        for flag in ('--type','--team-id','--bundle-id','--asc-public-id','--provider-public-id'):
+            self.assertNotIn(flag, command)
+        self.assertEqual(command[command.index('--platform')+1], 'ios')
+        self.assertEqual(command[command.index('--apple-id')+1], '6814845611')
+        self.assertEqual(self.command[2:6], ['--platform','ios','--file',str(self.ipa)])
+
+    def test_native_home_private_scratch_and_no_injected_jvm_or_cf_home(self):
+        result = self.options['env']
+        self.assertEqual(result['HOME'], str(self.root.parent))
+        self.assertEqual(result['TMPDIR'], str(self.root/'tmp'))
+        for key in ('JAVA_TOOL_OPTIONS','_JAVA_OPTIONS','JDK_JAVA_OPTIONS','CFFIXED_USER_HOME'):
+            self.assertNotIn(key, result)
+        self.assertEqual(result['APPLE_APP_SPECIFIC_PASSWORD'], 'SYNTHETIC_SECRET')
+        self.assertNotIn('SYNTHETIC_SECRET', self.command)
+
+    def test_unverified_or_replaced_native_home_fails_closed(self):
+        path = self.root/'runner-context.json'
+        value = delivery.read_json(path); value['identity'][1] += 1
+        delivery.write_json(path, value)
+        with self.assertRaises(ValueError): delivery.private_upload_environment(self.root, {})
+        path.unlink()
+        with self.assertRaises(ValueError): delivery.private_upload_environment(self.root, {})
+
+    def test_api_key_search_home_remains_private(self):
+        result = delivery.private_upload_environment(self.root, {}, native=False)
+        self.assertEqual(result['HOME'], str(self.root/'home'))
+        self.assertEqual(result['CFFIXED_USER_HOME'], str(self.root/'home'))
+        self.assertIn('-Duser.home=', result['JAVA_TOOL_OPTIONS'])
+
+    def test_latest_no_upload_tag_remains_consumed(self):
+        prior = PriorAttemptExceptionTests(methodName='test_sigabrt_delivery_tag_cannot_reuse_the_consumed_upload_exception')
+        prior.setUp()
+        try:
+            prior.tags.append(delivery.CONSUMED_SETUP_TAG)
+            calls, _, error = prior.exercise()
+            self.assertIsInstance(error, ValueError); self.assertEqual(calls, [])
+            with self.assertRaises(ValueError):
+                delivery.prior_attempt_slot(delivery.CONSUMED_SETUP_TAG, delivery.INSTALLED_ALTOOL_BASE)
+        finally:
+            prior.doCleanups()
+
+    @unittest.skipUnless(os.name == 'posix', 'POSIX directory descriptors require macOS certification')
+    def test_read_only_owned_home_directory_is_repaired_without_external_changes(self):
+        home = self.root/'home'; child = home/'generated'; child.mkdir()
+        (child/'synthetic').write_text('harmless')
+        child.chmod(0o500); home.chmod(0o500)
+        self.addCleanup(lambda: home.exists() and home.chmod(0o700))
+        self.addCleanup(lambda: child.exists() and child.chmod(0o700))
+        external = self.root.parent/'external-synthetic-mode-fixture'
+        with tempfile.TemporaryDirectory(dir=self.root.parent) as outside:
+            external = Path(outside).resolve(strict=True)
+            sentinel = external/'sentinel'; sentinel.write_text('untouched')
+            home.chmod(0o700); (home/'external-link').symlink_to(external, target_is_directory=True); home.chmod(0o500)
+            before = external.stat().st_mode
+            delivery.repair_owned_home_modes(self.root, lambda: None)
+            self.assertEqual(home.stat().st_mode & 0o700, 0o700)
+            self.assertEqual(child.stat().st_mode & 0o700, 0o700)
+            self.assertEqual(external.stat().st_mode, before)
+            self.assertEqual(sentinel.read_text(), 'untouched')
+            delivery.remove_owned_workspace(self.root, lambda: None, {})
+            self.assertFalse(self.root.exists()); self.assertTrue(sentinel.exists())
+
+    @unittest.skipUnless(os.name == 'posix', 'POSIX directory descriptors require macOS certification')
+    def test_foreign_directory_owner_is_rejected_before_permission_change(self):
+        with patch.object(delivery.os, 'getuid', return_value=-1), patch.object(delivery.os, 'fchmod') as change:
+            with self.assertRaisesRegex(ValueError, 'owner changed'):
+                delivery.repair_owned_home_modes(self.root, lambda: None)
+            change.assert_not_called()
+
+    @unittest.skipUnless(os.name == 'posix', 'POSIX directory descriptors require macOS certification')
+    def test_unexplained_eacces_is_not_suppressed_or_retried(self):
+        with patch.object(delivery.os, 'open', side_effect=PermissionError(errno.EACCES, 'PRIVATE')), patch.object(delivery.os, 'fchmod') as change:
+            with self.assertRaises(PermissionError):
+                delivery.repair_owned_home_modes(self.root, lambda: None)
+            change.assert_not_called()
+            self.assertTrue((self.root/'.owned').exists())
+
+    def test_exact_parent_two_files_and_consumed_tag_objects_are_frozen(self):
+        for options in ({}, {'installed_parent':'9'*40}, {'installed_inventory':b''},
+                        {'parent':delivery.DELIVERY_RECOVERY_TEST_BASE}):
+            with self.subTest(options=options), patch.object(delivery.cert,'git',side_effect=source_git(**options)), patch.object(delivery.subprocess,'run'), patch.object(delivery.cert,'original_contracts'):
+                if options:
+                    with self.assertRaises(ValueError): delivery.source_guard(COMMIT, True)
+                else: self.assertTrue(delivery.source_guard(COMMIT, True)['runtime_unchanged'])
+        original = source_git()
+        for command in (('cat-file','-t',delivery.CONSUMED_SETUP_TAG), ('rev-parse','--verify',delivery.CONSUMED_SETUP_TAG), ('rev-parse','--verify',delivery.CONSUMED_SETUP_TAG+'^{}')):
+            with patch.object(delivery.cert,'git',side_effect=lambda *args: b'altered' if args == command else original(*args)), patch.object(delivery.subprocess,'run'), patch.object(delivery.cert,'original_contracts'), self.assertRaises(ValueError):
+                delivery.source_guard(COMMIT, True)
+
+    def test_scope_preserves_signing_authorization_and_upload_failure_semantics(self):
+        old = delivery.cert.git('show',delivery.INSTALLED_ALTOOL_BASE+':tools/apple_storekit_testflight_delivery.py').decode()
+        current = (ROOT/'tools/apple_storekit_testflight_delivery.py').read_text()
+        functions = lambda code: {n.name:ast.dump(n) for n in ast.parse(code).body if isinstance(n,(ast.FunctionDef,ast.ClassDef))}
+        before, after = functions(old), functions(current)
+        self.assertEqual(after.keys()-before.keys(), {'repair_owned_home_modes'})
+        changed = {'source_guard','apple_id_command','private_upload_environment','run_upload_process','prepare_package_upload','remove_owned_workspace','transfer'}
+        self.assertEqual({name for name in before if before[name] != after[name]}, changed)
+        self.assertEqual(before['transfer'], functions(normalize_installed_altool(current))['transfer'])
+        self.assertEqual(delivery.cert.release.BUNDLE, 'com.gridlygo.gridly')
 
 
 if __name__ == "__main__":
