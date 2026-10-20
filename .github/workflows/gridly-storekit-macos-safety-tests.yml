@@ -1,0 +1,78 @@
+name: Gridly StoreKit macOS Safety Tests
+
+on:
+  push:
+    branches:
+      - 'codex/storekit-macos-certification-15'
+
+permissions:
+  contents: read
+
+jobs:
+  synthetic-safety-tests:
+    if: ${{ github.repository == 'DBMaps/liberty-county-map' && github.event_name == 'push' && github.ref == 'refs/heads/codex/storekit-macos-certification-15' && github.event.deleted == false && github.event.forced == false && github.run_attempt == 1 }}
+    runs-on: macos-26
+    timeout-minutes: 20
+    defaults:
+      run:
+        shell: bash --noprofile --norc -e -o pipefail {0}
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - name: Checkout exact triggering source and historical tags
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          fetch-tags: true
+          persist-credentials: false
+      - name: Run existing synthetic safety suite in both environments
+        run: |
+          set -euo pipefail
+          set +x
+          umask 077
+          python3 -B - <<'PY'
+          import importlib.util
+          import json
+          import os
+          import platform
+          import sys
+          import unittest
+          from pathlib import Path
+
+          def guard(event, args):
+              if event in ("socket.connect", "socket.getaddrinfo"):
+                  raise AssertionError("LIVE_NETWORK_BLOCKED")
+              if event == "subprocess.Popen":
+                  executable = Path(str(args[0])).name.lower()
+                  command = args[1]
+                  if executable == "git":
+                      if not isinstance(command, (list, tuple)) or len(command) < 2 or command[1] not in {
+                          "show", "diff", "rev-parse", "cat-file", "ls-tree", "ls-files", "status", "merge-base"
+                      }:
+                          raise AssertionError("MUTATING_OR_NETWORK_GIT_BLOCKED")
+                  elif executable not in {"bash", "bash.exe"}:
+                      raise AssertionError("LIVE_PROCESS_BLOCKED")
+
+          sys.addaudithook(guard)
+          print(json.dumps({"platform": platform.system(), "macos": platform.mac_ver()[0],
+                            "architecture": platform.machine(), "sha": os.environ["GITHUB_SHA"]}), flush=True)
+          spec = importlib.util.spec_from_file_location("gridly_synthetic_safety_tests", "tests/storekit-testflight-delivery.test.py")
+          module = importlib.util.module_from_spec(spec)
+          sys.modules[spec.name] = module
+          spec.loader.exec_module(module)
+          passed = True
+          for mode in ("UNSET", "APPLE_ID"):
+              os.environ.pop("GRIDLY_UPLOAD_AUTHENTICATION", None)
+              if mode == "APPLE_ID":
+                  os.environ["GRIDLY_UPLOAD_AUTHENTICATION"] = mode
+              suite = unittest.defaultTestLoader.loadTestsFromModule(module)
+              result = unittest.TextTestRunner(verbosity=2).run(suite)
+              failed = len(result.failures) + len(result.errors)
+              print(json.dumps({"mode": mode, "tests": result.testsRun,
+                                "passed": result.testsRun - failed - len(result.skipped),
+                                "failed": failed, "skipped": len(result.skipped),
+                                "real_upload": "NOT_INVOKED"}), flush=True)
+              passed = passed and result.wasSuccessful() and not result.skipped
+          raise SystemExit(0 if passed else 1)
+          PY
