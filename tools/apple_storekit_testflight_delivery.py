@@ -57,6 +57,10 @@ FAILED_AUTH_TAG_OBJECT = "900887b07a73fa3014173610cd0eba28db66a481"
 UPLOADER_REPAIR_BASE = "b66348762e10bf47031f2297963345cf18088b83"
 UPLOADER_CERTIFICATION_BASE = "9fefb24f0e9f945cc5167d25b8f2634f83d17f95"
 TEAM_ID_REPAIR_BASE = "8934b648d884a07c0957c1b9ece8b90459189674"
+DELIVERY_RESUME_BASE = "ab83301e60b753151901608b304ae74e77c1c7aa"
+SECOND_UNCERTAIN_RUN = 39457019380
+SECOND_UNCERTAIN_TAG = "refs/tags/gridly-storekit-testflight-deliver-15-" + UPLOADER_REPAIR_BASE
+SECOND_UNCERTAIN_TAG_OBJECT = "ea2d9158e9b0a0b1e0035947f15e2d3cef79173c"
 _UPLOAD_RUN = subprocess.run
 TEST_MODE_FILES = {
     "tools/apple_storekit_testflight_delivery.py",
@@ -196,7 +200,9 @@ PRIOR_ATTEMPT_CONFIRMATIONS = {
     "duplicate_risk_acknowledged", "one_additional_upload_authorized",
     "owner_verified_no_registered_build",
     "owner_verified_no_processing_build",
-    "owner_verified_no_new_pending_or_uncertain_uploads",
+    "owner_verified_no_other_unacknowledged_pending_or_uncertain_uploads",
+    "later_unknown_acceptance_acknowledged",
+    "no_other_unresolved_uploads_confirmed",
     "exception_not_previously_used_confirmed",
 }
 
@@ -292,12 +298,14 @@ def prior_attempt_evidence(authorization, now=None):
             "historical uncertainty must remain explicit")
     exception = evidence[PRIOR_ATTEMPT_FIELD]
     require(isinstance(exception, dict) and set(exception) == PRIOR_ATTEMPT_CONFIRMATIONS | {
-        "prior_run_id", "bundle_id", "platform", "version", "build", "certified_candidate_commit",
+        "prior_run_id", "additional_prior_run_id", "bundle_id", "platform", "version", "build", "certified_candidate_commit",
     }, "exact one-time prior-attempt exception required")
     require(all(exception[key] is True for key in PRIOR_ATTEMPT_CONFIRMATIONS),
             "explicit one-time owner confirmations required")
-    require(type(exception["prior_run_id"]) is int and exception["prior_run_id"] == PRIOR_ATTEMPT_RUN,
-            "only the historical Build 15 attempt allowed")
+    require(type(exception["prior_run_id"]) is int and exception["prior_run_id"] == PRIOR_ATTEMPT_RUN
+            and type(exception["additional_prior_run_id"]) is int
+            and exception["additional_prior_run_id"] == SECOND_UNCERTAIN_RUN,
+            "only the two individually acknowledged historical Build 15 attempts allowed")
     require(exception["bundle_id"] == "com.gridlygo.gridly" and exception["platform"] == "IOS"
             and exception["version"] == "1.0.0" and exception["build"] == "15"
             and authorization.get("diagnostic_build_number") == "15", "only Gridly iOS 1.0.0 Build 15 allowed")
@@ -322,7 +330,8 @@ def prior_attempt_evidence(authorization, now=None):
         require(0 <= moment - checked <= OWNER_CHECK_TTL, "owner UI build evidence expired")
     return {"build": "15", "version": "1.0.0", "verification_method": SOLO_OWNER_UI_METHOD,
             "registered_build_visible": False, "historical_transport_acceptance": "UNKNOWN",
-            "prior_run_id": PRIOR_ATTEMPT_RUN, "prior_attempt_exception_authorized": True,
+            "prior_run_id": PRIOR_ATTEMPT_RUN, "additional_prior_run_id": SECOND_UNCERTAIN_RUN,
+            "prior_attempt_exception_authorized": True,
             "owner_checked_at": evidence["owner_checked_at"]}
 
 
@@ -335,7 +344,11 @@ def prior_attempt_slot(ref, commit):
             and cert.git("rev-parse", "--verify", FAILED_AUTH_TAG).decode().strip() == FAILED_AUTH_TAG_OBJECT
             and cert.git("rev-parse", "--verify", FAILED_AUTH_TAG + "^{}").decode().strip() == FAILED_AUTH_BASE,
             "only the documented failed pre-build authorization may be recovered")
-    expected = {"refs/tags/" + name for name in HISTORICAL_TAGS if ("refs/tags/" + name).startswith(PREFIX)} | {FAILED_AUTH_TAG, ref}
+    require(cert.git("cat-file", "-t", SECOND_UNCERTAIN_TAG).decode().strip() == "tag"
+            and cert.git("rev-parse", "--verify", SECOND_UNCERTAIN_TAG).decode().strip() == SECOND_UNCERTAIN_TAG_OBJECT
+            and cert.git("rev-parse", "--verify", SECOND_UNCERTAIN_TAG + "^{}").decode().strip() == UPLOADER_REPAIR_BASE,
+            "previous signed-IPA upload uncertainty must remain pinned")
+    expected = {"refs/tags/" + name for name in HISTORICAL_TAGS if ("refs/tags/" + name).startswith(PREFIX)} | {FAILED_AUTH_TAG, SECOND_UNCERTAIN_TAG, ref}
     require(set(refs) == expected and len(refs) == len(expected),
             "prior-attempt exception already consumed or new delivery attempt unresolved")
 
@@ -486,11 +499,11 @@ def authorize(ref, commit, event_path, attempt):
 def source_guard(commit, clean):
     require(re.fullmatch(r"[0-9a-f]{40}", commit or ""), "exact source SHA required")
     pinned = {SOURCE, DELIVERY_BASE, OWNER_CORRECTION, PREFLIGHT_BASE, REFINEMENT_BASE,
-              SIGNING_BASE, CMS_BASE, CMS_REPAIR_BASE, SIGNING_VERIFIED_BASE, P04_BASE, ARCHIVE_BASE, EVIDENCE_BASE, ENVIRONMENT_BASE, TRANSFER_BASE, AUTH_BASE, APPLE_ID_BASE, UPLOAD_BASE, CERTIFIED_BASE, SOLO_OWNER_BASE, SOLO_OWNER_ATTEST_BASE, SOLO_OWNER_FIX_BASE, FAILED_AUTH_BASE, UPLOADER_REPAIR_BASE, UPLOADER_CERTIFICATION_BASE, TEAM_ID_REPAIR_BASE}
+              SIGNING_BASE, CMS_BASE, CMS_REPAIR_BASE, SIGNING_VERIFIED_BASE, P04_BASE, ARCHIVE_BASE, EVIDENCE_BASE, ENVIRONMENT_BASE, TRANSFER_BASE, AUTH_BASE, APPLE_ID_BASE, UPLOAD_BASE, CERTIFIED_BASE, SOLO_OWNER_BASE, SOLO_OWNER_ATTEST_BASE, SOLO_OWNER_FIX_BASE, FAILED_AUTH_BASE, UPLOADER_REPAIR_BASE, UPLOADER_CERTIFICATION_BASE, TEAM_ID_REPAIR_BASE, DELIVERY_RESUME_BASE}
     require(cert.git("rev-parse", "HEAD").decode().strip() == commit and commit not in pinned,
             "new reviewed delivery-support commit required")
     for child, parent in (
-        (commit, TEAM_ID_REPAIR_BASE), (TEAM_ID_REPAIR_BASE, UPLOADER_CERTIFICATION_BASE), (UPLOADER_CERTIFICATION_BASE, UPLOADER_REPAIR_BASE), (UPLOADER_REPAIR_BASE, FAILED_AUTH_BASE), (FAILED_AUTH_BASE, SOLO_OWNER_FIX_BASE), (SOLO_OWNER_FIX_BASE, SOLO_OWNER_ATTEST_BASE),
+        (commit, DELIVERY_RESUME_BASE), (DELIVERY_RESUME_BASE, TEAM_ID_REPAIR_BASE), (TEAM_ID_REPAIR_BASE, UPLOADER_CERTIFICATION_BASE), (UPLOADER_CERTIFICATION_BASE, UPLOADER_REPAIR_BASE), (UPLOADER_REPAIR_BASE, FAILED_AUTH_BASE), (FAILED_AUTH_BASE, SOLO_OWNER_FIX_BASE), (SOLO_OWNER_FIX_BASE, SOLO_OWNER_ATTEST_BASE),
         (SOLO_OWNER_ATTEST_BASE, SOLO_OWNER_BASE), (SOLO_OWNER_BASE, CERTIFIED_BASE), (CERTIFIED_BASE, UPLOAD_BASE), (UPLOAD_BASE, APPLE_ID_BASE), (APPLE_ID_BASE, AUTH_BASE), (AUTH_BASE, TRANSFER_BASE), (TRANSFER_BASE, ENVIRONMENT_BASE), (ENVIRONMENT_BASE, EVIDENCE_BASE), (EVIDENCE_BASE, ARCHIVE_BASE), (ARCHIVE_BASE, P04_BASE), (P04_BASE, SIGNING_VERIFIED_BASE),
         (SIGNING_VERIFIED_BASE, CMS_REPAIR_BASE),
         (CMS_REPAIR_BASE, CMS_BASE), (CMS_BASE, SIGNING_BASE), (SIGNING_BASE, REFINEMENT_BASE),
@@ -534,7 +547,8 @@ def source_guard(commit, clean):
         (FAILED_AUTH_BASE, UPLOADER_REPAIR_BASE, "M", TEST_MODE_FILES),
         (UPLOADER_REPAIR_BASE, UPLOADER_CERTIFICATION_BASE, "M", TEST_MODE_FILES),
         (UPLOADER_CERTIFICATION_BASE, TEAM_ID_REPAIR_BASE, "M", TEST_MODE_FILES),
-        (TEAM_ID_REPAIR_BASE, commit, "M", TEST_MODE_FILES),
+        (TEAM_ID_REPAIR_BASE, DELIVERY_RESUME_BASE, "M", TEST_MODE_FILES),
+        (DELIVERY_RESUME_BASE, commit, "M", TEST_MODE_FILES),
         (SOURCE, commit, "A", FILES | PREFLIGHT_FILES | SIGNING_FILES | CMS_FILES | SAFETY_FILES),
     ):
         records = cert.git("diff", "--name-status", "--no-renames", base, target).decode().splitlines()

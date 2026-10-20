@@ -297,7 +297,8 @@ def owner_automatic_authorization():
             }}
 
 
-def source_git(*, parent=delivery.TEAM_ID_REPAIR_BASE,
+def source_git(*, parent=delivery.DELIVERY_RESUME_BASE,
+               resume_parent=delivery.TEAM_ID_REPAIR_BASE, resume_inventory=None,
                team_id_parent=delivery.UPLOADER_CERTIFICATION_BASE, team_id_inventory=None, repair_base_parent=delivery.FAILED_AUTH_BASE,
                certification_parent=delivery.UPLOADER_REPAIR_BASE, certification_inventory=None,
                repair_base_inventory=None, failed_auth_parent=delivery.SOLO_OWNER_FIX_BASE, failed_auth_inventory=None,
@@ -336,6 +337,7 @@ def source_git(*, parent=delivery.TEAM_ID_REPAIR_BASE,
     values = {
         ("rev-parse", "HEAD"): COMMIT.encode(),
         ("show", "-s", "--format=%P", COMMIT): parent.encode(),
+        ("show", "-s", "--format=%P", delivery.DELIVERY_RESUME_BASE): resume_parent.encode(),
         ("show", "-s", "--format=%P", delivery.TEAM_ID_REPAIR_BASE): team_id_parent.encode(),
         ("show", "-s", "--format=%P", delivery.UPLOADER_CERTIFICATION_BASE): certification_parent.encode(),
         ("show", "-s", "--format=%P", delivery.UPLOADER_REPAIR_BASE): repair_base_parent.encode(),
@@ -389,7 +391,8 @@ def source_git(*, parent=delivery.TEAM_ID_REPAIR_BASE,
         ("diff", "--name-status", "--no-renames", delivery.FAILED_AUTH_BASE, delivery.UPLOADER_REPAIR_BASE): test_mode if repair_base_inventory is None else repair_base_inventory,
         ("diff", "--name-status", "--no-renames", delivery.UPLOADER_REPAIR_BASE, delivery.UPLOADER_CERTIFICATION_BASE): test_mode if certification_inventory is None else certification_inventory,
         ("diff", "--name-status", "--no-renames", delivery.UPLOADER_CERTIFICATION_BASE, delivery.TEAM_ID_REPAIR_BASE): test_mode if team_id_inventory is None else team_id_inventory,
-        ("diff", "--name-status", "--no-renames", delivery.TEAM_ID_REPAIR_BASE, COMMIT): test_mode if correction is None else correction,
+        ("diff", "--name-status", "--no-renames", delivery.TEAM_ID_REPAIR_BASE, delivery.DELIVERY_RESUME_BASE): test_mode if resume_inventory is None else resume_inventory,
+        ("diff", "--name-status", "--no-renames", delivery.DELIVERY_RESUME_BASE, COMMIT): test_mode if correction is None else correction,
         ("diff", "--name-status", "--no-renames", delivery.SOURCE, COMMIT): all_additions if net is None else net,
         ("diff", "--name-only", "HEAD"): dirty,
         ("diff", "--cached", "--name-only"): staged,
@@ -410,7 +413,7 @@ def source_git(*, parent=delivery.TEAM_ID_REPAIR_BASE,
     for path in delivery.TEST_MODE_FILES | delivery.SAFETY_FILES:
         values[("ls-tree", delivery.CERTIFIED_BASE, "--", path)] = ("100644 blob " + "0"*40 + "\t" + path).encode()
     for path in delivery.TEST_MODE_FILES:
-        for checkpoint in (delivery.SOLO_OWNER_BASE, delivery.SOLO_OWNER_ATTEST_BASE, delivery.SOLO_OWNER_FIX_BASE, delivery.FAILED_AUTH_BASE, delivery.UPLOADER_REPAIR_BASE, delivery.UPLOADER_CERTIFICATION_BASE, delivery.TEAM_ID_REPAIR_BASE):
+        for checkpoint in (delivery.SOLO_OWNER_BASE, delivery.SOLO_OWNER_ATTEST_BASE, delivery.SOLO_OWNER_FIX_BASE, delivery.FAILED_AUTH_BASE, delivery.UPLOADER_REPAIR_BASE, delivery.UPLOADER_CERTIFICATION_BASE, delivery.TEAM_ID_REPAIR_BASE, delivery.DELIVERY_RESUME_BASE):
             values[("ls-tree", checkpoint, "--", path)] = ("100644 blob " + "0"*40 + "\t" + path).encode()
     for path in delivery.FILES | delivery.PREFLIGHT_FILES | delivery.SIGNING_FILES | delivery.CMS_FILES | delivery.SAFETY_FILES:
         values[("ls-tree", COMMIT, "--", path)] = (mode + " blob " + "0"*40 + "\t" + path).encode()
@@ -1885,7 +1888,7 @@ security() {
         nodes=lambda text:{n.targets[0].id:n.value for n in ast.parse(text).body
                            if isinstance(n,ast.Assign) and isinstance(n.targets[0],ast.Name)}
         old,new=nodes(before),nodes(after)
-        self.assertEqual(set(new)-set(old),{"TEAM_ID_REPAIR_BASE","UPLOADER_CERTIFICATION_BASE","UPLOADER_REPAIR_BASE","_UPLOAD_RUN","CERTIFIED_BASE","SOLO_OWNER_BASE","SOLO_OWNER_ATTEST_BASE","SOLO_OWNER_FIX_BASE","FAILED_AUTH_BASE","FAILED_AUTH_TAG","FAILED_AUTH_TAG_OBJECT","SOLO_OWNER_UI_METHOD","SOLO_OWNER_UI_CONFIRMATIONS","PRIOR_ATTEMPT_FIELD","PRIOR_ATTEMPT_RUN","PRIOR_ATTEMPT_CONFIRMATIONS","SAFETY_FILES","UPLOAD_BASE","UPLOAD_ERROR_CATEGORIES","APPLE_ID_BASE","TEST_MODE_FILES","AUTH_BASE","APPLE_ID_AUTH_FIELD","UI_UNUSED_METHOD","UI_UNUSED_CONFIRMATIONS","TRANSFER_BASE","DELIVERY_STAGES","DELIVERY_STAGE_FAILURES","DELIVERY_CATEGORIES","P04_BASE","ARCHIVE_BASE","EVIDENCE_BASE","ENVIRONMENT_BASE","ARCHIVE_RULES","ARCHIVE_MAX_BYTES","ARCHIVE_STRUCTURED_STATES","HISTORY_CATEGORIES","HISTORY_ATTEMPTS",
+        self.assertEqual(set(new)-set(old),{"TEAM_ID_REPAIR_BASE","DELIVERY_RESUME_BASE","SECOND_UNCERTAIN_RUN","SECOND_UNCERTAIN_TAG","SECOND_UNCERTAIN_TAG_OBJECT","UPLOADER_CERTIFICATION_BASE","UPLOADER_REPAIR_BASE","_UPLOAD_RUN","CERTIFIED_BASE","SOLO_OWNER_BASE","SOLO_OWNER_ATTEST_BASE","SOLO_OWNER_FIX_BASE","FAILED_AUTH_BASE","FAILED_AUTH_TAG","FAILED_AUTH_TAG_OBJECT","SOLO_OWNER_UI_METHOD","SOLO_OWNER_UI_CONFIRMATIONS","PRIOR_ATTEMPT_FIELD","PRIOR_ATTEMPT_RUN","PRIOR_ATTEMPT_CONFIRMATIONS","SAFETY_FILES","UPLOAD_BASE","UPLOAD_ERROR_CATEGORIES","APPLE_ID_BASE","TEST_MODE_FILES","AUTH_BASE","APPLE_ID_AUTH_FIELD","UI_UNUSED_METHOD","UI_UNUSED_CONFIRMATIONS","TRANSFER_BASE","DELIVERY_STAGES","DELIVERY_STAGE_FAILURES","DELIVERY_CATEGORIES","P04_BASE","ARCHIVE_BASE","EVIDENCE_BASE","ENVIRONMENT_BASE","ARCHIVE_RULES","ARCHIVE_MAX_BYTES","ARCHIVE_STRUCTURED_STATES","HISTORY_CATEGORIES","HISTORY_ATTEMPTS",
                          "HISTORY_WAIT_BUDGET","HISTORY_DEADLINE","HISTORY_TIMEOUT","HISTORY_MAX_BYTES"})
         for name,node in old.items():
             if name=="HISTORICAL_TAGS":
@@ -1986,7 +1989,7 @@ security() {
         self.assertFalse(git("ls-files","--others","--exclude-standard"))
         head=git("rev-parse","HEAD")
         self.assertFalse(git("status","--porcelain=v1","--untracked-files=all"))
-        self.assertEqual(git("show","-s","--format=%P",head),delivery.TEAM_ID_REPAIR_BASE)
+        self.assertEqual(git("show","-s","--format=%P",head),delivery.DELIVERY_RESUME_BASE)
         delivery.source_guard(head,True)
         for path in support:
             entry=git("ls-files","--stage","--",path).split()
@@ -4066,13 +4069,16 @@ class PriorAttemptExceptionTests(SyntheticDeliveryTestCase):
         self.actual_source_guard=delivery.source_guard
         CertificationAndTransferTests.setUp(self)
         self.actual_git=delivery.cert.git
-        self.tags=["refs/tags/"+name for name in delivery.HISTORICAL_TAGS if ("refs/tags/"+name).startswith(delivery.PREFIX)]+[delivery.FAILED_AUTH_TAG, REF]
+        self.tags=["refs/tags/"+name for name in delivery.HISTORICAL_TAGS if ("refs/tags/"+name).startswith(delivery.PREFIX)]+[delivery.FAILED_AUTH_TAG, delivery.SECOND_UNCERTAIN_TAG, REF]
         query=("rev-parse","--symbolic-full-name","--tags="+delivery.PREFIX.removeprefix("refs/tags/")+"*")
         def git(*args):
             if args==query:return "\n".join(self.tags).encode()
             if args==("cat-file","-t",delivery.FAILED_AUTH_TAG):return b"tag"
             if args==("rev-parse","--verify",delivery.FAILED_AUTH_TAG):return delivery.FAILED_AUTH_TAG_OBJECT.encode()
             if args==("rev-parse","--verify",delivery.FAILED_AUTH_TAG+"^{}"):return delivery.FAILED_AUTH_BASE.encode()
+            if args==("cat-file","-t",delivery.SECOND_UNCERTAIN_TAG):return b"tag"
+            if args==("rev-parse","--verify",delivery.SECOND_UNCERTAIN_TAG):return delivery.SECOND_UNCERTAIN_TAG_OBJECT.encode()
+            if args==("rev-parse","--verify",delivery.SECOND_UNCERTAIN_TAG+"^{}"):return delivery.UPLOADER_REPAIR_BASE.encode()
             return self.actual_git(*args)
         patch.object(delivery.cert,'git',side_effect=git).start()
 
@@ -4085,7 +4091,8 @@ class PriorAttemptExceptionTests(SyntheticDeliveryTestCase):
             'no_pending_or_uncertain_uploads':False,
             delivery.PRIOR_ATTEMPT_FIELD:{
                 **dict.fromkeys(delivery.PRIOR_ATTEMPT_CONFIRMATIONS,True),
-                'prior_run_id':39315841160,'bundle_id':'com.gridlygo.gridly','platform':'IOS',
+                'prior_run_id':39315841160,'additional_prior_run_id':39457019380,
+                'bundle_id':'com.gridlygo.gridly','platform':'IOS',
                 'version':'1.0.0','build':'15','certified_candidate_commit':delivery.CERTIFIED_BASE,
             }}
         self.save(value);return value
@@ -4104,6 +4111,7 @@ class PriorAttemptExceptionTests(SyntheticDeliveryTestCase):
         self.assertNotIn('unused',receipt)
         self.assertNotIn('ACCEPTED',json.dumps(receipt))
         self.assertEqual(receipt['prior_run_id'],39315841160)
+        self.assertEqual(receipt['additional_prior_run_id'],39457019380)
         self.assertEqual(receipt['verification_method'],delivery.SOLO_OWNER_UI_METHOD)
         self.assertNotIn('independent_checked_at',receipt)
         self.assertNotIn('independent_checked_at',value[delivery.APPLE_ID_AUTH_FIELD])
@@ -4120,6 +4128,17 @@ class PriorAttemptExceptionTests(SyntheticDeliveryTestCase):
         for run in (39315841161,True,'39315841160',None):
             value=self.bind();self.exception(value)['prior_run_id']=run
             with self.subTest(run=run),self.assertRaises(ValueError):delivery.owner_authorization(value,COMMIT,REF,NOW)
+
+    def test_second_d06_requires_exact_owner_acknowledgment(self):
+        for run in (39457019381, 39315841160, True, '39457019380', None):
+            value=self.bind();self.exception(value)['additional_prior_run_id']=run
+            with self.subTest(run=run),self.assertRaises(ValueError):
+                delivery.owner_authorization(value,COMMIT,REF,NOW)
+        for field in ('later_unknown_acceptance_acknowledged','no_other_unresolved_uploads_confirmed',
+                      'owner_verified_no_other_unacknowledged_pending_or_uncertain_uploads'):
+            value=self.bind();self.exception(value)[field]=False
+            with self.subTest(field=field),self.assertRaises(ValueError):
+                delivery.owner_authorization(value,COMMIT,REF,NOW)
 
     def test_wrong_app_platform_version_build_and_certified_lineage_are_rejected(self):
         for key,value in (('bundle_id','com.example.other'),('platform','ANDROID'),('version','1.0.1'),
@@ -4163,7 +4182,7 @@ class PriorAttemptExceptionTests(SyntheticDeliveryTestCase):
 
     def test_visible_processing_or_new_unresolved_upload_blocks_before_credentials(self):
         for key in ('owner_verified_no_registered_build','owner_verified_no_processing_build',
-                    'owner_verified_no_new_pending_or_uncertain_uploads'):
+                    'owner_verified_no_other_unacknowledged_pending_or_uncertain_uploads'):
             value=self.bind();self.exception(value)[key]=False
             calls,_,error=self.exercise(value=value)
             with self.subTest(key=key):self.assertIsInstance(error,ValueError);self.assertEqual(calls,[])
@@ -4199,12 +4218,13 @@ class PriorAttemptExceptionTests(SyntheticDeliveryTestCase):
         self.assertIsInstance(error,ValueError);self.assertEqual(calls,[])
 
     def test_consumed_or_unknown_delivery_tag_blocks_a_second_exception(self):
-        for mutation in ('extra','duplicate','missing_current','missing_failed_tag','missing_history'):
+        for mutation in ('extra','duplicate','missing_current','missing_failed_tag','missing_second_tag','missing_history'):
             original=list(self.tags)
             if mutation=='extra':self.tags.append(delivery.PREFIX+'9'*40)
             elif mutation=='duplicate':self.tags.append(REF)
             elif mutation=='missing_current':self.tags.remove(REF)
             elif mutation=='missing_failed_tag':self.tags.remove(delivery.FAILED_AUTH_TAG)
+            elif mutation=='missing_second_tag':self.tags.remove(delivery.SECOND_UNCERTAIN_TAG)
             else:self.tags.pop(0)
             calls,_,error=self.exercise()
             with self.subTest(mutation=mutation):self.assertIsInstance(error,ValueError);self.assertEqual(calls,[])
@@ -4216,6 +4236,11 @@ class PriorAttemptExceptionTests(SyntheticDeliveryTestCase):
             ("cat-file","-t",delivery.FAILED_AUTH_TAG),
             ("rev-parse","--verify",delivery.FAILED_AUTH_TAG),
             ("rev-parse","--verify",delivery.FAILED_AUTH_TAG+"^{}"),
+        )
+        commands += (
+            ("cat-file","-t",delivery.SECOND_UNCERTAIN_TAG),
+            ("rev-parse","--verify",delivery.SECOND_UNCERTAIN_TAG),
+            ("rev-parse","--verify",delivery.SECOND_UNCERTAIN_TAG+"^{}"),
         )
         for command in commands:
             def falsify(*args):
@@ -4229,7 +4254,7 @@ class PriorAttemptExceptionTests(SyntheticDeliveryTestCase):
         value=self.bind()
         def update(stage,status):
             if stage=='D05_LIVE_BUILD_AVAILABILITY' and status=='RUNNING':
-                self.exception(value)['owner_verified_no_new_pending_or_uncertain_uploads']=False;self.save(value)
+                self.exception(value)['owner_verified_no_other_unacknowledged_pending_or_uncertain_uploads']=False;self.save(value)
         calls,stages,error=self.exercise(value=value,on_progress=update)
         self.assertIsInstance(error,ValueError);self.assertEqual(calls,['--validate-app'])
         self.assertEqual(stages[-1][:2],('D05_LIVE_BUILD_AVAILABILITY','FAIL'))
@@ -4242,7 +4267,10 @@ class PriorAttemptExceptionTests(SyntheticDeliveryTestCase):
                 ('rev-parse','--symbolic-full-name','--tags='+delivery.PREFIX.removeprefix('refs/tags/')+'*'):'\n'.join(tags).encode(),
                 ('cat-file','-t',delivery.FAILED_AUTH_TAG):b'tag',
                 ('rev-parse','--verify',delivery.FAILED_AUTH_TAG):delivery.FAILED_AUTH_TAG_OBJECT.encode(),
-                ('rev-parse','--verify',delivery.FAILED_AUTH_TAG+'^{}'):delivery.FAILED_AUTH_BASE.encode()}
+                ('rev-parse','--verify',delivery.FAILED_AUTH_TAG+'^{}'):delivery.FAILED_AUTH_BASE.encode(),
+                ('cat-file','-t',delivery.SECOND_UNCERTAIN_TAG):b'tag',
+                ('rev-parse','--verify',delivery.SECOND_UNCERTAIN_TAG):delivery.SECOND_UNCERTAIN_TAG_OBJECT.encode(),
+                ('rev-parse','--verify',delivery.SECOND_UNCERTAIN_TAG+'^{}'):delivery.UPLOADER_REPAIR_BASE.encode()}
         with patch.object(delivery.cert,'git',side_effect=lambda *a:values[a]),patch.object(delivery,'read_json',return_value=event()),patch.object(delivery,'apple_id_command') as credentials:
             self.assertEqual(delivery.authorize(REF,COMMIT,'synthetic','1')['authorization'],value)
             with self.assertRaises(ValueError):delivery.authorize(REF,COMMIT,'synthetic','2')
@@ -4434,14 +4462,15 @@ class SupportedPackageUploaderTests(SyntheticDeliveryTestCase):
             self.assertEqual(before[name], normalized[name], name)
         self.assertEqual(delivery.UPLOADER_REPAIR_BASE, 'b66348762e10bf47031f2297963345cf18088b83')
         head = delivery.cert.git('rev-parse', 'HEAD').decode().strip()
-        if head != delivery.TEAM_ID_REPAIR_BASE:
+        if head != delivery.DELIVERY_RESUME_BASE:
             self.assertEqual(delivery.cert.git('show', '-s', '--format=%P', head).decode().strip(),
-                             delivery.TEAM_ID_REPAIR_BASE)
+                             delivery.DELIVERY_RESUME_BASE)
         changed = delivery.cert.git('diff', '--name-only', delivery.UPLOADER_REPAIR_BASE).decode().splitlines()
         self.assertEqual(set(changed), delivery.TEST_MODE_FILES)
 
     def test_new_parent_inventory_and_failed_delivery_tag_are_frozen(self):
         for options in ({'parent': delivery.UPLOADER_CERTIFICATION_BASE},
+                        {'resume_parent':'9'*40}, {'resume_inventory':b''},
                         {'team_id_parent': '9'*40}, {'team_id_inventory': b''},
                         {'parent': delivery.UPLOADER_REPAIR_BASE},
                         {'parent': delivery.FAILED_AUTH_BASE}, {'repair_base_parent': '9'*40},
