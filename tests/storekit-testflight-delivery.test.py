@@ -359,6 +359,8 @@ def source_git(*, parent=delivery.SOLO_OWNER_BASE, solo_owner_parent=delivery.CE
         values[("ls-tree", delivery.UPLOAD_BASE, "--", path)] = ("100644 blob " + "0"*40 + "\t" + path).encode()
     for path in delivery.TEST_MODE_FILES | delivery.SAFETY_FILES:
         values[("ls-tree", delivery.CERTIFIED_BASE, "--", path)] = ("100644 blob " + "0"*40 + "\t" + path).encode()
+    for path in delivery.TEST_MODE_FILES:
+        values[("ls-tree", delivery.SOLO_OWNER_BASE, "--", path)] = ("100644 blob " + "0"*40 + "\t" + path).encode()
     for path in delivery.FILES | delivery.PREFLIGHT_FILES | delivery.SIGNING_FILES | delivery.CMS_FILES | delivery.SAFETY_FILES:
         values[("ls-tree", COMMIT, "--", path)] = (mode + " blob " + "0"*40 + "\t" + path).encode()
     for name, (original_object, original_target) in delivery.HISTORICAL_TAGS.items():

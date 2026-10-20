@@ -309,10 +309,10 @@ def prior_attempt_evidence(authorization, now=None):
                 "genuine UTC UI evidence time required")
         checked = dt.datetime.strptime(stamp, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=dt.timezone.utc).timestamp()
         require(0 <= moment - checked <= OWNER_CHECK_TTL, "owner UI build evidence expired")
-    return {"build": "15", "version": "1.0.0", "verification_method": UI_UNUSED_METHOD,
+    return {"build": "15", "version": "1.0.0", "verification_method": SOLO_OWNER_UI_METHOD,
             "registered_build_visible": False, "historical_transport_acceptance": "UNKNOWN",
             "prior_run_id": PRIOR_ATTEMPT_RUN, "prior_attempt_exception_authorized": True,
-            "owner_checked_at": evidence["owner_checked_at"], "independent_checked_at": evidence["independent_checked_at"]}
+            "owner_checked_at": evidence["owner_checked_at"]}
 
 
 def prior_attempt_slot(ref, commit):
