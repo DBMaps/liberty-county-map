@@ -1,0 +1,38 @@
+name: Gridly altool Capabilities (Read Only)
+on:
+  push:
+    branches:
+      - 'codex/gridly-altool-capability-readonly-20261020'
+    paths:
+      - '.github/workflows/gridly-altool-capability-readonly-20261020.yml'
+permissions: {}
+jobs:
+  read-capabilities:
+    if: ${{ github.repository == 'DBMaps/liberty-county-map' && github.event_name == 'push' && github.event.created == false && github.event.deleted == false && github.event.forced == false && github.run_attempt == 1 && github.event.before == '3ec05f8bbdc37bdff58d45a03164128d80177eeb' }}
+    runs-on: macos-26
+    timeout-minutes: 7
+    steps:
+      - name: Inspect local altool help only — no credentials, no upload
+        shell: bash
+        run: |
+          set -euo pipefail
+          set +x
+          python3 -B - <<'PY'
+          import json, re, subprocess
+          try:
+              x = subprocess.run(['xcrun','altool','--help'], stdin=subprocess.DEVNULL,
+                                 capture_output=True, timeout=35, check=False)
+          except Exception as e:
+              print(json.dumps({"diagnostic":"HELP_EXECUTION_FAILURE","exception_type":type(e).__name__}))
+              raise SystemExit(0)
+          data = (x.stdout + b'\n' + x.stderr).decode('utf-8','replace')[:262144]
+          options = ['--upload-package', '--upload-app', '--team-id', '--asc-public-id',
+                     '--provider-public-id','--apple-id', '--bundle-id', '--bundle-version',
+                     '--bundle-short-version-string','--type', '--platform', '--username',
+                     '--password','--app-password', '--apiKey','--api-key', '--apiIssuer','--api-issuer']
+          found = {f: bool(re.search(r'(?<![A-Za-z0-9_-])'+re.escape(f)+r'(?![A-Za-z0-9_-])',data)) for f in options}
+          print(json.dumps({'diagnostic':'ALTOOL_HELP_ONLY',
+                            'help_exit_code':x.returncode,
+                            'help_bytes':len(x.stdout)+len(x.stderr),
+                            'flags_found':found},sort_keys=True),flush=True)
+          PY
