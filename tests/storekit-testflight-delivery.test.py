@@ -297,7 +297,8 @@ def owner_automatic_authorization():
             }}
 
 
-def source_git(*, parent=delivery.DELIVERY_RESUME_BASE,
+def source_git(*, parent=delivery.DELIVERY_RECOVERY_TEST_BASE,
+               recovery_parent=delivery.DELIVERY_RESUME_BASE, recovery_inventory=None,
                resume_parent=delivery.TEAM_ID_REPAIR_BASE, resume_inventory=None,
                team_id_parent=delivery.UPLOADER_CERTIFICATION_BASE, team_id_inventory=None, repair_base_parent=delivery.FAILED_AUTH_BASE,
                certification_parent=delivery.UPLOADER_REPAIR_BASE, certification_inventory=None,
@@ -337,6 +338,7 @@ def source_git(*, parent=delivery.DELIVERY_RESUME_BASE,
     values = {
         ("rev-parse", "HEAD"): COMMIT.encode(),
         ("show", "-s", "--format=%P", COMMIT): parent.encode(),
+        ("show", "-s", "--format=%P", delivery.DELIVERY_RECOVERY_TEST_BASE): recovery_parent.encode(),
         ("show", "-s", "--format=%P", delivery.DELIVERY_RESUME_BASE): resume_parent.encode(),
         ("show", "-s", "--format=%P", delivery.TEAM_ID_REPAIR_BASE): team_id_parent.encode(),
         ("show", "-s", "--format=%P", delivery.UPLOADER_CERTIFICATION_BASE): certification_parent.encode(),
@@ -392,7 +394,8 @@ def source_git(*, parent=delivery.DELIVERY_RESUME_BASE,
         ("diff", "--name-status", "--no-renames", delivery.UPLOADER_REPAIR_BASE, delivery.UPLOADER_CERTIFICATION_BASE): test_mode if certification_inventory is None else certification_inventory,
         ("diff", "--name-status", "--no-renames", delivery.UPLOADER_CERTIFICATION_BASE, delivery.TEAM_ID_REPAIR_BASE): test_mode if team_id_inventory is None else team_id_inventory,
         ("diff", "--name-status", "--no-renames", delivery.TEAM_ID_REPAIR_BASE, delivery.DELIVERY_RESUME_BASE): test_mode if resume_inventory is None else resume_inventory,
-        ("diff", "--name-status", "--no-renames", delivery.DELIVERY_RESUME_BASE, COMMIT): test_mode if correction is None else correction,
+        ("diff", "--name-status", "--no-renames", delivery.DELIVERY_RESUME_BASE, delivery.DELIVERY_RECOVERY_TEST_BASE): test_mode if recovery_inventory is None else recovery_inventory,
+        ("diff", "--name-status", "--no-renames", delivery.DELIVERY_RECOVERY_TEST_BASE, COMMIT): test_mode if correction is None else correction,
         ("diff", "--name-status", "--no-renames", delivery.SOURCE, COMMIT): all_additions if net is None else net,
         ("diff", "--name-only", "HEAD"): dirty,
         ("diff", "--cached", "--name-only"): staged,
@@ -413,7 +416,7 @@ def source_git(*, parent=delivery.DELIVERY_RESUME_BASE,
     for path in delivery.TEST_MODE_FILES | delivery.SAFETY_FILES:
         values[("ls-tree", delivery.CERTIFIED_BASE, "--", path)] = ("100644 blob " + "0"*40 + "\t" + path).encode()
     for path in delivery.TEST_MODE_FILES:
-        for checkpoint in (delivery.SOLO_OWNER_BASE, delivery.SOLO_OWNER_ATTEST_BASE, delivery.SOLO_OWNER_FIX_BASE, delivery.FAILED_AUTH_BASE, delivery.UPLOADER_REPAIR_BASE, delivery.UPLOADER_CERTIFICATION_BASE, delivery.TEAM_ID_REPAIR_BASE, delivery.DELIVERY_RESUME_BASE):
+        for checkpoint in (delivery.SOLO_OWNER_BASE, delivery.SOLO_OWNER_ATTEST_BASE, delivery.SOLO_OWNER_FIX_BASE, delivery.FAILED_AUTH_BASE, delivery.UPLOADER_REPAIR_BASE, delivery.UPLOADER_CERTIFICATION_BASE, delivery.TEAM_ID_REPAIR_BASE, delivery.DELIVERY_RESUME_BASE, delivery.DELIVERY_RECOVERY_TEST_BASE):
             values[("ls-tree", checkpoint, "--", path)] = ("100644 blob " + "0"*40 + "\t" + path).encode()
     for path in delivery.FILES | delivery.PREFLIGHT_FILES | delivery.SIGNING_FILES | delivery.CMS_FILES | delivery.SAFETY_FILES:
         values[("ls-tree", COMMIT, "--", path)] = (mode + " blob " + "0"*40 + "\t" + path).encode()
@@ -1888,7 +1891,7 @@ security() {
         nodes=lambda text:{n.targets[0].id:n.value for n in ast.parse(text).body
                            if isinstance(n,ast.Assign) and isinstance(n.targets[0],ast.Name)}
         old,new=nodes(before),nodes(after)
-        self.assertEqual(set(new)-set(old),{"TEAM_ID_REPAIR_BASE","DELIVERY_RESUME_BASE","SECOND_UNCERTAIN_RUN","SECOND_UNCERTAIN_TAG","SECOND_UNCERTAIN_TAG_OBJECT","UPLOADER_CERTIFICATION_BASE","UPLOADER_REPAIR_BASE","_UPLOAD_RUN","CERTIFIED_BASE","SOLO_OWNER_BASE","SOLO_OWNER_ATTEST_BASE","SOLO_OWNER_FIX_BASE","FAILED_AUTH_BASE","FAILED_AUTH_TAG","FAILED_AUTH_TAG_OBJECT","SOLO_OWNER_UI_METHOD","SOLO_OWNER_UI_CONFIRMATIONS","PRIOR_ATTEMPT_FIELD","PRIOR_ATTEMPT_RUN","PRIOR_ATTEMPT_CONFIRMATIONS","SAFETY_FILES","UPLOAD_BASE","UPLOAD_ERROR_CATEGORIES","APPLE_ID_BASE","TEST_MODE_FILES","AUTH_BASE","APPLE_ID_AUTH_FIELD","UI_UNUSED_METHOD","UI_UNUSED_CONFIRMATIONS","TRANSFER_BASE","DELIVERY_STAGES","DELIVERY_STAGE_FAILURES","DELIVERY_CATEGORIES","P04_BASE","ARCHIVE_BASE","EVIDENCE_BASE","ENVIRONMENT_BASE","ARCHIVE_RULES","ARCHIVE_MAX_BYTES","ARCHIVE_STRUCTURED_STATES","HISTORY_CATEGORIES","HISTORY_ATTEMPTS",
+        self.assertEqual(set(new)-set(old),{"TEAM_ID_REPAIR_BASE","DELIVERY_RESUME_BASE","DELIVERY_RECOVERY_TEST_BASE","SECOND_UNCERTAIN_RUN","SECOND_UNCERTAIN_TAG","SECOND_UNCERTAIN_TAG_OBJECT","UPLOADER_CERTIFICATION_BASE","UPLOADER_REPAIR_BASE","_UPLOAD_RUN","CERTIFIED_BASE","SOLO_OWNER_BASE","SOLO_OWNER_ATTEST_BASE","SOLO_OWNER_FIX_BASE","FAILED_AUTH_BASE","FAILED_AUTH_TAG","FAILED_AUTH_TAG_OBJECT","SOLO_OWNER_UI_METHOD","SOLO_OWNER_UI_CONFIRMATIONS","PRIOR_ATTEMPT_FIELD","PRIOR_ATTEMPT_RUN","PRIOR_ATTEMPT_CONFIRMATIONS","SAFETY_FILES","UPLOAD_BASE","UPLOAD_ERROR_CATEGORIES","APPLE_ID_BASE","TEST_MODE_FILES","AUTH_BASE","APPLE_ID_AUTH_FIELD","UI_UNUSED_METHOD","UI_UNUSED_CONFIRMATIONS","TRANSFER_BASE","DELIVERY_STAGES","DELIVERY_STAGE_FAILURES","DELIVERY_CATEGORIES","P04_BASE","ARCHIVE_BASE","EVIDENCE_BASE","ENVIRONMENT_BASE","ARCHIVE_RULES","ARCHIVE_MAX_BYTES","ARCHIVE_STRUCTURED_STATES","HISTORY_CATEGORIES","HISTORY_ATTEMPTS",
                          "HISTORY_WAIT_BUDGET","HISTORY_DEADLINE","HISTORY_TIMEOUT","HISTORY_MAX_BYTES"})
         for name,node in old.items():
             if name=="HISTORICAL_TAGS":
@@ -1989,7 +1992,7 @@ security() {
         self.assertFalse(git("ls-files","--others","--exclude-standard"))
         head=git("rev-parse","HEAD")
         self.assertFalse(git("status","--porcelain=v1","--untracked-files=all"))
-        self.assertEqual(git("show","-s","--format=%P",head),delivery.DELIVERY_RESUME_BASE)
+        self.assertEqual(git("show","-s","--format=%P",head),delivery.DELIVERY_RECOVERY_TEST_BASE)
         delivery.source_guard(head,True)
         for path in support:
             entry=git("ls-files","--stage","--",path).split()
@@ -4455,21 +4458,22 @@ class SupportedPackageUploaderTests(SyntheticDeliveryTestCase):
         before, after = functions(baseline), functions(current)
         self.assertEqual(set(after)-set(before), {'private_upload_environment', 'run_upload_process',
                                                 'package_provider', 'prepare_package_upload'})
-        for name in before.keys()-{'source_guard', 'execute_upload', 'transfer'}:
+        for name in before.keys()-{'source_guard', 'execute_upload', 'transfer', 'prior_attempt_evidence', 'prior_attempt_slot'}:
             self.assertEqual(before[name], after[name], name)
         normalized = functions(normalize_uploader_repair(current))
         for name in ('execute_upload', 'transfer'):
             self.assertEqual(before[name], normalized[name], name)
         self.assertEqual(delivery.UPLOADER_REPAIR_BASE, 'b66348762e10bf47031f2297963345cf18088b83')
         head = delivery.cert.git('rev-parse', 'HEAD').decode().strip()
-        if head != delivery.DELIVERY_RESUME_BASE:
+        if head != delivery.DELIVERY_RECOVERY_TEST_BASE:
             self.assertEqual(delivery.cert.git('show', '-s', '--format=%P', head).decode().strip(),
-                             delivery.DELIVERY_RESUME_BASE)
+                             delivery.DELIVERY_RECOVERY_TEST_BASE)
         changed = delivery.cert.git('diff', '--name-only', delivery.UPLOADER_REPAIR_BASE).decode().splitlines()
         self.assertEqual(set(changed), delivery.TEST_MODE_FILES)
 
     def test_new_parent_inventory_and_failed_delivery_tag_are_frozen(self):
         for options in ({'parent': delivery.UPLOADER_CERTIFICATION_BASE},
+                        {'recovery_parent':'9'*40}, {'recovery_inventory':b''},
                         {'resume_parent':'9'*40}, {'resume_inventory':b''},
                         {'team_id_parent': '9'*40}, {'team_id_inventory': b''},
                         {'parent': delivery.UPLOADER_REPAIR_BASE},
@@ -4570,7 +4574,7 @@ class SharedPackagePreflightTests(SyntheticDeliveryTestCase):
                                    if isinstance(node, (ast.FunctionDef, ast.ClassDef))}
         old, new = functions(before), functions(after)
         self.assertEqual(old.keys(), new.keys())
-        for name in old.keys()-{'source_guard', 'prepare_package_upload'}:
+        for name in old.keys()-{'source_guard', 'prepare_package_upload', 'prior_attempt_evidence', 'prior_attempt_slot'}:
             self.assertEqual(old[name], new[name], name)
 
 
