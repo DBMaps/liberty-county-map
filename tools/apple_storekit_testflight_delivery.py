@@ -46,6 +46,7 @@ AUTH_BASE = "03620e25ed19fc70ab9e493627fb84c4b9a3617c"
 APPLE_ID_BASE = "0c17376475cf76798d553e7b9717543056df1595"
 UPLOAD_BASE = "54cbf359ac73225d0354491409533d1ea613d885"
 CERTIFIED_BASE = "685d6e70f79792d828a093e5427f76acbeee6341"
+SOLO_OWNER_BASE = "a5e996ba6feca4d1c9274d54594613fdf9cc0489"
 TEST_MODE_FILES = {
     "tools/apple_storekit_testflight_delivery.py",
     "tests/storekit-testflight-delivery.test.py",
@@ -168,11 +169,13 @@ OWNER_AUTO_CONFIRMATIONS = {
 OWNER_CHECK_TTL = 1800
 APPLE_ID_AUTH_FIELD = "apple_id_upload_authorization"
 UI_UNUSED_METHOD = "OWNER_AND_INDEPENDENT_APP_STORE_CONNECT_UI"
+SOLO_OWNER_UI_METHOD = "SOLE_OWNER_APP_STORE_CONNECT_UI"
 UI_UNUSED_CONFIRMATIONS = {
     "authorized", "owner_verified_unused", "independent_verified_unused",
     "build_uploads_reviewed", "testflight_all_builds_reviewed",
     "no_pending_or_uncertain_uploads", "exclusive_upload_window_acknowledged",
 }
+SOLO_OWNER_UI_CONFIRMATIONS = UI_UNUSED_CONFIRMATIONS - {"independent_verified_unused"}
 
 
 PRIOR_ATTEMPT_FIELD = "prior_attempt_exception"
@@ -180,10 +183,9 @@ PRIOR_ATTEMPT_RUN = 39315841160
 PRIOR_ATTEMPT_CONFIRMATIONS = {
     "authorized", "historical_acceptance_unknown_acknowledged",
     "duplicate_risk_acknowledged", "one_additional_upload_authorized",
-    "owner_verified_no_registered_build", "independent_verified_no_registered_build",
-    "owner_verified_no_processing_build", "independent_verified_no_processing_build",
+    "owner_verified_no_registered_build",
+    "owner_verified_no_processing_build",
     "owner_verified_no_new_pending_or_uncertain_uploads",
-    "independent_verified_no_new_pending_or_uncertain_uploads",
     "exception_not_previously_used_confirmed",
 }
 
@@ -270,11 +272,11 @@ def ui_unused_build(authorization, now=None):
 def prior_attempt_evidence(authorization, now=None):
     """One acknowledged historical uncertainty; never manufacture Apple acceptance."""
     evidence = authorization.get(APPLE_ID_AUTH_FIELD)
-    require(isinstance(evidence, dict) and set(evidence) == UI_UNUSED_CONFIRMATIONS | {
-        "method", "owner_checked_at", "independent_checked_at", PRIOR_ATTEMPT_FIELD,
-    }, "complete prior-attempt UI evidence required")
-    require(evidence["method"] == UI_UNUSED_METHOD
-            and all(evidence[key] is True for key in UI_UNUSED_CONFIRMATIONS - {"no_pending_or_uncertain_uploads"})
+    require(isinstance(evidence, dict) and set(evidence) == SOLO_OWNER_UI_CONFIRMATIONS | {
+        "method", "owner_checked_at", PRIOR_ATTEMPT_FIELD,
+    }, "complete prior-attempt owner UI evidence required")
+    require(evidence["method"] == SOLO_OWNER_UI_METHOD
+            and all(evidence[key] is True for key in SOLO_OWNER_UI_CONFIRMATIONS - {"no_pending_or_uncertain_uploads"})
             and evidence["no_pending_or_uncertain_uploads"] is False,
             "historical uncertainty must remain explicit")
     exception = evidence[PRIOR_ATTEMPT_FIELD]
@@ -282,7 +284,7 @@ def prior_attempt_evidence(authorization, now=None):
         "prior_run_id", "bundle_id", "platform", "version", "build", "certified_candidate_commit",
     }, "exact one-time prior-attempt exception required")
     require(all(exception[key] is True for key in PRIOR_ATTEMPT_CONFIRMATIONS),
-            "explicit one-time owner and independent confirmations required")
+            "explicit one-time owner confirmations required")
     require(type(exception["prior_run_id"]) is int and exception["prior_run_id"] == PRIOR_ATTEMPT_RUN,
             "only the historical Build 15 attempt allowed")
     require(exception["bundle_id"] == "com.gridlygo.gridly" and exception["platform"] == "IOS"
@@ -301,12 +303,12 @@ def prior_attempt_evidence(authorization, now=None):
     require(evidence["owner_checked_at"] == authorization.get("owner_checks_at"),
             "UI owner check must match the owner authorization")
     moment = time.time() if now is None else now
-    for name in ("owner_checked_at", "independent_checked_at"):
+    for name in ("owner_checked_at",):
         stamp = evidence[name]
         require(isinstance(stamp, str) and re.fullmatch(r"\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ", stamp),
                 "genuine UTC UI evidence time required")
         checked = dt.datetime.strptime(stamp, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=dt.timezone.utc).timestamp()
-        require(0 <= moment - checked <= OWNER_CHECK_TTL, "independent UI build evidence expired")
+        require(0 <= moment - checked <= OWNER_CHECK_TTL, "owner UI build evidence expired")
     return {"build": "15", "version": "1.0.0", "verification_method": UI_UNUSED_METHOD,
             "registered_build_visible": False, "historical_transport_acceptance": "UNKNOWN",
             "prior_run_id": PRIOR_ATTEMPT_RUN, "prior_attempt_exception_authorized": True,
@@ -364,11 +366,11 @@ def authorize(ref, commit, event_path, attempt):
 def source_guard(commit, clean):
     require(re.fullmatch(r"[0-9a-f]{40}", commit or ""), "exact source SHA required")
     pinned = {SOURCE, DELIVERY_BASE, OWNER_CORRECTION, PREFLIGHT_BASE, REFINEMENT_BASE,
-              SIGNING_BASE, CMS_BASE, CMS_REPAIR_BASE, SIGNING_VERIFIED_BASE, P04_BASE, ARCHIVE_BASE, EVIDENCE_BASE, ENVIRONMENT_BASE, TRANSFER_BASE, AUTH_BASE, APPLE_ID_BASE, UPLOAD_BASE, CERTIFIED_BASE}
+              SIGNING_BASE, CMS_BASE, CMS_REPAIR_BASE, SIGNING_VERIFIED_BASE, P04_BASE, ARCHIVE_BASE, EVIDENCE_BASE, ENVIRONMENT_BASE, TRANSFER_BASE, AUTH_BASE, APPLE_ID_BASE, UPLOAD_BASE, CERTIFIED_BASE, SOLO_OWNER_BASE}
     require(cert.git("rev-parse", "HEAD").decode().strip() == commit and commit not in pinned,
             "new reviewed delivery-support commit required")
     for child, parent in (
-        (commit, CERTIFIED_BASE), (CERTIFIED_BASE, UPLOAD_BASE), (UPLOAD_BASE, APPLE_ID_BASE), (APPLE_ID_BASE, AUTH_BASE), (AUTH_BASE, TRANSFER_BASE), (TRANSFER_BASE, ENVIRONMENT_BASE), (ENVIRONMENT_BASE, EVIDENCE_BASE), (EVIDENCE_BASE, ARCHIVE_BASE), (ARCHIVE_BASE, P04_BASE), (P04_BASE, SIGNING_VERIFIED_BASE),
+        (commit, SOLO_OWNER_BASE), (SOLO_OWNER_BASE, CERTIFIED_BASE), (CERTIFIED_BASE, UPLOAD_BASE), (UPLOAD_BASE, APPLE_ID_BASE), (APPLE_ID_BASE, AUTH_BASE), (AUTH_BASE, TRANSFER_BASE), (TRANSFER_BASE, ENVIRONMENT_BASE), (ENVIRONMENT_BASE, EVIDENCE_BASE), (EVIDENCE_BASE, ARCHIVE_BASE), (ARCHIVE_BASE, P04_BASE), (P04_BASE, SIGNING_VERIFIED_BASE),
         (SIGNING_VERIFIED_BASE, CMS_REPAIR_BASE),
         (CMS_REPAIR_BASE, CMS_BASE), (CMS_BASE, SIGNING_BASE), (SIGNING_BASE, REFINEMENT_BASE),
         (REFINEMENT_BASE, PREFLIGHT_BASE), (PREFLIGHT_BASE, OWNER_CORRECTION),
@@ -402,7 +404,8 @@ def source_guard(commit, clean):
         (TRANSFER_BASE, AUTH_BASE, "M", FILES),
         (AUTH_BASE, APPLE_ID_BASE, "M", FILES),
         (APPLE_ID_BASE, UPLOAD_BASE, "M", TEST_MODE_FILES),
-        (CERTIFIED_BASE, commit, "M", TEST_MODE_FILES),
+        (CERTIFIED_BASE, SOLO_OWNER_BASE, "M", TEST_MODE_FILES),
+        (SOLO_OWNER_BASE, commit, "M", TEST_MODE_FILES),
         (SOURCE, commit, "A", FILES | PREFLIGHT_FILES | SIGNING_FILES | CMS_FILES | SAFETY_FILES),
     ):
         records = cert.git("diff", "--name-status", "--no-renames", base, target).decode().splitlines()

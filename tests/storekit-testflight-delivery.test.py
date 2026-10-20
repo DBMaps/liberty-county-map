@@ -269,7 +269,8 @@ def owner_automatic_authorization():
             }}
 
 
-def source_git(*, parent=delivery.CERTIFIED_BASE, base_parent=delivery.SOURCE,
+def source_git(*, parent=delivery.SOLO_OWNER_BASE, solo_owner_parent=delivery.CERTIFIED_BASE,
+               solo_owner_inventory=None, base_parent=delivery.SOURCE,
                owner_parent=delivery.DELIVERY_BASE, preflight_parent=delivery.OWNER_CORRECTION,
                preparation=None, past_correction=None, preflight_inventory=None,
                historical_refinement=None, signing_inventory=None, cms_inventory=None,
@@ -300,6 +301,7 @@ def source_git(*, parent=delivery.CERTIFIED_BASE, base_parent=delivery.SOURCE,
     values = {
         ("rev-parse", "HEAD"): COMMIT.encode(),
         ("show", "-s", "--format=%P", COMMIT): parent.encode(),
+        ("show", "-s", "--format=%P", delivery.SOLO_OWNER_BASE): solo_owner_parent.encode(),
         ("show", "-s", "--format=%P", delivery.CERTIFIED_BASE): certified_parent.encode(),
         ("show", "-s", "--format=%P", delivery.REFINEMENT_BASE): refinement_parent.encode(),
         ("show", "-s", "--format=%P", delivery.SIGNING_BASE): signing_parent.encode(),
@@ -336,7 +338,8 @@ def source_git(*, parent=delivery.CERTIFIED_BASE, base_parent=delivery.SOURCE,
         ("diff", "--name-status", "--no-renames", delivery.AUTH_BASE, delivery.APPLE_ID_BASE): modifications if apple_id_inventory is None else apple_id_inventory,
         ("diff", "--name-status", "--no-renames", delivery.APPLE_ID_BASE, delivery.UPLOAD_BASE): test_mode if upload_inventory is None else upload_inventory,
         ("diff", "--name-status", "--no-renames", delivery.UPLOAD_BASE, delivery.CERTIFIED_BASE): safety if certified_inventory is None else certified_inventory,
-        ("diff", "--name-status", "--no-renames", delivery.CERTIFIED_BASE, COMMIT): test_mode if correction is None else correction,
+        ("diff", "--name-status", "--no-renames", delivery.CERTIFIED_BASE, delivery.SOLO_OWNER_BASE): test_mode if solo_owner_inventory is None else solo_owner_inventory,
+        ("diff", "--name-status", "--no-renames", delivery.SOLO_OWNER_BASE, COMMIT): test_mode if correction is None else correction,
         ("diff", "--name-status", "--no-renames", delivery.SOURCE, COMMIT): all_additions if net is None else net,
         ("diff", "--name-only", "HEAD"): dirty,
         ("diff", "--cached", "--name-only"): staged,
@@ -1807,7 +1810,7 @@ security() {
         nodes=lambda text:{n.targets[0].id:n.value for n in ast.parse(text).body
                            if isinstance(n,ast.Assign) and isinstance(n.targets[0],ast.Name)}
         old,new=nodes(before),nodes(after)
-        self.assertEqual(set(new)-set(old),{"CERTIFIED_BASE","PRIOR_ATTEMPT_FIELD","PRIOR_ATTEMPT_RUN","PRIOR_ATTEMPT_CONFIRMATIONS","SAFETY_FILES","UPLOAD_BASE","UPLOAD_ERROR_CATEGORIES","APPLE_ID_BASE","TEST_MODE_FILES","AUTH_BASE","APPLE_ID_AUTH_FIELD","UI_UNUSED_METHOD","UI_UNUSED_CONFIRMATIONS","TRANSFER_BASE","DELIVERY_STAGES","DELIVERY_STAGE_FAILURES","DELIVERY_CATEGORIES","P04_BASE","ARCHIVE_BASE","EVIDENCE_BASE","ENVIRONMENT_BASE","ARCHIVE_RULES","ARCHIVE_MAX_BYTES","ARCHIVE_STRUCTURED_STATES","HISTORY_CATEGORIES","HISTORY_ATTEMPTS",
+        self.assertEqual(set(new)-set(old),{"CERTIFIED_BASE","SOLO_OWNER_BASE","SOLO_OWNER_UI_METHOD","SOLO_OWNER_UI_CONFIRMATIONS","PRIOR_ATTEMPT_FIELD","PRIOR_ATTEMPT_RUN","PRIOR_ATTEMPT_CONFIRMATIONS","SAFETY_FILES","UPLOAD_BASE","UPLOAD_ERROR_CATEGORIES","APPLE_ID_BASE","TEST_MODE_FILES","AUTH_BASE","APPLE_ID_AUTH_FIELD","UI_UNUSED_METHOD","UI_UNUSED_CONFIRMATIONS","TRANSFER_BASE","DELIVERY_STAGES","DELIVERY_STAGE_FAILURES","DELIVERY_CATEGORIES","P04_BASE","ARCHIVE_BASE","EVIDENCE_BASE","ENVIRONMENT_BASE","ARCHIVE_RULES","ARCHIVE_MAX_BYTES","ARCHIVE_STRUCTURED_STATES","HISTORY_CATEGORIES","HISTORY_ATTEMPTS",
                          "HISTORY_WAIT_BUDGET","HISTORY_DEADLINE","HISTORY_TIMEOUT","HISTORY_MAX_BYTES"})
         for name,node in old.items():
             if name=="HISTORICAL_TAGS":
@@ -1882,14 +1885,15 @@ security() {
                 self.assertEqual(historical, delivery.cert.git("show",delivery.CMS_BASE+":"+path),path)
                 if path not in {"tools/apple_storekit_signing_diagnostic.py","tests/storekit-signing-diagnostic.test.py"}:
                     self.assertEqual((ROOT/path).read_bytes().replace(b"\r\n",b"\n"),historical,path)
-        checkpoint=delivery.CERTIFIED_BASE
+        checkpoint=delivery.SOLO_OWNER_BASE
         support={"tools/apple_storekit_testflight_delivery.py","tests/storekit-testflight-delivery.test.py"}
         self.assertEqual(support,delivery.TEST_MODE_FILES)
         def git(*args):
             return delivery.cert.git(*args).decode().strip()
         rows=git("diff","--name-status","--no-renames",checkpoint).splitlines()
         self.assertEqual(delivery.CERTIFIED_BASE,"685d6e70f79792d828a093e5427f76acbeee6341")
-        self.assertEqual(git("show","-s","--format=%P",checkpoint),delivery.UPLOAD_BASE)
+        self.assertEqual(git("show","-s","--format=%P",checkpoint),delivery.CERTIFIED_BASE)
+        self.assertEqual(git("diff","--name-status","--no-renames",delivery.CERTIFIED_BASE,checkpoint).splitlines(),["M\t"+path for path in sorted(support)])
         historical=git("diff","--name-status","--no-renames",delivery.UPLOAD_BASE,checkpoint).splitlines()
         self.assertEqual(set(historical),{"M\t"+path for path in support}|{"A\t"+path for path in delivery.SAFETY_FILES})
         self.assertEqual(len(historical),3)
@@ -3987,8 +3991,8 @@ class PriorAttemptExceptionTests(SyntheticDeliveryTestCase):
         value=owner_automatic_authorization()
         value['unused_build_number_confirmed']=False
         value[delivery.APPLE_ID_AUTH_FIELD]={
-            **dict.fromkeys(delivery.UI_UNUSED_CONFIRMATIONS,True),
-            'method':delivery.UI_UNUSED_METHOD,'owner_checked_at':STAMP,'independent_checked_at':STAMP,
+            **dict.fromkeys(delivery.SOLO_OWNER_UI_CONFIRMATIONS,True),
+            'method':delivery.SOLO_OWNER_UI_METHOD,'owner_checked_at':STAMP,
             'no_pending_or_uncertain_uploads':False,
             delivery.PRIOR_ATTEMPT_FIELD:{
                 **dict.fromkeys(delivery.PRIOR_ATTEMPT_CONFIRMATIONS,True),
@@ -4011,6 +4015,9 @@ class PriorAttemptExceptionTests(SyntheticDeliveryTestCase):
         self.assertNotIn('unused',receipt)
         self.assertNotIn('ACCEPTED',json.dumps(receipt))
         self.assertEqual(receipt['prior_run_id'],39315841160)
+        self.assertEqual(receipt['verification_method'],delivery.SOLO_OWNER_UI_METHOD)
+        self.assertNotIn('independent_checked_at',receipt)
+        self.assertNotIn('independent_checked_at',value[delivery.APPLE_ID_AUTH_FIELD])
 
     def test_normal_strict_option_remains_unchanged_and_requires_truthful_flag(self):
         value=AppleIdDeliveryTests.bind(self)
@@ -4035,7 +4042,7 @@ class PriorAttemptExceptionTests(SyntheticDeliveryTestCase):
         candidate=self.bind();candidate['certified_source_commit']='9'*40
         with self.assertRaises(ValueError):delivery.owner_authorization(candidate,COMMIT,REF,NOW)
 
-    def test_every_owner_and_independent_confirmation_is_mandatory_and_boolean(self):
+    def test_every_owner_confirmation_is_mandatory_and_boolean(self):
         for key in delivery.PRIOR_ATTEMPT_CONFIRMATIONS:
             for invalid in (False,0,1,None,'true'):
                 value=self.bind();self.exception(value)[key]=invalid
@@ -4066,22 +4073,27 @@ class PriorAttemptExceptionTests(SyntheticDeliveryTestCase):
         with self.assertRaises(ValueError):delivery.owner_authorization(value,COMMIT,REF,NOW)
 
     def test_visible_processing_or_new_unresolved_upload_blocks_before_credentials(self):
-        for key in ('owner_verified_no_registered_build','independent_verified_no_registered_build',
-                    'owner_verified_no_processing_build','independent_verified_no_processing_build',
-                    'owner_verified_no_new_pending_or_uncertain_uploads','independent_verified_no_new_pending_or_uncertain_uploads'):
+        for key in ('owner_verified_no_registered_build','owner_verified_no_processing_build',
+                    'owner_verified_no_new_pending_or_uncertain_uploads'):
             value=self.bind();self.exception(value)[key]=False
             calls,_,error=self.exercise(value=value)
             with self.subTest(key=key):self.assertIsInstance(error,ValueError);self.assertEqual(calls,[])
 
     def test_stale_future_malformed_or_missing_ui_evidence_fails(self):
-        for key in ('owner_checked_at','independent_checked_at'):
+        for key in ('owner_checked_at',):
             for offset in (-1801,1):
                 value=self.bind();value[delivery.APPLE_ID_AUTH_FIELD][key]=delivery.dt.datetime.fromtimestamp(NOW+offset,delivery.dt.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
                 with self.subTest(key=key,offset=offset),self.assertRaises(ValueError):delivery.owner_authorization(value,COMMIT,REF,NOW)
             value=self.bind();del value[delivery.APPLE_ID_AUTH_FIELD][key]
             with self.assertRaises(ValueError):delivery.owner_authorization(value,COMMIT,REF,NOW)
-        value=self.bind();value[delivery.APPLE_ID_AUTH_FIELD]['independent_checked_at']='not-a-time'
+        value=self.bind();value[delivery.APPLE_ID_AUTH_FIELD]['independent_checked_at']=STAMP
         with self.assertRaises(ValueError):delivery.owner_authorization(value,COMMIT,REF,NOW)
+        for extra in ('independent_verified_unused','independent_checked_at'):
+            value=self.bind();value[delivery.APPLE_ID_AUTH_FIELD][extra]=True
+            with self.subTest(extra=extra),self.assertRaises(ValueError):delivery.owner_authorization(value,COMMIT,REF,NOW)
+        for extra in ('independent_verified_no_registered_build','independent_verified_no_processing_build','independent_verified_no_new_pending_or_uncertain_uploads'):
+            value=self.bind();self.exception(value)[extra]=True
+            with self.subTest(extra=extra),self.assertRaises(ValueError):delivery.owner_authorization(value,COMMIT,REF,NOW)
         self.assertEqual(delivery.owner_authorization(self.bind(),COMMIT,REF,NOW+1800)['delivery_commit'],COMMIT)
 
     def test_duplicate_authorization_fields_are_not_accepted(self):
@@ -4112,7 +4124,7 @@ class PriorAttemptExceptionTests(SyntheticDeliveryTestCase):
         value=self.bind()
         def update(stage,status):
             if stage=='D05_LIVE_BUILD_AVAILABILITY' and status=='RUNNING':
-                self.exception(value)['independent_verified_no_new_pending_or_uncertain_uploads']=False;self.save(value)
+                self.exception(value)['owner_verified_no_new_pending_or_uncertain_uploads']=False;self.save(value)
         calls,stages,error=self.exercise(value=value,on_progress=update)
         self.assertIsInstance(error,ValueError);self.assertEqual(calls,['--validate-app'])
         self.assertEqual(stages[-1][:2],('D05_LIVE_BUILD_AVAILABILITY','FAIL'))
@@ -4133,7 +4145,8 @@ class PriorAttemptExceptionTests(SyntheticDeliveryTestCase):
     def test_direct_child_inventory_and_certified_history_are_exact(self):
         with patch.object(delivery,'source_guard',self.actual_source_guard),patch.object(delivery.cert,'git',side_effect=source_git()),patch.object(delivery.subprocess,'run'),patch.object(delivery.cert,'original_contracts'):
             self.assertTrue(delivery.source_guard(COMMIT,True)['runtime_unchanged'])
-        for options in ({'parent':delivery.UPLOAD_BASE},{'parent':delivery.CERTIFIED_BASE+' '+'9'*40},
+        for options in ({'parent':delivery.UPLOAD_BASE},{'parent':delivery.SOLO_OWNER_BASE+' '+'9'*40},
+                        {'solo_owner_parent':'9'*40},{'solo_owner_inventory':b''},
                         {'certified_parent':'9'*40},{'certified_inventory':b''},{'correction':b''},
                         {'correction':b'M\tjs/gridly-paid-ui.mjs'},{'mode':'100755'},
                         {'missing_tag':next(iter(delivery.HISTORICAL_TAGS))},{'tag_target':'9'*40}):
