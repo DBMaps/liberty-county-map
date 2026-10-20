@@ -45,6 +45,7 @@ TRANSFER_BASE = "2cca00a2248e9a0c04ef5173e3364709a517f31e"
 AUTH_BASE = "03620e25ed19fc70ab9e493627fb84c4b9a3617c"
 APPLE_ID_BASE = "0c17376475cf76798d553e7b9717543056df1595"
 UPLOAD_BASE = "54cbf359ac73225d0354491409533d1ea613d885"
+CERTIFIED_BASE = "685d6e70f79792d828a093e5427f76acbeee6341"
 TEST_MODE_FILES = {
     "tools/apple_storekit_testflight_delivery.py",
     "tests/storekit-testflight-delivery.test.py",
@@ -111,9 +112,9 @@ FILES = {
 # The historical four-file refinement is pinned at REFINEMENT_BASE.
 # REPAIR_FILES remains the pinned four-file CMS repair inventory.
 # The three-file Apple ID correction is pinned at APPLE_ID_BASE.
-# The test-mode correction is pinned at UPLOAD_BASE. Permit one direct-child
-# upload-reporting correction of the two support files plus one isolated test workflow;
-# older inventories and all delivery workflow bytes stay pinned.
+# The complete safety candidate is pinned at CERTIFIED_BASE. Permit exactly one
+# direct-child authorization correction of TEST_MODE_FILES only. The historical
+# three-file candidate and every older inventory remain pinned.
 REFINEMENT_FILES = FILES | {"tests/storekit-preflight-diagnostic.test.py"}
 REPAIR_FILES = FILES | {"tests/storekit-signing-diagnostic.test.py"}
 HISTORICAL_TAGS = {
@@ -174,6 +175,19 @@ UI_UNUSED_CONFIRMATIONS = {
 }
 
 
+PRIOR_ATTEMPT_FIELD = "prior_attempt_exception"
+PRIOR_ATTEMPT_RUN = 39315841160
+PRIOR_ATTEMPT_CONFIRMATIONS = {
+    "authorized", "historical_acceptance_unknown_acknowledged",
+    "duplicate_risk_acknowledged", "one_additional_upload_authorized",
+    "owner_verified_no_registered_build", "independent_verified_no_registered_build",
+    "owner_verified_no_processing_build", "independent_verified_no_processing_build",
+    "owner_verified_no_new_pending_or_uncertain_uploads",
+    "independent_verified_no_new_pending_or_uncertain_uploads",
+    "exception_not_previously_used_confirmed",
+}
+
+
 def require(value, reason):
     # Security checks must also work if Python is run with optimization enabled.
     if not value:
@@ -200,6 +214,9 @@ def owner_authorization(value, commit, ref, now=None):
     require(type(value["certification_run_id"]) is int and value["certification_run_id"] == RUN, "wrong certification run")
     require(value["diagnostic_build_number"] == "15", "only unused diagnostic Build 15 allowed")
     common = CONFIRMATIONS - {"testflight_auto_distribution_disabled"}
+    if isinstance(value.get(APPLE_ID_AUTH_FIELD), dict) and PRIOR_ATTEMPT_FIELD in value[APPLE_ID_AUTH_FIELD]:
+        require(value["unused_build_number_confirmed"] is False, "historical build-number uncertainty must remain explicit")
+        common = common - {"unused_build_number_confirmed"}
     require(all(value[key] is True for key in common), "explicit confirmations required")
     if OWNER_AUTO_FIELD in value:
         require(value["testflight_auto_distribution_disabled"] is False, "contradictory automatic distribution authorization")
@@ -227,6 +244,8 @@ def owner_authorization(value, commit, ref, now=None):
 def ui_unused_build(authorization, now=None):
     """Explicit owner-approved UI evidence, never an invented live API response."""
     evidence = authorization.get(APPLE_ID_AUTH_FIELD)
+    if isinstance(evidence, dict) and PRIOR_ATTEMPT_FIELD in evidence:
+        return prior_attempt_evidence(authorization, now)
     require(isinstance(evidence, dict) and set(evidence) == UI_UNUSED_CONFIRMATIONS | {
         "method", "owner_checked_at", "independent_checked_at",
     }, "complete independent UI build evidence required")
@@ -246,6 +265,61 @@ def ui_unused_build(authorization, now=None):
     return {"build": "15", "version": "1.0.0", "unused": True, "verification_method": UI_UNUSED_METHOD,
             "owner_checked_at": evidence["owner_checked_at"],
             "independent_checked_at": evidence["independent_checked_at"]}
+
+
+def prior_attempt_evidence(authorization, now=None):
+    """One acknowledged historical uncertainty; never manufacture Apple acceptance."""
+    evidence = authorization.get(APPLE_ID_AUTH_FIELD)
+    require(isinstance(evidence, dict) and set(evidence) == UI_UNUSED_CONFIRMATIONS | {
+        "method", "owner_checked_at", "independent_checked_at", PRIOR_ATTEMPT_FIELD,
+    }, "complete prior-attempt UI evidence required")
+    require(evidence["method"] == UI_UNUSED_METHOD
+            and all(evidence[key] is True for key in UI_UNUSED_CONFIRMATIONS - {"no_pending_or_uncertain_uploads"})
+            and evidence["no_pending_or_uncertain_uploads"] is False,
+            "historical uncertainty must remain explicit")
+    exception = evidence[PRIOR_ATTEMPT_FIELD]
+    require(isinstance(exception, dict) and set(exception) == PRIOR_ATTEMPT_CONFIRMATIONS | {
+        "prior_run_id", "bundle_id", "platform", "version", "build", "certified_candidate_commit",
+    }, "exact one-time prior-attempt exception required")
+    require(all(exception[key] is True for key in PRIOR_ATTEMPT_CONFIRMATIONS),
+            "explicit one-time owner and independent confirmations required")
+    require(type(exception["prior_run_id"]) is int and exception["prior_run_id"] == PRIOR_ATTEMPT_RUN,
+            "only the historical Build 15 attempt allowed")
+    require(exception["bundle_id"] == "com.gridlygo.gridly" and exception["platform"] == "IOS"
+            and exception["version"] == "1.0.0" and exception["build"] == "15"
+            and authorization.get("diagnostic_build_number") == "15", "only Gridly iOS 1.0.0 Build 15 allowed")
+    require(exception["certified_candidate_commit"] == CERTIFIED_BASE
+            and authorization.get("certified_source_commit") == SOURCE
+            and isinstance(authorization.get("delivery_commit"), str)
+            and re.fullmatch(r"[0-9a-f]{40}", authorization["delivery_commit"])
+            and authorization["delivery_commit"] != CERTIFIED_BASE,
+            "exact certified recovery lineage required")
+    require(authorization.get("testflight_upload_authorized") is True,
+            "separate owner upload approval required")
+    require(authorization.get("unused_build_number_confirmed") is False,
+            "historical build-number uncertainty must remain explicit")
+    require(evidence["owner_checked_at"] == authorization.get("owner_checks_at"),
+            "UI owner check must match the owner authorization")
+    moment = time.time() if now is None else now
+    for name in ("owner_checked_at", "independent_checked_at"):
+        stamp = evidence[name]
+        require(isinstance(stamp, str) and re.fullmatch(r"\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ", stamp),
+                "genuine UTC UI evidence time required")
+        checked = dt.datetime.strptime(stamp, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=dt.timezone.utc).timestamp()
+        require(0 <= moment - checked <= OWNER_CHECK_TTL, "independent UI build evidence expired")
+    return {"build": "15", "version": "1.0.0", "verification_method": UI_UNUSED_METHOD,
+            "registered_build_visible": False, "historical_transport_acceptance": "UNKNOWN",
+            "prior_run_id": PRIOR_ATTEMPT_RUN, "prior_attempt_exception_authorized": True,
+            "owner_checked_at": evidence["owner_checked_at"], "independent_checked_at": evidence["independent_checked_at"]}
+
+
+def prior_attempt_slot(ref, commit):
+    """Preserved tag history consumes this exception even if that run fails early."""
+    require(ref == PREFIX + commit and commit != CERTIFIED_BASE, "exact one-time delivery tag required")
+    refs = cert.git("rev-parse", "--symbolic-full-name", "--tags=" + PREFIX.removeprefix("refs/tags/") + "*").decode().splitlines()
+    expected = {"refs/tags/" + name for name in HISTORICAL_TAGS if ("refs/tags/" + name).startswith(PREFIX)} | {ref}
+    require(set(refs) == expected and len(refs) == len(expected),
+            "prior-attempt exception already consumed or new delivery attempt unresolved")
 
 
 def apple_id_command(root, ipa, values):
@@ -280,6 +354,8 @@ def authorize(ref, commit, event_path, attempt):
     event_gate(read_json(event_path), ref, commit, attempt, cert.git("rev-parse", "--verify", ref).decode().strip())
     value = json.loads(annotation, object_pairs_hook=cert.unique_json_object)
     owner_authorization(value, commit, ref)
+    if PRIOR_ATTEMPT_FIELD in value.get(APPLE_ID_AUTH_FIELD, {}):
+        prior_attempt_slot(ref, commit)
     if os.environ.get("GRIDLY_UPLOAD_AUTHENTICATION") == "APPLE_ID":
         require(APPLE_ID_AUTH_FIELD in value, "explicit Apple ID UI authorization required")
     return {"authorization": value, "ref": ref, "source_commit": commit, "build": "15"}
@@ -288,11 +364,11 @@ def authorize(ref, commit, event_path, attempt):
 def source_guard(commit, clean):
     require(re.fullmatch(r"[0-9a-f]{40}", commit or ""), "exact source SHA required")
     pinned = {SOURCE, DELIVERY_BASE, OWNER_CORRECTION, PREFLIGHT_BASE, REFINEMENT_BASE,
-              SIGNING_BASE, CMS_BASE, CMS_REPAIR_BASE, SIGNING_VERIFIED_BASE, P04_BASE, ARCHIVE_BASE, EVIDENCE_BASE, ENVIRONMENT_BASE, TRANSFER_BASE, AUTH_BASE, APPLE_ID_BASE, UPLOAD_BASE}
+              SIGNING_BASE, CMS_BASE, CMS_REPAIR_BASE, SIGNING_VERIFIED_BASE, P04_BASE, ARCHIVE_BASE, EVIDENCE_BASE, ENVIRONMENT_BASE, TRANSFER_BASE, AUTH_BASE, APPLE_ID_BASE, UPLOAD_BASE, CERTIFIED_BASE}
     require(cert.git("rev-parse", "HEAD").decode().strip() == commit and commit not in pinned,
             "new reviewed delivery-support commit required")
     for child, parent in (
-        (commit, UPLOAD_BASE), (UPLOAD_BASE, APPLE_ID_BASE), (APPLE_ID_BASE, AUTH_BASE), (AUTH_BASE, TRANSFER_BASE), (TRANSFER_BASE, ENVIRONMENT_BASE), (ENVIRONMENT_BASE, EVIDENCE_BASE), (EVIDENCE_BASE, ARCHIVE_BASE), (ARCHIVE_BASE, P04_BASE), (P04_BASE, SIGNING_VERIFIED_BASE),
+        (commit, CERTIFIED_BASE), (CERTIFIED_BASE, UPLOAD_BASE), (UPLOAD_BASE, APPLE_ID_BASE), (APPLE_ID_BASE, AUTH_BASE), (AUTH_BASE, TRANSFER_BASE), (TRANSFER_BASE, ENVIRONMENT_BASE), (ENVIRONMENT_BASE, EVIDENCE_BASE), (EVIDENCE_BASE, ARCHIVE_BASE), (ARCHIVE_BASE, P04_BASE), (P04_BASE, SIGNING_VERIFIED_BASE),
         (SIGNING_VERIFIED_BASE, CMS_REPAIR_BASE),
         (CMS_REPAIR_BASE, CMS_BASE), (CMS_BASE, SIGNING_BASE), (SIGNING_BASE, REFINEMENT_BASE),
         (REFINEMENT_BASE, PREFLIGHT_BASE), (PREFLIGHT_BASE, OWNER_CORRECTION),
@@ -326,6 +402,7 @@ def source_guard(commit, clean):
         (TRANSFER_BASE, AUTH_BASE, "M", FILES),
         (AUTH_BASE, APPLE_ID_BASE, "M", FILES),
         (APPLE_ID_BASE, UPLOAD_BASE, "M", TEST_MODE_FILES),
+        (CERTIFIED_BASE, commit, "M", TEST_MODE_FILES),
         (SOURCE, commit, "A", FILES | PREFLIGHT_FILES | SIGNING_FILES | CMS_FILES | SAFETY_FILES),
     ):
         records = cert.git("diff", "--name-status", "--no-renames", base, target).decode().splitlines()
@@ -334,10 +411,12 @@ def source_guard(commit, clean):
         for path in inventory:
             require(cert.git("ls-tree", target, "--", path).decode().split()[0] == "100644",
                     "historical or current support file mode changed")
-    records = cert.git("diff", "--name-status", "--no-renames", UPLOAD_BASE, commit).decode().splitlines()
+    records = cert.git("diff", "--name-status", "--no-renames", UPLOAD_BASE, CERTIFIED_BASE).decode().splitlines()
     expected = {"M\t" + path for path in TEST_MODE_FILES} | {"A\t" + path for path in SAFETY_FILES}
     require(set(records) == expected and len(records) == len(expected),
             "exact two delivery repairs and one test-only workflow required")
+    for path in TEST_MODE_FILES | SAFETY_FILES:
+        require(cert.git("ls-tree", CERTIFIED_BASE, "--", path).decode().split()[0] == "100644", "certified safety file mode changed")
     for path in FILES | PREFLIGHT_FILES | SIGNING_FILES | CMS_FILES | SAFETY_FILES:
         require(cert.git("ls-tree", commit, "--", path).decode().split()[0] == "100644", "support file mode changed")
     require(not cert.git("diff", "--name-only", "HEAD"), "tracked working source changed")
@@ -659,7 +738,10 @@ def delivery_preflight(root, commit, output, github_env, environment=None, execu
 def authorization_guard(root, commit, now=None):
     report = read_json(root / "reports/delivery-authorization.json")
     require(report["source_commit"] == commit and report["build"] == "15", "wrong authorization report")
-    return owner_authorization(report["authorization"], commit, report["ref"], now)
+    value = owner_authorization(report["authorization"], commit, report["ref"], now)
+    if PRIOR_ATTEMPT_FIELD in value.get(APPLE_ID_AUTH_FIELD, {}):
+        prior_attempt_slot(report["ref"], commit)
+    return value
 
 
 def export_guard(path):
