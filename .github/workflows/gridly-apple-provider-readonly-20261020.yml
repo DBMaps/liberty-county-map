@@ -18,8 +18,8 @@ jobs:
       github.event.deleted == false &&
       github.event.forced == false &&
       github.run_attempt == 1 &&
-      github.event.before == '6f262d3126221d29e1a7b645e3071fb32a380c3b' &&
-      github.event.head_commit.message == 'Use documented legacy format for Gridly provider lookup'
+      github.event.before == 'c84b02eaa1b394f327887210441ece8cd9bfb3b5' &&
+      github.event.head_commit.message == 'Fallback to safe plain-text Apple provider listing'
     runs-on: macos-26
     timeout-minutes: 7
     steps:
@@ -76,13 +76,38 @@ jobs:
               result('PROVIDER_RESPONSE_REJECTED')
           providers = data.get('providers')
           if not isinstance(providers, list):
-              if isinstance(data.get('data'), list):
-                  print('PROVIDER_SCHEMA_HINT=DATA_ARRAY', flush=True)
-              elif isinstance(data.get('result'), dict):
-                  print('PROVIDER_SCHEMA_HINT=RESULT_OBJECT', flush=True)
+              # Apple's altool supports a normal plain-text listing; never log it.
+              plain_command = ['xcrun', 'altool', '--list-providers',
+                               '--output-format', 'normal',
+                               '--username', username,
+                               '--password', '@env:APPLE_APP_SPECIFIC_PASSWORD']
+              try:
+                  plain = subprocess.run(plain_command, stdout=subprocess.PIPE,
+                                         stderr=subprocess.PIPE, timeout=90,
+                                         check=False)
+              except (OSError, subprocess.TimeoutExpired):
+                  result('PLAIN_PROVIDER_LOOKUP_UNAVAILABLE')
+              if plain.returncode != 0 or len(plain.stdout) > 1048576:
+                  result('PLAIN_PROVIDER_LOOKUP_FAILED')
+              try:
+                  listing = plain.stdout.decode('utf-8', errors='strict')
+              except UnicodeError:
+                  result('PLAIN_PROVIDER_TEXT_INVALID')
+              pattern = re.compile(r'(?<![0-9a-fA-F])([0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12})(?![0-9a-fA-F])')
+              providers = []
+              for line in listing.splitlines():
+                  match = pattern.search(line)
+                  if match is None:
+                      continue
+                  after = line[match.end():].strip().split()
+                  if after and re.fullmatch(r'[A-Z0-9]{10}', after[0]):
+                      providers.append({'PublicID': match.group(1),
+                                        'WWDRTeamID': after[0]})
+              if providers:
+                  print('PROVIDER_EVIDENCE_FORMAT=PLAIN_TEXT', flush=True)
               else:
-                  print('PROVIDER_SCHEMA_HINT=NO_RECOGNIZED_ARRAY', flush=True)
-              result('PROVIDER_LIST_UNAVAILABLE')
+                  print('PROVIDER_EVIDENCE_FORMAT=UNRECOGNIZED', flush=True)
+                  result('PROVIDER_LIST_UNAVAILABLE')
           if not 1 <= len(providers) <= 100:
               result('PROVIDER_LIST_UNAVAILABLE')
 
