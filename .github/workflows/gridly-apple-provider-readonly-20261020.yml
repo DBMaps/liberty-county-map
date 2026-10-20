@@ -1,0 +1,99 @@
+name: Gridly Apple Provider Association — Read Only
+
+on:
+  push:
+    branches:
+      - 'codex/gridly-apple-provider-readonly-20261020'
+    paths:
+      - '.github/workflows/gridly-apple-provider-readonly-20261020.yml'
+
+permissions: {}
+
+jobs:
+  check-provider:
+    if: >-
+      github.repository == 'DBMaps/liberty-county-map' &&
+      github.event_name == 'push' &&
+      github.event.created == false &&
+      github.event.deleted == false &&
+      github.event.forced == false &&
+      github.run_attempt == 1 &&
+      github.event.before == '8934b648d884a07c0957c1b9ece8b90459189674' &&
+      github.event.head_commit.message == 'One-time read-only Apple provider association check'
+    runs-on: macos-26
+    timeout-minutes: 7
+    steps:
+      - name: Read-only Apple provider association (no upload)
+        shell: bash
+        env:
+          APPLE_ID_USERNAME: ${{ secrets.APPLE_ID_USERNAME }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+        run: |
+          set -euo pipefail
+          set +x
+          python3 -B - <<'PY'
+          import json
+          import os
+          import re
+          import subprocess
+          import sys
+
+          def result(code, ok=False, count=None, matched=None):
+              print('GRIDLY_APPLE_PROVIDER_STATUS=' + code, flush=True)
+              if count is not None:
+                  print('PROVIDER_COUNT=' + str(count), flush=True)
+              if matched is not None:
+                  print('GRIDLY_SIGNING_TEAM_MATCH_COUNT=' + str(matched), flush=True)
+              sys.exit(0 if ok else 1)
+
+          username = os.environ.get('APPLE_ID_USERNAME', '')
+          password = os.environ.get('APPLE_APP_SPECIFIC_PASSWORD', '')
+          if not username or not password or any(c in username + password for c in '\r\n\x00'):
+              result('APPLE_CREDENTIALS_UNAVAILABLE')
+
+          # The password is never passed as an argument or printed.
+          command = ['xcrun', 'altool', '--list-providers', '--output-format', 'json',
+                     '--username', username, '--password', '@env:APPLE_APP_SPECIFIC_PASSWORD']
+          try:
+              attempt = subprocess.run(command, stdout=subprocess.PIPE,
+                                       stderr=subprocess.PIPE, timeout=90, check=False)
+          except subprocess.TimeoutExpired:
+              result('PROVIDER_LOOKUP_TIMEOUT')
+          except OSError:
+              result('PROVIDER_LOOKUP_UNAVAILABLE')
+
+          if attempt.returncode != 0:
+              result('PROVIDER_LOOKUP_PROCESS_FAILED')
+          if len(attempt.stdout) > 1048576:
+              result('PROVIDER_RESPONSE_TOO_LARGE')
+          try:
+              data = json.loads(attempt.stdout.decode('utf-8', errors='strict'))
+          except (ValueError, UnicodeError):
+              result('PROVIDER_RESPONSE_UNRECOGNIZED')
+          if not isinstance(data, dict) or 'errors' in data or 'product-errors' in data:
+              result('PROVIDER_RESPONSE_REJECTED')
+          providers = data.get('providers')
+          if not isinstance(providers, list) or not 1 <= len(providers) <= 100:
+              result('PROVIDER_LIST_UNAVAILABLE')
+
+          ids = []
+          team_matches = 0
+          for provider in providers:
+              if not isinstance(provider, dict):
+                  result('PROVIDER_SCHEMA_REJECTED')
+              public_id = provider.get('PublicID')
+              if not isinstance(public_id, str) or not re.fullmatch(
+                  r'[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}', public_id):
+                  result('PROVIDER_ID_SCHEMA_REJECTED')
+              ids.append(public_id.lower())
+              if provider.get('WWDRTeamID') == '2XSH6R7K37':
+                  team_matches += 1
+          if len(ids) != len(set(ids)):
+              result('PROVIDER_IDS_AMBIGUOUS')
+          if team_matches != 1:
+              result('GRIDLY_SIGNING_TEAM_NOT_UNIQUELY_MATCHED', count=len(ids), matched=team_matches)
+          if len(ids) == 1:
+              result('SINGLE_PROVIDER_GRIDLY_TEAM_VERIFIED', ok=True, count=1, matched=1)
+          result('MULTIPLE_PROVIDERS_GRIDLY_TEAM_VERIFIED', ok=True, count=len(ids), matched=1)
+          # Deliberately do not print Apple account details, provider IDs or raw responses.
+          PY
