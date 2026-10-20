@@ -49,6 +49,9 @@ CERTIFIED_BASE = "685d6e70f79792d828a093e5427f76acbeee6341"
 SOLO_OWNER_BASE = "a5e996ba6feca4d1c9274d54594613fdf9cc0489"
 SOLO_OWNER_ATTEST_BASE = "133c5068895f65408dac5c6549609bf1aa05c72c"
 SOLO_OWNER_FIX_BASE = "58b83364585da5d7a2bf535217251ab944728d85"
+FAILED_AUTH_BASE = "fce13ac4484e7b348a152a16b6ddd8226f173325"
+FAILED_AUTH_TAG = "refs/tags/gridly-storekit-testflight-deliver-15-" + FAILED_AUTH_BASE
+FAILED_AUTH_TAG_OBJECT = "900887b07a73fa3014173610cd0eba28db66a481"
 TEST_MODE_FILES = {
     "tools/apple_storekit_testflight_delivery.py",
     "tests/storekit-testflight-delivery.test.py",
@@ -321,7 +324,12 @@ def prior_attempt_slot(ref, commit):
     """Preserved tag history consumes this exception even if that run fails early."""
     require(ref == PREFIX + commit and commit != CERTIFIED_BASE, "exact one-time delivery tag required")
     refs = cert.git("rev-parse", "--symbolic-full-name", "--tags=" + PREFIX.removeprefix("refs/tags/") + "*").decode().splitlines()
-    expected = {"refs/tags/" + name for name in HISTORICAL_TAGS if ("refs/tags/" + name).startswith(PREFIX)} | {ref}
+    require(ref != FAILED_AUTH_TAG and commit != FAILED_AUTH_BASE, "failed authorization tag cannot be reused")
+    require(cert.git("cat-file", "-t", FAILED_AUTH_TAG).decode().strip() == "tag"
+            and cert.git("rev-parse", "--verify", FAILED_AUTH_TAG).decode().strip() == FAILED_AUTH_TAG_OBJECT
+            and cert.git("rev-parse", "--verify", FAILED_AUTH_TAG + "^{}").decode().strip() == FAILED_AUTH_BASE,
+            "only the documented failed pre-build authorization may be recovered")
+    expected = {"refs/tags/" + name for name in HISTORICAL_TAGS if ("refs/tags/" + name).startswith(PREFIX)} | {FAILED_AUTH_TAG, ref}
     require(set(refs) == expected and len(refs) == len(expected),
             "prior-attempt exception already consumed or new delivery attempt unresolved")
 
@@ -368,11 +376,11 @@ def authorize(ref, commit, event_path, attempt):
 def source_guard(commit, clean):
     require(re.fullmatch(r"[0-9a-f]{40}", commit or ""), "exact source SHA required")
     pinned = {SOURCE, DELIVERY_BASE, OWNER_CORRECTION, PREFLIGHT_BASE, REFINEMENT_BASE,
-              SIGNING_BASE, CMS_BASE, CMS_REPAIR_BASE, SIGNING_VERIFIED_BASE, P04_BASE, ARCHIVE_BASE, EVIDENCE_BASE, ENVIRONMENT_BASE, TRANSFER_BASE, AUTH_BASE, APPLE_ID_BASE, UPLOAD_BASE, CERTIFIED_BASE, SOLO_OWNER_BASE, SOLO_OWNER_ATTEST_BASE, SOLO_OWNER_FIX_BASE}
+              SIGNING_BASE, CMS_BASE, CMS_REPAIR_BASE, SIGNING_VERIFIED_BASE, P04_BASE, ARCHIVE_BASE, EVIDENCE_BASE, ENVIRONMENT_BASE, TRANSFER_BASE, AUTH_BASE, APPLE_ID_BASE, UPLOAD_BASE, CERTIFIED_BASE, SOLO_OWNER_BASE, SOLO_OWNER_ATTEST_BASE, SOLO_OWNER_FIX_BASE, FAILED_AUTH_BASE}
     require(cert.git("rev-parse", "HEAD").decode().strip() == commit and commit not in pinned,
             "new reviewed delivery-support commit required")
     for child, parent in (
-        (commit, SOLO_OWNER_FIX_BASE), (SOLO_OWNER_FIX_BASE, SOLO_OWNER_ATTEST_BASE),
+        (commit, FAILED_AUTH_BASE), (FAILED_AUTH_BASE, SOLO_OWNER_FIX_BASE), (SOLO_OWNER_FIX_BASE, SOLO_OWNER_ATTEST_BASE),
         (SOLO_OWNER_ATTEST_BASE, SOLO_OWNER_BASE), (SOLO_OWNER_BASE, CERTIFIED_BASE), (CERTIFIED_BASE, UPLOAD_BASE), (UPLOAD_BASE, APPLE_ID_BASE), (APPLE_ID_BASE, AUTH_BASE), (AUTH_BASE, TRANSFER_BASE), (TRANSFER_BASE, ENVIRONMENT_BASE), (ENVIRONMENT_BASE, EVIDENCE_BASE), (EVIDENCE_BASE, ARCHIVE_BASE), (ARCHIVE_BASE, P04_BASE), (P04_BASE, SIGNING_VERIFIED_BASE),
         (SIGNING_VERIFIED_BASE, CMS_REPAIR_BASE),
         (CMS_REPAIR_BASE, CMS_BASE), (CMS_BASE, SIGNING_BASE), (SIGNING_BASE, REFINEMENT_BASE),
@@ -410,7 +418,8 @@ def source_guard(commit, clean):
         (CERTIFIED_BASE, SOLO_OWNER_BASE, "M", TEST_MODE_FILES),
         (SOLO_OWNER_BASE, SOLO_OWNER_ATTEST_BASE, "M", TEST_MODE_FILES),
         (SOLO_OWNER_ATTEST_BASE, SOLO_OWNER_FIX_BASE, "M", TEST_MODE_FILES),
-        (SOLO_OWNER_FIX_BASE, commit, "M", TEST_MODE_FILES),
+        (SOLO_OWNER_FIX_BASE, FAILED_AUTH_BASE, "M", TEST_MODE_FILES),
+        (FAILED_AUTH_BASE, commit, "M", TEST_MODE_FILES),
         (SOURCE, commit, "A", FILES | PREFLIGHT_FILES | SIGNING_FILES | CMS_FILES | SAFETY_FILES),
     ):
         records = cert.git("diff", "--name-status", "--no-renames", base, target).decode().splitlines()

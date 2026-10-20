@@ -269,7 +269,7 @@ def owner_automatic_authorization():
             }}
 
 
-def source_git(*, parent=delivery.SOLO_OWNER_FIX_BASE,
+def source_git(*, parent=delivery.FAILED_AUTH_BASE, failed_auth_parent=delivery.SOLO_OWNER_FIX_BASE, failed_auth_inventory=None,
                solo_fix_parent=delivery.SOLO_OWNER_ATTEST_BASE,
                solo_attest_parent=delivery.SOLO_OWNER_BASE,
                solo_owner_parent=delivery.CERTIFIED_BASE,
@@ -305,6 +305,7 @@ def source_git(*, parent=delivery.SOLO_OWNER_FIX_BASE,
     values = {
         ("rev-parse", "HEAD"): COMMIT.encode(),
         ("show", "-s", "--format=%P", COMMIT): parent.encode(),
+        ("show", "-s", "--format=%P", delivery.FAILED_AUTH_BASE): failed_auth_parent.encode(),
         ("show", "-s", "--format=%P", delivery.SOLO_OWNER_FIX_BASE): solo_fix_parent.encode(),
         ("show", "-s", "--format=%P", delivery.SOLO_OWNER_ATTEST_BASE): solo_attest_parent.encode(),
         ("show", "-s", "--format=%P", delivery.SOLO_OWNER_BASE): solo_owner_parent.encode(),
@@ -347,7 +348,8 @@ def source_git(*, parent=delivery.SOLO_OWNER_FIX_BASE,
         ("diff", "--name-status", "--no-renames", delivery.CERTIFIED_BASE, delivery.SOLO_OWNER_BASE): test_mode if solo_owner_inventory is None else solo_owner_inventory,
         ("diff", "--name-status", "--no-renames", delivery.SOLO_OWNER_BASE, delivery.SOLO_OWNER_ATTEST_BASE): test_mode if solo_attest_inventory is None else solo_attest_inventory,
         ("diff", "--name-status", "--no-renames", delivery.SOLO_OWNER_ATTEST_BASE, delivery.SOLO_OWNER_FIX_BASE): test_mode if solo_fix_inventory is None else solo_fix_inventory,
-        ("diff", "--name-status", "--no-renames", delivery.SOLO_OWNER_FIX_BASE, COMMIT): test_mode if correction is None else correction,
+        ("diff", "--name-status", "--no-renames", delivery.SOLO_OWNER_FIX_BASE, delivery.FAILED_AUTH_BASE): test_mode if failed_auth_inventory is None else failed_auth_inventory,
+        ("diff", "--name-status", "--no-renames", delivery.FAILED_AUTH_BASE, COMMIT): test_mode if correction is None else correction,
         ("diff", "--name-status", "--no-renames", delivery.SOURCE, COMMIT): all_additions if net is None else net,
         ("diff", "--name-only", "HEAD"): dirty,
         ("diff", "--cached", "--name-only"): staged,
@@ -368,7 +370,7 @@ def source_git(*, parent=delivery.SOLO_OWNER_FIX_BASE,
     for path in delivery.TEST_MODE_FILES | delivery.SAFETY_FILES:
         values[("ls-tree", delivery.CERTIFIED_BASE, "--", path)] = ("100644 blob " + "0"*40 + "\t" + path).encode()
     for path in delivery.TEST_MODE_FILES:
-        for checkpoint in (delivery.SOLO_OWNER_BASE, delivery.SOLO_OWNER_ATTEST_BASE, delivery.SOLO_OWNER_FIX_BASE):
+        for checkpoint in (delivery.SOLO_OWNER_BASE, delivery.SOLO_OWNER_ATTEST_BASE, delivery.SOLO_OWNER_FIX_BASE, delivery.FAILED_AUTH_BASE):
             values[("ls-tree", checkpoint, "--", path)] = ("100644 blob " + "0"*40 + "\t" + path).encode()
     for path in delivery.FILES | delivery.PREFLIGHT_FILES | delivery.SIGNING_FILES | delivery.CMS_FILES | delivery.SAFETY_FILES:
         values[("ls-tree", COMMIT, "--", path)] = (mode + " blob " + "0"*40 + "\t" + path).encode()
@@ -1821,7 +1823,7 @@ security() {
         nodes=lambda text:{n.targets[0].id:n.value for n in ast.parse(text).body
                            if isinstance(n,ast.Assign) and isinstance(n.targets[0],ast.Name)}
         old,new=nodes(before),nodes(after)
-        self.assertEqual(set(new)-set(old),{"CERTIFIED_BASE","SOLO_OWNER_BASE","SOLO_OWNER_ATTEST_BASE","SOLO_OWNER_FIX_BASE","SOLO_OWNER_UI_METHOD","SOLO_OWNER_UI_CONFIRMATIONS","PRIOR_ATTEMPT_FIELD","PRIOR_ATTEMPT_RUN","PRIOR_ATTEMPT_CONFIRMATIONS","SAFETY_FILES","UPLOAD_BASE","UPLOAD_ERROR_CATEGORIES","APPLE_ID_BASE","TEST_MODE_FILES","AUTH_BASE","APPLE_ID_AUTH_FIELD","UI_UNUSED_METHOD","UI_UNUSED_CONFIRMATIONS","TRANSFER_BASE","DELIVERY_STAGES","DELIVERY_STAGE_FAILURES","DELIVERY_CATEGORIES","P04_BASE","ARCHIVE_BASE","EVIDENCE_BASE","ENVIRONMENT_BASE","ARCHIVE_RULES","ARCHIVE_MAX_BYTES","ARCHIVE_STRUCTURED_STATES","HISTORY_CATEGORIES","HISTORY_ATTEMPTS",
+        self.assertEqual(set(new)-set(old),{"CERTIFIED_BASE","SOLO_OWNER_BASE","SOLO_OWNER_ATTEST_BASE","SOLO_OWNER_FIX_BASE","FAILED_AUTH_BASE","FAILED_AUTH_TAG","FAILED_AUTH_TAG_OBJECT","SOLO_OWNER_UI_METHOD","SOLO_OWNER_UI_CONFIRMATIONS","PRIOR_ATTEMPT_FIELD","PRIOR_ATTEMPT_RUN","PRIOR_ATTEMPT_CONFIRMATIONS","SAFETY_FILES","UPLOAD_BASE","UPLOAD_ERROR_CATEGORIES","APPLE_ID_BASE","TEST_MODE_FILES","AUTH_BASE","APPLE_ID_AUTH_FIELD","UI_UNUSED_METHOD","UI_UNUSED_CONFIRMATIONS","TRANSFER_BASE","DELIVERY_STAGES","DELIVERY_STAGE_FAILURES","DELIVERY_CATEGORIES","P04_BASE","ARCHIVE_BASE","EVIDENCE_BASE","ENVIRONMENT_BASE","ARCHIVE_RULES","ARCHIVE_MAX_BYTES","ARCHIVE_STRUCTURED_STATES","HISTORY_CATEGORIES","HISTORY_ATTEMPTS",
                          "HISTORY_WAIT_BUDGET","HISTORY_DEADLINE","HISTORY_TIMEOUT","HISTORY_MAX_BYTES"})
         for name,node in old.items():
             if name=="HISTORICAL_TAGS":
@@ -1896,19 +1898,21 @@ security() {
                 self.assertEqual(historical, delivery.cert.git("show",delivery.CMS_BASE+":"+path),path)
                 if path not in {"tools/apple_storekit_signing_diagnostic.py","tests/storekit-signing-diagnostic.test.py"}:
                     self.assertEqual((ROOT/path).read_bytes().replace(b"\r\n",b"\n"),historical,path)
-        checkpoint=delivery.SOLO_OWNER_FIX_BASE
+        checkpoint=delivery.FAILED_AUTH_BASE
         support={"tools/apple_storekit_testflight_delivery.py","tests/storekit-testflight-delivery.test.py"}
         self.assertEqual(support,delivery.TEST_MODE_FILES)
         def git(*args):
             return delivery.cert.git(*args).decode().strip()
         rows=git("diff","--name-status","--no-renames",checkpoint).splitlines()
         self.assertEqual(delivery.CERTIFIED_BASE,"685d6e70f79792d828a093e5427f76acbeee6341")
-        self.assertEqual(git("show","-s","--format=%P",checkpoint),delivery.SOLO_OWNER_ATTEST_BASE)
+        self.assertEqual(git("show","-s","--format=%P",checkpoint),delivery.SOLO_OWNER_FIX_BASE)
+        self.assertEqual(git("show","-s","--format=%P",delivery.SOLO_OWNER_FIX_BASE),delivery.SOLO_OWNER_ATTEST_BASE)
         self.assertEqual(git("show","-s","--format=%P",delivery.SOLO_OWNER_ATTEST_BASE),delivery.SOLO_OWNER_BASE)
         self.assertEqual(git("show","-s","--format=%P",delivery.SOLO_OWNER_BASE),delivery.CERTIFIED_BASE)
         for earlier,later in ((delivery.CERTIFIED_BASE,delivery.SOLO_OWNER_BASE),
                               (delivery.SOLO_OWNER_BASE,delivery.SOLO_OWNER_ATTEST_BASE),
-                              (delivery.SOLO_OWNER_ATTEST_BASE,checkpoint)):
+                              (delivery.SOLO_OWNER_ATTEST_BASE,delivery.SOLO_OWNER_FIX_BASE),
+                              (delivery.SOLO_OWNER_FIX_BASE,checkpoint)):
             self.assertEqual(git("diff","--name-status","--no-renames",earlier,later).splitlines(),["M\t"+path for path in sorted(support)])
         historical=git("diff","--name-status","--no-renames",delivery.UPLOAD_BASE,checkpoint).splitlines()
         self.assertEqual(set(historical),{"M\t"+path for path in support}|{"A\t"+path for path in delivery.SAFETY_FILES})
@@ -3997,10 +4001,14 @@ class PriorAttemptExceptionTests(SyntheticDeliveryTestCase):
         self.actual_source_guard=delivery.source_guard
         CertificationAndTransferTests.setUp(self)
         self.actual_git=delivery.cert.git
-        self.tags=["refs/tags/"+name for name in delivery.HISTORICAL_TAGS if ("refs/tags/"+name).startswith(delivery.PREFIX)]+[REF]
+        self.tags=["refs/tags/"+name for name in delivery.HISTORICAL_TAGS if ("refs/tags/"+name).startswith(delivery.PREFIX)]+[delivery.FAILED_AUTH_TAG, REF]
         query=("rev-parse","--symbolic-full-name","--tags="+delivery.PREFIX.removeprefix("refs/tags/")+"*")
         def git(*args):
-            return "\n".join(self.tags).encode() if args==query else self.actual_git(*args)
+            if args==query:return "\n".join(self.tags).encode()
+            if args==("cat-file","-t",delivery.FAILED_AUTH_TAG):return b"tag"
+            if args==("rev-parse","--verify",delivery.FAILED_AUTH_TAG):return delivery.FAILED_AUTH_TAG_OBJECT.encode()
+            if args==("rev-parse","--verify",delivery.FAILED_AUTH_TAG+"^{}"):return delivery.FAILED_AUTH_BASE.encode()
+            return self.actual_git(*args)
         patch.object(delivery.cert,'git',side_effect=git).start()
 
     def bind(self):
@@ -4126,15 +4134,31 @@ class PriorAttemptExceptionTests(SyntheticDeliveryTestCase):
         self.assertIsInstance(error,ValueError);self.assertEqual(calls,[])
 
     def test_consumed_or_unknown_delivery_tag_blocks_a_second_exception(self):
-        for mutation in ('extra','duplicate','missing_current','missing_history'):
+        for mutation in ('extra','duplicate','missing_current','missing_failed_tag','missing_history'):
             original=list(self.tags)
             if mutation=='extra':self.tags.append(delivery.PREFIX+'9'*40)
             elif mutation=='duplicate':self.tags.append(REF)
             elif mutation=='missing_current':self.tags.remove(REF)
+            elif mutation=='missing_failed_tag':self.tags.remove(delivery.FAILED_AUTH_TAG)
             else:self.tags.pop(0)
             calls,_,error=self.exercise()
             with self.subTest(mutation=mutation):self.assertIsInstance(error,ValueError);self.assertEqual(calls,[])
             self.tags=original
+
+    def test_only_exact_pinned_malformed_tag_is_accepted(self):
+        original_git=delivery.cert.git
+        commands=(
+            ("cat-file","-t",delivery.FAILED_AUTH_TAG),
+            ("rev-parse","--verify",delivery.FAILED_AUTH_TAG),
+            ("rev-parse","--verify",delivery.FAILED_AUTH_TAG+"^{}"),
+        )
+        for command in commands:
+            def falsify(*args):
+                return b"not-the-approved-object" if args==command else original_git(*args)
+            with self.subTest(command=command),patch.object(delivery.cert,"git",side_effect=falsify):
+                calls,_,error=self.exercise()
+                self.assertIsInstance(error,ValueError)
+                self.assertEqual(calls,[])
 
     def test_new_uncertainty_after_validation_blocks_d05_and_upload(self):
         value=self.bind()
@@ -4150,7 +4174,10 @@ class PriorAttemptExceptionTests(SyntheticDeliveryTestCase):
         values={('rev-parse','HEAD'):COMMIT.encode(),('rev-parse','--verify',delivery.cert.DIAGNOSTIC_BRANCH):COMMIT.encode(),
                 ('cat-file','-t',REF):b'tag',('rev-parse','--verify',REF):b'5'*40,
                 ('cat-file','-p',REF):('object '+COMMIT+'\ntype commit\ntag '+REF.removeprefix('refs/tags/')+'\ntagger Synthetic\n\n'+json.dumps(value)).encode(),
-                ('rev-parse','--symbolic-full-name','--tags='+delivery.PREFIX.removeprefix('refs/tags/')+'*'):'\n'.join(tags).encode()}
+                ('rev-parse','--symbolic-full-name','--tags='+delivery.PREFIX.removeprefix('refs/tags/')+'*'):'\n'.join(tags).encode(),
+                ('cat-file','-t',delivery.FAILED_AUTH_TAG):b'tag',
+                ('rev-parse','--verify',delivery.FAILED_AUTH_TAG):delivery.FAILED_AUTH_TAG_OBJECT.encode(),
+                ('rev-parse','--verify',delivery.FAILED_AUTH_TAG+'^{}'):delivery.FAILED_AUTH_BASE.encode()}
         with patch.object(delivery.cert,'git',side_effect=lambda *a:values[a]),patch.object(delivery,'read_json',return_value=event()),patch.object(delivery,'apple_id_command') as credentials:
             self.assertEqual(delivery.authorize(REF,COMMIT,'synthetic','1')['authorization'],value)
             with self.assertRaises(ValueError):delivery.authorize(REF,COMMIT,'synthetic','2')
@@ -4161,7 +4188,8 @@ class PriorAttemptExceptionTests(SyntheticDeliveryTestCase):
     def test_direct_child_inventory_and_certified_history_are_exact(self):
         with patch.object(delivery,'source_guard',self.actual_source_guard),patch.object(delivery.cert,'git',side_effect=source_git()),patch.object(delivery.subprocess,'run'),patch.object(delivery.cert,'original_contracts'):
             self.assertTrue(delivery.source_guard(COMMIT,True)['runtime_unchanged'])
-        for options in ({'parent':delivery.UPLOAD_BASE},{'parent':delivery.SOLO_OWNER_FIX_BASE+' '+'9'*40},
+        for options in ({'parent':delivery.UPLOAD_BASE},{'parent':delivery.FAILED_AUTH_BASE+' '+'9'*40},
+                        {'failed_auth_parent':'9'*40},{'failed_auth_inventory':b''},
                         {'solo_fix_parent':'9'*40},{'solo_fix_inventory':b''},
                         {'solo_attest_parent':'9'*40},{'solo_attest_inventory':b''},
                         {'solo_owner_parent':'9'*40},{'solo_owner_inventory':b''},
