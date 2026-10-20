@@ -18,8 +18,8 @@ jobs:
       github.event.deleted == false &&
       github.event.forced == false &&
       github.run_attempt == 1 &&
-      github.event.before == '8934b648d884a07c0957c1b9ece8b90459189674' &&
-      github.event.head_commit.message == 'One-time read-only Apple provider association check'
+      github.event.before == '6f262d3126221d29e1a7b645e3071fb32a380c3b' &&
+      github.event.head_commit.message == 'Use documented legacy format for Gridly provider lookup'
     runs-on: macos-26
     timeout-minutes: 7
     steps:
@@ -52,7 +52,7 @@ jobs:
               result('APPLE_CREDENTIALS_UNAVAILABLE')
 
           # The password is never passed as an argument or printed.
-          command = ['xcrun', 'altool', '--list-providers', '--output-format', 'json',
+          command = ['xcrun', 'altool', '--list-providers', '--legacy', '--output-format', 'json',
                      '--username', username, '--password', '@env:APPLE_APP_SPECIFIC_PASSWORD']
           try:
               attempt = subprocess.run(command, stdout=subprocess.PIPE,
@@ -70,10 +70,20 @@ jobs:
               data = json.loads(attempt.stdout.decode('utf-8', errors='strict'))
           except (ValueError, UnicodeError):
               result('PROVIDER_RESPONSE_UNRECOGNIZED')
-          if not isinstance(data, dict) or 'errors' in data or 'product-errors' in data:
+          if not isinstance(data, dict):
+              result('PROVIDER_ROOT_NOT_OBJECT')
+          if 'errors' in data or 'product-errors' in data:
               result('PROVIDER_RESPONSE_REJECTED')
           providers = data.get('providers')
-          if not isinstance(providers, list) or not 1 <= len(providers) <= 100:
+          if not isinstance(providers, list):
+              if isinstance(data.get('data'), list):
+                  print('PROVIDER_SCHEMA_HINT=DATA_ARRAY', flush=True)
+              elif isinstance(data.get('result'), dict):
+                  print('PROVIDER_SCHEMA_HINT=RESULT_OBJECT', flush=True)
+              else:
+                  print('PROVIDER_SCHEMA_HINT=NO_RECOGNIZED_ARRAY', flush=True)
+              result('PROVIDER_LIST_UNAVAILABLE')
+          if not 1 <= len(providers) <= 100:
               result('PROVIDER_LIST_UNAVAILABLE')
 
           ids = []
