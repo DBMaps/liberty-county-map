@@ -23,6 +23,8 @@ import shlex
 import time
 import tempfile
 import stat
+import signal
+import sys
 import urllib.parse
 import urllib.request
 from pathlib import Path
@@ -52,6 +54,8 @@ SOLO_OWNER_FIX_BASE = "58b83364585da5d7a2bf535217251ab944728d85"
 FAILED_AUTH_BASE = "fce13ac4484e7b348a152a16b6ddd8226f173325"
 FAILED_AUTH_TAG = "refs/tags/gridly-storekit-testflight-deliver-15-" + FAILED_AUTH_BASE
 FAILED_AUTH_TAG_OBJECT = "900887b07a73fa3014173610cd0eba28db66a481"
+UPLOADER_REPAIR_BASE = "b66348762e10bf47031f2297963345cf18088b83"
+_UPLOAD_RUN = subprocess.run
 TEST_MODE_FILES = {
     "tools/apple_storekit_testflight_delivery.py",
     "tests/storekit-testflight-delivery.test.py",
@@ -348,6 +352,117 @@ def apple_id_command(root, ipa, values):
     return command, {"env": {**os.environ, "APPLE_APP_SPECIFIC_PASSWORD": password}}
 
 
+def private_upload_environment(root, environment):
+    """Keep native and Java scratch state in the owned workspace, per child only."""
+    require((root / ".owned").is_file() and not (root / ".owned").is_symlink()
+            and (root / ".owned").read_text() == cert.PRIVATE_MARKER, "owned upload workspace required")
+    for directory in (root, root / "home", root / "tmp"):
+        owned_runner_directory(directory)
+    result = dict(environment)
+    result.update(HOME=str(root / "home"), CFFIXED_USER_HOME=str(root / "home"),
+                  TMPDIR=str(root / "tmp"),
+                  JAVA_TOOL_OPTIONS='-Duser.home="' + str(root / "home")
+                  + '" -Djava.io.tmpdir="' + str(root / "tmp") + '"')
+    # Other JVM injection variables can override the private directories above.
+    result.pop("_JAVA_OPTIONS", None)
+    result.pop("JDK_JAVA_OPTIONS", None)
+    return result
+
+
+def run_upload_process(command, *, check, cwd, timeout=900, **options):
+    """Own a new macOS process group; bound and reap it on every exit path."""
+    require(sys.platform == "darwin", "macOS uploader process isolation required")
+    root = Path(cwd).parent
+    options["env"] = private_upload_environment(root, options.get("env", os.environ))
+    process = subprocess.Popen(command, cwd=cwd, start_new_session=True, **options)
+    try:
+        code = process.wait(timeout=timeout)
+        if check and code:
+            raise subprocess.CalledProcessError(code, command)
+        return subprocess.CompletedProcess(command, code)
+    finally:
+        # Only this invocation's session/group, including children after leader exit.
+        try:
+            try:
+                os.killpg(process.pid, signal.SIGTERM)
+            except ProcessLookupError:
+                pass
+            else:
+                time.sleep(0.25)
+                try:
+                    os.killpg(process.pid, signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
+        finally:
+            process.wait(timeout=5)
+
+
+def package_provider(public, selected):
+    """A provider choice must match an actual, unambiguous discovery response."""
+    require(isinstance(public, dict) and "errors" not in public
+            and "product-errors" not in public, "provider discovery unverified")
+    providers = public.get("providers")
+    require(isinstance(providers, list) and 0 < len(providers) <= 100,
+            "provider discovery unverified")
+    identifiers = []
+    for provider in providers:
+        value = provider.get("PublicID") if isinstance(provider, dict) else None
+        require(isinstance(value, str) and re.fullmatch(
+            r"[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}", value),
+            "provider discovery unverified")
+        identifiers.append(value.lower())
+    require(len(set(identifiers)) == len(identifiers), "provider discovery ambiguous")
+    if selected:
+        require(isinstance(selected, str) and selected.lower() in identifiers,
+                "verified provider public ID required")
+        require(providers[identifiers.index(selected.lower())].get("WWDRTeamID") == cert.release.TEAM,
+                "provider must match certified signing team")
+        return selected.lower()
+    require(len(identifiers) == 1, "multiple providers; verified provider public ID required")
+    require(providers[0].get("WWDRTeamID") == cert.release.TEAM,
+            "provider must match certified signing team")
+    return None  # Apple's --asc-public-id is optional for exactly one provider.
+
+
+def prepare_package_upload(root, command, ipa, execute, **options):
+    """Read-only capability/provider checks before validation or upload intent."""
+    require(command[:6] == ["xcrun", "altool", "--type", "ios", "--file", str(ipa)],
+            "exact IPA validation command required")
+    auth = command[6:]
+    invoke = run_upload_process if execute is _UPLOAD_RUN else execute
+    try:
+        private_upload_environment(root, {})
+        owned_runner_directory(root / "logs")
+        # No credential flags or secret environment values are needed for local help.
+        help_env = {key: value for key, value in os.environ.items()
+                    if key in {"PATH", "DEVELOPER_DIR", "SDKROOT", "LANG", "LC_ALL"}}
+        with tempfile.TemporaryFile(dir=root / "logs") as output:
+            invoke(["xcrun", "altool", "--help"], check=True, cwd=root / "home",
+                   stdout=output, stderr=subprocess.STDOUT, timeout=30, env=help_env)
+            require(output.tell() <= 1048576, "uploader help too large")
+            output.seek(0)
+            help_text = output.read().decode("utf-8", errors="strict")
+        for flag in ("--upload-package", "--apple-id", "--bundle-id", "--bundle-version",
+                     "--bundle-short-version-string", "--asc-public-id", "--list-providers"):
+            require(re.search(r"(?<![\w-])" + re.escape(flag) + r"(?![\w-])", help_text),
+                    "installed altool upload-package syntax unsupported")
+        with tempfile.TemporaryFile(dir=root / "logs") as output:
+            invoke(["xcrun", "altool", "--list-providers", "--output-format", "json", *auth],
+                   check=True, cwd=root / "home", stdout=output, stderr=subprocess.STDOUT,
+                   timeout=30, **options)
+            require(output.tell() <= 1048576, "provider response too large")
+            output.seek(0)
+            providers = json.loads(output.read(), object_pairs_hook=cert.unique_json_object)
+        provider = package_provider(providers, os.environ.get("GRIDLY_APPLE_PROVIDER_PUBLIC_ID"))
+    except BaseException:
+        # No raw help, account metadata, paths or credential-bearing command escapes.
+        raise ValueError("uploader capability/provider verification failed; no upload permitted") from None
+    return ["xcrun", "altool", "--upload-package", str(ipa), "--type", "ios",
+            "--apple-id", "6814845611", "--bundle-id", "com.gridlygo.gridly",
+            "--bundle-short-version-string", "1.0.0", "--bundle-version", "15",
+            *(["--asc-public-id", provider] if provider else []), *auth]
+
+
 def event_gate(event, ref, commit, attempt, tag_object):
     require(attempt == "1", "reruns cannot upload")
     require(event.get("repository", {}).get("full_name") == REPOSITORY, "wrong repository")
@@ -376,11 +491,11 @@ def authorize(ref, commit, event_path, attempt):
 def source_guard(commit, clean):
     require(re.fullmatch(r"[0-9a-f]{40}", commit or ""), "exact source SHA required")
     pinned = {SOURCE, DELIVERY_BASE, OWNER_CORRECTION, PREFLIGHT_BASE, REFINEMENT_BASE,
-              SIGNING_BASE, CMS_BASE, CMS_REPAIR_BASE, SIGNING_VERIFIED_BASE, P04_BASE, ARCHIVE_BASE, EVIDENCE_BASE, ENVIRONMENT_BASE, TRANSFER_BASE, AUTH_BASE, APPLE_ID_BASE, UPLOAD_BASE, CERTIFIED_BASE, SOLO_OWNER_BASE, SOLO_OWNER_ATTEST_BASE, SOLO_OWNER_FIX_BASE, FAILED_AUTH_BASE}
+              SIGNING_BASE, CMS_BASE, CMS_REPAIR_BASE, SIGNING_VERIFIED_BASE, P04_BASE, ARCHIVE_BASE, EVIDENCE_BASE, ENVIRONMENT_BASE, TRANSFER_BASE, AUTH_BASE, APPLE_ID_BASE, UPLOAD_BASE, CERTIFIED_BASE, SOLO_OWNER_BASE, SOLO_OWNER_ATTEST_BASE, SOLO_OWNER_FIX_BASE, FAILED_AUTH_BASE, UPLOADER_REPAIR_BASE}
     require(cert.git("rev-parse", "HEAD").decode().strip() == commit and commit not in pinned,
             "new reviewed delivery-support commit required")
     for child, parent in (
-        (commit, FAILED_AUTH_BASE), (FAILED_AUTH_BASE, SOLO_OWNER_FIX_BASE), (SOLO_OWNER_FIX_BASE, SOLO_OWNER_ATTEST_BASE),
+        (commit, UPLOADER_REPAIR_BASE), (UPLOADER_REPAIR_BASE, FAILED_AUTH_BASE), (FAILED_AUTH_BASE, SOLO_OWNER_FIX_BASE), (SOLO_OWNER_FIX_BASE, SOLO_OWNER_ATTEST_BASE),
         (SOLO_OWNER_ATTEST_BASE, SOLO_OWNER_BASE), (SOLO_OWNER_BASE, CERTIFIED_BASE), (CERTIFIED_BASE, UPLOAD_BASE), (UPLOAD_BASE, APPLE_ID_BASE), (APPLE_ID_BASE, AUTH_BASE), (AUTH_BASE, TRANSFER_BASE), (TRANSFER_BASE, ENVIRONMENT_BASE), (ENVIRONMENT_BASE, EVIDENCE_BASE), (EVIDENCE_BASE, ARCHIVE_BASE), (ARCHIVE_BASE, P04_BASE), (P04_BASE, SIGNING_VERIFIED_BASE),
         (SIGNING_VERIFIED_BASE, CMS_REPAIR_BASE),
         (CMS_REPAIR_BASE, CMS_BASE), (CMS_BASE, SIGNING_BASE), (SIGNING_BASE, REFINEMENT_BASE),
@@ -389,7 +504,9 @@ def source_guard(commit, clean):
     ):
         require(cert.git("show", "-s", "--format=%P", child).decode().strip() == parent,
                 "exact pinned delivery/preflight ancestry required; no extra commits or merges")
-    for name, (tag_object, target) in HISTORICAL_TAGS.items():
+    for name, (tag_object, target) in {**HISTORICAL_TAGS,
+        "gridly-storekit-testflight-deliver-15-" + UPLOADER_REPAIR_BASE:
+            ("ea2d9158e9b0a0b1e0035947f15e2d3cef79173c", UPLOADER_REPAIR_BASE)}.items():
         ref = "refs/tags/" + name
         require(cert.git("rev-parse", "--verify", ref).decode().strip() == tag_object,
                 "historical authorization tag changed or missing")
@@ -419,7 +536,8 @@ def source_guard(commit, clean):
         (SOLO_OWNER_BASE, SOLO_OWNER_ATTEST_BASE, "M", TEST_MODE_FILES),
         (SOLO_OWNER_ATTEST_BASE, SOLO_OWNER_FIX_BASE, "M", TEST_MODE_FILES),
         (SOLO_OWNER_FIX_BASE, FAILED_AUTH_BASE, "M", TEST_MODE_FILES),
-        (FAILED_AUTH_BASE, commit, "M", TEST_MODE_FILES),
+        (FAILED_AUTH_BASE, UPLOADER_REPAIR_BASE, "M", TEST_MODE_FILES),
+        (UPLOADER_REPAIR_BASE, commit, "M", TEST_MODE_FILES),
         (SOURCE, commit, "A", FILES | PREFLIGHT_FILES | SIGNING_FILES | CMS_FILES | SAFETY_FILES),
     ):
         records = cert.git("diff", "--name-status", "--no-renames", base, target).decode().splitlines()
@@ -1047,7 +1165,7 @@ def execute_upload(root, command, execute, **options):
     try:
         with private:
             try:
-                return execute(command, check=True, cwd=root / "home", stdout=private,
+                return (run_upload_process if execute is _UPLOAD_RUN else execute)(command, check=True, cwd=root / "home", stdout=private,
                                stderr=subprocess.STDOUT, **options)
             except subprocess.CalledProcessError as error:
                 private.seek(0, 2)
@@ -1056,7 +1174,7 @@ def execute_upload(root, command, execute, **options):
                 code = error.returncode if type(error.returncode) is int and -255 <= error.returncode <= 65535 else None
                 if code is not None and code < 0:
                     category = "UPLOAD_PROCESS_SIGNALED_UNCERTAIN"
-                safe = subprocess.CalledProcessError(code, ["xcrun", "altool", "--upload-app"])
+                safe = subprocess.CalledProcessError(code, ["xcrun", "altool", "--upload-package"])
                 safe.gridly_upload_category = category
                 raise safe from None
             except subprocess.TimeoutExpired:
@@ -1171,6 +1289,7 @@ def transfer(root, commit, ipa, precheck=ready, credentials=None, token_factory=
                 stream.write(raw)
             key_path.chmod(0o600)
             command = ["xcrun", "altool", "--type", "ios", "--file", str(ipa), "--apiKey", key, "--apiIssuer", issuer]
+        upload_command = prepare_package_upload(root, command, ipa, execute, **transport_options)
     with delivery_stage("D03_APPLE_VALIDATION", progress):
         execute([*command, "--validate-app"], check=True, cwd=root / "home", **transport_options)
     with delivery_stage("D04_POST_VALIDATION_VERIFICATION", progress):
@@ -1191,7 +1310,7 @@ def transfer(root, commit, ipa, precheck=ready, credentials=None, token_factory=
         write_json(root / "reports/delivery-availability.json", {**unused, "checked_at": int(clock())})
     with delivery_stage("D06_ACTUAL_UPLOAD", progress):
         # No build/signing work or unrelated Apple operation between this final unused-build gate and the upload.
-        upload_once(root, commit, [*command, "--upload-app"], execute, **transport_options)
+        upload_once(root, commit, upload_command, execute, **transport_options)
 
 
 

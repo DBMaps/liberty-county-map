@@ -18,7 +18,7 @@ import email.utils
 import socket
 import urllib.error
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools"))
 import apple_storekit_testflight_delivery as delivery
 
@@ -43,8 +43,36 @@ DELIVERY_REPORTING_FUNCTIONS = {
 APPLE_ID_WORKFLOW_COMMENT = '# Apple ID delivery uses ONLY the two existing Apple ID secrets, never an API key.\n# REQUIRED additional annotation field: "apple_id_upload_authorization":{\n# "authorized":true,"method":"OWNER_AND_INDEPENDENT_APP_STORE_CONNECT_UI",\n# "owner_checked_at":"<same genuine UTC time as owner_checks_at>",\n# "independent_checked_at":"<genuine independent read-only UI check UTC time>",\n# "owner_verified_unused":true,"independent_verified_unused":true,\n# "build_uploads_reviewed":true,"testflight_all_builds_reviewed":true,\n# "no_pending_or_uncertain_uploads":true,"exclusive_upload_window_acknowledged":true}\n# The owner AND an independent reviewer must actually inspect App Store Connect\n# Build Uploads and all TestFlight builds before tagging; never fabricate evidence.\n# Both checks must remain within 1,800 seconds through the pre-upload gate.\n# D05\'s historical stage name now covers this explicit UI-evidence mode, not an API query.\n# No validation result alone is treated as proof that Build 15 is unused.\n# Do not include account identities, screenshots, raw Apple output or secrets in the tag.\n'
 
 
+def normalize_uploader_repair(source):
+    """Reverse exact transport call deltas for the older historical comparisons.
+
+    The new transport and unchanged authorization functions are tested separately.
+    Never substitute whole functions or fetch replacement implementations.
+    """
+    if 'def prepare_package_upload(' not in source:
+        return source
+    replacements = (
+        ('        upload_command = prepare_package_upload(root, command, ipa, execute, **transport_options)\n', ''),
+        ('upload_once(root, commit, upload_command, execute, **transport_options)',
+         'upload_once(root, commit, [*command, "--upload-app"], execute, **transport_options)'),
+        ('(run_upload_process if execute is _UPLOAD_RUN else execute)(command, check=True,',
+         'execute(command, check=True,'),
+        ('safe = subprocess.CalledProcessError(code, ["xcrun", "altool", "--upload-package"])',
+         'safe = subprocess.CalledProcessError(code, ["xcrun", "altool", "--upload-app"])'),
+    )
+    for current, previous in replacements:
+        assert source.count(current) == 1, current
+        source = source.replace(current, previous, 1)
+    tree = ast.parse(source)
+    tree.body = [node for node in tree.body if not (isinstance(node, ast.FunctionDef)
+        and node.name in {'private_upload_environment', 'run_upload_process',
+                          'package_provider', 'prepare_package_upload'})]
+    return ast.unparse(tree)
+
+
 def normalize_prior_attempt(source):
     """Reverse only the exact optional-path deltas for historical comparisons."""
+    source = normalize_uploader_repair(source)
     if "def prior_attempt_evidence(" not in source:
         return source
     tree=ast.parse(source)
@@ -269,7 +297,8 @@ def owner_automatic_authorization():
             }}
 
 
-def source_git(*, parent=delivery.FAILED_AUTH_BASE, failed_auth_parent=delivery.SOLO_OWNER_FIX_BASE, failed_auth_inventory=None,
+def source_git(*, parent=delivery.UPLOADER_REPAIR_BASE, repair_base_parent=delivery.FAILED_AUTH_BASE,
+               repair_base_inventory=None, failed_auth_parent=delivery.SOLO_OWNER_FIX_BASE, failed_auth_inventory=None,
                solo_fix_parent=delivery.SOLO_OWNER_ATTEST_BASE,
                solo_attest_parent=delivery.SOLO_OWNER_BASE,
                solo_owner_parent=delivery.CERTIFIED_BASE,
@@ -305,6 +334,10 @@ def source_git(*, parent=delivery.FAILED_AUTH_BASE, failed_auth_parent=delivery.
     values = {
         ("rev-parse", "HEAD"): COMMIT.encode(),
         ("show", "-s", "--format=%P", COMMIT): parent.encode(),
+        ("show", "-s", "--format=%P", delivery.UPLOADER_REPAIR_BASE): repair_base_parent.encode(),
+        ("rev-parse", "--verify", delivery.PREFIX + delivery.UPLOADER_REPAIR_BASE): b"ea2d9158e9b0a0b1e0035947f15e2d3cef79173c",
+        ("cat-file", "-t", delivery.PREFIX + delivery.UPLOADER_REPAIR_BASE): b"tag",
+        ("rev-parse", "--verify", delivery.PREFIX + delivery.UPLOADER_REPAIR_BASE + "^{}"): delivery.UPLOADER_REPAIR_BASE.encode(),
         ("show", "-s", "--format=%P", delivery.FAILED_AUTH_BASE): failed_auth_parent.encode(),
         ("show", "-s", "--format=%P", delivery.SOLO_OWNER_FIX_BASE): solo_fix_parent.encode(),
         ("show", "-s", "--format=%P", delivery.SOLO_OWNER_ATTEST_BASE): solo_attest_parent.encode(),
@@ -349,7 +382,8 @@ def source_git(*, parent=delivery.FAILED_AUTH_BASE, failed_auth_parent=delivery.
         ("diff", "--name-status", "--no-renames", delivery.SOLO_OWNER_BASE, delivery.SOLO_OWNER_ATTEST_BASE): test_mode if solo_attest_inventory is None else solo_attest_inventory,
         ("diff", "--name-status", "--no-renames", delivery.SOLO_OWNER_ATTEST_BASE, delivery.SOLO_OWNER_FIX_BASE): test_mode if solo_fix_inventory is None else solo_fix_inventory,
         ("diff", "--name-status", "--no-renames", delivery.SOLO_OWNER_FIX_BASE, delivery.FAILED_AUTH_BASE): test_mode if failed_auth_inventory is None else failed_auth_inventory,
-        ("diff", "--name-status", "--no-renames", delivery.FAILED_AUTH_BASE, COMMIT): test_mode if correction is None else correction,
+        ("diff", "--name-status", "--no-renames", delivery.FAILED_AUTH_BASE, delivery.UPLOADER_REPAIR_BASE): test_mode if repair_base_inventory is None else repair_base_inventory,
+        ("diff", "--name-status", "--no-renames", delivery.UPLOADER_REPAIR_BASE, COMMIT): test_mode if correction is None else correction,
         ("diff", "--name-status", "--no-renames", delivery.SOURCE, COMMIT): all_additions if net is None else net,
         ("diff", "--name-only", "HEAD"): dirty,
         ("diff", "--cached", "--name-only"): staged,
@@ -370,7 +404,7 @@ def source_git(*, parent=delivery.FAILED_AUTH_BASE, failed_auth_parent=delivery.
     for path in delivery.TEST_MODE_FILES | delivery.SAFETY_FILES:
         values[("ls-tree", delivery.CERTIFIED_BASE, "--", path)] = ("100644 blob " + "0"*40 + "\t" + path).encode()
     for path in delivery.TEST_MODE_FILES:
-        for checkpoint in (delivery.SOLO_OWNER_BASE, delivery.SOLO_OWNER_ATTEST_BASE, delivery.SOLO_OWNER_FIX_BASE, delivery.FAILED_AUTH_BASE):
+        for checkpoint in (delivery.SOLO_OWNER_BASE, delivery.SOLO_OWNER_ATTEST_BASE, delivery.SOLO_OWNER_FIX_BASE, delivery.FAILED_AUTH_BASE, delivery.UPLOADER_REPAIR_BASE):
             values[("ls-tree", checkpoint, "--", path)] = ("100644 blob " + "0"*40 + "\t" + path).encode()
     for path in delivery.FILES | delivery.PREFLIGHT_FILES | delivery.SIGNING_FILES | delivery.CMS_FILES | delivery.SAFETY_FILES:
         values[("ls-tree", COMMIT, "--", path)] = (mode + " blob " + "0"*40 + "\t" + path).encode()
@@ -400,11 +434,30 @@ def proof(ipa):
             "activation": activation, "web_files": 1005, "ipa_sha256": hashlib.sha256(ipa.read_bytes()).hexdigest()}
 
 
+def upload_action(command):
+    return '--upload-package' if '--upload-package' in command else command[-1]
+
+
+def synthetic_transport_query(command, options):
+    """Synthetic Apple schema/capabilities only. Never execute a tool or network call."""
+    if '--help' in command:
+        options['stdout'].write(b'--upload-package --apple-id --bundle-id --bundle-version '
+            b'--bundle-short-version-string --asc-public-id --list-providers')
+        return True
+    if '--list-providers' in command:
+        options['stdout'].write(json.dumps({'providers': [
+            {'PublicID': '00000000-0000-0000-0000-000000000001',
+             'WWDRTeamID': delivery.cert.release.TEAM}]}).encode())
+        return True
+    return False
+
+
 def fixture(root):
     (root / ".owned").write_text(delivery.cert.PRIVATE_MARKER)
     (root / "logs").mkdir(mode=0o700)
     (root / "reports").mkdir()
     (root / "home").mkdir()
+    (root / "tmp").mkdir()
     (root / "export").mkdir()
     ipa = root / "export/synthetic.ipa"
     ipa.write_bytes(b"NOT_AN_APP_OR_SIGNED_IPA")
@@ -777,9 +830,10 @@ class CertificationAndTransferTests(SyntheticDeliveryTestCase):
                 return {"data": [{"id": "123", "type": "apps", "attributes": {"bundleId": delivery.cert.release.BUNDLE}}]}
             return {"data": [{"id": "synthetic"}] if existing else []}
         def execute(command, **options):
-            action = command[-1]
+            if synthetic_transport_query(command, options): return
+            action = upload_action(command)
             calls.append(action)
-            if fail and action == "--upload-app": raise subprocess.CalledProcessError(1, command, stderr="PRIVATE NEVER PRINT")
+            if fail and action == "--upload-package": raise subprocess.CalledProcessError(1, command, stderr="PRIVATE NEVER PRINT")
         creds = {"ASC_KEY_ID": "SYNTHETIC1", "ASC_ISSUER_ID": "00000000-0000-0000-0000-000000000000",
                  "ASC_PRIVATE_KEY_P8_BASE64": delivery.base64.b64encode(b"-----BEGIN PRIVATE KEY-----\nNOT_A_REAL_KEY\n-----END PRIVATE KEY-----").decode()}
         return calls, dict(credentials=creds, token_factory=lambda *args: "SYNTHETIC_NOT_A_JWT", get=get, execute=execute, clock=lambda: NOW)
@@ -787,10 +841,10 @@ class CertificationAndTransferTests(SyntheticDeliveryTestCase):
     def test_validate_then_live_unused_check_then_exactly_one_upload(self):
         calls, options = self.fake_upload()
         delivery.transfer(self.root, COMMIT, self.ipa, **options)
-        self.assertEqual(calls, ["--validate-app", "apps", "builds", "--upload-app"])
+        self.assertEqual(calls, ["--validate-app", "apps", "builds", "--upload-package"])
         self.assertEqual(delivery.read_json(self.root / "reports/delivery-transfer.json")["status"], "ACCEPTED")
         with self.assertRaises(ValueError): delivery.transfer(self.root, COMMIT, self.ipa, **options)
-        self.assertEqual(calls.count("--upload-app"), 1)
+        self.assertEqual(calls.count("--upload-package"), 1)
 
     def test_owner_only_authorization_uses_same_signed_ipa_and_transport_with_no_group_operations(self):
         report = self.root / "reports/delivery-authorization.json"
@@ -800,7 +854,7 @@ class CertificationAndTransferTests(SyntheticDeliveryTestCase):
         before = self.ipa.read_bytes()
         calls, options = self.fake_upload()
         delivery.transfer(self.root, COMMIT, self.ipa, **options)
-        self.assertEqual(calls, ["--validate-app", "apps", "builds", "--upload-app"])
+        self.assertEqual(calls, ["--validate-app", "apps", "builds", "--upload-package"])
         self.assertEqual(self.ipa.read_bytes(), before)
 
     def test_unapproved_owner_only_access_is_rejected_before_credentials_or_transport(self):
@@ -835,7 +889,7 @@ class CertificationAndTransferTests(SyntheticDeliveryTestCase):
         options["get"] = expire
         with self.assertRaises(ValueError):
             delivery.transfer(self.root, COMMIT, self.ipa, **options)
-        self.assertNotIn("--upload-app", calls)
+        self.assertNotIn("--upload-package", calls)
 
     def test_successfully_certified_but_expired_build_cannot_read_upload_credentials(self):
         class NeverReadCredentials(dict):
@@ -860,19 +914,20 @@ class CertificationAndTransferTests(SyntheticDeliveryTestCase):
     def test_existing_build_prevents_upload(self):
         calls, options = self.fake_upload(existing=True)
         with self.assertRaises(ValueError): delivery.transfer(self.root, COMMIT, self.ipa, **options)
-        self.assertNotIn("--upload-app", calls)
+        self.assertNotIn("--upload-package", calls)
 
     def test_uncertain_acceptance_records_attempt_and_does_not_retry(self):
         calls, options = self.fake_upload(fail=True)
         with self.assertRaises(subprocess.CalledProcessError): delivery.transfer(self.root, COMMIT, self.ipa, **options)
         self.assertEqual(delivery.read_json(self.root / "reports/delivery-transfer.json")["status"], "ATTEMPTED")
         with self.assertRaises(ValueError): delivery.transfer(self.root, COMMIT, self.ipa, **options)
-        self.assertEqual(calls.count("--upload-app"), 1)
+        self.assertEqual(calls.count("--upload-package"), 1)
 
     def test_apple_validation_failure_prevents_availability_and_upload(self):
         calls, options = self.fake_upload()
         def reject(command, **kwargs):
-            calls.append(command[-1])
+            if synthetic_transport_query(command, kwargs): return
+            calls.append(upload_action(command))
             raise subprocess.CalledProcessError(1, command)
         options["execute"] = reject
         with self.assertRaises(subprocess.CalledProcessError):
@@ -882,7 +937,8 @@ class CertificationAndTransferTests(SyntheticDeliveryTestCase):
     def test_ipa_changed_during_validation_never_reaches_apple_upload(self):
         calls, options = self.fake_upload()
         def corrupt(command, **kwargs):
-            calls.append(command[-1])
+            if synthetic_transport_query(command, kwargs): return
+            calls.append(upload_action(command))
             self.ipa.write_bytes(b"ALTERED")
         options["execute"] = corrupt
         with self.assertRaises(ValueError):
@@ -895,7 +951,7 @@ class CertificationAndTransferTests(SyntheticDeliveryTestCase):
         options["clock"] = lambda: next(moments)
         with self.assertRaises(ValueError):
             delivery.transfer(self.root, COMMIT, self.ipa, **options)
-        self.assertNotIn("--upload-app", calls)
+        self.assertNotIn("--upload-package", calls)
 
     def test_missing_existing_api_credentials_fail_without_requests(self):
         with patch.object(delivery, "api_token") as signer, patch.object(delivery.subprocess, "run") as execute, patch.object(delivery.cert, "original_contracts"), self.assertRaises(ValueError):
@@ -1823,7 +1879,7 @@ security() {
         nodes=lambda text:{n.targets[0].id:n.value for n in ast.parse(text).body
                            if isinstance(n,ast.Assign) and isinstance(n.targets[0],ast.Name)}
         old,new=nodes(before),nodes(after)
-        self.assertEqual(set(new)-set(old),{"CERTIFIED_BASE","SOLO_OWNER_BASE","SOLO_OWNER_ATTEST_BASE","SOLO_OWNER_FIX_BASE","FAILED_AUTH_BASE","FAILED_AUTH_TAG","FAILED_AUTH_TAG_OBJECT","SOLO_OWNER_UI_METHOD","SOLO_OWNER_UI_CONFIRMATIONS","PRIOR_ATTEMPT_FIELD","PRIOR_ATTEMPT_RUN","PRIOR_ATTEMPT_CONFIRMATIONS","SAFETY_FILES","UPLOAD_BASE","UPLOAD_ERROR_CATEGORIES","APPLE_ID_BASE","TEST_MODE_FILES","AUTH_BASE","APPLE_ID_AUTH_FIELD","UI_UNUSED_METHOD","UI_UNUSED_CONFIRMATIONS","TRANSFER_BASE","DELIVERY_STAGES","DELIVERY_STAGE_FAILURES","DELIVERY_CATEGORIES","P04_BASE","ARCHIVE_BASE","EVIDENCE_BASE","ENVIRONMENT_BASE","ARCHIVE_RULES","ARCHIVE_MAX_BYTES","ARCHIVE_STRUCTURED_STATES","HISTORY_CATEGORIES","HISTORY_ATTEMPTS",
+        self.assertEqual(set(new)-set(old),{"UPLOADER_REPAIR_BASE","_UPLOAD_RUN","CERTIFIED_BASE","SOLO_OWNER_BASE","SOLO_OWNER_ATTEST_BASE","SOLO_OWNER_FIX_BASE","FAILED_AUTH_BASE","FAILED_AUTH_TAG","FAILED_AUTH_TAG_OBJECT","SOLO_OWNER_UI_METHOD","SOLO_OWNER_UI_CONFIRMATIONS","PRIOR_ATTEMPT_FIELD","PRIOR_ATTEMPT_RUN","PRIOR_ATTEMPT_CONFIRMATIONS","SAFETY_FILES","UPLOAD_BASE","UPLOAD_ERROR_CATEGORIES","APPLE_ID_BASE","TEST_MODE_FILES","AUTH_BASE","APPLE_ID_AUTH_FIELD","UI_UNUSED_METHOD","UI_UNUSED_CONFIRMATIONS","TRANSFER_BASE","DELIVERY_STAGES","DELIVERY_STAGE_FAILURES","DELIVERY_CATEGORIES","P04_BASE","ARCHIVE_BASE","EVIDENCE_BASE","ENVIRONMENT_BASE","ARCHIVE_RULES","ARCHIVE_MAX_BYTES","ARCHIVE_STRUCTURED_STATES","HISTORY_CATEGORIES","HISTORY_ATTEMPTS",
                          "HISTORY_WAIT_BUDGET","HISTORY_DEADLINE","HISTORY_TIMEOUT","HISTORY_MAX_BYTES"})
         for name,node in old.items():
             if name=="HISTORICAL_TAGS":
@@ -1924,7 +1980,7 @@ security() {
         self.assertFalse(git("ls-files","--others","--exclude-standard"))
         head=git("rev-parse","HEAD")
         self.assertFalse(git("status","--porcelain=v1","--untracked-files=all"))
-        self.assertEqual(git("show","-s","--format=%P",head),checkpoint)
+        self.assertEqual(git("show","-s","--format=%P",head),delivery.UPLOADER_REPAIR_BASE)
         delivery.source_guard(head,True)
         for path in support:
             entry=git("ls-files","--stage","--",path).split()
@@ -2988,11 +3044,13 @@ class DeliveryStageReportingTests(SyntheticDeliveryTestCase):
         if fail=="credentials":options["credentials"]={}
         if fail=="validation":
             def execute(command,**kwargs):
-                calls.append(command[-1]);raise subprocess.CalledProcessError(2,command,stderr=self.canary)
+                if synthetic_transport_query(command, kwargs): return
+                calls.append(upload_action(command));raise subprocess.CalledProcessError(2,command,stderr=self.canary)
             options["execute"]=execute
         if fail=="postcheck":
             original=options["execute"]
             def execute(command,**kwargs):
+                if synthetic_transport_query(command, kwargs): return
                 original(command,**kwargs);self.ipa.write_bytes(b"ALTERED")
             options["execute"]=execute
         if fail=="token":
@@ -3041,7 +3099,7 @@ class DeliveryStageReportingTests(SyntheticDeliveryTestCase):
     def test_success_reports_all_six_stages_in_order_and_one_upload(self):
         calls,frames,error=self.exercise()
         self.assertIsNone(error)
-        self.assertEqual(calls,["--validate-app","apps","builds","--upload-app"])
+        self.assertEqual(calls,["--validate-app","apps","builds","--upload-package"])
         self.assertEqual(len(frames),12)
         self.assertEqual([row["status"] for row in self.final(frames)],["PASS"]*6)
         self.assertEqual(delivery.read_json(self.root/"reports/delivery-transfer.json")["status"],"ACCEPTED")
@@ -3092,13 +3150,13 @@ class DeliveryStageReportingTests(SyntheticDeliveryTestCase):
 
     def test_expired_owner_authorization_after_live_check_still_blocks_upload(self):
         calls,frames,error=self.exercise(fail="expired")
-        self.assertIsInstance(error,ValueError);self.assertNotIn("--upload-app",calls)
+        self.assertIsInstance(error,ValueError);self.assertNotIn("--upload-package",calls)
         self.assert_boundary(frames,4,"OWNER_AUTHORIZATION_EXPIRED")
 
     def test_upload_failure_is_uncertain_and_never_retried(self):
         calls,frames,error=self.exercise(fail="upload")
         self.assertIsInstance(error,subprocess.CalledProcessError)
-        self.assertEqual(calls.count("--upload-app"),1)
+        self.assertEqual(calls.count("--upload-package"),1)
         self.assert_boundary(frames,5,"UPLOAD_NO_TOOL_OUTPUT")
         self.assertEqual(delivery.read_json(self.root/"reports/delivery-transfer.json")["status"],"ATTEMPTED")
 
@@ -3108,7 +3166,7 @@ class DeliveryStageReportingTests(SyntheticDeliveryTestCase):
 
     def test_post_acceptance_reporting_failure_preserves_acceptance_marker(self):
         calls,frames,error=self.exercise(write_failure=12)
-        self.assertIsInstance(error,OSError);self.assertEqual(calls.count("--upload-app"),1)
+        self.assertIsInstance(error,OSError);self.assertEqual(calls.count("--upload-package"),1)
         self.assertEqual(delivery.read_json(self.root/"reports/delivery-transfer.json")["status"],"ACCEPTED")
 
     def test_actual_output_sidecar_absence_is_not_misclassified_as_bad_credentials(self):
@@ -3279,14 +3337,15 @@ class AppleIdDeliveryTests(SyntheticDeliveryTestCase):
         supplied = OnlyExistingAppleSecrets(APPLE_ID_USERNAME="synthetic@example.invalid",
                                             APPLE_APP_SPECIFIC_PASSWORD=secret) if credentials is None else credentials
         def execute(command, **options):
-            calls.append(command[-1])
-            self.assertEqual(command[:6], ["xcrun", "altool", "--type", "ios", "--file", str(self.ipa)])
-            self.assertEqual(command[-3:-1], ["--password", "@env:APPLE_APP_SPECIFIC_PASSWORD"])
+            if synthetic_transport_query(command, options): return
+            calls.append(upload_action(command))
+            self.assertEqual(command[:6], (["xcrun", "altool", "--upload-package", str(self.ipa), "--type", "ios"] if "--upload-package" in command else ["xcrun", "altool", "--type", "ios", "--file", str(self.ipa)]))
+            self.assertEqual(command[-2:] if "--upload-package" in command else command[-3:-1], ["--password", "@env:APPLE_APP_SPECIFIC_PASSWORD"])
             self.assertNotIn(secret, command)
             self.assertEqual(options["env"]["APPLE_APP_SPECIFIC_PASSWORD"], secret)
             self.assertEqual(options["cwd"], self.root / "home")
             self.assertIs(options["check"], True)
-            if failure == "validation" or failure == "upload" and command[-1] == "--upload-app":
+            if failure == "validation" or failure == "upload" and upload_action(command) == "--upload-package":
                 raise subprocess.CalledProcessError(1, command, stderr="SYNTHETIC_PRIVATE_NEVER_PUBLIC")
             if failure == "expiry_after_validation":
                 delivery.time.time.return_value = NOW + 1801
@@ -3415,7 +3474,7 @@ class AppleIdDeliveryTests(SyntheticDeliveryTestCase):
         before = self.ipa.read_bytes()
         calls, stages, error = self.exercise()
         self.assertIsNone(error)
-        self.assertEqual(calls, ["--validate-app", "--upload-app"])
+        self.assertEqual(calls, ["--validate-app", "--upload-package"])
         self.assertEqual(self.ipa.read_bytes(), before)
         self.assertEqual([r[0] for r in stages if r[1] == "PASS"], list(delivery.DELIVERY_STAGES))
         self.assertFalse((self.root / "home/.appstoreconnect").exists())
@@ -3471,7 +3530,7 @@ class AppleIdDeliveryTests(SyntheticDeliveryTestCase):
     def test_uncertain_apple_id_upload_is_recorded_and_never_retried(self):
         calls, stages, error = self.exercise(failure="upload")
         self.assertIsInstance(error, subprocess.CalledProcessError)
-        self.assertEqual(calls.count("--upload-app"), 1)
+        self.assertEqual(calls.count("--upload-package"), 1)
         self.assertEqual(delivery.read_json(self.root / "reports/delivery-transfer.json")["status"], "ATTEMPTED")
         self.assertEqual(stages[-1][2], "UPLOAD_NO_TOOL_OUTPUT")
         calls, stages, error = self.exercise()
@@ -3590,7 +3649,7 @@ class UploadFailureTests(SyntheticDeliveryTestCase):
         for raw, expected in self.cases:
             with self.subTest(expected=expected), tempfile.TemporaryDirectory() as directory:
                 root=Path(directory); fixture(root); calls=[]; streams=[]
-                command=["xcrun","altool","--username","synthetic@example.invalid","--password","@env:APPLE_APP_SPECIFIC_PASSWORD","--upload-app"]
+                command=["xcrun","altool","--username","synthetic@example.invalid","--password","@env:APPLE_APP_SPECIFIC_PASSWORD","--upload-package"]
                 def execute(cmd, **options):
                     calls.append(cmd); private=options["stdout"]; streams.append(private)
                     self.assertEqual(options["stderr"],subprocess.STDOUT)
@@ -3611,7 +3670,7 @@ class UploadFailureTests(SyntheticDeliveryTestCase):
     def test_success_keeps_exact_proven_command_and_password_environment(self):
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory);fixture(root);calls=[]
-            command=["xcrun","altool","--upload-app"]
+            command=["xcrun","altool","--upload-package"]
             def execute(cmd, **options):
                 calls.append(cmd);self.assertEqual(options["env"],{"APPLE_APP_SPECIFIC_PASSWORD":"SYNTHETIC_SECRET"})
             delivery.execute_upload(root,command,execute,env={"APPLE_APP_SPECIFIC_PASSWORD":"SYNTHETIC_SECRET"})
@@ -3622,7 +3681,7 @@ class UploadFailureTests(SyntheticDeliveryTestCase):
             root=Path(directory)/"owned";root.mkdir();fixture(root)
             (root/".owned").unlink()
             with patch.object(delivery.subprocess,"run") as execute,self.assertRaises(ValueError):
-                delivery.execute_upload(root,["xcrun","altool","--upload-app"],execute)
+                delivery.execute_upload(root,["xcrun","altool","--upload-package"],execute)
             execute.assert_not_called()
 
     def test_current_upload_parent_inventory_and_tag_fail_closed(self):
@@ -3658,7 +3717,7 @@ class UploadRecoveryReliabilityTests(SyntheticDeliveryTestCase):
     def setUp(self):
         self.temp=tempfile.TemporaryDirectory(); self.addCleanup(self.temp.cleanup)
         self.root=Path(self.temp.name);self.ipa,self.guard=fixture(self.root)
-        self.command=['xcrun','altool','--username','SYNTHETIC_PRIVATE_USER','--upload-app']
+        self.command=['xcrun','altool','--username','SYNTHETIC_PRIVATE_USER','--upload-package']
         self.marker=self.root/'reports/delivery-transfer.json'
 
     def run_upload(self, error=None):
@@ -3692,7 +3751,7 @@ class UploadRecoveryReliabilityTests(SyntheticDeliveryTestCase):
         self.assertIsInstance(error,subprocess.CalledProcessError)
         self.assertEqual(error.returncode,23)
         self.assertIsNone(error.stdout);self.assertIsNone(error.stderr)
-        self.assertEqual(error.cmd,['xcrun','altool','--upload-app'])
+        self.assertEqual(error.cmd,['xcrun','altool','--upload-package'])
         self.assertEqual(delivery.delivery_failure_category('D06_ACTUAL_UPLOAD',error),'UPLOAD_AUTHENTICATION_REJECTED')
         value=delivery.read_json(self.marker)
         self.assertEqual((value['status'],value['uploader_outcome'],value['uploader_exit_code']),('ATTEMPTED','RETURNED_NONZERO',23))
@@ -3965,7 +4024,7 @@ class MacosSafetyWorkflowTests(SyntheticDeliveryTestCase):
         self.assertIn('LIVE_PROCESS_BLOCKED',self.text)
         self.assertIn('unittest.TextTestRunner(verbosity=2)',self.text)
         self.assertNotIn('tools/apple_storekit_testflight_delivery.py ',self.text)
-        self.assertNotIn('--upload-app',self.text)
+        self.assertNotIn('--upload-package',self.text)
         self.assertNotIn('--validate-app',self.text)
         self.assertNotIn('xcodebuild',self.text)
         self.assertNotIn('subprocess.run(',self.text)
@@ -4126,7 +4185,7 @@ class PriorAttemptExceptionTests(SyntheticDeliveryTestCase):
 
     def test_exception_validates_then_invokes_only_one_mock_upload(self):
         calls,stages,error=self.exercise()
-        self.assertIsNone(error);self.assertEqual(calls,['--validate-app','--upload-app'])
+        self.assertIsNone(error);self.assertEqual(calls,['--validate-app','--upload-package'])
         self.assertEqual(stages[-1][:2],('D06_ACTUAL_UPLOAD','PASS'))
         receipt=delivery.read_json(self.root/'reports/delivery-availability.json')
         self.assertEqual(receipt['historical_transport_acceptance'],'UNKNOWN');self.assertNotIn('unused',receipt)
@@ -4216,6 +4275,188 @@ class PriorAttemptExceptionTests(SyntheticDeliveryTestCase):
         for before,after in (('return prior_attempt_evidence(authorization, now)','return prior_attempt_evidence({}, now)'),
                              ('        prior_attempt_slot(ref, commit)','        prior_attempt_slot(ref, "UNAPPROVED")')):
             with self.subTest(before=before),self.assertRaises(AssertionError):normalize_prior_attempt(text.replace(before,after,1))
+
+class SupportedPackageUploaderTests(SyntheticDeliveryTestCase):
+    """No real tool, provider response, authorization or credential is used here."""
+    def setUp(self):
+        self.temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temporary.cleanup)
+        self.root = Path(self.temporary.name)
+        self.ipa, _ = fixture(self.root)
+        self.command, self.options = delivery.apple_id_command(self.root, self.ipa, {
+            'APPLE_ID_USERNAME': 'synthetic@example.invalid',
+            'APPLE_APP_SPECIFIC_PASSWORD': 'SYNTHETIC_SECRET'})
+        self.provider = '00000000-0000-0000-0000-000000000001'
+        self.other = '00000000-0000-0000-0000-000000000002'
+        self.providers = {'providers': [{'PublicID': self.provider,
+                                       'WWDRTeamID': delivery.cert.release.TEAM}]}
+
+    def prepare(self, *, providers=None, help_text=None, error=None, selected=None):
+        calls = []
+        def execute(command, **options):
+            calls.append((command, options))
+            self.assertNotIn('SYNTHETIC_SECRET', command)
+            self.assertEqual(options['timeout'], 30)
+            if error is not None:
+                raise error
+            if '--help' in command and help_text is not None:
+                options['stdout'].write(help_text)
+            elif '--list-providers' in command:
+                options['stdout'].write(json.dumps(self.providers if providers is None else providers).encode())
+            else:
+                self.assertTrue(synthetic_transport_query(command, options))
+        with patch.dict(os.environ):
+            os.environ.pop('GRIDLY_APPLE_PROVIDER_PUBLIC_ID', None)
+            if selected is not None:
+                os.environ['GRIDLY_APPLE_PROVIDER_PUBLIC_ID'] = selected
+            command = delivery.prepare_package_upload(self.root, self.command, self.ipa,
+                                                       execute, **self.options)
+        return command, calls
+
+    def test_supported_ipa_command_has_exact_identity_and_env_password(self):
+        command, calls = self.prepare()
+        self.assertEqual(command, ['xcrun', 'altool', '--upload-package', str(self.ipa),
+            '--type', 'ios', '--apple-id', '6814845611', '--bundle-id', 'com.gridlygo.gridly',
+            '--bundle-short-version-string', '1.0.0', '--bundle-version', '15',
+            '--username', 'synthetic@example.invalid', '--password', '@env:APPLE_APP_SPECIFIC_PASSWORD'])
+        self.assertNotIn('--file', command)
+        self.assertNotIn('--asc-public-id', command)
+        self.assertEqual(len(calls), 2)
+        self.assertEqual(calls[0][0], ['xcrun', 'altool', '--help'])
+        self.assertNotIn('APPLE_APP_SPECIFIC_PASSWORD', calls[0][1]['env'])
+        self.assertEqual(calls[1][0], ['xcrun', 'altool', '--list-providers', '--output-format',
+                                     'json', *self.command[6:]])
+        self.assertEqual(calls[1][1]['env']['APPLE_APP_SPECIFIC_PASSWORD'], 'SYNTHETIC_SECRET')
+        self.assertTrue(all(options['stdout'].closed for _, options in calls))
+        self.assertEqual(list((self.root/'logs').iterdir()), [])
+        self.assertFalse((self.root/'reports/delivery-transfer.json').exists())
+
+    def test_multiple_providers_require_selection_from_discovery_and_correct_signing_team(self):
+        providers = {'providers': [*self.providers['providers'],
+            {'PublicID': self.other, 'WWDRTeamID': 'OTHERTEAM1'}]}
+        for selected in (None, '00000000-0000-0000-0000-000000000003', self.other):
+            with self.subTest(selected=selected), self.assertRaisesRegex(ValueError, 'no upload permitted'):
+                self.prepare(providers=providers, selected=selected)
+        command, _ = self.prepare(providers=providers, selected=self.provider)
+        self.assertEqual(command[command.index('--asc-public-id')+1], self.provider)
+
+    def test_missing_empty_malformed_duplicate_and_error_provider_data_fail_closed(self):
+        for response in ({}, {'providers': []}, {'providers': 'private'},
+                         {'providers': [{}]}, {'providers': [{'PublicID': 'private'}]},
+                         {'providers': self.providers['providers'] * 2},
+                         {'errors': ['PRIVATE'], **self.providers},
+                         {'product-errors': ['PRIVATE'], **self.providers},
+                         {'providers': [{'PublicID': self.provider, 'WWDRTeamID': 'OTHERTEAM1'}]}):
+            with self.subTest(response=response), self.assertRaisesRegex(ValueError, 'no upload permitted'):
+                self.prepare(providers=response)
+
+    def test_unsupported_or_failed_help_and_discovery_do_not_attempt_upload(self):
+        for help_text in (b'', b'--upload-app', b'--upload-package-unsupported'):
+            with self.subTest(help_text=help_text), self.assertRaisesRegex(ValueError, 'no upload permitted'):
+                self.prepare(help_text=help_text)
+        for error in (subprocess.CalledProcessError(-6, self.command, output=b'PRIVATE'),
+                      subprocess.TimeoutExpired(self.command, 30, output=b'PRIVATE'),
+                      KeyboardInterrupt('PRIVATE'), OSError('PRIVATE')):
+            with self.subTest(error=type(error)), self.assertRaises(ValueError) as caught:
+                self.prepare(error=error)
+            self.assertNotIn('PRIVATE', str(caught.exception))
+        self.assertFalse((self.root/'reports/delivery-transfer.json').exists())
+
+    def test_private_environment_is_per_child_and_rejects_unowned_directories(self):
+        original = {'HOME': 'foreign', 'TMPDIR': 'foreign', 'CFFIXED_USER_HOME': 'foreign',
+                    'JAVA_TOOL_OPTIONS': 'foreign', '_JAVA_OPTIONS': 'foreign',
+                    'JDK_JAVA_OPTIONS': 'foreign', 'APPLE_APP_SPECIFIC_PASSWORD': 'SYNTHETIC_SECRET'}
+        before = dict(original)
+        result = delivery.private_upload_environment(self.root, original)
+        self.assertEqual(original, before)
+        self.assertEqual(result['HOME'], str(self.root/'home'))
+        self.assertEqual(result['CFFIXED_USER_HOME'], str(self.root/'home'))
+        self.assertEqual(result['TMPDIR'], str(self.root/'tmp'))
+        self.assertIn('-Duser.home="'+str(self.root/'home')+'"', result['JAVA_TOOL_OPTIONS'])
+        self.assertIn('-Djava.io.tmpdir="'+str(self.root/'tmp')+'"', result['JAVA_TOOL_OPTIONS'])
+        self.assertEqual(result['APPLE_APP_SPECIFIC_PASSWORD'], 'SYNTHETIC_SECRET')
+        self.assertNotIn('_JAVA_OPTIONS', result)
+        self.assertNotIn('JDK_JAVA_OPTIONS', result)
+        (self.root/'.owned').unlink()
+        with self.assertRaises(ValueError):
+            delivery.private_upload_environment(self.root, original)
+
+    def test_owned_process_group_is_bounded_and_reaped_for_every_process_outcome(self):
+        for outcome in (0, -6, subprocess.TimeoutExpired(self.command, 900), KeyboardInterrupt()):
+            process = Mock(pid=424242)
+            process.wait.side_effect = [outcome, 0]
+            with self.subTest(outcome=type(outcome)), patch.object(delivery.sys, 'platform', 'darwin'), \
+                 patch.object(delivery.subprocess, 'Popen', return_value=process) as spawn, \
+                 patch.object(delivery.os, 'killpg', create=True) as kill, \
+                 patch.object(delivery.signal, 'SIGKILL', 9, create=True), \
+                 patch.object(delivery.time, 'sleep'):
+                def invoke():
+                    return delivery.run_upload_process(self.command, check=True, cwd=self.root/'home',
+                                                       stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT,
+                                                       env={'APPLE_APP_SPECIFIC_PASSWORD': 'SYNTHETIC_SECRET'})
+                if outcome == 0:
+                    self.assertEqual(invoke().returncode, 0)
+                elif outcome == -6:
+                    with self.assertRaises(subprocess.CalledProcessError) as caught: invoke()
+                    self.assertEqual(caught.exception.returncode, -6)
+                else:
+                    with self.assertRaises(type(outcome)): invoke()
+                self.assertTrue(spawn.call_args.kwargs['start_new_session'])
+                self.assertEqual(spawn.call_count, 1)
+                self.assertEqual([call.args for call in kill.call_args_list],
+                    [(424242, delivery.signal.SIGTERM), (424242, 9)])
+                self.assertEqual([call.kwargs for call in process.wait.call_args_list],
+                                 [{'timeout': 900}, {'timeout': 5}])
+
+    def test_process_cleanup_failure_is_not_suppressed(self):
+        process = Mock(pid=424242)
+        process.wait.return_value = 0
+        with patch.object(delivery.sys, 'platform', 'darwin'), \
+             patch.object(delivery.subprocess, 'Popen', return_value=process), \
+             patch.object(delivery.os, 'killpg', side_effect=PermissionError('PRIVATE'), create=True), \
+             self.assertRaises(PermissionError):
+            delivery.run_upload_process(self.command, check=True, cwd=self.root/'home')
+
+    def test_repair_only_changes_transport_and_exact_source_ancestry(self):
+        baseline = delivery.cert.git('show', delivery.UPLOADER_REPAIR_BASE +
+                                     ':tools/apple_storekit_testflight_delivery.py').decode()
+        current = (ROOT/'tools/apple_storekit_testflight_delivery.py').read_text()
+        functions = lambda source: {node.name: ast.dump(node) for node in ast.parse(source).body
+                                   if isinstance(node, (ast.FunctionDef, ast.ClassDef))}
+        before, after = functions(baseline), functions(current)
+        self.assertEqual(set(after)-set(before), {'private_upload_environment', 'run_upload_process',
+                                                'package_provider', 'prepare_package_upload'})
+        for name in before.keys()-{'source_guard', 'execute_upload', 'transfer'}:
+            self.assertEqual(before[name], after[name], name)
+        normalized = functions(normalize_uploader_repair(current))
+        for name in ('execute_upload', 'transfer'):
+            self.assertEqual(before[name], normalized[name], name)
+        self.assertEqual(delivery.UPLOADER_REPAIR_BASE, 'b66348762e10bf47031f2297963345cf18088b83')
+        head = delivery.cert.git('rev-parse', 'HEAD').decode().strip()
+        if head != delivery.UPLOADER_REPAIR_BASE:
+            self.assertEqual(delivery.cert.git('show', '-s', '--format=%P', head).decode().strip(),
+                             delivery.UPLOADER_REPAIR_BASE)
+        changed = delivery.cert.git('diff', '--name-only', delivery.UPLOADER_REPAIR_BASE).decode().splitlines()
+        self.assertEqual(set(changed), delivery.TEST_MODE_FILES)
+
+    def test_new_parent_inventory_and_failed_delivery_tag_are_frozen(self):
+        for options in ({'parent': delivery.FAILED_AUTH_BASE}, {'repair_base_parent': '9'*40},
+                        {'repair_base_inventory': b''}, {'correction': b'M\tjs/gridly-paid-ui.mjs'},
+                        {'dirty': b'changed'}, {'mode': '100755'}):
+            with self.subTest(options=options), patch.object(delivery.cert, 'git', side_effect=source_git(**options)), \
+                 patch.object(delivery.subprocess, 'run'), patch.object(delivery.cert, 'original_contracts'), \
+                 self.assertRaises(ValueError):
+                delivery.source_guard(COMMIT, True)
+        original = source_git()
+        tag = delivery.PREFIX + delivery.UPLOADER_REPAIR_BASE
+        for command in (('rev-parse', '--verify', tag), ('cat-file', '-t', tag),
+                        ('rev-parse', '--verify', tag+'^{}')):
+            def changed(*args): return b'changed' if args == command else original(*args)
+            with self.subTest(command=command), patch.object(delivery.cert, 'git', side_effect=changed), \
+                 patch.object(delivery.subprocess, 'run'), patch.object(delivery.cert, 'original_contracts'), \
+                 self.assertRaises(ValueError):
+                delivery.source_guard(COMMIT, True)
+
 
 if __name__ == "__main__":
     unittest.main()
