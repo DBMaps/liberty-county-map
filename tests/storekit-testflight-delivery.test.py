@@ -361,7 +361,8 @@ def owner_automatic_authorization():
             }}
 
 
-def source_git(*, parent=delivery.SUCCESSOR_BASE,
+def source_git(*, parent=delivery.OWNER_ONLY_POLICY_BASE,
+               owner_policy_parent=delivery.SUCCESSOR_BASE, owner_policy_inventory=None,
                successor_parent=delivery.INSTALLED_ALTOOL_BASE, successor_inventory=None,
                installed_parent=delivery.DELIVERY_RECOVERY_TEST_BASE, installed_inventory=None,
                recovery_parent=delivery.DELIVERY_RESUME_BASE, recovery_inventory=None,
@@ -404,6 +405,7 @@ def source_git(*, parent=delivery.SUCCESSOR_BASE,
     values = {
         ("rev-parse", "HEAD"): COMMIT.encode(),
         ("show", "-s", "--format=%P", COMMIT): parent.encode(),
+        ("show", "-s", "--format=%P", delivery.OWNER_ONLY_POLICY_BASE): owner_policy_parent.encode(),
         ("show", "-s", "--format=%P", delivery.SUCCESSOR_BASE): successor_parent.encode(),
         ("show", "-s", "--format=%P", delivery.INSTALLED_ALTOOL_BASE): installed_parent.encode(),
         ("cat-file", "-t", delivery.CONSUMED_SETUP_TAG): b"tag",
@@ -468,7 +470,8 @@ def source_git(*, parent=delivery.SUCCESSOR_BASE,
         ("diff", "--name-status", "--no-renames", delivery.DELIVERY_RESUME_BASE, delivery.DELIVERY_RECOVERY_TEST_BASE): test_mode if recovery_inventory is None else recovery_inventory,
         ("diff", "--name-status", "--no-renames", delivery.DELIVERY_RECOVERY_TEST_BASE, delivery.INSTALLED_ALTOOL_BASE): test_mode if installed_inventory is None else installed_inventory,
         ("diff", "--name-status", "--no-renames", delivery.INSTALLED_ALTOOL_BASE, delivery.SUCCESSOR_BASE): test_mode if successor_inventory is None else successor_inventory,
-        ("diff", "--name-status", "--no-renames", delivery.SUCCESSOR_BASE, COMMIT): test_mode if correction is None else correction,
+        ("diff", "--name-status", "--no-renames", delivery.SUCCESSOR_BASE, delivery.OWNER_ONLY_POLICY_BASE): test_mode if owner_policy_inventory is None else owner_policy_inventory,
+        ("diff", "--name-status", "--no-renames", delivery.OWNER_ONLY_POLICY_BASE, COMMIT): test_mode if correction is None else correction,
         ("diff", "--name-status", "--no-renames", delivery.SOURCE, COMMIT): all_additions if net is None else net,
         ("diff", "--name-only", "HEAD"): dirty,
         ("diff", "--cached", "--name-only"): staged,
@@ -489,7 +492,7 @@ def source_git(*, parent=delivery.SUCCESSOR_BASE,
     for path in delivery.TEST_MODE_FILES | delivery.SAFETY_FILES:
         values[("ls-tree", delivery.CERTIFIED_BASE, "--", path)] = ("100644 blob " + "0"*40 + "\t" + path).encode()
     for path in delivery.TEST_MODE_FILES:
-        for checkpoint in (delivery.SOLO_OWNER_BASE, delivery.SOLO_OWNER_ATTEST_BASE, delivery.SOLO_OWNER_FIX_BASE, delivery.FAILED_AUTH_BASE, delivery.UPLOADER_REPAIR_BASE, delivery.UPLOADER_CERTIFICATION_BASE, delivery.TEAM_ID_REPAIR_BASE, delivery.DELIVERY_RESUME_BASE, delivery.DELIVERY_RECOVERY_TEST_BASE, delivery.INSTALLED_ALTOOL_BASE, delivery.SUCCESSOR_BASE):
+        for checkpoint in (delivery.SOLO_OWNER_BASE, delivery.SOLO_OWNER_ATTEST_BASE, delivery.SOLO_OWNER_FIX_BASE, delivery.FAILED_AUTH_BASE, delivery.UPLOADER_REPAIR_BASE, delivery.UPLOADER_CERTIFICATION_BASE, delivery.TEAM_ID_REPAIR_BASE, delivery.DELIVERY_RESUME_BASE, delivery.DELIVERY_RECOVERY_TEST_BASE, delivery.INSTALLED_ALTOOL_BASE, delivery.SUCCESSOR_BASE, delivery.OWNER_ONLY_POLICY_BASE):
             values[("ls-tree", checkpoint, "--", path)] = ("100644 blob " + "0"*40 + "\t" + path).encode()
     for path in delivery.FILES | delivery.PREFLIGHT_FILES | delivery.SIGNING_FILES | delivery.CMS_FILES | delivery.SAFETY_FILES:
         values[("ls-tree", COMMIT, "--", path)] = (mode + " blob " + "0"*40 + "\t" + path).encode()
@@ -1967,7 +1970,7 @@ security() {
         nodes=lambda text:{n.targets[0].id:n.value for n in ast.parse(text).body
                            if isinstance(n,ast.Assign) and isinstance(n.targets[0],ast.Name)}
         old,new=nodes(before),nodes(after)
-        self.assertEqual(set(new)-set(old),{"SUCCESSOR_BASE","SUCCESSOR_FIELD","SUCCESSOR_CONFIRMATIONS","CONSUMED_SETUP_OUTCOME","INSTALLED_ALTOOL_BASE","CONSUMED_SETUP_TAG","CONSUMED_SETUP_TAG_OBJECT","TEAM_ID_REPAIR_BASE","DELIVERY_RESUME_BASE","DELIVERY_RECOVERY_TEST_BASE","SECOND_UNCERTAIN_RUN","SECOND_UNCERTAIN_TAG","SECOND_UNCERTAIN_TAG_OBJECT","UPLOADER_CERTIFICATION_BASE","UPLOADER_REPAIR_BASE","_UPLOAD_RUN","CERTIFIED_BASE","SOLO_OWNER_BASE","SOLO_OWNER_ATTEST_BASE","SOLO_OWNER_FIX_BASE","FAILED_AUTH_BASE","FAILED_AUTH_TAG","FAILED_AUTH_TAG_OBJECT","SOLO_OWNER_UI_METHOD","SOLO_OWNER_UI_CONFIRMATIONS","PRIOR_ATTEMPT_FIELD","PRIOR_ATTEMPT_RUN","PRIOR_ATTEMPT_CONFIRMATIONS","SAFETY_FILES","UPLOAD_BASE","UPLOAD_ERROR_CATEGORIES","APPLE_ID_BASE","TEST_MODE_FILES","AUTH_BASE","APPLE_ID_AUTH_FIELD","UI_UNUSED_METHOD","UI_UNUSED_CONFIRMATIONS","TRANSFER_BASE","DELIVERY_STAGES","DELIVERY_STAGE_FAILURES","DELIVERY_CATEGORIES","P04_BASE","ARCHIVE_BASE","EVIDENCE_BASE","ENVIRONMENT_BASE","ARCHIVE_RULES","ARCHIVE_MAX_BYTES","ARCHIVE_STRUCTURED_STATES","HISTORY_CATEGORIES","HISTORY_ATTEMPTS",
+        self.assertEqual(set(new)-set(old),{"OWNER_ONLY_POLICY_BASE","SUCCESSOR_BASE","SUCCESSOR_FIELD","SUCCESSOR_CONFIRMATIONS","CONSUMED_SETUP_OUTCOME","INSTALLED_ALTOOL_BASE","CONSUMED_SETUP_TAG","CONSUMED_SETUP_TAG_OBJECT","TEAM_ID_REPAIR_BASE","DELIVERY_RESUME_BASE","DELIVERY_RECOVERY_TEST_BASE","SECOND_UNCERTAIN_RUN","SECOND_UNCERTAIN_TAG","SECOND_UNCERTAIN_TAG_OBJECT","UPLOADER_CERTIFICATION_BASE","UPLOADER_REPAIR_BASE","_UPLOAD_RUN","CERTIFIED_BASE","SOLO_OWNER_BASE","SOLO_OWNER_ATTEST_BASE","SOLO_OWNER_FIX_BASE","FAILED_AUTH_BASE","FAILED_AUTH_TAG","FAILED_AUTH_TAG_OBJECT","SOLO_OWNER_UI_METHOD","SOLO_OWNER_UI_CONFIRMATIONS","PRIOR_ATTEMPT_FIELD","PRIOR_ATTEMPT_RUN","PRIOR_ATTEMPT_CONFIRMATIONS","SAFETY_FILES","UPLOAD_BASE","UPLOAD_ERROR_CATEGORIES","APPLE_ID_BASE","TEST_MODE_FILES","AUTH_BASE","APPLE_ID_AUTH_FIELD","UI_UNUSED_METHOD","UI_UNUSED_CONFIRMATIONS","TRANSFER_BASE","DELIVERY_STAGES","DELIVERY_STAGE_FAILURES","DELIVERY_CATEGORIES","P04_BASE","ARCHIVE_BASE","EVIDENCE_BASE","ENVIRONMENT_BASE","ARCHIVE_RULES","ARCHIVE_MAX_BYTES","ARCHIVE_STRUCTURED_STATES","HISTORY_CATEGORIES","HISTORY_ATTEMPTS",
                          "HISTORY_WAIT_BUDGET","HISTORY_DEADLINE","HISTORY_TIMEOUT","HISTORY_MAX_BYTES"})
         for name,node in old.items():
             if name=="HISTORICAL_TAGS":
@@ -2068,7 +2071,7 @@ security() {
         self.assertFalse(git("ls-files","--others","--exclude-standard"))
         head=git("rev-parse","HEAD")
         self.assertFalse(git("status","--porcelain=v1","--untracked-files=all"))
-        self.assertEqual(git("show","-s","--format=%P",head),delivery.SUCCESSOR_BASE)
+        self.assertEqual(git("show","-s","--format=%P",head),delivery.OWNER_ONLY_POLICY_BASE)
         delivery.source_guard(head,True)
         for path in support:
             entry=git("ls-files","--stage","--",path).split()
@@ -4540,9 +4543,9 @@ class SupportedPackageUploaderTests(SyntheticDeliveryTestCase):
             self.assertEqual(before[name], normalized[name], name)
         self.assertEqual(delivery.UPLOADER_REPAIR_BASE, 'b66348762e10bf47031f2297963345cf18088b83')
         head = delivery.cert.git('rev-parse', 'HEAD').decode().strip()
-        if head != delivery.SUCCESSOR_BASE:
+        if head != delivery.OWNER_ONLY_POLICY_BASE:
             self.assertEqual(delivery.cert.git('show', '-s', '--format=%P', head).decode().strip(),
-                             delivery.SUCCESSOR_BASE)
+                             delivery.OWNER_ONLY_POLICY_BASE)
         changed = delivery.cert.git('diff', '--name-only', delivery.UPLOADER_REPAIR_BASE).decode().splitlines()
         self.assertEqual(set(changed), delivery.TEST_MODE_FILES)
 
@@ -4961,6 +4964,82 @@ class ConsumedAuthorizationSuccessorTests(SyntheticDeliveryTestCase):
                          {'source_guard','prior_attempt_evidence','prior_attempt_slot','authorize','authorization_guard'})
         restored = functions(normalize_authorization_successor(after))
         for name in old.keys()-{'source_guard'}: self.assertEqual(old[name], restored[name], name)
+
+
+class OwnerOnlyDeliveryPolicyTests(SyntheticDeliveryTestCase):
+    """Owner facts are synthetic here; no reviewer identity or live evidence exists."""
+    upload_authentication = 'APPLE_ID'
+    setUp = ConsumedAuthorizationSuccessorTests.setUp
+    bind = ConsumedAuthorizationSuccessorTests.bind
+    save = AppleIdDeliveryTests.save
+    exercise = AppleIdDeliveryTests.exercise
+    exception = PriorAttemptExceptionTests.exception
+    recovery = ConsumedAuthorizationSuccessorTests.recovery
+
+    def test_owner_only_check_needs_no_independent_person_or_timestamp(self):
+        value = self.bind()
+        evidence = value[delivery.APPLE_ID_AUTH_FIELD]
+        self.assertEqual(evidence['method'], 'SOLE_OWNER_APP_STORE_CONNECT_UI')
+        self.assertNotIn('independent_verified_unused', evidence)
+        self.assertNotIn('independent_checked_at', evidence)
+        self.assertTrue(self.recovery(value)['owner_only_apple_side_check_confirmed'])
+        self.assertTrue(self.recovery(value)['independent_review_declined'])
+        self.assertTrue(self.recovery(value)['build_uploads_all_statuses_reviewed'])
+        self.assertTrue(self.exception(value)['duplicate_risk_acknowledged'])
+        delivery.owner_authorization(value, COMMIT, REF, NOW)
+        receipt = delivery.ui_unused_build(value, NOW)
+        self.assertEqual(receipt['review_policy'], 'SOLE_OWNER_NO_INDEPENDENT_REVIEWER')
+        self.assertEqual(receipt['earlier_attempts'], [
+            {'run_id':39315841160,'apple_acceptance':'UNKNOWN'},
+            {'run_id':39457019380,'apple_acceptance':'UNKNOWN'}])
+        self.assertEqual(receipt['consumed_pre_upload_attempt']['upload'], 'NOT_ATTEMPTED')
+
+    def test_explicit_owner_only_all_statuses_and_declined_reviewer_confirmations_are_strict(self):
+        for key in ('owner_only_apple_side_check_confirmed','independent_review_declined',
+                    'build_uploads_all_statuses_reviewed'):
+            for invalid in (False, None, 0, 1, 'true'):
+                value = self.bind(); self.recovery(value)[key] = invalid
+                with self.subTest(key=key,invalid=invalid), self.assertRaises(ValueError):
+                    delivery.owner_authorization(value, COMMIT, REF, NOW)
+
+    def test_fabricated_independent_evidence_cannot_replace_owner_only_policy(self):
+        for key, added in (('independent_checked_at',STAMP), ('independent_verified_unused',True),
+                           ('independent_reviewer','SYNTHETIC_NOT_A_PERSON')):
+            value = self.bind(); value[delivery.APPLE_ID_AUTH_FIELD][key] = added
+            with self.subTest(key=key), self.assertRaises(ValueError):
+                delivery.owner_authorization(value, COMMIT, REF, NOW)
+
+    def test_revoked_owner_only_approval_after_validation_blocks_upload(self):
+        value = self.bind()
+        def revoke(stage, status):
+            if stage == 'D05_LIVE_BUILD_AVAILABILITY' and status == 'RUNNING':
+                self.recovery(value)['owner_only_apple_side_check_confirmed'] = False
+                self.save(value)
+        calls, _, error = self.exercise(value=value, on_progress=revoke)
+        self.assertIsInstance(error, ValueError)
+        self.assertEqual(calls, ['--validate-app'])
+
+    def test_policy_child_commit_and_inventory_remain_exact(self):
+        for options in ({}, {'parent':delivery.SUCCESSOR_BASE}, {'owner_policy_parent':'9'*40},
+                        {'owner_policy_inventory':b''}, {'correction':b'M\tjs/gridly-paid-ui.mjs'}):
+            with self.subTest(options=options), patch.object(delivery,'source_guard',self.actual_source_guard), patch.object(delivery.cert,'git',side_effect=source_git(**options)), patch.object(delivery.subprocess,'run'), patch.object(delivery.cert,'original_contracts'):
+                if options:
+                    with self.assertRaises(ValueError): delivery.source_guard(COMMIT, True)
+                else: self.assertTrue(delivery.source_guard(COMMIT, True)['runtime_unchanged'])
+
+    def test_only_review_policy_receipt_confirmations_and_source_ancestry_change(self):
+        before = self.actual_git('show',delivery.OWNER_ONLY_POLICY_BASE+':tools/apple_storekit_testflight_delivery.py').decode()
+        after = (ROOT/'tools/apple_storekit_testflight_delivery.py').read_text()
+        functions = lambda code: {n.name:ast.dump(n) for n in ast.parse(code).body if isinstance(n,(ast.FunctionDef,ast.ClassDef))}
+        old, new = functions(before), functions(after)
+        self.assertEqual(old.keys(), new.keys())
+        self.assertEqual({name for name in old if old[name] != new[name]},
+                         {'source_guard','successor_attempt_evidence'})
+        constants = lambda code: {n.targets[0].id:ast.dump(n.value) for n in ast.parse(code).body
+            if isinstance(n,ast.Assign) and isinstance(n.targets[0],ast.Name)}
+        original, current = constants(before), constants(after)
+        self.assertEqual(current.keys()-original.keys(), {'OWNER_ONLY_POLICY_BASE'})
+        self.assertEqual({key for key in original if original[key] != current[key]}, {'SUCCESSOR_CONFIRMATIONS'})
 
 
 if __name__ == "__main__":
