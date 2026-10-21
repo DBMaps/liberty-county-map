@@ -76,7 +76,9 @@ export async function bootPaidAccess() {
   document.body.append(legal);
   const previousInert=new Map();
   const lock=(checking=false)=>{
-    const entry=googleEntry&&!subscriptionOpen;
+    // The public Android entry must not cover the first-install tour. The tour
+    // completes before render exposes subscription actions on that entry.
+    const entry=googleEntry&&tourComplete&&!subscriptionOpen;
     root.classList.add('gridly-paid-locked');root.classList.toggle('gridly-paid-pending',checking||entry);gate.hidden=checking||entry;
     for(const child of document.body.children) if(child!==gate&&child!==pending&&child!==legal&&child.tagName!=='SCRIPT') {
       if(!previousInert.has(child)) previousInert.set(child,child.inert);

@@ -179,7 +179,7 @@ export async function stage(destination, { runtimeConfigFile, googleLicenseTest=
   if(androidProduction&&googleLicenseTest)throw Error('Production and license-test staging are mutually exclusive');
   if(androidProduction) {
     const metadata=await readFile(join(root,'android/app/build.gradle'),'utf8');
-    if(!/^\s*versionCode 12\s*$/m.test(metadata)||!/^\s*versionName ["']1\.0\.0["']\s*$/m.test(metadata))throw Error('Production staging requires Gridly 1.0.0 / versionCode 12');
+    if(!/^\s*versionCode 13\s*$/m.test(metadata)||!/^\s*versionName ["']1\.0\.0["']\s*$/m.test(metadata))throw Error('Production staging requires Gridly 1.0.0 / versionCode 13');
   }
   const consumerScriptManifest = await readConsumerScriptManifest(root);
   let composedRuntimeConfig = null;

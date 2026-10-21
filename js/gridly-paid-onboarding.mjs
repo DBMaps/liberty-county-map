@@ -15,10 +15,27 @@ export function onboardingComplete() {
   if(get(COMPLETE)==='yes')return true;
   try{return JSON.parse(get(PROFILE)||'null')?.setupComplete===true;}catch{return false;}
 }
+// Local WebView asset loading can fail or stall too. Keep Android startup
+// bounded through body decoding; cancellation alone need not settle a fetch.
+export async function loadAndroidOnboardingModel({timeoutMs=12000}={}) {
+  const controller=new AbortController();let timer;
+  try {
+    return await Promise.race([
+      (async()=>{const response=await fetch('assets/onboarding/paid-onboarding-model.json',{signal:controller.signal});
+        if(!response.ok)throw Error('onboarding_unavailable');return response.json();})(),
+      new Promise((_,reject)=>{timer=setTimeout(()=>{controller.abort();reject(Error('onboarding_unavailable'));},timeoutMs);})
+    ]);
+  } finally {clearTimeout(timer);controller.abort();}
+}
 export async function createPaidOnboarding({onComplete}) {
-  const response=await fetch('assets/onboarding/paid-onboarding-model.json');
-  if(!response.ok)throw Error('onboarding_unavailable');
-  const model=await response.json();
+  const isAndroid=window.Capacitor?.isNativePlatform?.()===true&&window.Capacitor?.getPlatform?.()==='android';
+  let model;
+  if(isAndroid)model=await loadAndroidOnboardingModel();
+  else {
+    const response=await fetch('assets/onboarding/paid-onboarding-model.json');
+    if(!response.ok)throw Error('onboarding_unavailable');
+    model=await response.json();
+  }
   const GRIDLY_DEFAULT_COUNTY_ID='liberty-tx';
   const GRIDLY_COUNTY_BOUNDARY_OVERLAY_GEOID_BY_ID=model.geoids;
   const GRIDLY_COUNTY_REGISTRY=model.registry,GRIDLY_AWARENESS_AREA_DEFINITIONS=model.areas;
@@ -44,7 +61,6 @@ export async function createPaidOnboarding({onComplete}) {
   delegatedHandlersAttached: false
 };
   const overlay=document.getElementById('gridlyWelcomeOnboarding');
-  const isAndroid=window.Capacitor?.isNativePlatform?.()===true&&window.Capacitor?.getPlatform?.()==='android';
   const original=overlay.cloneNode(true);original.inert=false;
   const els={gridlyWelcomeOnboarding:overlay};
   let closed=false, completionTimer, pendingPosition;
