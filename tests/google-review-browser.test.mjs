@@ -6,21 +6,23 @@ import {resolve,extname,sep} from 'node:path';
 import {webcrypto as crypto,randomBytes} from 'node:crypto';
 import {chromium} from '@playwright/test';
 import {paidStartupFixtureModule} from './helpers/paid-startup-fixture.mjs';
-import {createGoogleReviewHandler} from '../supabase/functions/_shared/google-review.mjs';
-import {createNativeAuthorizer} from '../supabase/functions/_shared/entitlement/native-authorization.mjs';
-import {createGoogleReviewIntegrityVerifier} from '../supabase/functions/_shared/entitlement/google-integrity.mjs';
+import {pathToFileURL} from 'node:url';
+const backendRoot=resolve(process.env.GRIDLY_REVIEW_BACKEND_ROOT||'.');
+const {createGoogleReviewHandler,createGoogleReviewNativeAuthorizer}=await import(pathToFileURL(resolve(backendRoot,'supabase/functions/_shared/google-review.mjs')));
+const {createGoogleReviewIntegrityVerifier}=await import(pathToFileURL(resolve(backendRoot,'supabase/functions/_shared/entitlement/google-integrity.mjs')));
 const id='grr_'+'a'.repeat(32),code=id+'_'+'a'.repeat(43),revision='b'.repeat(32);
 
 test('real Android reviewer form → signed authority → full Report UI → nonpublishing Submit; cold-open requires re-entry',{timeout:65000},async()=>{
-  const root=resolve(process.env.GRIDLY_REVIEW_TEST_ROOT||'.'),keys=await crypto.subtle.generateKey({name:'ECDSA',namedCurve:'P-256'},true,['sign','verify']);
+  const exactPackage=!!process.env.GRIDLY_REVIEW_EXACT_ROOT;
+  const root=resolve(process.env.GRIDLY_REVIEW_EXACT_ROOT||process.env.GRIDLY_REVIEW_TEST_ROOT||'.'),keys=await crypto.subtle.generateKey({name:'ECDSA',namedCurve:'P-256'},true,['sign','verify']);
   const jwk=await crypto.subtle.exportKey('jwk',keys.publicKey),challenges=new Set(),events=[];
   const certificate=Buffer.from('3763446a68e18349e0a3474e21d28a142746f30e4c22957baa930da23650913b','hex').toString('base64url');
   const googleVerifier=createGoogleReviewIntegrityVerifier({accessToken:async()=>'offline',fetchImpl:async(url,options)=>{
     assert.match(url,/playintegrity.googleapis.com/);const hash=JSON.parse(options.body).integrity_token.slice(8);
     return Response.json({tokenPayloadExternal:{requestDetails:{requestPackageName:'com.gridlygo.gridly',requestHash:hash,timestampMillis:String(Date.now())},
-      appIntegrity:{packageName:'com.gridlygo.gridly',appRecognitionVerdict:'PLAY_RECOGNIZED',versionCode:'12',certificateSha256Digest:[certificate]},
+      appIntegrity:{packageName:'com.gridlygo.gridly',appRecognitionVerdict:'PLAY_RECOGNIZED',versionCode:'14',certificateSha256Digest:[certificate]},
       deviceIntegrity:{deviceRecognitionVerdict:['MEETS_DEVICE_INTEGRITY']},accountDetails:{appLicensingVerdict:'UNLICENSED'}}});}});
-  const handler=createGoogleReviewHandler({...keys,authorizeNative:createNativeAuthorizer({googleVerifier,store:{consume:async({hash})=>challenges.delete(hash)}}),
+  const handler=createGoogleReviewHandler({...keys,authorizeNative:createGoogleReviewNativeAuthorizer({googleVerifier,store:{consume:async({hash})=>challenges.delete(hash)}}),
     credentialAuthority:async({action,credentialId,digest,revision:rev})=>{
       if(credentialId!==id||action==='login'&&digest!==Buffer.from(await crypto.subtle.digest('SHA-256',Buffer.from(code))).toString('hex')||action!=='login'&&rev!==revision)return null;
       if(action==='verified')events.push('verified');if(action==='report')events.push('report');
@@ -37,7 +39,7 @@ test('real Android reviewer form → signed authority → full Report UI → non
         let body='';for await(const part of req)body+=part;const response=await handler(new Request('https://fixture.test/review',{method:'POST',body}));
         res.writeHead(response.status,{'Content-Type':'application/json'});res.end(await response.text());return;
       }
-      if(path==='/js/gridly-paid-config.mjs'){res.setHeader('Content-Type','text/javascript');res.end(paidStartupFixtureModule());return;}
+      if(!exactPackage&&path==='/js/gridly-paid-config.mjs'){res.setHeader('Content-Type','text/javascript');res.end(paidStartupFixtureModule());return;}
       if(path==='/js/gridly-entitlement-public-key.mjs'){res.setHeader('Content-Type','text/javascript');res.end(`export const importProductionEntitlementKey=()=>crypto.subtle.importKey('jwk',${JSON.stringify(jwk)},{name:'ECDSA',namedCurve:'P-256'},false,['verify']);`);return;}
       const file=resolve(root,'.'+(path==='/'?'/index.html':path));if(!file.startsWith(root+sep))throw Error();let bytes=await readFile(file);
       if(path==='/')bytes=bytes.toString().replace('</body>','<script type="application/gridly-protected">window.__protectedStarted=true;</script></body>');
@@ -68,8 +70,8 @@ test('real Android reviewer form → signed authority → full Report UI → non
     await page.addInitScript(()=>{
       localStorage.setItem('gridlyBetaFirstRunWalkthroughCompleteV894C','yes');localStorage.setItem('gridlyEntitled','true');
       window.__paidStartupOptions={};window.__nativeRequests=[];
-      window.Capacitor={isNativePlatform:()=>true,getPlatform:()=>'android',isPluginAvailable:name=>['GridlyPlayIntegrity','CapacitorHttp'].includes(name),
-        Plugins:{GridlyPlayIntegrity:{prepare:async()=>({prepared:true}),authorize:async({digest})=>({type:'google_standard',token:'fixture.'+digest})}},
+      window.Capacitor={isNativePlatform:()=>true,getPlatform:()=>'android',isPluginAvailable:name=>['GridlyPlayBilling','GridlyPlayIntegrity','CapacitorHttp'].includes(name),
+        Plugins:{GridlyPlayBilling:{addListener:async()=>({remove:async()=>{}}),startObserving:async()=>({}),getProducts:async()=>({result:'available',productId:'com.gridlygo.gridly.monthly',basePlanId:'monthly',displayPrice:'$2.99',currency:'USD',billingPeriod:'P1M',storefront:'US',hasOffer:false}),queryCurrentPurchases:async()=>({result:'no_evidence'}),restorePurchases:async()=>({result:'no_evidence'}),purchase:async()=>{throw Error('Purchase is forbidden in reviewer certification');}},GridlyPlayIntegrity:{prepare:async()=>({prepared:true}),authorize:async({digest})=>({type:'google_standard',token:'fixture.'+digest})}},
         nativePromise:async(plugin,method,options)=>{
           if(plugin!=='CapacitorHttp'||method!=='request')throw Error();window.__nativeRequests.push(options.url);
           const path=options.url==='https://gridlygo.com/subscription-challenge'?'/fixture/challenge':options.url==='https://nhwhkbkludzkuyxmkkcj.supabase.co/functions/v1/gridly-google-review-access'?'/fixture/review':null;
@@ -112,7 +114,7 @@ test('real Android reviewer form → signed authority → full Report UI → non
     assert.equal(await page.evaluate(()=>activeHazards.length+activeReports.length),0,'review Submit creates no local incident');
     assert.equal(await page.locator('#gridlyRetryPendingReport').count(),0);
     assert.equal(await page.evaluate(()=>window.gridlyGovernedRoadHazardReportDraft),null);
-    await page.screenshot({path:resolve('.artifacts/android-production-v12/review-submit-validated.png')});
+    await page.screenshot({path:resolve('.artifacts/android-review14/review-submit-validated.png')});
     await page.reload();await page.locator('#gridlyPaidEntryActions:not([hidden])').waitFor();assert.equal(await page.evaluate(()=>!!window.__protectedStarted),false);
     await page.close();
   }finally{await browser.close();await new Promise(r=>server.close(r));}

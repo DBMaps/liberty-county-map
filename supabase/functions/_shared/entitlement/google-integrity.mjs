@@ -1,3 +1,4 @@
+import {GOOGLE_REVIEW_COMPATIBLE_BUILDS} from '../../../../js/gridly-google-review-proof.mjs';
 const PACKAGE = 'com.gridlygo.gridly';
 export const GOOGLE_PLAY_CLOUD_PROJECT_ID = 'gridly-play-billing';
 export const GOOGLE_PLAY_CLOUD_PROJECT_NUMBER = '219024907806';
@@ -22,7 +23,7 @@ export function createGoogleIntegrityVerifier({accessToken,fetchImpl=fetch,now=D
 // the exact Play-signed production app/build plus its bound fresh challenge.
 /** @param {{accessToken?: unknown, fetchImpl?: typeof fetch, now?: () => number}} options */
 export function createGoogleReviewIntegrityVerifier({accessToken,fetchImpl=fetch,now=Date.now}={}) {
-  return integrityVerifier({accessToken,fetchImpl,now,acceptedEnvironment:'production',acceptedVersionCodes:['12'],review:true});
+  return integrityVerifier({accessToken,fetchImpl,now,acceptedEnvironment:'production',acceptedVersionCodes:GOOGLE_REVIEW_COMPATIBLE_BUILDS,review:true});
 }
 function integrityVerifier({accessToken,fetchImpl,now,acceptedEnvironment,acceptedVersionCodes,review}) {
   const versions=acceptedVersionCodes===undefined?null:
@@ -51,7 +52,7 @@ function integrityVerifier({accessToken,fetchImpl,now,acceptedEnvironment,accept
         (review&&(!Array.isArray(app.certificateSha256Digest)||!app.certificateSha256Digest.includes(
           btoa(String.fromCharCode(...'3763446a68e18349e0a3474e21d28a142746f30e4c22957baa930da23650913b'.match(/../g).map(value=>parseInt(value,16)))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')))) ||
         !Array.isArray(device?.deviceRecognitionVerdict) || !device.deviceRecognitionVerdict.includes('MEETS_DEVICE_INTEGRITY')) return null;
-      return Object.freeze({verified:true,platform:'google',kind:'google_standard'});
+      return Object.freeze({verified:true,platform:'google',kind:'google_standard',...(review?{buildVersionCode:app.versionCode}:{})});
     } catch {return null;}
   }});
 }

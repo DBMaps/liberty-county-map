@@ -1,9 +1,23 @@
-import {GOOGLE_REVIEW_AUTHORITY,reviewBase64,verifyGoogleReviewProof} from '../../../js/gridly-google-review-proof.mjs';
+import {GOOGLE_REVIEW_AUTHORITY,GOOGLE_REVIEW_COMPATIBLE_BUILDS,reviewBase64,verifyGoogleReviewProof} from '../../../js/gridly-google-review-proof.mjs';
 import {validateGoogleReviewReport} from './google-review-report-validation.mjs';
+import {createNativeAuthorizer} from './entitlement/native-authorization.mjs';
 const headers={'Content-Type':'application/json','Cache-Control':'no-store','Access-Control-Allow-Origin':'*',
   'Access-Control-Allow-Methods':'POST, OPTIONS','Access-Control-Allow-Headers':'authorization, apikey, content-type, x-client-info, x-retry-count, traceparent, tracestate, baggage'};
 const reply=(status,code)=>Response.json({status:code},{status,headers});
 const encoder=new TextEncoder();
+// The build comes only from Google's verified verdict, after the bound challenge
+// is consumed. Capture it per request; never accept a client build/access flag.
+export function createGoogleReviewNativeAuthorizer({store,googleVerifier,crypto=globalThis.crypto}={}) {
+  return async request=>{
+    let buildVersionCode=null;
+    const authorize=createNativeAuthorizer({store,crypto,googleVerifier:{verify:async input=>{
+      const verdict=await googleVerifier?.verify?.(input);
+      if(verdict?.verified===true&&GOOGLE_REVIEW_COMPATIBLE_BUILDS.includes(verdict.buildVersionCode))buildVersionCode=verdict.buildVersionCode;
+      return verdict;
+    }}});
+    return await authorize(request)&&buildVersionCode?Object.freeze({buildVersionCode}):false;
+  };
+}
 async function bodyText(request){
   const reader=request.body?.getReader();if(!reader)throw Error();let size=0;const chunks=[];
   try {for(;;){const {value,done}=await reader.read();if(done)break;size+=value.length;if(size>32768)throw Error();chunks.push(value);}
@@ -23,7 +37,7 @@ export function createGoogleReviewHandler({publicKey,privateKey,authorizeNative,
       if(!body||Array.isArray(body)||typeof body!=='object')return reply(400,'invalid_request');
       if(Object.keys(body).sort().join(',')==='args,operation,proof,protocol_version') {
         if(body.protocol_version!==2)return reply(400,'invalid_request');
-        const proof=await verifyGoogleReviewProof({proof:body.proof,publicKey,now:now(),crypto});
+        const proof=await verifyGoogleReviewProof({proof:body.proof,publicKey,now:now(),crypto,acceptedBuilds:GOOGLE_REVIEW_COMPATIBLE_BUILDS});
         if(!proof)return reply(403,'forbidden');
         if(!await credentialAuthority({action:'report',credentialId:proof.credentialId,revision:proof.credentialRevision}))return reply(403,'forbidden');
         const status=await reportingStatus();
@@ -45,14 +59,15 @@ export function createGoogleReviewHandler({publicKey,privateKey,authorizeNative,
       const admitted=await credentialAuthority({action:'login',credentialId,digest});
       if(!admitted||admitted.credentialId!==credentialId||!/^[a-f0-9]{32}$/.test(admitted.credentialRevision))return reply(403,'forbidden');
       const revision=admitted.credentialRevision;
-      if(!await authorizeNative({body:text,environment:'production'})){await credentialAuthority({action:'denied',credentialId,revision});return reply(403,'forbidden');}
+      const native=await authorizeNative({body:text,environment:'production'});
+      if(!native||!GOOGLE_REVIEW_COMPATIBLE_BUILDS.includes(native.buildVersionCode)){await credentialAuthority({action:'denied',credentialId,revision});return reply(403,'forbidden');}
       if(!await credentialAuthority({action:'verified',credentialId,revision}))return reply(403,'forbidden');
-      const issuedAt=now(),row={authority:GOOGLE_REVIEW_AUTHORITY,scope:'google_play_review',platform:'google',buildVersionCode:'12',
+      const issuedAt=now(),row={authority:GOOGLE_REVIEW_AUTHORITY,scope:'google_play_review',platform:'google',buildVersionCode:native.buildVersionCode,
         audience:'com.gridlygo.gridly:google-review',credentialId,credentialRevision:revision,nonce:body.nonce,issuedAt,expiresAt:issuedAt+180000};
       const head=reviewBase64(encoder.encode(JSON.stringify({alg:'ES256',typ:'gridly-review-entitlement-v1'}))),payload=reviewBase64(encoder.encode(JSON.stringify(row)));
       const signature=await crypto.subtle.sign({name:'ECDSA',hash:'SHA-256'},privateKey,encoder.encode(head+'.'+payload));
       const proof=head+'.'+payload+'.'+reviewBase64(new Uint8Array(signature));
-      if(!await verifyGoogleReviewProof({proof,publicKey,nonce:body.nonce,now:now(),crypto}))return reply(503,'maintenance');
+      if(!await verifyGoogleReviewProof({proof,publicKey,nonce:body.nonce,now:now(),crypto,acceptedBuilds:[native.buildVersionCode]}))return reply(503,'maintenance');
       return Response.json({proof},{headers});
     }catch{return reply(503,'retryable_failure');}
   };
