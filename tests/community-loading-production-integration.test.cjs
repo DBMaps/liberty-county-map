@@ -30,10 +30,14 @@ test('Apple StoreKit, recovery, continuity and paid authority remain exact uploa
   for(const file of ['ios/App/App/GridlyStoreKitPlugin.swift','js/gridly-apple-storekit.mjs','js/gridly-paid-access.mjs','js/gridly-continuity.mjs','js/gridly-store-verification.mjs'])assert.equal(current(file),source(APPLE,file),file);
 });
 test('production paid UI, Google specialization and reporting authorization remain exact Android Build 14 sources',()=>{
-  for(const file of ['js/gridly-paid-ui.mjs','js/gridly-paid-bootstrap.js','js/gridly-paid-onboarding.mjs','js/gridly-entitlement.mjs','js/gridly-native-attested-invoke.mjs','js/gridly-native-edge-transport.mjs','tools/android-production-sources.mjs','tools/native-web.mjs','js/gridly-ugc-compliance.js'])assert.equal(current(file),source(BASE,file),file);
+  for(const file of ['js/gridly-paid-ui.mjs','js/gridly-paid-bootstrap.js','js/gridly-paid-onboarding.mjs','js/gridly-entitlement.mjs','js/gridly-native-attested-invoke.mjs','js/gridly-native-edge-transport.mjs','tools/android-production-sources.mjs','js/gridly-ugc-compliance.js'])assert.equal(current(file),source(BASE,file),file);
+  // Explicit approved exception: version guard + source/build attestation only.
+  // Pin the complete reviewed tool, rather than allowing arbitrary packaging edits.
+  assert.equal(require('node:crypto').createHash('sha256').update(current('tools/native-web.mjs')).digest('hex'),'0cc4f8d13e0b09cfe15c4d123efe35dc9ab7cbacf983f5837d1b4f575277cbdf');
 });
-test('portrait, consumer entrypoint, service worker, dependencies and native configurations are unchanged',()=>{
-  for(const file of ['css/styles.css','css/gridly-paid-access.css','index.html','service-worker.js','package.json','package-lock.json','android/app/build.gradle','ios/App/App.xcodeproj/project.pbxproj'])assert.equal(current(file),source(BASE,file),file);
+test('portrait, consumer entrypoint, service worker, dependencies and native configurations retain only the reviewed Android version bump',()=>{
+  for(const file of ['css/styles.css','css/gridly-paid-access.css','index.html','service-worker.js','package.json','package-lock.json','ios/App/App.xcodeproj/project.pbxproj'])assert.equal(current(file),source(BASE,file),file);
+  assert.equal(current('android/app/build.gradle'),source(BASE,'android/app/build.gradle').replace('versionCode 14','versionCode 15'));
 });
 test('later owner-only Apple diagnostic code is excluded',()=>{
   assert.doesNotMatch(current('js/gridly-paid-ui.mjs'),/STOREKIT DIAGNOSTIC BUILD|initializeDiagnostics|diagnosticPort/);

@@ -1,9 +1,9 @@
 // Google review access is a separate authority, never subscription ownership.
 export const GOOGLE_REVIEW_AUTHORITY='gridly-google-play-review-v12';
 export const GOOGLE_REVIEW_ENDPOINT='gridly-google-review-access';
-export const GOOGLE_REVIEW_BUILD_VERSION='14';
-// Keep the live Build 12 reviewer working while the replacement is reviewed.
-export const GOOGLE_REVIEW_COMPATIBLE_BUILDS=Object.freeze(['12',GOOGLE_REVIEW_BUILD_VERSION]);
+export const GOOGLE_REVIEW_BUILD_VERSION='15';
+// Keep the approved Build 12/14 reviewers while the replacement is reviewed.
+export const GOOGLE_REVIEW_COMPATIBLE_BUILDS=Object.freeze(['12','14',GOOGLE_REVIEW_BUILD_VERSION]);
 const proven=new WeakSet(),encoder=new TextEncoder();
 const fields='audience,authority,buildVersionCode,credentialId,credentialRevision,expiresAt,issuedAt,nonce,platform,scope';
 export const reviewBase64=bytes=>btoa(String.fromCharCode(...bytes)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');

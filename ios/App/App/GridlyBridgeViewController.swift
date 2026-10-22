@@ -4,6 +4,16 @@ import WebKit
 import OSLog
 
 // BEGIN TESTABLE RECOVERY GATE
+// Reviewed native releases of the same protocol-v2 / V1 storage migration.
+// The fixed scripts additionally validate runtime capability, schema, origin,
+// readiness and the pre-Build-12 cutoff before preview or explicit one-key clear.
+enum GridlyLegacyRecoveryCompatibility {
+    static func supports(bundleIdentifier: String?, buildNumber: String?) -> Bool {
+        guard bundleIdentifier == "com.gridlygo.gridly", let buildNumber = buildNumber else { return false }
+        return ["14", "16"].contains(buildNumber)
+    }
+}
+
 // Readiness failures never consume the one prompt. Evaluation is event-driven
 // and bounded for this controller lifetime, including navigation and resume.
 struct GridlyLegacyRecoveryGate {
@@ -48,8 +58,9 @@ class GridlyBridgeViewController: CAPBridgeViewController {
     private static let recoveryLog = Logger(subsystem: "com.gridlygo.gridly", category: "LegacyRecovery")
 
     private var recoveryBuild: Bool {
-        Bundle.main.bundleIdentifier == "com.gridlygo.gridly" &&
-        Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String == "14"
+        GridlyLegacyRecoveryCompatibility.supports(
+            bundleIdentifier: Bundle.main.bundleIdentifier,
+            buildNumber: Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String)
     }
 
     override func capacitorDidLoad() {

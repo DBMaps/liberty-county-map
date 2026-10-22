@@ -7,6 +7,7 @@ import { tmpdir } from 'node:os';
 import { execFileSync } from 'node:child_process';
 import { composeProductionRuntimeConfig } from './lp1831/prepare-cloudflare-preview-artifact.mjs';
 import {productionAndroidSource,PRODUCTION_SPECIALIZED_MODULES} from './android-production-sources.mjs';
+import {GOOGLE_REVIEW_BUILD_VERSION} from '../js/gridly-google-review-proof.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const output = resolve(root, process.argv.includes('--output') ? process.argv[process.argv.indexOf('--output') + 1] : 'www');
@@ -175,11 +176,19 @@ export async function stageNativeAddressRuntime(sourceRoot, destination) {
 
 const licenseTestOff='const GRIDLY_ANDROID_LICENSE_TEST_CANDIDATE = false;';
 const licenseTestOn='const GRIDLY_ANDROID_LICENSE_TEST_CANDIDATE = true;';
+export function androidProductionBuildIdentity(metadata,reviewVersion=GOOGLE_REVIEW_BUILD_VERSION) {
+  const codes=[...metadata.matchAll(/^\s*versionCode (\d+)\s*$/gm)].map(match=>match[1]);
+  if(codes.length!==1||!['14','15'].includes(reviewVersion)||codes[0]!==reviewVersion||
+    !/^\s*versionName ["']1\.0\.0["']\s*$/m.test(metadata)||
+    !/^\s*applicationId ['"]com\.gridlygo\.gridly['"]\s*$/m.test(metadata))
+    throw Error('Production staging requires matching reviewed Gridly 1.0.0 package/build and Google review authority');
+  return {applicationId:'com.gridlygo.gridly',versionName:'1.0.0',versionCode:codes[0],reviewBuildVersion:reviewVersion};
+}
 export async function stage(destination, { runtimeConfigFile, googleLicenseTest=false,androidProduction=false } = {}) {
   if(androidProduction&&googleLicenseTest)throw Error('Production and license-test staging are mutually exclusive');
   if(androidProduction) {
     const metadata=await readFile(join(root,'android/app/build.gradle'),'utf8');
-    if(!/^\s*versionCode 14\s*$/m.test(metadata)||!/^\s*versionName ["']1\.0\.0["']\s*$/m.test(metadata))throw Error('Production staging requires Gridly 1.0.0 / versionCode 14');
+    androidProductionBuildIdentity(metadata);
   }
   const consumerScriptManifest = await readConsumerScriptManifest(root);
   let composedRuntimeConfig = null;
@@ -437,6 +446,7 @@ async function verify(directory, { reportFile, googleLicenseTest=false,androidPr
     if (reportFile) {
       const report = JSON.parse(await readFile(reportFile, 'utf8'));
       if (report.bundleDigest !== actual.digest || report.googleLicenseTest !== googleLicenseTest || !!report.androidProduction !== androidProduction || JSON.stringify(report.files) !== JSON.stringify(actual.files)) throw new Error('Native configured bundle identity report mismatch.');
+      if(androidProduction&&JSON.stringify(report.androidBuildIdentity)!==JSON.stringify(androidProductionBuildIdentity(await readFile(join(root,'android/app/build.gradle'),'utf8'))))throw Error('Native Android build identity mismatch.');
     } else {
       await stage(temporary,{googleLicenseTest,androidProduction});
       const repeated = await identity(temporary);
@@ -462,6 +472,11 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
         candidateGitSha: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim(),
         googleLicenseTest,
         androidProduction,
+        androidBuildIdentity: androidProduction ? androidProductionBuildIdentity(await readFile(join(root,'android/app/build.gradle'),'utf8')) : null,
+        sourceGitState: {
+          trackedDirty: !!execFileSync('git',['status','--porcelain','--untracked-files=no'],{cwd:root,encoding:'utf8'}).trim(),
+          trackedDiffSha256: createHash('sha256').update(execFileSync('git',['diff','HEAD','--binary'],{cwd:root,maxBuffer:32*1024*1024})).digest('hex')
+        },
         bundleDigest: attestation.digest,
         runtimeConfig: { path: runtimeConfigPath, bytes: runtimeBytes.length, sha256: createHash('sha256').update(runtimeBytes).digest('hex'), classification: 'OWNER_COMPOSED_BROWSER_PUBLIC_CONFIG' },
         files: attestation.files

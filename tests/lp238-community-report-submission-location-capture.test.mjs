@@ -247,13 +247,21 @@ test('LP238 map placement and GPS invoke one shared snap contract and forward it
   const gpsEnd = app.indexOf('\n};', gpsStart) + 3;
   const gps = app.slice(gpsStart, gpsEnd);
   for (const source of [mapPlacement, gps]) {
-    assert.match(source, /await snapHazardToRoad\(.*lat.*lng/s);
-    assert.match(source, /selectedRoadName: snapped\.selectedRoadName/);
+    assert.match(source, /snapHazardToRoad\([^)]*lat[^)]*lng/s);
+    assert.match(source, /buildGovernedRoadHazardReportDraft\([^]*?\.\.\.snapped/);
+    assert.match(source, /continueGovernedRoadHazardDraftToReview\(draft\)/);
+    assert.doesNotMatch(source, /createSharedHazardReport/);
   }
-  assert.match(mapPlacement, /createSharedHazardReport/);
-  assert.doesNotMatch(gps, /createSharedHazardReport/);
-  assert.match(gps, /continueGovernedRoadHazardDraftToReview/);
-  assert.match(functionSource('submitGovernedRoadHazardDraft'), /createSharedHazardReport/);
+  // Tap Map already bounds the same road lookup with Promise.race in Build14.
+  assert.match(mapPlacement, /snapped = await Promise\.race\(\[\s*snapHazardToRoad\(rawTapCoordinate\.lat, rawTapCoordinate\.lng/);
+  assert.match(mapPlacement, /roadLookupTimeout = window\.setTimeout\([^]*?12000\)/);
+  assert.match(mapPlacement, /finally\s*\{\s*window\.clearTimeout\(roadLookupTimeout\)/);
+  assert.match(gps, /await snapHazardToRoad\(/);
+  assert.match(functionSource('buildGovernedRoadHazardReportDraft'), /selectedRoadName: snapped\?\.selectedRoadName \|\| ""/);
+  const submit = functionSource('submitGovernedRoadHazardDraft');
+  assert.match(submit, /createSharedHazardReport/);
+  assert.match(submit, /selectedRoadName: draft\.selectedRoadName/);
+  assert.match(submit, /governedDraftConfirmation: true/);
 });
 
 test('LP238 deterministic authority selects and normalizes the nearest valid named road', () => {

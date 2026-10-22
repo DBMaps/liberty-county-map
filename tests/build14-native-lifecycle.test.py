@@ -8,12 +8,27 @@ import shutil
 import subprocess
 import tempfile
 
-source = Path("ios/App/App/GridlyBridgeViewController.swift").read_text()
+source = Path("ios/App/App/GridlyBridgeViewController.swift").read_text(encoding="utf-8")
 gate = source.split("// BEGIN TESTABLE RECOVERY GATE\n", 1)[1].split("// END TESTABLE RECOVERY GATE", 1)[0]
 checks = r'''
 var cases = 0
 func check(_ name: String, _ body: () -> Void) {
     body(); cases += 1; print("PASS " + name)
+}
+check("reviewed Build14 and proposed Build16 share the recovery contract") {
+    for build in ["14", "16"] {
+        assert(GridlyLegacyRecoveryCompatibility.supports(bundleIdentifier: "com.gridlygo.gridly", buildNumber: build))
+    }
+}
+check("unsupported, missing, malformed versions and foreign apps fail closed") {
+    let unsupported: [String?] = [nil, "", "12", "13", "15", "17", "140", "016", "16.0", "16\n"]
+    for build in unsupported {
+        assert(!GridlyLegacyRecoveryCompatibility.supports(bundleIdentifier: "com.gridlygo.gridly", buildNumber: build))
+    }
+    let foreign: [String?] = [nil, "", "com.example.gridly"]
+    for bundle in foreign {
+        assert(!GridlyLegacyRecoveryCompatibility.supports(bundleIdentifier: bundle, buildNumber: "16"))
+    }
 }
 check("inactive first appearance does not consume trigger; didBecomeActive recovers") {
     var g = GridlyLegacyRecoveryGate()

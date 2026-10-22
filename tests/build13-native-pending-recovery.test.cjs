@@ -24,7 +24,7 @@ function fixture(saved=operation()) {
  if(saved!==undefined&&saved!==null)data.set(protocol.KEY,typeof saved==='string'?saved:JSON.stringify(saved));
  const storage={getItem:key=>data.has(key)?data.get(key):null,setItem:(key,value)=>{writes.push(['set',key]);data.set(key,value);},
   removeItem:key=>{writes.push(['remove',key]);data.delete(key);}};
- const client=protocol.create({storage});
+ const client=protocol.create({storage,now:()=>cutoff+2*protocol.MAX_AGE});
  const context={window:{gridlyReportProtocol:protocol},localStorage:storage,
   location:{protocol:'capacitor:',hostname:'localhost'},
   reportingState:{submissionInProgress:false,locationLookupInProgress:false,reportModeActive:false,placementModeActive:false},
@@ -56,6 +56,13 @@ test('preview reads an expired legacy record without normalization, writes, or e
 
 test('explicit clear removes exactly one key and the real Retry CTA; all other persistence is byte-identical',()=>{
  const f=fixture();f.context.gridlyRefreshPendingOperationButton();assert.ok(f.nodes.has('gridlyRetryPendingReport'));
+ // The CTA's real pending() read first normalizes this expired operation to a
+ // cancellation identity. Measure only the subsequent native preview/clear;
+ // retain and assert the setup write instead of weakening the 24-hour policy.
+ assert.deepEqual(f.writes,[['set',protocol.KEY]]);
+ const normalized=JSON.parse(f.data.get(protocol.KEY));
+ assert.deepEqual(normalized,{id,startedAt:cutoff-60000,kind:'cancel'});
+ f.writes.length=0;
  const preview=f.run('preview'),before=new Map(f.data);
  const result=f.run('clear',preview.raw);assert.equal(result.status,'removed');assert.equal(result.ctaRefreshed,true);
  assert.equal(f.client.pending(),null);assert.equal(f.nodes.has('gridlyRetryPendingReport'),false);
@@ -66,6 +73,18 @@ test('explicit clear removes exactly one key and the real Retry CTA; all other p
 
 test('keeping or closing the preview never removes the saved operation',()=>{
  const f=fixture(),before=new Map(f.data);f.run('preview');assert.deepEqual(f.data,before);assert.deepEqual(f.writes,[]);
+});
+
+test('fresh installs and incompatible runtime schemas cannot mutate any saved customer state',()=>{
+ const fresh=fixture(null),before=new Map(fresh.data);
+ assert.equal(fresh.run('preview').status,'empty');assert.equal(fresh.run('clear','').status,'empty');
+ assert.deepEqual(fresh.data,before);assert.deepEqual(fresh.writes,[]);
+ for(const version of [undefined,null,0,1,3,'2']) {
+  const f=fixture(),saved=new Map(f.data);
+  f.context.window.gridlyReportProtocol={...protocol,protocol_version:version};
+  assert.equal(f.run('preview').status,'not_ready');assert.equal(f.run('clear',saved.get(protocol.KEY)).status,'not_ready');
+  assert.deepEqual(f.data,saved);assert.deepEqual(f.writes,[]);
+ }
 });
 
 test('a changed record is preserved, including another legacy operation or an altered payload',()=>{
@@ -149,9 +168,10 @@ test('empty storage, unknown actions and unbound confirmation cannot erase anyth
  assert.equal(f.run('clear').status,'changed');assert.deepEqual(f.data,before);assert.deepEqual(f.writes,[]);
 });
 
-test('native entry is limited to Build 14 and explicit destructive confirmation; no general evaluator or vault action is exposed',()=>{
- assert.match(native,/CFBundleVersion"\) as\? String == "14"/);
- assert.match(native,/Bundle\.main\.bundleIdentifier == "com\.gridlygo\.gridly"/);
+test('native entry is limited to reviewed Builds 14/16 and explicit destructive confirmation; no general evaluator or vault action is exposed',()=>{
+ assert.match(native,/return \["14", "16"\]\.contains\(buildNumber\)/);
+ assert.match(native,/guard bundleIdentifier == "com\.gridlygo\.gridly"/);
+ assert.match(native,/private var recoveryBuild: Bool \{\s*GridlyLegacyRecoveryCompatibility\.supports\(/);
  assert.match(native,/title: "Keep saved retry", style: \.cancel/);
  assert.match(native,/title: "Forget saved retry", style: \.destructive/);
  assert.match(native,/target\.url == url, !target\.isLoading/);

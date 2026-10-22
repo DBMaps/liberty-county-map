@@ -21,6 +21,42 @@ TEAM = "2XSH6R7K37"
 BUNDLE = "com.gridlygo.gridly"
 PROFILE_UUID = "c0398bd6-9b5e-4935-82e7-40d117a4ccdc"
 
+# An exact, reviewed compatibility extension. Every script, storage/migration
+# check and lifecycle/confirmation owner outside these two replacements stays
+# byte-equivalent to Apple14; no arbitrary future native release is admitted.
+RECOVERY_COMPATIBILITY = '''// Reviewed native releases of the same protocol-v2 / V1 storage migration.
+// The fixed scripts additionally validate runtime capability, schema, origin,
+// readiness and the pre-Build-12 cutoff before preview or explicit one-key clear.
+enum GridlyLegacyRecoveryCompatibility {
+    static func supports(bundleIdentifier: String?, buildNumber: String?) -> Bool {
+        guard bundleIdentifier == "com.gridlygo.gridly", let buildNumber = buildNumber else { return false }
+        return ["14", "16"].contains(buildNumber)
+    }
+}
+
+'''
+LEGACY_RECOVERY_GATE = '''    private var recoveryBuild: Bool {
+        Bundle.main.bundleIdentifier == "com.gridlygo.gridly" &&
+        Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String == "14"
+    }'''
+RECOVERY_GATE = '''    private var recoveryBuild: Bool {
+        GridlyLegacyRecoveryCompatibility.supports(
+            bundleIdentifier: Bundle.main.bundleIdentifier,
+            buildNumber: Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String)
+    }'''
+
+
+def approved_recovery_source(legacy):
+    marker = "// BEGIN TESTABLE RECOVERY GATE\n"
+    assert legacy.count(marker) == legacy.count(LEGACY_RECOVERY_GATE) == 1, "unexpected Apple14 recovery source"
+    return legacy.replace(marker, marker + RECOVERY_COMPATIBILITY).replace(LEGACY_RECOVERY_GATE, RECOVERY_GATE)
+
+
+def validate_recovery_build(source, build_number):
+    if build_number == "14" and LEGACY_RECOVERY_GATE in source and "enum GridlyLegacyRecoveryCompatibility" not in source:
+        return
+    assert build_number in ("14", "16") and RECOVERY_GATE in source and RECOVERY_COMPATIBILITY in source, "RECOVERY_BUILD_MISMATCH: only reviewed Builds14/16 and the fixed compatibility contract are permitted"
+
 
 def sha256(body):
     return hashlib.sha256(body).hexdigest()
@@ -108,7 +144,13 @@ def validate_entitlements(entitlements):
     assert entitlements["com.apple.developer.team-identifier"] == TEAM, "wrong signed team"
 
 
-def signed_app_facts(app, certificate_prefix):
+def expected_app_identity(build_number="14"):
+    assert isinstance(build_number, str) and re.fullmatch(r"[1-9][0-9]*", build_number), "invalid build number"
+    return {"CFBundleShortVersionString": "1.0.0", "CFBundleVersion": build_number,
+            "CFBundleIdentifier": BUNDLE, "UIDeviceFamily": [1]}
+
+
+def signed_app_facts(app, certificate_prefix, build_number="14"):
     subprocess.run(["codesign", "--verify", "--deep", "--strict", "--verbose=2", str(app)], check=True)
     result = subprocess.run(["codesign", "-d", "--verbose=4", str(app)], check=True, capture_output=True, text=True)
     lines = result.stderr.splitlines() + result.stdout.splitlines()
@@ -130,16 +172,16 @@ def signed_app_facts(app, certificate_prefix):
     info = plistlib.loads((app / "Info.plist").read_bytes())
     architectures = subprocess.check_output(["lipo", "-archs", str(app / info["CFBundleExecutable"])], text=True).strip().split()
     assert architectures == ["arm64"], "unexpected executable architecture(s)"
-    expected = {"CFBundleShortVersionString": "1.0.0", "CFBundleVersion": "14", "CFBundleIdentifier": BUNDLE, "UIDeviceFamily": [1]}
+    expected = expected_app_identity(build_number)
     assert {key: info.get(key) for key in expected} == expected, "wrong app version/build/bundle/device family"
     return {"codesign": metadata, "certificate_sha1": leaf_sha1, "entitlements": entitlements, "architectures": architectures,
             "profile_uuid": profile["UUID"], "identity": expected, "executable": info["CFBundleExecutable"]}
 
 
-def certify_native_parity(app, ipa, native_source):
+def certify_native_parity(app, ipa, native_source, build_number="14"):
     app, ipa = Path(app), Path(ipa)
-    source = Path(native_source).read_text()
-    assert 'as? String == "14"' in source, "missing Build-14-only activation"
+    source = Path(native_source).read_text(encoding="utf-8")
+    validate_recovery_build(source, build_number)
     match = re.search(r'private static let legacyRecoveryScript = #"""\n(.*?)\n\s*"""#', source, re.S)
     assert match, "missing scoped recovery body"
     recovery = textwrap.dedent(match.group(1)).encode()
@@ -154,8 +196,8 @@ def certify_native_parity(app, ipa, native_source):
         exported_apps = list((work / "export" / "Payload").glob("*.app"))
         assert len(exported_apps) == 1, "expected one exported iPhone app"
         exported_app = exported_apps[0]
-        archive_facts = signed_app_facts(app, work / "archive-cert-")
-        ipa_facts = signed_app_facts(exported_app, work / "ipa-cert-")
+        archive_facts = signed_app_facts(app, work / "archive-cert-", build_number)
+        ipa_facts = signed_app_facts(exported_app, work / "ipa-cert-", build_number)
         assert archive_facts["entitlements"] == ipa_facts["entitlements"], "archive/IPA entitlement mismatch"
         assert archive_facts["identity"] == ipa_facts["identity"] and archive_facts["executable"] == ipa_facts["executable"]
         archive_path = app / archive_facts["executable"]

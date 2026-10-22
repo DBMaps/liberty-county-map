@@ -1,0 +1,163 @@
+name: Gridly Apple acceptance build only
+
+# LOCAL PREPARATION ONLY. Publishing this file or dispatching it needs separate
+# owner authorization. Product and controls must be the SAME reviewed commit,
+# descended from certified b7359198. No store or artifact transfer path exists.
+on:
+  workflow_dispatch:
+    inputs:
+      workflow_commit:
+        description: Exact reviewed source and workflow commit, including native compatibility repair
+        required: true
+        type: string
+      build_number:
+        description: Provisional internal archive metadata only; does not reserve an Apple build
+        required: true
+        default: '16'
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gridly-apple-acceptance-build-only
+  cancel-in-progress: false
+
+jobs:
+  archive-only:
+    if: github.repository == 'DBMaps/liberty-county-map' && github.actor == 'DBMaps' && github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/codex/community-loading-production-integration-v1'
+    runs-on: macos-26
+    timeout-minutes: 90
+    defaults:
+      run:
+        shell: bash --noprofile --norc -e -o pipefail {0}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          path: control
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          path: candidate
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify reviewed control source and recovery/version compatibility
+        env:
+          REVIEWED_WORKFLOW_COMMIT: ${{ inputs.workflow_commit }}
+          BUILD_NUMBER: ${{ inputs.build_number }}
+        run: |
+          set +x
+          [[ "$REVIEWED_WORKFLOW_COMMIT" =~ ^[0-9a-f]{40}$ ]]
+          test "$REVIEWED_WORKFLOW_COMMIT" = "$GITHUB_SHA"
+          test "$(git -C control rev-parse HEAD)" = "$GITHUB_SHA"
+          python3 -B control/tools/apple_acceptance_build_only.py preflight --source candidate --source-commit "$REVIEWED_WORKFLOW_COMMIT" --build-number "$BUILD_NUMBER"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install locked dependencies and run bounded native contracts
+        working-directory: candidate
+        run: |
+          npm ci --ignore-scripts
+          node --test tests/community-loading-performance-repair.test.cjs tests/community-loading-nws-safety.test.cjs tests/community-loading-production-integration.test.cjs tests/native-packaging.test.mjs tests/build13-native-pending-recovery.test.cjs tests/paid-report-authorization.test.mjs tests/lp24463-apple-storekit.test.mjs tests/native-version-compatibility.test.mjs tests/google-review-access.test.mjs
+          node tools/android-acceptance/fast.mjs
+          python3 -B tests/build14-native-lifecycle.test.py
+          python3 -B ../control/tests/apple_native_parity_test.py
+          python3 -B ../control/tests/apple_acceptance_build_only_test.py
+      - name: Stage, sign, archive, export locally and attest (no transfer)
+        env:
+          BUILD_NUMBER: ${{ inputs.build_number }}
+          GRIDLY_NATIVE_PROVIDER_CONFIG_BASE64: ${{ secrets.GRIDLY_NATIVE_PROVIDER_CONFIG_BASE64 }}
+          APPLE_DIST_PRIVATE_KEY_PEM_BASE64: ${{ secrets.APPLE_DIST_PRIVATE_KEY_PEM_BASE64 }}
+          APPLE_DIST_CERT_PEM_BASE64: ${{ secrets.APPLE_DIST_CERT_PEM_BASE64 }}
+          APPLE_PROVISION_PROFILE_BASE64: ${{ secrets.APPLE_PROVISION_PROFILE_BASE64 }}
+        run: |
+          set +x
+          umask 077
+          test "$BUILD_NUMBER" = 16
+          private="$RUNNER_TEMP/gridly-build-only-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir -m 700 "$private"
+          # Secret-bearing tool logs remain runner-private; only allowlisted
+          # non-secret attestation fields are emitted after success.
+          exec 3>&1
+          exec > "$private/build.log" 2>&1
+          cd candidate
+          test -n "$GRIDLY_NATIVE_PROVIDER_CONFIG_BASE64"
+          printf '%s' "$GRIDLY_NATIVE_PROVIDER_CONFIG_BASE64" | base64 -D > "$private/native-config.json"
+          node tools/native-assets.mjs
+          node tools/native-web.mjs --runtime-config-file "$private/native-config.json" --report-file "$private/web-identity.json"
+          node tools/native-web.mjs --verify --report-file "$private/web-identity.json"
+          npx --no-install cap sync ios
+          if test -f ios/App/Podfile; then (cd ios/App && pod install); fi
+          xcodebuild -version | grep -E '^Xcode 26([. ]|$)'
+          xcodebuild -resolvePackageDependencies -project ios/App/App.xcodeproj -scheme App
+          test -n "$APPLE_DIST_PRIVATE_KEY_PEM_BASE64"
+          test -n "$APPLE_DIST_CERT_PEM_BASE64"
+          test -n "$APPLE_PROVISION_PROFILE_BASE64"
+          printf '%s' "$APPLE_DIST_PRIVATE_KEY_PEM_BASE64" | base64 -D > "$private/key.pem"
+          printf '%s' "$APPLE_DIST_CERT_PEM_BASE64" | base64 -D > "$private/cert.pem"
+          printf '%s' "$APPLE_PROVISION_PROFILE_BASE64" | base64 -D > "$private/profile.mobileprovision"
+          key_sha=$(openssl pkey -in "$private/key.pem" -pubout -outform DER | shasum -a 256 | awk '{print $1}')
+          cert_sha=$(openssl x509 -in "$private/cert.pem" -pubkey -noout | openssl pkey -pubin -outform DER | shasum -a 256 | awk '{print $1}')
+          test "$key_sha" = "$cert_sha"
+          export P12_PASSWORD="$(openssl rand -hex 32)"
+          openssl pkcs12 -export -legacy -inkey "$private/key.pem" -in "$private/cert.pem" -out "$private/cert.p12" -passout env:P12_PASSWORD
+          keychain="$private/signing.keychain-db"
+          keychain_password="$(openssl rand -hex 32)"
+          security list-keychains -d user > "$private/previous-keychains.txt"
+          security create-keychain -p "$keychain_password" "$keychain"
+          security unlock-keychain -p "$keychain_password" "$keychain"
+          security import "$private/cert.p12" -k "$keychain" -P "$P12_PASSWORD" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple: -s -k "$keychain_password" "$keychain"
+          security list-keychains -d user -s "$keychain"
+          security find-identity -v -p codesigning "$keychain" | grep -F '1264FCB7434D20490824D05F959D90D3825EA45C "Apple Distribution: DJ Burns Collective LLC (2XSH6R7K37)"'
+          security cms -D -i "$private/profile.mobileprovision" > "$private/profile.plist"
+          # Existing certified profile and signing authority, never auto-renewed.
+          test "$(/usr/libexec/PlistBuddy -c 'Print :UUID' "$private/profile.plist")" = c0398bd6-9b5e-4935-82e7-40d117a4ccdc
+          test "$(/usr/libexec/PlistBuddy -c 'Print :TeamIdentifier:0' "$private/profile.plist")" = 2XSH6R7K37
+          test "$(/usr/libexec/PlistBuddy -c 'Print :Entitlements:application-identifier' "$private/profile.plist")" = 2XSH6R7K37.com.gridlygo.gridly
+          profile_dir="$HOME/Library/MobileDevice/Provisioning Profiles"
+          profile="$profile_dir/c0398bd6-9b5e-4935-82e7-40d117a4ccdc.mobileprovision"
+          mkdir -p "$profile_dir"
+          if test -f "$profile"; then cp "$profile" "$private/previous-profile.mobileprovision"; fi
+          cp "$private/profile.mobileprovision" "$profile"
+          cat > "$private/export.plist" <<'PLIST'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <plist version="1.0"><dict>
+          <key>method</key><string>app-store-connect</string>
+          <key>destination</key><string>export</string>
+          <key>manageAppVersionAndBuildNumber</key><false/>
+          <key>uploadSymbols</key><false/>
+          <key>signingStyle</key><string>manual</string>
+          <key>teamID</key><string>2XSH6R7K37</string>
+          <key>provisioningProfiles</key><dict><key>com.gridlygo.gridly</key><string>Gridly App Store Build 9</string></dict>
+          </dict></plist>
+          PLIST
+          xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release -destination 'generic/platform=iOS' -archivePath "$private/Gridly.xcarchive" CURRENT_PROJECT_VERSION="$BUILD_NUMBER" MARKETING_VERSION=1.0.0 DEVELOPMENT_TEAM=2XSH6R7K37 CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY="Apple Distribution" PROVISIONING_PROFILE_SPECIFIER="Gridly App Store Build 9" archive
+          xcodebuild -exportArchive -archivePath "$private/Gridly.xcarchive" -exportOptionsPlist "$private/export.plist" -exportPath "$private/export"
+          ipa=$(find "$private/export" -maxdepth 1 -name '*.ipa' -print -quit)
+          test -n "$ipa"
+          python3 -B ../control/tools/apple_acceptance_build_only.py attest --source . --source-commit "$GITHUB_SHA" --build-number "$BUILD_NUMBER" --app "$private/Gridly.xcarchive/Products/Applications/App.app" --ipa "$ipa" --identity "$private/web-identity.json" > "$private/attestation.json"
+          cat "$private/attestation.json" >&3
+          cat "$private/attestation.json" >> "$GITHUB_STEP_SUMMARY"
+      - name: Remove private signing material and all build outputs
+        if: always()
+        run: |
+          set +x
+          private="$RUNNER_TEMP/gridly-build-only-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          cleanup_failed=0
+          if test -d "$private"; then
+            if test -f "$private/previous-keychains.txt"; then
+              python3 -c 'import pathlib, shlex, subprocess, sys; subprocess.run(["security", "list-keychains", "-d", "user", "-s", *shlex.split(pathlib.Path(sys.argv[1]).read_text())], check=True)' "$private/previous-keychains.txt" || cleanup_failed=1
+            fi
+            if test -f "$private/signing.keychain-db"; then security delete-keychain "$private/signing.keychain-db" 2>/dev/null || cleanup_failed=1; fi
+            # Restore only the provisioning profile this job replaced.
+            profile="$HOME/Library/MobileDevice/Provisioning Profiles/c0398bd6-9b5e-4935-82e7-40d117a4ccdc.mobileprovision"
+            if test -f "$private/profile.mobileprovision" && test -f "$profile" && cmp -s "$profile" "$private/profile.mobileprovision"; then
+              if test -f "$private/previous-profile.mobileprovision"; then cp "$private/previous-profile.mobileprovision" "$profile" || cleanup_failed=1; else rm -f "$profile" || cleanup_failed=1; fi
+            fi
+            rm -rf "$private" || cleanup_failed=1
+          fi
+          rm -rf "$GITHUB_WORKSPACE/candidate/www" "$GITHUB_WORKSPACE/candidate/ios/App/App/public" || cleanup_failed=1
+          exit "$cleanup_failed"

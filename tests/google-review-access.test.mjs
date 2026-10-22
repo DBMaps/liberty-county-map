@@ -13,6 +13,7 @@ import {productionAndroidSource,PRODUCTION_SPECIALIZED_MODULES} from '../tools/a
 import {readFile} from 'node:fs/promises';
 import {pathToFileURL} from 'node:url';
 import {resolve} from 'node:path';
+import {execFileSync} from 'node:child_process';
 import {validateGoogleReviewReport} from '../supabase/functions/_shared/google-review-report-validation.mjs';
 const backendRoot=resolve(process.env.GRIDLY_REVIEW_BACKEND_ROOT||'.');
 const {createGoogleReviewHandler,createGoogleReviewNativeAuthorizer}=await import(pathToFileURL(resolve(backendRoot,'supabase/functions/_shared/google-review.mjs')));
@@ -23,9 +24,9 @@ const keys=await crypto.subtle.generateKey({name:'ECDSA',namedCurve:'P-256'},tru
 const requestBody=()=>storeVerificationRequest({platform:'google',environment:'production',nonce,evidence:{purchaseTokens:[code]}});
 const request=body=>new Request('https://example.test/review',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
 function payload(hash,patch={}) {return {requestDetails:{requestPackageName:'com.gridlygo.gridly',requestHash:hash,timestampMillis:String(now)},
-  appIntegrity:{packageName:'com.gridlygo.gridly',appRecognitionVerdict:'PLAY_RECOGNIZED',versionCode:'14',certificateSha256Digest:[certificate]},
+  appIntegrity:{packageName:'com.gridlygo.gridly',appRecognitionVerdict:'PLAY_RECOGNIZED',versionCode:'15',certificateSha256Digest:[certificate]},
   deviceIntegrity:{deviceRecognitionVerdict:['MEETS_DEVICE_INTEGRITY']},accountDetails:{appLicensingVerdict:'UNLICENSED'},...patch};}
-async function fixture({verdictPatch={},credentialEnabled=true,buildVersionCode='14'}={}) {
+async function fixture({verdictPatch={},credentialEnabled=true,buildVersionCode='15'}={}) {
   let consumed=false,enabled=credentialEnabled,hash=null,verified=0,reportCalls=0;
   const googleVerifier=createGoogleReviewIntegrityVerifier({now:()=>now,accessToken:async()=>'fixture-oauth',
     fetchImpl:async(url,options)=>{assert.match(url,/playintegrity.googleapis.com/);assert.equal(JSON.parse(options.body).integrity_token,'fixture-integrity');return Response.json({tokenPayloadExternal:payload(hash,{appIntegrity:{...payload(hash).appIntegrity,versionCode:buildVersionCode},...verdictPatch})});}});
@@ -91,19 +92,42 @@ test('disabled credential never yields a reviewer lease',async()=>{
   assert.equal(f.stats().consumed,false);
 });
 
-test('Build 14 proof reflects attestation; live Build 12 remains compatible without cross-build client admission',async()=>{
-  for(const buildVersionCode of ['12','14']) {
+test('Build 15 proof reflects attestation; live Builds 12/14 remain compatible without cross-build client admission',async()=>{
+  for(const buildVersionCode of ['12','14','15']) {
     const f=await fixture({buildVersionCode}),result=await f.invoke(GOOGLE_REVIEW_ENDPOINT,{body:requestBody()});
     assert.equal(result.error,null);
     const row=JSON.parse(Buffer.from(result.data.proof.split('.')[1],'base64url'));
     assert.equal(row.buildVersionCode,buildVersionCode);
     assert.ok(await verifyGoogleReviewProof({proof:result.data.proof,publicKey:keys.publicKey,nonce,now,crypto,acceptedBuilds:[buildVersionCode]}));
-    assert.equal(!!await verifyGoogleReviewProof({proof:result.data.proof,publicKey:keys.publicKey,nonce,now,crypto}),buildVersionCode==='14');
+    assert.equal(!!await verifyGoogleReviewProof({proof:result.data.proof,publicKey:keys.publicKey,nonce,now,crypto}),buildVersionCode===GOOGLE_REVIEW_BUILD_VERSION);
+  }
+});
+
+test('published Build14 client still accepts its bound proof; new15 proof cannot cross into it',async()=>{
+  const legacy=execFileSync('git',['show','faac47368da3137b50d53813b7f0299a2f4b1830:js/gridly-google-review-proof.mjs']);
+  const old=await import('data:text/javascript;base64,'+legacy.toString('base64'));
+  assert.equal(old.GOOGLE_REVIEW_BUILD_VERSION,'14');
+  for(const buildVersionCode of ['14','15']) {
+    const f=await fixture({buildVersionCode}),result=await f.invoke(GOOGLE_REVIEW_ENDPOINT,{body:requestBody()});
+    assert.equal(result.error,null);
+    const verified=await old.verifyGoogleReviewProof({proof:result.data.proof,publicKey:keys.publicKey,nonce,now,crypto});
+    assert.equal(!!verified,buildVersionCode==='14');
+  }
+});
+
+test('normal subscription integrity retains Build14/15 admission and LICENSED requirement independently of reviewer access',async()=>{
+  for(const versionCode of ['14','15'])for(const licensed of [true,false]) {
+    const hash='h'.repeat(43),base=payload(hash);
+    const verifier=createGoogleIntegrityVerifier({now:()=>now,accessToken:async()=>'fixture',fetchImpl:async()=>Response.json({tokenPayloadExternal:{...base,
+      appIntegrity:{...base.appIntegrity,versionCode},accountDetails:{appLicensingVerdict:licensed?'LICENSED':'UNLICENSED'}}})});
+    const result=await verifier.verify({authorization:{type:'google_standard',token:'fixture'},requestHash:hash,environment:'production'});
+    assert.equal(result?.verified===true,licensed);
+    if(result)assert.equal('buildVersionCode' in result,false,'ordinary subscription authority is not reviewer authority');
   }
 });
 
 test('ordinary users, guessed codes, client build flags and unapproved builds never acquire review access',async()=>{
-  for(const buildVersionCode of ['11','13','15']) {
+  for(const buildVersionCode of ['11','13','16']) {
     const f=await fixture({buildVersionCode});
     assert.equal((await f.invoke(GOOGLE_REVIEW_ENDPOINT,{body:requestBody()})).error.status,403);
     assert.equal(f.stats().verified,0);
@@ -135,11 +159,11 @@ test('concurrent reviewer authorization cannot exchange attested build contexts'
     const version=authorization.token;await new Promise(resolve=>setTimeout(resolve,version==='12'?8:1));
     return {verified:true,platform:'google',kind:'google_standard',buildVersionCode:version};}}});
   const body=version=>JSON.stringify({...requestBody(),nativeChallenge:challenge,nativeAuthorization:{type:'google_standard',token:version}});
-  assert.deepEqual(await Promise.all(['12','14'].map(version=>authorize({body:body(version),environment:'production'}))),[{buildVersionCode:'12'},{buildVersionCode:'14'}]);
+  assert.deepEqual(await Promise.all(['12','14','15'].map(version=>authorize({body:body(version),environment:'production'}))),[{buildVersionCode:'12'},{buildVersionCode:'14'},{buildVersionCode:'15'}]);
 });
 
 test('review build guard matches the replacement Android release; certified startup repair is retained',async()=>{
-  assert.equal(GOOGLE_REVIEW_BUILD_VERSION,'14');assert.deepEqual(GOOGLE_REVIEW_COMPATIBLE_BUILDS,['12','14']);
+  assert.equal(GOOGLE_REVIEW_BUILD_VERSION,'15');assert.deepEqual(GOOGLE_REVIEW_COMPATIBLE_BUILDS,['12','14','15']);
   assert.match(await readFile('android/app/build.gradle','utf8'),new RegExp('versionCode '+GOOGLE_REVIEW_BUILD_VERSION+'\\b'));
   assert.match(await readFile('js/gridly-paid-ui.mjs','utf8'),/googleEntry&&tourComplete&&!subscriptionOpen/);
 });
