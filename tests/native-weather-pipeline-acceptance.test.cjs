@@ -9,22 +9,23 @@ const app = fs.readFileSync("js/app.js", "utf8");
 test("native and web share the governed PLACE point and complete the NWS discovery pipeline", async () => {
   const requests = [];
   const point = { identityClass:"CANONICAL_PLACE", awarenessKey:"place-4819432", stableIdentity:"4819432", placeGeoid:"4819432", lat:30.0466, lng:-94.8852 };
-  const responses = [
-    { properties:{ forecast:"https://api.weather.gov/gridpoints/HGX/52,73/forecast" } },
-    { properties:{ periods:[{number:1,name:"Tonight"}] } },
-    { type:"FeatureCollection", features:[] }
-  ];
+  const responses = {
+    points: { properties:{ forecast:"https://api.weather.gov/gridpoints/HGX/52,73/forecast" } },
+    forecast: { properties:{ periods:[{number:1,name:"Tonight"}] } },
+    alerts: { type:"FeatureCollection", features:[] }
+  };
   const context = { console, Date, Promise, TypeError, Error, AbortController, setTimeout, clearTimeout,
     gridlyResolveGovernedWeatherPoint:()=>point,
     gridlyWeatherProvider:{normalizeRecords:(payload)=>payload.features},
-    fetch:async (url, options)=>{ requests.push({url,options}); return {ok:true,json:async()=>responses.shift()}; } };
+    fetch:async (url, options)=>{ requests.push({url,options}); return {ok:true,json:async()=>responses[url.includes('/points/')?'points':url.includes('/forecast')?'forecast':'alerts']}; } };
   context.globalThis=context; vm.createContext(context); vm.runInContext(source,context);
   await context.gridlyWeatherConnector.refreshAwarenessView();
-  assert.deepEqual(requests.map(({url})=>url), [
+  assert.deepEqual(requests.map(({url})=>url).sort(), [
     "https://api.weather.gov/points/30.0466,-94.8852",
     "https://api.weather.gov/gridpoints/HGX/52,73/forecast",
     "https://api.weather.gov/alerts/active?point=30.0466,-94.8852"
-  ]);
+  ].sort());
+  assert.ok(requests.findIndex(({url})=>url.includes('/points/')) < requests.findIndex(({url})=>url.includes('/forecast')), 'only forecast enrichment depends on points discovery');
   const audit=context.gridlyWeatherConnectorRuntimeAudit();
   assert.equal(audit.selectedIdentityClass,"CANONICAL_PLACE");
   assert.equal(audit.selectedPlaceGeoid,"4819432");

@@ -20,6 +20,17 @@ function harness(initial) {
   vm.runInContext(connectorSource, context);
   return { context, requests, select: (point) => { selected = point; } };
 }
+async function completeRequests(h) {
+  const completed = new Set();
+  for (let round=0;round<5;round++) {
+    for (const request of h.requests) {
+      if (completed.has(request)) continue;
+      completed.add(request);
+      request.resolve({ok:true,json:async()=>request.url.includes('/points/')?{properties:{forecast:'https://api.weather.gov/gridpoints/FWD/1,1/forecast'}}:request.url.includes('/forecast')?{properties:{periods:[]}}:payload()});
+    }
+    await new Promise(resolve=>setImmediate(resolve));
+  }
+}
 
 test("unresolved and malformed startup authority waits without requesting NWS", async () => {
   for (const point of [null, {}, { ...valid, lat:null, lng:null }, { ...valid, lat:0, lng:0 }, { ...valid, lat:NaN }, { ...valid, lng:Infinity }, { ...valid, lat:"33.1" }, { ...valid, lat:91 }, { ...valid, lng:-181 }]) {
@@ -37,14 +48,11 @@ test("not-ready to governed Sulphur Springs transition starts with the governed 
   await h.context.gridlyWeatherConnector.refreshAwarenessView();
   h.select(valid);
   const run = h.context.gridlyWeatherConnector.refreshAwarenessView();
-  assert.equal(h.requests.length, 1);
+  assert.equal(h.requests.filter(request=>request.url.includes('/points/')).length, 1);
   assert.equal(h.requests[0].url, "https://api.weather.gov/points/33.1384,-95.6011");
-  h.requests[0].resolve({ ok:true, json:async () => ({properties:{forecast:"https://api.weather.gov/gridpoints/FWD/1,1/forecast"}}) });
-  await new Promise(r=>setImmediate(r));
-  h.requests[1].resolve({ ok:true, json:async () => ({properties:{periods:[]}}) });
-  await new Promise(r=>setImmediate(r));
-  h.requests[2].resolve({ ok:true, json:async () => payload() });
+  await completeRequests(h);
   await run;
+  assert.equal(h.requests.length, 3, 'one request per points, forecast and alert source');
   assert.equal(h.context.gridlyWeatherConnectorRuntimeAudit().requestSucceeded, true);
 });
 
@@ -52,10 +60,11 @@ test("one zero component remains a valid governed points lookup", async () => {
   const first = { ...valid, stableIdentity:"equator", lat:0, lng:-95.6011 };
   const second = { ...valid, stableIdentity:"meridian", lat:33.1384, lng:0 };
   const h = harness(first);
-  h.context.gridlyWeatherConnector.refreshAwarenessView();
+  const firstRun=h.context.gridlyWeatherConnector.refreshAwarenessView();
   assert.match(h.requests[0].url, /\/points\/0,-95\.6011$/);
-  h.select(second); h.context.gridlyWeatherConnector.refreshAwarenessView();
-  assert.match(h.requests[1].url, /\/points\/33\.1384,0$/);
+  h.select(second); const secondRun=h.context.gridlyWeatherConnector.refreshAwarenessView();
+  assert.match(h.requests.filter(request=>request.url.includes('/points/')).at(-1).url, /\/points\/33\.1384,0$/);
+  await completeRequests(h); await Promise.all([firstRun,secondRun]);
 });
 
 test("governed resolver rejects null coercion and only the paired zero sentinel", () => {

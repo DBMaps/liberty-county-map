@@ -22,10 +22,12 @@ test('weather failed recheck cannot be resurrected by cached success; recovery r
 
 test('late obsolete weather success cannot replace a newer same-place failure after A-B-A transitions',async()=>{
  const a={awarenessKey:'place-a',stableIdentity:'a',lat:30.04,lng:-94.88},b={awarenessKey:'place-b',stableIdentity:'b',lat:31.04,lng:-95.88};
- let point=a,pointCalls=0,releaseOld;
+ let point=a,alertCalls=0,releaseOld;
  const healthy=url=>({ok:true,json:async()=>url.includes('/points/')?{properties:{forecast:'https://api.weather.gov/gridpoints/TEST/1,1/forecast'}}:url.includes('/forecast')?{properties:{periods:[]}}:{type:'FeatureCollection',features:[]}});
  const box={Date,Promise,Error,TypeError,AbortController,setTimeout,clearTimeout,gridlyResolveGovernedWeatherPoint:()=>point,gridlyWeatherProvider:{normalizeRecords:p=>p.features},fetch:async url=>{
-  if(url.includes('/points/')){pointCalls++;if(pointCalls===1)return new Promise(resolve=>{releaseOld=()=>resolve(healthy(url));});if(pointCalls===3||pointCalls===4)return {ok:false,status:503};}
+  // Fail the alert authority itself. A points/forecast outage now deliberately
+  // leaves independently successful alerts authoritative.
+  if(url.includes('/alerts/')){alertCalls++;if(alertCalls===1)return new Promise(resolve=>{releaseOld=()=>resolve(healthy(url));});if(alertCalls===3||alertCalls===4)return {ok:false,status:503};}
   return healthy(url);
  }};
  vm.createContext(box);vm.runInContext(fs.readFileSync('js/gridlyWeatherLiveConnector.js','utf8'),box);

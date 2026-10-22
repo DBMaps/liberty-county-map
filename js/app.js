@@ -120811,7 +120811,17 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   // Read health does not erase current, governed community evidence.
   // Keep source uncertainty explicit; lifecycle/geography still own row membership.
   function gridlyLP236RetainCommunityRowsDuringReadUncertainty(section) {
-    return section?.sourceClass === "community_report" && ["LOADING", "UNAVAILABLE", "STALE"].includes(section?.authorityState) && section?.activeConditionCount > 0;
+    if (!["LOADING", "UNAVAILABLE", "STALE"].includes(section?.authorityState) || !(section?.activeConditionCount > 0)) return false;
+    if (section.sourceClass === "community_report") return true;
+    // Keep the existing uncertainty presentation owner. Weather may use it only
+    // for the connector's exact-point, still-unexpired retained warning evidence.
+    if (section.sourceClass !== "weather") return false;
+    const selection = window.gridlySelectConsumerVisibleWeatherSituations?.();
+    const runtime = window.gridlyWeatherConnectorRuntimeAudit?.();
+    const verifiedWhileChecking = section.authorityState === "LOADING" && runtime?.freshEnough === true && runtime?.requestSucceeded === true && runtime?.responseValid === true;
+    if (selection?.retainedWarningEvidence !== true && !verifiedWhileChecking) return false;
+    const rows = Array.from(section.groups?.values?.() || []).flatMap(group => group.rows || []);
+    return rows.length > 0 && rows.every(row => window.GridlyAlertsWeatherAuthorityHandoff?.evaluate?.({ candidate: row.alert, weatherSelection: selection, connectorRuntime: runtime })?.accepted === true);
   }
 
   function gridlyLP236AlertsInformationArchitectureAudit() {
@@ -121107,7 +121117,10 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       }).join("");
       return `${roadwayHtml}${visible.directRows.map((row) => renderRow(row, source, false, "", row.typeLabel)).join("")}`;
     };
-    const criticalHtml = model.critical.filter(() => model.sections.find((section) => section.sourceClass === "weather")?.authorityState === "ACTIVE").map(({ alert }) => {
+    const criticalHtml = model.critical.filter(() => {
+      const weather = model.sections.find(section => section.sourceClass === "weather");
+      return weather?.authorityState === "ACTIVE" || gridlyLP236RetainCommunityRowsDuringReadUncertainty(weather);
+    }).map(({ alert }) => {
       const title = resolveAlertTitleText(alert);
       const timing = pickFirstNonEmptyText([alert?.timeframe, alert?.expires, alert?.endsAt, alert?.updatedAt]);
       return `<aside class="gridly-lp236-critical" role="status"><strong>⚠ ${sanitizeText(title)}</strong>${timing ? `<span>${sanitizeText(timing)}</span>` : ""}<span>High-priority weather information</span></aside>`;
@@ -121126,7 +121139,8 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       }
       const open = gridlyLP236AlertsState.disclosure.initialized ? gridlyLP236AlertsState.disclosure.sourceKeys.has(sourceKey) : model.total === 1 || source.sourceClass === model.firstSource;
       const groupsHtml = source.sourceClass === "official_roadway" ? renderOfficialRoadways(source) : source.groups.map((group, groupIndex) => renderGroup(group, source, groupIndex)).join("");
-      const readStatus = source.authorityState === "LOADING" ? "Checking live community reports" : source.authorityState === "STALE" ? "Live community updates delayed" : "Live community updates unavailable";
+      const readStatus = source.sourceClass === "weather" ? (source.authorityState === "LOADING" ? "Checking alert updates; showing last verified alerts" : "Alert updates delayed; showing previously verified, unexpired warnings")
+        : source.authorityState === "LOADING" ? "Checking live community reports" : source.authorityState === "STALE" ? "Live community updates delayed" : "Live community updates unavailable";
       const sourceStatus = gridlyLP236RetainCommunityRowsDuringReadUncertainty(source) ? `${source.provenance} · ${readStatus}` : source.provenance;
       return `<details class="gridly-lp236-source" data-gridly-disclosure-key="${sanitizeText(sourceKey)}" data-gridly-lp236-source="${source.sourceClass}" data-gridly-lp236-count="${source.activeConditionCount}" data-gridly-lp236-authority-state="${sanitizeText(source.authorityState)}"${open ? " open" : ""}><summary aria-label="${sanitizeText(source.label)}, ${source.activeConditionCount} active condition${source.activeConditionCount === 1 ? "" : "s"}"><span><strong>${sanitizeText(source.label)}</strong><small>${sanitizeText(sourceStatus)}</small></span><b aria-label="${source.activeConditionCount} active condition${source.activeConditionCount === 1 ? "" : "s"}">${source.activeConditionCount}</b></summary><div class="gridly-lp236-groups">${groupsHtml}</div></details>`;
     }).join("");

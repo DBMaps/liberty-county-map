@@ -18,12 +18,19 @@
     const requestIdentity = text(runtime.pointRequestIdentity);
     const responseIdentity = text(runtime.responseIdentity);
     const identityClass = text(runtime.selectedPoint?.identityClass);
+    const providerRecordId = text(input.candidate?.providerRecordId || input.candidate?.sourceProviderRecordId || input.candidate?.id);
+    const expiry = Date.parse(runtime.retainedWarningExpiries?.[providerRecordId] || "");
+    // This exception admits only the connector's explicitly retained, unexpired
+    // warning, not an unavailable/old empty response or a cross-point candidate.
+    const retainedWarning = runtime.retainedWarningEvidence === true && selection.retainedWarningEvidence === true
+      && runtime.retainedWarningIds?.includes(providerRecordId) && Number.isFinite(expiry) && expiry > Date.now()
+      && selection.consumerVisibleSituations?.some(record => text(record.providerRecordId || record.id) === providerRecordId && record.retainedWarningEvidence === true);
     let rejectionReason = null;
 
     if (selection.authorityStatus !== "ACTIVE") rejectionReason = "WEATHER_AUTHORITY_NOT_ACTIVE";
     else if (runtime.applicabilityMode !== "NWS_POINT_QUERY") rejectionReason = "COUNTY_OR_FALLBACK_WEATHER_INELIGIBLE";
-    else if (runtime.requestSucceeded !== true || runtime.responseValid !== true) rejectionReason = "WEATHER_RESPONSE_NOT_AUTHORITATIVE";
-    else if (runtime.freshEnough !== true) rejectionReason = "WEATHER_AUTHORITY_STALE";
+    else if (!retainedWarning && (runtime.requestSucceeded !== true || runtime.responseValid !== true)) rejectionReason = "WEATHER_RESPONSE_NOT_AUTHORITATIVE";
+    else if (!retainedWarning && runtime.freshEnough !== true) rejectionReason = "WEATHER_AUTHORITY_STALE";
     else if (!SUPPORTED_CLASSES.has(identityClass) || !text(runtime.selectedPoint?.awarenessKey) || !text(runtime.selectedPoint?.stableIdentity)) rejectionReason = "UNSUPPORTED_GOVERNED_AWARENESS_IDENTITY";
     else if (!candidateIdentity) rejectionReason = "WEATHER_FAMILY_IDENTITY_MISSING";
     else if (!authorityIdentity || !familyIdentity) rejectionReason = "WEATHER_AUTHORITY_IDENTITY_MISSING";

@@ -131,10 +131,24 @@
     const responseIdentity = connectorRuntime?.responseIdentity || null;
     // NWS has already evaluated applicability for this exact governed point.
     // Do not run point results through the legacy statewide radius/text owner.
-    const pointAuthority = connectorRuntime?.applicabilityMode === "NWS_POINT_QUERY" && connectorRuntime?.requestSucceeded === true && connectorRuntime?.responseValid === true && connectorRuntime?.freshEnough === true && selectedContextIdentity === requestIdentity && requestIdentity === responseIdentity;
+    const pointLineage = connectorRuntime?.applicabilityMode === "NWS_POINT_QUERY" && Boolean(selectedContextIdentity) && selectedContextIdentity === requestIdentity && requestIdentity === responseIdentity;
+    const freshPointAuthority = pointLineage && connectorRuntime?.requestSucceeded === true && connectorRuntime?.responseValid === true && connectorRuntime?.freshEnough === true;
+    const retainedRecords = pointLineage && connectorRuntime?.retainedWarningEvidence === true ? adapted.records.filter(record => {
+      const expires = timestamp(record.expirationTime || record.endTime);
+      return connectorRuntime.retainedWarningIds?.includes(record.id)
+        && connectorRuntime.retainedWarningExpiries?.[record.id] === (record.expirationTime || record.endTime)
+        && expires != null && expires > nowMs(options)
+        && /warning/i.test(record.event || record.category || "")
+        && lower(record.messageType) !== "cancel" && lower(record.status || "Actual") === "actual";
+    }) : [];
+    const retainedWarningEvidence = !freshPointAuthority && retainedRecords.length > 0;
+    const pointAuthority = freshPointAuthority || retainedWarningEvidence;
+    const pointRecords = freshPointAuthority ? adapted.records : retainedRecords;
     const authority = pointAuthority
-      ? { consumerEligibleWeather: adapted.records, containsAlerts: adapted.records.length > 0, uniqueSituationCount: adapted.records.length, quietStateReason: adapted.records.length ? null : "fresh_point_response_empty" }
-      : (typeof selector === "function" ? selector(Object.assign({}, options, { selectedAwarenessArea, records: adapted.records })) : null);
+      ? { consumerEligibleWeather: pointRecords, containsAlerts: pointRecords.length > 0, uniqueSituationCount: pointRecords.length, quietStateReason: pointRecords.length ? null : "fresh_point_response_empty" }
+      : (connectorRuntime?.applicabilityMode === "NWS_POINT_QUERY"
+        ? { consumerEligibleWeather: [], containsAlerts: false, uniqueSituationCount: 0, quietStateReason: "source_failure" }
+        : (typeof selector === "function" ? selector(Object.assign({}, options, { selectedAwarenessArea, records: adapted.records })) : null));
     const eligible = asArray(authority?.consumerEligibleWeather);
     const ownershipMethods = eligible.map((record) => record?.authority?.ownershipMethod || record?.ownershipMethod).filter(Boolean);
     const fallbackMethods = eligible.filter((record) => record?.authority?.fallbackReason || record?.fallbackUsed).map((record) => record?.authority?.ownershipMethod || record?.ownershipMethod || "fallback");
@@ -149,8 +163,9 @@
       requestIdentity,
       responseIdentity,
       authorityIdentity: pointAuthority ? responseIdentity : null,
+      retainedWarningEvidence,
       sourceIntegrationStatus: status,
-      freshnessStatus: adapted.staleRecordCount ? "stale_records_present" : adapted.expiredRecordCount ? "expired_records_excluded" : adapted.rawRecordCount ? "loaded_records_evaluated" : "no_loaded_records",
+      freshnessStatus: retainedWarningEvidence ? "retained_unexpired_warning" : adapted.staleRecordCount ? "stale_records_present" : adapted.expiredRecordCount ? "expired_records_excluded" : adapted.rawRecordCount ? "loaded_records_evaluated" : "no_loaded_records",
       geographicOwnershipStatus: ownershipMethods.length ? "ownership_evaluated" : adapted.rawRecordCount ? "filtered_outside_awareness_or_ineligible" : "no_loaded_records",
       deduplicationStatus: adapted.duplicateRecordCount ? "duplicates_removed" : "no_duplicates_observed",
       quietStateReason: authority?.quietStateReason || (adapted.rawRecordCount ? "filtered_outside_awareness_area" : "no_loaded_records"),
@@ -200,6 +215,7 @@
       effectiveTime: record?.effectiveTime || record?.onsetTime || record?.sentTime || null,
       onsetTime: record?.onsetTime || null,
       expirationTime: record?.expirationTime || null,
+      retainedWarningEvidence: snapshot.retainedWarningEvidence === true,
       authority: freeze(clone(record?.authority || {}) || {})
     });
   }
@@ -242,6 +258,7 @@
       activeCommunity: snapshot?.activeCommunity || null,
       weatherAuthorityIdentity: snapshot?.authorityIdentity || null,
       weatherFamilyIdentity: snapshot?.authorityIdentity || null,
+      retainedWarningEvidence: snapshot?.retainedWarningEvidence === true,
       authorityStatus: situations.length ? "ACTIVE" : "QUIET",
       consumerVisibleSituations: situations,
       consumerVisibleSituationCount: situations.length,

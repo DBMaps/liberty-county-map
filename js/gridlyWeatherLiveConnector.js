@@ -19,6 +19,7 @@
   let currentIdentity = null;
   let generation = 0;
   let refreshTimer = null;
+  let expiryTimer = null;
 
   const freeze = (value) => value && typeof value === "object" ? Object.freeze(value) : value;
   const clone = (value) => { try { return JSON.parse(JSON.stringify(value)); } catch (_) { return null; } };
@@ -55,8 +56,54 @@
       return status !== "test" && status !== "draft" && message !== "cancel" && (!Number.isFinite(effective) || effective <= now) && (!Number.isFinite(expires) || expires > now);
     });
   }
+  function retainedWarnings(records) {
+    // A transport outage is not a cancellation. Retain only previously verified
+    // warnings with an explicit authoritative expiry; never invent an extension.
+    return currentRecords(records).filter(record => /warning/i.test(record.event || record.category || "")
+      && String(record.status || "Actual").toLowerCase() === "actual"
+      && Boolean(record.id || record.sourceTrace?.sourceId)
+      && Number.isFinite(Date.parse(record.expirationTime || record.endTime || "")));
+  }
+  function entryIsFresh(entry) {
+    const age = Date.now() - Date.parse(entry?.fetchedAt || "");
+    return Boolean(entry?.succeeded && entry?.valid && age >= 0 && age <= REFRESH_INTERVAL_MS);
+  }
+  function entryRecords(entry) {
+    if (!entry?.recordsAuthoritative) return [];
+    return entryIsFresh(entry) ? currentRecords(entry.records) : retainedWarnings(entry.records);
+  }
+  function scheduleExpiry(entry, ownerGeneration) {
+    if (expiryTimer != null) globalScope.clearTimeout?.(expiryTimer);
+    expiryTimer=null;
+    const expiries=entryRecords(entry).map(record=>Date.parse(record.expirationTime || record.endTime || "")).filter(value=>Number.isFinite(value) && value>Date.now());
+    if (!expiries.length || typeof globalScope.setTimeout !== "function") return;
+    expiryTimer=globalScope.setTimeout(()=>{
+      expiryTimer=null;
+      if (ownerGeneration !== generation || currentIdentity !== entry.requestIdentity || identity(resolvePoint()) !== entry.requestIdentity || cache.get(entry.requestIdentity) !== entry) return;
+      normalizedRecords=entryRecords(entry).map(clone).filter(Boolean);
+      state.normalizedRecordCount=normalizedRecords.length;
+      notify("weather-alert-expired");
+      scheduleExpiry(entry,ownerGeneration);
+    },Math.min(2147483647,Math.max(1,Math.min(...expiries)-Date.now())));
+    // Node certification timers must not hold a process open; browser handles
+    // are numeric and do not expose unref.
+    expiryTimer?.unref?.();
+  }
+  function activeAlertPayload(payload) {
+    const cancelled=new Set();
+    for (const feature of payload.features) {
+      if (String(feature?.properties?.messageType || "").toLowerCase() !== "cancel" || String(feature?.properties?.status || "Actual").toLowerCase() !== "actual") continue;
+      for (const reference of feature.properties.references || []) {
+        if (reference?.identifier) cancelled.add(reference.identifier);
+        if (reference?.["@id"]) cancelled.add(reference["@id"]);
+        if (reference?.url) cancelled.add(reference.url);
+      }
+    }
+    return { ...payload, features:payload.features.filter(feature => !cancelled.has(feature?.id) && !cancelled.has(feature?.properties?.id)) };
+  }
   function notify(reason) {
     try { globalScope.gridlyOfficialProviderConsumerRefresh?.({ providerId:PROVIDER_ID, reason, evidenceChanged:true }); } catch (_) {}
+    try { globalScope.gridlySynchronizeOpenAlertsPortrait?.(reason); } catch (_) {}
   }
   async function requestPayload(url) {
     if (typeof globalScope.fetch !== "function") throw new Error("Weather connector fetch is unavailable");
@@ -80,14 +127,19 @@
     if (requestGeneration !== generation || identity(live) !== entry.requestIdentity) { state.staleResponseSuppressedCount += 1; return false; }
     state.requestInFlight = false;
     currentIdentity = entry.requestIdentity;
-    normalizedRecords = entry.records.map(clone).filter(Boolean);
-    state.connected=entry.succeeded && entry.valid; state.authorityReady=true; state.authorityWaitReason=null; state.lastFetchSucceeded=entry.succeeded; state.lastError=entry.error; state.lastSuccessAt=entry.succeeded ? entry.fetchedAt : state.lastSuccessAt; state.lastFailureAt=entry.succeeded ? state.lastFailureAt : entry.fetchedAt; state.normalizedRecordCount=normalizedRecords.length; state.pointRequestIdentity=entry.requestIdentity; state.pointEndpoint=entry.endpoint; state.pointResponseValid=entry.valid; state.pointsLookupEndpoint=entry.pointsLookupEndpoint; state.pointsRequestAttempted=entry.pointsRequestAttempted; state.pointsRequestSucceeded=entry.pointsRequestSucceeded; state.forecastEndpoint=entry.forecastEndpoint; state.forecastRequestAttempted=entry.forecastRequestAttempted; state.forecastRequestSucceeded=entry.forecastRequestSucceeded;
+    normalizedRecords = entryRecords(entry).map(clone).filter(Boolean);
+    state.connected=entry.succeeded && entry.valid; state.authorityReady=true; state.authorityWaitReason=null; state.lastFetchSucceeded=entry.succeeded; state.lastError=entry.error; state.lastSuccessAt=entry.lastAlertSuccessAt || null; state.lastFailureAt=entry.succeeded ? state.lastFailureAt : entry.checkedAt; state.normalizedRecordCount=normalizedRecords.length; state.pointRequestIdentity=entry.requestIdentity; state.pointEndpoint=entry.endpoint; state.pointResponseValid=entry.valid; state.pointsLookupEndpoint=entry.pointsLookupEndpoint; state.pointsRequestAttempted=entry.pointsRequestAttempted; state.pointsRequestSucceeded=entry.pointsRequestSucceeded; state.forecastEndpoint=entry.forecastEndpoint; state.forecastRequestAttempted=entry.forecastRequestAttempted; state.forecastRequestSucceeded=entry.forecastRequestSucceeded;
+    state.forecastError=entry.forecastError || null;
+    state.forecastRequestInFlight=entry.forecastRequestInFlight === true;
+    scheduleExpiry(entry,requestGeneration);
     notify(entry.succeeded ? "weather-point-fetch-success" : "weather-point-fetch-failure");
     return true;
   }
   function invalidateCurrentAuthority(nextIdentity, nextPoint) {
     if (currentIdentity === nextIdentity || (currentIdentity === null && state.pointRequestIdentity === nextIdentity && state.pointResponseValid === false)) return;
     currentIdentity = null;
+    if (expiryTimer != null) globalScope.clearTimeout?.(expiryTimer);
+    expiryTimer=null;
     normalizedRecords = [];
     state.connected = false;
     state.lastFetchSucceeded = false;
@@ -102,46 +154,63 @@
     state.forecastEndpoint = null;
     state.forecastRequestAttempted = false;
     state.forecastRequestSucceeded = false;
+    state.forecastError = null;
+    state.forecastRequestInFlight = false;
     notify("weather-point-identity-transition");
   }
   async function fetchPoint(point, requestGeneration) {
     const requestIdentity=identity(point), url=endpoint(point), lookupUrl=pointsEndpoint(point); state.requestInFlight=true; state.lastRequestAt=iso(); state.pointRequestIdentity=requestIdentity; state.pointEndpoint=url; state.pointsLookupEndpoint=lookupUrl;
     globalScope.gridlySynchronizeOpenAlertsPortrait?.("weather-source-loading");
-    const attempt={pointsLookupEndpoint:lookupUrl,pointsRequestAttempted:false,pointsRequestSucceeded:false,forecastEndpoint:null,forecastRequestAttempted:false,forecastRequestSucceeded:false};
+    const attempt={pointsLookupEndpoint:lookupUrl,pointsRequestAttempted:false,pointsRequestSucceeded:false,forecastEndpoint:null,forecastRequestAttempted:false,forecastRequestSucceeded:false,forecastError:null,forecastRequestInFlight:true};
+    const isCurrent=()=>requestGeneration === generation && identity(resolvePoint()) === requestIdentity;
+    let entry=null;
+    const commit=()=>{
+      if (isCurrent()) {
+        cache.delete(requestIdentity); cache.set(requestIdentity,entry);
+        while(cache.size>CACHE_MAX) cache.delete(cache.keys().next().value);
+      }
+      return publish(entry,requestGeneration);
+    };
+    // The selected point is already governed. Forecast discovery/enrichment must
+    // never gate its alert request or the publication of a successful warning.
+    const forecastTask=(async()=>{
+      try {
+        attempt.pointsRequestAttempted=true;
+        const pointsPayload=await requestPayload(lookupUrl);
+        attempt.pointsRequestSucceeded=true;
+        const forecastUrl=governedForecastEndpoint(pointsPayload);
+        if (!forecastUrl) throw new Error("NWS points response did not provide a governed forecast endpoint");
+        attempt.forecastEndpoint=forecastUrl; attempt.forecastRequestAttempted=true;
+        const forecastPayload=await requestPayload(forecastUrl);
+        if (!validForecastPayload(forecastPayload)) throw new Error("NWS forecast schema validation failed");
+        attempt.forecastRequestSucceeded=true;
+      } catch(error) { attempt.forecastError=error?.message||String(error); }
+      finally {
+        attempt.forecastRequestInFlight=false;
+        if (entry && isCurrent()) { Object.assign(entry,attempt); commit(); }
+      }
+    })();
     try {
-      attempt.pointsRequestAttempted=state.pointsRequestAttempted=true;
-      const pointsPayload=await requestPayload(lookupUrl);
-      attempt.pointsRequestSucceeded=state.pointsRequestSucceeded=true;
-      const forecastUrl=governedForecastEndpoint(pointsPayload);
-      if (!forecastUrl) throw new Error("NWS points response did not provide a governed forecast endpoint");
-      attempt.forecastEndpoint=state.forecastEndpoint=forecastUrl;
-      attempt.forecastRequestAttempted=state.forecastRequestAttempted=true;
-      const forecastPayload=await requestPayload(forecastUrl);
-      if (!validForecastPayload(forecastPayload)) throw new Error("NWS forecast schema validation failed");
-      attempt.forecastRequestSucceeded=state.forecastRequestSucceeded=true;
       const payload=await requestPayload(url);
       if (!validPayload(payload)) throw new Error("Weather connector schema validation failed");
       const normalizer=provider()?.normalizeRecords;
       if (typeof normalizer !== "function") throw new Error("Weather provider normalizer unavailable");
-      const records=currentRecords(normalizer(payload).map(clone).filter(Boolean));
-      const entry={ requestIdentity, point, endpoint:url, attempted:true, succeeded:true, valid:true, fetchedAt:iso(), records, error:null, ...attempt };
+      const records=currentRecords(normalizer(activeAlertPayload(payload)).map(clone).filter(Boolean));
+      const fetchedAt=iso();
+      entry={ requestIdentity, point, endpoint:url, attempted:true, succeeded:true, valid:true, fetchedAt, checkedAt:fetchedAt, lastAlertSuccessAt:fetchedAt, recordsAuthoritative:true, records, error:null, ...attempt };
       // Cache publication follows the same current-generation authority as UI
       // publication, including when an earlier A request finishes after A-B-A.
-      if (requestGeneration === generation && identity(resolvePoint()) === requestIdentity) {
-        cache.delete(requestIdentity); cache.set(requestIdentity,entry);
-        while(cache.size>CACHE_MAX) cache.delete(cache.keys().next().value);
-      }
-      publish(entry,requestGeneration); return freeze({ connected:true, normalizedRecordCount:records.length, requestIdentity });
+      commit();
     } catch(error) {
-      const entry={ requestIdentity, point, endpoint:url, attempted:true, succeeded:false, valid:false, fetchedAt:iso(), records:[], error:error?.message||String(error), ...attempt };
+      const previous=isCurrent() ? cache.get(requestIdentity) : null;
+      const records=previous?.recordsAuthoritative ? retainedWarnings(previous.records) : [];
+      entry={ requestIdentity, point, endpoint:url, attempted:true, succeeded:false, valid:false, fetchedAt:previous?.fetchedAt || null, checkedAt:iso(), lastAlertSuccessAt:previous?.lastAlertSuccessAt || null, recordsAuthoritative:records.length>0, records, error:error?.message||String(error), ...attempt };
       // A failed check supersedes this identity's earlier healthy cache entry.
       // Otherwise refreshAwarenessView can immediately restore obsolete success.
-      if (requestGeneration === generation && identity(resolvePoint()) === requestIdentity) {
-        cache.delete(requestIdentity); cache.set(requestIdentity,entry);
-        while(cache.size>CACHE_MAX) cache.delete(cache.keys().next().value);
-      }
-      publish(entry,requestGeneration); return freeze({ connected:false, normalizedRecordCount:0, error:entry.error, requestIdentity });
+      commit();
     }
+    await forecastTask;
+    return freeze({ connected:entry.succeeded && entry.valid, normalizedRecordCount:entryRecords(entry).length, error:entry.error, requestIdentity });
   }
   function fetchNow() {
     state.providerActivated = true;
@@ -156,25 +225,49 @@
       return Promise.resolve(freeze({connected:false,notReady:true,reason:state.authorityWaitReason}));
     }
     state.authorityReady=true; state.authorityWaitReason=null;
-    if (fetchInFlight?.identity === nextIdentity) return fetchInFlight.promise;
+    if (fetchInFlight?.identity === nextIdentity && fetchInFlight.generation === generation) return fetchInFlight.promise;
     invalidateCurrentAuthority(nextIdentity, point);
     const requestGeneration=++generation;
+    scheduleExpiry(cache.get(nextIdentity),requestGeneration);
     const promise=fetchPoint(point,requestGeneration).finally(() => { if(fetchInFlight?.promise===promise) fetchInFlight=null; });
-    fetchInFlight={identity:nextIdentity,promise}; return promise;
+    fetchInFlight={identity:nextIdentity,generation:requestGeneration,promise}; return promise;
   }
   function refreshAwarenessView() {
     const point=resolvePoint(), next=identity(point), cached=next ? cache.get(next) : null;
     if (!validGovernedPoint(point)) return fetchNow();
-    if (fetchInFlight?.identity === next) return fetchInFlight.promise;
+    if (fetchInFlight?.identity === next && fetchInFlight.generation === generation) return fetchInFlight.promise;
     generation+=1;
     invalidateCurrentAuthority(next, point);
-    if (cached && Date.now()-Date.parse(cached.fetchedAt)<=REFRESH_INTERVAL_MS) { publish(cached,generation); return Promise.resolve(freeze({connected:cached.succeeded===true&&cached.valid===true,cached:true,normalizedRecordCount:cached.records.length})); }
+    const checkAge=Date.now()-Date.parse(cached?.checkedAt || "");
+    if (cached && checkAge>=0 && checkAge<=REFRESH_INTERVAL_MS) { publish(cached,generation); return Promise.resolve(freeze({connected:entryIsFresh(cached),cached:true,normalizedRecordCount:entryRecords(cached).length})); }
     return fetchNow();
   }
   function startPolling() { state.automaticPolling=true; const tick=async()=>{await fetchNow(); if(state.automaticPolling) refreshTimer=globalScope.setTimeout(tick,REFRESH_INTERVAL_MS);}; tick(); return runtimeAudit(); }
   function stopPolling(){state.automaticPolling=false;if(refreshTimer!=null)globalScope.clearTimeout?.(refreshTimer);refreshTimer=null;return runtimeAudit();}
-  function getNormalizedRecords(){return freeze(normalizedRecords.map(clone).filter(Boolean));}
-  function runtimeAudit(){const selectedPoint=resolvePoint();const selectedIdentity=identity(selectedPoint);const entry=currentIdentity&&currentIdentity===selectedIdentity?cache.get(currentIdentity):null;const age=entry?Date.now()-Date.parse(entry.fetchedAt):Infinity;if(state.providerActivated!==true)return freeze({connected:false,networkingAvailable:typeof globalScope.fetch === "function",automaticPolling:false,providerActivated:false,renderingPerformed:false,normalizedRecordCount:0,requestAttempted:false,requestSucceeded:false,lastRequestAt:null,lastSuccessAt:null,lastFailureAt:null,lastError:null,refreshIntervalMs:REFRESH_INTERVAL_MS});const freshEnough=Boolean(entry?.succeeded&&entry?.valid&&state.lastFetchSucceeded&&age>=0&&age<=REFRESH_INTERVAL_MS);return freeze({ ...state, requestInFlight:state.requestInFlight===true && state.pointRequestIdentity===selectedIdentity, applicabilityMode:"NWS_POINT_QUERY", statewideDiagnosticEndpoint:DEFAULT_ENDPOINT, pointAlertEndpoint:state.pointEndpoint, requestAttempted:Boolean(entry?.attempted), requestSucceeded:Boolean(entry?.succeeded&&state.lastFetchSucceeded), responseValid:Boolean(entry?.valid&&state.pointResponseValid), fetchedAt:entry?.fetchedAt||null, freshEnough, freshnessStatus:freshEnough?"FRESH":(state.lastSuccessAt?"STALE":"UNKNOWN"), pointActiveAlertCount:entry?.records?.length||0, pointActiveAlertIds:freeze((entry?.records||[]).map(r=>r.id)), currentAwarenessIdentity:selectedIdentity, responseIdentity:entry?.requestIdentity||null, selectedPoint, selectedIdentityClass:selectedPoint?.identityClass||null, selectedPlaceGeoid:selectedPoint?.placeGeoid||null, governedWeatherPointAvailable:validGovernedPoint(selectedPoint), governedWeatherLatitude:validGovernedPoint(selectedPoint)?selectedPoint.lat:null, governedWeatherLongitude:validGovernedPoint(selectedPoint)?selectedPoint.lng:null, latestProviderSuccessTimestamp:state.lastSuccessAt, finalWeatherHealth:entry?.succeeded&&freshEnough?"HEALTHY":"UNAVAILABLE", finalWeatherUnavailableReason:entry?.succeeded&&freshEnough?null:(state.authorityWaitReason||state.lastError||(state.lastSuccessAt?"STALE_PROVIDER_SUCCESS":"PROVIDER_SUCCESS_NOT_ESTABLISHED")), cacheSize:cache.size });}
+  function getNormalizedRecords(){const selectedIdentity=identity(resolvePoint());const entry=currentIdentity===selectedIdentity ? cache.get(currentIdentity) : null;return freeze(entryRecords(entry).map(clone).filter(Boolean));}
+  function runtimeAudit(){
+    const selectedPoint=resolvePoint(), selectedIdentity=identity(selectedPoint);
+    const entry=currentIdentity&&currentIdentity===selectedIdentity?cache.get(currentIdentity):null;
+    if(state.providerActivated!==true)return freeze({connected:false,networkingAvailable:typeof globalScope.fetch === "function",automaticPolling:false,providerActivated:false,renderingPerformed:false,normalizedRecordCount:0,requestAttempted:false,requestSucceeded:false,lastRequestAt:null,lastSuccessAt:null,lastFailureAt:null,lastError:null,refreshIntervalMs:REFRESH_INTERVAL_MS});
+    const freshEnough=entryIsFresh(entry), records=entryRecords(entry);
+    const retainedWarningEvidence=!freshEnough && records.length>0;
+    const healthy=freshEnough && entry.forecastRequestSucceeded===true;
+    return freeze({ ...state,
+      requestInFlight:state.requestInFlight===true && state.pointRequestIdentity===selectedIdentity,
+      applicabilityMode:"NWS_POINT_QUERY", statewideDiagnosticEndpoint:DEFAULT_ENDPOINT, pointAlertEndpoint:state.pointEndpoint,
+      requestAttempted:Boolean(entry?.attempted), requestSucceeded:Boolean(entry?.succeeded), responseValid:Boolean(entry?.valid),
+      fetchedAt:entry?.fetchedAt||null, checkedAt:entry?.checkedAt||null, freshEnough,
+      freshnessStatus:freshEnough?"FRESH":(entry?.lastAlertSuccessAt?"STALE":"UNKNOWN"),
+      normalizedRecordCount:records.length, pointActiveAlertCount:records.length, pointActiveAlertIds:freeze(records.map(r=>r.id)),
+      retainedWarningEvidence, retainedWarningIds:freeze(retainedWarningEvidence?records.map(r=>r.id):[]),
+      retainedWarningExpiries:freeze(retainedWarningEvidence?Object.fromEntries(records.map(r=>[r.id,r.expirationTime||r.endTime])):{}),
+      currentAwarenessIdentity:selectedIdentity, responseIdentity:entry?.requestIdentity||null, selectedPoint,
+      selectedIdentityClass:selectedPoint?.identityClass||null, selectedPlaceGeoid:selectedPoint?.placeGeoid||null,
+      governedWeatherPointAvailable:validGovernedPoint(selectedPoint), governedWeatherLatitude:validGovernedPoint(selectedPoint)?selectedPoint.lat:null, governedWeatherLongitude:validGovernedPoint(selectedPoint)?selectedPoint.lng:null,
+      latestProviderSuccessTimestamp:entry?.lastAlertSuccessAt||null,
+      finalWeatherHealth:healthy?"HEALTHY":(freshEnough||retainedWarningEvidence?"DEGRADED":"UNAVAILABLE"),
+      finalWeatherUnavailableReason:healthy?null:(state.authorityWaitReason||state.lastError||entry?.forecastError||(entry?.forecastRequestInFlight?"FORECAST_ENRICHMENT_PENDING":entry?.lastAlertSuccessAt?"STALE_PROVIDER_SUCCESS":"PROVIDER_SUCCESS_NOT_ESTABLISHED")), cacheSize:cache.size });
+  }
   globalScope.gridlyWeatherConnector=freeze({providerId:PROVIDER_ID,providerName:PROVIDER_NAME,timeoutMs:TIMEOUT_MS,maxAttempts:MAX_ATTEMPTS,refreshIntervalMs:REFRESH_INTERVAL_MS,fetchNow,refreshAwarenessView,startPolling,stopPolling,getNormalizedRecords});
   globalScope.gridlyWeatherConnectorRuntimeAudit=runtimeAudit;
   if(typeof module!=="undefined"&&module.exports)module.exports=globalScope.gridlyWeatherConnector;
