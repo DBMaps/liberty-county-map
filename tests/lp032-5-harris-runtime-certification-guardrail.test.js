@@ -6,8 +6,9 @@ const manifestText = fs.readFileSync('data/roadway-runtime-manifest.json', 'utf8
 const manifest = JSON.parse(manifestText);
 const harris = manifest.counties['harris-tx'];
 
-assert.strictEqual(harris.status, 'partition_runtime_integrated', 'Harris remains integrated but gated.');
-assert.strictEqual(harris.integrationGateEnabled, true, 'Harris runtime gate must remain enabled.');
+assert.strictEqual(harris.status, 'partition_runtime_ready', 'Harris retains its governed ready runtime.');
+assert.strictEqual(harris.integrationGateEnabled, false, 'Production activation has removed the historical certification gate.');
+assert.strictEqual(harris.activationState, 'production_active', 'Harris is explicitly production-active.');
 assert.strictEqual(harris.url, null, 'Harris must not be production-activated through a single package URL.');
 
 assert.ok(app.includes('function gridlyLp032HarrisCertificationAudit()'), 'preferred certification helper exists.');
@@ -15,7 +16,8 @@ assert.ok(app.includes('window.gridlyLp032HarrisCertificationAudit = gridlyLp032
 assert.ok(app.includes('browserCertificationPass'), 'browser certification PASS logic is exposed.');
 assert.ok(app.includes('activationReadinessPass'), 'activation readiness PASS logic is exposed.');
 assert.ok(app.includes('criticalContractsPass = Object.values(contracts).every(Boolean)'), 'activation readiness depends on every critical runtime contract.');
-assert.ok(app.includes('activationReadinessPass = Boolean(safeForBrowserCertification && criticalContractsPass'), 'activation readiness cannot become true while a critical contract fails.');
+assert.ok(app.includes('productionActivationPass = Boolean(safeForBrowserCertification && criticalContractsPass'), 'production activation cannot become true while a critical contract fails.');
+assert.ok(app.includes('const activationReadinessPass = productionActivationPass;'), 'readiness delegates to the governed production activation result.');
 
 [
   'manifestLoading',

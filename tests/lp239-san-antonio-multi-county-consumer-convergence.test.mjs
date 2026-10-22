@@ -8,6 +8,13 @@ const app = read('js/app.js');
 const memberships = JSON.parse(read('data/runtime/canonical-crossing-memberships-v1.json'));
 const records = JSON.parse(read('data/runtime/canonical-crossing-records-v1.json')).records;
 
+function convergenceAuditSource() {
+  // Later, unrelated acceptance helpers are appended after this audit.
+  const match = app.match(/^function gridlyMultiCountyConsumerConvergenceAudit\(\) \{[^]*?^\}/m);
+  assert.ok(match, 'the complete convergence audit function must exist');
+  return match[0];
+}
+
 test('San Antonio fixture is certified solely by the statewide governed registry', () => {
   const place = memberships.places['4865000'];
   assert.equal(place.n, 'San Antonio');
@@ -94,7 +101,7 @@ test('owner-proven cohort membership contracts are unchanged', () => {
 });
 
 test('production repair is town-neutral, passive, and leaves active membership separate', () => {
-  const source = app.slice(app.indexOf('// LP239:'));
+  const source = convergenceAuditSource();
   assert.doesNotMatch(source, /San Antonio|Bexar|4865000|bexar-tx|Dallas|Austin|Waskom|4876636|Harrison/);
   assert.doesNotMatch(source, /fetch\s*\(|setInterval|setTimeout|requestAnimationFrame|setActiveCounty|renderCrossings\s*\(/);
   assert.match(source, /activeCounty: gridlyGetActiveCountyId\(\)/);
@@ -146,7 +153,7 @@ test('League City and owner controls keep populated shared canonical records', (
 });
 
 test('audit reconciliation creates no inventory, activation, viewport, or town-specific production branch', () => {
-  const source = app.slice(app.indexOf('// LP239:'));
+  const source = convergenceAuditSource();
   assert.doesNotMatch(source, /new Map|new Set\(crossing|fetch\s*\(|loadCrossings|ensureGridlyActiveCountyCrossingInventory|setActiveCounty|renderCrossings\s*\(|map\.getBounds/);
   assert.doesNotMatch(source, /Beaumont|Jefferson|4807000|San Antonio|Austin|Dallas|League City|Waskom/);
   assert.match(source, /crossingCountyIds: Object\.freeze\(\[\.\.\.membershipCountyIds\]\)/);

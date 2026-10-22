@@ -138,7 +138,12 @@ test('writer trace proves the legacy last writers fail before repair and the ful
   assert.match(app, /writer: "invalidateGridlyPortraitAwarenessSnapshotsForAreaChange"/);
   assert.match(app, /writer: "refreshPortraitV2LocalizedIntelligence:awareness-brief-publication"/);
   assert.match(app, /governed-active-evidence-blocked-quiet/);
-  assert.match(app, /const proposedSummary = gridlyLastAuthoritativeCommunityAwarenessSummary \|\| normalizedPatch\.communityAwarenessSummary \|\| publisherAuthoritativeSummary/);
+  assert.match(app, /const summaryCandidates = \[gridlyLastAuthoritativeCommunityAwarenessSummary, normalizedPatch\.communityAwarenessSummary, publisherAuthoritativeSummary\]/);
+  assert.match(app, /const proposedSummary = summaryCandidates\.find/);
+  assert.match(app, /summary\.canonicalCommunityRevision === gridlyGetCanonicalActiveCommunityState\(\)\.revision/);
+  if (app.includes('function gridlyAwarenessSummaryInputRevision(')) {
+    assert.match(app, /summary\.awarenessInputRevision === undefined \|\| isGridlyCachedAwarenessSummaryForCurrentArea\(summary\)/);
+  }
   assert.match(app, /firstSummaryLoss/);
   assert.match(app, /firstBriefQuietOverwrite/);
 });

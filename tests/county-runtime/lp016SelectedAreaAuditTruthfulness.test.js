@@ -5,7 +5,7 @@ const path = require('path');
 const source = fs.readFileSync(path.join(__dirname, '..', '..', 'js', 'app.js'), 'utf8');
 
 function bodyOf(functionName) {
-  const marker = `function ${functionName}`;
+  const marker = `function ${functionName}(`;
   const start = source.indexOf(marker);
   assert.notStrictEqual(start, -1, `${functionName} exists`);
   const bodyStart = source.indexOf('{', source.indexOf(')', start));
@@ -50,7 +50,8 @@ assert(cacheLiteral.includes('callsByInstrumentedCallSite'), 'deterministic call
 assert(activeCountyBody.includes('gridlyRecordSelectedAwarenessInstrumentedCallSite("gridlyGetActiveCountyId", "js/app.js:gridlyGetActiveCountyId")'), 'gridlyGetActiveCountyId has a lightweight full-run call-site counter');
 assert(driveTexasSource.includes('function matchesAwarenessArea(record, awareness)'), 'DriveTexas matcher accepts operation-scoped awareness');
 assert(!bodyOfFromSource(driveTexasSource, 'matchesAwarenessArea').includes('getGridlySelectedAwarenessArea('), 'DriveTexas matcher does not restore per-record selected-area lookups');
-assert(bodyOfFromSource(driveTexasSource, 'filterAwarenessRecords').includes('const awareness = activeAwarenessArea();'), 'DriveTexas filter resolves awareness once per operation');
+assert(bodyOfFromSource(driveTexasSource, 'deriveAwarenessView').includes('context = awarenessContextFrom(activeAwarenessArea());'), 'DriveTexas derivation resolves awareness once per operation');
+assert(!bodyOfFromSource(driveTexasSource, 'filterAwarenessRecords').includes('activeAwarenessArea('), 'DriveTexas filter receives the operation-scoped awareness');
 assert(![statusBody, callerAuditBody, samplerBody, activeCountyBody].some((body) => /Dayton|Liberty County|liberty-tx|dayton/i.test(body)), 'new LP016 audit/caller instrumentation does not hardcode a county or community');
 
 function bodyOfFromSource(text, functionName) {

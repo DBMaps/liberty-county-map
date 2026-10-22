@@ -51,7 +51,7 @@ test("the repair changes no crossing qualification or source governance", () => 
 
 test("settings community selection delegates county and camera ownership to the canonical save", () => {
   const select = functionBody("selectGridlySettingsAwarenessArea", "gridlyCommunityCoverageExpansionAudit");
-  assert.match(select, /saveGridlyHomeTownPreference\(saveValue, \{ source \}\)/);
+  assert.match(select, /saveGridlyHomeTownPreference\(selectedArea\?\.key \|\| saveValue, \{ source, countyId: selectedCountyId \|\| selectedArea\?\.countyId \|\| "" \}\)/);
   assert.doesNotMatch(select, /gridlySetActiveCountyContext/);
   assert.doesNotMatch(select, /gridlyDispatchSemanticCamera/);
   assert.match(select, /gridlyRefreshSettingsAwarenessDisplayOnly\(saved\)/, "independent settings synchronization remains");

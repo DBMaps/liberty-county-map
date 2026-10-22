@@ -29,7 +29,7 @@ includes('function invalidateGridlySelectedAwarenessAreaResolutionCache(reason =
 const selectedBody = bodyOf('getGridlySelectedAwarenessArea');
 assert(selectedBody.includes('gridlySelectedAwarenessAreaResolutionCache.signature'), 'selected-area getter uses the cache signature');
 assert(selectedBody.includes('gridlySelectedAwarenessAreaResolutionCache.cacheHits += 1'), 'selected-area getter records cache hits');
-assert(selectedBody.includes('const area = resolveGridlyAwarenessArea(requestedTown);'), 'selected-area getter still resolves the requested town through canonical resolver on miss');
+assert(selectedBody.includes('const area = gridlyResolveStableHomeSelectionArea(stableKey || requestedTown, stableCounty);'), 'selected-area cache miss preserves stable identity and county-qualified Home resolution');
 assert(!selectedBody.includes('getGridlyHomeTownPreference()'), 'selected-area getter avoids the prior normalize-then-resolve duplicate resolver path');
 
 const saveBody = bodyOf('saveGridlyHomeTownPreference');

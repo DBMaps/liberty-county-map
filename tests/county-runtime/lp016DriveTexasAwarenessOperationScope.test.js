@@ -8,6 +8,7 @@ const connectorSource = fs.readFileSync(path.join(__dirname, '..', '..', 'js', '
 function createRuntime() {
   let selected = null;
   let getterCalls = 0;
+  let lastOperationReads = null;
   const context = {
     console,
     Date,
@@ -56,6 +57,7 @@ function createRuntime() {
     context,
     setSelected(area) { selected = area; },
     getGetterCalls() { return getterCalls; },
+    getOperationReads() { return lastOperationReads; },
     async run(records) {
       context.fetch = async () => ({
         ok: true,
@@ -64,8 +66,12 @@ function createRuntime() {
           features: records.map((properties) => ({ type: 'Feature', properties, geometry: null }))
         })
       });
+      const before = getterCalls;
       await context.gridlyDriveTexasConnector.fetchNow();
-      return context.gridlyDriveTexasConnector.getNormalizedRecords();
+      const afterFetch = getterCalls;
+      const recordsForCurrentArea = context.gridlyDriveTexasConnector.getNormalizedRecords();
+      lastOperationReads = { fetch: afterFetch - before, projection: getterCalls - afterFetch };
+      return recordsForCurrentArea;
     }
   };
 }
@@ -111,7 +117,8 @@ const countyWide = Object.freeze({
     { id: 'alpha-text', title: 'Closure near Alpha Prairie' }
   ]);
   assert.deepStrictEqual(results.map((record) => record.id).sort(), ['alpha-coordinate', 'alpha-text']);
-  assert.strictEqual(runtime.getGetterCalls(), 1, 'community operation resolves awareness once for all records');
+  assert.deepStrictEqual(runtime.getOperationReads(), { fetch: 1, projection: 1 }, 'fetch derivation and projection ownership each read awareness once');
+  assert.strictEqual(runtime.getGetterCalls(), 2, 'separate fetch and projection operations retain bounded ownership reads');
 
   runtime.setSelected(beta);
   results = await runtime.run([
@@ -120,7 +127,8 @@ const countyWide = Object.freeze({
     { id: 'beta-text', description: 'Incident affecting beta-junction traffic' }
   ]);
   assert.deepStrictEqual(results.map((record) => record.id).sort(), ['beta-coordinate', 'beta-text']);
-  assert.strictEqual(runtime.getGetterCalls(), 2, 'different community selection is resolved once on the next operation');
+  assert.deepStrictEqual(runtime.getOperationReads(), { fetch: 1, projection: 1 });
+  assert.strictEqual(runtime.getGetterCalls(), 4, 'next selection retains the same per-operation budget');
 
   runtime.setSelected(countyWide);
   results = await runtime.run([
@@ -129,11 +137,12 @@ const countyWide = Object.freeze({
     { id: 'county-text', county: 'Gamma County' }
   ]);
   assert.deepStrictEqual(results.map((record) => record.id).sort(), ['county-radius', 'county-text']);
-  assert.strictEqual(runtime.getGetterCalls(), 3, 'county-wide operation resolves awareness once');
+  assert.deepStrictEqual(runtime.getOperationReads(), { fetch: 1, projection: 1 });
+  assert.strictEqual(runtime.getGetterCalls(), 6, 'county-wide fetch and projection each resolve ownership once');
 
   assert.strictEqual(runtime.context.gridlySelectedAwarenessAreaResolutionCache.driveTexasFilterOperationCount, 3);
   assert.strictEqual(runtime.context.gridlySelectedAwarenessAreaResolutionCache.driveTexasPerRecordAwarenessLookupCount, 0);
-  assert.strictEqual(runtime.context.gridlySelectedAwarenessAreaResolutionCache.totalGetterCalls, 3);
+  assert.strictEqual(runtime.context.gridlySelectedAwarenessAreaResolutionCache.totalGetterCalls, 6);
   function bodyOf(functionName) {
     const marker = `function ${functionName}`;
     const start = connectorSource.indexOf(marker);

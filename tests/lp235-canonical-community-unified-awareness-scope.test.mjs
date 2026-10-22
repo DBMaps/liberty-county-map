@@ -6,6 +6,12 @@ const read = p => fs.readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const memberships = JSON.parse(read('data/runtime/canonical-crossing-memberships-v1.json'));
 const recordAsset = JSON.parse(read('data/runtime/canonical-crossing-records-v1.json'));
 const app = read('js/app.js');
+function canonicalAlertsBoundary() {
+  const start = app.indexOf('const canonicalPlaceAlertsAuthority = Boolean(');
+  const end = app.indexOf('const activeIncidentCount', start);
+  assert.ok(start >= 0 && end > start, 'the actual canonical Alerts boundary is nonempty');
+  return app.slice(start, end);
+}
 const controls = { '4805000':154, '4819000':415, '4838476':11, '4817000':59, '4801000':49, '4848072':15, '4870904':36, '4842568':17, '4827348':0, '4873493':40 };
 
 test('canonical PLACE search publishes one identity row and county behavior remains separate', () => {
@@ -153,7 +159,7 @@ test('LP235.3 grouping, county fragmentation, and extras require identity proof'
 });
 
 test('LP235.3 canonical PLACE source repair is bounded before LP223', () => {
-  const snapshotBoundary = app.slice(app.indexOf('// A canonical PLACE projection'), app.indexOf('const activeIncidentCount', app.indexOf('// A canonical PLACE projection')));
+  const snapshotBoundary = canonicalAlertsBoundary();
   assert.match(snapshotBoundary, /canonicalPlaceAlertsAuthority/);
   assert.match(snapshotBoundary, /CANONICAL_GOVERNED_PLACE_ONLY/);
   assert.match(snapshotBoundary, /NON_PLACE_LEGACY_FALLBACK/);
@@ -168,7 +174,7 @@ test('LP235.3 canonical PLACE source repair is bounded before LP223', () => {
 });
 
 test('LP235.3 leaves protected systems and LP223 writer implementation untouched', () => {
-  const changedBoundary = app.slice(app.indexOf('// A canonical PLACE projection'), app.indexOf('// LP235 is passive'));
+  const changedBoundary = canonicalAlertsBoundary();
   assert.doesNotMatch(changedBoundary, /crossingCertifiedCount|kbygOfficialCount|topAwarenessActive|communityPulseActive/);
   assert.match(app, /window\.gridlyAlertsAuthorityWriterAudit = function/);
   assert.match(app, /firstLosingStage = "DOM_PARITY_PASS"/);

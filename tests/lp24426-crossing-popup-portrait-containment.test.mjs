@@ -1,12 +1,12 @@
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
-import { createReadStream, existsSync, statSync } from 'node:fs';
+import { createReadStream, existsSync, statSync, readFileSync } from 'node:fs';
 import { resolve, extname, sep } from 'node:path';
 import test from 'node:test';
 import { chromium } from 'playwright';
 
 const root = resolve(import.meta.dirname, '..');
-const contentTypes = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascript', '.json': 'application/json', '.geojson': 'application/geo+json', '.svg': 'image/svg+xml', '.png': 'image/png', '.webp': 'image/webp', '.woff2': 'font/woff2' };
+const contentTypes = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascript', '.mjs': 'text/javascript', '.json': 'application/json', '.geojson': 'application/geo+json', '.svg': 'image/svg+xml', '.png': 'image/png', '.webp': 'image/webp', '.woff2': 'font/woff2' };
 
 function staticServer() {
   return createServer((request, response) => {
@@ -14,6 +14,12 @@ function staticServer() {
     const file = resolve(root, relative);
     if (!file.startsWith(root + sep) || !existsSync(file) || !statSync(file).isFile()) return response.writeHead(404).end();
     response.writeHead(200, { 'content-type': contentTypes[extname(file).toLowerCase()] || 'application/octet-stream' });
+    // Local admitted-runtime fixture. Paid admission has its own browser suite;
+    // this geometry test must actually execute the protected consumer runtime.
+    if (relative === 'index.html') return response.end(readFileSync(file, 'utf8').replace('<script src="js/gridly-paid-bootstrap.js"></script>', ''));
+    // readFileSync also lets the explicit production-baseline hook serve its
+    // original source, rather than silently testing the repaired streamed file.
+    if (/\.(?:m?js)$/.test(file)) return response.end(readFileSync(file));
     createReadStream(file).pipe(response);
   });
 }
@@ -82,17 +88,31 @@ test('LP244.26 portrait crossing popup remains visible and interactive across na
       await t.test(`${width} x ${height}: left and right edge, close, reopen, pan`, { timeout: 45_000 }, async () => {
         const context = await browser.newContext({ viewport: { width, height }, isMobile: true, hasTouch: true, colorScheme: 'dark', permissions: ['geolocation'], geolocation: { latitude: 30.0466, longitude: -94.8852 } });
         try {
+          await context.routeWebSocket('**/*', socket => socket.close());
+          await context.addInitScript(() => {
+            localStorage.setItem('gridlyBetaFirstRunWalkthroughCompleteV894C','yes');
+            localStorage.setItem('gridlyHomePersonalizationV1',JSON.stringify({zip:'',identityType:'PLACE_GEOID',communityKey:'4819432',communityLabel:'Dayton',awarenessAreaKey:'place-4819432',consumerLabel:'Dayton',countyId:'liberty-tx',countyMemberships:['48291'],resolutionStatus:'manual_confirmed',resolutionMethod:'portrait-test-fixture',sourceVersion:'LP217',confirmedAt:'2026-10-22T00:00:00Z',schemaVersion:'LP051.7.home-personalization.v1'}));
+          });
           await context.route('**/*', route => {
             const url = route.request().url();
+            if (!['GET','HEAD','OPTIONS'].includes(route.request().method())) return route.abort();
             if (url.startsWith('https://unpkg.com/leaflet@1.9.4/dist/leaflet.js')) return route.fulfill({ path: resolve(root, 'node_modules/leaflet/dist/leaflet.js'), contentType: 'text/javascript' });
             if (url.startsWith('https://unpkg.com/leaflet@1.9.4/dist/leaflet.css')) return route.fulfill({ path: resolve(root, 'node_modules/leaflet/dist/leaflet.css'), contentType: 'text/css' });
             if (url.startsWith('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2')) return route.fulfill({ path: resolve(root, 'node_modules/@supabase/supabase-js/dist/umd/supabase.js'), contentType: 'text/javascript' });
+            if (url.startsWith('https://api.weather.gov/')) return route.fulfill({contentType:'application/json',body:JSON.stringify(url.includes('/points/')?{properties:{forecast:'https://api.weather.gov/gridpoints/TEST/1,1/forecast'}}:url.includes('/forecast')?{properties:{periods:[]}}:{type:'FeatureCollection',features:[]})});
+            if (url.includes('/rest/v1/')) return route.fulfill({contentType:'application/json',body:'[]'});
             if (!url.startsWith(baseURL)) return route.abort();
             return route.continue();
           });
           const page = await context.newPage();
           await page.goto(baseURL, { waitUntil: 'domcontentloaded' });
-          await page.waitForTimeout(6000);
+          await page.evaluate(async()=>{
+            document.documentElement.classList.remove('gridly-paid-locked','gridly-paid-pending');
+            document.getElementById('gridlyPaidAccess').hidden=true;
+            const {loadPaidRuntime}=await import('/js/gridly-paid-startup.mjs');
+            await loadPaidRuntime({document,window,allowed:()=>true});
+          });
+          await page.waitForFunction(()=>window.gridlyStartupDiagnostics?.state?.startupCompleted,null,{timeout:30000});
           const skip = page.locator('#gridlyV894CFirstRunSkipBtn');
           if (await skip.isVisible().catch(() => false)) await skip.click();
           await page.waitForTimeout(900);

@@ -20,6 +20,16 @@ function productionFunction(name) {
   throw new Error(`unterminated ${name}`);
 }
 
+// The bounded VM must load the real canonical identity/Home dependencies too.
+function createProductionContext(context) {
+  vm.createContext(context);
+  vm.runInContext([
+    'normalizeGridlyAwarenessAreaLookupText', 'gridlyResolveCanonicalPlaceRegistryIdentity',
+    'gridlyResolveCanonicalPlaceGeoid', 'gridlyResolveStableHomeSelectionArea',
+    'gridlyProjectCanonicalPlaceOperationalCounty'
+  ].map(productionFunction).join('\n'), context);
+}
+
 test('LP213 Harris -> Dallas commits county, storage, awareness and roadway ownership', () => {
   const settingsWrites = [];
   const profileWrites = [];
@@ -56,7 +66,7 @@ test('LP213 Harris -> Dallas commits county, storage, awareness and roadway owne
     ensureGridlyActiveCountyCrossingInventory: () => {}
   };
   context.window.GRIDLY_ACTIVE_COUNTY_ID = 'harris-tx';
-  vm.createContext(context);
+  createProductionContext(context);
   vm.runInContext([
     productionFunction('gridlyResolveCanonicalPlaceGeoid'),
     productionFunction('gridlyResolveCanonicalCountyIdForOperationalContext'),
@@ -107,7 +117,7 @@ test('LP213 startup settings and awareness resolution is bounded and non-reentra
     gridlyReadHomePersonalizationRecord: () => null,
     window: { GRIDLY_ACTIVE_COUNTY_ID: 'dallas-tx' }
   };
-  vm.createContext(context);
+  createProductionContext(context);
   vm.runInContext([
     productionFunction('normalizeGridlyAwarenessAreaLookupText'),
     productionFunction('resolveGridlyAwarenessArea'),
@@ -190,7 +200,7 @@ test('LP213 startup Liberty cancellation is followed by authoritative Dallas roa
     saveGridlySettingsPreferences() {},
     saveGridlyUserProfile() {}
   };
-  vm.createContext(context);
+  createProductionContext(context);
   vm.runInContext([
     productionFunction('gridlyResolveCanonicalPlaceGeoid'),
     productionFunction('gridlyResolveCanonicalCountyIdForOperationalContext'),
@@ -262,7 +272,7 @@ test('LP213 canonical Dallas profile defeats stale settings and unrelated runtim
     invalidateGridlySelectedAwarenessAreaResolutionCache() {},
     gridlyResolveCanonicalPlaceGeoid: undefined
   };
-  vm.createContext(context);
+  createProductionContext(context);
   vm.runInContext([
     productionFunction('gridlyResolveCanonicalPlaceGeoid'),
     productionFunction('gridlyResolvePersistedCanonicalPlaceOperationalCounty'),
@@ -334,7 +344,7 @@ test('LP213 exact browser cold start hydrates persisted Dallas profile before au
     ensureGridlyActiveCountyCrossingInventory() {},
     invalidateGridlySelectedAwarenessAreaResolutionCache() {}
   };
-  vm.createContext(context);
+  createProductionContext(context);
   vm.runInContext([
     productionFunction('getDefaultGridlyProfile'),
     productionFunction('gridlyHydrateUserProfileFromPersistence'),
