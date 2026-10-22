@@ -144,13 +144,14 @@ def validate_entitlements(entitlements):
     assert entitlements["com.apple.developer.team-identifier"] == TEAM, "wrong signed team"
 
 
-def expected_app_identity(build_number="14"):
+def expected_app_identity(build_number="14", marketing_version="1.0.0"):
     assert isinstance(build_number, str) and re.fullmatch(r"[1-9][0-9]*", build_number), "invalid build number"
-    return {"CFBundleShortVersionString": "1.0.0", "CFBundleVersion": build_number,
+    assert marketing_version == "1.0.0" or (marketing_version == "1.0.1" and build_number == "16"), "unreviewed marketing version/build"
+    return {"CFBundleShortVersionString": marketing_version, "CFBundleVersion": build_number,
             "CFBundleIdentifier": BUNDLE, "UIDeviceFamily": [1]}
 
 
-def signed_app_facts(app, certificate_prefix, build_number="14"):
+def signed_app_facts(app, certificate_prefix, build_number="14", marketing_version="1.0.0"):
     subprocess.run(["codesign", "--verify", "--deep", "--strict", "--verbose=2", str(app)], check=True)
     result = subprocess.run(["codesign", "-d", "--verbose=4", str(app)], check=True, capture_output=True, text=True)
     lines = result.stderr.splitlines() + result.stdout.splitlines()
@@ -172,13 +173,13 @@ def signed_app_facts(app, certificate_prefix, build_number="14"):
     info = plistlib.loads((app / "Info.plist").read_bytes())
     architectures = subprocess.check_output(["lipo", "-archs", str(app / info["CFBundleExecutable"])], text=True).strip().split()
     assert architectures == ["arm64"], "unexpected executable architecture(s)"
-    expected = expected_app_identity(build_number)
+    expected = expected_app_identity(build_number, marketing_version)
     assert {key: info.get(key) for key in expected} == expected, "wrong app version/build/bundle/device family"
     return {"codesign": metadata, "certificate_sha1": leaf_sha1, "entitlements": entitlements, "architectures": architectures,
             "profile_uuid": profile["UUID"], "identity": expected, "executable": info["CFBundleExecutable"]}
 
 
-def certify_native_parity(app, ipa, native_source, build_number="14"):
+def certify_native_parity(app, ipa, native_source, build_number="14", marketing_version="1.0.0"):
     app, ipa = Path(app), Path(ipa)
     source = Path(native_source).read_text(encoding="utf-8")
     validate_recovery_build(source, build_number)
@@ -196,8 +197,8 @@ def certify_native_parity(app, ipa, native_source, build_number="14"):
         exported_apps = list((work / "export" / "Payload").glob("*.app"))
         assert len(exported_apps) == 1, "expected one exported iPhone app"
         exported_app = exported_apps[0]
-        archive_facts = signed_app_facts(app, work / "archive-cert-", build_number)
-        ipa_facts = signed_app_facts(exported_app, work / "ipa-cert-", build_number)
+        archive_facts = signed_app_facts(app, work / "archive-cert-", build_number, marketing_version)
+        ipa_facts = signed_app_facts(exported_app, work / "ipa-cert-", build_number, marketing_version)
         assert archive_facts["entitlements"] == ipa_facts["entitlements"], "archive/IPA entitlement mismatch"
         assert archive_facts["identity"] == ipa_facts["identity"] and archive_facts["executable"] == ipa_facts["executable"]
         archive_path = app / archive_facts["executable"]

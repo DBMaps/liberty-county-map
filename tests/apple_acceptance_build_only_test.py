@@ -15,6 +15,22 @@ LEGACY = subprocess.check_output(["git", "show", build.APPLE14 + ":ios/App/App/G
 
 
 class BuildOnlyControls(unittest.TestCase):
+    def test_persisted_signing_evidence_is_complete_fail_closed_and_allowlisted(self):
+        hashes = ("archive_sha256", "ipa_sha256", "signing_neutral_sha256", "source_sha256", "recovery_body_sha256", "readiness_body_sha256")
+        flags = ("code_equal", "recovery_in_archive_and_ipa", "signed_artifacts_unchanged")
+        checked = {**{name: "a" * 64 for name in hashes}, **{name: True for name in flags}, "private_log": "MUST_NOT_EMIT"}
+        evidence = build.public_native_evidence(checked)
+        self.assertEqual(set(evidence), set(hashes + flags + ("distributionAuthority", "certificateSha1", "profileUUID")))
+        self.assertNotIn("MUST_NOT_EMIT", str(evidence))
+        self.assertEqual(evidence["certificateSha1"], parity.CERT_SHA1)
+        self.assertEqual(evidence["profileUUID"], parity.PROFILE_UUID)
+        for field in hashes + flags:
+            invalid = {**checked, field: False if field in flags else "bad hash"}
+            with self.subTest(field=field), self.assertRaises(AssertionError):
+                build.public_native_evidence(invalid)
+        workflow = (ROOT / ".github/workflows/gridly-apple-acceptance-build-only.yml").read_text(encoding="utf-8")
+        self.assertLess(workflow.index('cat "$private/attestation.json" >> "$GITHUB_STEP_SUMMARY"'), workflow.index('rm -rf "$private"'))
+
     def test_actual_source_permits_only_reviewed_14_16_compatibility_extension(self):
         source = (ROOT / "ios/App/App/GridlyBridgeViewController.swift").read_text(encoding="utf-8")
         self.assertEqual(source, parity.approved_recovery_source(LEGACY))
@@ -50,6 +66,47 @@ class BuildOnlyControls(unittest.TestCase):
         for invalid in ("0", "16;echo SECRET", "16\n", "", 16):
             with self.subTest(invalid=invalid), self.assertRaises(AssertionError):
                 parity.expected_app_identity(invalid)
+
+    def test_maintenance_identity_preserves_legacy_defaults_without_widening_versions(self):
+        self.assertEqual(parity.expected_app_identity("16", "1.0.1"), {
+            **parity.expected_app_identity("16"), "CFBundleShortVersionString": "1.0.1"})
+        build.require_maintenance_identity("16", "1.0.1")
+        for version in ("1.0.0", "1.0.2", "2.0.0", "1.0.1\n", None):
+            with self.subTest(version=version), self.assertRaisesRegex(AssertionError, "marketing version"):
+                build.preflight(ROOT, "16", build.SOURCE, version)
+        for number, version in (("14", "1.0.1"), ("15", "1.0.1"), ("17", "1.0.1"), ("16", "1.0.2")):
+            with self.subTest(number=number, version=version), self.assertRaises(AssertionError):
+                parity.expected_app_identity(number, version)
+
+    def test_marketing_metadata_cannot_change_native_activation_or_migration(self):
+        # Complete Apple14 source equivalence is checked above, including all
+        # lifecycle, origin, schema, transaction and single-key-clear owners.
+        source = (ROOT / "ios/App/App/GridlyBridgeViewController.swift").read_text(encoding="utf-8")
+        self.assertNotIn("CFBundleShortVersionString", source)
+        self.assertNotIn("MARKETING_VERSION", source)
+        self.assertIn('buildNumber: Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String)', source)
+        workflow = (ROOT / ".github/workflows/gridly-apple-acceptance-build-only.yml").read_text(encoding="utf-8")
+        self.assertEqual(workflow.count('--marketing-version 1.0.1'), 2)
+        self.assertIn('CURRENT_PROJECT_VERSION="$BUILD_NUMBER" MARKETING_VERSION=1.0.1', workflow)
+
+    def test_project_version_drift_is_refused(self):
+        def metadata(root, *args):
+            if args[0] == "rev-parse": return build.SOURCE
+            if args[0] == "merge-base": return args[1]
+            return ""
+        def certified(args):
+            relative = args[-1].split(":", 1)[1]
+            return LEGACY.encode() if relative.endswith(".swift") else (ROOT / relative).read_text(encoding="utf-8").encode()
+        original = Path.read_text
+        for old, new in (("MARKETING_VERSION = 1.0.1;", "MARKETING_VERSION = 1.0.0;"),
+                         ("CURRENT_PROJECT_VERSION = 16;", "CURRENT_PROJECT_VERSION = 17;"),
+                         ("TARGETED_DEVICE_FAMILY = 1;", "TARGETED_DEVICE_FAMILY = 2;")):
+            def read(path, *args, **kwargs):
+                body = original(path, *args, **kwargs)
+                return body.replace(old, new, 1) if path.suffix == ".pbxproj" else body
+            with self.subTest(old=old), patch.object(build, "git", side_effect=metadata), patch.object(build.subprocess, "check_output", side_effect=certified), patch.object(Path, "read_text", read):
+                with self.assertRaisesRegex(AssertionError, "native project identity mismatch"):
+                    build.preflight(ROOT, "16", build.SOURCE)
 
     def test_wrong_source_is_refused_before_reading_signing_material(self):
         with patch.object(build, "git", return_value="0" * 40):

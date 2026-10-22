@@ -11,13 +11,14 @@ import sys
 import zipfile
 from pathlib import Path
 
-from apple_native_parity import approved_recovery_source, certify_native_parity, expected_app_identity, validate_recovery_build
+from apple_native_parity import AUTHORITY, CERT_SHA1, PROFILE_UUID, approved_recovery_source, certify_native_parity, expected_app_identity, validate_recovery_build
 
 SOURCE = "b7359198b99bb605e1fb2328e57e273dc37844b7"
 BASE = "faac47368da3137b50d53813b7f0299a2f4b1830"
 APPLE14 = "e0b51235e96ce1cc7fcae81781bbd21e95fb418a"
 LEGAL = ("legal/privacy.html", "legal/terms.html", "legal/community-guidelines.html")
 SHIPPING = ("js/app.js", "js/gridlyWeatherLiveConnector.js", "js/gridlyWeatherAuthoritySourceIntegration.js", "js/gridlyAlertsWeatherAuthorityHandoff.js")
+MARKETING_VERSION = "1.0.1"
 
 
 def git(root, *args):
@@ -29,8 +30,13 @@ def require_recovery_build(source, build_number):
     validate_recovery_build(source, build_number)
 
 
-def preflight(root, build_number, source_commit):
+def require_maintenance_identity(build_number, marketing_version):
     assert build_number == "16", "only proposed internal Build16 is permitted; no Build14/15 rebuild"
+    assert marketing_version == MARKETING_VERSION, "only reviewed maintenance marketing version 1.0.1 is permitted"
+
+
+def preflight(root, build_number, source_commit, marketing_version=MARKETING_VERSION):
+    require_maintenance_identity(build_number, marketing_version)
     assert re.fullmatch(r"[0-9a-f]{40}", source_commit) and git(root, "rev-parse", "HEAD") == source_commit, "wrong source commit"
     assert git(root, "merge-base", SOURCE, source_commit) == SOURCE, "certified integration ancestry missing"
     assert git(root, "merge-base", BASE, source_commit) == BASE
@@ -43,10 +49,28 @@ def preflight(root, build_number, source_commit):
         certified = subprocess.check_output(["git", "-C", str(root), "show", SOURCE + ":" + relative]).decode()
         assert (root / relative).read_text(encoding="utf-8") == certified, "certified performance/NWS source drift: " + relative
     require_recovery_build(native.read_text(encoding="utf-8"), build_number)
-    return {"source": source_commit, "integrationSource": SOURCE, "build": build_number, "availability": "PROVISIONAL_NOT_VERIFIED_OR_RESERVED", "upload": False}
+    project = (root / "ios/App/App.xcodeproj/project.pbxproj").read_text(encoding="utf-8")
+    for key, value in (("CURRENT_PROJECT_VERSION", build_number), ("MARKETING_VERSION", marketing_version), ("TARGETED_DEVICE_FAMILY", "1")):
+        assert re.findall(r"^\s*" + key + r" = ([^;]+);$", project, re.M) == [value, value], "native project identity mismatch: " + key
+    return {"source": source_commit, "integrationSource": SOURCE, "build": build_number, "marketingVersion": marketing_version, "availability": "PROVISIONAL_NOT_VERIFIED_OR_RESERVED", "upload": False}
 
 
-def attest(root, app, ipa, identity, build_number, source_commit):
+def public_native_evidence(parity):
+    """Keep only nonsecret verified hashes/signing facts before private cleanup."""
+    hashes = ("archive_sha256", "ipa_sha256", "signing_neutral_sha256", "source_sha256", "recovery_body_sha256", "readiness_body_sha256")
+    for field in hashes:
+        assert re.fullmatch(r"[0-9a-f]{64}", parity[field]), "invalid native evidence hash"
+    for field in ("code_equal", "recovery_in_archive_and_ipa", "signed_artifacts_unchanged"):
+        assert parity[field] is True, "native evidence is not certified"
+    # archive_sha256 / ipa_sha256 here identify the two signed EXECUTABLES;
+    # the complete exported IPA has its separately named outer ipaSha256.
+    return {**{field: parity[field] for field in hashes},
+            "code_equal": True, "recovery_in_archive_and_ipa": True, "signed_artifacts_unchanged": True,
+            "distributionAuthority": AUTHORITY, "certificateSha1": CERT_SHA1, "profileUUID": PROFILE_UUID}
+
+
+def attest(root, app, ipa, identity, build_number, source_commit, marketing_version=MARKETING_VERSION):
+    preflight(root, build_number, source_commit, marketing_version)
     assert re.fullmatch(r"[0-9a-f]{40}", source_commit) and git(root, "rev-parse", "HEAD") == source_commit
     native = (root / "ios/App/App/GridlyBridgeViewController.swift").read_text(encoding="utf-8")
     legacy = subprocess.check_output(["git", "-C", str(root), "show", APPLE14 + ":ios/App/App/GridlyBridgeViewController.swift"]).decode()
@@ -59,7 +83,7 @@ def attest(root, app, ipa, identity, build_number, source_commit):
     assert manifest.get("androidProduction", False) is False
     records = manifest["files"]
     assert len(records) == 1007 and len({r["path"] for r in records}) == 1007
-    expected = expected_app_identity(build_number)
+    expected = expected_app_identity(build_number, marketing_version)
     with zipfile.ZipFile(ipa) as archive:
         infos = [n for n in archive.namelist() if re.fullmatch(r"Payload/[^/]+\.app/Info.plist", n)]
         assert len(infos) == 1
@@ -83,8 +107,8 @@ def attest(root, app, ipa, identity, build_number, source_commit):
     # Preserve the certified signature-neutral executable, certificate, profile,
     # entitlement and compiled recovery checks; only build metadata is parameterized.
     with contextlib.redirect_stdout(io.StringIO()):
-        native_parity = certify_native_parity(app, ipa, root / "ios/App/App/GridlyBridgeViewController.swift", build_number)
-    return {"source": source_commit, "integrationSource": SOURCE, "build": build_number, "buildAvailability": "PROVISIONAL_NOT_VERIFIED_OR_RESERVED", "bundle": "com.gridlygo.gridly", "team": "2XSH6R7K37", "ipaBytes": ipa.stat().st_size, "ipaSha256": hashlib.sha256(ipa.read_bytes()).hexdigest(), "files": len(records), "bundleDigest": manifest["bundleDigest"], "nativeCodeParity": native_parity["code_equal"], "uploaded": False, "retainedForDistribution": False}
+        native_parity = certify_native_parity(app, ipa, root / "ios/App/App/GridlyBridgeViewController.swift", build_number, marketing_version)
+    return {"source": source_commit, "integrationSource": SOURCE, "build": build_number, "marketingVersion": marketing_version, "buildAvailability": "PROVISIONAL_NOT_VERIFIED_OR_RESERVED", "bundle": "com.gridlygo.gridly", "team": "2XSH6R7K37", "appIdentity": expected, "minimumOSVersion": "16.4", "ipaBytes": ipa.stat().st_size, "ipaSha256": hashlib.sha256(ipa.read_bytes()).hexdigest(), "files": len(records), "bundleDigest": manifest["bundleDigest"], "nativeCodeParity": native_parity["code_equal"], "nativeExecutableEvidence": public_native_evidence(native_parity), "uploaded": False, "retainedForDistribution": False}
 
 
 if __name__ == "__main__":
@@ -92,13 +116,14 @@ if __name__ == "__main__":
     parser.add_argument("command", choices=("preflight", "attest"))
     parser.add_argument("--source", type=Path, required=True)
     parser.add_argument("--build-number", required=True)
+    parser.add_argument("--marketing-version", required=True)
     parser.add_argument("--source-commit", required=True)
     parser.add_argument("--app", type=Path)
     parser.add_argument("--ipa", type=Path)
     parser.add_argument("--identity", type=Path)
     args = parser.parse_args()
     try:
-        result = preflight(args.source, args.build_number, args.source_commit) if args.command == "preflight" else attest(args.source, args.app, args.ipa, args.identity, args.build_number, args.source_commit)
+        result = preflight(args.source, args.build_number, args.source_commit, args.marketing_version) if args.command == "preflight" else attest(args.source, args.app, args.ipa, args.identity, args.build_number, args.source_commit, args.marketing_version)
         print(json.dumps(result, sort_keys=True))
     except AssertionError as error:
         # No raw signing command, profile or secret-bearing log is printed.

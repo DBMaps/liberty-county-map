@@ -36,7 +36,7 @@ android {
         minSdk 24
         targetSdk 36
         versionCode 15
-        versionName '1.0.0'
+        versionName '1.0.1'
         buildConfigField 'long', 'GRIDLY_PLAY_INTEGRITY_PROJECT_NUMBER', "${gridlyIntegrityProject}L"
     }
     buildFeatures { buildConfig true }

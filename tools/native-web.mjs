@@ -178,11 +178,13 @@ const licenseTestOff='const GRIDLY_ANDROID_LICENSE_TEST_CANDIDATE = false;';
 const licenseTestOn='const GRIDLY_ANDROID_LICENSE_TEST_CANDIDATE = true;';
 export function androidProductionBuildIdentity(metadata,reviewVersion=GOOGLE_REVIEW_BUILD_VERSION) {
   const codes=[...metadata.matchAll(/^\s*versionCode (\d+)\s*$/gm)].map(match=>match[1]);
+  const names=[...metadata.matchAll(/^\s*versionName ["']([^"']+)["']\s*$/gm)].map(match=>match[1]);
+  const reviewedNames={'14':'1.0.0','15':'1.0.1'};
   if(codes.length!==1||!['14','15'].includes(reviewVersion)||codes[0]!==reviewVersion||
-    !/^\s*versionName ["']1\.0\.0["']\s*$/m.test(metadata)||
+    names.length!==1||names[0]!==reviewedNames[reviewVersion]||
     !/^\s*applicationId ['"]com\.gridlygo\.gridly['"]\s*$/m.test(metadata))
-    throw Error('Production staging requires matching reviewed Gridly 1.0.0 package/build and Google review authority');
-  return {applicationId:'com.gridlygo.gridly',versionName:'1.0.0',versionCode:codes[0],reviewBuildVersion:reviewVersion};
+    throw Error('Production staging requires matching reviewed Gridly package/version/build and Google review authority');
+  return {applicationId:'com.gridlygo.gridly',versionName:names[0],versionCode:codes[0],reviewBuildVersion:reviewVersion};
 }
 export async function stage(destination, { runtimeConfigFile, googleLicenseTest=false,androidProduction=false } = {}) {
   if(androidProduction&&googleLicenseTest)throw Error('Production and license-test staging are mutually exclusive');

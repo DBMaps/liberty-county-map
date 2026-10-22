@@ -33,11 +33,13 @@ test('production paid UI, Google specialization and reporting authorization rema
   for(const file of ['js/gridly-paid-ui.mjs','js/gridly-paid-bootstrap.js','js/gridly-paid-onboarding.mjs','js/gridly-entitlement.mjs','js/gridly-native-attested-invoke.mjs','js/gridly-native-edge-transport.mjs','tools/android-production-sources.mjs','js/gridly-ugc-compliance.js'])assert.equal(current(file),source(BASE,file),file);
   // Explicit approved exception: version guard + source/build attestation only.
   // Pin the complete reviewed tool, rather than allowing arbitrary packaging edits.
-  assert.equal(require('node:crypto').createHash('sha256').update(current('tools/native-web.mjs')).digest('hex'),'0cc4f8d13e0b09cfe15c4d123efe35dc9ab7cbacf983f5837d1b4f575277cbdf');
+  assert.equal(require('node:crypto').createHash('sha256').update(current('tools/native-web.mjs')).digest('hex'),'0d0d3dd3b627c5974388ae32f86a3d45b6ec44d49043d1910dbe675fdf47d65c');
 });
-test('portrait, consumer entrypoint, service worker, dependencies and native configurations retain only the reviewed Android version bump',()=>{
-  for(const file of ['css/styles.css','css/gridly-paid-access.css','index.html','service-worker.js','package.json','package-lock.json','ios/App/App.xcodeproj/project.pbxproj'])assert.equal(current(file),source(BASE,file),file);
-  assert.equal(current('android/app/build.gradle'),source(BASE,'android/app/build.gradle').replace('versionCode 14','versionCode 15'));
+test('portrait, consumer entrypoint, service worker, dependencies and native configurations retain only the reviewed maintenance version metadata',()=>{
+  for(const file of ['css/styles.css','css/gridly-paid-access.css','index.html','service-worker.js','package.json','package-lock.json'])assert.equal(current(file),source(BASE,file),file);
+  assert.equal(current('android/app/build.gradle'),source(BASE,'android/app/build.gradle').replace('versionCode 14','versionCode 15').replace("versionName '1.0.0'","versionName '1.0.1'"));
+  const project='ios/App/App.xcodeproj/project.pbxproj';
+  assert.equal(current(project),source(BASE,project).replaceAll('CURRENT_PROJECT_VERSION = 1;','CURRENT_PROJECT_VERSION = 16;').replaceAll('MARKETING_VERSION = 1.0.0;','MARKETING_VERSION = 1.0.1;'));
 });
 test('later owner-only Apple diagnostic code is excluded',()=>{
   assert.doesNotMatch(current('js/gridly-paid-ui.mjs'),/STOREKIT DIAGNOSTIC BUILD|initializeDiagnostics|diagnosticPort/);
