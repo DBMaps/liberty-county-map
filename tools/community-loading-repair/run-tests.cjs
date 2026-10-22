@@ -1,0 +1,14 @@
+const fs = require('node:fs');
+const path = require('node:path');
+const { spawnSync } = require('node:child_process');
+const phase = process.argv[2] || 'after';
+if (!['before', 'after'].includes(phase)) throw new Error('Expected before or after');
+const suite = process.argv[3] || 'investigation';
+const tests = require(`./${suite === 'expanded' ? 'expanded-test-manifest' : 'test-manifest'}.json`);
+const args = [...(phase === 'before' ? ['--require', path.resolve(__dirname, 'baseline-source.cjs')] : []), '--test', '--test-reporter=tap', ...tests];
+const result = spawnSync(process.execPath, args, { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 });
+const output = result.stdout + result.stderr;
+const directory = '.artifacts/community-loading-repair'; fs.mkdirSync(directory, { recursive: true });
+fs.writeFileSync(`${directory}/${phase}-${suite}.tap`, output);
+console.log(output.split('\n').slice(-11).join('\n'));
+process.exitCode = result.status ?? 1;

@@ -9202,6 +9202,8 @@ function buildGridlyRoadEvaluationContext(options = {}) {
 }
 
 function gridlyGetInvalidRoadLabelCaller() {
+  // Stack attribution is diagnostic work, never part of road-label eligibility.
+  if (!isGridlyExplicitDebugModeEnabled()) return { name: "production", source: "diagnostics-disabled" };
   try {
     const stackLines = String(new Error().stack || "").split("\n").map((line) => line.trim()).filter(Boolean);
     const directFrame = stackLines.find((line) => !line.includes("gridlyGetInvalidRoadLabelCaller") && !line.includes("gridlyRecordInvalidRoadLabelContextAudit") && !line.includes("gridlyIsInvalidCountyAwareRoadLabel") && !line.includes("Error"));
@@ -27014,6 +27016,7 @@ function gridlyV734BuildRefreshReuseSignature(extra = {}, context = {}) {
     crossings: gridlyV734CollectionSignature(typeof crossings !== "undefined" ? crossings : [], 120),
     latestAlerts: typeof window !== "undefined" && Array.isArray(window.__gridlyLatestAlertsForRender) ? gridlyV734CollectionSignature(window.__gridlyLatestAlertsForRender, 40) : "",
     officialRoadwayAwarenessRevision: typeof window !== "undefined" ? Number(window.gridlyOfficialRoadwayAwarenessRevision || 0) : 0,
+    awarenessInputRevision: typeof gridlyAwarenessSummaryInputRevision === "function" ? gridlyAwarenessSummaryInputRevision() : null,
     ...extra
   });
 }
@@ -43061,6 +43064,10 @@ function getGridlyCurrentSelectedAwarenessAreaIdentity() {
 }
 
 function isGridlyCachedAwarenessSummaryForCurrentArea(summary = {}) {
+  if (summary.awarenessInputRevision !== undefined) {
+    const revision = gridlyAwarenessSummaryInputRevision();
+    if (revision === null || summary.awarenessInputRevision !== revision) return false;
+  }
   // Same place does not mean the same active community conditions. A provider
   // publication captured before clear must not reintroduce its former rows.
   if (summary.canonicalCommunityRevision && summary.canonicalCommunityRevision !== gridlyGetCanonicalActiveCommunityState().revision) return false;
@@ -50258,7 +50265,7 @@ function gridlyActiveCountyRuntimeAudit() {
   const activeCountyId = gridlyGetActiveCountyId();
   const sourceCountyId = gridlyGetActiveCountyRuntimeSources()?.countyId || null;
   const inventoryOwnerMatchesActiveCounty = gridlyCrossingInventoryCountyId === activeCountyId;
-  const inventoryHydrationInFlight = Boolean(gridlyCrossingInventoryReloadPromise?.gridlyTargetCountyId === activeCountyId);
+  const inventoryHydrationInFlight = Boolean(gridlyCrossingInventoryReloadPromise?.gridlyTargetCountyId === activeCountyId && gridlyCrossingInventoryReloadPromise.gridlyTargetGeneration === gridlyActiveCountyTransitionGeneration);
   const inventoryHydrationCompleted = Boolean(inventoryOwnerMatchesActiveCounty && Array.isArray(crossings));
   const activeEmptyIntentionalZero = Boolean(inventoryHydrationCompleted && crossings.length === 0);
   return Object.freeze({
@@ -50722,11 +50729,11 @@ async function gridlyCheckRegionalCrossingSourceExists(source) {
 async function gridlyAwaitActiveCountyCrossingInventoryLoad(reason = "unspecified") {
   const activeCountyId = gridlyGetActiveCountyId();
   if (gridlyCrossingInventoryCountyId !== activeCountyId || !Array.isArray(crossings) || crossings.length === 0) {
-    if (!gridlyCrossingInventoryReloadPromise || gridlyCrossingInventoryReloadPromise.gridlyTargetCountyId !== activeCountyId) {
+    if (!gridlyCrossingInventoryReloadPromise || gridlyCrossingInventoryReloadPromise.gridlyTargetCountyId !== activeCountyId || gridlyCrossingInventoryReloadPromise.gridlyTargetGeneration !== gridlyActiveCountyTransitionGeneration) {
       ensureGridlyActiveCountyCrossingInventory(reason);
     }
   }
-  if (gridlyCrossingInventoryReloadPromise && gridlyCrossingInventoryReloadPromise.gridlyTargetCountyId === activeCountyId) {
+  if (gridlyCrossingInventoryReloadPromise && gridlyCrossingInventoryReloadPromise.gridlyTargetCountyId === activeCountyId && gridlyCrossingInventoryReloadPromise.gridlyTargetGeneration === gridlyActiveCountyTransitionGeneration) {
     await gridlyCrossingInventoryReloadPromise;
   }
   return gridlyCrossingInventoryCountyId === activeCountyId && Array.isArray(crossings) ? crossings : [];
@@ -53709,14 +53716,32 @@ function getGridlyHomeTownCrossings(homeTownAnchor = getGridlyHomeTownAwarenessA
 }
 
 function getGridlyAwarenessIntelligenceCrossing(record = {}) {
-  const crossingId = String(record?.crossingId || record?.crossing_id || record?.crossing_id_text || "").trim();
-  if (crossingId && Array.isArray(crossings)) {
-    const crossing = crossings.find((item) => String(item?.id || item?.crossingId || item?.crossing_id || "") === crossingId);
-    if (crossing) return crossing;
+  if (!Array.isArray(crossings)) return null;
+  const revision = typeof gridlyCrossingInventoryRevision === "number" ? gridlyCrossingInventoryRevision : 0;
+  const county = typeof gridlyGetActiveCountyId === "function" ? gridlyGetActiveCountyId() : null;
+  const generation = typeof gridlyActiveCountyTransitionGeneration === "number" ? gridlyActiveCountyTransitionGeneration : 0;
+  let index = getGridlyAwarenessIntelligenceCrossing.index;
+  if (!index || index.inventory !== crossings || index.length !== crossings.length || index.revision !== revision || index.county !== county || index.generation !== generation || index.normalize !== normalizeGridlyAwarenessAreaLookupText) {
+    const byId = new Map();
+    for (const item of crossings) {
+      const id = String(item?.id || item?.crossingId || item?.crossing_id || "");
+      if (!byId.has(id)) byId.set(id, item);
+    }
+    index = { inventory: crossings, length: crossings.length, revision, county, generation, normalize: normalizeGridlyAwarenessAreaLookupText, byId, byName: null };
+    getGridlyAwarenessIntelligenceCrossing.index = index;
   }
+  const crossingId = String(record?.crossingId || record?.crossing_id || record?.crossing_id_text || "").trim();
+  if (crossingId && index.byId.has(crossingId)) return index.byId.get(crossingId);
   const crossingName = normalizeGridlyAwarenessAreaLookupText(record?.crossingName || record?.crossing || record?.name || "");
-  if (crossingName && Array.isArray(crossings)) {
-    return crossings.find((item) => normalizeGridlyAwarenessAreaLookupText(item?.name || item?.roadName || item?.road || "") === crossingName) || null;
+  if (crossingName) {
+    if (!index.byName) {
+      index.byName = new Map();
+      for (const item of crossings) {
+        const name = normalizeGridlyAwarenessAreaLookupText(item?.name || item?.roadName || item?.road || "");
+        if (!index.byName.has(name)) index.byName.set(name, item);
+      }
+    }
+    return index.byName.get(crossingName) || null;
   }
   return null;
 }
@@ -54003,6 +54028,30 @@ function getGridlyAwarenessIntelligenceStatus({ awarenessAreaName = "this area",
   return getGridlyQuietAwarenessSupportCopy({ areaName: awarenessAreaName, crossingsCount: crossingCount, surface: "location_awareness_status" }).status;
 }
 
+function gridlyAwarenessSummaryInputRevision(options = {}) {
+  // Validate existing shared snapshots; do not introduce a time-based summary
+  // cache. Lifecycle and source freshness are evaluated again at each read.
+  try {
+    const area = options.awarenessArea || getGridlySelectedAwarenessArea();
+    const reports = Array.isArray(options.activeReports) ? options.activeReports : activeReports;
+    const hazards = Array.isArray(options.activeHazards) ? options.activeHazards : activeHazards;
+    return JSON.stringify([
+      area, gridlyGetActiveCountyId(), gridlyActiveCountyTransitionGeneration,
+      gridlyGetCurrentAwarenessContext(), gridlyCrossingInventoryCountyId,
+      gridlyCrossingInventoryRevision, crossingRenderCrossingsVersion,
+      gridlyRoadwayDatasetRevision, gridlyCrossingInventoryHydrationState,
+      reports, hazards, window.__gridlyLatestAlertsForRender || [],
+      gridlyGetCanonicalActiveCommunityState({ selectedArea: area, reports, hazards }).revision,
+      gridlySourceCoverageRevision(), window.gridlyOfficialRoadwayAwarenessRevision || 0,
+      window.gridlyDriveTexasConnector?.getAllNormalizedRecords?.() || [],
+      window.gridlyWeatherConnector?.getNormalizedRecords?.() || []
+    ]);
+  } catch (_error) {
+    // Unsupported/circular evidence cannot authorize reuse.
+    return null;
+  }
+}
+
 function buildGridlyCommunityAwarenessIntelligenceSummary(options = {}) {
   const errors = [];
   const warnings = [];
@@ -54104,6 +54153,7 @@ function buildGridlyCommunityAwarenessIntelligenceSummary(options = {}) {
   if (missingCoordinateRecords.activeHazards || missingCoordinateRecords.activeReports) warnings.push("Some active records did not include coordinates or crossing inventory links, so they were not assigned to the selected awareness area.");
 
   return {
+    awarenessInputRevision: gridlyAwarenessSummaryInputRevision(options),
     canonicalCommunityRevision: typeof gridlyGetCanonicalActiveCommunityState === "function" ? gridlyGetCanonicalActiveCommunityState({ selectedArea }).revision : null,
     selectedAwarenessArea: getGridlyAwarenessAreaDebugOption(selectedArea),
     awarenessAreaName,
@@ -55295,9 +55345,23 @@ function renderUserLocationDot() {
   userMarker.addTo(map);
 }
 
-async function loadCrossings() {
-  const requestedCountyId = gridlyGetActiveCountyId();
-  const requestedGeneration = gridlyActiveCountyTransitionGeneration;
+function loadCrossings() {
+  const countyId = gridlyGetActiveCountyId();
+  const generation = gridlyActiveCountyTransitionGeneration;
+  const current = loadCrossings.inFlight;
+  if (current?.countyId === countyId && current.generation === generation) return current.promise;
+  // Defer entry until the promise is installed: synchronous ensure callers
+  // reached during hydration must share this transaction too.
+  const request = { countyId, generation, promise: null };
+  request.promise = Promise.resolve().then(() => gridlyHydrateCrossings(countyId, generation)).finally(() => {
+    if (loadCrossings.inFlight === request) loadCrossings.inFlight = null;
+  });
+  loadCrossings.inFlight = request;
+  return request.promise;
+}
+
+async function gridlyHydrateCrossings(requestedCountyId, requestedGeneration) {
+  if (requestedCountyId !== gridlyGetActiveCountyId() || requestedGeneration !== gridlyActiveCountyTransitionGeneration) return;
   const isExpectedCountySwitchCancellation = (error) => {
     return /Active county changed during crossing load/i.test(String(error?.message || error || ""));
   };
@@ -55403,6 +55467,11 @@ async function loadCrossings() {
     if (typeof renderUnifiedIncidents === "function") renderUnifiedIncidents("auto-crossings-loaded");
   } catch (error) {
     gridlyRecordCrossingHydrationTrace("HYDRATION_FAILURE", { countyId: requestedCountyId, generation: requestedGeneration, reason: String(error?.message || error || "crossing_load_failed") });
+    if (requestedCountyId !== gridlyGetActiveCountyId() || requestedGeneration !== gridlyActiveCountyTransitionGeneration) {
+      // A rejected request from an earlier A -> B -> A transaction owns no
+      // current failure flags, inventory state or consumer status text.
+      return;
+    }
     if (isExpectedCountySwitchCancellation(error)) {
       crossingLoadFailed = false;
       console.warn("Gridly crossing load cancelled because active county changed:", error?.message || error);
@@ -56532,7 +56601,7 @@ function ensureGridlyActiveCountyCrossingInventory(reason = "unspecified") {
     gridlyRecordCrossingHydrationTrace("HYDRATION_ALREADY_HEALTHY", { countyId: activeCountyId });
     return false;
   }
-  if (gridlyCrossingInventoryReloadPromise && gridlyCrossingInventoryReloadPromise.gridlyTargetCountyId === activeCountyId) {
+  if (gridlyCrossingInventoryReloadPromise && gridlyCrossingInventoryReloadPromise.gridlyTargetCountyId === activeCountyId && gridlyCrossingInventoryReloadPromise.gridlyTargetGeneration === gridlyActiveCountyTransitionGeneration) {
     gridlyRecordCrossingHydrationTrace("HYDRATION_INFLIGHT_REUSED", { countyId: activeCountyId });
     return true;
   }
@@ -56549,6 +56618,7 @@ function ensureGridlyActiveCountyCrossingInventory(reason = "unspecified") {
     if (gridlyCrossingInventoryReloadPromise === reload) gridlyCrossingInventoryReloadPromise = null;
   });
   reload.gridlyTargetCountyId = activeCountyId;
+  reload.gridlyTargetGeneration = gridlyActiveCountyTransitionGeneration;
   reload.gridlyReason = reason;
   gridlyCrossingInventoryReloadPromise = reload;
   return true;
@@ -61749,14 +61819,16 @@ function renderCrossings(reason = "unspecified", options = {}) {
       popupAnchor: crossingMarkerPopupAnchor
     });
 
-    const popupContent = buildPopup(crossing, report);
+    // The existing activation owner prepares current report/location content
+    // synchronously before opening. Do not resolve county roads for unopened popups.
+    const popupContent = () => buildPopup(crossing, getLatestReportForCrossing(crossing.id));
     // Crossing details are authoritatively exposed by Alerts/KBYG and the
     // crossing detail surfaces. The icon remains pointer-operable as a map
     // enhancement, but must not become an anonymous duplicate Tab stop.
     const marker = L.marker([crossing.lat, crossing.lng], { icon, keyboard: false, incidentId: `rail-${crossing.id}`, crossingId: String(crossing.id), gridlyCommunityStatus: hasActiveIssue ? "active" : "inventory", status: hasActiveIssue ? "active" : "inventory", gridlyCountyId: gridlyGetActiveCountyId(), gridlyCrossingCountyId: crossing.countyId || gridlyGetActiveCountyId() })
       .bindPopup(popupContent, getGridlyCrossingPopupOptions(map))
       .addTo(crossingLayer);
-    marker.__gridlyCrossingPopupContentSignature = String(popupContent || "");
+    marker.__gridlyCrossingPopupContentSignature = null;
     marker.__gridlyCrossingReport = report || null;
 
     if (!marker.__gridlyCrossingClickBound) {
@@ -62005,7 +62077,7 @@ function renderCrossings(reason = "unspecified", options = {}) {
     crossingRenderPolicyReason: finalRenderCoverageDiagnostics.policyReason
   });
   const gridlyV921Duration = Number((gridlyV921Now() - gridlyV921RenderStartedAt).toFixed(2));
-  const v921CrossingCall = { timestamp: Date.now(), reason: normalizedV921Reason, caller: inferGridlyCrossingRenderCaller(getGridlyTrimmedStack()), inputRecordCount: renderCrossingsInputCount, filteredRecordCount: visibleCrossings.length, visibleRecordCount: prioritizedVisibleCrossings.length, markerCountBefore: markerCountBeforeDiff, markerCountAfter: crossingMarkers.size, currentSignature: renderSignature, previousSignature: lastRender.signature || "", signatureEqual: false, skippedBeforeModelWork: false, skippedAfterModelWork: false, layerCleared: false, markersCreated: crossingsNeedingMarkers.length, markersReused: reusableCrossingIds.size, markersRemoved: gridlyV921RenderPipelineState.markerReuse.removed, popupContentBuilt: crossingsNeedingMarkers.length, listenersAttached: crossingsNeedingMarkers.length * 2, duration: gridlyV921Duration, longestPhase: Object.entries(gridlyV921Phases).sort((a,b)=>b[1]-a[1])[0] || null, popupOpenState: typeof isGridlyCrossingPopupInteractionActive === "function" && isGridlyCrossingPopupInteractionActive(), selectedCrossing: gridlyCrossingRenderLifecycleAuditState.selectedCrossingId || "", awarenessArea: activeCountyId, mapZoom: visibilityPolicy.currentZoom, viewportSignature, renderMode: crossingsNeedingMarkers.length ? "diff-and-frame-schedule" : "selection-only update", phases: gridlyV921Phases };
+  const v921CrossingCall = { timestamp: Date.now(), reason: normalizedV921Reason, caller: inferGridlyCrossingRenderCaller(getGridlyTrimmedStack()), inputRecordCount: renderCrossingsInputCount, filteredRecordCount: visibleCrossings.length, visibleRecordCount: prioritizedVisibleCrossings.length, markerCountBefore: markerCountBeforeDiff, markerCountAfter: crossingMarkers.size, currentSignature: renderSignature, previousSignature: lastRender.signature || "", signatureEqual: false, skippedBeforeModelWork: false, skippedAfterModelWork: false, layerCleared: false, markersCreated: crossingsNeedingMarkers.length, markersReused: reusableCrossingIds.size, markersRemoved: gridlyV921RenderPipelineState.markerReuse.removed, popupContentBuilt: 0, listenersAttached: crossingsNeedingMarkers.length * 2, duration: gridlyV921Duration, longestPhase: Object.entries(gridlyV921Phases).sort((a,b)=>b[1]-a[1])[0] || null, popupOpenState: typeof isGridlyCrossingPopupInteractionActive === "function" && isGridlyCrossingPopupInteractionActive(), selectedCrossing: gridlyCrossingRenderLifecycleAuditState.selectedCrossingId || "", awarenessArea: activeCountyId, mapZoom: visibilityPolicy.currentZoom, viewportSignature, renderMode: crossingsNeedingMarkers.length ? "diff-and-frame-schedule" : "selection-only update", phases: gridlyV921Phases };
   gridlyV921RecordPipelineCall("crossings", v921CrossingCall);
   if (typeof gridlyV922RecordCall === "function") gridlyV922RecordCall("crossings", { owner: "renderCrossings", caller: v921CrossingCall.caller, phases: { ...gridlyV921Phases }, totalMs: gridlyV921Duration, breakdown: gridlyV922ClassifyPhases(gridlyV921Phases), refreshChain: ["scheduleRenderCrossings", "renderCrossings", crossingsNeedingMarkers.length ? "renderCrossingMarkersFromList" : "commitAuthoritativeCrossingGeneration"], renderMode: v921CrossingCall.renderMode });
   pushCrossingAuditCall("markers-added", reason, { renderedCrossingMarkerCount: crossingMarkers.size, ...finalRenderCoverageDiagnostics });
@@ -66254,7 +66326,7 @@ function publishGridlyCommunityPulseAuditState(patch = {}, publication = {}) {
   // model and the official publisher's lagging readback. Area invalidation
   // clears this local authority before a new area's first publication.
   const summaryCandidates = [gridlyLastAuthoritativeCommunityAwarenessSummary, normalizedPatch.communityAwarenessSummary, publisherAuthoritativeSummary];
-  const proposedSummary = summaryCandidates.find((summary) => summary && (!summary.canonicalCommunityRevision || summary.canonicalCommunityRevision === gridlyGetCanonicalActiveCommunityState().revision))
+  const proposedSummary = summaryCandidates.find((summary) => summary && (summary.awarenessInputRevision === undefined || isGridlyCachedAwarenessSummaryForCurrentArea(summary)) && (!summary.canonicalCommunityRevision || summary.canonicalCommunityRevision === gridlyGetCanonicalActiveCommunityState().revision))
     || (normalizedPatch.communityAwarenessSummary ? buildGridlyCommunityAwarenessIntelligenceSummary() : null);
   const governedRows = typeof gridlyGetGovernedActiveAwarenessRows === "function" ? gridlyGetGovernedActiveAwarenessRows() : [];
   const authoritativeSummary = proposedSummary && window.gridlyGovernedActiveConditionParity?.convergeAuthoritativeSummary?.(proposedSummary, governedRows) || proposedSummary;
@@ -66286,7 +66358,7 @@ if (typeof window !== "undefined") window.gridlyCommunityPulseAuditState = gridl
 // input is the governed snapshot already enriched by the official publisher.
 function gridlyPublishAuthoritativeCommunityAwarenessSummary(summary, publication = {}) {
   if (!summary || typeof summary !== "object") return null;
-  if (summary.canonicalCommunityRevision && summary.canonicalCommunityRevision !== gridlyGetCanonicalActiveCommunityState().revision) {
+  if ((summary.awarenessInputRevision !== undefined && !isGridlyCachedAwarenessSummaryForCurrentArea(summary)) || (summary.canonicalCommunityRevision && summary.canonicalCommunityRevision !== gridlyGetCanonicalActiveCommunityState().revision)) {
     summary = buildGridlyCommunityAwarenessIntelligenceSummary();
   }
   // LP244.5 live correction: this is the last production writer before Pulse,
@@ -116948,12 +117020,9 @@ let crossingReviewDecisions = JSON.parse(localStorage.getItem(REVIEW_STORAGE_KEY
 
 const originalLoadCrossingsV1231 = loadCrossings;
 
-loadCrossings = async function () {
-  await originalLoadCrossingsV1231();
-
-  if (REVIEW_MODE_ACTIVE) {
-    initCrossingReviewMode();
-  }
+loadCrossings = function () {
+  const promise = originalLoadCrossingsV1231();
+  return REVIEW_MODE_ACTIVE ? promise.then(() => initCrossingReviewMode()) : promise;
 };
 
 function initCrossingReviewMode() {
