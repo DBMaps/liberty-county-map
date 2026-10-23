@@ -168,8 +168,8 @@ test('empty storage, unknown actions and unbound confirmation cannot erase anyth
  assert.equal(f.run('clear').status,'changed');assert.deepEqual(f.data,before);assert.deepEqual(f.writes,[]);
 });
 
-test('native entry is limited to reviewed Builds 14/16 and explicit destructive confirmation; no general evaluator or vault action is exposed',()=>{
- assert.match(native,/return \["14", "16"\]\.contains\(buildNumber\)/);
+test('native entry is limited to reviewed Builds 14/16/17 and explicit destructive confirmation; no general evaluator or vault action is exposed',()=>{
+ assert.match(native,/return \["14", "16", "17"\]\.contains\(buildNumber\)/);
  assert.match(native,/guard bundleIdentifier == "com\.gridlygo\.gridly"/);
  assert.match(native,/private var recoveryBuild: Bool \{\s*GridlyLegacyRecoveryCompatibility\.supports\(/);
  assert.match(native,/title: "Keep saved retry", style: \.cancel/);
