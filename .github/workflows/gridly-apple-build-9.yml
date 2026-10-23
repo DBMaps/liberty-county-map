@@ -1,9 +1,8 @@
-name: Gridly Apple 1.0.1 Build 16 certification only
+name: Gridly Apple 1.0.1 Build 16 authorized TestFlight delivery
 
-# Isolated control adaptation at the existing registered manual workflow path.
-# Application source stays exactly pinned below; controls are a separate reviewed
-# direct-child commit changing ONLY this workflow. Publish/dispatch needs approval.
-# Manual tag dispatch only. No store credentials, transfer or artifact upload.
+# Isolated, owner-authorized ONE-upload delivery control. No public release.
+# The application remains exactly pinned; only this registered workflow changes.
+# Existing certification control/tag is frozen. Publish only a new delivery tag.
 on:
   workflow_dispatch:
     inputs:
@@ -12,7 +11,7 @@ on:
         required: true
         type: string
       upload_to_app_store_connect:
-        description: Must remain false; true is rejected before any secret access
+        description: Explicit owner approval for ONE Build16 upload and the two existing internal testers
         required: true
         default: false
         type: boolean
@@ -20,22 +19,28 @@ on:
         description: Exact reviewed control commit named in the immutable control tag
         required: true
         type: string
+      apple_checked_at:
+        description: Genuine UTC time of fresh all-status Apple build/upload and internal-access inspection
+        required: true
+        type: string
 
 permissions:
   contents: read
+  actions: read
 
 concurrency:
-  group: gridly-apple-acceptance-build-only
+  group: gridly-apple-testflight-build16
   cancel-in-progress: false
 
 jobs:
   archive-only:
-    if: github.repository == 'DBMaps/liberty-county-map' && github.actor == 'DBMaps' && github.event_name == 'workflow_dispatch' && inputs.upload_to_app_store_connect == false && startsWith(github.ref, 'refs/tags/gridly-apple-acceptance-control-16-')
+    if: github.repository == 'DBMaps/liberty-county-map' && github.actor == 'DBMaps' && github.event_name == 'workflow_dispatch' && inputs.upload_to_app_store_connect == true && github.run_attempt == 1 && startsWith(github.ref, 'refs/tags/gridly-apple-testflight-16-')
     runs-on: macos-26
     timeout-minutes: 90
     env:
       APPLICATION_SHA: '0e9eebd185dac45aa3382471870092852645941b'
       BUILD_NUMBER: '16'
+      CERTIFIED_CONTROL_SHA: 'f0906a8f2b504c3bae531fe03da30bd85fe8b875'
       PYTHONDONTWRITEBYTECODE: '1'
     defaults:
       run:
@@ -58,23 +63,26 @@ jobs:
           REVIEWED_CONTROL_COMMIT: ${{ inputs.control_commit }}
           REQUESTED_APPLICATION_SHA: ${{ inputs.commit_sha }}
           UPLOAD_REQUESTED: ${{ inputs.upload_to_app_store_connect }}
+          APPLE_CHECKED_AT: ${{ inputs.apple_checked_at }}
+          CERTIFICATION_TOKEN: ${{ github.token }}
         run: |
           set +x
           test "$GITHUB_REPOSITORY" = DBMaps/liberty-county-map
           test "$GITHUB_ACTOR" = DBMaps
           test "$GITHUB_EVENT_NAME" = workflow_dispatch
-          test "$UPLOAD_REQUESTED" = false
+          test "$UPLOAD_REQUESTED" = true
+          test "$GITHUB_RUN_ATTEMPT" = 1
           [[ "$REVIEWED_CONTROL_COMMIT" =~ ^[0-9a-f]{40}$ ]]
           test "$REQUESTED_APPLICATION_SHA" = "$APPLICATION_SHA"
           test "$REVIEWED_CONTROL_COMMIT" = "$GITHUB_SHA"
           test "$GITHUB_WORKFLOW_SHA" = "$REVIEWED_CONTROL_COMMIT"
-          test "$GITHUB_REF" = "refs/tags/gridly-apple-acceptance-control-16-$REVIEWED_CONTROL_COMMIT"
+          test "$GITHUB_REF" = "refs/tags/gridly-apple-testflight-16-$REVIEWED_CONTROL_COMMIT"
           test "$GITHUB_WORKFLOW_REF" = "DBMaps/liberty-county-map/.github/workflows/gridly-apple-build-9.yml@$GITHUB_REF"
           test "$(git -C control rev-parse HEAD)" = "$REVIEWED_CONTROL_COMMIT"
           test "$(git -C control cat-file -t "$GITHUB_REF")" = tag
           test "$(git -C control rev-parse "$GITHUB_REF^{commit}")" = "$REVIEWED_CONTROL_COMMIT"
-          test "$(git -C control show -s --format=%P HEAD)" = "$APPLICATION_SHA"
-          test "$(git -C control diff --name-only --no-renames "$APPLICATION_SHA" HEAD)" = .github/workflows/gridly-apple-build-9.yml
+          test "$(git -C control show -s --format=%P HEAD)" = "$CERTIFIED_CONTROL_SHA"
+          test "$(git -C control diff --name-only --no-renames "$CERTIFIED_CONTROL_SHA" HEAD)" = .github/workflows/gridly-apple-build-9.yml
           control_state="$(git -C control status --porcelain --untracked-files=normal)"
           test -z "$control_state"
           test "$(git -C candidate rev-parse HEAD)" = "$APPLICATION_SHA"
@@ -84,6 +92,24 @@ jobs:
           test "$(uname -s)" = Darwin
           xcodebuild -version | grep -E '^Xcode 26([. ]|$)'
           swift --version >/dev/null
+          python3 - <<'PY'
+          import datetime, hashlib, json, os, re, subprocess, urllib.request
+          stamp = os.environ["APPLE_CHECKED_AT"]
+          assert re.fullmatch(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z", stamp), "invalid Apple inspection timestamp"
+          checked = datetime.datetime.fromisoformat(stamp.replace("Z", "+00:00"))
+          assert 0 <= (datetime.datetime.now(datetime.timezone.utc) - checked).total_seconds() <= 1800, "Apple inspection expired"
+          previous = subprocess.check_output(["git", "-C", "control", "show", os.environ["CERTIFIED_CONTROL_SHA"] + ":.github/workflows/gridly-apple-build-9.yml"])
+          assert hashlib.sha256(previous).hexdigest() == "db70da44f636e361df19b72cca9a95b6ffc373627f009708a416e8af0d2e5f3e", "certified control drift"
+          request = urllib.request.Request("https://api.github.com/repos/DBMaps/liberty-county-map/actions/runs/39873986805/attempts/2", headers={"Authorization": "Bearer " + os.environ["CERTIFICATION_TOKEN"], "Accept": "application/vnd.github+json"})
+          try:
+              with urllib.request.urlopen(request, timeout=30) as response:
+                  run = json.load(response)
+              assert run["id"] == 39873986805 and run["run_attempt"] == 2 and run["conclusion"] == "success"
+              assert run["head_sha"] == os.environ["CERTIFIED_CONTROL_SHA"]
+          except Exception:
+              raise SystemExit("PRIOR_CERTIFICATION_NOT_VERIFIED") from None
+          print("Prior signed certification and fresh read-only Apple inspection verified")
+          PY
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -187,6 +213,7 @@ jobs:
           assert report["source"] == os.environ["APPLICATION_SHA"]
           assert report["build"] == "16" and report["marketingVersion"] == "1.0.1"
           assert report["uploaded"] is False and report["nativeCodeParity"] is True
+          assert report["bundleDigest"] == "sha256:a633f1d201bed1fe98b6bae67c230076427829746b7ac0b0b5b36712c5009503"
           report["controlCommit"] = control
           report["workflowSha256"] = __import__("hashlib").sha256(subprocess.check_output([
               "git", "-C", "../control", "show", control + ":.github/workflows/gridly-apple-build-9.yml"])).hexdigest()
@@ -195,6 +222,171 @@ jobs:
           PY
           cat "$private/attestation.json" >&3
           cat "$private/attestation.json" >> "$GITHUB_STEP_SUMMARY"
+      - name: Validate and upload the single attested Build16 IPA
+        env:
+          APPLE_ID_USERNAME: ${{ secrets.APPLE_ID_USERNAME }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          UPLOAD_REQUESTED: ${{ inputs.upload_to_app_store_connect }}
+          APPLE_CHECKED_AT: ${{ inputs.apple_checked_at }}
+        run: |
+          set +x
+          umask 077
+          private="$RUNNER_TEMP/gridly-build-only-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          exec 3>&1
+          exec > "$private/transfer.log" 2>&1
+          cd candidate
+          python3 - "$private" <<'DELIVERY_PY'
+          """Embedded delivery control: one validated IPA, one upload, no public release."""
+          import datetime
+          import hashlib
+          import json
+          import os
+          import pathlib
+          import re
+          import signal
+          import subprocess
+          import sys
+          import time
+
+          APP = "0e9eebd185dac45aa3382471870092852645941b"
+          DIGEST = "sha256:a633f1d201bed1fe98b6bae67c230076427829746b7ac0b0b5b36712c5009503"
+          CERT = "1264FCB7434D20490824D05F959D90D3825EA45C"
+          PROFILE = "c0398bd6-9b5e-4935-82e7-40d117a4ccdc"
+
+
+          def require(value, category):
+              if not value:
+                  raise RuntimeError(category)
+
+
+          def fresh(stamp, now=None):
+              require(isinstance(stamp, str) and re.fullmatch(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z", stamp), "APPLE_INSPECTION_INVALID")
+              checked = datetime.datetime.fromisoformat(stamp.replace("Z", "+00:00"))
+              age = ((now or datetime.datetime.now(datetime.timezone.utc)) - checked).total_seconds()
+              require(0 <= age <= 1800, "APPLE_INSPECTION_EXPIRED")
+
+
+          def proof(root, env):
+              require(root.resolve() == (pathlib.Path(env["RUNNER_TEMP"]) / ("gridly-build-only-" + env["GITHUB_RUN_ID"] + "-" + env["GITHUB_RUN_ATTEMPT"])).resolve(), "PRIVATE_PATH_REJECTED")
+              require(root.is_dir() and not root.is_symlink(), "PRIVATE_PATH_REJECTED")
+              if hasattr(os, "getuid"):
+                  require(root.stat().st_uid == os.getuid() and root.stat().st_mode & 0o077 == 0, "PRIVATE_OWNERSHIP_REJECTED")
+              require(env["GITHUB_RUN_ATTEMPT"] == "1", "RERUN_REJECTED")
+              require(env["GITHUB_REPOSITORY"] == "DBMaps/liberty-county-map" and env["GITHUB_ACTOR"] == "DBMaps", "OWNER_REJECTED")
+              require(env["UPLOAD_REQUESTED"] == "true" and env["APPLICATION_SHA"] == APP, "UPLOAD_NOT_AUTHORIZED")
+              require(re.fullmatch(r"[0-9a-f]{40}", env["GITHUB_SHA"]), "CONTROL_REJECTED")
+              require(env["GITHUB_REF"] == "refs/tags/gridly-apple-testflight-16-" + env["GITHUB_SHA"], "CONTROL_REJECTED")
+              fresh(env["APPLE_CHECKED_AT"])
+              marker = root / "upload-attempt.json"
+              require(not marker.exists() and not marker.is_symlink(), "PREVIOUS_UPLOAD_ATTEMPT")
+              report_path = root / "attestation.json"
+              require(report_path.is_file() and not report_path.is_symlink(), "SIGNED_PROOF_REJECTED")
+              report = json.loads(report_path.read_text())
+              require(report["source"] == APP and report["controlCommit"] == env["GITHUB_SHA"], "SOURCE_REJECTED")
+              require(report["appIdentity"] == {"CFBundleIdentifier": "com.gridlygo.gridly", "CFBundleShortVersionString": "1.0.1", "CFBundleVersion": "16", "UIDeviceFamily": [1]}, "IDENTITY_REJECTED")
+              require(report["build"] == "16" and report["marketingVersion"] == "1.0.1" and report["minimumOSVersion"] == "16.4", "IDENTITY_REJECTED")
+              require(report["files"] == 1007 and report["bundleDigest"] == DIGEST and report["team"] == "2XSH6R7K37", "ASSETS_REJECTED")
+              require(report["nativeCodeParity"] is True and report["uploaded"] is False and report["swiftLifecycleCasesPassed"] == 14, "SIGNED_PROOF_REJECTED")
+              native = report["nativeExecutableEvidence"]
+              require(all(native[k] is True for k in ("code_equal", "recovery_in_archive_and_ipa", "signed_artifacts_unchanged")), "NATIVE_PROOF_REJECTED")
+              require(native["certificateSha1"] == CERT and native["profileUUID"] == PROFILE and native["distributionAuthority"] == "Apple Distribution: DJ Burns Collective LLC (2XSH6R7K37)", "SIGNING_REJECTED")
+              require(subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip() == APP, "SOURCE_REJECTED")
+              require(not subprocess.check_output(["git", "status", "--porcelain", "--untracked-files=no"]), "DIRTY_APPLICATION")
+              workflow = subprocess.check_output(["git", "-C", "../control", "show", env["GITHUB_SHA"] + ":.github/workflows/gridly-apple-build-9.yml"])
+              require(hashlib.sha256(workflow).hexdigest() == report["workflowSha256"], "CONTROL_REJECTED")
+              ipas = list((root / "export").glob("*.ipa"))
+              require(len(ipas) == 1, "IPA_REJECTED")
+              ipa = ipas[0]
+              require(ipa.is_file() and not ipa.is_symlink() and ipa.resolve().parent == (root / "export").resolve(), "IPA_REJECTED")
+              require(ipa.stat().st_size == report["ipaBytes"] and hashlib.sha256(ipa.read_bytes()).hexdigest() == report["ipaSha256"], "IPA_CHANGED")
+              return ipa, report
+
+
+          def native_process(command, root, env, phase, timeout):
+              require(sys.platform == "darwin", "MACOS_REQUIRED")
+              child_env = {k: v for k, v in env.items() if k in {"PATH", "DEVELOPER_DIR", "SDKROOT", "LANG", "LC_ALL", "HOME"}}
+              (root / "tmp").mkdir(mode=0o700, exist_ok=True)
+              child_env["TMPDIR"] = str(root / "tmp") + "/"
+              # Preserve native HOME; never repeat the old fake-HOME Apple uploader issue.
+              if phase != "help":
+                  child_env["APPLE_APP_SPECIFIC_PASSWORD"] = env["APPLE_APP_SPECIFIC_PASSWORD"]
+              with (root / (phase + ".log")).open("wb") as output:
+                  process = subprocess.Popen(command, cwd=root, env=child_env, stdout=output, stderr=subprocess.STDOUT, start_new_session=True)
+                  try:
+                      return process.wait(timeout=timeout)
+                  finally:
+                      try:
+                          os.killpg(process.pid, signal.SIGTERM)
+                          time.sleep(0.25)
+                          try:
+                              os.killpg(process.pid, signal.SIGKILL)
+                          except ProcessLookupError:
+                              pass
+                      except ProcessLookupError:
+                          pass
+                      process.wait(timeout=5)
+
+
+          def emit(status):
+              # Fixed status schema only: no Apple output, account names or exception text.
+              encoded = json.dumps(status, sort_keys=True) + "\n"
+              with os.fdopen(os.dup(3), "w") as public:
+                  public.write(encoded)
+                  public.flush()
+              with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as summary:
+                  summary.write(encoded)
+
+
+          def transfer(root, env, invoke=native_process, publish=emit):
+              status = {"delivery": "NOT_ATTEMPTED", "phase": "LOCAL_PROOF", "applicationSource": APP,
+                        "controlCommit": env.get("GITHUB_SHA"), "appleAppId": "6814845611",
+                        "version": "1.0.1", "build": "16", "ipaSha256": None,
+                        "uploadAttempted": False, "uploaderExitCode": None,
+                        "appleProcessing": "NOT_VERIFIED", "publicRelease": False}
+              try:
+                  ipa, report = proof(root, env)
+                  status["ipaSha256"] = report["ipaSha256"]
+                  username, password = env.get("APPLE_ID_USERNAME", ""), env.get("APPLE_APP_SPECIFIC_PASSWORD", "")
+                  require(0 < len(username) <= 320 and username == username.strip() and not any(c.isspace() or ord(c) < 32 for c in username), "CREDENTIAL_FORMAT_REJECTED")
+                  require(0 < len(password) <= 1024 and password == password.strip() and not any(c in password for c in "\r\n\0"), "CREDENTIAL_FORMAT_REJECTED")
+                  status["phase"] = "LOCAL_TOOL_CHECK"
+                  require(invoke(["xcrun", "altool", "--help"], root, env, "help", 30) == 0, "TOOL_CHECK_FAILED")
+                  help_path = root / "help.log"
+                  require(help_path.stat().st_size <= 1048576, "TOOL_CHECK_FAILED")
+                  help_text = help_path.read_text()
+                  for flag in ("--upload-package", "--validate-app", "--platform", "--file", "--apple-id", "--bundle-version", "--bundle-short-version-string", "--username", "--password"):
+                      require(re.search(r"(?<![\w-])" + re.escape(flag) + r"(?![\w-])", help_text), "TOOL_CHECK_FAILED")
+                  auth = ["--username", username, "--password", "@env:APPLE_APP_SPECIFIC_PASSWORD"]
+                  fresh(env["APPLE_CHECKED_AT"])
+                  status["phase"] = "APPLE_VALIDATION"
+                  require(invoke(["xcrun", "altool", "--platform", "ios", "--file", str(ipa), *auth, "--validate-app"], root, env, "validate", 900) == 0, "VALIDATION_FAILED")
+                  status["phase"] = "POST_VALIDATION_PROOF"
+                  current_ipa, current = proof(root, env)
+                  require(current_ipa == ipa and current == report, "SIGNED_PROOF_CHANGED")
+                  fresh(env["APPLE_CHECKED_AT"])
+                  # Exclusive, durable attempt marker BEFORE invoking Apple. Never retry.
+                  with (root / "upload-attempt.json").open("x") as marker:
+                      marker.write(json.dumps({"source": APP, "control": env["GITHUB_SHA"], "ipaSha256": report["ipaSha256"], "status": "ATTEMPT_STARTED"}))
+                      marker.flush()
+                      os.fsync(marker.fileno())
+                  status.update(phase="APPLE_UPLOAD", uploadAttempted=True, delivery="UPLOAD_OUTCOME_UNCERTAIN")
+                  publish(dict(status))
+                  code = invoke(["xcrun", "altool", "--upload-package", str(ipa), "--platform", "ios", "--apple-id", "6814845611", "--bundle-short-version-string", "1.0.1", "--bundle-version", "16", *auth], root, env, "upload", 900)
+                  status["uploaderExitCode"] = code
+                  require(code == 0, "UPLOAD_FAILED_OR_UNCERTAIN")
+                  status["delivery"] = "UPLOADER_SUCCEEDED_APPLE_UNCONFIRMED"
+                  return 0
+              except BaseException:
+                  if not status["uploadAttempted"]:
+                      status["delivery"] = "FAILED_BEFORE_UPLOAD"
+                  return 1
+              finally:
+                  publish(dict(status))
+
+
+          if __name__ == "__main__":
+              raise SystemExit(transfer(pathlib.Path(sys.argv[1]), os.environ))
+          DELIVERY_PY
       - name: Remove private signing material and all build outputs
         if: always()
         run: |
