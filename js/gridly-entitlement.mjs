@@ -57,9 +57,56 @@ export async function verifyAuthorityProof({proof, publicKey, nonce, platform, e
     return snapshot;
   } catch { return failure(); }
 }
-export function accessDecision(snapshot, {platform, environment='production', surface='product', now=Date.now()}={}) {
+
+// A fresh Google response is tied to a nonce generated before the request.
+// Its authenticated verification time supplies UTC; elapsed request/runtime time
+// is measured conservatively. Device wall-clock offset is never paid authority.
+const googleRequests=new WeakMap(),googleClocks=new WeakMap();
+export function beginGoogleProofRequest({nonce,now=Date.now,monotonic=()=>globalThis.performance.now()}={}) {
+ if(typeof nonce!=='string'||!/^[A-Za-z0-9_-]{32,128}$/.test(nonce)||typeof now!=='function'||typeof monotonic!=='function')throw Error('invalid_authority');
+ let wall=now(),tick=monotonic(),elapsed=0,invalid=!Number.isFinite(wall)||!Number.isFinite(tick);
+ const originWall=wall,originTick=tick;
+ const age=()=>{
+  if(invalid)return NaN;
+  try{
+   const nextWall=now(),nextTick=monotonic();
+   if(!Number.isFinite(nextWall)||!Number.isFinite(nextTick)||nextWall<wall||nextTick<tick){invalid=true;return NaN;}
+   // Wall progression covers sleep if the WebView timer pauses; monotonic
+   // progression prevents a wall adjustment from extending an admitted lease.
+   elapsed=Math.max(elapsed,nextWall-originWall,nextTick-originTick);wall=nextWall;tick=nextTick;
+   if(!Number.isFinite(elapsed)){invalid=true;return NaN;}
+   return elapsed;
+  }catch{invalid=true;return NaN;}
+ };
+ const request=Object.freeze({});googleRequests.set(request,{nonce,age});return request;
+}
+export function entitlementNow(snapshot,fallbackNow=Date.now()) {
+ const clock=googleClocks.get(snapshot);return clock?clock():fallbackNow;
+}
+export async function verifyGoogleResponseProof({proof,publicKey,nonce,environment='production',requestClock,crypto=globalThis.crypto}={}) {
+ const request=googleRequests.get(requestClock);googleRequests.delete(requestClock);
+ try{
+  if(!request||request.nonce!==nonce||typeof proof!=='string'||proof.length>8192)return failure();
+  const parts=proof.split('.');if(parts.length!==3)return failure();
+  // Candidate data only determines the validation instant. No authority or
+  // clock is retained until the existing signature and full claim checks pass.
+  const issued=date(JSON.parse(new TextDecoder().decode(decode(parts[1]))).lastVerifiedAt);
+  const age=request.age();if(!Number.isFinite(issued)||!Number.isFinite(age)||age>15000)return failure();
+  const snapshot=await verifyAuthorityProof({proof,publicKey,nonce,platform:'google',environment,now:issued+age,crypto});
+  if(!proven.has(snapshot))return snapshot;
+  const checkedAge=request.age();
+  if(!Number.isFinite(checkedAge)||checkedAge>15000||issued+checkedAge>=date(snapshot.expiresAt))return failure();
+  // Starting age before the network request overestimates time since the
+  // server observation; it can shorten the signed lease, never extend it.
+  googleClocks.set(snapshot,()=>issued+request.age());return snapshot;
+ }catch{return failure();}
+}
+
+export function accessDecision(snapshot, {platform, environment='production', surface='product', now=Date.now(),minimumRemainingMs=0}={}) {
   if(PUBLIC_SURFACES.has(surface)) return Object.freeze({allowed:true, reason:'public_surface'});
   if(!['apple','google'].includes(platform)) return Object.freeze({allowed:false,reason:'app_store_required'});
+  if(!Number.isFinite(now)||!Number.isFinite(minimumRemainingMs)||minimumRemainingMs<0||minimumRemainingMs>MAX_LEASE_MS)return Object.freeze({allowed:false,reason:'verification_required'});
+  now=entitlementNow(snapshot,now)+minimumRemainingMs;
   if(!proven.has(snapshot) || snapshot.platform !== platform || snapshot.environment !== environment ||
      !Number.isFinite(now) || now < date(snapshot.lastVerifiedAt) || now >= date(snapshot.expiresAt)) return Object.freeze({allowed:false,reason:'verification_required'});
   if(snapshot.entitlementState === 'entitled' && now < date(snapshot.currentPeriodEnd)) return Object.freeze({allowed:true,reason:'verified_subscription'});

@@ -1,4 +1,4 @@
-import {verifyAuthorityProof,accessDecision} from './gridly-entitlement.mjs';
+import {beginGoogleProofRequest,verifyGoogleResponseProof,accessDecision} from './gridly-entitlement.mjs';
 import {storeVerificationRequest,STORE_VERIFIERS} from './gridly-store-verification.mjs';
 export const GOOGLE_PRODUCT_ID=STORE_VERIFIERS.google.productId,GOOGLE_BASE_PLAN_ID=STORE_VERIFIERS.google.basePlanId;
 const failure=(errorCategory='verification_unavailable')=>Object.freeze({platform:null,productId:null,environment:null,subscriptionState:'unknown',entitlementState:'unknown',currentPeriodEnd:null,lastVerifiedAt:null,verificationSource:'none',restoreAvailable:true,errorCategory});
@@ -14,7 +14,7 @@ export function createGoogleVerificationAuthority({invoke,environment='productio
  }});
 }
 // Explicit trusted composition only: no startup, credentials, storage or paywall activation.
-export function createGooglePlayBilling({capacitor,plugin,authority,publicKey,deliverEntitlement,onNativeDenial,environment='production',crypto=globalThis.crypto,now=Date.now,timeoutMs=15000,purchaseTimeoutMs=120000}) {
+export function createGooglePlayBilling({capacitor,plugin,authority,publicKey,deliverEntitlement,onNativeDenial,environment='production',crypto=globalThis.crypto,now=Date.now,monotonic=()=>globalThis.performance.now(),timeoutMs=15000,purchaseTimeoutMs=120000}) {
  let state=failure(),tail=Promise.resolve(),stopped=false,startPromise,signalTask;
  const listeners=[];
  const android=()=>capacitor?.isNativePlatform?.()===true&&capacitor?.getPlatform?.()==='android'&&!!plugin;
@@ -37,9 +37,10 @@ export function createGooglePlayBilling({capacitor,plugin,authority,publicKey,de
    const nonce=Array.from(crypto.getRandomValues(new Uint8Array(24)),b=>b.toString(16).padStart(2,'0')).join('');
    let request=storeVerificationRequest({platform:'google',environment,nonce,evidence:{purchaseTokens:[native.purchaseToken]}});
    native=null;
+   const requestClock=beginGoogleProofRequest({nonce,now,monotonic});
    let proof;try{proof=await bounded(()=>authority.reconcile(request));}finally{request=null;}
    if(!active||stopped)return failure();
-   const verified=await verifyAuthorityProof({proof,publicKey,nonce,platform:'google',environment,now:now(),crypto});
+   const verified=await verifyGoogleResponseProof({proof,publicKey,nonce,environment,requestClock,crypto});
    if(!active||stopped)return failure('invalid_authority');
     if(verified.entitlementState==='unknown')return failure(verified.errorCategory==='invalid_authority'?'invalid_authority':'verification_unavailable');
    if(verified.entitlementState==='not_entitled')return verified;

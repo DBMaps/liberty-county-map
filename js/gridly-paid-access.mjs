@@ -1,4 +1,4 @@
-import {accessDecision} from './gridly-entitlement.mjs';
+import {accessDecision,entitlementNow} from './gridly-entitlement.mjs';
 import {verifyContinuity,continuityDecision} from './gridly-continuity.mjs';
 import {createAppleStoreKit} from './gridly-apple-storekit.mjs';
 import {createGooglePlayBilling} from './gridly-google-play-billing.mjs';
@@ -15,7 +15,7 @@ export function createPaidAccess({capacitor,plugin,authority,publicKey,continuit
  let snapshot=null,reportingProof=null,reportingProofSnapshot=null,pendingProof=null,continuity=null,state='initializing',action=null,product=null,productLoading=false,errorCategory='none';
  let session,tail=Promise.resolve(),signalTask,startTask,expiryTimer,stopped=false,context=null,denied=false;
  let clockAnchor=null, generation=0;
- const effectiveNow=()=>clockAnchor===null?now():Math.max(now(),clockAnchor.utc+Math.max(0,monotonic()-clockAnchor.tick));
+ const effectiveNow=()=>platform==='google'&&snapshot?entitlementNow(snapshot,now()):clockAnchor===null?now():Math.max(now(),clockAnchor.utc+Math.max(0,monotonic()-clockAnchor.tick));
  const continuityAllowed=()=>clockAnchor!==null&&now()>=clockAnchor.wall&&continuityDecision(continuity,{platform,now:effectiveNow()});
  const proofEnvironment=()=>platform==='apple'?snapshot?.environment??'production':googleEnvironment;
  const allowed=()=>!stopped&&state==='entitled'&&(accessDecision(snapshot,{platform,environment:proofEnvironment(),now:effectiveNow()}).allowed||continuityAllowed());
@@ -40,7 +40,7 @@ export function createPaidAccess({capacitor,plugin,authority,publicKey,continuit
   catch(error){if(error?.message==='authority_denied'&&operation===generation&&!stopped)await revoke();throw Error('verification_unavailable');}
  }}:null;
  if(platform) {
-  session=(platform==='apple'?createAppleStoreKit:createGooglePlayBilling)({capacitor,plugin,authority:boundAuthority,publicKey,now,crypto,timeoutMs,purchaseTimeoutMs,environment:platform==='apple'?'auto':googleEnvironment,
+  session=(platform==='apple'?createAppleStoreKit:createGooglePlayBilling)({capacitor,plugin,authority:boundAuthority,publicKey,now,monotonic,crypto,timeoutMs,purchaseTimeoutMs,environment:platform==='apple'?'auto':googleEnvironment,
    onNativeDenial:revoke,deliverEntitlement:async(row,guard)=>{
    if(stopped||denied||!guard.isCurrent()||typeof guard.proof!=='string'||!accessDecision(row,{platform,environment:platform==='apple'?row?.environment:googleEnvironment,now:now()}).allowed)return false;
     snapshot=row;pendingProof=guard.proof;return true;
@@ -116,7 +116,7 @@ export function createPaidAccess({capacitor,plugin,authority,publicKey,continuit
   pendingProof=null;action=null;return publish();
  }
  const refresh=()=>{if(!signalTask)signalTask=queue(()=>run('refresh')).finally(()=>{signalTask=null;});return signalTask;};
- const currentReportingProof=()=>reportingProof&&reportingProofSnapshot===snapshot&&allowed()&&accessDecision(snapshot,{platform,environment:proofEnvironment(),now:effectiveNow()+30000}).allowed?reportingProof:null;
+ const currentReportingProof=()=>reportingProof&&reportingProofSnapshot===snapshot&&allowed()&&accessDecision(snapshot,{platform,environment:proofEnvironment(),now:effectiveNow(),minimumRemainingMs:30000}).allowed?reportingProof:null;
  async function getReportingProof(){
   if(!currentReportingProof())await refresh();
   const proof=currentReportingProof();
