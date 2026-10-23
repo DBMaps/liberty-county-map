@@ -19,13 +19,13 @@ var cases = 0
 func check(_ name: String, _ body: () -> Void) {
     body(); cases += 1; print("PASS " + name)
 }
-check("reviewed Build14 and proposed Build16 share the recovery contract") {
-    for build in ["14", "16"] {
+check("reviewed Builds14/16 and emergency17 share the recovery contract") {
+    for build in ["14", "16", "17"] {
         assert(GridlyLegacyRecoveryCompatibility.supports(bundleIdentifier: "com.gridlygo.gridly", buildNumber: build))
     }
 }
 check("unsupported, missing, malformed versions and foreign apps fail closed") {
-    let unsupported: [String?] = [nil, "", "12", "13", "15", "17", "140", "016", "16.0", "16\n"]
+    let unsupported: [String?] = [nil, "", "12", "13", "15", "18", "140", "016", "16.0", "16\n"]
     for build in unsupported {
         assert(!GridlyLegacyRecoveryCompatibility.supports(bundleIdentifier: "com.gridlygo.gridly", buildNumber: build))
     }
@@ -38,7 +38,7 @@ check("published and maintenance marketing metadata use the exact native build b
     let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
     try! FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
     defer { try! FileManager.default.removeItem(at: directory) }
-    for (index, metadata) in [("1.0.0", "14", true), ("1.0.0", "16", true), ("1.0.1", "16", true), ("1.0.1", "15", false), ("1.0.1", "17", false)].enumerated() {
+    for (index, metadata) in [("1.0.0", "14", true), ("1.0.0", "16", true), ("1.0.1", "16", true), ("1.0.1", "15", false), ("1.0.1", "17", true)].enumerated() {
         let path = directory.appendingPathComponent("Fixture\(index).bundle")
         try! FileManager.default.createDirectory(at: path, withIntermediateDirectories: true)
         let info = ["CFBundleIdentifier": "com.gridlygo.gridly", "CFBundleShortVersionString": metadata.0, "CFBundleVersion": metadata.1]

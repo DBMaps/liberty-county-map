@@ -30,7 +30,7 @@ RECOVERY_COMPATIBILITY = '''// Reviewed native releases of the same protocol-v2 
 enum GridlyLegacyRecoveryCompatibility {
     static func supports(bundleIdentifier: String?, buildNumber: String?) -> Bool {
         guard bundleIdentifier == "com.gridlygo.gridly", let buildNumber = buildNumber else { return false }
-        return ["14", "16"].contains(buildNumber)
+        return ["14", "16", "17"].contains(buildNumber)
     }
 }
 
@@ -55,7 +55,7 @@ def approved_recovery_source(legacy):
 def validate_recovery_build(source, build_number):
     if build_number == "14" and LEGACY_RECOVERY_GATE in source and "enum GridlyLegacyRecoveryCompatibility" not in source:
         return
-    assert build_number in ("14", "16") and RECOVERY_GATE in source and RECOVERY_COMPATIBILITY in source, "RECOVERY_BUILD_MISMATCH: only reviewed Builds14/16 and the fixed compatibility contract are permitted"
+    assert build_number in ("14", "16", "17") and RECOVERY_GATE in source and RECOVERY_COMPATIBILITY in source, "RECOVERY_BUILD_MISMATCH: only reviewed Builds14/16/17 and the fixed compatibility contract are permitted"
 
 
 def sha256(body):
@@ -146,7 +146,7 @@ def validate_entitlements(entitlements):
 
 def expected_app_identity(build_number="14", marketing_version="1.0.0"):
     assert isinstance(build_number, str) and re.fullmatch(r"[1-9][0-9]*", build_number), "invalid build number"
-    assert marketing_version == "1.0.0" or (marketing_version == "1.0.1" and build_number == "16"), "unreviewed marketing version/build"
+    assert marketing_version == "1.0.0" or (marketing_version == "1.0.1" and build_number in ("16", "17")), "unreviewed marketing version/build"
     return {"CFBundleShortVersionString": marketing_version, "CFBundleVersion": build_number,
             "CFBundleIdentifier": BUNDLE, "UIDeviceFamily": [1]}
 

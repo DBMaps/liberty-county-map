@@ -19,6 +19,13 @@ APPLE14 = "e0b51235e96ce1cc7fcae81781bbd21e95fb418a"
 LEGAL = ("legal/privacy.html", "legal/terms.html", "legal/community-guidelines.html")
 SHIPPING = ("js/app.js", "js/gridlyWeatherLiveConnector.js", "js/gridlyWeatherAuthoritySourceIntegration.js", "js/gridlyAlertsWeatherAuthorityHandoff.js")
 MARKETING_VERSION = "1.0.1"
+# Exact reviewed P0 clock modules, in addition to unchanged performance/NWS source.
+P0_CLOCK_HASHES = {
+    "js/gridly-entitlement.mjs": "25e214bf02bf0701d9cf16b9f77167e0b4d3143d701a0d5cfe664022e9e30449",
+    "js/gridly-google-play-billing.mjs": "a3937b596990b776f6946caea6d45f5e1bda2e4235d4ed5f22b589574db2153c",
+    "js/gridly-paid-access.mjs": "847485b4cd00ad5ec7bffbce97bb114c75d42128eb101fe4c4d81da380c8d9ba",
+    "js/gridly-apple-storekit.mjs": "0287c4a8d7732b8571c88e002e1780f3c333345e416373ad3c011d0f1f68e9ae"
+}
 
 
 def git(root, *args):
@@ -31,7 +38,7 @@ def require_recovery_build(source, build_number):
 
 
 def require_maintenance_identity(build_number, marketing_version):
-    assert build_number == "16", "only proposed internal Build16 is permitted; no Build14/15 rebuild"
+    assert build_number == "17", "only prepared emergency Build17 is permitted; no held Build16 rebuild"
     assert marketing_version == MARKETING_VERSION, "only reviewed maintenance marketing version 1.0.1 is permitted"
 
 
@@ -48,6 +55,8 @@ def preflight(root, build_number, source_commit, marketing_version=MARKETING_VER
     for relative in SHIPPING:
         certified = subprocess.check_output(["git", "-C", str(root), "show", SOURCE + ":" + relative]).decode()
         assert (root / relative).read_text(encoding="utf-8") == certified, "certified performance/NWS source drift: " + relative
+    for relative, expected in P0_CLOCK_HASHES.items():
+        assert hashlib.sha256((root / relative).read_text(encoding="utf-8").encode()).hexdigest() == expected, "P0 clock source drift: " + relative
     require_recovery_build(native.read_text(encoding="utf-8"), build_number)
     project = (root / "ios/App/App.xcodeproj/project.pbxproj").read_text(encoding="utf-8")
     for key, value in (("CURRENT_PROJECT_VERSION", build_number), ("MARKETING_VERSION", marketing_version), ("TARGETED_DEVICE_FAMILY", "1")):

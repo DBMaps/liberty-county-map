@@ -31,29 +31,29 @@ class BuildOnlyControls(unittest.TestCase):
         workflow = (ROOT / ".github/workflows/gridly-apple-acceptance-build-only.yml").read_text(encoding="utf-8")
         self.assertLess(workflow.index('cat "$private/attestation.json" >> "$GITHUB_STEP_SUMMARY"'), workflow.index('rm -rf "$private"'))
 
-    def test_actual_source_permits_only_reviewed_14_16_compatibility_extension(self):
+    def test_actual_source_permits_only_reviewed_14_16_17_compatibility_extension(self):
         source = (ROOT / "ios/App/App/GridlyBridgeViewController.swift").read_text(encoding="utf-8")
         self.assertEqual(source, parity.approved_recovery_source(LEGACY))
         build.require_recovery_build(source, "14")
-        build.require_recovery_build(source, "16")
-        for value in ("12", "13", "15", "17", "016", "16.0", "", None):
+        build.require_recovery_build(source, "17")
+        for value in ("12", "13", "15", "18", "016", "16.0", "", None):
             with self.subTest(value=value), self.assertRaisesRegex(AssertionError, "RECOVERY_BUILD_MISMATCH"):
                 build.require_recovery_build(source, value)
 
     def test_legacy_source_remains_build14_only(self):
         build.require_recovery_build(LEGACY, "14")
         with self.assertRaisesRegex(AssertionError, "RECOVERY_BUILD_MISMATCH"):
-            build.require_recovery_build(LEGACY, "16")
+            build.require_recovery_build(LEGACY, "17")
 
     def test_unrelated_build_literal_cannot_authorize_recovery(self):
         source = LEGACY
-        source += '\nlet unrelated = \'Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String == "16"\'\n'
+        source += '\nlet unrelated = \'Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String == "17"\'\n'
         with self.assertRaisesRegex(AssertionError, "RECOVERY_BUILD_MISMATCH"):
-            build.require_recovery_build(source, "16")
+            build.require_recovery_build(source, "17")
 
     def test_identity_guard_cannot_be_omitted(self):
         with self.assertRaisesRegex(AssertionError, "RECOVERY_BUILD_MISMATCH"):
-            build.require_recovery_build('private var recoveryBuild: Bool {\ntrue\n    }', "16")
+            build.require_recovery_build('private var recoveryBuild: Bool {\ntrue\n    }', "17")
 
     def test_legacy_build14_parity_default_is_unchanged(self):
         self.assertEqual(parity.expected_app_identity(), {"CFBundleShortVersionString": "1.0.0", "CFBundleVersion": "14", "CFBundleIdentifier": "com.gridlygo.gridly", "UIDeviceFamily": [1]})
@@ -61,20 +61,20 @@ class BuildOnlyControls(unittest.TestCase):
     def test_explicit_build_changes_only_expected_build_metadata(self):
         old = parity.expected_app_identity()
         expected = copy.deepcopy(old)
-        expected["CFBundleVersion"] = "16"
-        self.assertEqual(parity.expected_app_identity("16"), expected)
+        expected["CFBundleVersion"] = "17"
+        self.assertEqual(parity.expected_app_identity("17"), expected)
         for invalid in ("0", "16;echo SECRET", "16\n", "", 16):
             with self.subTest(invalid=invalid), self.assertRaises(AssertionError):
                 parity.expected_app_identity(invalid)
 
     def test_maintenance_identity_preserves_legacy_defaults_without_widening_versions(self):
-        self.assertEqual(parity.expected_app_identity("16", "1.0.1"), {
-            **parity.expected_app_identity("16"), "CFBundleShortVersionString": "1.0.1"})
-        build.require_maintenance_identity("16", "1.0.1")
+        self.assertEqual(parity.expected_app_identity("17", "1.0.1"), {
+            **parity.expected_app_identity("17"), "CFBundleShortVersionString": "1.0.1"})
+        build.require_maintenance_identity("17", "1.0.1")
         for version in ("1.0.0", "1.0.2", "2.0.0", "1.0.1\n", None):
             with self.subTest(version=version), self.assertRaisesRegex(AssertionError, "marketing version"):
-                build.preflight(ROOT, "16", build.SOURCE, version)
-        for number, version in (("14", "1.0.1"), ("15", "1.0.1"), ("17", "1.0.1"), ("16", "1.0.2")):
+                build.preflight(ROOT, "17", build.SOURCE, version)
+        for number, version in (("14", "1.0.1"), ("15", "1.0.1"), ("18", "1.0.1"), ("17", "1.0.2")):
             with self.subTest(number=number, version=version), self.assertRaises(AssertionError):
                 parity.expected_app_identity(number, version)
 
@@ -99,19 +99,19 @@ class BuildOnlyControls(unittest.TestCase):
             return LEGACY.encode() if relative.endswith(".swift") else (ROOT / relative).read_text(encoding="utf-8").encode()
         original = Path.read_text
         for old, new in (("MARKETING_VERSION = 1.0.1;", "MARKETING_VERSION = 1.0.0;"),
-                         ("CURRENT_PROJECT_VERSION = 16;", "CURRENT_PROJECT_VERSION = 17;"),
+                         ("CURRENT_PROJECT_VERSION = 17;", "CURRENT_PROJECT_VERSION = 18;"),
                          ("TARGETED_DEVICE_FAMILY = 1;", "TARGETED_DEVICE_FAMILY = 2;")):
             def read(path, *args, **kwargs):
                 body = original(path, *args, **kwargs)
                 return body.replace(old, new, 1) if path.suffix == ".pbxproj" else body
             with self.subTest(old=old), patch.object(build, "git", side_effect=metadata), patch.object(build.subprocess, "check_output", side_effect=certified), patch.object(Path, "read_text", read):
                 with self.assertRaisesRegex(AssertionError, "native project identity mismatch"):
-                    build.preflight(ROOT, "16", build.SOURCE)
+                    build.preflight(ROOT, "17", build.SOURCE)
 
     def test_wrong_source_is_refused_before_reading_signing_material(self):
         with patch.object(build, "git", return_value="0" * 40):
             with self.assertRaisesRegex(AssertionError, "wrong source"):
-                build.preflight(ROOT, "16", build.SOURCE)
+                build.preflight(ROOT, "17", build.SOURCE)
 
     def test_reviewed_source_cleanliness_ancestry_and_narrow_native_parity(self):
         def metadata(root, *args):
@@ -123,14 +123,14 @@ class BuildOnlyControls(unittest.TestCase):
             relative = args[-1].split(":", 1)[1]
             return LEGACY.encode() if relative.endswith(".swift") else (ROOT / relative).read_text(encoding="utf-8").encode()
         with patch.object(build, "git", side_effect=metadata), patch.object(build.subprocess, "check_output", side_effect=certified):
-            self.assertEqual(build.preflight(ROOT, "16", build.SOURCE)["source"], build.SOURCE)
+            self.assertEqual(build.preflight(ROOT, "17", build.SOURCE)["source"], build.SOURCE)
         with patch.object(build, "git", side_effect=lambda root,*args: " M js/app.js" if args[0] == "status" else metadata(root,*args)):
             with self.assertRaisesRegex(AssertionError, "dirty tracked"):
-                build.preflight(ROOT, "16", build.SOURCE)
+                build.preflight(ROOT, "17", build.SOURCE)
 
     def test_old_or_injected_build_number_is_refused(self):
-        for value in ("14", "15", "16; echo oops", "16\n"):
-            with self.subTest(value=value), self.assertRaisesRegex(AssertionError, "only proposed"):
+        for value in ("14", "15", "16", "17; echo oops", "17\n"):
+            with self.subTest(value=value), self.assertRaisesRegex(AssertionError, "only prepared emergency Build17"):
                 build.preflight(ROOT, value, build.SOURCE)
 
     def test_certified_performance_or_nws_drift_is_refused_before_signing(self):
@@ -145,7 +145,24 @@ class BuildOnlyControls(unittest.TestCase):
                 return ((ROOT / relative).read_text(encoding="utf-8") + ("drift" if relative == changed else "")).encode()
             with self.subTest(changed=changed), patch.object(build, "git", side_effect=metadata), patch.object(build.subprocess, "check_output", side_effect=certified):
                 with self.assertRaisesRegex(AssertionError, "certified performance/NWS source drift"):
-                    build.preflight(ROOT, "16", build.SOURCE)
+                    build.preflight(ROOT, "17", build.SOURCE)
+
+    def test_clock_payload_drift_is_refused_before_signing(self):
+        def metadata(root, *args):
+            if args[0] == "rev-parse": return build.SOURCE
+            if args[0] == "merge-base": return args[1]
+            return ""
+        original = Path.read_text
+        def certified(args):
+            relative = args[-1].split(":", 1)[1]
+            return LEGACY.encode() if relative.endswith(".swift") else original(ROOT / relative, encoding="utf-8").encode()
+        for changed in build.P0_CLOCK_HASHES:
+            def read(path, *args, **kwargs):
+                body = original(path, *args, **kwargs)
+                return body + "drift" if path == ROOT / changed else body
+            with self.subTest(changed=changed), patch.object(build, "git", side_effect=metadata), patch.object(build.subprocess, "check_output", side_effect=certified), patch.object(Path, "read_text", read):
+                with self.assertRaisesRegex(AssertionError, "P0 clock source drift"):
+                    build.preflight(ROOT, "17", build.SOURCE)
 
     def test_workflow_has_no_automatic_trigger_or_transfer_capability(self):
         workflow = (ROOT / ".github/workflows/gridly-apple-acceptance-build-only.yml").read_text(encoding="utf-8")

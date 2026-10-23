@@ -15,7 +15,7 @@ export function createPaidAccess({capacitor,plugin,authority,publicKey,continuit
  let snapshot=null,reportingProof=null,reportingProofSnapshot=null,pendingProof=null,continuity=null,state='initializing',action=null,product=null,productLoading=false,errorCategory='none';
  let session,tail=Promise.resolve(),signalTask,startTask,expiryTimer,stopped=false,context=null,denied=false;
  let clockAnchor=null, generation=0;
- const effectiveNow=()=>platform==='google'&&snapshot?entitlementNow(snapshot,now()):clockAnchor===null?now():Math.max(now(),clockAnchor.utc+Math.max(0,monotonic()-clockAnchor.tick));
+ const effectiveNow=()=>entitlementNow(snapshot,clockAnchor===null?now():Math.max(now(),clockAnchor.utc+Math.max(0,monotonic()-clockAnchor.tick)));
  const continuityAllowed=()=>clockAnchor!==null&&now()>=clockAnchor.wall&&continuityDecision(continuity,{platform,now:effectiveNow()});
  const proofEnvironment=()=>platform==='apple'?snapshot?.environment??'production':googleEnvironment;
  const allowed=()=>!stopped&&state==='entitled'&&(accessDecision(snapshot,{platform,environment:proofEnvironment(),now:effectiveNow()}).allowed||continuityAllowed());

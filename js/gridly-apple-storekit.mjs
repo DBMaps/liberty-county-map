@@ -1,4 +1,4 @@
-import {verifyAuthorityProof,accessDecision} from './gridly-entitlement.mjs';
+import {beginAppleProofRequest,verifyAppleResponseProof,accessDecision} from './gridly-entitlement.mjs';
 import {storeVerificationRequest,STORE_VERIFIERS} from './gridly-store-verification.mjs';
 
 export const APPLE_PRODUCT_ID=STORE_VERIFIERS.apple.productId;
@@ -19,7 +19,7 @@ export function createAppleVerificationAuthority({invoke}) {
 }
 // Opt-in application composition. Importing this module starts no native/store/network work.
 // Caller registers GridlyStoreKit through Capacitor's registerPlugin('GridlyStoreKit').
-export function createAppleStoreKit({capacitor,plugin,authority,publicKey,deliverEntitlement,onNativeDenial,environment='production',crypto=globalThis.crypto,now=Date.now,timeoutMs=15000,purchaseTimeoutMs=120000}) {
+export function createAppleStoreKit({capacitor,plugin,authority,publicKey,deliverEntitlement,onNativeDenial,environment='production',crypto=globalThis.crypto,now=Date.now,monotonic=()=>globalThis.performance.now(),timeoutMs=15000,purchaseTimeoutMs=120000}) {
  let state=failure('verification_unavailable'),tail=Promise.resolve(),stopped=false,started=false,startPromise,signalTask;
  const listeners=[];
  const ios=()=>capacitor?.isNativePlatform?.()===true&&capacitor?.getPlatform?.()==='ios'&&!!plugin;
@@ -50,10 +50,11 @@ export function createAppleStoreKit({capacitor,plugin,authority,publicKey,delive
     let request=storeVerificationRequest({platform:'apple',environment:storeEnvironment,nativeAuthorizationEnvironment:'production',nonce,evidence:{signedTransactions:[native.signedTransaction]}});
     const handle=native.completionHandle;
     native=null; // Do not retain native evidence in session/read/UI state.
+    const requestClock=beginAppleProofRequest({nonce,now,monotonic});
     let proof;
     try {proof=await bounded(()=>authority.reconcile(request));}finally{request=null;}
     if(!active||stopped)return failure();
-    const verified=await verifyAuthorityProof({proof,publicKey,nonce,platform:'apple',environment:storeEnvironment,now:now(),crypto});
+    const verified=await verifyAppleResponseProof({proof,publicKey,nonce,environment:storeEnvironment,requestClock,crypto});
     if(!active||stopped)return failure('invalid_authority');
     if(verified.entitlementState==='unknown')return failure(verified.errorCategory==='invalid_authority'?'invalid_authority':'verification_unavailable');
     if(verified.entitlementState==='not_entitled')return verified;

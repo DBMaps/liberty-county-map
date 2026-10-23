@@ -239,3 +239,148 @@ authorized here.
 Production customer access restored: NOT VERIFIED. The unavailable customer's
 precise rejection and production public signer identity remain evidence gaps.
 Cleanup-monitor work remains suspended and was not inspected or changed.
+
+## Emergency native delivery extension — 2026-10-23
+
+This section supersedes the earlier Apple-unchanged statement for the locally
+prepared next candidate. It does not change the historical dee9d21e certification.
+
+### Reproduced Apple defect and local correction
+
+The exact approved application source 0e9eebd185dac45aa3382471870092852645941b
+was loaded as an isolated baseline. Synthetic, correctly signed ACTIVE Apple
+proofs with the local clock 1 second, 1 minute or 1 day behind server time produced
+UNKNOWN, denied access and zero transaction finishes. The aligned-time control
+unlocked. This reproduces an Apple client defect; it does not prove any particular
+customer's device state or the identity of the production signing key.
+
+The existing Android response-clock design now serves both stores through separate
+platform-bound, opaque, single-use request contexts. Apple starts its context before
+reconciliation and validates the response using the authenticated signed observation
+time plus conservative elapsed time. The coordinator uses the authenticated clock
+for both platforms. The strict standalone verifier, pinned public key, ES256 claims,
+nonce, product, environment, audience, five-minute lease, period expiry, restore,
+delivery-before-finish ordering and native authorization remain enforced. No offline
+payment grant was added. Existing native challenge time windows remain unchanged;
+large arbitrary clock offsets are not certified end to end through those windows.
+
+### Android delivery actually completed
+
+- Package com.gridlygo.gridly; versionName 1.0.1; versionCode 16.
+- Exact AAB: .artifacts/p0-android16-release/Gridly-1.0.1-versionCode16-clock-repair-release.aab
+- Bytes: 116038424.
+- SHA-256: ca4d5a25dacb6503b5e51e408fab74db2de5882819bc53ceb60dcbd90b629a1f.
+- Upload certificate SHA-256: 84fb65b7e36538dd1fb95727b89e4644bb0cf51a1bb270c254269dcdfcf7c8a3.
+  It matches the public Play upload fingerprint independently copied from Play's
+  upload-key control and the existing Gradle release signing report. No secret
+  values were printed, copied or changed.
+- The first authorized release build failed at signReleaseBundle with an exhausted
+  metaspace warning and a generated heap dump. The dump was removed without reading.
+  The owner then explicitly authorized ONE additional diagnostic build. A fresh
+  JDK21 process, 2GiB heap/1GiB metaspace and two workers succeeded. Two build
+  invocations total, one successfully certified artifact, ONE upload, no retry upload.
+- Official existing bundletool1.18.1 validation, unique ZIP entries/CRC, and all
+  1485 payload-entry signatures passed. Release/nondebuggable; manifest differs from
+  certified15 only by versionCode. Resources, native bridge and dependencies match15.
+- The certified15 AAB (SHA e4552cd03fef4c056f3b56374536bff8ecc395abc40cab6044ff2d9f3fe140ff)
+  supplied the preserved runtime payload. Exactly four files changed: entitlement,
+  Google billing, paid access and Apple StoreKit modules. Other1003 web files are
+  byte-identical, including performance, crossing, NWS/weather, legal and saved-data
+  runtime assets. No statewide assets were regenerated.
+- Play accepted the exact uploaded filename and16(1.0.1). Artifact ID4860243754369551831.
+  Existing Internal Testing track4700731124967069144, release15, is AVAILABLE TO
+  INTERNAL TESTERS as of Oct23 12:20PM CDT. Existing Testers list has2 eligible users;
+  no tester configuration or invitations changed. UI upload provenance identifies
+  the submitted bytes; no separate provider-returned whole-file checksum is claimed.
+- The sole Play warning is missing deobfuscation mapping. The existing release has
+  no new R8/minification configuration; device support did not change.
+- Postcheck: public14 remains Available on Google Play; production15 remains Ready
+  to publish; Managed Publishing ON. No production submission or rollout occurred.
+
+### Apple17 candidate preparation, not a signed binary
+
+Authenticated App Store Connect All Statuses history showed highest upload16 and
+no observed17. This is a point-in-time availability observation, not a reservation;
+recheck immediately before any future upload. The owner directly authorized local17
+metadata, exact recovery compatibility14/16/17 and matching fail-closed checks.
+
+Local project: com.gridlygo.gridly,1.0.1(17), iPhone, minimumOS16.4. The native
+controller changes only the exact recovery build whitelist. All migration, stored
+report, readiness, schema, origin, lifecycle and confirmation bodies remain unchanged.
+Build-only certification requires17, exact four-module P0 hashes and unchanged
+performance/NWS source before signing. Parity retains legacy14/16 contracts.
+
+No Apple archive/IPA was built or uploaded here. Windows cannot execute Xcode,
+actual Swift lifecycle compilation or codesign. The established macOS26/Xcode26
+workflow and existing distribution certificate/profile must be used; a reviewed
+build-only control must pin this new application commit and17, preserve the proven
+signing/attestation/cleanup body, and omit transfer. Do not run an old control pinned
+to0e9e/16: it would omit the repair. No workflow/tag/branch was published or dispatched.
+The local source handoff manifest/bundle identifies the exact prepared commit.
+
+The retained actual16 attestation is reused as baseline evidence: source0e9e,
+1007 runtime files, digest a633f1d201bed1fe98b6bae67c230076427829746b7ac0b0b5b36712c5009503,
+IPA SHA25f6d39e0892da826f1faf7bb52bdb2dfd6b83cc6710f11099db9758bd375d96,
+macOS run39879265009. Its IPA was deliberately removed by that workflow's cleanup;
+new17 archive/IPA parity is therefore PENDING, not inferred from local tests.
+Fresh Apple postcheck:1.0.1(16) Pending Developer Release, manual release selected;
+1.0.0 Ready for Distribution. No Apple store field or release was changed.
+
+### Focused certification and evidence
+
+Existing89/143 test evidence is retained; no broad audit was repeated. Selected
+runs overlap and must not be summed as unique tests:
+
+- Actual AAB-extracted Google/Apple clock and negative-security regressions:19/19.
+- Final staged Capacitor production Android bridge cases:9/9; AAB bytes match stage.
+- Apple clock/restore/replay, continuity, paid coordinator and report authorization:63/63.
+- Shared Google/Chromium/source parity:35/35; six source-preservation cases rechecked
+  after Apple17 metadata:6/6.
+- Apple17 build controls, including injected versions and clock-payload drift:17/17.
+- Portable native parity:7 PASS;1 real macOS codesign case explicitly SKIPPED.
+- Focused community loading/crossing and NWS safety tests passed. Strict full-source
+  preservation checks retain the17 approved performance hunks and NWS repair.
+- No unresolved final local assertion failure. Before-repair regression failures,
+  initial stale metadata/source-pin fixtures and the failed first build are retained.
+
+Evidence: .artifacts/p0-android16-release/{artifact-certification.json,
+signature-entry-verification.json,artifact-clock-security.tap,final-native-bridge.tap,
+final-stage-identity.json,release-build.log,release-build2.log,upload-attempt.json};
+.artifacts/p0-apple-clock-repair/{before.tap,after-focused.tap,security-continuity.tap,
+final-parity.tap,build17-controls-final.txt,final-source-preservation.tap,native-parity17.txt}.
+
+### Remaining acceptance and controlled next action
+
+Production entitlement signer identity remains independently UNVERIFIED. Upload
+certificate verification is a different key identity. No signing keys were rotated
+and no proof check bypassed. Wrong-key proofs still deny access.
+
+ADB check found0 authorized/unauthorized/offline devices; no install was performed.
+The two existing internal testers can opt in at
+https://play.google.com/apps/internaltest/4700731124967069144 and update14/15 to16
+in place through Play. Do not uninstall, clear data, repurchase or use reviewer codes.
+On an authorized owner account already holding a PRODUCTION subscription, verify
+startup admission, repeated reopen/foreground, restore, Home Area/settings/saved
+places/Route Watch, pending report preservation, location/map and alerts. Without
+that account/device, production acceptance stays pending; sandbox is not a substitute.
+Do not generate test community reports or collect customer evidence.
+
+Next Apple step: certified macOS build-only execution from this exact candidate,
+14 actual Swift lifecycle cases, production signing and complete archive/IPA runtime
+and native parity. A separately authorized TestFlight upload is then needed for
+physical in-place acceptance. Keep held16 until the replacement is certified.
+
+After both physical acceptance gates and signer compatibility close, obtain separate
+store-submission authorization to replace held Google15 with16 and held Apple16
+with17, request expedited review as appropriate, and retain Managed/Manual publishing.
+No public release is authorized. Do not release the currently held defective binaries.
+
+No backend, cleanup monitor, subscription products/prices/payment states,
+entitlements, customer records, settings or app-store public releases were modified.
+Customer access restored: NOT VERIFIED. The original customer's precise cause
+remains unproven.
+
+Additional final handoff checks: native-version compatibility3/3 PASS. The legacy
+Android staging gate still rejects16; the emergency AAB used exact certified artifact
+composition without widening reviewer authority. A local17 build-only control template
+reuses the actually certified f0906a8 macOS body and remains unpublished/unexecuted.

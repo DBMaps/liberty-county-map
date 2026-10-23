@@ -10,7 +10,7 @@ import OSLog
 enum GridlyLegacyRecoveryCompatibility {
     static func supports(bundleIdentifier: String?, buildNumber: String?) -> Bool {
         guard bundleIdentifier == "com.gridlygo.gridly", let buildNumber = buildNumber else { return false }
-        return ["14", "16"].contains(buildNumber)
+        return ["14", "16", "17"].contains(buildNumber)
     }
 }
 

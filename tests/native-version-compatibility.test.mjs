@@ -8,7 +8,7 @@ const baseline=path=>execFileSync('git',['show','faac47368da3137b50d53813b7f0299
 const current=async path=>(await readFile(path,'utf8')).replace(/\r\n/g,'\n');
 
 test('Android configuration changes only reviewed versionName/versionCode; package, signing, plugins and permissions stay exact',async()=>{
-  assert.equal(await current('android/app/build.gradle'),baseline('android/app/build.gradle').replace('versionCode 14','versionCode 15').replace("versionName '1.0.0'","versionName '1.0.1'"));
+  assert.equal(await current('android/app/build.gradle'),baseline('android/app/build.gradle').replace('versionCode 14','versionCode 16').replace("versionName '1.0.0'","versionName '1.0.1'"));
   for(const path of ['android/app/src/main/AndroidManifest.xml','android/app/src/main/java/com/gridlygo/gridly/MainActivity.kt','capacitor.config.json'])
     assert.equal(await current(path),baseline(path),path);
 });
@@ -22,8 +22,11 @@ test('Google reviewer change is limited to next build and retention of approved 
   assert.equal(await current(path),expected);
 });
 
-test('production staging binds package/version to the reviewed authority and rejects drift or arbitrary future builds',async()=>{
-  const metadata=await current('android/app/build.gradle');
+test('legacy production staging stays bound to reviewed authority; emergency16 requires certified artifact composition',async()=>{
+  const emergency=await current('android/app/build.gradle');
+  assert.match(emergency,/versionCode 16\b/);
+  assert.throws(()=>androidProductionBuildIdentity(emergency),/matching reviewed/);
+  const metadata=emergency.replace('versionCode 16','versionCode 15');
   assert.equal(GOOGLE_REVIEW_BUILD_VERSION,'15');
   assert.deepEqual(androidProductionBuildIdentity(metadata),{applicationId:'com.gridlygo.gridly',versionName:'1.0.1',versionCode:'15',reviewBuildVersion:'15'});
   const previous=metadata.replace('versionCode 15','versionCode 14').replace("versionName '1.0.1'","versionName '1.0.0'");
