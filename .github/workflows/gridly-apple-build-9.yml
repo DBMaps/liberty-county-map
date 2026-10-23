@@ -1,300 +1,416 @@
-name: Gridly Apple Build 14
+name: Gridly Apple 1.0.1 Build 17 authorized certification and Apple upload
 
+# Isolated, owner-authorized ONE-upload delivery control. No public release.
+# The application remains exactly pinned; only this registered workflow changes.
+# Existing certification control/tag is frozen. Publish only a new delivery tag.
 on:
   workflow_dispatch:
     inputs:
       commit_sha:
-        description: Exact certified launch commit to package
+        description: Exact certified application SHA (must match the fixed application pin)
         required: true
         type: string
       upload_to_app_store_connect:
-        description: Validate and upload the signed Build 14 IPA
+        description: Explicit owner approval for ONE Build17 upload and no public release or review submission
         required: true
         default: false
         type: boolean
+      control_commit:
+        description: Exact reviewed control commit named in the immutable control tag
+        required: true
+        type: string
+      apple_checked_at:
+        description: Genuine UTC time of fresh all-status Apple build/upload inspection
+        required: true
+        type: string
 
 permissions:
   contents: read
+  actions: read
+
+concurrency:
+  group: gridly-apple-delivery-build17
+  cancel-in-progress: false
 
 jobs:
-  apple-build-14:
-    if: ${{ inputs.upload_to_app_store_connect == true && github.ref == 'refs/heads/codex/restore-production-community-reporting' }}
+  archive-only:
+    if: github.repository == 'DBMaps/liberty-county-map' && github.actor == 'DBMaps' && github.event_name == 'workflow_dispatch' && inputs.upload_to_app_store_connect == true && github.run_attempt == 1 && startsWith(github.ref, 'refs/tags/gridly-apple-delivery-17-')
     runs-on: macos-26
     timeout-minutes: 90
+    env:
+      APPLICATION_SHA: '86bf721ddaf5b85e8786b1d74da240a048c98f96'
+      BUILD_NUMBER: '17'
+      CERTIFIED_CONTROL_SHA: 'f0906a8f2b504c3bae531fe03da30bd85fe8b875'
+      PYTHONDONTWRITEBYTECODE: '1'
+    defaults:
+      run:
+        shell: bash --noprofile --norc -e -o pipefail {0}
     steps:
-      - name: Checkout exact certified commit
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.commit_sha }}
-          fetch-depth: 4
+          ref: ${{ github.sha }}
+          path: control
+          fetch-depth: 0
           persist-credentials: false
-      - name: Verify source and Xcode
-        shell: bash
+      - uses: actions/checkout@v4
+        with:
+          ref: 86bf721ddaf5b85e8786b1d74da240a048c98f96
+          path: candidate
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify independent control and application provenance before secrets
         env:
-          EXPECTED_COMMIT_SHA: ${{ inputs.commit_sha }}
+          REVIEWED_CONTROL_COMMIT: ${{ inputs.control_commit }}
+          REQUESTED_APPLICATION_SHA: ${{ inputs.commit_sha }}
+          UPLOAD_REQUESTED: ${{ inputs.upload_to_app_store_connect }}
+          APPLE_CHECKED_AT: ${{ inputs.apple_checked_at }}
+          CERTIFICATION_TOKEN: ${{ github.token }}
         run: |
-          set -euo pipefail
-          [[ "$EXPECTED_COMMIT_SHA" =~ ^[0-9a-f]{40}$ ]]
-          test "$EXPECTED_COMMIT_SHA" = "$GITHUB_SHA"
-          test "$(git rev-parse HEAD)" = "$EXPECTED_COMMIT_SHA"
-          test "$(git rev-parse HEAD^)" = "389c9d7602925e2ae2c5811e84df460791e11e87"
-          test "$(git rev-parse HEAD^^)" = "f4a8f95890440bc0bde7d12c88b9088251ba0ffa"
-          test "$(git diff --name-only HEAD^^ HEAD^)" = "$(printf 'ios/App/App/GridlyBridgeViewController.swift\ntests/build13-native-pending-recovery.test.cjs\ntests/build14-native-lifecycle.test.py')"
-          test "$(git diff --name-only HEAD^ HEAD)" = "$(printf '.github/workflows/gridly-apple-build-9.yml\ntools/apple_native_parity.py')"
+          set +x
+          test "$GITHUB_REPOSITORY" = DBMaps/liberty-county-map
+          test "$GITHUB_ACTOR" = DBMaps
+          test "$GITHUB_EVENT_NAME" = workflow_dispatch
+          test "$UPLOAD_REQUESTED" = true
+          test "$GITHUB_RUN_ATTEMPT" = 1
+          [[ "$REVIEWED_CONTROL_COMMIT" =~ ^[0-9a-f]{40}$ ]]
+          test "$REQUESTED_APPLICATION_SHA" = "$APPLICATION_SHA"
+          test "$REVIEWED_CONTROL_COMMIT" = "$GITHUB_SHA"
+          test "$GITHUB_WORKFLOW_SHA" = "$REVIEWED_CONTROL_COMMIT"
+          test "$GITHUB_REF" = "refs/tags/gridly-apple-delivery-17-$REVIEWED_CONTROL_COMMIT"
+          test "$GITHUB_WORKFLOW_REF" = "DBMaps/liberty-county-map/.github/workflows/gridly-apple-build-9.yml@$GITHUB_REF"
+          test "$(git -C control rev-parse HEAD)" = "$REVIEWED_CONTROL_COMMIT"
+          test "$(git -C control cat-file -t "$GITHUB_REF")" = tag
+          test "$(git -C control rev-parse "$GITHUB_REF^{commit}")" = "$REVIEWED_CONTROL_COMMIT"
+          test "$(git -C control show -s --format=%P HEAD)" = "$APPLICATION_SHA"
+          test "$(git -C control diff --name-only --no-renames "$APPLICATION_SHA" HEAD)" = .github/workflows/gridly-apple-build-9.yml
+          control_state="$(git -C control status --porcelain --untracked-files=normal)"
+          test -z "$control_state"
+          test "$(git -C candidate rev-parse HEAD)" = "$APPLICATION_SHA"
+          candidate_state="$(git -C candidate status --porcelain --untracked-files=normal)"
+          test -z "$candidate_state"
+          python3 -B candidate/tools/apple_acceptance_build_only.py preflight --source candidate --source-commit "$APPLICATION_SHA" --build-number "$BUILD_NUMBER" --marketing-version 1.0.1
+          test "$(uname -s)" = Darwin
           xcodebuild -version | grep -E '^Xcode 26([. ]|$)'
-          grep -q 'GRIDLY_ANDROID_LICENSE_TEST_CANDIDATE = false' js/gridly-paid-ui.mjs
-          grep -q 'gridly-paid-report' js/app.js
-          grep -q 'versionCode 9' android/app/build.gradle
-      - name: Set up Node
-        uses: actions/setup-node@v4
+          swift --version >/dev/null
+          python3 - <<'PY'
+          import datetime, hashlib, json, os, re, subprocess, urllib.request
+          stamp = os.environ["APPLE_CHECKED_AT"]
+          assert re.fullmatch(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z", stamp), "invalid Apple inspection timestamp"
+          checked = datetime.datetime.fromisoformat(stamp.replace("Z", "+00:00"))
+          assert 0 <= (datetime.datetime.now(datetime.timezone.utc) - checked).total_seconds() <= 1800, "Apple inspection expired"
+          previous = subprocess.check_output(["git", "-C", "control", "show", os.environ["CERTIFIED_CONTROL_SHA"] + ":.github/workflows/gridly-apple-build-9.yml"])
+          assert hashlib.sha256(previous).hexdigest() == "db70da44f636e361df19b72cca9a95b6ffc373627f009708a416e8af0d2e5f3e", "certified control drift"
+          request = urllib.request.Request("https://api.github.com/repos/DBMaps/liberty-county-map/actions/runs/39873986805/attempts/2", headers={"Authorization": "Bearer " + os.environ["CERTIFICATION_TOKEN"], "Accept": "application/vnd.github+json"})
+          try:
+              with urllib.request.urlopen(request, timeout=30) as response:
+                  run = json.load(response)
+              assert run["id"] == 39873986805 and run["run_attempt"] == 2 and run["conclusion"] == "success"
+              assert run["head_sha"] == os.environ["CERTIFIED_CONTROL_SHA"]
+          except Exception:
+              raise SystemExit("PRIOR_CERTIFICATION_NOT_VERIFIED") from None
+          print("Historical signing-pipeline certification and fresh read-only Apple inspection verified")
+          PY
+      - uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: npm
-      - name: Install dependencies and test paid reporting
-        shell: bash
+      - name: Install locked dependencies and run bounded native contracts
+        working-directory: candidate
         run: |
-          set -euo pipefail
-          npm ci
-          node --test tests/build13-native-pending-recovery.test.cjs tests/paid-report-authorization.test.mjs tests/lp24465-paid-access.test.mjs tests/build11-pending-report-recovery.test.cjs tests/lp24463-apple-storekit.test.mjs tests/native-packaging.test.mjs
-          python3 -B tests/build14-native-lifecycle.test.py
+          npm ci --ignore-scripts
+          node --test tests/p0-apple-proof-clock.test.mjs tests/p0-google-proof-clock.test.mjs tests/community-loading-performance-repair.test.cjs tests/community-loading-nws-safety.test.cjs tests/community-loading-production-integration.test.cjs tests/native-packaging.test.mjs tests/build13-native-pending-recovery.test.cjs tests/paid-report-authorization.test.mjs tests/lp24463-apple-storekit.test.mjs tests/native-version-compatibility.test.mjs tests/google-review-access.test.mjs
+          node tools/android-acceptance/fast.mjs
           python3 -B tests/apple_native_parity_test.py
-      - name: Stage production web runtime and sync iOS
-        shell: bash
+          python3 -B tests/apple_acceptance_build_only_test.py
+      - name: Require all 14 compiled Swift compatibility and lifecycle cases
+        working-directory: candidate
+        run: |
+          python3 -B tests/build14-native-lifecycle.test.py | tee "$RUNNER_TEMP/gridly-swift-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT.txt"
+          grep -Fxq 'Production Swift lifecycle gate: 14 cases PASS' "$RUNNER_TEMP/gridly-swift-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT.txt"
+          rm -f "$RUNNER_TEMP/gridly-swift-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT.txt"
+      - name: Stage, sign, archive, export locally and attest (no transfer)
         env:
           GRIDLY_NATIVE_PROVIDER_CONFIG_BASE64: ${{ secrets.GRIDLY_NATIVE_PROVIDER_CONFIG_BASE64 }}
-        run: |
-          set -euo pipefail
-          test -n "$GRIDLY_NATIVE_PROVIDER_CONFIG_BASE64"
-          printf '%s' "$GRIDLY_NATIVE_PROVIDER_CONFIG_BASE64" | base64 -D > "$RUNNER_TEMP/native-provider-config.json"
-          npm run build:native-assets
-          node tools/native-web.mjs --runtime-config-file "$RUNNER_TEMP/native-provider-config.json" --report-file .artifacts/native-web-identity.json
-          node tools/native-web.mjs --verify --report-file .artifacts/native-web-identity.json
-          rm -f "$RUNNER_TEMP/native-provider-config.json"
-          npx cap sync ios
-          if test -f ios/App/Podfile; then (cd ios/App && pod install); fi
-          xcodebuild -resolvePackageDependencies -project ios/App/App.xcodeproj -scheme App
-      - name: Install distribution signing
-        shell: bash
-        env:
           APPLE_DIST_PRIVATE_KEY_PEM_BASE64: ${{ secrets.APPLE_DIST_PRIVATE_KEY_PEM_BASE64 }}
           APPLE_DIST_CERT_PEM_BASE64: ${{ secrets.APPLE_DIST_CERT_PEM_BASE64 }}
           APPLE_PROVISION_PROFILE_BASE64: ${{ secrets.APPLE_PROVISION_PROFILE_BASE64 }}
         run: |
-          set -euo pipefail
+          set +x
           umask 077
-          cleanup_signing_material() {
-            rm -f "$RUNNER_TEMP/distribution-private.key" "$RUNNER_TEMP/distribution-cert.pem" "$RUNNER_TEMP/distribution.p12"
-            unset TEMP_P12_PASSWORD KEYCHAIN_PASSWORD
-          }
-          trap cleanup_signing_material EXIT
-          test -n "$APPLE_DIST_PRIVATE_KEY_PEM_BASE64" && test -n "$APPLE_DIST_CERT_PEM_BASE64" && test -n "$APPLE_PROVISION_PROFILE_BASE64"
-          printf '%s' "$APPLE_DIST_PRIVATE_KEY_PEM_BASE64" | base64 -D > "$RUNNER_TEMP/distribution-private.key"
-          printf '%s' "$APPLE_DIST_CERT_PEM_BASE64" | base64 -D > "$RUNNER_TEMP/distribution-cert.pem"
-          printf '%s' "$APPLE_PROVISION_PROFILE_BASE64" | base64 -D > "$RUNNER_TEMP/distribution.mobileprovision"
-          KEY_PUBLIC_SHA=$(openssl pkey -in "$RUNNER_TEMP/distribution-private.key" -pubout -outform DER | shasum -a 256 | awk '{print $1}')
-          CERT_PUBLIC_SHA=$(openssl x509 -in "$RUNNER_TEMP/distribution-cert.pem" -pubkey -noout | openssl pkey -pubin -outform DER | shasum -a 256 | awk '{print $1}')
-          test -n "$KEY_PUBLIC_SHA" && test "$KEY_PUBLIC_SHA" = "$CERT_PUBLIC_SHA"
-          openssl version
-          TEMP_P12_PASSWORD="$(openssl rand -hex 32)"
-          export TEMP_P12_PASSWORD
-          openssl pkcs12 -export -legacy -inkey "$RUNNER_TEMP/distribution-private.key" -in "$RUNNER_TEMP/distribution-cert.pem" \
-            -out "$RUNNER_TEMP/distribution.p12" -passout env:TEMP_P12_PASSWORD
-          openssl pkcs12 -legacy -in "$RUNNER_TEMP/distribution.p12" -passin env:TEMP_P12_PASSWORD -info -noout >/dev/null 2>&1
-          KEYCHAIN_PASSWORD="$(openssl rand -base64 32)"
-          security create-keychain -p "$KEYCHAIN_PASSWORD" gridly-build.keychain
-          security unlock-keychain -p "$KEYCHAIN_PASSWORD" gridly-build.keychain
-          security import "$RUNNER_TEMP/distribution.p12" -k gridly-build.keychain -P "$TEMP_P12_PASSWORD" -T /usr/bin/codesign
-          security set-key-partition-list -S apple-tool:,apple: -s -k "$KEYCHAIN_PASSWORD" gridly-build.keychain >/dev/null
-          security list-keychains -d user -s gridly-build.keychain
-          security cms -D -i "$RUNNER_TEMP/distribution.mobileprovision" > "$RUNNER_TEMP/profile.plist"
-          PROFILE_NAME=$(/usr/libexec/PlistBuddy -c 'Print :Name' "$RUNNER_TEMP/profile.plist")
-          PROFILE_UUID=$(/usr/libexec/PlistBuddy -c 'Print :UUID' "$RUNNER_TEMP/profile.plist")
-          TEAM_ID=$(/usr/libexec/PlistBuddy -c 'Print :TeamIdentifier:0' "$RUNNER_TEMP/profile.plist")
-          APP_ID=$(/usr/libexec/PlistBuddy -c 'Print :Entitlements:application-identifier' "$RUNNER_TEMP/profile.plist")
-          test "$APP_ID" = "$TEAM_ID.com.gridlygo.gridly"
-          mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
-          cp "$RUNNER_TEMP/distribution.mobileprovision" "$HOME/Library/MobileDevice/Provisioning Profiles/$PROFILE_UUID.mobileprovision"
-          { printf 'PROFILE_NAME=%s\n' "$PROFILE_NAME"; printf 'TEAM_ID=%s\n' "$TEAM_ID"; } >> "$GITHUB_ENV"
-          rm -f "$RUNNER_TEMP/distribution.mobileprovision" "$RUNNER_TEMP/profile.plist"
-      - name: Archive and export Build 14
-        shell: bash
-        run: |
-          set -euo pipefail
-          SIGNING_IDENTITIES="$(security find-identity -v -p codesigning gridly-build.keychain)"
-          printf '%s\n' "$SIGNING_IDENTITIES"
-          printf '%s\n' "$SIGNING_IDENTITIES" | grep -Eq '^[[:space:]]*[0-9]+\) [[:xdigit:]]{40} "Apple Distribution: [^"]+"'
-          printf '%s\n' "$SIGNING_IDENTITIES" | grep -Fq '1264FCB7434D20490824D05F959D90D3825EA45C "Apple Distribution: DJ Burns Collective LLC (2XSH6R7K37)"'
-          xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release -destination 'generic/platform=iOS' \
-            -showBuildSettings CURRENT_PROJECT_VERSION=14 DEVELOPMENT_TEAM="$TEAM_ID" CODE_SIGN_STYLE=Manual \
-            CODE_SIGN_IDENTITY="Apple Distribution" PROVISIONING_PROFILE_SPECIFIER="$PROFILE_NAME" 2>&1 | \
-            awk -F ' = ' '/^Build settings for action .* and target App:$/ { in_app=1; next } /^Build settings for action .* and target / { in_app=0 } in_app && NF >= 2 { key=$1; sub(/^[[:space:]]+/, "", key); if (key ~ /^(CODE_SIGN_IDENTITY|CODE_SIGN_STYLE|DEVELOPMENT_TEAM|PROVISIONING_PROFILE_SPECIFIER|PRODUCT_BUNDLE_IDENTIFIER)$/) print key " = " $2 }' | \
-            tee "$RUNNER_TEMP/effective-signing-settings.txt"
-          grep -Fxq 'CODE_SIGN_IDENTITY = Apple Distribution' "$RUNNER_TEMP/effective-signing-settings.txt"
-          grep -Fxq 'CODE_SIGN_STYLE = Manual' "$RUNNER_TEMP/effective-signing-settings.txt"
-          grep -Fxq 'DEVELOPMENT_TEAM = 2XSH6R7K37' "$RUNNER_TEMP/effective-signing-settings.txt"
-          grep -Fxq 'PROVISIONING_PROFILE_SPECIFIER = Gridly App Store Build 9' "$RUNNER_TEMP/effective-signing-settings.txt"
-          grep -Fxq 'PRODUCT_BUNDLE_IDENTIFIER = com.gridlygo.gridly' "$RUNNER_TEMP/effective-signing-settings.txt"
-          cat > "$RUNNER_TEMP/ExportOptions.plist" <<EOF
+          test "$BUILD_NUMBER" = 17
+          private="$RUNNER_TEMP/gridly-build-only-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir -m 700 "$private"
+          # Secret-bearing tool logs remain runner-private; only allowlisted
+          # non-secret attestation fields are emitted after success.
+          exec 3>&1
+          exec > "$private/build.log" 2>&1
+          cd candidate
+          test -n "$GRIDLY_NATIVE_PROVIDER_CONFIG_BASE64"
+          printf '%s' "$GRIDLY_NATIVE_PROVIDER_CONFIG_BASE64" | base64 -D > "$private/native-config.json"
+          node tools/native-assets.mjs
+          node tools/native-web.mjs --runtime-config-file "$private/native-config.json" --report-file "$private/web-identity.json"
+          node tools/native-web.mjs --verify --report-file "$private/web-identity.json"
+          npx --no-install cap sync ios
+          if test -f ios/App/Podfile; then (cd ios/App && pod install); fi
+          xcodebuild -version | grep -E '^Xcode 26([. ]|$)'
+          xcodebuild -resolvePackageDependencies -project ios/App/App.xcodeproj -scheme App -derivedDataPath "$private/derived-data" -clonedSourcePackagesDirPath "$private/source-packages"
+          test -n "$APPLE_DIST_PRIVATE_KEY_PEM_BASE64"
+          test -n "$APPLE_DIST_CERT_PEM_BASE64"
+          test -n "$APPLE_PROVISION_PROFILE_BASE64"
+          printf '%s' "$APPLE_DIST_PRIVATE_KEY_PEM_BASE64" | base64 -D > "$private/key.pem"
+          printf '%s' "$APPLE_DIST_CERT_PEM_BASE64" | base64 -D > "$private/cert.pem"
+          printf '%s' "$APPLE_PROVISION_PROFILE_BASE64" | base64 -D > "$private/profile.mobileprovision"
+          key_sha=$(openssl pkey -in "$private/key.pem" -pubout -outform DER | shasum -a 256 | awk '{print $1}')
+          cert_sha=$(openssl x509 -in "$private/cert.pem" -pubkey -noout | openssl pkey -pubin -outform DER | shasum -a 256 | awk '{print $1}')
+          test "$key_sha" = "$cert_sha"
+          export P12_PASSWORD="$(openssl rand -hex 32)"
+          openssl pkcs12 -export -legacy -inkey "$private/key.pem" -in "$private/cert.pem" -out "$private/cert.p12" -passout env:P12_PASSWORD
+          openssl pkcs12 -legacy -in "$private/cert.p12" -passin env:P12_PASSWORD -info -noout >/dev/null 2>&1
+          keychain="$private/signing.keychain-db"
+          keychain_password="$(openssl rand -hex 32)"
+          security list-keychains -d user > "$private/previous-keychains.txt"
+          security create-keychain -p "$keychain_password" "$keychain"
+          security unlock-keychain -p "$keychain_password" "$keychain"
+          security import "$private/cert.p12" -k "$keychain" -P "$P12_PASSWORD" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple: -s -k "$keychain_password" "$keychain"
+          security list-keychains -d user -s "$keychain"
+          security find-identity -v -p codesigning "$keychain" | grep -F '1264FCB7434D20490824D05F959D90D3825EA45C "Apple Distribution: DJ Burns Collective LLC (2XSH6R7K37)"'
+          security cms -D -k "$keychain" -i "$private/profile.mobileprovision" > "$private/profile.plist"
+          # Existing certified profile and signing authority, never auto-renewed.
+          test "$(/usr/libexec/PlistBuddy -c 'Print :Name' "$private/profile.plist")" = 'Gridly App Store Build 9'
+          test "$(/usr/libexec/PlistBuddy -c 'Print :UUID' "$private/profile.plist")" = c0398bd6-9b5e-4935-82e7-40d117a4ccdc
+          test "$(/usr/libexec/PlistBuddy -c 'Print :TeamIdentifier:0' "$private/profile.plist")" = 2XSH6R7K37
+          test "$(/usr/libexec/PlistBuddy -c 'Print :Entitlements:application-identifier' "$private/profile.plist")" = 2XSH6R7K37.com.gridlygo.gridly
+          profile_dir="$HOME/Library/MobileDevice/Provisioning Profiles"
+          profile="$profile_dir/c0398bd6-9b5e-4935-82e7-40d117a4ccdc.mobileprovision"
+          mkdir -p "$profile_dir"
+          if test -f "$profile"; then cp "$profile" "$private/previous-profile.mobileprovision"; fi
+          cp "$private/profile.mobileprovision" "$profile"
+          cat > "$private/export.plist" <<'PLIST'
           <?xml version="1.0" encoding="UTF-8"?>
           <plist version="1.0"><dict>
-            <key>method</key><string>app-store-connect</string>
-            <key>signingStyle</key><string>manual</string>
-            <key>teamID</key><string>$TEAM_ID</string>
-            <key>provisioningProfiles</key><dict><key>com.gridlygo.gridly</key><string>$PROFILE_NAME</string></dict>
+          <key>method</key><string>app-store-connect</string>
+          <key>destination</key><string>export</string>
+          <key>manageAppVersionAndBuildNumber</key><false/>
+          <key>uploadSymbols</key><false/>
+          <key>signingStyle</key><string>manual</string>
+          <key>teamID</key><string>2XSH6R7K37</string>
+          <key>provisioningProfiles</key><dict><key>com.gridlygo.gridly</key><string>Gridly App Store Build 9</string></dict>
           </dict></plist>
-          EOF
-          xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release -destination 'generic/platform=iOS' \
-            -archivePath "$RUNNER_TEMP/Gridly-Build-14.xcarchive" CURRENT_PROJECT_VERSION=14 \
-            DEVELOPMENT_TEAM="$TEAM_ID" CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY="Apple Distribution" \
-            PROVISIONING_PROFILE_SPECIFIER="$PROFILE_NAME" archive
-          xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/Gridly-Build-14.xcarchive" \
-            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" -exportPath "$RUNNER_TEMP/gridly-export"
-          IPA=$(find "$RUNNER_TEMP/gridly-export" -maxdepth 1 -name '*.ipa' -print -quit)
-          test -n "$IPA" && test -f "$IPA"
-          printf 'IPA_PATH=%s\n' "$IPA" >> "$GITHUB_ENV"
-          shasum -a 256 "$IPA"
-          /usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$RUNNER_TEMP/Gridly-Build-14.xcarchive/Products/Applications/App.app/Info.plist" | grep -x 14
-          /usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$RUNNER_TEMP/Gridly-Build-14.xcarchive/Products/Applications/App.app/Info.plist" | grep -x 1.0.0
-          /usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$RUNNER_TEMP/Gridly-Build-14.xcarchive/Products/Applications/App.app/Info.plist" | grep -x com.gridlygo.gridly
-      - name: Certify archived and exported iPhone app
-        shell: bash
-        run: |
-          set -euo pipefail
-          APP="$RUNNER_TEMP/Gridly-Build-14.xcarchive/Products/Applications/App.app"
-          codesign --verify --deep --strict --verbose=2 "$APP"
-          codesign -d --verbose=4 "$APP" 2>&1 | grep -E '^(Identifier|Authority|TeamIdentifier|Timestamp)='
-          python3 - "$APP" "$IPA_PATH" <<'PY'
-          import hashlib
-          import json
-          import plistlib
-          import subprocess
-          import sys
-          import zipfile
-          from pathlib import Path
-          sys.path.insert(0, str(Path("tools").resolve()))
-          from apple_native_parity import certify_native_parity
-
-          app = Path(sys.argv[1])
-          ipa = Path(sys.argv[2])
-          source_commit = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
-          identity = json.loads(Path(".artifacts/native-web-identity.json").read_text())
-          assert identity["candidateGitSha"] == source_commit
-          assert identity["googleLicenseTest"] is False
-          assert len(identity["files"]) == 1005
-          for path in ("js/app.js", "js/gridly-report-protocol.js", "service-worker.js", "consumer-script-manifest.json"):
-              assert Path(path).read_bytes() == (Path("www") / path).read_bytes(), path
-          archive_info = plistlib.loads((app.parents[2] / "Info.plist").read_bytes())
-          profile = plistlib.loads(subprocess.check_output(["security", "cms", "-D", "-i", str(app / "embedded.mobileprovision")]))
-          assert profile["Name"] == "Gridly App Store Build 9"
-          assert profile["UUID"] == "c0398bd6-9b5e-4935-82e7-40d117a4ccdc"
-          assert profile["TeamIdentifier"] == ["2XSH6R7K37"]
-          assert profile["Entitlements"]["application-identifier"] == "2XSH6R7K37.com.gridlygo.gridly"
-          assert profile["Entitlements"].get("get-task-allow") is False
-          assert not profile.get("ProvisionsAllDevices") and "ProvisionedDevices" not in profile
-          entitlements = plistlib.loads(subprocess.check_output(["codesign", "-d", "--entitlements", ":-", str(app)], stderr=subprocess.DEVNULL))
-          assert entitlements["com.apple.developer.devicecheck.appattest-environment"] == "production"
-          assert entitlements.get("get-task-allow", False) is False
-          assert entitlements["application-identifier"] == "2XSH6R7K37.com.gridlygo.gridly"
-          assert entitlements["com.apple.developer.team-identifier"] == "2XSH6R7K37"
-          print("archive certification: " + json.dumps({"source_commit": source_commit, "archive_path": str(app.parents[2]), "archive_timestamp_utc": archive_info["CreationDate"].isoformat() + "Z", "profile_name": profile["Name"], "profile_uuid": profile["UUID"], "team_id": profile["TeamIdentifier"][0], "bundle_digest": identity["bundleDigest"]}, sort_keys=True))
-          expected = {
-              "CFBundleShortVersionString": "1.0.0",
-              "CFBundleVersion": "14",
-              "CFBundleIdentifier": "com.gridlygo.gridly",
-              "UIDeviceFamily": [1],
-          }
-          with (app / "Info.plist").open("rb") as file:
-              archived = plistlib.load(file)
-          with zipfile.ZipFile(ipa) as package:
-              names = package.namelist()
-              info_paths = [name for name in names if name.startswith("Payload/") and name.endswith(".app/Info.plist")]
-              assert len(info_paths) == 1, info_paths
-              exported = plistlib.loads(package.read(info_paths[0]))
-              certify_native_parity(app, ipa, "ios/App/App/GridlyBridgeViewController.swift")
-              public_prefix = info_paths[0].removesuffix("Info.plist") + "public/"
-              archived_files = {p.relative_to(app / "public").as_posix() for p in (app / "public").rglob("*") if p.is_file()}
-              exported_files = {name.removeprefix(public_prefix) for name in names if name.startswith(public_prefix) and not name.endswith("/")}
-              recorded_files = {record["path"] for record in identity["files"]}
-              assert recorded_files <= archived_files and recorded_files <= exported_files
-              # Capacitor adds only these two generated native loader files.
-              assert archived_files - recorded_files <= {"cordova.js", "cordova_plugins.js"}, archived_files - recorded_files
-              assert exported_files == archived_files
-              for record in identity["files"]:
-                  path = record["path"]
-                  expected_hash = record["sha256"]
-                  for label, body in (("stage", (Path("www") / path).read_bytes()), ("iOS public", (Path("ios/App/App/public") / path).read_bytes()), ("archive", (app / "public" / path).read_bytes()), ("IPA", package.read(public_prefix + path))):
-                      assert len(body) == record["bytes"] and hashlib.sha256(body).hexdigest() == expected_hash, (label, path)
-              print(f"source/stage/iOS/archive/IPA parity: {len(recorded_files)} governed files; no stale web assets")
-              for label, info in (("archive", archived), ("IPA", exported)):
-                  actual = {key: info.get(key) for key in expected}
-                  assert actual == expected, (label, actual)
-                  assert 2 not in info["UIDeviceFamily"], (label, info["UIDeviceFamily"])
-                  print(f"{label} identity: {json.dumps(actual, sort_keys=True)}")
-
-              def packaged(path):
-                  matches = [name for name in names if name.endswith("/public/" + path)]
-                  assert len(matches) == 1, (path, matches)
-                  return package.read(matches[0]).decode("utf-8")
-
-              app_js = packaged("js/app.js")
-              paid_files = {
-                  path: packaged(path)
-                  for path in (
-                      "js/gridly-paid-bootstrap.js",
-                      "js/gridly-paid-access.mjs",
-                      "js/gridly-paid-startup.mjs",
-                      "js/gridly-paid-config.mjs",
-                      "js/gridly-paid-ui.mjs",
-                  )
-              }
-              start = app_js.index("function gridlyAuthorizedReportTransport(")
-              end = app_js.index("/* LP244.29A REPORTING AVAILABILITY RUNTIME START */", start)
-              transport = app_js[start:end]
-              assert 'client.functions.invoke("gridly-paid-report"' in transport
-              assert "window.gridlyPaidReporting?.getProof()" in transport
-              assert transport.count("client.rpc(") == 1
-              assert 'if (name === "get_community_reporting_status") return client.rpc(name, args);' in transport
-              assert "GRIDLY_ANDROID_LICENSE_TEST_CANDIDATE = false;" in paid_files["js/gridly-paid-ui.mjs"]
-              assert "GRIDLY_ANDROID_LICENSE_TEST_CANDIDATE = true;" not in "\n".join(paid_files.values())
-              assert "QA_BYPASS" not in "\n".join(paid_files.values())
-              print("paid-report bridge and gridly-paid-report transport packaged")
-              print("raw writer absent from packaged client transport; debug QA bypass absent")
+          PLIST
+          xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release -destination 'generic/platform=iOS' -derivedDataPath "$private/derived-data" -clonedSourcePackagesDirPath "$private/source-packages" -archivePath "$private/Gridly.xcarchive" CURRENT_PROJECT_VERSION="$BUILD_NUMBER" MARKETING_VERSION=1.0.1 DEVELOPMENT_TEAM=2XSH6R7K37 CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY="Apple Distribution" PROVISIONING_PROFILE_SPECIFIER="Gridly App Store Build 9" archive
+          xcodebuild -exportArchive -archivePath "$private/Gridly.xcarchive" -exportOptionsPlist "$private/export.plist" -exportPath "$private/export"
+          ipa=$(find "$private/export" -maxdepth 1 -name '*.ipa' -print -quit)
+          test -n "$ipa"
+          python3 -B tools/apple_acceptance_build_only.py attest --source . --source-commit "$APPLICATION_SHA" --build-number "$BUILD_NUMBER" --marketing-version 1.0.1 --app "$private/Gridly.xcarchive/Products/Applications/App.app" --ipa "$ipa" --identity "$private/web-identity.json" > "$private/attestation.json"
+          # Add only the independently checked control provenance to the
+          # existing strict nonsecret application/signing attestation schema.
+          python3 - "$private/attestation.json" <<'PY'
+          import json, os, pathlib, re, subprocess, sys
+          path = pathlib.Path(sys.argv[1])
+          report = json.loads(path.read_text())
+          control = os.environ["GITHUB_SHA"]
+          assert re.fullmatch(r"[0-9a-f]{40}", control)
+          assert report["source"] == os.environ["APPLICATION_SHA"]
+          assert report["build"] == "17" and report["marketingVersion"] == "1.0.1"
+          assert report["uploaded"] is False and report["nativeCodeParity"] is True
+          assert report["bundleDigest"] == "sha256:ecec921aa2be35b03ef934dd5b2e79d49cf835ad0f3e424e3187f6b5e9767b20"
+          report["controlCommit"] = control
+          report["workflowSha256"] = __import__("hashlib").sha256(subprocess.check_output([
+              "git", "-C", "../control", "show", control + ":.github/workflows/gridly-apple-build-9.yml"])).hexdigest()
+          report["swiftLifecycleCasesPassed"] = 14
+          path.write_text(json.dumps(report, sort_keys=True) + "\n")
           PY
-      - name: Validate and upload IPA
-        shell: bash
+          cat "$private/attestation.json" >&3
+          cat "$private/attestation.json" >> "$GITHUB_STEP_SUMMARY"
+      - name: Validate and upload the single attested Build17 IPA
         env:
-          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
-          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
-          ASC_PRIVATE_KEY_P8_BASE64: ${{ secrets.ASC_PRIVATE_KEY_P8_BASE64 }}
           APPLE_ID_USERNAME: ${{ secrets.APPLE_ID_USERNAME }}
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          UPLOAD_REQUESTED: ${{ inputs.upload_to_app_store_connect }}
+          APPLE_CHECKED_AT: ${{ inputs.apple_checked_at }}
         run: |
-          set -euo pipefail
-          if test -n "$ASC_KEY_ID" && test -n "$ASC_ISSUER_ID" && test -n "$ASC_PRIVATE_KEY_P8_BASE64"; then
-            mkdir -p "$HOME/.appstoreconnect/private_keys"
-            printf '%s' "$ASC_PRIVATE_KEY_P8_BASE64" | base64 -D > "$HOME/.appstoreconnect/private_keys/AuthKey_$ASC_KEY_ID.p8"
-            chmod 600 "$HOME/.appstoreconnect/private_keys/AuthKey_$ASC_KEY_ID.p8"
-            xcrun altool --validate-app --type ios --file "$IPA_PATH" --apiKey "$ASC_KEY_ID" --apiIssuer "$ASC_ISSUER_ID"
-            xcrun altool --upload-app --type ios --file "$IPA_PATH" --apiKey "$ASC_KEY_ID" --apiIssuer "$ASC_ISSUER_ID"
-          else
-            test -n "$APPLE_ID_USERNAME" && test -n "$APPLE_APP_SPECIFIC_PASSWORD"
-            xcrun altool --validate-app --type ios --file "$IPA_PATH" --username "$APPLE_ID_USERNAME" --password "$APPLE_APP_SPECIFIC_PASSWORD"
-            xcrun altool --upload-app --type ios --file "$IPA_PATH" --username "$APPLE_ID_USERNAME" --password "$APPLE_APP_SPECIFIC_PASSWORD"
-          fi
-      - name: Preserve signed artifact for owner review
-        if: ${{ github.event.repository.private }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: gridly-apple-build-14
-          path: |
-            ${{ runner.temp }}/gridly-export/*.ipa
-            ${{ runner.temp }}/Gridly-Build-14.xcarchive
-          retention-days: 3
-          if-no-files-found: error
-      - name: Remove temporary signing material
+          set +x
+          umask 077
+          private="$RUNNER_TEMP/gridly-build-only-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          exec 3>&1
+          exec > "$private/transfer.log" 2>&1
+          cd candidate
+          python3 - "$private" <<'DELIVERY_PY'
+          """Embedded delivery control: one validated IPA, one upload, no public release."""
+          import datetime
+          import hashlib
+          import json
+          import os
+          import pathlib
+          import re
+          import signal
+          import subprocess
+          import sys
+          import time
+
+          APP = "86bf721ddaf5b85e8786b1d74da240a048c98f96"
+          DIGEST = "sha256:ecec921aa2be35b03ef934dd5b2e79d49cf835ad0f3e424e3187f6b5e9767b20"
+          CERT = "1264FCB7434D20490824D05F959D90D3825EA45C"
+          PROFILE = "c0398bd6-9b5e-4935-82e7-40d117a4ccdc"
+
+
+          def require(value, category):
+              if not value:
+                  raise RuntimeError(category)
+
+
+          def fresh(stamp, now=None):
+              require(isinstance(stamp, str) and re.fullmatch(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z", stamp), "APPLE_INSPECTION_INVALID")
+              checked = datetime.datetime.fromisoformat(stamp.replace("Z", "+00:00"))
+              age = ((now or datetime.datetime.now(datetime.timezone.utc)) - checked).total_seconds()
+              require(0 <= age <= 1800, "APPLE_INSPECTION_EXPIRED")
+
+
+          def proof(root, env):
+              require(root.resolve() == (pathlib.Path(env["RUNNER_TEMP"]) / ("gridly-build-only-" + env["GITHUB_RUN_ID"] + "-" + env["GITHUB_RUN_ATTEMPT"])).resolve(), "PRIVATE_PATH_REJECTED")
+              require(root.is_dir() and not root.is_symlink(), "PRIVATE_PATH_REJECTED")
+              if hasattr(os, "getuid"):
+                  require(root.stat().st_uid == os.getuid() and root.stat().st_mode & 0o077 == 0, "PRIVATE_OWNERSHIP_REJECTED")
+              require(env["GITHUB_RUN_ATTEMPT"] == "1", "RERUN_REJECTED")
+              require(env["GITHUB_REPOSITORY"] == "DBMaps/liberty-county-map" and env["GITHUB_ACTOR"] == "DBMaps", "OWNER_REJECTED")
+              require(env["UPLOAD_REQUESTED"] == "true" and env["APPLICATION_SHA"] == APP, "UPLOAD_NOT_AUTHORIZED")
+              require(re.fullmatch(r"[0-9a-f]{40}", env["GITHUB_SHA"]), "CONTROL_REJECTED")
+              require(env["GITHUB_REF"] == "refs/tags/gridly-apple-delivery-17-" + env["GITHUB_SHA"], "CONTROL_REJECTED")
+              fresh(env["APPLE_CHECKED_AT"])
+              marker = root / "upload-attempt.json"
+              require(not marker.exists() and not marker.is_symlink(), "PREVIOUS_UPLOAD_ATTEMPT")
+              report_path = root / "attestation.json"
+              require(report_path.is_file() and not report_path.is_symlink(), "SIGNED_PROOF_REJECTED")
+              report = json.loads(report_path.read_text())
+              require(report["source"] == APP and report["controlCommit"] == env["GITHUB_SHA"], "SOURCE_REJECTED")
+              require(report["appIdentity"] == {"CFBundleIdentifier": "com.gridlygo.gridly", "CFBundleShortVersionString": "1.0.1", "CFBundleVersion": "17", "UIDeviceFamily": [1]}, "IDENTITY_REJECTED")
+              require(report["build"] == "17" and report["marketingVersion"] == "1.0.1" and report["minimumOSVersion"] == "16.4", "IDENTITY_REJECTED")
+              require(report["files"] == 1007 and report["bundleDigest"] == DIGEST and report["team"] == "2XSH6R7K37", "ASSETS_REJECTED")
+              require(report["nativeCodeParity"] is True and report["uploaded"] is False and report["swiftLifecycleCasesPassed"] == 14, "SIGNED_PROOF_REJECTED")
+              native = report["nativeExecutableEvidence"]
+              require(all(native[k] is True for k in ("code_equal", "recovery_in_archive_and_ipa", "signed_artifacts_unchanged")), "NATIVE_PROOF_REJECTED")
+              require(native["certificateSha1"] == CERT and native["profileUUID"] == PROFILE and native["distributionAuthority"] == "Apple Distribution: DJ Burns Collective LLC (2XSH6R7K37)", "SIGNING_REJECTED")
+              require(subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip() == APP, "SOURCE_REJECTED")
+              require(not subprocess.check_output(["git", "status", "--porcelain", "--untracked-files=no"]), "DIRTY_APPLICATION")
+              workflow = subprocess.check_output(["git", "-C", "../control", "show", env["GITHUB_SHA"] + ":.github/workflows/gridly-apple-build-9.yml"])
+              require(hashlib.sha256(workflow).hexdigest() == report["workflowSha256"], "CONTROL_REJECTED")
+              ipas = list((root / "export").glob("*.ipa"))
+              require(len(ipas) == 1, "IPA_REJECTED")
+              ipa = ipas[0]
+              require(ipa.is_file() and not ipa.is_symlink() and ipa.resolve().parent == (root / "export").resolve(), "IPA_REJECTED")
+              require(ipa.stat().st_size == report["ipaBytes"] and hashlib.sha256(ipa.read_bytes()).hexdigest() == report["ipaSha256"], "IPA_CHANGED")
+              return ipa, report
+
+
+          def native_process(command, root, env, phase, timeout):
+              require(sys.platform == "darwin", "MACOS_REQUIRED")
+              child_env = {k: v for k, v in env.items() if k in {"PATH", "DEVELOPER_DIR", "SDKROOT", "LANG", "LC_ALL", "HOME"}}
+              (root / "tmp").mkdir(mode=0o700, exist_ok=True)
+              child_env["TMPDIR"] = str(root / "tmp") + "/"
+              # Preserve native HOME; never repeat the old fake-HOME Apple uploader issue.
+              if phase != "help":
+                  child_env["APPLE_APP_SPECIFIC_PASSWORD"] = env["APPLE_APP_SPECIFIC_PASSWORD"]
+              with (root / (phase + ".log")).open("wb") as output:
+                  process = subprocess.Popen(command, cwd=root, env=child_env, stdout=output, stderr=subprocess.STDOUT, start_new_session=True)
+                  try:
+                      return process.wait(timeout=timeout)
+                  finally:
+                      try:
+                          os.killpg(process.pid, signal.SIGTERM)
+                          time.sleep(0.25)
+                          try:
+                              os.killpg(process.pid, signal.SIGKILL)
+                          except ProcessLookupError:
+                              pass
+                      except ProcessLookupError:
+                          pass
+                      process.wait(timeout=5)
+
+
+          def emit(status):
+              # Fixed status schema only: no Apple output, account names or exception text.
+              encoded = json.dumps(status, sort_keys=True) + "\n"
+              with os.fdopen(os.dup(3), "w") as public:
+                  public.write(encoded)
+                  public.flush()
+              with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as summary:
+                  summary.write(encoded)
+
+
+          def transfer(root, env, invoke=native_process, publish=emit):
+              status = {"delivery": "NOT_ATTEMPTED", "phase": "LOCAL_PROOF", "applicationSource": APP,
+                        "controlCommit": env.get("GITHUB_SHA"), "appleAppId": "6814845611",
+                        "version": "1.0.1", "build": "17", "ipaSha256": None,
+                        "uploadAttempted": False, "uploaderExitCode": None,
+                        "appleProcessing": "NOT_VERIFIED", "publicRelease": False}
+              try:
+                  ipa, report = proof(root, env)
+                  status["ipaSha256"] = report["ipaSha256"]
+                  username, password = env.get("APPLE_ID_USERNAME", ""), env.get("APPLE_APP_SPECIFIC_PASSWORD", "")
+                  require(0 < len(username) <= 320 and username == username.strip() and not any(c.isspace() or ord(c) < 32 for c in username), "CREDENTIAL_FORMAT_REJECTED")
+                  require(0 < len(password) <= 1024 and password == password.strip() and not any(c in password for c in "\r\n\0"), "CREDENTIAL_FORMAT_REJECTED")
+                  status["phase"] = "LOCAL_TOOL_CHECK"
+                  require(invoke(["xcrun", "altool", "--help"], root, env, "help", 30) == 0, "TOOL_CHECK_FAILED")
+                  help_path = root / "help.log"
+                  require(help_path.stat().st_size <= 1048576, "TOOL_CHECK_FAILED")
+                  help_text = help_path.read_text()
+                  for flag in ("--upload-package", "--platform", "--apple-id", "--bundle-version", "--bundle-short-version-string", "--username", "--password"):
+                      require(re.search(r"(?<![\w-])" + re.escape(flag) + r"(?![\w-])", help_text), "TOOL_CHECK_FAILED")
+                  auth = ["--username", username, "--password", "@env:APPLE_APP_SPECIFIC_PASSWORD"]
+                  fresh(env["APPLE_CHECKED_AT"])
+                  status["phase"] = "APPLE_VALIDATION"
+                  require(invoke(["xcrun", "altool", "--platform", "ios", "--file", str(ipa), *auth, "--validate-app"], root, env, "validate", 900) == 0, "VALIDATION_FAILED")
+                  status["phase"] = "POST_VALIDATION_PROOF"
+                  current_ipa, current = proof(root, env)
+                  require(current_ipa == ipa and current == report, "SIGNED_PROOF_CHANGED")
+                  fresh(env["APPLE_CHECKED_AT"])
+                  # Exclusive, durable attempt marker BEFORE invoking Apple. Never retry.
+                  with (root / "upload-attempt.json").open("x") as marker:
+                      marker.write(json.dumps({"source": APP, "control": env["GITHUB_SHA"], "ipaSha256": report["ipaSha256"], "status": "ATTEMPT_STARTED"}))
+                      marker.flush()
+                      os.fsync(marker.fileno())
+                  status.update(phase="APPLE_UPLOAD", uploadAttempted=True, delivery="UPLOAD_OUTCOME_UNCERTAIN")
+                  publish(dict(status))
+                  code = invoke(["xcrun", "altool", "--upload-package", str(ipa), "--platform", "ios", "--apple-id", "6814845611", "--bundle-short-version-string", "1.0.1", "--bundle-version", "17", *auth], root, env, "upload", 900)
+                  status["uploaderExitCode"] = code
+                  require(code == 0, "UPLOAD_FAILED_OR_UNCERTAIN")
+                  status["delivery"] = "UPLOADER_SUCCEEDED_APPLE_UNCONFIRMED"
+                  return 0
+              except BaseException:
+                  if not status["uploadAttempted"]:
+                      status["delivery"] = "FAILED_BEFORE_UPLOAD"
+                  return 1
+              finally:
+                  publish(dict(status))
+
+
+          if __name__ == "__main__":
+              raise SystemExit(transfer(pathlib.Path(sys.argv[1]), os.environ))
+          DELIVERY_PY
+      - name: Remove private signing material and all build outputs
         if: always()
-        shell: bash
         run: |
-          rm -f "$RUNNER_TEMP/native-provider-config.json" "$RUNNER_TEMP/distribution-private.key" "$RUNNER_TEMP/distribution-cert.pem" "$RUNNER_TEMP/distribution.p12" "$RUNNER_TEMP/distribution.mobileprovision" "$RUNNER_TEMP/profile.plist"
-          rm -f "$HOME/.appstoreconnect/private_keys/AuthKey_"*.p8
-          security delete-keychain gridly-build.keychain 2>/dev/null || true
+          set +x
+          private="$RUNNER_TEMP/gridly-build-only-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          cleanup_failed=0
+          rm -f "$RUNNER_TEMP/gridly-swift-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT.txt" || cleanup_failed=1
+          if test -d "$private"; then
+            if test -f "$private/previous-keychains.txt"; then
+              python3 -c 'import pathlib, shlex, subprocess, sys; subprocess.run(["security", "list-keychains", "-d", "user", "-s", *shlex.split(pathlib.Path(sys.argv[1]).read_text())], check=True)' "$private/previous-keychains.txt" || cleanup_failed=1
+            fi
+            if test -f "$private/signing.keychain-db"; then security delete-keychain "$private/signing.keychain-db" 2>/dev/null || cleanup_failed=1; fi
+            # Restore only the provisioning profile this job replaced.
+            profile="$HOME/Library/MobileDevice/Provisioning Profiles/c0398bd6-9b5e-4935-82e7-40d117a4ccdc.mobileprovision"
+            if test -f "$private/profile.mobileprovision" && test -f "$profile" && cmp -s "$profile" "$private/profile.mobileprovision"; then
+              if test -f "$private/previous-profile.mobileprovision"; then cp "$private/previous-profile.mobileprovision" "$profile" || cleanup_failed=1; else rm -f "$profile" || cleanup_failed=1; fi
+            fi
+            rm -rf "$private" || cleanup_failed=1
+          fi
+          rm -rf "$GITHUB_WORKSPACE/candidate/www" "$GITHUB_WORKSPACE/candidate/ios/App/App/public" || cleanup_failed=1
+          test ! -e "$private" || cleanup_failed=1
+          if test "$cleanup_failed" = 0; then
+            printf '%s\n' '{"cleanup":"PASS"}' >> "$GITHUB_STEP_SUMMARY"
+          else
+            printf '%s\n' '{"cleanup":"FAIL"}' >> "$GITHUB_STEP_SUMMARY"
+          fi
+          exit "$cleanup_failed"
