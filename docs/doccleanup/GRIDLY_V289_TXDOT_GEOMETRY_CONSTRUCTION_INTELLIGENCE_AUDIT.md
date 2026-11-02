@@ -145,7 +145,7 @@ Gridly's TxDOT service currently recognizes these construction-relevant fields f
 ## 7. WZDx Construction Audit
 
 DriveTexas WZDx endpoint under review:  
-`https://api.drivetexas.org/api/conditions.wzdx.geojson?key=3976adf2-eedd-4a7d-8ea4-e91de3f95e89`
+`https://api.drivetexas.org/api/conditions.wzdx.geojson?key=[REDACTED_API_KEY]`
 
 ### 7.1 Schema structure
 
