@@ -427,7 +427,7 @@ Rationale:
 
 ### Live / external sources inspected
 
-- `https://api.drivetexas.org/api/conditions.geojson?key=3976adf2-eedd-4a7d-8ea4-e91de3f95e89`
+- `https://api.drivetexas.org/api/conditions.geojson?key=[REDACTED_API_KEY]`
 - `https://api.drivetexas.org/api-docs`
 - `https://api.drivetexas.org/`
 
@@ -442,7 +442,7 @@ rg -n "GRIDLY_TXDOT|gridlyTxdot|futureTxdot|normalizeTxdot|Txdot|txdot" js src p
 nl -ba js/gridlyTxdotService.js | sed -n '1,340p'
 cat package.json | sed -n '1,160p'
 env | sort | rg -n "proxy|PROXY|HTTP|HTTPS|ALL|NO_PROXY"
-curl -L -A 'Gridly audit' -D /tmp/headers_conditions.geojson -o /tmp/conditions.geojson 'https://api.drivetexas.org/api/conditions.geojson?key=3976adf2-eedd-4a7d-8ea4-e91de3f95e89' --max-time 60 -s -S -w 'HTTP %{http_code} bytes %{size_download}\n'
+curl -L -A 'Gridly audit' -D /tmp/headers_conditions.geojson -o /tmp/conditions.geojson 'https://api.drivetexas.org/api/conditions.geojson?key=[REDACTED_API_KEY]' --max-time 60 -s -S -w 'HTTP %{http_code} bytes %{size_download}\n'
 ```
 
 ### Environment limitation
