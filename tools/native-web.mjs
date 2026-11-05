@@ -8,6 +8,9 @@ import { execFileSync } from 'node:child_process';
 import { composeProductionRuntimeConfig } from './lp1831/prepare-cloudflare-preview-artifact.mjs';
 import {productionAndroidSource,PRODUCTION_SPECIALIZED_MODULES} from './android-production-sources.mjs';
 import {GOOGLE_REVIEW_BUILD_VERSION} from '../js/gridly-google-review-proof.mjs';
+import {PROFILE as ARCGIS_MAINTENANCE_PROFILE,maintenanceAndroidIdentity,maintenanceIosIdentity} from './arcgis-maintenance/contracts.mjs';
+import {readMaintenanceProviderInputs,verifyMaintenanceRuntime,assertMaintenanceOutput} from './arcgis-maintenance/staging.mjs';
+import {privatePathVerified} from './arcgis-maintenance/windows-private-path.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const output = resolve(root, process.argv.includes('--output') ? process.argv[process.argv.indexOf('--output') + 1] : 'www');
@@ -176,7 +179,8 @@ export async function stageNativeAddressRuntime(sourceRoot, destination) {
 
 const licenseTestOff='const GRIDLY_ANDROID_LICENSE_TEST_CANDIDATE = false;';
 const licenseTestOn='const GRIDLY_ANDROID_LICENSE_TEST_CANDIDATE = true;';
-export function androidProductionBuildIdentity(metadata,reviewVersion=GOOGLE_REVIEW_BUILD_VERSION) {
+export function androidProductionBuildIdentity(metadata,reviewVersion=GOOGLE_REVIEW_BUILD_VERSION,{maintenanceProfile}={}) {
+  if(maintenanceProfile!==undefined)return maintenanceAndroidIdentity(metadata,maintenanceProfile);
   const codes=[...metadata.matchAll(/^\s*versionCode (\d+)\s*$/gm)].map(match=>match[1]);
   const names=[...metadata.matchAll(/^\s*versionName ["']([^"']+)["']\s*$/gm)].map(match=>match[1]);
   const reviewedNames={'14':'1.0.0','15':'1.0.1'};
@@ -186,18 +190,25 @@ export function androidProductionBuildIdentity(metadata,reviewVersion=GOOGLE_REV
     throw Error('Production staging requires matching reviewed Gridly package/version/build and Google review authority');
   return {applicationId:'com.gridlygo.gridly',versionName:names[0],versionCode:codes[0],reviewBuildVersion:reviewVersion};
 }
-export async function stage(destination, { runtimeConfigFile, googleLicenseTest=false,androidProduction=false } = {}) {
+export async function stage(destination, { runtimeConfigFile, googleLicenseTest=false,androidProduction=false,maintenanceProfile,maintenanceOriginalFile } = {}) {
+  let maintenanceInputs;
+  if(maintenanceProfile!==undefined){
+    if(maintenanceProfile!==ARCGIS_MAINTENANCE_PROFILE||googleLicenseTest||!runtimeConfigFile||!maintenanceOriginalFile)throw Error('MAINTENANCE_EXPLICIT_PRIVATE_INPUTS_REQUIRED');
+    await assertMaintenanceOutput({repositoryRoot:root,outputDirectory:destination});
+    maintenanceInputs=await readMaintenanceProviderInputs({candidateFile:runtimeConfigFile,originalFile:maintenanceOriginalFile,verifyPrivateFile:privatePathVerified});
+    if(!androidProduction)maintenanceIosIdentity({project:await readFile(join(root,'ios/App/App.xcodeproj/project.pbxproj'),'utf8'),recovery:await readFile(join(root,'ios/App/App/GridlyBridgeViewController.swift'),'utf8'),profile:maintenanceProfile});
+  }
   if(androidProduction&&googleLicenseTest)throw Error('Production and license-test staging are mutually exclusive');
   if(androidProduction) {
     const metadata=await readFile(join(root,'android/app/build.gradle'),'utf8');
-    androidProductionBuildIdentity(metadata);
+    androidProductionBuildIdentity(metadata,GOOGLE_REVIEW_BUILD_VERSION,{maintenanceProfile});
   }
   const consumerScriptManifest = await readConsumerScriptManifest(root);
   let composedRuntimeConfig = null;
   if (runtimeConfigFile) {
     const ownerInput = resolve(runtimeConfigFile);
     let ownerBytes;
-    try { ownerBytes = await readFile(ownerInput); }
+    try { ownerBytes = maintenanceInputs?.candidateBytes || await readFile(ownerInput); }
     catch (error) {
       if (error.code === 'ENOENT') throw new Error(`NATIVE_PROVIDER_CONFIG_MISSING:${runtimeConfigFile}. On Windows run: powershell -ExecutionPolicy Bypass -File tools/Prepare-GridlyNative.ps1`);
       throw error;
@@ -373,7 +384,14 @@ async function identity(directory) {
   return { digest: `sha256:${hash.digest('hex')}`, files: records };
 }
 
-async function verify(directory, { reportFile, googleLicenseTest=false,androidProduction=false } = {}) {
+async function verify(directory, { reportFile, googleLicenseTest=false,androidProduction=false,maintenanceProfile,maintenanceOriginalFile,runtimeConfigFile } = {}) {
+  if(maintenanceProfile!==undefined){
+    if(maintenanceProfile!==ARCGIS_MAINTENANCE_PROFILE||googleLicenseTest||!reportFile)throw Error('MAINTENANCE_EXPLICIT_PRIVATE_INPUTS_REQUIRED');
+    await assertMaintenanceOutput({repositoryRoot:root,outputDirectory:directory,requireNew:false});
+    const inputs=await readMaintenanceProviderInputs({candidateFile:runtimeConfigFile,originalFile:maintenanceOriginalFile,verifyPrivateFile:privatePathVerified});
+    verifyMaintenanceRuntime({...inputs,canonicalBytes:await readFile(join(root,runtimeConfigPath)),runtimeBytes:await readFile(join(directory,runtimeConfigPath))});
+    if(!androidProduction)maintenanceIosIdentity({project:await readFile(join(root,'ios/App/App.xcodeproj/project.pbxproj'),'utf8'),recovery:await readFile(join(root,'ios/App/App/GridlyBridgeViewController.swift'),'utf8'),profile:maintenanceProfile});
+  }
   if(androidProduction&&googleLicenseTest)throw Error('Production and license-test staging are mutually exclusive');
   await verifyCommunitySubmissionBundle(directory);
   const consumerScriptManifest = await readConsumerScriptManifest(root);
@@ -447,8 +465,9 @@ async function verify(directory, { reportFile, googleLicenseTest=false,androidPr
     const actual = await identity(directory);
     if (reportFile) {
       const report = JSON.parse(await readFile(reportFile, 'utf8'));
+      if((report.maintenanceProfile||undefined)!==maintenanceProfile)throw Error('MAINTENANCE_REPORT_PROFILE_MISMATCH');
       if (report.bundleDigest !== actual.digest || report.googleLicenseTest !== googleLicenseTest || !!report.androidProduction !== androidProduction || JSON.stringify(report.files) !== JSON.stringify(actual.files)) throw new Error('Native configured bundle identity report mismatch.');
-      if(androidProduction&&JSON.stringify(report.androidBuildIdentity)!==JSON.stringify(androidProductionBuildIdentity(await readFile(join(root,'android/app/build.gradle'),'utf8'))))throw Error('Native Android build identity mismatch.');
+      if(androidProduction&&JSON.stringify(report.androidBuildIdentity)!==JSON.stringify(androidProductionBuildIdentity(await readFile(join(root,'android/app/build.gradle'),'utf8'),GOOGLE_REVIEW_BUILD_VERSION,{maintenanceProfile})))throw Error('Native Android build identity mismatch.');
     } else {
       await stage(temporary,{googleLicenseTest,androidProduction});
       const repeated = await identity(temporary);
@@ -463,8 +482,12 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
   const reportFile = option('--report-file');
   const googleLicenseTest=process.argv.includes('--google-license-test');
   const androidProduction=process.argv.includes('--android-production');
-  if (process.argv.includes('--verify')) await verify(output, { reportFile,googleLicenseTest,androidProduction }); else {
-    await stage(output, { runtimeConfigFile,googleLicenseTest,androidProduction });
+  const maintenanceFlagIndex=process.argv.indexOf('--arcgis-maintenance-profile');
+  const maintenanceProfile=maintenanceFlagIndex<0?undefined:process.argv[maintenanceFlagIndex+1];
+  if(maintenanceFlagIndex>=0&&maintenanceProfile!==ARCGIS_MAINTENANCE_PROFILE)throw Error('MAINTENANCE_PROFILE_REQUIRED');
+  const maintenanceOriginalFile=option('--original-runtime-config-file');
+  if (process.argv.includes('--verify')) await verify(output, { reportFile,googleLicenseTest,androidProduction,maintenanceProfile,maintenanceOriginalFile,runtimeConfigFile }); else {
+    await stage(output, { runtimeConfigFile,googleLicenseTest,androidProduction,maintenanceProfile,maintenanceOriginalFile });
     if (runtimeConfigFile) {
       if (!reportFile) throw new Error('--report-file is required with --runtime-config-file.');
       const attestation = await identity(output);
@@ -474,7 +497,8 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
         candidateGitSha: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim(),
         googleLicenseTest,
         androidProduction,
-        androidBuildIdentity: androidProduction ? androidProductionBuildIdentity(await readFile(join(root,'android/app/build.gradle'),'utf8')) : null,
+        ...(maintenanceProfile?{maintenanceProfile}:{}),
+        androidBuildIdentity: androidProduction ? androidProductionBuildIdentity(await readFile(join(root,'android/app/build.gradle'),'utf8'),GOOGLE_REVIEW_BUILD_VERSION,{maintenanceProfile}) : null,
         sourceGitState: {
           trackedDirty: !!execFileSync('git',['status','--porcelain','--untracked-files=no'],{cwd:root,encoding:'utf8'}).trim(),
           trackedDiffSha256: createHash('sha256').update(execFileSync('git',['diff','HEAD','--binary'],{cwd:root,maxBuffer:32*1024*1024})).digest('hex')

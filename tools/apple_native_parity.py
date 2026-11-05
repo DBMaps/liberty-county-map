@@ -20,6 +20,7 @@ CERT_SHA1 = "1264FCB7434D20490824D05F959D90D3825EA45C"
 TEAM = "2XSH6R7K37"
 BUNDLE = "com.gridlygo.gridly"
 PROFILE_UUID = "c0398bd6-9b5e-4935-82e7-40d117a4ccdc"
+MAINTENANCE_PROFILE = "arcgis-satellite-labels-2026-11"
 
 # An exact, reviewed compatibility extension. Every script, storage/migration
 # check and lifecycle/confirmation owner outside these two replacements stays
@@ -46,13 +47,19 @@ RECOVERY_GATE = '''    private var recoveryBuild: Bool {
     }'''
 
 
-def approved_recovery_source(legacy):
+def approved_recovery_source(legacy, maintenance_profile=None):
+    assert maintenance_profile in (None, MAINTENANCE_PROFILE), "MAINTENANCE_PROFILE_INVALID"
     marker = "// BEGIN TESTABLE RECOVERY GATE\n"
     assert legacy.count(marker) == legacy.count(LEGACY_RECOVERY_GATE) == 1, "unexpected Apple14 recovery source"
-    return legacy.replace(marker, marker + RECOVERY_COMPATIBILITY).replace(LEGACY_RECOVERY_GATE, RECOVERY_GATE)
+    compatibility = RECOVERY_COMPATIBILITY if maintenance_profile is None else RECOVERY_COMPATIBILITY.replace('["14", "16", "17"]', '["14", "16", "17", "18"]')
+    return legacy.replace(marker, marker + compatibility).replace(LEGACY_RECOVERY_GATE, RECOVERY_GATE)
 
 
-def validate_recovery_build(source, build_number):
+def validate_recovery_build(source, build_number, maintenance_profile=None):
+    if maintenance_profile is not None:
+        expected = RECOVERY_COMPATIBILITY.replace('["14", "16", "17"]', '["14", "16", "17", "18"]')
+        assert maintenance_profile == MAINTENANCE_PROFILE and build_number == "18" and RECOVERY_GATE in source and expected in source, "RECOVERY_BUILD_MISMATCH: exact maintenance18 contract required"
+        return
     if build_number == "14" and LEGACY_RECOVERY_GATE in source and "enum GridlyLegacyRecoveryCompatibility" not in source:
         return
     assert build_number in ("14", "16", "17") and RECOVERY_GATE in source and RECOVERY_COMPATIBILITY in source, "RECOVERY_BUILD_MISMATCH: only reviewed Builds14/16/17 and the fixed compatibility contract are permitted"
@@ -144,14 +151,17 @@ def validate_entitlements(entitlements):
     assert entitlements["com.apple.developer.team-identifier"] == TEAM, "wrong signed team"
 
 
-def expected_app_identity(build_number="14", marketing_version="1.0.0"):
+def expected_app_identity(build_number="14", marketing_version="1.0.0", maintenance_profile=None):
     assert isinstance(build_number, str) and re.fullmatch(r"[1-9][0-9]*", build_number), "invalid build number"
-    assert marketing_version == "1.0.0" or (marketing_version == "1.0.1" and build_number in ("16", "17")), "unreviewed marketing version/build"
+    if maintenance_profile is not None:
+        assert maintenance_profile == MAINTENANCE_PROFILE and build_number == "18" and marketing_version == "1.0.2", "unreviewed maintenance identity"
+    else:
+        assert marketing_version == "1.0.0" or (marketing_version == "1.0.1" and build_number in ("16", "17")), "unreviewed marketing version/build"
     return {"CFBundleShortVersionString": marketing_version, "CFBundleVersion": build_number,
             "CFBundleIdentifier": BUNDLE, "UIDeviceFamily": [1]}
 
 
-def signed_app_facts(app, certificate_prefix, build_number="14", marketing_version="1.0.0"):
+def signed_app_facts(app, certificate_prefix, build_number="14", marketing_version="1.0.0", maintenance_profile=None):
     subprocess.run(["codesign", "--verify", "--deep", "--strict", "--verbose=2", str(app)], check=True)
     result = subprocess.run(["codesign", "-d", "--verbose=4", str(app)], check=True, capture_output=True, text=True)
     lines = result.stderr.splitlines() + result.stdout.splitlines()
@@ -173,16 +183,16 @@ def signed_app_facts(app, certificate_prefix, build_number="14", marketing_versi
     info = plistlib.loads((app / "Info.plist").read_bytes())
     architectures = subprocess.check_output(["lipo", "-archs", str(app / info["CFBundleExecutable"])], text=True).strip().split()
     assert architectures == ["arm64"], "unexpected executable architecture(s)"
-    expected = expected_app_identity(build_number, marketing_version)
+    expected = expected_app_identity(build_number, marketing_version, maintenance_profile)
     assert {key: info.get(key) for key in expected} == expected, "wrong app version/build/bundle/device family"
     return {"codesign": metadata, "certificate_sha1": leaf_sha1, "entitlements": entitlements, "architectures": architectures,
             "profile_uuid": profile["UUID"], "identity": expected, "executable": info["CFBundleExecutable"]}
 
 
-def certify_native_parity(app, ipa, native_source, build_number="14", marketing_version="1.0.0"):
+def certify_native_parity(app, ipa, native_source, build_number="14", marketing_version="1.0.0", maintenance_profile=None):
     app, ipa = Path(app), Path(ipa)
     source = Path(native_source).read_text(encoding="utf-8")
-    validate_recovery_build(source, build_number)
+    validate_recovery_build(source, build_number, maintenance_profile)
     match = re.search(r'private static let legacyRecoveryScript = #"""\n(.*?)\n\s*"""#', source, re.S)
     assert match, "missing scoped recovery body"
     recovery = textwrap.dedent(match.group(1)).encode()
@@ -197,8 +207,8 @@ def certify_native_parity(app, ipa, native_source, build_number="14", marketing_
         exported_apps = list((work / "export" / "Payload").glob("*.app"))
         assert len(exported_apps) == 1, "expected one exported iPhone app"
         exported_app = exported_apps[0]
-        archive_facts = signed_app_facts(app, work / "archive-cert-", build_number, marketing_version)
-        ipa_facts = signed_app_facts(exported_app, work / "ipa-cert-", build_number, marketing_version)
+        archive_facts = signed_app_facts(app, work / "archive-cert-", build_number, marketing_version, maintenance_profile)
+        ipa_facts = signed_app_facts(exported_app, work / "ipa-cert-", build_number, marketing_version, maintenance_profile)
         assert archive_facts["entitlements"] == ipa_facts["entitlements"], "archive/IPA entitlement mismatch"
         assert archive_facts["identity"] == ipa_facts["identity"] and archive_facts["executable"] == ipa_facts["executable"]
         archive_path = app / archive_facts["executable"]
