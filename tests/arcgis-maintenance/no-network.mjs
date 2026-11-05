@@ -28,6 +28,10 @@ for(const method of ['spawnSync','execFileSync']){
   const name=basename(String(command)).toLowerCase().replace(/\.exe$/,'');
   if(name==='git'&&['show','diff','ls-files','check-ignore'].includes(args[0]))
    return original.call(this,command,args,{...options,shell:false});
+ if(command==='/bin/ls'&&args.length===2&&args[0]==='-ldeO'&&typeof args[1]==='string'&&args[1].startsWith('/')&&!/[\r\n\u0000]/.test(args[1]))
+   return original.call(this,command,args,{...options,shell:false}); // Read-only macOS ACL inspection only.
+ if(command==='/sbin/mount'&&args.length===0)
+   return original.call(this,command,args,{...options,shell:false}); // Inventory only; no mount/unmount operation.
   if((name==='node'||command===process.execPath)&&args.length===2
     &&args[0]==='tools/lp1841a/build-privacy-audit.mjs'&&args[1]==='verify')
    return original.call(this,command,['--import',fileURLToPath(import.meta.url),...args],{...options,shell:false});

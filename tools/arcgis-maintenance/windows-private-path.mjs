@@ -1,6 +1,7 @@
 import {execFileSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import {assertPlainPath} from './staging.mjs';
+import {macPrivatePathVerified} from './mac-private-path.mjs';
 export async function windowsPrivatePathVerified(path,kind='File') {
   if(process.platform!=='win32'||!['File','Directory'].includes(kind))return false;
   try {
@@ -11,9 +12,8 @@ export async function windowsPrivatePathVerified(path,kind='File') {
     return result.trim()==='PRIVATE_PATH_VALID';
   }catch{return false;}
 }
-export async function privatePathVerified(path,kind='File') {
+export async function privatePathVerified(path,kind='File',options={}) {
   if(process.platform==='win32')return windowsPrivatePathVerified(path,kind);
-  // POSIX mode bits alone do not prove macOS extended ACL privacy.
-  // An owner-reviewed Mac ACL adapter is required before real iOS staging.
+  if(process.platform==='darwin')return macPrivatePathVerified(path,kind,options);
   return false;
 }

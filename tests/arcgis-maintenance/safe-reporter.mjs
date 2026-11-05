@@ -2,7 +2,7 @@
 import { relative } from 'node:path';
 export default async function* report(events) {
   for await (const event of events) {
-    if (event.type === 'test:pass') yield JSON.stringify({type:'pass',file:relative(process.cwd(),event.data.file || ''),name:event.data.name}) + '\n';
+    if (event.type === 'test:pass') yield JSON.stringify({type:event.data.skip?'skip':'pass',file:relative(process.cwd(),event.data.file || ''),name:event.data.name}) + '\n';
     if (event.type === 'test:fail') {
       const error = event.data.details?.error;
       const cause=error?.cause||error;

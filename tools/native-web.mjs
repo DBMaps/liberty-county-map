@@ -190,12 +190,12 @@ export function androidProductionBuildIdentity(metadata,reviewVersion=GOOGLE_REV
     throw Error('Production staging requires matching reviewed Gridly package/version/build and Google review authority');
   return {applicationId:'com.gridlygo.gridly',versionName:names[0],versionCode:codes[0],reviewBuildVersion:reviewVersion};
 }
-export async function stage(destination, { runtimeConfigFile, googleLicenseTest=false,androidProduction=false,maintenanceProfile,maintenanceOriginalFile } = {}) {
+export async function stage(destination, { runtimeConfigFile, googleLicenseTest=false,androidProduction=false,maintenanceProfile,maintenanceOriginalFile,maintenancePrivateRoot } = {}) {
   let maintenanceInputs;
   if(maintenanceProfile!==undefined){
     if(maintenanceProfile!==ARCGIS_MAINTENANCE_PROFILE||googleLicenseTest||!runtimeConfigFile||!maintenanceOriginalFile)throw Error('MAINTENANCE_EXPLICIT_PRIVATE_INPUTS_REQUIRED');
     await assertMaintenanceOutput({repositoryRoot:root,outputDirectory:destination});
-    maintenanceInputs=await readMaintenanceProviderInputs({candidateFile:runtimeConfigFile,originalFile:maintenanceOriginalFile,verifyPrivateFile:privatePathVerified});
+    maintenanceInputs=await readMaintenanceProviderInputs({candidateFile:runtimeConfigFile,originalFile:maintenanceOriginalFile,verifyPrivateFile:path=>privatePathVerified(path,'File',{authorizedRoot:maintenancePrivateRoot})});
     if(!androidProduction)maintenanceIosIdentity({project:await readFile(join(root,'ios/App/App.xcodeproj/project.pbxproj'),'utf8'),recovery:await readFile(join(root,'ios/App/App/GridlyBridgeViewController.swift'),'utf8'),profile:maintenanceProfile});
   }
   if(androidProduction&&googleLicenseTest)throw Error('Production and license-test staging are mutually exclusive');
@@ -384,11 +384,11 @@ async function identity(directory) {
   return { digest: `sha256:${hash.digest('hex')}`, files: records };
 }
 
-async function verify(directory, { reportFile, googleLicenseTest=false,androidProduction=false,maintenanceProfile,maintenanceOriginalFile,runtimeConfigFile } = {}) {
+async function verify(directory, { reportFile, googleLicenseTest=false,androidProduction=false,maintenanceProfile,maintenanceOriginalFile,runtimeConfigFile,maintenancePrivateRoot } = {}) {
   if(maintenanceProfile!==undefined){
     if(maintenanceProfile!==ARCGIS_MAINTENANCE_PROFILE||googleLicenseTest||!reportFile)throw Error('MAINTENANCE_EXPLICIT_PRIVATE_INPUTS_REQUIRED');
     await assertMaintenanceOutput({repositoryRoot:root,outputDirectory:directory,requireNew:false});
-    const inputs=await readMaintenanceProviderInputs({candidateFile:runtimeConfigFile,originalFile:maintenanceOriginalFile,verifyPrivateFile:privatePathVerified});
+    const inputs=await readMaintenanceProviderInputs({candidateFile:runtimeConfigFile,originalFile:maintenanceOriginalFile,verifyPrivateFile:path=>privatePathVerified(path,'File',{authorizedRoot:maintenancePrivateRoot})});
     verifyMaintenanceRuntime({...inputs,canonicalBytes:await readFile(join(root,runtimeConfigPath)),runtimeBytes:await readFile(join(directory,runtimeConfigPath))});
     if(!androidProduction)maintenanceIosIdentity({project:await readFile(join(root,'ios/App/App.xcodeproj/project.pbxproj'),'utf8'),recovery:await readFile(join(root,'ios/App/App/GridlyBridgeViewController.swift'),'utf8'),profile:maintenanceProfile});
   }
@@ -486,8 +486,9 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
   const maintenanceProfile=maintenanceFlagIndex<0?undefined:process.argv[maintenanceFlagIndex+1];
   if(maintenanceFlagIndex>=0&&maintenanceProfile!==ARCGIS_MAINTENANCE_PROFILE)throw Error('MAINTENANCE_PROFILE_REQUIRED');
   const maintenanceOriginalFile=option('--original-runtime-config-file');
-  if (process.argv.includes('--verify')) await verify(output, { reportFile,googleLicenseTest,androidProduction,maintenanceProfile,maintenanceOriginalFile,runtimeConfigFile }); else {
-    await stage(output, { runtimeConfigFile,googleLicenseTest,androidProduction,maintenanceProfile,maintenanceOriginalFile });
+  const maintenancePrivateRoot=option('--maintenance-private-root');
+  if (process.argv.includes('--verify')) await verify(output, { reportFile,googleLicenseTest,androidProduction,maintenanceProfile,maintenanceOriginalFile,runtimeConfigFile,maintenancePrivateRoot }); else {
+    await stage(output, { runtimeConfigFile,googleLicenseTest,androidProduction,maintenanceProfile,maintenanceOriginalFile,maintenancePrivateRoot });
     if (runtimeConfigFile) {
       if (!reportFile) throw new Error('--report-file is required with --runtime-config-file.');
       const attestation = await identity(output);

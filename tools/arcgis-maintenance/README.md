@@ -22,7 +22,7 @@ The existing `tools/native-web.mjs --runtime-config-file` interface accepts a fi
 3. `--android-production` for Android; never license-test mode.
 4. The exact future identity described above; the unchanged release projects intentionally fail this check.
 5. A new, absent, ignored and untracked `www` output with no symlink/junction ancestors. Existing output is refused rather than deleted or merged.
-6. A non-repository, non-synchronized candidate with owner-only protected Windows ACLs; SYSTEM/Administrators are allowed. Both file and parent directory are checked. macOS real-input verification currently returns false: POSIX mode bits alone do not certify extended ACL privacy. A reviewed Mac ACL adapter and secure local input are prerequisites.
+6. A non-repository, non-synchronized candidate with owner-only protected Windows ACLs; SYSTEM/Administrators are allowed. Both file and parent directory are checked. On macOS the new read-only adapter requires an explicit `--maintenance-private-root`, owner600 file, owner700 root, safe ancestors and no ACL grants. Actual macOS execution remains ENVIRONMENT_UNAVAILABLE on Windows. A secure Mac-local input is not yet provisioned.
 
 The JSON schema is exactly `arcgisStaticBasemapApiKey` and `driveTexas.apiKey`. Missing, extra, duplicate/escaped properties, empty/control-character/trim-damaged values and malformed JSON are rejected with fixed errors. The candidate ArcGIS value must differ; DriveTexas must match. Comparison uses fresh process-local HMACs that are never returned or recorded. Canonical runtime composition is additive and verified byte-for-byte; unrelated canonical settings remain intact. No default provider input or original-key fallback is accepted in maintenance mode.
 
@@ -40,7 +40,7 @@ Installation is unarmed. All traffic is denied until arming. Only unmodified GET
 
 Evidence contains only request ordinal, platform, allowlisted origin/Referer classifications, HTTP status, allowlisted content type, structural PNG/CRC validity and rendering status. It excludes request URLs, query strings, raw headers, keys, token fingerprints and response bodies. PNG validation is structural, not native image decoding; a synthetic rendered flag is not native rendering evidence.
 
-**Native interception is NOT certified.** Capability declarations are adapter prerequisites, not proof that Android WebView/WKWebView traffic is intercepted. No concrete native adapter is included. Real network testing remains blocked until a reviewed adapter proves pre-navigation whole-context interception, retries/redirects disabled, restart-safe budget use and secret-safe output. On adapter absence/insufficient capability, activation throws a fixed error. The controller always reports `nativeAdapterCertified:false`.
+**Native interception is NOT runtime-certified.** Concrete diagnostic source is now provided under `native/android` and `native/ios`; it is excluded from production target membership. The original host controller still reports `nativeAdapterCertified:false`. Android source intercepts an owned fresh WebView and handles TLS without HTTP fall-through. iOS cannot intercept ordinary HTTPS using WKURLSchemeHandler: its source blocks WKWebView HTTP(S) and uses a separate explicit native TLS path with no fabricated headers. See [INFRASTRUCTURE.md](INFRASTRUCTURE.md) for source evidence, limitations and required native synthetic certification. No native compilation/execution or actual macOS certification is implied. Real provider testing remains blocked.
 
 ## Offline validation commands
 
@@ -59,3 +59,5 @@ Protected regressions: Android129 PASS /133, iOS130 PASS /133. Android's release
 Preserve all existing worktrees, credentials, native packages, consumer source and notification development. Production reporting status, account declarations, public UGC operational compliance, Mac readiness and actual emitted native referrers remain separate unverified gates. Original credential expiration: November30,2026; replacement expiration November1,2027 is owner-confirmed, not independently verified by these tests.
 
 **ARCGIS_PREBUILD_PARTIAL** — tooling and synthetic contracts prepared; no native/live authorization implied. Stop for owner review.
+
+The subsequent infrastructure work is classified separately in `INFRASTRUCTURE.md`. Initial test counts above describe preparation; current infrastructure counts are reported there.
