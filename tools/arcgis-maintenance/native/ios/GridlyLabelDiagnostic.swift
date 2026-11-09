@@ -1,6 +1,5 @@
-// Diagnostic source only. NOT a production target member or Capacitor subclass.
-// Both conditions are required; a shipping Release target contains no fixture code.
-#if DEBUG && GRIDLY_ARCGIS_DIAGNOSTIC
+// Diagnostic source only. Compiled for the standalone fixture or an explicit Build 18 opt-in.
+#if GRIDLY_ARCGIS_DIAGNOSTIC && (DEBUG || GRIDLY_BUILD18_DIAGNOSTIC)
 import UIKit
 import WebKit
 import Network
@@ -9,13 +8,15 @@ import Darwin
 
 private enum DiagnosticFailure: Error { case stopped, http(Int) }
 
-private final class NativeLabelBudget {
+// The sidecar stays on disk if we cannot prove that completion was persisted.
+final class NativeLabelBudget {
+    private enum Operation: Equatable { case inspect, reserve, complete, stop }
     private let file: URL
-    private var flightHeld = false
+    private(set) var flightHeld = false
     private let prefix: String
-    private static func location(_ run: String) throws -> URL {
+    private static func location(_ run: String, createDirectory: Bool = false) throws -> URL {
         guard run.range(of: "^owner-[a-f0-9]{32}$", options: .regularExpression) != nil else { throw DiagnosticFailure.stopped }
-        let root = try FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: false).resolvingSymlinksInPath().standardizedFileURL
+        let root = try FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: createDirectory).resolvingSymlinksInPath().standardizedFileURL
         let url = root.appendingPathComponent("arcgis-ios-\(run).ledger")
         guard url.resolvingSymlinksInPath().standardizedFileURL == url.standardizedFileURL else { throw DiagnosticFailure.stopped }
         return url
@@ -23,39 +24,54 @@ private final class NativeLabelBudget {
     // Explicit owner provisioning, never invoked by opening/arming/restarting a fixture.
     static func provision(run: String, mode: String) throws {
         guard mode == GridlyLabelDiagnostic.mode else { throw DiagnosticFailure.stopped }
-        let url = try location(run)
+        let url = try location(run, createDirectory: true)
         let fd = Darwin.open(url.path, O_WRONLY | O_CREAT | O_EXCL | O_NOFOLLOW, S_IRUSR | S_IWUSR)
         guard fd >= 0 else { throw DiagnosticFailure.stopped }
         defer { Darwin.close(fd) }
-        let bytes = Array("GRIDLY_LABELS_V1:ios:\(run)\n".utf8)
+        let bytes = Array("GRIDLY_LABELS_V2:ios:\(run)\n".utf8)
         let written = bytes.withUnsafeBytes { Darwin.write(fd, $0.baseAddress, $0.count) }
         guard written == bytes.count, fsync(fd) == 0 else { throw DiagnosticFailure.stopped }
         var privateURL = url
         var values = URLResourceValues(); values.isExcludedFromBackup = true
         try privateURL.setResourceValues(values)
+        try syncParent(of: url)
         // A partial file remains invalid. Never delete/reset a failed provisioning.
     }
     init(run: String) throws {
         file = try Self.location(run)
-        prefix = "GRIDLY_LABELS_V1:ios:\(run)\n"
-        guard !FileManager.default.fileExists(atPath: file.path + ".flight"), !FileManager.default.fileExists(atPath: file.path + ".stopped") else { throw DiagnosticFailure.stopped }
-        _ = try change(reserve: false, stop: false)
+        prefix = "GRIDLY_LABELS_V2:ios:\(run)\n"
+        try checkAvailable()
+    }
+    func checkAvailable() throws {
+        guard !FileManager.default.fileExists(atPath: file.path + ".flight") else { throw DiagnosticFailure.stopped }
+        _ = try change(.inspect)
     }
     func beginFlight() throws {
         guard !flightHeld, !FileManager.default.fileExists(atPath: file.path + ".stopped") else { throw DiagnosticFailure.stopped }
         let fd = Darwin.open(file.path + ".flight", O_WRONLY | O_CREAT | O_EXCL | O_NOFOLLOW, S_IRUSR | S_IWUSR)
-        guard fd >= 0 else { throw DiagnosticFailure.stopped }; Darwin.close(fd); flightHeld = true
+        guard fd >= 0 else { throw DiagnosticFailure.stopped }
+        defer { Darwin.close(fd) }
+        flightHeld = true
+        guard fsync(fd) == 0 else { throw DiagnosticFailure.stopped }
+        try Self.syncParent(of: file)
     }
-    func endFlight() {
-        if flightHeld { if unlink(file.path + ".flight") != 0 { markStopped() }; flightHeld = false }
+    private static func syncParent(of file: URL) throws {
+        let fd = Darwin.open(file.deletingLastPathComponent().path, O_RDONLY | O_DIRECTORY | O_NOFOLLOW)
+        guard fd >= 0 else { throw DiagnosticFailure.stopped }
+        defer { Darwin.close(fd) }
+        guard fsync(fd) == 0 else { throw DiagnosticFailure.stopped }
     }
-    func markStopped() {
-        let fd = Darwin.open(file.path + ".stopped", O_WRONLY | O_CREAT | O_EXCL | O_NOFOLLOW, S_IRUSR | S_IWUSR)
-        if fd >= 0 { _ = fsync(fd); Darwin.close(fd) }
+    func endFlight(stopping: Bool) throws {
+        guard flightHeld else { throw DiagnosticFailure.stopped }
+        _ = try change(stopping ? .stop : .complete)
+        guard unlink(file.path + ".flight") == 0 else { throw DiagnosticFailure.stopped }
+        flightHeld = false
     }
-    func change(reserve: Bool, stop: Bool) throws -> Int {
-        guard (try file.resourceValues(forKeys: [.isExcludedFromBackupKey])).isExcludedFromBackup == true,
-              stop || !FileManager.default.fileExists(atPath: file.path + ".stopped") else { throw DiagnosticFailure.stopped }
+    func reserve() throws -> Int { try change(.reserve) }
+    private func change(_ operation: Operation) throws -> Int {
+        guard operation == .inspect || flightHeld,
+              (try file.resourceValues(forKeys: [.isExcludedFromBackupKey])).isExcludedFromBackup == true,
+              !FileManager.default.fileExists(atPath: file.path + ".stopped") else { throw DiagnosticFailure.stopped }
         let fd = Darwin.open(file.path, O_RDWR | O_NOFOLLOW)
         guard fd >= 0 else { throw DiagnosticFailure.stopped }
         defer { Darwin.close(fd) }
@@ -70,15 +86,57 @@ private final class NativeLabelBudget {
         var tail = String(state.dropFirst(prefix.count))
         let terminal = tail.hasSuffix("STOP\n")
         if terminal { tail = String(tail.dropLast(5)) }
-        let used = tail == "" ? 0 : tail == "1\n" ? 1 : tail == "1\n2\n" ? 2 : -1
-        guard used >= 0, used < 2, !terminal else { throw DiagnosticFailure.stopped }
-        if reserve || stop {
-            let addition = Array((stop ? "STOP\n" : "\(used + 1)\n").utf8)
+        let used: Int
+        switch tail {
+        case "": used = 0
+        case "1\n", "1\nOK\n": used = 1
+        case "1\nOK\n2\n": used = 2
+        default: throw DiagnosticFailure.stopped
+        }
+        let available = !terminal && (tail.isEmpty || tail == "1\nOK\n")
+        let record: String
+        switch operation {
+        case .inspect:
+            guard available else { throw DiagnosticFailure.stopped }
+            return used
+        case .reserve:
+            guard available, used < 2 else { throw DiagnosticFailure.stopped }
+            record = "\(used + 1)\n"
+        case .complete:
+            guard !terminal, tail == "1\n" else { throw DiagnosticFailure.stopped }
+            record = "OK\n"
+        case .stop:
+            record = terminal ? "" : "STOP\n"
+        }
+        if !record.isEmpty {
+            let addition = Array(record.utf8)
             guard lseek(fd, 0, SEEK_END) >= 0 else { throw DiagnosticFailure.stopped }
             let written = addition.withUnsafeBytes { Darwin.write(fd, $0.baseAddress, $0.count) }
-            guard written == addition.count, fsync(fd) == 0 else { throw DiagnosticFailure.stopped }
+            guard written == addition.count else { throw DiagnosticFailure.stopped }
         }
-        return reserve ? used + 1 : used
+        guard fsync(fd) == 0 else { throw DiagnosticFailure.stopped }
+        return operation == .reserve ? used + 1 : used
+    }
+}
+
+// Lifecycle cancellation is latched synchronously, even when the transport queue is busy.
+final class DiagnosticCancellation {
+    private let lock = NSLock()
+    private var cancelled = false
+
+    func cancel() {
+        lock.lock()
+        cancelled = true
+        lock.unlock()
+    }
+
+    @discardableResult
+    func whileActive(_ action: () -> Void) -> Bool {
+        lock.lock()
+        defer { lock.unlock() }
+        guard !cancelled else { return false }
+        action()
+        return true
     }
 }
 
@@ -103,11 +161,14 @@ final class GridlyLabelDiagnostic: NSObject, WKNavigationDelegate {
     private let queue = DispatchQueue(label: "Gridly.IsolatedLabelDiagnostic")
     private let budget: NativeLabelBudget
     private let candidate: String
+    private let cancellation = DiagnosticCancellation()
+    private let requestSlot = DispatchSemaphore(value: 1)
     private var armed = false, stopped = false, inFlight = false
     private var providerEnabled = false
     private var synthetic: (() -> Data)?
     private var connection: NWConnection?
     private var timeout: DispatchWorkItem?
+    private var cancelRequest: (() -> Void)?
     private var webView: WKWebView?
     private var preparing = false
     private var inactiveObserver: NSObjectProtocol?
@@ -151,16 +212,19 @@ final class GridlyLabelDiagnostic: NSObject, WKNavigationDelegate {
         preparing = true
         let rules = "[{\"trigger\":{\"url-filter\":\"^https?://\"},\"action\":{\"type\":\"block\"}}]"
         WKContentRuleListStore.default().compileContentRuleList(forIdentifier: "GridlyIsolatedNoNetworkV1", encodedContentRuleList: rules) { [weak self] rule, error in
-            guard let self = self, let rule = rule, error == nil else { completion(nil,"RULE_COMPILATION_FAILED"); return }
-            let configuration = WKWebViewConfiguration()
-            configuration.websiteDataStore = .nonPersistent()
-            configuration.defaultWebpagePreferences.allowsContentJavaScript = false
-            configuration.userContentController.add(rule)
-            configuration.setURLSchemeHandler(EmptyFixtureAssets(), forURLScheme: "capacitor")
-            let view = WKWebView(frame: .zero, configuration: configuration)
-            view.navigationDelegate = self; self.webView = view
-            view.load(URLRequest(url: URL(string: "capacitor://localhost/")!))
-            completion(view,"INSTALLED_UNARMED")
+            DispatchQueue.main.async {
+                guard let self = self, let rule = rule, error == nil else { completion(nil,"RULE_COMPILATION_FAILED"); return }
+                guard self.cancellation.whileActive({}) else { completion(nil,"FIXTURE_REJECTED"); return }
+                let configuration = WKWebViewConfiguration()
+                configuration.websiteDataStore = .nonPersistent()
+                configuration.defaultWebpagePreferences.allowsContentJavaScript = false
+                configuration.userContentController.add(rule)
+                configuration.setURLSchemeHandler(EmptyFixtureAssets(), forURLScheme: "capacitor")
+                let view = WKWebView(frame: .zero, configuration: configuration)
+                view.navigationDelegate = self; self.webView = view
+                view.load(URLRequest(url: URL(string: "capacitor://localhost/")!))
+                completion(view,"INSTALLED_UNARMED")
+            }
         }
     }
     func webView(_ webView: WKWebView, decidePolicyFor action: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
@@ -170,37 +234,85 @@ final class GridlyLabelDiagnostic: NSObject, WKNavigationDelegate {
     }
     func webViewWebContentProcessDidTerminate(_ webView: WKWebView) { stop() }
     func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) { stop() }
+    func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) { stop() }
     func arm(completion: @escaping (String) -> Void) {
-        guard Thread.isMainThread, let view = webView, !view.isLoading, view.url?.absoluteString == "capacitor://localhost/" else { completion("ARM_REJECTED"); return }
+        guard Thread.isMainThread, UIApplication.shared.applicationState == .active,
+              let view = webView, !view.isLoading, view.url?.absoluteString == "capacitor://localhost/" else { completion("ARM_REJECTED"); return }
         let observed = "\(view.url!.scheme!)://\(view.url!.host!)" // Actual native document URL; not an HTTP header.
         queue.async {
-            guard self.providerEnabled || self.synthetic != nil, !self.armed, !self.stopped, (try? self.budget.change(reserve: false, stop: false)) != nil else { completion("ARM_REJECTED"); return }
+            guard self.providerEnabled || self.synthetic != nil, !self.armed, !self.stopped,
+                  self.cancellation.whileActive({}) else { completion("ARM_REJECTED"); return }
+            do { try self.budget.checkAvailable() }
+            catch { self.finishStop(); completion("BUDGET_UNAVAILABLE"); return }
             self.documentOrigin = observed; self.armed = true; completion("ARMED")
         }
     }
-    func stop() { queue.async { self.finishStop() } }
+    func stop() {
+        cancellation.cancel()
+        queue.async {
+            if let cancelRequest = self.cancelRequest { cancelRequest() }
+            else { self.finishStop() }
+        }
+    }
     private func finishStop() {
-        stopped = true; armed = false; inFlight = false
-        budget.markStopped()
+        guard !stopped else { return }
+        stopped = true; armed = false
+        cancellation.cancel()
         timeout?.cancel(); timeout = nil; connection?.cancel(); connection = nil
-        _ = try? budget.change(reserve: false, stop: true)
+        do {
+            if !budget.flightHeld { try budget.beginFlight() }
+            try budget.endFlight(stopping: true)
+            inFlight = false
+        } catch {
+            // No further attempts. A held sidecar remains if the terminal write failed.
+        }
+    }
+    private func settleFlight(success: Bool, ordinal: Int) -> Bool {
+        guard success, cancellation.whileActive({}), !stopped else {
+            finishStop()
+            return false
+        }
+        if ordinal == 2 {
+            finishStop()
+            return !inFlight
+        }
+        do {
+            try budget.endFlight(stopping: false)
+            inFlight = false
+            return true
+        } catch {
+            // A failed completion write is terminal. Leave the sidecar in place.
+            stopped = true
+            armed = false
+            cancellation.cancel()
+            return false
+        }
     }
     func evidence(completion: @escaping ([Evidence]) -> Void) { queue.async { completion(self.rows) } }
     // Explicit native button/action only. No script-message/native HTTP plugin path.
-    func requestTile(zoom: Int, row: Int, column: Int, completion: @escaping (UIImage?, String) -> Void) {
+    func requestTile(zoom: Int, row: Int, column: Int, completion result: @escaping (UIImage?, String) -> Void) {
+        guard requestSlot.wait(timeout: .now()) == .success else { result(nil,"BLOCKED"); return }
         queue.async {
-            guard (self.providerEnabled || self.synthetic != nil), self.armed, !self.stopped, !self.inFlight, zoom >= 0, zoom <= 23, row >= 0, column >= 0,
+            func completion(_ image: UIImage?, _ status: String) {
+                if !self.inFlight { self.requestSlot.signal() }
+                result(image, status)
+            }
+            guard (self.providerEnabled || self.synthetic != nil), self.armed, !self.stopped, !self.inFlight,
+                  self.cancellation.whileActive({}), zoom >= 0, zoom <= 23, row >= 0, column >= 0,
                   row < (1 << zoom), column < (1 << zoom) else { completion(nil,"BLOCKED"); return }
             self.inFlight = true
             do {
                 try self.budget.beginFlight() // Cross-controller exclusion; stale crash marker fails closed.
-                let ordinal = try self.budget.change(reserve: true, stop: false) // Durable before transport.
+                let ordinal = try self.budget.reserve() // Durable before transport.
+                guard self.cancellation.whileActive({}) else { self.finishStop(); completion(nil,"STOPPED"); return }
                 if let response = self.synthetic {
                     let data = response()
-                    guard data.count <= Self.maxBytes, let image = UIImage(data: data), image.cgImage?.width == 512, image.cgImage?.height == 512 else { self.budget.endFlight(); self.finishStop(); completion(nil,"SYNTHETIC_FAIL"); return }
+                    guard data.count <= Self.maxBytes, let image = UIImage(data: data), image.cgImage?.width == 512, image.cgImage?.height == 512 else {
+                        self.finishStop(); completion(nil,"SYNTHETIC_FAIL"); return
+                    }
+                    guard self.settleFlight(success: true, ordinal: ordinal) else { completion(nil,"STOPPED"); return }
                     self.rows.append(Evidence(request: ordinal, status: 0, documentOrigin: self.documentOrigin, contentType: "image/png", tileValidity: "SYNTHETIC_DECODE_512_PASS", context: "SYNTHETIC_TRANSPORT"))
-                    self.budget.endFlight(); self.inFlight = false
-                    if ordinal == 2 { self.finishStop() }; completion(image,"SYNTHETIC_PASS"); return
+                    completion(image,"SYNTHETIC_PASS"); return
                 }
                 let path = Self.tile + "\(zoom)/\(row)/\(column)?token=" + self.candidate
                 // NO synthesized Referer/Origin. This is NOT ordinary WKWebView authorization evidence.
@@ -215,12 +327,11 @@ final class GridlyLabelDiagnostic: NSObject, WKNavigationDelegate {
                 var sent = false, response = Data(), finished = false
                 func finish(_ image: UIImage?, _ status: Int) {
                     guard !finished else { return }; finished = true
-                    let accepted = self.stopped ? nil : image
+                    self.cancelRequest = nil
+                    connection.stateUpdateHandler = nil
                     self.timeout?.cancel(); self.timeout = nil; connection.cancel(); self.connection = nil
+                    let accepted = self.settleFlight(success: image != nil, ordinal: ordinal) ? image : nil
                     self.rows.append(Evidence(request: ordinal, status: status, documentOrigin: self.documentOrigin, contentType: accepted == nil ? "UNEXPECTED" : "image/png", tileValidity: accepted == nil ? "FAIL" : "DECODE_512_PASS", context: "EXPLICIT_NATIVE_TLS_NOT_WEBVIEW_HTTPS"))
-                    self.inFlight = false
-                    self.budget.endFlight()
-                    if accepted == nil || ordinal == 2 { self.finishStop() }
                     completion(accepted,accepted == nil ? "STOPPED" : "PASS")
                 }
                 func receive() {
@@ -235,13 +346,19 @@ final class GridlyLabelDiagnostic: NSObject, WKNavigationDelegate {
                         } else { receive() } // Read more bytes; NEVER send another HTTP request.
                     }
                 }
+                self.cancelRequest = { finish(nil,0) }
                 connection.stateUpdateHandler = { state in
                     switch state {
                     case .ready:
-                        guard !sent, !finished else { return }; sent = true
-                        connection.send(content: bytes, completion: .contentProcessed { error in // SINGLE_HTTP_WRITE; no .idempotent/restart/retry.
-                            if error != nil { finish(nil,0) } else { receive() }
-                        })
+                        guard !sent, !finished else { return }
+                        guard self.armed, !self.stopped, self.inFlight, self.connection === connection,
+                              self.cancellation.whileActive({
+                            sent = true
+                            connection.send(content: bytes, completion: .contentProcessed { error in // SINGLE_HTTP_WRITE; no .idempotent/restart/retry.
+                                guard !finished else { return }
+                                if error != nil { finish(nil,0) } else { receive() }
+                            })
+                        }) else { finish(nil,0); return }
                     case .failed, .waiting: finish(nil,0)
                     default: break
                     }
@@ -249,7 +366,11 @@ final class GridlyLabelDiagnostic: NSObject, WKNavigationDelegate {
                 let timeout = DispatchWorkItem { finish(nil,0) }; self.timeout = timeout
                 self.queue.asyncAfter(deadline: .now() + 10, execute: timeout)
                 connection.start(queue: self.queue)
-            } catch { self.budget.endFlight(); self.finishStop(); completion(nil,"BUDGET_UNAVAILABLE") }
+            } catch {
+                if self.budget.flightHeld { self.finishStop() }
+                else { self.stopped = true; self.armed = false }
+                completion(nil,"BUDGET_UNAVAILABLE")
+            }
         }
     }
     static func parseResponse(_ response: Data) throws -> Data {

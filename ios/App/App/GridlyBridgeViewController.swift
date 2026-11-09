@@ -10,7 +10,7 @@ import OSLog
 enum GridlyLegacyRecoveryCompatibility {
     static func supports(bundleIdentifier: String?, buildNumber: String?) -> Bool {
         guard bundleIdentifier == "com.gridlygo.gridly", let buildNumber = buildNumber else { return false }
-        return ["14", "16", "17"].contains(buildNumber)
+        return ["14", "16", "17", "18"].contains(buildNumber)
     }
 }
 
@@ -92,6 +92,9 @@ class GridlyBridgeViewController: CAPBridgeViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        #if GRIDLY_BUILD18_DIAGNOSTIC && GRIDLY_ARCGIS_DIAGNOSTIC
+        GridlyBuild18DiagnosticViewController.install(on: self)
+        #endif
         guard recoveryBuild else { return }
         previewLegacyRetry()
     }

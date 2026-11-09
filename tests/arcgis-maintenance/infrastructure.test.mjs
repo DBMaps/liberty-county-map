@@ -85,22 +85,26 @@ test('Android source reserves durably before one authenticated TLS HTTP write wi
 });
 test('iOS source uses supported custom local scheme, network-blocked fresh WKWebView and separate native transport',async()=>{
   const source=await readFile(swiftPath,'utf8');
-  assert.ok(source.startsWith('// Diagnostic source only.'));assert.match(source,/#if DEBUG && GRIDLY_ARCGIS_DIAGNOSTIC/);
+  assert.ok(source.startsWith('// Diagnostic source only.'));assert.match(source,/#if GRIDLY_ARCGIS_DIAGNOSTIC && \(DEBUG \|\| GRIDLY_BUILD18_DIAGNOSTIC\)/);
   assert.match(source,/forURLScheme: "capacitor"/);assert.doesNotMatch(source,/forURLScheme: "https?"|URLProtocol\.registerClass|allowsAnyHTTPSCertificate|sec_protocol_options_set_verify_block|URLSession/);
   for(const token of ['websiteDataStore = .nonPersistent()','allowsContentJavaScript = false','userContentController.add(rule)','guard let self = self, let rule = rule, error == nil','EXPLICIT_NATIVE_TLS_NOT_WEBVIEW_HTTPS','ABSENT_NATIVE_BOUND_PATH'])assert.ok(source.includes(token));
   assert.ok(source.indexOf('userContentController.add(rule)')<source.indexOf('let view = WKWebView'));
 });
 test('iOS source reserves before single TLS send, rejects redirects and persists lifecycle stops',async()=>{
   const source=await readFile(swiftPath,'utf8');
-  assert.ok(source.indexOf('let ordinal = try self.budget.change(reserve: true')<source.indexOf('let connection = NWConnection'));
+  assert.ok(source.indexOf('let ordinal = try self.budget.reserve()')<source.indexOf('let connection = NWConnection'));
   assert.equal((source.match(/connection\.send\(content:/g)||[]).length,1);
-  for(const token of ['guard !sent, !finished','used < 2','O_EXCL | O_NOFOLLOW','fsync(fd)','beginFlight()','markStopped()','webViewWebContentProcessDidTerminate','guard status == 200','sec_protocol_options_set_tls_server_name','isExcludedFromBackup = true'])assert.ok(source.includes(token));
+  for(const token of ['guard !sent, !finished','used < 2','O_EXCL | O_NOFOLLOW','fsync(fd)','beginFlight()','endFlight(stopping: true)','webViewWebContentProcessDidTerminate','guard status == 200','sec_protocol_options_set_tls_server_name','isExcludedFromBackup = true'])assert.ok(source.includes(token));
   assert.doesNotMatch(source,/completion: \.idempotent|connection\.restart\(|print\(|NSLog\(|Logger\(|dump\(/);
 });
-test('native fixtures remain outside all production runtime and native project membership',async()=>{
-  for(const path of ['consumer-script-manifest.json','android/app/build.gradle','android/app/src/main/AndroidManifest.xml','android/app/src/main/java/com/gridlygo/gridly/MainActivity.kt','ios/App/App.xcodeproj/project.pbxproj','ios/App/App/GridlyBridgeViewController.swift']){
+test('native fixtures remain outside consumer web and Android runtime; iOS wiring requires both Build 18 flags',async()=>{
+  for(const path of ['consumer-script-manifest.json','android/app/build.gradle','android/app/src/main/AndroidManifest.xml','android/app/src/main/java/com/gridlygo/gridly/MainActivity.kt']){
     const text=await readFile(path,'utf8');assert.doesNotMatch(text,/GridlyLabelDiagnostic|GRIDLY_ARCGIS_DIAGNOSTIC/);
   }
+  const project=await readFile('ios/App/App.xcodeproj/project.pbxproj','utf8');
+  assert.doesNotMatch(project,/GRIDLY_ARCGIS_DIAGNOSTIC|GRIDLY_BUILD18_DIAGNOSTIC/);
+  const bridge=await readFile('ios/App/App/GridlyBridgeViewController.swift','utf8');
+  assert.match(bridge,/#if GRIDLY_BUILD18_DIAGNOSTIC && GRIDLY_ARCGIS_DIAGNOSTIC\s+GridlyBuild18DiagnosticViewController\.install\(on: self\)\s+#endif/);
 });
 test('both native sources default provider transport OFF and separate synthetic from explicit live selection',async()=>{
   for(const path of [javaPath,swiftPath]){

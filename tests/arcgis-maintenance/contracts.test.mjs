@@ -29,9 +29,11 @@ test('iOS18 derivative is exact and cannot alter signing entitlements startup or
   assert.throws(()=>maintenanceIosIdentity({project,recovery,profile:PROFILE}));
   for(const changed of [{...next,project:next.project+'\n// unrelated signing change'},{...next,recovery:next.recovery+'\n// unrelated change'},{...next,recovery:next.recovery.replace('"18"','"19"')}])assert.throws(()=>maintenanceIosIdentity({...changed,profile:PROFILE}));
 });
-test('released native files and both platform shipping source remain unchanged',async()=>{
-  for(const path of ['android/app/build.gradle','ios/App/App.xcodeproj/project.pbxproj','ios/App/App/GridlyBridgeViewController.swift','ios/App/App/Info.plist','ios/App/App/App-Production.entitlements','android/app/src/main/AndroidManifest.xml','android/app/src/main/java/com/gridlygo/gridly/MainActivity.kt','capacitor.config.json','js/app.js','js/gridly-paid-access.mjs','js/gridly-ugc-compliance.js'])
+test('protected shipping inputs remain unchanged; Build 18 project and recovery deltas have their own exact comparison',async()=>{
+  for(const path of ['android/app/build.gradle','ios/App/App/Info.plist','ios/App/App/App-Production.entitlements','android/app/src/main/AndroidManifest.xml','android/app/src/main/java/com/gridlygo/gridly/MainActivity.kt','capacitor.config.json','js/app.js','js/gridly-paid-access.mjs','js/gridly-ugc-compliance.js'])
     assert.equal((await readFile(path,'utf8')).replaceAll('\r\n','\n'),released(RELEASES.android,path),path);
+  for(const path of ['ios/App/App.xcodeproj/project.pbxproj','ios/App/App/GridlyBridgeViewController.swift'])
+    assert.equal(released('12f3f7045bd221a26562697ec0e59c51a0e37907',path),released(RELEASES.ios,path),path);
 });
 test('provider comparison rejects original fallback missing inputs malformed duplicates and unrelated changes',()=>{
   assert.equal(validateProviderPair({originalBytes,candidateBytes}).driveTexasParity,true);
