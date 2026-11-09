@@ -55,6 +55,7 @@ class CompileOnlyTests(unittest.TestCase):
             "timeout": "ADAPTER_OBJECT_TIMEOUT",
             "module": "ADAPTER_OUTPUT_MISSING",
             "symbols": "ADAPTER_CONDITIONAL_BODY_MISSING",
+            "imports": "XCTEST_SWIFT_IMPORT_PATH_MISSING",
             "test": "XCTEST_TYPECHECK_FAILED exit_code=73",
             "parse": "INTEGRATION_PARSE_FAILED exit_code=73",
         }
@@ -67,6 +68,9 @@ class CompileOnlyTests(unittest.TestCase):
                 sdk.mkdir(parents=True)
                 frameworks = sdk_platform / "Developer/Library/Frameworks"
                 (frameworks / "XCTest.framework").mkdir(parents=True)
+                test_imports = sdk_platform / "Developer/usr/lib"
+                if case != "imports":
+                    test_imports.mkdir(parents=True)
                 scratch = root / "scratch"
                 scratch.mkdir()
                 for relative in job.REVIEWED_INPUTS:
@@ -131,7 +135,7 @@ class CompileOnlyTests(unittest.TestCase):
                         stages.append("test")
                         self.assertEqual(argv, (
                             *compiler_args, "-typecheck", "-I", str(work), "-F", str(frameworks),
-                            str(root / job.TESTS),
+                            "-I", str(test_imports), str(root / job.TESTS),
                         ))
                     else:
                         stages.append("parse")
@@ -139,6 +143,13 @@ class CompileOnlyTests(unittest.TestCase):
                             *compiler_args, "-parse", str(root / job.VIEW), str(root / job.BRIDGE),
                         ))
                     diagnostic = f"{argv[-1]}:27:4: error: {synthetic_detail}"
+                    if case == stages[-1] == "test":
+                        diagnostic += (
+                            f"\n{argv[-1]}:14:13: error: cannot find 'XCTAssertFalse' in scope"
+                            f"\n{argv[-1]}:27:9: error: cannot find '{synthetic_detail}' in scope"
+                            f"\n{argv[-1]}:28:9: error: cannot find 'XCTAssertThrowsError' in scope {synthetic_detail}"
+                            "\n/private/synthetic.swift:14:13: error: cannot find 'XCTAssertFalse' in scope"
+                        )
                     code = 73 if case == stages[-1] else 0
                     return subprocess.CompletedProcess(argv, code, synthetic_detail, diagnostic if code else "")
 
@@ -157,6 +168,13 @@ class CompileOnlyTests(unittest.TestCase):
                         job.main()
                         self.assertEqual(stages, ["adapter", "test", "parse"])
                         self.assertIn("SWIFT_INTEGRATION_SYNTAX_PASS APP_PROJECT_COMPILE_REQUIRED", output.getvalue())
+                if case == "imports":
+                    self.assertEqual(stages, ["adapter"])
+                if case == "test":
+                    self.assertIn("SWIFT_DIAGNOSTIC Build18DiagnosticTests.swift error line=14 column=13 "
+                                  "category=XCTEST_ASSERTION_NOT_IN_SCOPE", output.getvalue())
+                    self.assertEqual(output.getvalue().count("category="), 1)
+                    self.assertNotIn("/private/synthetic.swift", output.getvalue())
                 self.assertNotIn(synthetic_detail, output.getvalue())
                 self.assertNotIn(str(root), output.getvalue())
                 self.assertEqual(list(scratch.iterdir()), [])

@@ -19,6 +19,9 @@ ADAPTER = "tools/arcgis-maintenance/native/ios/GridlyLabelDiagnostic.swift"
 VIEW = "ios/App/App/GridlyBuild18DiagnosticViewController.swift"
 BRIDGE = "ios/App/App/GridlyBridgeViewController.swift"
 TESTS = "tests/arcgis-maintenance/ios-build18/Build18DiagnosticTests.swift"
+XCTEST_MISSING_ASSERTION = re.compile(
+    r"cannot find '(?:XCTAssertEqual|XCTAssertFalse|XCTAssertThrowsError|XCTAssertTrue|XCTFail)' in scope"
+)
 REVIEWED_INPUTS = {
     ADAPTER: "c7bcdb6cd97dc0b1b101bc4700f433e1fd9473376d64b8fe220ea198c2b4462f",
     VIEW: "8ab3c5653c02050c6f9d8f98f8c7f65bdc695c4b3acca78e997c685ef75229c9",
@@ -60,10 +63,13 @@ def metadata(stage, env, *argv):
 def swift_check(stage, env, compiler, args, sources):
     result = command(stage, env, *compiler, *args, *(str(ROOT / path) for path in sources), timeout=90)
     for source in sources:
-        location = rf"(?m)^{re.escape(str(ROOT / source))}:([0-9]{{1,6}}):([0-9]{{1,4}}): (error|warning|note):"
+        location = rf"(?m)^{re.escape(str(ROOT / source))}:([0-9]{{1,6}}):([0-9]{{1,4}}): (error|warning|note): ?([^\r\n]*)"
         for match in islice(re.finditer(location, result.stderr), 8):
-            line, column, severity = match.groups()
-            print(f"SWIFT_DIAGNOSTIC {Path(source).name} {severity} line={line} column={column}")
+            line, column, severity, message = match.groups()
+            category = ""
+            if stage == "XCTEST_TYPECHECK" and severity == "error" and XCTEST_MISSING_ASSERTION.fullmatch(message):
+                category = " category=XCTEST_ASSERTION_NOT_IN_SCOPE"
+            print(f"SWIFT_DIAGNOSTIC {Path(source).name} {severity} line={line} column={column}{category}")
     require(result.returncode == 0, f"{stage}_FAILED exit_code={result.returncode}")
 
 
@@ -120,8 +126,12 @@ def main():
         print("SWIFT_ADAPTER_OBJECT_PASS")
 
         require((frameworks / "XCTest.framework").is_dir(), "XCTEST_FRAMEWORK_MISSING")
+        # SwiftPM also searches the platform's Developer/usr/lib for Swift test support.
+        test_imports = sdk_platform / "Developer/usr/lib"
+        require(test_imports.is_dir() and test_imports.resolve().is_relative_to(XCODE.resolve()),
+                "XCTEST_SWIFT_IMPORT_PATH_MISSING")
         swift_check("XCTEST_TYPECHECK", compile_env, compiler,
-                    (*flags, "-typecheck", "-I", str(work), "-F", str(frameworks)), (TESTS,))
+                    (*flags, "-typecheck", "-I", str(work), "-F", str(frameworks), "-I", str(test_imports)), (TESTS,))
         print("SWIFT_XCTEST_TYPECHECK_PASS scope=adapter-module")
 
         swift_check("INTEGRATION_PARSE", compile_env, compiler, (*flags, "-parse"), (VIEW, BRIDGE))
