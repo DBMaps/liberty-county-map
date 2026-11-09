@@ -7,7 +7,14 @@ import { fileURLToPath } from 'node:url';
 export async function alignIOSDeploymentFloor(root) {
   const project = await readFile(resolve(root, 'ios/App/App.xcodeproj/project.pbxproj'), 'utf8');
   const floors = [...project.matchAll(/IPHONEOS_DEPLOYMENT_TARGET = ([^;]+);/g)].map(match => match[1]);
-  if (floors.length !== 4 || floors.some(floor => floor !== '16.4')) throw new Error('Expected all four Gridly Xcode deployment targets to be 16.4.');
+  const nativeTargets = project.split('/* Begin PBXNativeTarget section */')[1]?.split('/* End PBXNativeTarget section */')[0];
+  const hasBuild18Tests = /^[\t ]*name = GridlyBuild18Tests;$/m.test(nativeTargets ?? '');
+  const expectedCount = hasBuild18Tests ? 6 : 4;
+  if (floors.length !== expectedCount || floors.some(floor => floor !== '16.4')) {
+    throw new Error(hasBuild18Tests
+      ? 'Expected all six Gridly Xcode deployment settings to be 16.4 with Build 18 XCTest.'
+      : 'Expected all four Gridly Xcode deployment targets to be 16.4.');
+  }
   const path = resolve(root, 'ios/App/CapApp-SPM/Package.swift');
   const source = await readFile(path, 'utf8');
   if ((source.match(/platforms:\s*\[\.iOS\((?:\.v16|"16\.4")\)\]/g) || []).length !== 1) throw new Error('Unexpected SPM platform declaration; review instead of overwriting.');

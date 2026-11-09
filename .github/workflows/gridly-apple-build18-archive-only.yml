@@ -3,26 +3,27 @@ name: Gridly Apple Build 18 native integration (compile and archive only)
 on:
   push:
     branches:
-      - codex/arcgis-ios-build18-native-integration
+      - codex/arcgis-ios-build18-native-integration-sync-repair
 
 permissions:
   contents: read
 
 concurrency:
-  group: gridly-apple-build18-native-integration
+  group: gridly-apple-build18-native-integration-sync-repair
   cancel-in-progress: false
 
 jobs:
   native-integration:
     if: >-
       github.repository == 'DBMaps/liberty-county-map' && github.actor == 'DBMaps' &&
-      github.event_name == 'push' && github.ref == 'refs/heads/codex/arcgis-ios-build18-native-integration' &&
+      github.event_name == 'push' && github.ref == 'refs/heads/codex/arcgis-ios-build18-native-integration-sync-repair' &&
       github.event.created == true && github.event.deleted == false && github.event.forced == false &&
       github.run_attempt == 1
     runs-on: macos-26
     timeout-minutes: 45
     env:
       APPLICATION_SHA: b9cbff579b1cbf05842030fc01cd7ed60267dd1d
+      INTEGRATION_BASE_SHA: 1055168666f094d2fd551d002b31556c81a8280b
       RELEASED_SHA: 71168111a133fa1c187620b9604b08e79fbf4687
       DEVELOPER_DIR: /Applications/Xcode_26.5.app/Contents/Developer
     defaults:
@@ -37,7 +38,7 @@ jobs:
           persist-credentials: false
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
-          ref: b9cbff579b1cbf05842030fc01cd7ed60267dd1d
+          ref: ${{ github.sha }}
           path: candidate
           fetch-depth: 0
           persist-credentials: false
@@ -45,13 +46,18 @@ jobs:
         run: |
           test "$GITHUB_WORKFLOW_SHA" = "$GITHUB_SHA"
           test "$(git -C control rev-parse HEAD)" = "$GITHUB_SHA"
-          test "$(git -C control show -s --format=%P HEAD)" = "$APPLICATION_SHA"
-          test "$(git -C control diff --name-only --no-renames "$APPLICATION_SHA" HEAD)" = "$(printf '%s\n' \
+          test "$(git -C control show -s --format=%P HEAD)" = "$INTEGRATION_BASE_SHA"
+          test "$(git -C control diff --name-only --no-renames "$INTEGRATION_BASE_SHA" HEAD)" = "$(printf '%s\n' \
             .github/workflows/gridly-apple-build18-archive-only.yml \
-            tests/arcgis-maintenance/ios-build18/test_swift_compile_only.py)"
+            tests/arcgis-maintenance/build18.test.mjs \
+            tests/arcgis-maintenance/ios-build18/test_swift_compile_only.py \
+            tools/ios-deployment-floor.mjs)"
           test -z "$(git -C control status --porcelain)"
-          test "$(git -C candidate rev-parse HEAD)" = "$APPLICATION_SHA"
+          test "$(git -C candidate rev-parse HEAD)" = "$GITHUB_SHA"
+          test "$(git -C candidate show -s --format=%P "$INTEGRATION_BASE_SHA")" = "$APPLICATION_SHA"
           test -z "$(git -C candidate status --porcelain)"
+          git -C candidate diff --quiet "$APPLICATION_SHA" HEAD -- ios/App tools/arcgis-maintenance/native/ios \
+            tests/arcgis-maintenance/ios-build18/Build18DiagnosticTests.swift
           git -C candidate merge-base --is-ancestor "$RELEASED_SHA" HEAD
           git -C candidate diff --quiet "$RELEASED_SHA" HEAD -- android css js capacitor.config.json package-lock.json \
             ios/App/CapApp-SPM ios/App/App/AppDelegate.swift \
@@ -97,12 +103,12 @@ jobs:
           cleanup() {
             status=$?
             trap - EXIT
+            if test "$status" -ne 0; then printf 'BUILD18_ARCHIVE_FAILED stage=%s exit_code=%d\n' "$stage" "$status" >&3; fi
             if ! rm -rf -- "$private" www ios/App/App/public; then
               printf '%s\n' 'BUILD18_ARCHIVE_CLEANUP_FAILED' >&3
               exit 1
             fi
             printf '%s\n' 'BUILD18_ARCHIVE_CLEANUP_PASS' >&3
-            if test "$status" -ne 0; then printf 'BUILD18_ARCHIVE_FAILED stage=%s\n' "$stage" >&3; fi
             exit "$status"
           }
           trap cleanup EXIT
@@ -122,16 +128,22 @@ jobs:
           node tools/native-assets.mjs
           node tools/native-web.mjs
           node tools/native-web.mjs --verify
-          stage=CAPACITOR_SYNC
+          stage=CAP_SPM_MANIFEST_MISMATCH
           spm=ios/App/CapApp-SPM/Package.swift
           git show "HEAD:$spm" > "$private/Package.swift"
+          stage=CAP_SYNC_COMMAND_FAILED
           npx --no-install cap sync ios
           # Capacitor 8.3.4 regenerates the SPM platform using only the major version.
           # Accept only that known rewrite, then archive with the reviewed 16.4 manifest.
+          stage=CAP_SPM_MANIFEST_MISMATCH
           sed 's/\.iOS("16\.4")/\.iOS(.v16)/' "$private/Package.swift" > "$private/Package.generated.swift"
           cmp -s "$spm" "$private/Package.generated.swift" || cmp -s "$spm" "$private/Package.swift"
+          stage=CAP_SPM_RESTORE_FAILED
           cp "$private/Package.swift" "$spm"
-          test -z "$(git status --porcelain --untracked-files=no)"
+          cmp -s "$spm" "$private/Package.swift"
+          stage=CAP_TRACKED_FILE_DRIFT
+          tracked_changes="$(git status --porcelain --untracked-files=no)"
+          test -z "$tracked_changes"
           stage=PACKAGE_RESOLUTION
           xcodebuild -resolvePackageDependencies -project ios/App/App.xcodeproj -scheme App \
             -derivedDataPath "$private/derived-data" -clonedSourcePackagesDirPath "$private/source-packages"

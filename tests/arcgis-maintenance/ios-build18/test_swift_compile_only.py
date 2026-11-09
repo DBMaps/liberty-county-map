@@ -49,7 +49,7 @@ class CompileOnlyTests(unittest.TestCase):
                     self.assertIsNotNone(triggers)
                     if workflow.name == "gridly-apple-build18-archive-only.yml":
                         self.assertEqual(triggers.group(1).strip(),
-                                         "push:\n    branches:\n      - codex/arcgis-ios-build18-native-integration")
+                                         "push:\n    branches:\n      - codex/arcgis-ios-build18-native-integration-sync-repair")
                     else:
                         self.assertNotRegex(triggers.group(1), r"(?m)^\s+(push|create):")
 
@@ -57,14 +57,19 @@ class CompileOnlyTests(unittest.TestCase):
         workflow = job.ROOT / ".github/workflows/gridly-apple-build18-archive-only.yml"
         source = workflow.read_text(encoding="utf-8")
         candidate = "b9cbff579b1cbf05842030fc01cd7ed60267dd1d"
-        branch = "refs/heads/codex/arcgis-ios-build18-native-integration"
+        base = "1055168666f094d2fd551d002b31556c81a8280b"
+        branch = "refs/heads/codex/arcgis-ios-build18-native-integration-sync-repair"
         for gate in ("github.repository == 'DBMaps/liberty-county-map'", "github.actor == 'DBMaps'",
                      f"github.ref == '{branch}'", "github.event_name == 'push'", "github.event.created == true",
                      "github.event.deleted == false", "github.event.forced == false", "github.run_attempt == 1",
-                     "contents: read", "runs-on: macos-26", f"APPLICATION_SHA: {candidate}", f"ref: {candidate}",
+                     "contents: read", "runs-on: macos-26", f"APPLICATION_SHA: {candidate}", f"INTEGRATION_BASE_SHA: {base}",
+                     'test "$(git -C control show -s --format=%P HEAD)" = "$INTEGRATION_BASE_SHA"',
+                     'test "$(git -C candidate show -s --format=%P "$INTEGRATION_BASE_SHA")" = "$APPLICATION_SHA"',
+                     'test "$(git -C candidate rev-parse HEAD)" = "$GITHUB_SHA"',
                      "BUILD18_NATIVE_LIFECYCLE_14_DEFERRED", "BUILD18_NATIVE_EXECUTION_NOT_RUN"):
             self.assertIn(gate, source)
         self.assertEqual(source.count("persist-credentials: false"), 2)
+        self.assertEqual(source.count("ref: ${{ github.sha }}"), 2)
         self.assertNotRegex(source, r"\bsimctl\b|\btest-without-building\b|\bpfctl\b|\baltool\b|"
                                     r"\bbuild14-native-lifecycle\.test\.py\b|\bsecrets\.|"
                                     r"\bupload-artifact\b|--runtime-config-file|-exportArchive")

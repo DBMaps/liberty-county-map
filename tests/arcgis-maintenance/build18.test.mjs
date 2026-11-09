@@ -1,11 +1,13 @@
 import assert from 'node:assert/strict';
 import {execFileSync} from 'node:child_process';
 import {createDecipheriv,createHash,generateKeyPairSync,verify} from 'node:crypto';
-import {readFile} from 'node:fs/promises';
+import {mkdir,readFile,writeFile} from 'node:fs/promises';
+import {dirname,join} from 'node:path';
 import test from 'node:test';
 import {deriveIosMaintenanceInputs,maintenanceIosIdentity,PROFILE,RELEASES} from '../../tools/arcgis-maintenance/contracts.mjs';
 import {sealBuild18Candidate} from '../../tools/arcgis-maintenance/build18-candidate.mjs';
-import {originalBytes,candidateBytes} from './fixtures.mjs';
+import {alignIOSDeploymentFloor} from '../../tools/ios-deployment-floor.mjs';
+import {originalBytes,candidateBytes,fixture} from './fixtures.mjs';
 
 const projectPath='ios/App/App.xcodeproj/project.pbxproj';
 const bridgePath='ios/App/App/GridlyBridgeViewController.swift';
@@ -43,6 +45,38 @@ test('Build 18 changes only reviewed metadata, recovery allowlist and opt-in dia
   assert.match(scheme,/<TestableReference skipped="NO" parallelizable="NO">[\s\S]*?BlueprintIdentifier="A18D1A700000000000000006"/);
   // The production candidate staging path must still refuse this diagnostic project.
   assert.throws(()=>maintenanceIosIdentity({project,recovery,profile:PROFILE}),/MAINTENANCE_IOS_/);
+});
+
+test('iOS post-sync hook preserves the exact 16.4 manifest with and without the Build 18 test target',async t=>{
+  const {root,dispose}=await fixture();
+  t.after(dispose);
+  const project=join(root,projectPath);
+  const spmPath='ios/App/CapApp-SPM/Package.swift';
+  const spm=join(root,spmPath);
+  await mkdir(dirname(project),{recursive:true});
+  await mkdir(dirname(spm),{recursive:true});
+  const approved=await read(spmPath);
+  const generated=approved.replace('.iOS("16.4")','.iOS(.v16)');
+  assert.notEqual(generated,approved);
+  const withTests=await read(projectPath);
+  for(const source of [released(projectPath),withTests]){
+    await writeFile(project,source);
+    await writeFile(spm,generated);
+    await alignIOSDeploymentFloor(root);
+    assert.equal(await read(spm),approved);
+    await alignIOSDeploymentFloor(root);
+    assert.equal(await read(spm),approved);
+  }
+  for(const [source,error] of [
+    [withTests.replace('name = GridlyBuild18Tests;','name = UnreviewedTests;'),/all four/],
+    [withTests.replace('IPHONEOS_DEPLOYMENT_TARGET = 16.4;','IPHONEOS_DEPLOYMENT_TARGET = 16.3;'),/all six/],
+    [withTests.replace('IPHONEOS_DEPLOYMENT_TARGET = 16.4;',''),/all six/]
+  ]){
+    await writeFile(project,source);
+    await writeFile(spm,generated);
+    await assert.rejects(alignIOSDeploymentFloor(root),error);
+    assert.equal(await read(spm),generated);
+  }
 });
 
 test('Build 18 candidate can only be imported from the owner screen and never reaches JavaScript',async()=>{
