@@ -177,12 +177,39 @@ def sim(stage, *args, **options):
     return command(stage, "/usr/bin/xcrun", "simctl", *args, **options)
 
 
+def require_simulator_runtime():
+    try:
+        result = subprocess.run(
+            ("/usr/bin/xcrun", "simctl", "list", "-j", "runtimes"),
+            cwd=ROOT, env=ENV, stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
+            timeout=60, check=True,
+        )
+    except subprocess.TimeoutExpired:
+        raise Blocked("SIM_RUNTIME_TIMEOUT") from None
+    except subprocess.CalledProcessError as failure:
+        raise Blocked(f"SIM_RUNTIME_COMMAND_FAILED exit_code={failure.returncode}") from None
+    except OSError:
+        raise Blocked("SIM_RUNTIME_COMMAND_FAILED") from None
+
+    require(len(result.stdout) <= 1024 * 1024, "SIM_RUNTIME_INVALID_OUTPUT")
+    try:
+        inventory = json.loads(result.stdout.decode("utf-8"))
+    except (ValueError, RecursionError):
+        raise Blocked("SIM_RUNTIME_INVALID_OUTPUT") from None
+    runtimes = inventory.get("runtimes") if isinstance(inventory, dict) else None
+    require(isinstance(runtimes, list) and all(
+        isinstance(row, dict) and isinstance(row.get("identifier"), str) and row["identifier"]
+        and isinstance(row.get("isAvailable"), bool) for row in runtimes
+    ), "SIM_RUNTIME_INVALID_OUTPUT")
+    require(any(row["identifier"] == RUNTIME and row["isAvailable"] for row in runtimes), "SIM_RUNTIME_MISSING")
+    print("SIM_RUNTIME_AVAILABLE", flush=True)
+
+
 def compile_fixture(work):
     xcode = command("XCODE_VERSION", "/usr/bin/xcodebuild", "-version")
     version = re.fullmatch(r"Xcode (26\.5(?:\.\d+)?)\nBuild version ([A-Za-z0-9]+)\s*", xcode)
     require(version is not None, "XCODE_VERSION")
-    runtimes = json.loads(sim("SIM_RUNTIME_LIST", "list", "-j", "runtimes"))["runtimes"]
-    require(any(row["identifier"] == RUNTIME and row["isAvailable"] is True for row in runtimes), "SIM_RUNTIME_MISSING")
+    require_simulator_runtime()
     sdk = command("SIMULATOR_SDK", "/usr/bin/xcrun", "--sdk", "iphonesimulator", "--show-sdk-path").strip()
     require(Path(sdk).is_dir() and sdk.startswith(XCODE + "/"), "SIMULATOR_SDK")
     app = work / (EXECUTABLE + ".app")
