@@ -6,7 +6,12 @@ inspect the fixture, but certification requires a Swift-capable runner.
 from pathlib import Path
 import shutil
 import subprocess
+import sys
 import tempfile
+
+if sys.argv[1:] not in ([], ["--build18"]):
+    raise SystemExit("Expected no arguments or --build18")
+expects_build18 = sys.argv[1:] == ["--build18"]
 
 source = Path("ios/App/App/GridlyBridgeViewController.swift").read_text(encoding="utf-8")
 gate = source.split("// BEGIN TESTABLE RECOVERY GATE\n", 1)[1].split("// END TESTABLE RECOVERY GATE", 1)[0]
@@ -23,9 +28,10 @@ check("reviewed Builds14/16 and emergency17 share the recovery contract") {
     for build in ["14", "16", "17"] {
         assert(GridlyLegacyRecoveryCompatibility.supports(bundleIdentifier: "com.gridlygo.gridly", buildNumber: build))
     }
+    assert(GridlyLegacyRecoveryCompatibility.supports(bundleIdentifier: "com.gridlygo.gridly", buildNumber: "18") == expectsBuild18)
 }
 check("unsupported, missing, malformed versions and foreign apps fail closed") {
-    let unsupported: [String?] = [nil, "", "12", "13", "15", "18", "140", "016", "16.0", "16\n"]
+    let unsupported: [String?] = [nil, "", "12", "13", "15", "19", "140", "016", "16.0", "16\n"]
     for build in unsupported {
         assert(!GridlyLegacyRecoveryCompatibility.supports(bundleIdentifier: "com.gridlygo.gridly", buildNumber: build))
     }
@@ -38,7 +44,9 @@ check("published and maintenance marketing metadata use the exact native build b
     let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
     try! FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
     defer { try! FileManager.default.removeItem(at: directory) }
-    for (index, metadata) in [("1.0.0", "14", true), ("1.0.0", "16", true), ("1.0.1", "16", true), ("1.0.1", "15", false), ("1.0.1", "17", true)].enumerated() {
+    let versions = [("1.0.0", "14", true), ("1.0.0", "16", true), ("1.0.1", "16", true),
+                    ("1.0.1", "15", false), ("1.0.1", "17", true), ("1.0.2", "18", expectsBuild18)]
+    for (index, metadata) in versions.enumerated() {
         let path = directory.appendingPathComponent("Fixture\(index).bundle")
         try! FileManager.default.createDirectory(at: path, withIntermediateDirectories: true)
         let info = ["CFBundleIdentifier": "com.gridlygo.gridly", "CFBundleShortVersionString": metadata.0, "CFBundleVersion": metadata.1]
@@ -118,5 +126,6 @@ if not swift:
     raise SystemExit("Swift is required for this certification (run on macOS)")
 with tempfile.TemporaryDirectory(prefix="gridly-recovery-lifecycle-") as temporary:
     fixture = Path(temporary) / "RecoveryLifecycle.swift"
-    fixture.write_text('import Foundation\n' + gate + binding + checks)
+    fixture.write_text('import Foundation\n' + gate + binding
+                       + f'\nlet expectsBuild18 = {str(expects_build18).lower()}\n' + checks)
     subprocess.run([swift, str(fixture)], check=True)

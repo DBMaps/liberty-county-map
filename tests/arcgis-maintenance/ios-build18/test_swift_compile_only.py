@@ -43,7 +43,11 @@ class CompileOnlyTests(unittest.TestCase):
                     text = workflow.read_text(encoding="utf-8")
                     triggers = re.search(r"(?ms)^on:\n(.*?)(?=^[a-z][a-z_-]*:|\Z)", text)
                     self.assertIsNotNone(triggers)
-                    self.assertNotRegex(triggers.group(1), r"(?m)^\s+(push|create):")
+                    if workflow.name == "gridly-apple-build18-archive-only.yml":
+                        self.assertEqual(triggers.group(1).strip(),
+                                         "push:\n    branches:\n      - codex/arcgis-ios-build18-archive-only")
+                    else:
+                        self.assertNotRegex(triggers.group(1), r"(?m)^\s+(push|create):")
 
     def test_compiler_stages_fail_closed_and_clean_up(self):
         sha = "1" * 40
