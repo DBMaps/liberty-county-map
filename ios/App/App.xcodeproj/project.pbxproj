@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		A18D1A600000000000000001 /* GridlyLabelDiagnostic.swift in Sources */ = {isa = PBXBuildFile; fileRef = A18D1A600000000000000002 /* GridlyLabelDiagnostic.swift */; };
 		A18D1A600000000000000003 /* GridlyBuild18DiagnosticViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A18D1A600000000000000004 /* GridlyBuild18DiagnosticViewController.swift */; };
+		A18D1A700000000000000001 /* GridlyBuild18Candidate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A18D1A700000000000000002 /* GridlyBuild18Candidate.swift */; };
+		A18D1A700000000000000003 /* Build18DiagnosticTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A18D1A700000000000000004 /* Build18DiagnosticTests.swift */; };
 		A24465010000000000000001 /* GridlyContinuityPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = A24465010000000000000002 /* GridlyContinuityPlugin.swift */; };
 		A24466C10000000000000001 /* GridlyAppAttestPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = A24466C10000000000000002 /* GridlyAppAttestPlugin.swift */; };
 		A24463010000000000000001 /* GridlyStoreKitPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = A24463010000000000000002 /* GridlyStoreKitPlugin.swift */; };
@@ -23,9 +25,22 @@
 		50B271D11FEDC1A000F3C39B /* public in Resources */ = {isa = PBXBuildFile; fileRef = 50B271D01FEDC1A000F3C39B /* public */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		A18D1A70000000000000000B /* App proxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 504EC2FC1FED79650016851F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 504EC3031FED79650016851F;
+			remoteInfo = App;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		A18D1A600000000000000002 /* GridlyLabelDiagnostic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GridlyLabelDiagnostic.swift; path = ../../tools/arcgis-maintenance/native/ios/GridlyLabelDiagnostic.swift; sourceTree = SOURCE_ROOT; };
 		A18D1A600000000000000004 /* GridlyBuild18DiagnosticViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridlyBuild18DiagnosticViewController.swift; sourceTree = "<group>"; };
+		A18D1A700000000000000002 /* GridlyBuild18Candidate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridlyBuild18Candidate.swift; sourceTree = "<group>"; };
+		A18D1A700000000000000004 /* Build18DiagnosticTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Build18DiagnosticTests.swift; path = ../../tests/arcgis-maintenance/ios-build18/Build18DiagnosticTests.swift; sourceTree = SOURCE_ROOT; };
+		A18D1A700000000000000005 /* GridlyBuild18Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GridlyBuild18Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A24465010000000000000002 /* GridlyContinuityPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridlyContinuityPlugin.swift; sourceTree = "<group>"; };
 		A24466C10000000000000002 /* GridlyAppAttestPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridlyAppAttestPlugin.swift; sourceTree = "<group>"; };
 		A24466C10000000000000003 /* App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = App.entitlements; sourceTree = "<group>"; };
@@ -45,6 +60,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		A18D1A70000000000000000D /* Test Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		504EC3011FED79650016851F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -61,6 +83,7 @@
 			children = (
 				958DCC722DB07C7200EA8C5F /* debug.xcconfig */,
 				504EC3061FED79650016851F /* App */,
+				A18D1A700000000000000004 /* Build18DiagnosticTests.swift */,
 				504EC3051FED79650016851F /* Products */,
 			);
 			sourceTree = "<group>";
@@ -69,6 +92,7 @@
 			isa = PBXGroup;
 			children = (
 				504EC3041FED79650016851F /* App.app */,
+				A18D1A700000000000000005 /* GridlyBuild18Tests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -84,6 +108,7 @@
 				A24463010000000000000004 /* GridlyBridgeViewController.swift */,
 				A18D1A600000000000000002 /* GridlyLabelDiagnostic.swift */,
 				A18D1A600000000000000004 /* GridlyBuild18DiagnosticViewController.swift */,
+				A18D1A700000000000000002 /* GridlyBuild18Candidate.swift */,
 				50379B222058CBB4000EE86E /* capacitor.config.json */,
 				504EC3071FED79650016851F /* AppDelegate.swift */,
 				504EC30B1FED79650016851F /* Main.storyboard */,
@@ -99,6 +124,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		A18D1A700000000000000006 /* GridlyBuild18Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A18D1A700000000000000008 /* Build configuration list for GridlyBuild18Tests */;
+			buildPhases = (
+				A18D1A700000000000000007 /* Test Sources */,
+				A18D1A70000000000000000D /* Test Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A18D1A70000000000000000C /* App dependency */,
+			);
+			name = GridlyBuild18Tests;
+			productName = GridlyBuild18Tests;
+			productReference = A18D1A700000000000000005 /* GridlyBuild18Tests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		504EC3031FED79650016851F /* App */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 504EC3161FED79650016851F /* Build configuration list for PBXNativeTarget "App" */;
@@ -128,6 +170,9 @@
 				LastSwiftUpdateCheck = 0920;
 				LastUpgradeCheck = 0920;
 				TargetAttributes = {
+					A18D1A700000000000000006 = {
+						TestTargetID = 504EC3031FED79650016851F;
+					};
 					504EC3031FED79650016851F = {
 						CreatedOnToolsVersion = 9.2;
 						LastSwiftMigration = 1100;
@@ -152,6 +197,7 @@
 			projectRoot = "";
 			targets = (
 				504EC3031FED79650016851F /* App */,
+				A18D1A700000000000000006 /* GridlyBuild18Tests */,
 			);
 		};
 /* End PBXProject section */
@@ -173,6 +219,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		A18D1A700000000000000007 /* Test Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A18D1A700000000000000003 /* Build18DiagnosticTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		504EC3001FED79650016851F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -184,10 +238,19 @@
 				A24463010000000000000003 /* GridlyBridgeViewController.swift in Sources */,
 				A18D1A600000000000000001 /* GridlyLabelDiagnostic.swift in Sources */,
 				A18D1A600000000000000003 /* GridlyBuild18DiagnosticViewController.swift in Sources */,
+				A18D1A700000000000000001 /* GridlyBuild18Candidate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		A18D1A70000000000000000C /* App dependency */ = {
+			isa = PBXTargetDependency;
+			target = 504EC3031FED79650016851F /* App */;
+			targetProxy = A18D1A70000000000000000B /* App proxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		504EC30B1FED79650016851F /* Main.storyboard */ = {
@@ -209,6 +272,38 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		A18D1A700000000000000009 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks", "@loader_path/Frameworks");
+				PRODUCT_BUNDLE_IDENTIFIER = com.gridlygo.gridly.Build18Tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = iphonesimulator;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/App.app/App";
+			};
+			name = Debug;
+		};
+		A18D1A70000000000000000A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks", "@loader_path/Frameworks");
+				PRODUCT_BUNDLE_IDENTIFIER = com.gridlygo.gridly.Build18Tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = iphonesimulator;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/App.app/App";
+			};
+			name = Release;
+		};
 		504EC3141FED79650016851F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 958DCC722DB07C7200EA8C5F /* debug.xcconfig */;
@@ -367,6 +462,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		A18D1A700000000000000008 /* Build configuration list for GridlyBuild18Tests */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A18D1A700000000000000009 /* Debug */,
+				A18D1A70000000000000000A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
 		504EC2FF1FED79650016851F /* Build configuration list for PBXProject "App" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

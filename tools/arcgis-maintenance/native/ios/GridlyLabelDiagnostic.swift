@@ -160,11 +160,13 @@ final class GridlyLabelDiagnostic: NSObject, WKNavigationDelegate {
     private static let maxBytes = 2 * 1024 * 1024
     private let queue = DispatchQueue(label: "Gridly.IsolatedLabelDiagnostic")
     private let budget: NativeLabelBudget
-    private let candidate: String
+    private var candidate: Data
+    private let syntheticCandidate: Bool
     private let cancellation = DiagnosticCancellation()
     private let requestSlot = DispatchSemaphore(value: 1)
     private var armed = false, stopped = false, inFlight = false
     private var providerEnabled = false
+    private var providerDeadline: DispatchTime?
     private var synthetic: (() -> Data)?
     private var connection: NWConnection?
     private var timeout: DispatchWorkItem?
@@ -183,27 +185,62 @@ final class GridlyLabelDiagnostic: NSObject, WKNavigationDelegate {
         let context: String
     }
     static func provision(run: String, mode: String) throws { try NativeLabelBudget.provision(run: run, mode: mode) }
-    init(run: String, mode: String, candidate: String) throws {
-        guard mode == Self.mode, candidate.range(of: "^[A-Za-z0-9_.~-]{16,4096}$", options: .regularExpression) != nil else { throw DiagnosticFailure.stopped }
-        self.budget = try NativeLabelBudget(run: run); self.candidate = candidate
+    convenience init(run: String, mode: String, candidate: String) throws {
+        try self.init(run: run, mode: mode, candidateBytes: Data(candidate.utf8))
+    }
+    init(run: String, mode: String, candidateBytes: Data) throws {
+        guard mode == Self.mode, Self.validCandidateBytes(candidateBytes) else { throw DiagnosticFailure.stopped }
+        self.budget = try NativeLabelBudget(run: run)
+        self.candidate = candidateBytes.withUnsafeBytes { Data(bytes: $0.baseAddress!, count: $0.count) }
+        self.syntheticCandidate = candidateBytes.starts(with: "SYNTHETIC_".utf8)
         super.init()
         inactiveObserver = NotificationCenter.default.addObserver(forName: UIApplication.willResignActiveNotification, object: nil, queue: nil) { [weak self] _ in self?.stop() }
     }
-    deinit { if let observer = inactiveObserver { NotificationCenter.default.removeObserver(observer) }; connection?.cancel() }
+    static func validCandidateBytes(_ bytes: Data) -> Bool {
+        (16...4096).contains(bytes.count) && bytes.allSatisfy {
+            (48...57).contains($0) || (65...90).contains($0) || (97...122).contains($0) ||
+            $0 == 45 || $0 == 46 || $0 == 95 || $0 == 126
+        }
+    }
+    deinit {
+        if let observer = inactiveObserver { NotificationCenter.default.removeObserver(observer) }
+        connection?.cancel()
+        clearCandidate()
+    }
+    private func clearCandidate() {
+        candidate.resetBytes(in: 0..<candidate.count)
+        candidate.removeAll(keepingCapacity: false)
+        providerEnabled = false
+        providerDeadline = nil
+    }
+    private var providerAllowed: Bool {
+        guard providerEnabled, let deadline = providerDeadline else { return false }
+        return DispatchTime.now() < deadline
+    }
     func selectSyntheticTransport(_ response: @escaping () -> Data) -> Bool {
         guard Thread.isMainThread else { return false }
         return queue.sync {
-            guard webView == nil, !armed, !stopped, !providerEnabled, candidate.hasPrefix("SYNTHETIC_") else { return false }
+            guard webView == nil, !armed, !stopped, !providerEnabled, syntheticCandidate else { return false }
             synthetic = response; return true
         }
     }
-    // No automatic call site. A separate explicit live-test authorization is required.
-    func authorizeProviderTransport(_ authorization: String) -> Bool {
-        guard Thread.isMainThread else { return false }
+    // Only an explicit, time-bounded physical-device owner session can enable this.
+    func authorizeProviderTransport(_ authorization: String, expires: Date) -> Bool {
+        #if GRIDLY_BUILD18_DIAGNOSTIC && !targetEnvironment(simulator)
+        let interval = min(300, expires.timeIntervalSinceNow)
+        guard Thread.isMainThread, UIApplication.shared.applicationState == .active, interval > 0 else { return false }
         return queue.sync {
-            guard webView == nil, !armed, !stopped, synthetic == nil, !candidate.hasPrefix("SYNTHETIC_"), authorization == "OWNER_TWO_REQUEST_NATIVE_PROVIDER_TEST" else { return false }
-            providerEnabled = true; return true
+            guard webView == nil, !armed, !stopped, synthetic == nil, !syntheticCandidate, !providerEnabled,
+                  cancellation.whileActive({}), authorization == "OWNER_TWO_REQUEST_NATIVE_PROVIDER_TEST" else { return false }
+            let deadline = DispatchTime.now() + interval
+            providerEnabled = true
+            providerDeadline = deadline
+            queue.asyncAfter(deadline: deadline) { [weak self] in self?.stop() }
+            return true
         }
+        #else
+        return false
+        #endif
     }
     // Main thread only. No consumer source, Leaflet, map, bridge plugins or push code.
     // Completion provides fixed status only; a nil view is a hard stop.
@@ -240,7 +277,7 @@ final class GridlyLabelDiagnostic: NSObject, WKNavigationDelegate {
               let view = webView, !view.isLoading, view.url?.absoluteString == "capacitor://localhost/" else { completion("ARM_REJECTED"); return }
         let observed = "\(view.url!.scheme!)://\(view.url!.host!)" // Actual native document URL; not an HTTP header.
         queue.async {
-            guard self.providerEnabled || self.synthetic != nil, !self.armed, !self.stopped,
+            guard self.providerAllowed || self.synthetic != nil, !self.armed, !self.stopped,
                   self.cancellation.whileActive({}) else { completion("ARM_REJECTED"); return }
             do { try self.budget.checkAvailable() }
             catch { self.finishStop(); completion("BUDGET_UNAVAILABLE"); return }
@@ -259,6 +296,7 @@ final class GridlyLabelDiagnostic: NSObject, WKNavigationDelegate {
         stopped = true; armed = false
         cancellation.cancel()
         timeout?.cancel(); timeout = nil; connection?.cancel(); connection = nil
+        clearCandidate()
         do {
             if !budget.flightHeld { try budget.beginFlight() }
             try budget.endFlight(stopping: true)
@@ -285,6 +323,7 @@ final class GridlyLabelDiagnostic: NSObject, WKNavigationDelegate {
             stopped = true
             armed = false
             cancellation.cancel()
+            clearCandidate()
             return false
         }
     }
@@ -297,7 +336,7 @@ final class GridlyLabelDiagnostic: NSObject, WKNavigationDelegate {
                 if !self.inFlight { self.requestSlot.signal() }
                 result(image, status)
             }
-            guard (self.providerEnabled || self.synthetic != nil), self.armed, !self.stopped, !self.inFlight,
+            guard (self.providerAllowed || self.synthetic != nil), self.armed, !self.stopped, !self.inFlight,
                   self.cancellation.whileActive({}), zoom >= 0, zoom <= 23, row >= 0, column >= 0,
                   row < (1 << zoom), column < (1 << zoom) else { completion(nil,"BLOCKED"); return }
             self.inFlight = true
@@ -314,9 +353,11 @@ final class GridlyLabelDiagnostic: NSObject, WKNavigationDelegate {
                     self.rows.append(Evidence(request: ordinal, status: 0, documentOrigin: self.documentOrigin, contentType: "image/png", tileValidity: "SYNTHETIC_DECODE_512_PASS", context: "SYNTHETIC_TRANSPORT"))
                     completion(image,"SYNTHETIC_PASS"); return
                 }
-                let path = Self.tile + "\(zoom)/\(row)/\(column)?token=" + self.candidate
+                guard self.providerAllowed else { self.finishStop(); completion(nil,"STOPPED"); return }
                 // NO synthesized Referer/Origin. This is NOT ordinary WKWebView authorization evidence.
-                let bytes = Data("GET \(path) HTTP/1.1\r\nHost: \(Self.host)\r\nConnection: close\r\nAccept: image/png\r\nAccept-Encoding: identity\r\n\r\n".utf8)
+                var bytes = Data("GET \(Self.tile)\(zoom)/\(row)/\(column)?token=".utf8)
+                bytes.append(self.candidate)
+                bytes.append(contentsOf: " HTTP/1.1\r\nHost: \(Self.host)\r\nConnection: close\r\nAccept: image/png\r\nAccept-Encoding: identity\r\n\r\n".utf8)
                 let tls = NWProtocolTLS.Options()
                 sec_protocol_options_set_tls_server_name(tls.securityProtocolOptions, Self.host)
                 sec_protocol_options_add_tls_application_protocol(tls.securityProtocolOptions, "http/1.1")
@@ -327,10 +368,11 @@ final class GridlyLabelDiagnostic: NSObject, WKNavigationDelegate {
                 var sent = false, response = Data(), finished = false
                 func finish(_ image: UIImage?, _ status: Int) {
                     guard !finished else { return }; finished = true
+                    bytes.resetBytes(in: 0..<bytes.count)
                     self.cancelRequest = nil
                     connection.stateUpdateHandler = nil
                     self.timeout?.cancel(); self.timeout = nil; connection.cancel(); self.connection = nil
-                    let accepted = self.settleFlight(success: image != nil, ordinal: ordinal) ? image : nil
+                    let accepted = self.settleFlight(success: image != nil && self.providerAllowed, ordinal: ordinal) ? image : nil
                     self.rows.append(Evidence(request: ordinal, status: status, documentOrigin: self.documentOrigin, contentType: accepted == nil ? "UNEXPECTED" : "image/png", tileValidity: accepted == nil ? "FAIL" : "DECODE_512_PASS", context: "EXPLICIT_NATIVE_TLS_NOT_WEBVIEW_HTTPS"))
                     completion(accepted,accepted == nil ? "STOPPED" : "PASS")
                 }
@@ -351,7 +393,7 @@ final class GridlyLabelDiagnostic: NSObject, WKNavigationDelegate {
                     switch state {
                     case .ready:
                         guard !sent, !finished else { return }
-                        guard self.armed, !self.stopped, self.inFlight, self.connection === connection,
+                        guard self.providerAllowed, self.armed, !self.stopped, self.inFlight, self.connection === connection,
                               self.cancellation.whileActive({
                             sent = true
                             connection.send(content: bytes, completion: .contentProcessed { error in // SINGLE_HTTP_WRITE; no .idempotent/restart/retry.
@@ -365,10 +407,12 @@ final class GridlyLabelDiagnostic: NSObject, WKNavigationDelegate {
                 }
                 let timeout = DispatchWorkItem { finish(nil,0) }; self.timeout = timeout
                 self.queue.asyncAfter(deadline: .now() + 10, execute: timeout)
-                connection.start(queue: self.queue)
+                guard self.providerAllowed, self.cancellation.whileActive({ connection.start(queue: self.queue) }) else {
+                    finish(nil,0); return
+                }
             } catch {
                 if self.budget.flightHeld { self.finishStop() }
-                else { self.stopped = true; self.armed = false }
+                else { self.stopped = true; self.armed = false; self.clearCandidate() }
                 completion(nil,"BUDGET_UNAVAILABLE")
             }
         }

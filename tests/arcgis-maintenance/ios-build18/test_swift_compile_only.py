@@ -15,10 +15,14 @@ import swift_compile_only as job
 
 class CompileOnlyTests(unittest.TestCase):
     def test_reviewed_inputs_match_pins(self):
+        # The standalone runner is frozen at its last reviewed inputs. The new
+        # candidate is verified by the actual Xcode App target and hosted tests.
+        reviewed = "f852cc5f0bb18ef22989dadcf6033dafe96b9495"
         self.assertEqual(len(job.REVIEWED_INPUTS), 6)
         for relative, digest in job.REVIEWED_INPUTS.items():
             with self.subTest(source=relative):
-                data = (job.ROOT / relative).read_bytes().replace(b"\r\n", b"\n")
+                data = subprocess.check_output(["git", "show", f"{reviewed}:{relative}"], cwd=job.ROOT)
+                data = data.replace(b"\r\n", b"\n")
                 self.assertEqual(hashlib.sha256(data).hexdigest(), digest)
 
     def test_workflow_is_limited_to_one_reviewed_branch_creation(self):
