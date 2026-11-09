@@ -108,16 +108,20 @@ class CompileOnlyTests(unittest.TestCase):
                         symbols = "\n".join(f"GridlyLabelDiagnostic_{method}" for method in
                                             ("prepareFixture", "authorizeProviderTransport", "requestTile"))
                         return subprocess.CompletedProcess(argv, 0, "" if case == "symbols" else symbols, "")
-                    self.assertEqual(argv[:4], (*job.SDK_COMMAND, "swiftc"))
                     self.assertEqual(kwargs["timeout"], 90)
-                    self.assertIn(job.TARGET, argv)
-                    self.assertIn("GRIDLY_BUILD18_DIAGNOSTIC", argv)
-                    self.assertIn("GRIDLY_ARCGIS_DIAGNOSTIC", argv)
-                    self.assertNotIn("-emit-executable", argv)
+                    compiler_args = (
+                        *job.SDK_COMMAND, "swiftc", "-swift-version", "5", "-sdk", str(sdk),
+                        "-target", "arm64-apple-ios16.4-simulator", "-D", "DEBUG",
+                        "-D", "GRIDLY_ARCGIS_DIAGNOSTIC", "-D", "GRIDLY_BUILD18_DIAGNOSTIC",
+                        "-module-cache-path", str(work / "module-cache"),
+                    )
                     if "-emit-object" in argv:
                         stages.append("adapter")
-                        self.assertIn("-enable-testing", argv)
-                        self.assertEqual(argv[-1], str(root / job.ADAPTER))
+                        self.assertEqual(argv, (
+                            *compiler_args, "-parse-as-library", "-enable-testing", "-module-name", "App",
+                            "-emit-object", "-emit-module", "-emit-module-path", str(module),
+                            "-o", str(output), str(root / job.ADAPTER),
+                        ))
                         if case == "timeout":
                             raise subprocess.TimeoutExpired(argv, 90, stderr=synthetic_detail)
                         output.write_bytes(b"synthetic object")
@@ -125,13 +129,15 @@ class CompileOnlyTests(unittest.TestCase):
                             module.write_bytes(b"synthetic module")
                     elif "-typecheck" in argv:
                         stages.append("test")
-                        self.assertIn(str(frameworks), argv)
-                        self.assertIn(str(work), argv)
-                        self.assertEqual(argv[-1], str(root / job.TESTS))
+                        self.assertEqual(argv, (
+                            *compiler_args, "-typecheck", "-I", str(work), "-F", str(frameworks),
+                            str(root / job.TESTS),
+                        ))
                     else:
                         stages.append("parse")
-                        self.assertIn("-parse", argv)
-                        self.assertEqual(argv[-2:], (str(root / job.VIEW), str(root / job.BRIDGE)))
+                        self.assertEqual(argv, (
+                            *compiler_args, "-parse", str(root / job.VIEW), str(root / job.BRIDGE),
+                        ))
                     diagnostic = f"{argv[-1]}:27:4: error: {synthetic_detail}"
                     code = 73 if case == stages[-1] else 0
                     return subprocess.CompletedProcess(argv, code, synthetic_detail, diagnostic if code else "")

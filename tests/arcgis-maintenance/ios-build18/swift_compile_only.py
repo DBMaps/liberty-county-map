@@ -105,7 +105,7 @@ def main():
         compile_env = {**env, "TMPDIR": str(work)}
         compiler = (*SDK_COMMAND, "swiftc")
         flags = ("-swift-version", "5", "-sdk", str(sdk), "-target", TARGET,
-                 "-D", "GRIDLY_ARCGIS_DIAGNOSTIC", "-D", "GRIDLY_BUILD18_DIAGNOSTIC",
+                 "-D", "DEBUG", "-D", "GRIDLY_ARCGIS_DIAGNOSTIC", "-D", "GRIDLY_BUILD18_DIAGNOSTIC",
                  "-module-cache-path", str(work / "module-cache"))
         # This module contains the real adapter only. The App name satisfies the existing @testable import.
         swift_check("ADAPTER_OBJECT", compile_env, compiler,
