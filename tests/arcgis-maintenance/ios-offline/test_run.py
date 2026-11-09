@@ -133,5 +133,132 @@ class SimulatorDiscoveryTests(unittest.TestCase):
                 self.assertEqual(list(Path(temp).iterdir()), [])
 
 
+class ExecutionOrderTests(unittest.TestCase):
+    def test_preflight_isolation_and_cleanup_order(self):
+        before_pf = ["CHECKOUT_SHA", "XCODE_VERSION", "SIM_RUNTIME", "SIMULATOR_SDK", "PF_LOAD"]
+        cleanup = ["PF_FLUSH", "PF_RELEASE"]
+        before_compile = before_pf + ["PF_ENABLE", "PF_PROBE", "PF_PROBE", "SWIFT_COMPILE"]
+        before_fixture = before_compile + ["PF_PROBE", "SIM_CREATE", "FIXTURE"]
+        delete = ["SIM_SHUTDOWN", "SIM_DELETE"]
+        cases = [
+            (None, None, before_fixture + ["MAC_PRIVATE_INPUT", "PF_PROBE"] + delete + cleanup),
+            ("PF_LOAD", "PF_COMMAND", before_pf + ["PF_FLUSH"]),
+            ("IPv4", "PF_DUAL_STACK_PROBE", before_pf + ["PF_ENABLE", "PF_PROBE"] + cleanup),
+            ("IPv6 recheck", "PF_DUAL_STACK_PROBE", before_compile[:-1] + cleanup),
+            ("SWIFT_COMPILE", "SWIFT_COMPILE", before_compile + cleanup),
+            ("FIXTURE", "SYNTHETIC_FAIL", before_fixture + delete + cleanup),
+            ("MAC_PRIVATE_INPUT", "MAC_PRIVATE_INPUT", before_fixture + ["MAC_PRIVATE_INPUT"] + delete + cleanup),
+            ("SIM_DELETE", "SIM_DELETE", before_fixture + ["MAC_PRIVATE_INPUT", "PF_PROBE"] + delete),
+        ]
+        sha = "1" * 40
+        runner = {
+            "GITHUB_ACTIONS": "true", "RUNNER_ENVIRONMENT": "github-hosted",
+            "GITHUB_REPOSITORY": "DBMaps/liberty-county-map", "GITHUB_REF": run.BRANCH,
+            "GITHUB_EVENT_NAME": "push", "GITHUB_RUN_ATTEMPT": "1",
+            "GITHUB_SHA": sha, "GITHUB_RUN_ID": "123",
+        }
+        for failure, status, expected in cases:
+            with self.subTest(failure=failure), tempfile.TemporaryDirectory() as temp:
+                events, packets = [], [0, 0]
+                sdk = Path(temp) / "Xcode" / "SDK"
+                sdk.mkdir(parents=True)
+                stdout, stderr = io.StringIO(), io.StringIO()
+                marker = "SYNTHETIC_PRIVATE_COMMAND_MARKER"
+
+                def command(stage, *args, **options):
+                    events.append(stage)
+                    if stage == "SWIFT_COMPILE":
+                        self.assertIn("swiftc", args)
+                    if failure == stage and stage in ("SWIFT_COMPILE", "SIM_DELETE"):
+                        raise run.Blocked(stage)
+                    return {
+                        "CHECKOUT_SHA": sha, "XCODE_VERSION": "Xcode 26.5\nBuild version 17F42\n",
+                        "SIMULATOR_SDK": sdk.as_posix(), "SIM_CREATE": "12345678-1234-1234-1234-123456789ABC",
+                        "MAC_PRIVATE_INPUT": marker if failure == stage else "MAC_PRIVATE_INPUT_PASS",
+                    }.get(stage, "")
+
+                def pf(*args, **options):
+                    if args[-2:] == ("-f", "-"):
+                        events.append("PF_LOAD")
+                        if failure == "PF_LOAD":
+                            raise run.Blocked("PF_COMMAND")
+                    if args[0] == "-E":
+                        events.append("PF_ENABLE")
+                        return "Token: 123\n"
+                    if args[-2:] == ("-s", "labels"):
+                        return f"gridly_probe4 0 {packets[0]}\ngridly_probe6 0 {packets[1]}"
+                    if args[-2:] == ("-F", "rules"):
+                        events.append("PF_FLUSH")
+                    if args == ("-X", "123"):
+                        events.append("PF_RELEASE")
+                    return ""
+
+                def canaries():
+                    events.append("PF_PROBE")
+                    if failure != "IPv4":
+                        packets[0] += 1
+                    if failure != "IPv6 recheck" or events.count("PF_PROBE") == 1:
+                        packets[1] += 1
+
+                def fixture(*args):
+                    events.append("FIXTURE")
+                    if failure == "FIXTURE":
+                        raise run.Blocked("SYNTHETIC_FAIL")
+
+                with (
+                    patch.dict(run.os.environ, {**runner, "RUNNER_TEMP": temp}), patch.dict(run.ENV),
+                    patch.object(run.os, "getuid", return_value=501, create=True), patch.object(run.os, "umask"),
+                    patch.object(run.platform, "system", return_value="Darwin"),
+                    patch.object(run.platform, "machine", return_value="arm64"),
+                    patch.object(run.platform, "mac_ver", return_value=("26.7.2", (), "")),
+                    patch.object(run, "XCODE", sdk.parent.as_posix()),
+                    patch.object(run, "command", side_effect=command),
+                    patch.object(run, "require_simulator_runtime", side_effect=lambda: events.append("SIM_RUNTIME")),
+                    patch.object(run.Firewall, "check_policy"), patch.object(run, "pf", side_effect=pf),
+                    patch.object(run, "send_canaries", side_effect=canaries),
+                    patch.object(run, "run_fixture", side_effect=fixture), redirect_stdout(stdout), redirect_stderr(stderr),
+                ):
+                    if status:
+                        with self.assertRaisesRegex(run.Blocked, f"^{status}$"):
+                            run.main()
+                    else:
+                        run.main()
+                self.assertEqual(events, expected)
+                self.assertEqual(stdout.getvalue(), "" if status else "ARCGIS_IOS_SYNTHETIC_PASS\n")
+                self.assertEqual(stderr.getvalue(), "")
+                report = Path(temp) / "gridly-arcgis-synthetic-result.json"
+                self.assertEqual(report.exists(), status is None)
+                if not status:
+                    self.assertNotIn(marker, report.read_text(encoding="utf-8"))
+
+    def test_fixture_rechecks_before_install_and_launch(self):
+        device = "sim"
+        for blocked in (True, False):
+            with self.subTest(blocked=blocked), tempfile.TemporaryDirectory() as temp:
+                home = Path(temp)
+                data = home / "Library/Developer/CoreSimulator/Devices" / device / "data"
+                data.mkdir(parents=True)
+                events = []
+                firewall = Mock()
+
+                def verify():
+                    events.append("PF_VERIFY")
+                    if blocked and events.count("PF_VERIFY") == 2:
+                        raise run.Blocked("PF_DUAL_STACK_PROBE")
+
+                def sim(stage, *args, **options):
+                    events.append(stage)
+                    if stage == "SIM_FIXTURE_LAUNCH":
+                        raise run.Blocked("LAUNCH_TEST_BOUNDARY")
+                    return str(data) if stage == "SIM_DATA_CONTAINER" else ""
+
+                firewall.verify.side_effect = verify
+                with patch.object(run.Path, "home", return_value=home), patch.object(run, "sim", side_effect=sim):
+                    with self.assertRaisesRegex(run.Blocked, "PF_DUAL_STACK_PROBE" if blocked else "LAUNCH_TEST_BOUNDARY"):
+                        run.run_fixture(device, home / "Fixture.app", home, firewall)
+                expected = ["SIM_BOOT", "SIM_BOOT_STATUS", "PF_VERIFY", "SIM_FIXTURE_INSTALL", "SIM_DATA_CONTAINER", "PF_VERIFY"]
+                self.assertEqual(events, expected if blocked else expected + ["SIM_FIXTURE_LAUNCH"])
+
+
 if __name__ == "__main__":
     unittest.main()

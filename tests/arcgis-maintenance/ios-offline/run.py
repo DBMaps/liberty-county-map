@@ -205,13 +205,17 @@ def require_simulator_runtime():
     print("SIM_RUNTIME_AVAILABLE", flush=True)
 
 
-def compile_fixture(work):
+def preflight():
     xcode = command("XCODE_VERSION", "/usr/bin/xcodebuild", "-version")
     version = re.fullmatch(r"Xcode (26\.5(?:\.\d+)?)\nBuild version ([A-Za-z0-9]+)\s*", xcode)
     require(version is not None, "XCODE_VERSION")
     require_simulator_runtime()
     sdk = command("SIMULATOR_SDK", "/usr/bin/xcrun", "--sdk", "iphonesimulator", "--show-sdk-path").strip()
     require(Path(sdk).is_dir() and sdk.startswith(XCODE + "/"), "SIMULATOR_SDK")
+    return sdk, version.groups()
+
+
+def compile_fixture(work, sdk):
     app = work / (EXECUTABLE + ".app")
     app.mkdir()
     info = {
@@ -226,7 +230,7 @@ def compile_fixture(work):
             "-sdk", sdk, "-target", "arm64-apple-ios26.5-simulator", "-swift-version", "5",
             "-D", "DEBUG", "-D", "GRIDLY_ARCGIS_DIAGNOSTIC", "-parse-as-library",
             str(adapter), str(FIXTURES / "Fixture.swift"), "-o", str(app / EXECUTABLE), timeout=90)
-    return app, version.groups()
+    return app
 
 
 def run_fixture(device, app, work, firewall):
@@ -277,18 +281,20 @@ def main():
     with tempfile.TemporaryDirectory(prefix="arcgis-fixture-", dir=temp) as directory:
         work = Path(directory)
         ENV["TMPDIR"] = str(work)
-        app, (xcode, build) = compile_fixture(work)
+        sdk, (xcode, build) = preflight()
         firewall = Firewall(run_id)
         device = None
         try:
             firewall.install()
-            result = command("MAC_PRIVATE_INPUT", "node", str(FIXTURES / "private-input.mjs"), timeout=90)
-            require(result.strip() == "MAC_PRIVATE_INPUT_PASS", "MAC_PRIVATE_INPUT")
+            firewall.verify()
+            app = compile_fixture(work, sdk)
             firewall.verify()
             value = sim("SIM_CREATE", "create", "Gridly ArcGIS Offline " + run_id, DEVICE, RUNTIME).strip()
             require(re.fullmatch(r"[0-9A-F]{8}(?:-[0-9A-F]{4}){3}-[0-9A-F]{12}", value), "SIM_UUID")
             device = value
             run_fixture(device, app, work, firewall)
+            result = command("MAC_PRIVATE_INPUT", "node", str(FIXTURES / "private-input.mjs"), timeout=90)
+            require(result.strip() == "MAC_PRIVATE_INPUT_PASS", "MAC_PRIVATE_INPUT")
             firewall.verify()
         finally:
             # If simulator deletion fails, leave the deny rule active on this disposable runner.
