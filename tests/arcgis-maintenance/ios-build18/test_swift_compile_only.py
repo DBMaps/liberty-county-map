@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 import re
 import subprocess
+import sys
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -49,7 +50,7 @@ class CompileOnlyTests(unittest.TestCase):
                     self.assertIsNotNone(triggers)
                     if workflow.name == "gridly-apple-build18-archive-only.yml":
                         self.assertEqual(triggers.group(1).strip(),
-                                         "push:\n    branches:\n      - codex/arcgis-ios-build18-native-integration-sync-repair")
+                                         "push:\n    branches:\n      - codex/arcgis-ios-build18-xctest-diagnostics")
                     else:
                         self.assertNotRegex(triggers.group(1), r"(?m)^\s+(push|create):")
 
@@ -58,24 +59,35 @@ class CompileOnlyTests(unittest.TestCase):
         source = workflow.read_text(encoding="utf-8")
         candidate = "b9cbff579b1cbf05842030fc01cd7ed60267dd1d"
         base = "1055168666f094d2fd551d002b31556c81a8280b"
-        branch = "refs/heads/codex/arcgis-ios-build18-native-integration-sync-repair"
+        certified = "88d410ea4b55f69dd7d6a3533b507211d47f8d56"
+        branch = "refs/heads/codex/arcgis-ios-build18-xctest-diagnostics"
         for gate in ("github.repository == 'DBMaps/liberty-county-map'", "github.actor == 'DBMaps'",
                      f"github.ref == '{branch}'", "github.event_name == 'push'", "github.event.created == true",
                      "github.event.deleted == false", "github.event.forced == false", "github.run_attempt == 1",
                      "contents: read", "runs-on: macos-26", f"APPLICATION_SHA: {candidate}", f"INTEGRATION_BASE_SHA: {base}",
-                     'test "$(git -C control show -s --format=%P HEAD)" = "$INTEGRATION_BASE_SHA"',
+                     f"CERTIFIED_SOURCE_SHA: {certified}", f"ref: {certified}",
+                     'test "$(git -C control show -s --format=%P HEAD)" = "$CERTIFIED_SOURCE_SHA"',
+                     'test "$(git -C candidate show -s --format=%P HEAD)" = "$INTEGRATION_BASE_SHA"',
                      'test "$(git -C candidate show -s --format=%P "$INTEGRATION_BASE_SHA")" = "$APPLICATION_SHA"',
-                     'test "$(git -C candidate rev-parse HEAD)" = "$GITHUB_SHA"',
+                     'test "$(git -C candidate rev-parse HEAD)" = "$CERTIFIED_SOURCE_SHA"',
+                     "APP_ARCHIVE_CERTIFIED", "XCTEST_BUILD_CERTIFICATION=FAILED",
+                     "XCTEST_BUILD_CERTIFICATION=PRODUCT_VERIFICATION_FAILED", "XCTEST_BUILD_CERTIFICATION=PASSED",
                      "BUILD18_NATIVE_LIFECYCLE_14_DEFERRED", "BUILD18_NATIVE_EXECUTION_NOT_RUN"):
             self.assertIn(gate, source)
         self.assertEqual(source.count("persist-credentials: false"), 2)
-        self.assertEqual(source.count("ref: ${{ github.sha }}"), 2)
+        self.assertEqual(source.count("ref: ${{ github.sha }}"), 1)
         self.assertNotRegex(source, r"\bsimctl\b|\btest-without-building\b|\bpfctl\b|\baltool\b|"
                                     r"\bbuild14-native-lifecycle\.test\.py\b|\bsecrets\.|"
                                     r"\bupload-artifact\b|--runtime-config-file|-exportArchive")
         commands = re.findall(r"(?m)^\s*xcodebuild ([^\n]+)", re.sub(r"\\\n\s*", " ", source))
         self.assertEqual(len(commands), 3)
         resolve, archive, xctest = commands
+        previous = subprocess.check_output(
+            ["git", "show", f"{certified}:.github/workflows/{workflow.name}"], cwd=job.ROOT, text=True
+        )
+        reviewed_commands = re.findall(r"(?m)^\s*xcodebuild ([^\n]+)", re.sub(r"\\\n\s*", " ", previous))
+        self.assertEqual([resolve, archive], reviewed_commands[:2])
+        self.assertEqual(xctest, reviewed_commands[2] + '  > "$private/xctest-build.log" 2>&1 || xctest_exit=$?')
         self.assertIn("-resolvePackageDependencies -project ios/App/App.xcodeproj -scheme App", resolve)
         self.assertIn("-project ios/App/App.xcodeproj -scheme App -configuration Release", archive)
         self.assertIn("-destination 'generic/platform=iOS'", archive)
@@ -86,6 +98,65 @@ class CompileOnlyTests(unittest.TestCase):
         self.assertIn("SWIFT_ACTIVE_COMPILATION_CONDITIONS='DEBUG GRIDLY_ARCGIS_DIAGNOSTIC GRIDLY_BUILD18_DIAGNOSTIC' build-for-testing", xctest)
         for command in (archive, xctest):
             self.assertIn("CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY= GRIDLY_BUILD18_OWNER_PUBLIC_KEY=", command)
+
+    def test_xcode_log_classifies_errors_without_releasing_log_content(self):
+        tool = job.ROOT / "tools/arcgis-maintenance/xctest-build-diagnostics.py"
+        cases = (
+            (
+                "SwiftCompile normal arm64 /private/SYNTHETIC_PATH/Build18DiagnosticTests.swift\n"
+                "/private/SYNTHETIC_PATH/Build18DiagnosticTests.swift:42:7: error: no such module 'SYNTHETIC_SECRET'\n"
+                "The following build commands failed:\n"
+                "\tSwiftCompile normal arm64 /private/SYNTHETIC_PATH/Build18DiagnosticTests.swift "
+                "(in target 'GridlyBuild18Tests' from project 'App')\n(1 failure)\n",
+                ["BUILD18_XCTEST_FAILED_COMMAND kind=SWIFT_COMPILE target=XCTEST",
+                 "BUILD18_XCTEST_DIAGNOSTIC code=SWIFT_MODULE_MISSING source=Build18DiagnosticTests.swift line=42 column=7"],
+            ),
+            (
+                "Undefined symbols for architecture arm64:\n  \"_SYNTHETIC_SECRET\"\n"
+                "clang: error: linker command failed with exit code 1 (use -v to see invocation)\n"
+                "The following build commands failed:\n"
+                "\tLd /private/SYNTHETIC_PATH/App normal (in target 'App' from project 'App')\n(1 failure)\n",
+                ["BUILD18_XCTEST_FAILED_COMMAND kind=LINK target=APP_HOST",
+                 "BUILD18_XCTEST_DIAGNOSTIC code=LINK_UNDEFINED_SYMBOLS",
+                 "BUILD18_XCTEST_DIAGNOSTIC code=LINK_COMMAND_FAILED"],
+            ),
+            (
+                "xcodebuild: error: Unable to find a destination matching https://example.invalid/?key=SYNTHETIC_SECRET\n",
+                ["BUILD18_XCTEST_FAILED_COMMAND kind=UNKNOWN target=UNKNOWN",
+                 "BUILD18_XCTEST_DIAGNOSTIC code=XCODE_DESTINATION"],
+            ),
+            (
+                "error: Could not find test host at /private/SYNTHETIC_PATH/App.app\n",
+                ["BUILD18_XCTEST_FAILED_COMMAND kind=UNKNOWN target=UNKNOWN",
+                 "BUILD18_XCTEST_DIAGNOSTIC code=XCODE_TEST_HOST"],
+            ),
+            (
+                "/private/SYNTHETIC_PATH/Unknown.swift:13:7: error: SYNTHETIC_SECRET\n",
+                ["BUILD18_XCTEST_FAILED_COMMAND kind=UNKNOWN target=UNKNOWN",
+                 "BUILD18_XCTEST_DIAGNOSTIC code=UNCLASSIFIED_XCODE_ERROR"],
+            ),
+            (
+                "SwiftCompile normal arm64 SYNTHETIC_PATH (in target 'App' from project 'App')\n"
+                "warning: error-like SYNTHETIC_SECRET\nld: warning: SYNTHETIC_PATH\n",
+                ["BUILD18_XCTEST_FAILED_COMMAND kind=UNKNOWN target=UNKNOWN",
+                 "BUILD18_XCTEST_DIAGNOSTIC code=NO_CLASSIFIABLE_ERROR"],
+            ),
+        )
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / "private.log"
+            for index, (log, expected) in enumerate(cases):
+                with self.subTest(case=index):
+                    path.write_text(log, encoding="utf-8")
+                    result = subprocess.run([sys.executable, "-I", "-B", str(tool), str(path)],
+                                            capture_output=True, text=True, check=True)
+                    self.assertEqual(result.stdout.splitlines(), expected)
+                    self.assertEqual(result.stderr, "")
+            path.write_text("".join(f"Build18DiagnosticTests.swift:{line}:7: error: SYNTHETIC_SECRET\n"
+                                    for line in range(1, 25)), encoding="utf-8")
+            result = subprocess.run([sys.executable, "-I", "-B", str(tool), str(path)],
+                                    capture_output=True, text=True, check=True)
+            self.assertEqual(len(result.stdout.splitlines()), 9)
+            self.assertNotIn("SYNTHETIC_SECRET", result.stdout + result.stderr)
 
     def test_compiler_stages_fail_closed_and_clean_up(self):
         sha = "1" * 40

@@ -3,20 +3,20 @@ name: Gridly Apple Build 18 native integration (compile and archive only)
 on:
   push:
     branches:
-      - codex/arcgis-ios-build18-native-integration-sync-repair
+      - codex/arcgis-ios-build18-xctest-diagnostics
 
 permissions:
   contents: read
 
 concurrency:
-  group: gridly-apple-build18-native-integration-sync-repair
+  group: gridly-apple-build18-xctest-diagnostics
   cancel-in-progress: false
 
 jobs:
   native-integration:
     if: >-
       github.repository == 'DBMaps/liberty-county-map' && github.actor == 'DBMaps' &&
-      github.event_name == 'push' && github.ref == 'refs/heads/codex/arcgis-ios-build18-native-integration-sync-repair' &&
+      github.event_name == 'push' && github.ref == 'refs/heads/codex/arcgis-ios-build18-xctest-diagnostics' &&
       github.event.created == true && github.event.deleted == false && github.event.forced == false &&
       github.run_attempt == 1
     runs-on: macos-26
@@ -24,6 +24,7 @@ jobs:
     env:
       APPLICATION_SHA: b9cbff579b1cbf05842030fc01cd7ed60267dd1d
       INTEGRATION_BASE_SHA: 1055168666f094d2fd551d002b31556c81a8280b
+      CERTIFIED_SOURCE_SHA: 88d410ea4b55f69dd7d6a3533b507211d47f8d56
       RELEASED_SHA: 71168111a133fa1c187620b9604b08e79fbf4687
       DEVELOPER_DIR: /Applications/Xcode_26.5.app/Contents/Developer
     defaults:
@@ -38,7 +39,7 @@ jobs:
           persist-credentials: false
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
-          ref: ${{ github.sha }}
+          ref: 88d410ea4b55f69dd7d6a3533b507211d47f8d56
           path: candidate
           fetch-depth: 0
           persist-credentials: false
@@ -46,14 +47,14 @@ jobs:
         run: |
           test "$GITHUB_WORKFLOW_SHA" = "$GITHUB_SHA"
           test "$(git -C control rev-parse HEAD)" = "$GITHUB_SHA"
-          test "$(git -C control show -s --format=%P HEAD)" = "$INTEGRATION_BASE_SHA"
-          test "$(git -C control diff --name-only --no-renames "$INTEGRATION_BASE_SHA" HEAD)" = "$(printf '%s\n' \
+          test "$(git -C control show -s --format=%P HEAD)" = "$CERTIFIED_SOURCE_SHA"
+          test "$(git -C control diff --name-only --no-renames "$CERTIFIED_SOURCE_SHA" HEAD)" = "$(printf '%s\n' \
             .github/workflows/gridly-apple-build18-archive-only.yml \
-            tests/arcgis-maintenance/build18.test.mjs \
             tests/arcgis-maintenance/ios-build18/test_swift_compile_only.py \
-            tools/ios-deployment-floor.mjs)"
+            tools/arcgis-maintenance/xctest-build-diagnostics.py)"
           test -z "$(git -C control status --porcelain)"
-          test "$(git -C candidate rev-parse HEAD)" = "$GITHUB_SHA"
+          test "$(git -C candidate rev-parse HEAD)" = "$CERTIFIED_SOURCE_SHA"
+          test "$(git -C candidate show -s --format=%P HEAD)" = "$INTEGRATION_BASE_SHA"
           test "$(git -C candidate show -s --format=%P "$INTEGRATION_BASE_SHA")" = "$APPLICATION_SHA"
           test -z "$(git -C candidate status --porcelain)"
           git -C candidate diff --quiet "$APPLICATION_SHA" HEAD -- ios/App tools/arcgis-maintenance/native/ios \
@@ -103,6 +104,9 @@ jobs:
           cleanup() {
             status=$?
             trap - EXIT
+            if test "$stage" = XCTEST_PRODUCT_IDENTITY && test "$status" -ne 0; then
+              printf '%s\n' 'XCTEST_BUILD_CERTIFICATION=PRODUCT_VERIFICATION_FAILED' >&3
+            fi
             if test "$status" -ne 0; then printf 'BUILD18_ARCHIVE_FAILED stage=%s exit_code=%d\n' "$stage" "$status" >&3; fi
             if ! rm -rf -- "$private" www ios/App/App/public; then
               printf '%s\n' 'BUILD18_ARCHIVE_CLEANUP_FAILED' >&3
@@ -191,14 +195,23 @@ jobs:
             grep -Fq "$symbol" "$private/symbols"
           done
           printf '%s\n' 'BUILD18_ACTUAL_APP_ARCHIVE_PASS DIAGNOSTIC_SYMBOLS_PRESENT' >&3
+          printf '%s\n' 'APP_ARCHIVE_CERTIFIED' >&3
 
           stage=XCTEST_BUILD_FOR_TESTING
+          xctest_exit=0
           xcodebuild -project ios/App/App.xcodeproj -scheme GridlyBuild18Diagnostics -configuration Debug \
             -destination 'generic/platform=iOS Simulator' -derivedDataPath "$private/derived-data" \
             -clonedSourcePackagesDirPath "$private/source-packages" -disableAutomaticPackageResolution \
             ARCHS=arm64 ONLY_ACTIVE_ARCH=NO ENABLE_TESTABILITY=YES \
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY= GRIDLY_BUILD18_OWNER_PUBLIC_KEY= \
-            SWIFT_ACTIVE_COMPILATION_CONDITIONS='DEBUG GRIDLY_ARCGIS_DIAGNOSTIC GRIDLY_BUILD18_DIAGNOSTIC' build-for-testing
+            SWIFT_ACTIVE_COMPILATION_CONDITIONS='DEBUG GRIDLY_ARCGIS_DIAGNOSTIC GRIDLY_BUILD18_DIAGNOSTIC' build-for-testing \
+            > "$private/xctest-build.log" 2>&1 || xctest_exit=$?
+          if test "$xctest_exit" -ne 0; then
+            printf '%s\n' 'XCTEST_BUILD_CERTIFICATION=FAILED' >&3
+            python3 -I -B ../control/tools/arcgis-maintenance/xctest-build-diagnostics.py "$private/xctest-build.log" >&3 ||
+              printf '%s\n' 'BUILD18_XCTEST_DIAGNOSTIC code=DIAGNOSTICS_UNAVAILABLE' >&3
+            exit "$xctest_exit"
+          fi
           stage=XCTEST_PRODUCT_IDENTITY
           test -z "$(git status --porcelain --untracked-files=no)"
           test_binary="$(python3 -I -B - "$private/derived-data/Build/Products" <<'PY'
@@ -235,4 +248,5 @@ jobs:
           )"
           xcrun nm -arch arm64 -U -j "$test_binary" > "$private/test-symbols"
           grep -Fq 'Build18DiagnosticTests' "$private/test-symbols"
-          printf '%s\n' 'BUILD18_APP_HOSTED_XCTEST_BUILD_PASS' 'BUILD18_NATIVE_EXECUTION_NOT_RUN' >&3
+          printf '%s\n' 'XCTEST_BUILD_CERTIFICATION=PASSED' \
+            'BUILD18_APP_HOSTED_XCTEST_BUILD_PASS' 'BUILD18_NATIVE_EXECUTION_NOT_RUN' >&3
