@@ -50,7 +50,7 @@ class CompileOnlyTests(unittest.TestCase):
                     self.assertIsNotNone(triggers)
                     if workflow.name == "gridly-apple-build18-archive-only.yml":
                         self.assertEqual(triggers.group(1).strip(),
-                                         "push:\n    branches:\n      - codex/arcgis-ios-build18-xctest-diagnostics")
+                                         "push:\n    branches:\n      - codex/arcgis-ios-build18-xctest-exact-diagnostics")
                     else:
                         self.assertNotRegex(triggers.group(1), r"(?m)^\s+(push|create):")
 
@@ -60,13 +60,15 @@ class CompileOnlyTests(unittest.TestCase):
         candidate = "b9cbff579b1cbf05842030fc01cd7ed60267dd1d"
         base = "1055168666f094d2fd551d002b31556c81a8280b"
         certified = "88d410ea4b55f69dd7d6a3533b507211d47f8d56"
-        branch = "refs/heads/codex/arcgis-ios-build18-xctest-diagnostics"
+        diagnostics_base = "eb94bca38592ffcaef689712ef014e7d3bc60b91"
+        branch = "refs/heads/codex/arcgis-ios-build18-xctest-exact-diagnostics"
         for gate in ("github.repository == 'DBMaps/liberty-county-map'", "github.actor == 'DBMaps'",
                      f"github.ref == '{branch}'", "github.event_name == 'push'", "github.event.created == true",
                      "github.event.deleted == false", "github.event.forced == false", "github.run_attempt == 1",
                      "contents: read", "runs-on: macos-26", f"APPLICATION_SHA: {candidate}", f"INTEGRATION_BASE_SHA: {base}",
                      f"CERTIFIED_SOURCE_SHA: {certified}", f"ref: {certified}",
-                     'test "$(git -C control show -s --format=%P HEAD)" = "$CERTIFIED_SOURCE_SHA"',
+                     f"DIAGNOSTICS_BASE_SHA: {diagnostics_base}",
+                     'test "$(git -C control show -s --format=%P HEAD)" = "$DIAGNOSTICS_BASE_SHA"',
                      'test "$(git -C candidate show -s --format=%P HEAD)" = "$INTEGRATION_BASE_SHA"',
                      'test "$(git -C candidate show -s --format=%P "$INTEGRATION_BASE_SHA")" = "$APPLICATION_SHA"',
                      'test "$(git -C candidate rev-parse HEAD)" = "$CERTIFIED_SOURCE_SHA"',
@@ -98,6 +100,11 @@ class CompileOnlyTests(unittest.TestCase):
         self.assertIn("SWIFT_ACTIVE_COMPILATION_CONDITIONS='DEBUG GRIDLY_ARCGIS_DIAGNOSTIC GRIDLY_BUILD18_DIAGNOSTIC' build-for-testing", xctest)
         for command in (archive, xctest):
             self.assertIn("CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY= GRIDLY_BUILD18_OWNER_PUBLIC_KEY=", command)
+        previous_control = subprocess.check_output(
+            ["git", "show", f"{diagnostics_base}:.github/workflows/{workflow.name}"], cwd=job.ROOT, text=True
+        )
+        self.assertEqual(source.split("          git -C candidate diff --quiet", 1)[1],
+                         previous_control.split("          git -C candidate diff --quiet", 1)[1])
 
     def test_xcode_log_classifies_errors_without_releasing_log_content(self):
         tool = job.ROOT / "tools/arcgis-maintenance/xctest-build-diagnostics.py"
@@ -157,6 +164,52 @@ class CompileOnlyTests(unittest.TestCase):
                                     capture_output=True, text=True, check=True)
             self.assertEqual(len(result.stdout.splitlines()), 9)
             self.assertNotIn("SYNTHETIC_SECRET", result.stdout + result.stderr)
+
+    def test_focused_xcode_error_text_requires_a_full_safe_match_at_the_pinned_coordinate(self):
+        tool = job.ROOT / "tools/arcgis-maintenance/xctest-build-diagnostics.py"
+        location = "/private/SYNTHETIC_PATH/Build18DiagnosticTests.swift:141:61: error: "
+        conversion = ("invalid conversion from throwing function of type '(UIImage?, String) throws -> ()' "
+                      "to non-throwing function type '(UIImage?, String) -> Void'")
+        fallback = "BUILD18_XCTEST_DIAGNOSTIC code=SWIFT_SOURCE_ERROR source=Build18DiagnosticTests.swift line=141 column=61"
+        prefix = "BUILD18_XCTEST_DIAGNOSTIC code="
+        source = " source=Build18DiagnosticTests.swift line=141 column=61 message="
+        cases = (
+            (location + conversion, prefix + "SWIFT_THROWING_CLOSURE_CONVERSION" + source + conversion),
+            (location + conversion + " SYNTHETIC_TOKEN",
+             prefix + "SWIFT_THROWING_CLOSURE_CONVERSION" + source + "WITHHELD"),
+            (location + conversion.replace("UIImage?", "https://example.invalid/?token=SYNTHETIC_TOKEN", 1),
+             prefix + "SWIFT_THROWING_CLOSURE_CONVERSION" + source + "WITHHELD"),
+            (location + "converting non-sendable function value to '@Sendable (UIImage?, String) -> Void' may introduce data races",
+             prefix + "SWIFT_CLOSURE_SENDABILITY" + source
+             + "converting non-sendable function value to '@Sendable (UIImage?, String) -> Void' may introduce data races"),
+            (location + "converting function value of type '@MainActor (UIImage?, String) -> Void' "
+             "to '(UIImage?, String) -> Void' loses global actor 'MainActor'",
+             prefix + "SWIFT_CLOSURE_ACTOR_ISOLATION" + source
+             + "converting function value of type '@MainActor (UIImage?, String) -> Void' "
+             "to '(UIImage?, String) -> Void' loses global actor 'MainActor'"),
+            (location + "type of expression is ambiguous without a type annotation",
+             prefix + "SWIFT_CLOSURE_TYPE_INFERENCE" + source + "type of expression is ambiguous without a type annotation"),
+            (location + "errors thrown from here are not handled",
+             prefix + "SWIFT_UNHANDLED_THROW" + source + "errors thrown from here are not handled"),
+            (location + "SYNTHETIC_TOKEN=/private/path https://example.invalid/", fallback + " message=WITHHELD"),
+            (location.replace(":141:61:", ":141:62:") + conversion, fallback.replace("column=61", "column=62")),
+            ("error: quoted " + location + conversion, fallback),
+        )
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / "private.log"
+            command = [sys.executable, "-I", "-B", str(tool), str(path)]
+            for index, (log, expected) in enumerate(cases):
+                with self.subTest(case=index):
+                    path.write_text(log + "\n", encoding="utf-8")
+                    result = subprocess.run(command, capture_output=True, text=True, check=True)
+                    self.assertEqual(result.stdout.splitlines()[1:], [expected])
+                    self.assertEqual(result.stderr, "")
+            earlier = "".join(f"GridlyBuild18Candidate.swift:{line}:7: error: SYNTHETIC_TOKEN\n" for line in range(1, 13))
+            path.write_text(earlier + location + conversion + "\n", encoding="utf-8")
+            result = subprocess.run(command, capture_output=True, text=True, check=True)
+            self.assertEqual(result.stdout.splitlines()[1], cases[0][1])
+            self.assertEqual(len(result.stdout.splitlines()), 9)
+            self.assertNotRegex(result.stdout + result.stderr, r"SYNTHETIC_|/private/|https://")
 
     def test_compiler_stages_fail_closed_and_clean_up(self):
         sha = "1" * 40

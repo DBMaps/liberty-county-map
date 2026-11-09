@@ -1,4 +1,4 @@
-"""Emit only fixed failure classifications from a private Xcode build log."""
+"""Emit fixed classifications and allowlisted Swift text from a private log."""
 
 import re
 import sys
@@ -60,10 +60,52 @@ ERROR_CODES = (
     ("LINK_COMMAND_FAILED", r"linker command failed"),
 )
 
+# This source and coordinate refer to the pinned candidate in the workflow.
+# Every emitted message must match the entire template, including its types.
+FOCUS_LOCATION = ("Build18DiagnosticTests.swift", "141", "61")
+CALLBACK = r"(?:(?:@MainActor|@Sendable) ){0,2}\((?:UIKit\.)?UIImage\?, (?:Swift\.)?String\)"
+VOID = r"(?:\(\)|(?:Swift\.)?Void|_)"
+FOCUS_MESSAGES = (
+    ("SWIFT_THROWING_CLOSURE_CONVERSION",
+     rf"invalid conversion from throwing function of type '{CALLBACK} throws -> {VOID}' "
+     rf"to non-throwing function type '{CALLBACK} -> {VOID}'"),
+    ("SWIFT_THROWING_CLOSURE_CONVERSION",
+     rf"cannot convert value of type '{CALLBACK} throws -> {VOID}' "
+     rf"to expected argument type '{CALLBACK} -> {VOID}'"),
+    ("SWIFT_ASYNC_CLOSURE_CONVERSION",
+     rf"invalid conversion from 'async' function of type '{CALLBACK} async -> {VOID}' "
+     rf"to synchronous function type '{CALLBACK} -> {VOID}'"),
+    ("SWIFT_CLOSURE_ACTOR_ISOLATION",
+     rf"converting function value of type '@MainActor {CALLBACK} -> {VOID}' "
+     rf"to '{CALLBACK} -> {VOID}' loses global actor 'MainActor'"),
+    ("SWIFT_CLOSURE_SENDABILITY",
+     rf"converting non-sendable function value to '@Sendable {CALLBACK} -> {VOID}' may introduce data races"),
+    ("SWIFT_CLOSURE_TYPE_INFERENCE",
+     r"type of expression is ambiguous without a type annotation|"
+     r"cannot infer return type for closure with multiple statements; add explicit type to disambiguate"),
+    ("SWIFT_UNHANDLED_THROW", r"errors thrown from here are not handled|"
+     r"call can throw, but it is not marked with 'try' and the error is not handled"),
+)
+FOCUS_CODES = (
+    ("SWIFT_THROWING_CLOSURE_CONVERSION", r"invalid conversion from throwing function|"
+     r"cannot pass function of type .* throws -> .*non-throwing|"
+     r"cannot convert value of type '[^']* throws -> [^']+' to expected argument type "
+     r"'(?![^']*\bthrows\b)[^']* -> [^']+'"),
+    ("SWIFT_ASYNC_CLOSURE_CONVERSION", r"invalid conversion from 'async' function|"
+     r"parameter expecting synchronous function type"),
+    ("SWIFT_CLOSURE_ACTOR_ISOLATION", r"loses global actor|actor-isolated|actor isolation"),
+    ("SWIFT_CLOSURE_SENDABILITY", r"non-sendable|@sendable|may introduce data races"),
+    ("SWIFT_CLOSURE_TYPE_INFERENCE", r"cannot infer (?:return type for closure|type of closure parameter)|"
+     r"type of expression is ambiguous without a type annotation"),
+    ("SWIFT_UNHANDLED_THROW", r"errors? thrown from here (?:are|is) not handled|"
+     r"call can throw, but it is not marked with 'try'"),
+)
+
 
 def classify(lines):
     commands = {}
     diagnostics = {}
+    focused = {}
     in_failure_summary = False
     for raw in lines:
         if len(raw) > 8192:
@@ -80,8 +122,6 @@ def classify(lines):
                 target = TARGET.search(line)
                 commands[(command, TARGETS[target[1]] if target else "UNKNOWN")] = None
 
-        if len(diagnostics) >= 8:
-            continue
         error = ERROR.search(line)
         if not error and not line.startswith(("Undefined symbols for architecture ", "duplicate symbol ")):
             continue
@@ -89,14 +129,26 @@ def classify(lines):
         if message.lower().startswith(("warning:", "note:")):
             continue
         location = LOCATION.search(line)
-        code = next((label for label, pattern in ERROR_CODES if re.search(pattern, message, re.IGNORECASE)),
+        is_focus = (location and error and location.groups() == FOCUS_LOCATION
+                    and location.end() <= error.end() and not line[location.end():error.end()].strip())
+        records = focused if is_focus else diagnostics
+        if len(records) >= 8:
+            continue
+        patterns = (*FOCUS_CODES, *ERROR_CODES) if is_focus else ERROR_CODES
+        code = next((label for label, pattern in patterns if re.search(pattern, message, re.IGNORECASE)),
                     "SWIFT_SOURCE_ERROR" if location and location[1].endswith(".swift") else "UNCLASSIFIED_XCODE_ERROR")
         source = f" source={location[1]} line={location[2]} column={location[3]}" if location else ""
-        diagnostics[f"BUILD18_XCTEST_DIAGNOSTIC code={code}{source}"] = None
+        detail = ""
+        if is_focus:
+            exact = next((label for label, pattern in FOCUS_MESSAGES if re.fullmatch(pattern, message)), None)
+            if exact:
+                code = exact
+            detail = f" message={message if exact else 'WITHHELD'}"
+        records[f"BUILD18_XCTEST_DIAGNOSTIC code={code}{source}{detail}"] = None
 
     result = [f"BUILD18_XCTEST_FAILED_COMMAND kind={command} target={target}"
               for command, target in (commands or {("UNKNOWN", "UNKNOWN"): None})]
-    result.extend(diagnostics or ["BUILD18_XCTEST_DIAGNOSTIC code=NO_CLASSIFIABLE_ERROR"])
+    result.extend([*focused, *diagnostics][:8] or ["BUILD18_XCTEST_DIAGNOSTIC code=NO_CLASSIFIABLE_ERROR"])
     return result
 
 

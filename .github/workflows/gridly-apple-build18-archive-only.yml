@@ -3,20 +3,20 @@ name: Gridly Apple Build 18 native integration (compile and archive only)
 on:
   push:
     branches:
-      - codex/arcgis-ios-build18-xctest-diagnostics
+      - codex/arcgis-ios-build18-xctest-exact-diagnostics
 
 permissions:
   contents: read
 
 concurrency:
-  group: gridly-apple-build18-xctest-diagnostics
+  group: gridly-apple-build18-xctest-exact-diagnostics
   cancel-in-progress: false
 
 jobs:
   native-integration:
     if: >-
       github.repository == 'DBMaps/liberty-county-map' && github.actor == 'DBMaps' &&
-      github.event_name == 'push' && github.ref == 'refs/heads/codex/arcgis-ios-build18-xctest-diagnostics' &&
+      github.event_name == 'push' && github.ref == 'refs/heads/codex/arcgis-ios-build18-xctest-exact-diagnostics' &&
       github.event.created == true && github.event.deleted == false && github.event.forced == false &&
       github.run_attempt == 1
     runs-on: macos-26
@@ -25,6 +25,7 @@ jobs:
       APPLICATION_SHA: b9cbff579b1cbf05842030fc01cd7ed60267dd1d
       INTEGRATION_BASE_SHA: 1055168666f094d2fd551d002b31556c81a8280b
       CERTIFIED_SOURCE_SHA: 88d410ea4b55f69dd7d6a3533b507211d47f8d56
+      DIAGNOSTICS_BASE_SHA: eb94bca38592ffcaef689712ef014e7d3bc60b91
       RELEASED_SHA: 71168111a133fa1c187620b9604b08e79fbf4687
       DEVELOPER_DIR: /Applications/Xcode_26.5.app/Contents/Developer
     defaults:
@@ -47,8 +48,8 @@ jobs:
         run: |
           test "$GITHUB_WORKFLOW_SHA" = "$GITHUB_SHA"
           test "$(git -C control rev-parse HEAD)" = "$GITHUB_SHA"
-          test "$(git -C control show -s --format=%P HEAD)" = "$CERTIFIED_SOURCE_SHA"
-          test "$(git -C control diff --name-only --no-renames "$CERTIFIED_SOURCE_SHA" HEAD)" = "$(printf '%s\n' \
+          test "$(git -C control show -s --format=%P HEAD)" = "$DIAGNOSTICS_BASE_SHA"
+          test "$(git -C control diff --name-only --no-renames "$DIAGNOSTICS_BASE_SHA" HEAD)" = "$(printf '%s\n' \
             .github/workflows/gridly-apple-build18-archive-only.yml \
             tests/arcgis-maintenance/ios-build18/test_swift_compile_only.py \
             tools/arcgis-maintenance/xctest-build-diagnostics.py)"
