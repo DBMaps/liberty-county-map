@@ -49,9 +49,38 @@ class CompileOnlyTests(unittest.TestCase):
                     self.assertIsNotNone(triggers)
                     if workflow.name == "gridly-apple-build18-archive-only.yml":
                         self.assertEqual(triggers.group(1).strip(),
-                                         "push:\n    branches:\n      - codex/arcgis-ios-build18-archive-only")
+                                         "push:\n    branches:\n      - codex/arcgis-ios-build18-native-integration")
                     else:
                         self.assertNotRegex(triggers.group(1), r"(?m)^\s+(push|create):")
+
+    def test_app_archive_and_hosted_xctest_build_do_not_execute_native_code(self):
+        workflow = job.ROOT / ".github/workflows/gridly-apple-build18-archive-only.yml"
+        source = workflow.read_text(encoding="utf-8")
+        candidate = "b9cbff579b1cbf05842030fc01cd7ed60267dd1d"
+        branch = "refs/heads/codex/arcgis-ios-build18-native-integration"
+        for gate in ("github.repository == 'DBMaps/liberty-county-map'", "github.actor == 'DBMaps'",
+                     f"github.ref == '{branch}'", "github.event_name == 'push'", "github.event.created == true",
+                     "github.event.deleted == false", "github.event.forced == false", "github.run_attempt == 1",
+                     "contents: read", "runs-on: macos-26", f"APPLICATION_SHA: {candidate}", f"ref: {candidate}",
+                     "BUILD18_NATIVE_LIFECYCLE_14_DEFERRED", "BUILD18_NATIVE_EXECUTION_NOT_RUN"):
+            self.assertIn(gate, source)
+        self.assertEqual(source.count("persist-credentials: false"), 2)
+        self.assertNotRegex(source, r"\bsimctl\b|\btest-without-building\b|\bpfctl\b|\baltool\b|"
+                                    r"\bbuild14-native-lifecycle\.test\.py\b|\bsecrets\.|"
+                                    r"\bupload-artifact\b|--runtime-config-file|-exportArchive")
+        commands = re.findall(r"(?m)^\s*xcodebuild ([^\n]+)", re.sub(r"\\\n\s*", " ", source))
+        self.assertEqual(len(commands), 3)
+        resolve, archive, xctest = commands
+        self.assertIn("-resolvePackageDependencies -project ios/App/App.xcodeproj -scheme App", resolve)
+        self.assertIn("-project ios/App/App.xcodeproj -scheme App -configuration Release", archive)
+        self.assertIn("-destination 'generic/platform=iOS'", archive)
+        self.assertIn("SWIFT_ACTIVE_COMPILATION_CONDITIONS='GRIDLY_ARCGIS_DIAGNOSTIC GRIDLY_BUILD18_DIAGNOSTIC' archive", archive)
+        self.assertIn("-project ios/App/App.xcodeproj -scheme GridlyBuild18Diagnostics -configuration Debug", xctest)
+        self.assertIn("-destination 'generic/platform=iOS Simulator'", xctest)
+        self.assertIn("ARCHS=arm64 ONLY_ACTIVE_ARCH=NO ENABLE_TESTABILITY=YES", xctest)
+        self.assertIn("SWIFT_ACTIVE_COMPILATION_CONDITIONS='DEBUG GRIDLY_ARCGIS_DIAGNOSTIC GRIDLY_BUILD18_DIAGNOSTIC' build-for-testing", xctest)
+        for command in (archive, xctest):
+            self.assertIn("CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY= GRIDLY_BUILD18_OWNER_PUBLIC_KEY=", command)
 
     def test_compiler_stages_fail_closed_and_clean_up(self):
         sha = "1" * 40

@@ -1,28 +1,28 @@
-name: Gridly Apple Build 18 unsigned certification archive
+name: Gridly Apple Build 18 native integration (compile and archive only)
 
 on:
   push:
     branches:
-      - codex/arcgis-ios-build18-archive-only
+      - codex/arcgis-ios-build18-native-integration
 
 permissions:
   contents: read
 
 concurrency:
-  group: gridly-apple-build18-archive-only
+  group: gridly-apple-build18-native-integration
   cancel-in-progress: false
 
 jobs:
-  archive-only:
+  native-integration:
     if: >-
       github.repository == 'DBMaps/liberty-county-map' && github.actor == 'DBMaps' &&
-      github.event_name == 'push' && github.ref == 'refs/heads/codex/arcgis-ios-build18-archive-only' &&
+      github.event_name == 'push' && github.ref == 'refs/heads/codex/arcgis-ios-build18-native-integration' &&
       github.event.created == true && github.event.deleted == false && github.event.forced == false &&
       github.run_attempt == 1
     runs-on: macos-26
     timeout-minutes: 45
     env:
-      APPLICATION_SHA: 8ad0abdf6718126e4d0c1abbea7f8fb77b48fdc8
+      APPLICATION_SHA: b9cbff579b1cbf05842030fc01cd7ed60267dd1d
       RELEASED_SHA: 71168111a133fa1c187620b9604b08e79fbf4687
       DEVELOPER_DIR: /Applications/Xcode_26.5.app/Contents/Developer
     defaults:
@@ -37,7 +37,7 @@ jobs:
           persist-credentials: false
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
-          ref: 8ad0abdf6718126e4d0c1abbea7f8fb77b48fdc8
+          ref: b9cbff579b1cbf05842030fc01cd7ed60267dd1d
           path: candidate
           fetch-depth: 0
           persist-credentials: false
@@ -48,22 +48,33 @@ jobs:
           test "$(git -C control show -s --format=%P HEAD)" = "$APPLICATION_SHA"
           test "$(git -C control diff --name-only --no-renames "$APPLICATION_SHA" HEAD)" = "$(printf '%s\n' \
             .github/workflows/gridly-apple-build18-archive-only.yml \
-            tests/arcgis-maintenance/ios-build18/test_swift_compile_only.py tests/build14-native-lifecycle.test.py)"
+            tests/arcgis-maintenance/ios-build18/test_swift_compile_only.py)"
           test -z "$(git -C control status --porcelain)"
           test "$(git -C candidate rev-parse HEAD)" = "$APPLICATION_SHA"
           test -z "$(git -C candidate status --porcelain)"
           git -C candidate merge-base --is-ancestor "$RELEASED_SHA" HEAD
           git -C candidate diff --quiet "$RELEASED_SHA" HEAD -- android css js capacitor.config.json package-lock.json \
-            ios/App/CapApp-SPM ios/App/App/AppDelegate.swift ios/App/App/Info.plist \
+            ios/App/CapApp-SPM ios/App/App/AppDelegate.swift \
             ios/App/App/capacitor.config.json ios/App/App/App.entitlements ios/App/App/App-Production.entitlements
+          python3 -I -B - "$RELEASED_SHA" <<'PY'
+          import plistlib, subprocess, sys
+          from pathlib import Path
+
+          path = "ios/App/App/Info.plist"
+          original = plistlib.loads(subprocess.check_output(["git", "-C", "candidate", "show", f"{sys.argv[1]}:{path}"]))
+          candidate = plistlib.loads(Path("candidate", path).read_bytes())
+          assert candidate.pop("GridlyBuild18OwnerPublicKey") == "$(GRIDLY_BUILD18_OWNER_PUBLIC_KEY)"
+          assert candidate == original
+          PY
           test "$(uname -s):$(uname -m)" = Darwin:arm64
           test "$(xcodebuild -version)" = "$(printf '%s\n' 'Xcode 26.5' 'Build version 17F42')"
           test "$(xcrun --sdk iphoneos --show-sdk-version)" = 26.5
+          test "$(xcrun --sdk iphonesimulator --show-sdk-version)" = 26.5
           printf '%s\n' 'BUILD18_ARCHIVE_SOURCE_AND_TOOLCHAIN_PASS'
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # Build 17 setup-node revision
         with:
           node-version: '22'
-      - name: Run existing native packaging, admission, recovery and lifecycle gates
+      - name: Run existing offline packaging, admission and recovery regressions
         working-directory: candidate
         run: |
           npm ci --ignore-scripts
@@ -71,10 +82,10 @@ jobs:
             tests/build13-native-pending-recovery.test.cjs tests/paid-report-authorization.test.mjs \
             tests/lp24463-apple-storekit.test.mjs tests/lp24465-paid-access.test.mjs \
             tests/native-version-compatibility.test.mjs tests/arcgis-maintenance/build18.test.mjs
-          lifecycle="$(python3 -B ../control/tests/build14-native-lifecycle.test.py --build18)"
-          grep -Fxq 'Production Swift lifecycle gate: 14 cases PASS' <<< "$lifecycle"
-          printf '%s\n' 'BUILD18_RECOVERY_LIFECYCLE_14_PASS' 'BUILD18_XCTEST_PENDING_REAL_XCODE_TEST_TARGET'
-      - name: Stage canonical web assets, sync and archive the actual unsigned App target
+          # The existing 14 Swift lifecycle cases require execution and stay
+          # with the separately authorized, isolated native test session.
+          printf '%s\n' 'BUILD18_NATIVE_LIFECYCLE_14_DEFERRED'
+      - name: Stage canonical web assets, sync, archive the App and build App-hosted XCTest
         working-directory: candidate
         run: |
           umask 077
@@ -129,7 +140,7 @@ jobs:
             -destination 'generic/platform=iOS' -derivedDataPath "$private/derived-data" \
             -clonedSourcePackagesDirPath "$private/source-packages" -disableAutomaticPackageResolution \
             -archivePath "$private/Gridly.xcarchive" CURRENT_PROJECT_VERSION=18 MARKETING_VERSION=1.0.2 \
-            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY= \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY= GRIDLY_BUILD18_OWNER_PUBLIC_KEY= \
             STRIP_INSTALLED_PRODUCT=NO COPY_PHASE_STRIP=NO \
             SWIFT_ACTIVE_COMPILATION_CONDITIONS='GRIDLY_ARCGIS_DIAGNOSTIC GRIDLY_BUILD18_DIAGNOSTIC' archive
           stage=ARCHIVE_IDENTITY
@@ -145,8 +156,10 @@ jobs:
                       "CFBundleVersion": "18", "MinimumOSVersion": "16.4", "UIDeviceFamily": [1],
                       "CFBundleExecutable": "App"}
           assert all(info.get(key) == value for key, value in expected.items())
+          assert not info.get("GridlyBuild18OwnerPublicKey")
           assert not (app / "embedded.mobileprovision").exists()
           assert not (app / "_CodeSignature").exists()
+          assert not any(app.rglob("*.xctest"))
           runtime = Path("js/gridlyRuntimeEnvironmentConfig.js")
           assert runtime.read_bytes() == (app / "public" / runtime).read_bytes()
           staged = Path("www")
@@ -162,7 +175,52 @@ jobs:
           PY
           stage=DIAGNOSTIC_SYMBOLS
           xcrun nm -arch arm64 -U -j "$app/App" > "$private/symbols"
-          for symbol in GridlyLabelDiagnostic GridlyBuild18DiagnosticViewController GridlyBridgeViewController; do
+          for symbol in GridlyBuild18Candidate GridlyLabelDiagnostic GridlyBuild18DiagnosticViewController GridlyBridgeViewController; do
             grep -Fq "$symbol" "$private/symbols"
           done
           printf '%s\n' 'BUILD18_ACTUAL_APP_ARCHIVE_PASS DIAGNOSTIC_SYMBOLS_PRESENT' >&3
+
+          stage=XCTEST_BUILD_FOR_TESTING
+          xcodebuild -project ios/App/App.xcodeproj -scheme GridlyBuild18Diagnostics -configuration Debug \
+            -destination 'generic/platform=iOS Simulator' -derivedDataPath "$private/derived-data" \
+            -clonedSourcePackagesDirPath "$private/source-packages" -disableAutomaticPackageResolution \
+            ARCHS=arm64 ONLY_ACTIVE_ARCH=NO ENABLE_TESTABILITY=YES \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY= GRIDLY_BUILD18_OWNER_PUBLIC_KEY= \
+            SWIFT_ACTIVE_COMPILATION_CONDITIONS='DEBUG GRIDLY_ARCGIS_DIAGNOSTIC GRIDLY_BUILD18_DIAGNOSTIC' build-for-testing
+          stage=XCTEST_PRODUCT_IDENTITY
+          test -z "$(git status --porcelain --untracked-files=no)"
+          test_binary="$(python3 -I -B - "$private/derived-data/Build/Products" <<'PY'
+          import plistlib, sys
+          from pathlib import Path
+
+          products = Path(sys.argv[1]).resolve()
+          manifests = list(products.glob("*.xctestrun"))
+          assert len(manifests) == 1
+          manifest = plistlib.loads(manifests[0].read_bytes())
+          if "TestConfigurations" in manifest:
+              targets = [target for config in manifest["TestConfigurations"] for target in config["TestTargets"]]
+          else:
+              targets = [target for target in manifest.values() if "TestBundlePath" in target]
+          assert len(targets) == 1
+          target = targets[0]
+          host = Path(target["TestHostPath"].replace("__TESTROOT__", str(products))).resolve()
+          assert host == products / "Debug-iphonesimulator" / "App.app"
+          bundle = Path(target["TestBundlePath"].replace("__TESTROOT__", str(products))
+                        .replace("__TESTHOST__", str(host))).resolve()
+          assert bundle in {host / "PlugIns" / "GridlyBuild18Tests.xctest",
+                            host.parent / "GridlyBuild18Tests.xctest"}
+          host_info = plistlib.loads((host / "Info.plist").read_bytes())
+          assert host_info["CFBundleIdentifier"] == "com.gridlygo.gridly"
+          assert host_info["CFBundleVersion"] == "18" and host_info["CFBundleShortVersionString"] == "1.0.2"
+          assert not host_info.get("GridlyBuild18OwnerPublicKey")
+          info = plistlib.loads((bundle / "Info.plist").read_bytes())
+          assert info["CFBundleIdentifier"] == "com.gridlygo.gridly.Build18Tests"
+          assert info["CFBundleExecutable"] == "GridlyBuild18Tests"
+          binary = bundle / "GridlyBuild18Tests"
+          assert binary.is_file() and (host / "App").is_file()
+          print(binary)
+          PY
+          )"
+          xcrun nm -arch arm64 -U -j "$test_binary" > "$private/test-symbols"
+          grep -Fq 'Build18DiagnosticTests' "$private/test-symbols"
+          printf '%s\n' 'BUILD18_APP_HOSTED_XCTEST_BUILD_PASS' 'BUILD18_NATIVE_EXECUTION_NOT_RUN' >&3
