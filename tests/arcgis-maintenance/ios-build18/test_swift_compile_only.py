@@ -25,7 +25,8 @@ class CompileOnlyTests(unittest.TestCase):
         workflows = job.ROOT / ".github/workflows"
         name = "gridly-arcgis-build18-compile-only.yml"
         source = (workflows / name).read_text(encoding="utf-8")
-        branch = job.BRANCH.removeprefix("refs/heads/")
+        branch = "codex/arcgis-ios-build18-xctest-verification"
+        self.assertEqual(job.BRANCH, f"refs/heads/{branch}")
         self.assertIn(f"on:\n  push:\n    branches:\n      - {branch}\n\npermissions:\n  contents: read\n", source)
         for gate in ("github.repository == 'DBMaps/liberty-county-map'", f"github.ref == '{job.BRANCH}'",
                      "github.event_name == 'push'", "github.event.created == true", "github.event.deleted == false",
@@ -49,15 +50,21 @@ class CompileOnlyTests(unittest.TestCase):
         synthetic_detail = "SYNTHETIC_PRIVATE_COMPILER_DETAIL"
         cases = {
             "pass": None,
-            "branch": "RUNNER_SCOPE",
+            "original": None,
+            "old-branch": "RUNNER_SCOPE",
+            "attempt": "RUNNER_SCOPE",
             "source": "SOURCE_HASH GridlyLabelDiagnostic.swift",
             "xcode": "XCODE_VERSION",
             "timeout": "ADAPTER_OBJECT_TIMEOUT",
-            "module": "ADAPTER_OUTPUT_MISSING",
+            "module": "ADAPTER_TEST_MODULE_MISSING",
+            "object": "ADAPTER_OUTPUT_MISSING",
             "symbols": "ADAPTER_CONDITIONAL_BODY_MISSING",
             "imports": "XCTEST_SWIFT_IMPORT_PATH_MISSING",
-            "test": "XCTEST_TYPECHECK_FAILED exit_code=73",
-            "parse": "INTEGRATION_PARSE_FAILED exit_code=73",
+            "original-timeout": "XCTEST_ORIGINAL_TYPECHECK_TIMEOUT",
+            "original-terminated": "XCTEST_ORIGINAL_TYPECHECK_FAILED exit_code=-9",
+            "corrected": "XCTEST_CORRECTED_TYPECHECK_FAILED exit_code=73",
+            "view": "VIEW_PARSE_FAILED exit_code=73",
+            "bridge": "BRIDGE_PARSE_FAILED exit_code=73",
         }
         for case, expected in cases.items():
             with self.subTest(case=case), tempfile.TemporaryDirectory() as directory:
@@ -84,8 +91,9 @@ class CompileOnlyTests(unittest.TestCase):
                 runner = {
                     "GITHUB_ACTIONS": "true", "RUNNER_ENVIRONMENT": "github-hosted",
                     "GITHUB_REPOSITORY": "DBMaps/liberty-county-map", "GITHUB_EVENT_NAME": "push",
-                    "GITHUB_REF": job.BRANCH if case != "branch" else "refs/heads/other",
-                    "GITHUB_RUN_ATTEMPT": "1", "GITHUB_SHA": sha, "RUNNER_TEMP": str(scratch),
+                    "GITHUB_REF": "refs/heads/codex/arcgis-ios-build18-compile-only" if case == "old-branch" else job.BRANCH,
+                    "GITHUB_RUN_ATTEMPT": "2" if case == "attempt" else "1",
+                    "GITHUB_SHA": sha, "RUNNER_TEMP": str(scratch),
                     "SYNTHETIC_PRIVATE_ENV": synthetic_detail,
                 }
                 metadata = {
@@ -109,6 +117,8 @@ class CompileOnlyTests(unittest.TestCase):
                     module = work / "App.swiftmodule"
                     if argv[3] == "nm":
                         self.assertTrue(output.is_file())
+                        self.assertEqual(argv, (*job.SDK_COMMAND, "nm", "-arch", "arm64", "-U", "-j", str(output)))
+                        stages.append("symbols")
                         symbols = "\n".join(f"GridlyLabelDiagnostic_{method}" for method in
                                             ("prepareFixture", "authorizeProviderTransport", "requestTile"))
                         return subprocess.CompletedProcess(argv, 0, "" if case == "symbols" else symbols, "")
@@ -117,40 +127,53 @@ class CompileOnlyTests(unittest.TestCase):
                         *job.SDK_COMMAND, "swiftc", "-swift-version", "5", "-sdk", str(sdk),
                         "-target", "arm64-apple-ios16.4-simulator", "-D", "DEBUG",
                         "-D", "GRIDLY_ARCGIS_DIAGNOSTIC", "-D", "GRIDLY_BUILD18_DIAGNOSTIC",
-                        "-module-cache-path", str(work / "module-cache"),
                     )
-                    if "-emit-object" in argv:
+                    compile_args = (*compiler_args, "-module-cache-path", str(work / "module-cache"))
+                    adapter_args = (*compile_args, "-parse-as-library", "-enable-testing", "-module-name", "App")
+                    if "-emit-module" in argv:
+                        stages.append("module")
+                        self.assertEqual(argv, (
+                            *adapter_args, "-emit-module", "-emit-module-path", str(module), str(root / job.ADAPTER),
+                        ))
+                        if case != "module":
+                            module.write_bytes(b"synthetic module")
+                    elif "-emit-object" in argv:
                         stages.append("adapter")
                         self.assertEqual(argv, (
-                            *compiler_args, "-parse-as-library", "-enable-testing", "-module-name", "App",
-                            "-emit-object", "-emit-module", "-emit-module-path", str(module),
-                            "-o", str(output), str(root / job.ADAPTER),
+                            *adapter_args, "-emit-object", "-o", str(output), str(root / job.ADAPTER),
                         ))
                         if case == "timeout":
                             raise subprocess.TimeoutExpired(argv, 90, stderr=synthetic_detail)
-                        output.write_bytes(b"synthetic object")
-                        if case != "module":
-                            module.write_bytes(b"synthetic module")
+                        if case != "object":
+                            output.write_bytes(b"synthetic object")
                     elif "-typecheck" in argv:
-                        stages.append("test")
+                        comparison = "original" if stages[-1] == "module" else "corrected"
+                        stages.append(comparison)
+                        self.assertTrue(module.is_file())
+                        self.assertFalse(output.exists())
+                        imports = ("-I", str(test_imports)) if comparison == "corrected" else ()
                         self.assertEqual(argv, (
                             *compiler_args, "-typecheck", "-I", str(work), "-F", str(frameworks),
-                            "-I", str(test_imports), str(root / job.TESTS),
+                            "-module-cache-path", str(work / f"xctest-{comparison}-cache"), *imports, str(root / job.TESTS),
                         ))
+                        if case == "original-timeout" and comparison == "original":
+                            raise subprocess.TimeoutExpired(argv, 90, stderr=synthetic_detail)
+                        if case == "original-terminated" and comparison == "original":
+                            return subprocess.CompletedProcess(argv, -9, "", synthetic_detail)
                     else:
-                        stages.append("parse")
-                        self.assertEqual(argv, (
-                            *compiler_args, "-parse", str(root / job.VIEW), str(root / job.BRIDGE),
-                        ))
+                        view = stages[-1] == "symbols"
+                        stages.append("view" if view else "bridge")
+                        source = job.VIEW if view else job.BRIDGE
+                        self.assertEqual(argv, (*compile_args, "-parse", str(root / source)))
                     diagnostic = f"{argv[-1]}:27:4: error: {synthetic_detail}"
-                    if case == stages[-1] == "test":
+                    if case == stages[-1] and case in {"original", "corrected"}:
                         diagnostic += (
                             f"\n{argv[-1]}:14:13: error: cannot find 'XCTAssertFalse' in scope"
                             f"\n{argv[-1]}:27:9: error: cannot find '{synthetic_detail}' in scope"
                             f"\n{argv[-1]}:28:9: error: cannot find 'XCTAssertThrowsError' in scope {synthetic_detail}"
                             "\n/private/synthetic.swift:14:13: error: cannot find 'XCTAssertFalse' in scope"
                         )
-                    code = 73 if case == stages[-1] else 0
+                    code = 73 if case == stages[-1] and case != "module" else 0
                     return subprocess.CompletedProcess(argv, code, synthetic_detail, diagnostic if code else "")
 
                 with (
@@ -166,13 +189,26 @@ class CompileOnlyTests(unittest.TestCase):
                         self.assertEqual(str(failure.exception), expected)
                     else:
                         job.main()
-                        self.assertEqual(stages, ["adapter", "test", "parse"])
+                        self.assertEqual(stages, ["module", "original", "corrected", "adapter", "symbols", "view", "bridge"])
+                        self.assertIn("SWIFT_XCTEST_CORRECTED_PASS scope=adapter-module", output.getvalue())
+                        self.assertIn("SWIFT_ADAPTER_OBJECT_PASS", output.getvalue())
+                        self.assertIn("SWIFT_ADAPTER_SYMBOLS_PASS", output.getvalue())
+                        self.assertIn("SWIFT_VIEW_PARSE_PASS", output.getvalue())
+                        self.assertIn("SWIFT_BRIDGE_PARSE_PASS", output.getvalue())
                         self.assertIn("SWIFT_INTEGRATION_SYNTAX_PASS APP_PROJECT_COMPILE_REQUIRED", output.getvalue())
-                if case == "imports":
-                    self.assertEqual(stages, ["adapter"])
-                if case == "test":
+                if case == "pass":
+                    self.assertIn("SWIFT_XCTEST_ORIGINAL_PASS ROOT_CAUSE_NOT_REPRODUCED", output.getvalue())
+                if case == "original":
+                    self.assertIn("SWIFT_XCTEST_ORIGINAL_FAIL exit_code=73", output.getvalue())
+                    self.assertNotIn("ROOT_CAUSE_NOT_REPRODUCED", output.getvalue())
+                if case in {"imports", "original-timeout", "original-terminated"}:
+                    self.assertEqual(stages, ["module", "original"])
+                if case == "corrected":
+                    self.assertEqual(stages, ["module", "original", "corrected"])
+                if case in {"original", "corrected"}:
                     self.assertIn("SWIFT_DIAGNOSTIC Build18DiagnosticTests.swift error line=14 column=13 "
-                                  "category=XCTEST_ASSERTION_NOT_IN_SCOPE", output.getvalue())
+                                  f"stage=XCTEST_{case.upper()}_TYPECHECK category=XCTEST_ASSERTION_NOT_IN_SCOPE",
+                                  output.getvalue())
                     self.assertEqual(output.getvalue().count("category="), 1)
                     self.assertNotIn("/private/synthetic.swift", output.getvalue())
                 self.assertNotIn(synthetic_detail, output.getvalue())

@@ -3,7 +3,7 @@ name: Gridly ArcGIS Build 18 Swift Compile Only
 on:
   push:
     branches:
-      - codex/arcgis-ios-build18-compile-only
+      - codex/arcgis-ios-build18-xctest-verification
 
 permissions:
   contents: read
@@ -13,11 +13,11 @@ jobs:
     if: >-
       github.repository == 'DBMaps/liberty-county-map' &&
       github.event_name == 'push' &&
-      github.ref == 'refs/heads/codex/arcgis-ios-build18-compile-only' &&
+      github.ref == 'refs/heads/codex/arcgis-ios-build18-xctest-verification' &&
       github.event.created == true && github.event.deleted == false &&
       github.event.forced == false && github.run_attempt == 1
     runs-on: macos-26
-    timeout-minutes: 7
+    timeout-minutes: 10
     steps:
       - name: Check out the reviewed source
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
