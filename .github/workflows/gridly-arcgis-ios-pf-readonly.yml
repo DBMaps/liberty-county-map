@@ -1,0 +1,32 @@
+name: Gridly ArcGIS iOS Read-only PF Diagnostic
+
+on:
+  push:
+    branches:
+      - codex/arcgis-ios-pf-readonly
+
+permissions:
+  contents: read
+
+jobs:
+  root-filter-diagnostic:
+    if: >-
+      github.repository == 'DBMaps/liberty-county-map' &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/codex/arcgis-ios-pf-readonly' &&
+      github.event.created == true &&
+      github.event.deleted == false &&
+      github.event.forced == false &&
+      github.run_attempt == 1
+    runs-on: macos-26
+    timeout-minutes: 3
+    steps:
+      - name: Check out the reviewed diagnostic
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+          fetch-depth: 1
+          fetch-tags: false
+      - name: Classify the root filter without changing PF
+        run: python3 -E -s -B tests/arcgis-maintenance/ios-offline/pf_root_diagnostic.py
