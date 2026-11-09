@@ -3,20 +3,20 @@ name: Gridly Apple Build 18 native integration (compile and archive only)
 on:
   push:
     branches:
-      - codex/arcgis-ios-build18-xctest-exact-diagnostics
+      - codex/arcgis-ios-build18-xctest-closure-fix
 
 permissions:
   contents: read
 
 concurrency:
-  group: gridly-apple-build18-xctest-exact-diagnostics
+  group: gridly-apple-build18-xctest-closure-fix
   cancel-in-progress: false
 
 jobs:
   native-integration:
     if: >-
       github.repository == 'DBMaps/liberty-county-map' && github.actor == 'DBMaps' &&
-      github.event_name == 'push' && github.ref == 'refs/heads/codex/arcgis-ios-build18-xctest-exact-diagnostics' &&
+      github.event_name == 'push' && github.ref == 'refs/heads/codex/arcgis-ios-build18-xctest-closure-fix' &&
       github.event.created == true && github.event.deleted == false && github.event.forced == false &&
       github.run_attempt == 1
     runs-on: macos-26
@@ -25,7 +25,8 @@ jobs:
       APPLICATION_SHA: b9cbff579b1cbf05842030fc01cd7ed60267dd1d
       INTEGRATION_BASE_SHA: 1055168666f094d2fd551d002b31556c81a8280b
       CERTIFIED_SOURCE_SHA: 88d410ea4b55f69dd7d6a3533b507211d47f8d56
-      DIAGNOSTICS_BASE_SHA: eb94bca38592ffcaef689712ef014e7d3bc60b91
+      DIAGNOSTICS_BASE_SHA: 1685a65acdce51797a91f21f87ff2f7c8b31dd6c
+      XCTEST_SOURCE_SHA256: 1074ee4e4d4549471abb4f871bc50fe83e25c7d5b88f436850f2df571b294ebd
       RELEASED_SHA: 71168111a133fa1c187620b9604b08e79fbf4687
       DEVELOPER_DIR: /Applications/Xcode_26.5.app/Contents/Developer
     defaults:
@@ -40,7 +41,7 @@ jobs:
           persist-credentials: false
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
-          ref: 88d410ea4b55f69dd7d6a3533b507211d47f8d56
+          ref: ${{ github.sha }}
           path: candidate
           fetch-depth: 0
           persist-credentials: false
@@ -51,15 +52,17 @@ jobs:
           test "$(git -C control show -s --format=%P HEAD)" = "$DIAGNOSTICS_BASE_SHA"
           test "$(git -C control diff --name-only --no-renames "$DIAGNOSTICS_BASE_SHA" HEAD)" = "$(printf '%s\n' \
             .github/workflows/gridly-apple-build18-archive-only.yml \
-            tests/arcgis-maintenance/ios-build18/test_swift_compile_only.py \
-            tools/arcgis-maintenance/xctest-build-diagnostics.py)"
+            tests/arcgis-maintenance/ios-build18/Build18DiagnosticTests.swift \
+            tests/arcgis-maintenance/ios-build18/test_swift_compile_only.py)"
           test -z "$(git -C control status --porcelain)"
-          test "$(git -C candidate rev-parse HEAD)" = "$CERTIFIED_SOURCE_SHA"
-          test "$(git -C candidate show -s --format=%P HEAD)" = "$INTEGRATION_BASE_SHA"
+          test "$(git -C candidate rev-parse HEAD)" = "$GITHUB_SHA"
+          git -C candidate merge-base --is-ancestor "$CERTIFIED_SOURCE_SHA" HEAD
+          test "$(git -C candidate show -s --format=%P "$CERTIFIED_SOURCE_SHA")" = "$INTEGRATION_BASE_SHA"
           test "$(git -C candidate show -s --format=%P "$INTEGRATION_BASE_SHA")" = "$APPLICATION_SHA"
           test -z "$(git -C candidate status --porcelain)"
-          git -C candidate diff --quiet "$APPLICATION_SHA" HEAD -- ios/App tools/arcgis-maintenance/native/ios \
-            tests/arcgis-maintenance/ios-build18/Build18DiagnosticTests.swift
+          git -C candidate diff --quiet "$APPLICATION_SHA" HEAD -- ios/App tools/arcgis-maintenance/native/ios
+          xctest_digest="$(shasum -a 256 candidate/tests/arcgis-maintenance/ios-build18/Build18DiagnosticTests.swift)"
+          test "${xctest_digest%% *}" = "$XCTEST_SOURCE_SHA256"
           git -C candidate merge-base --is-ancestor "$RELEASED_SHA" HEAD
           git -C candidate diff --quiet "$RELEASED_SHA" HEAD -- android css js capacitor.config.json package-lock.json \
             ios/App/CapApp-SPM ios/App/App/AppDelegate.swift \

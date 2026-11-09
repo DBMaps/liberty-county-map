@@ -50,7 +50,7 @@ class CompileOnlyTests(unittest.TestCase):
                     self.assertIsNotNone(triggers)
                     if workflow.name == "gridly-apple-build18-archive-only.yml":
                         self.assertEqual(triggers.group(1).strip(),
-                                         "push:\n    branches:\n      - codex/arcgis-ios-build18-xctest-exact-diagnostics")
+                                         "push:\n    branches:\n      - codex/arcgis-ios-build18-xctest-closure-fix")
                     else:
                         self.assertNotRegex(triggers.group(1), r"(?m)^\s+(push|create):")
 
@@ -60,24 +60,29 @@ class CompileOnlyTests(unittest.TestCase):
         candidate = "b9cbff579b1cbf05842030fc01cd7ed60267dd1d"
         base = "1055168666f094d2fd551d002b31556c81a8280b"
         certified = "88d410ea4b55f69dd7d6a3533b507211d47f8d56"
-        diagnostics_base = "eb94bca38592ffcaef689712ef014e7d3bc60b91"
-        branch = "refs/heads/codex/arcgis-ios-build18-xctest-exact-diagnostics"
+        diagnostics_base = "1685a65acdce51797a91f21f87ff2f7c8b31dd6c"
+        branch = "refs/heads/codex/arcgis-ios-build18-xctest-closure-fix"
+        test_path = "tests/arcgis-maintenance/ios-build18/Build18DiagnosticTests.swift"
+        test_digest = hashlib.sha256((job.ROOT / test_path).read_bytes().replace(b"\r\n", b"\n")).hexdigest()
         for gate in ("github.repository == 'DBMaps/liberty-county-map'", "github.actor == 'DBMaps'",
                      f"github.ref == '{branch}'", "github.event_name == 'push'", "github.event.created == true",
                      "github.event.deleted == false", "github.event.forced == false", "github.run_attempt == 1",
                      "contents: read", "runs-on: macos-26", f"APPLICATION_SHA: {candidate}", f"INTEGRATION_BASE_SHA: {base}",
-                     f"CERTIFIED_SOURCE_SHA: {certified}", f"ref: {certified}",
-                     f"DIAGNOSTICS_BASE_SHA: {diagnostics_base}",
+                     f"CERTIFIED_SOURCE_SHA: {certified}", f"XCTEST_SOURCE_SHA256: {test_digest}",
+                     f"DIAGNOSTICS_BASE_SHA: {diagnostics_base}", test_path,
                      'test "$(git -C control show -s --format=%P HEAD)" = "$DIAGNOSTICS_BASE_SHA"',
-                     'test "$(git -C candidate show -s --format=%P HEAD)" = "$INTEGRATION_BASE_SHA"',
+                     'git -C candidate merge-base --is-ancestor "$CERTIFIED_SOURCE_SHA" HEAD',
+                     'test "$(git -C candidate show -s --format=%P "$CERTIFIED_SOURCE_SHA")" = "$INTEGRATION_BASE_SHA"',
                      'test "$(git -C candidate show -s --format=%P "$INTEGRATION_BASE_SHA")" = "$APPLICATION_SHA"',
-                     'test "$(git -C candidate rev-parse HEAD)" = "$CERTIFIED_SOURCE_SHA"',
+                     'test "$(git -C candidate rev-parse HEAD)" = "$GITHUB_SHA"',
+                     f'xctest_digest="$(shasum -a 256 candidate/{test_path})"',
+                     'test "${xctest_digest%% *}" = "$XCTEST_SOURCE_SHA256"',
                      "APP_ARCHIVE_CERTIFIED", "XCTEST_BUILD_CERTIFICATION=FAILED",
                      "XCTEST_BUILD_CERTIFICATION=PRODUCT_VERIFICATION_FAILED", "XCTEST_BUILD_CERTIFICATION=PASSED",
                      "BUILD18_NATIVE_LIFECYCLE_14_DEFERRED", "BUILD18_NATIVE_EXECUTION_NOT_RUN"):
             self.assertIn(gate, source)
         self.assertEqual(source.count("persist-credentials: false"), 2)
-        self.assertEqual(source.count("ref: ${{ github.sha }}"), 1)
+        self.assertEqual(source.count("ref: ${{ github.sha }}"), 2)
         self.assertNotRegex(source, r"\bsimctl\b|\btest-without-building\b|\bpfctl\b|\baltool\b|"
                                     r"\bbuild14-native-lifecycle\.test\.py\b|\bsecrets\.|"
                                     r"\bupload-artifact\b|--runtime-config-file|-exportArchive")
@@ -103,8 +108,8 @@ class CompileOnlyTests(unittest.TestCase):
         previous_control = subprocess.check_output(
             ["git", "show", f"{diagnostics_base}:.github/workflows/{workflow.name}"], cwd=job.ROOT, text=True
         )
-        self.assertEqual(source.split("          git -C candidate diff --quiet", 1)[1],
-                         previous_control.split("          git -C candidate diff --quiet", 1)[1])
+        protected = '          git -C candidate merge-base --is-ancestor "$RELEASED_SHA" HEAD'
+        self.assertEqual(source[source.index(protected):], previous_control[previous_control.index(protected):])
 
     def test_xcode_log_classifies_errors_without_releasing_log_content(self):
         tool = job.ROOT / "tools/arcgis-maintenance/xctest-build-diagnostics.py"

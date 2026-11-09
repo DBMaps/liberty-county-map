@@ -140,11 +140,26 @@ final class Build18DiagnosticTests: XCTestCase {
             NotificationCenter.default.post(name: UIApplication.willResignActiveNotification, object: nil)
             adapter.requestTile(zoom: 0, row: 0, column: 0) { _, state in
                 XCTAssertEqual(state, "BLOCKED")
-                XCTAssertThrowsError(try NativeLabelBudget(run: run.id))
+                Self.assertLedgerRestartRejected(run.id)
                 finished.fulfill()
             }
         }
         wait(for: [finished], timeout: 3)
+    }
+
+    private static func assertLedgerRestartRejected(_ runID: String, file: StaticString = #filePath, line: UInt = #line) {
+        // An invalid run ID reaches the adapter's private stopped error before file access.
+        guard case .failure(let expected) = Result(catching: { try NativeLabelBudget(run: "") }) else {
+            XCTFail("Invalid run did not produce a rejection", file: file, line: line)
+            return
+        }
+        let expectedError = expected as NSError
+        XCTAssertThrowsError(try NativeLabelBudget(run: runID), file: file, line: line) { error in
+            let actualError = error as NSError
+            XCTAssertTrue(type(of: error) == type(of: expected) &&
+                          actualError.domain == expectedError.domain && actualError.code == expectedError.code,
+                          "Unexpected ledger restart error", file: file, line: line)
+        }
     }
 
     func testCancellationBeforeConnectionReadyCannotWrite() {
