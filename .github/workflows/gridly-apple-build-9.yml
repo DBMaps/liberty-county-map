@@ -46,6 +46,7 @@ jobs:
     environment: gridly-ios-delivery
     env:
       APPLICATION_SHA: '79750810f8ff7ebf1ba8ed4b125c97a13a6ae90c'
+      PREVIOUS_DELIVERY_CONTROL_SHA: 'f0a1d0496bd736d0d3ee821ee6e8fcbe36fdd27e'
       BUILD_NUMBER: '18'
       MAINTENANCE_PROFILE: arcgis-satellite-labels-2026-11
       BUILD17_DELIVERY_SHA: '3f9f1fcb49ac343016acd7f787bd1d47e9c95ec0'
@@ -95,7 +96,9 @@ jobs:
           test "$(git -C control rev-parse HEAD)" = "$REVIEWED_CONTROL_COMMIT"
           test "$(git -C control cat-file -t "$GITHUB_REF")" = tag
           test "$(git -C control rev-parse "$GITHUB_REF^{commit}")" = "$REVIEWED_CONTROL_COMMIT"
-          test "$(git -C control show -s --format=%P HEAD)" = "$APPLICATION_SHA"
+          test "$(git -C control show -s --format=%P HEAD)" = "$PREVIOUS_DELIVERY_CONTROL_SHA"
+          test "$(git -C control show -s --format=%P "$PREVIOUS_DELIVERY_CONTROL_SHA")" = "$APPLICATION_SHA"
+          test "$(git -C control diff --name-only --no-renames "$PREVIOUS_DELIVERY_CONTROL_SHA" HEAD)" = .github/workflows/gridly-apple-build-9.yml
           test "$(git -C control diff --name-only --no-renames "$APPLICATION_SHA" HEAD)" = .github/workflows/gridly-apple-build-9.yml
           control_state="$(git -C control status --porcelain --untracked-files=normal)"
           test -z "$control_state"
@@ -149,7 +152,20 @@ jobs:
           node --test tests/native-packaging.test.mjs
           # The three Build 17 application byte pins are replaced by the combined source preflight.
           node --import ./tests/arcgis-maintenance/no-network.mjs --test --test-name-pattern='verified common Build 14|Apple native and continuity|later owner-only' tests/community-loading-production-integration.test.cjs
-          python3 -B tests/arcgis-maintenance/run-python-tests.py
+          python3 -B - <<'PY'
+          import runpy
+          import unittest
+
+          unittest.defaultTestLoader.testNamePatterns = [
+              "*.AppleMaintenance.*", "*.BuildOnlyControls.*", "*.PortableParityTests.*"
+          ]
+          runpy.run_path("tests/arcgis-maintenance/run-python-tests.py", run_name="__main__")
+          PY
+      - name: Run the real macOS Mach-O signing and parity regression
+        working-directory: candidate
+        run: |
+          test "$(python3 -B -c 'import sys; print(sys.platform)')" = darwin
+          python3 -B tests/apple_native_parity_test.py -v AppleToolParityTests.test_real_resigning_passes_and_real_code_change_fails
       - name: Require all 14 compiled Swift compatibility and lifecycle cases
         working-directory: candidate
         run: |
