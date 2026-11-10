@@ -18,6 +18,7 @@ const releaseTooling = {
   ios: [
     'tools/apple_acceptance_build_only.py',
     'tools/arcgis-maintenance/mac-private-path.mjs',
+    'tools/arcgis-maintenance/staging.mjs',
     'tests/arcgis-maintenance/mac-private-path.test.mjs',
     'tests/arcgis-maintenance/no-network.mjs'
   ],

@@ -37,7 +37,7 @@ export async function assertMaintenanceOutput({repositoryRoot,outputDirectory,re
 export async function readMaintenanceProviderInputs({candidateFile,originalFile,verifyPrivateFile}) {
   if(!candidateFile||!originalFile||typeof verifyPrivateFile!=='function')fail('MAINTENANCE_EXPLICIT_PRIVATE_INPUTS_REQUIRED');
   const candidate=await assertPlainPath(candidateFile),original=await assertPlainPath(originalFile);
-  await assertOutsideRepository(candidate);
+  await assertOutsideRepository(dirname(candidate));
   if(candidate.toLowerCase()===original.toLowerCase())fail('MAINTENANCE_CANDIDATE_EQUALS_ORIGINAL');
   // A filesystem/ACL attestation is required, never inferred from a callback's absence.
   if(await verifyPrivateFile(candidate)!==true)fail('MAINTENANCE_PRIVATE_INPUT_NOT_VERIFIED');

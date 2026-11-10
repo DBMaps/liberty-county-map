@@ -1,9 +1,11 @@
 import assert from 'node:assert/strict';
 import { mkdtemp, realpath, rm, symlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 import test from 'node:test';
 import { macEffectiveVolume, macPrivatePathVerified } from '../../tools/arcgis-maintenance/mac-private-path.mjs';
+import { readMaintenanceProviderInputs } from '../../tools/arcgis-maintenance/staging.mjs';
+import { candidateBytes, fixture, originalBytes } from './fixtures.mjs';
 
 const source = '/dev/disk3s5';
 const mountpoint = '/System/Volumes/Data';
@@ -23,6 +25,21 @@ test('selects the exact writable APFS Data mount reported for the path', () => {
 test('rejects remote, noowners, and read-only effective mounts', () => {
   for (const options of ['smbfs, local', 'apfs, journaled', 'apfs, local, noowners', 'apfs, local, read-only']) {
     assert.equal(macEffectiveVolume(df, system + source + ' on ' + mountpoint + ' (' + options + ')'), null);
+  }
+});
+
+test('checks repository ancestry from the private provider file’s directory', async () => {
+  const f = await fixture();
+  try {
+    const candidateFile = await realpath(f.candidateFile);
+    const originalFile = await realpath(f.originalFile);
+    const options = { candidateFile, originalFile, verifyPrivateFile: async path => path === candidateFile };
+    const inputs = await readMaintenanceProviderInputs(options);
+    assert.deepEqual(inputs, { candidateBytes, originalBytes });
+    await writeFile(join(dirname(candidateFile), '.git'), 'synthetic repository marker', { flag: 'wx' });
+    await assert.rejects(() => readMaintenanceProviderInputs(options), { message: 'MAINTENANCE_OUTPUT_REPOSITORY_FORBIDDEN' });
+  } finally {
+    await f.dispose();
   }
 });
 
