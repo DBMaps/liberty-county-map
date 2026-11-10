@@ -121571,7 +121571,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     else if (selected) {
       const label = crossingReportText(crossingReportLocation(selected));
       const where = crossingReportText([selected.city,crossingReportCounty(selected),selected.railroad].filter(Boolean).join(' · '));
-      html = `<p class="gridly-v2-sheet-copy"><strong>${flow.condition ? 'Review your report' : 'What are you seeing?'}</strong><span>${label}</span><span>${where}</span><span>Location ${selected.lat.toFixed(5)}, ${selected.lng.toFixed(5)}</span></p>`;
+      html = `<p class="gridly-v2-sheet-copy"><strong>${flow.condition ? 'Review your report' : 'What are you seeing?'}</strong><span>${label}</span><span>${where}</span>${flow.condition ? "" : `<span>Location ${selected.lat.toFixed(5)}, ${selected.lng.toFixed(5)}</span>`}</p>`;
       if (flow.condition) html += `<p class="gridly-v2-sheet-copy"><strong>${flow.condition==='blocked'?'Blocked crossing':'Train delay'}</strong><span>Confirm this crossing and condition before sharing.</span></p><button class="primary-btn" data-v2-action="report-crossing-submit" type="button" ${flow.submitting?'disabled':''}>${flow.submitting?'Submitting…':'Submit Report'}</button>`;
       else html += '<button class="secondary-btn" data-v2-action="report-crossing-condition" data-crossing-condition="blocked" type="button">Blocked crossing</button><button class="secondary-btn" data-v2-action="report-crossing-condition" data-crossing-condition="heavy" type="button">Train delay</button>';
       html += `<button class="secondary-btn" data-v2-action="report-crossing-back" type="button" ${flow.submitting?'disabled':''}>Back</button>`;
