@@ -48,6 +48,7 @@ jobs:
       APPLICATION_SHA: '79750810f8ff7ebf1ba8ed4b125c97a13a6ae90c'
       PREVIOUS_DELIVERY_CONTROL_SHA: 'f0a1d0496bd736d0d3ee821ee6e8fcbe36fdd27e'
       REPAIRED_DELIVERY_CONTROL_SHA: 'dfd318106f12342fe2423beba6320b5b132f65a3'
+      DIAGNOSTIC_DELIVERY_CONTROL_SHA: 'b91cd712a27c31977339c2623d60110fece09999'
       BUILD_NUMBER: '18'
       MAINTENANCE_PROFILE: arcgis-satellite-labels-2026-11
       BUILD17_DELIVERY_SHA: '3f9f1fcb49ac343016acd7f787bd1d47e9c95ec0'
@@ -97,10 +98,11 @@ jobs:
           test "$(git -C control rev-parse HEAD)" = "$REVIEWED_CONTROL_COMMIT"
           test "$(git -C control cat-file -t "$GITHUB_REF")" = tag
           test "$(git -C control rev-parse "$GITHUB_REF^{commit}")" = "$REVIEWED_CONTROL_COMMIT"
-          test "$(git -C control show -s --format=%P HEAD)" = "$REPAIRED_DELIVERY_CONTROL_SHA"
+          test "$(git -C control show -s --format=%P HEAD)" = "$DIAGNOSTIC_DELIVERY_CONTROL_SHA"
+          test "$(git -C control show -s --format=%P "$DIAGNOSTIC_DELIVERY_CONTROL_SHA")" = "$REPAIRED_DELIVERY_CONTROL_SHA"
           test "$(git -C control show -s --format=%P "$REPAIRED_DELIVERY_CONTROL_SHA")" = "$PREVIOUS_DELIVERY_CONTROL_SHA"
           test "$(git -C control show -s --format=%P "$PREVIOUS_DELIVERY_CONTROL_SHA")" = "$APPLICATION_SHA"
-          test "$(git -C control diff --name-only --no-renames "$REPAIRED_DELIVERY_CONTROL_SHA" HEAD)" = .github/workflows/gridly-apple-build-9.yml
+          test "$(git -C control diff --name-only --no-renames "$DIAGNOSTIC_DELIVERY_CONTROL_SHA" HEAD)" = .github/workflows/gridly-apple-build-9.yml
           test "$(git -C control diff --name-only --no-renames "$APPLICATION_SHA" HEAD)" = .github/workflows/gridly-apple-build-9.yml
           control_state="$(git -C control status --porcelain --untracked-files=normal)"
           test -z "$control_state"
@@ -286,7 +288,83 @@ jobs:
           phase=NATIVE_ASSETS
           node tools/native-assets.mjs
           phase=COMBINED_ARCGIS_STAGING
-          node tools/arcgis-maintenance/combined-release.mjs ios --release "$APPLICATION_SHA" "$replacement" "$original"
+          # The pinned wrapper discards native stage stderr. Preserve it only in
+          # the private log, and publish exact allowlisted identifiers on failure.
+          cat > "$private/arcgis-staging-diagnostics.mjs" <<'STAGING_JS'
+          import childProcess from 'node:child_process';
+          import { readFileSync } from 'node:fs';
+          import { syncBuiltinESMExports } from 'node:module';
+
+          if (process.argv[2] === '--report') {
+            const allowed = new Set([
+              'COMBINED_ARGUMENTS_INVALID',
+              'COMBINED_PROFILE_REJECTED',
+              'COMBINED_BASELINE_REJECTED',
+              'COMBINED_APPROVED_SOURCE_MISMATCH',
+              'COMBINED_RELEASE_SOURCE_REJECTED',
+              'COMBINED_UNRELATED_SOURCE_CHANGE',
+              'COMBINED_SOURCE_HASH_MISMATCH',
+              'COMBINED_STAGE_INVALID_ENTRY',
+              'COMBINED_STAGE_INVENTORY_MISMATCH',
+              'COMBINED_STAGE_BYTE_MISMATCH',
+              'COMBINED_REPORT_ALREADY_EXISTS',
+              'COMBINED_RELEASE_PRIVATE_PATH_REJECTED',
+              'COMBINED_RELEASE_REQUIRES_REAL_INPUTS',
+              'COMBINED_BASE_STAGE_FAILED',
+              'COMBINED_BASE_STAGE_VERIFICATION_FAILED',
+              'COMBINED_BASE_STAGE_INVENTORY_MISMATCH',
+              'COMBINED_IOS_STAGE_SOURCE_MISMATCH',
+              'COMBINED_OPERATION_REJECTED',
+              'MAINTENANCE_PATH_UNSAFE',
+              'MAINTENANCE_INPUT_MISSING',
+              'MAINTENANCE_OUTPUT_REPOSITORY_FORBIDDEN',
+              'MAINTENANCE_OUTPUT_NOT_NATIVE_WEB_DIR',
+              'MAINTENANCE_OUTPUT_NOT_PRIVATE_IGNORED',
+              'MAINTENANCE_OUTPUT_EXISTS',
+              'MAINTENANCE_EXPLICIT_PRIVATE_INPUTS_REQUIRED',
+              'MAINTENANCE_CANDIDATE_EQUALS_ORIGINAL',
+              'MAINTENANCE_PRIVATE_INPUT_NOT_VERIFIED',
+              'MAINTENANCE_PRIVATE_INPUT_INVALID',
+              'MAINTENANCE_PROFILE_REQUIRED',
+              'MAINTENANCE_PROVIDER_SCHEMA_INVALID',
+              'MAINTENANCE_PROVIDER_VALUE_INVALID',
+              'MAINTENANCE_UNRELATED_PROVIDER_CHANGED',
+              'MAINTENANCE_RUNTIME_COMPOSITION_FAILED',
+              'MAINTENANCE_RUNTIME_VERIFICATION_FAILED',
+              'MAINTENANCE_IOS_IDENTITY_INVALID',
+              'MAINTENANCE_IOS_BASELINE_DRIFT',
+              'MAINTENANCE_SOURCE_INVALID',
+              'MAINTENANCE_SOURCE_DRIFT',
+              'MAINTENANCE_REPORT_REQUIRED',
+              'MAINTENANCE_REPORT_PROFILE_MISMATCH',
+              'MAINTENANCE_OPERATION_FAILED'
+            ]);
+            const lines = new Set(readFileSync(process.argv[3], 'utf8').split(/\r?\n/));
+            for (const line of lines) {
+              if (allowed.has(line)) console.log(line);
+            }
+          } else {
+            const execFileSync = childProcess.execFileSync;
+            const nativeStage = ['--import', './tests/arcgis-maintenance/no-network.mjs',
+              'tools/native-web.mjs', '--arcgis-maintenance-profile', 'arcgis-satellite-labels-2026-11'];
+            childProcess.execFileSync = function (command, args, options) {
+              if (command === process.execPath && options?.stdio === 'ignore' &&
+                  nativeStage.every((value, index) => args?.[index] === value)) {
+                return execFileSync(command, args, { ...options, stdio: ['ignore', 'ignore', 2] });
+              }
+              return execFileSync.apply(this, arguments);
+            };
+            syncBuiltinESMExports();
+          }
+          STAGING_JS
+          staging_log="$private/combined-staging.stderr"
+          if node --import "$private/arcgis-staging-diagnostics.mjs" tools/arcgis-maintenance/combined-release.mjs ios --release "$APPLICATION_SHA" "$replacement" "$original" 2> "$staging_log"; then
+            :
+          else
+            stage_status=$?
+            node "$private/arcgis-staging-diagnostics.mjs" --report "$staging_log" >&3 || true
+            exit "$stage_status"
+          fi
           identity="$private/replacement/combined-release-identity.json"
           phase=CAPACITOR_SYNC
           npx --no-install cap sync ios
