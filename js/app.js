@@ -3771,6 +3771,19 @@ function gridlyStoryRelevantConditionAuthority(records = [], transportationRecor
   });
 }
 
+function gridlyStoryCrossingLocation(records = []) {
+  if (typeof getGridlySpecificCrossingLocation !== "function") return "";
+  const labels = new Set();
+  records.filter(record => /crossing|train|rail|blocked|blocking/i.test(gridlyStoryRecordText(record))).forEach(record => {
+    // Use this condition's existing governed identity/fields. A narrative must
+    // not borrow the nearest crossing's roads when location evidence is absent.
+    const location = getGridlySpecificCrossingLocation(record, { allowCoordinateLookup: false });
+    const label = gridlyStoryText(location?.locationLineLabel || location?.headlineLocation || "");
+    if (label && isGridlyConsumerCrossingLocationTokenUseful(label)) labels.add(label.replace(/\s+&\s+/g, " and "));
+  });
+  return labels.size === 1 ? [...labels][0] : "";
+}
+
 function buildGridlyAwarenessStory(input = {}) {
   const presentationContext = input.awarenessContext || (typeof getGridlyCanonicalAwarenessPresentationContext === "function" ? getGridlyCanonicalAwarenessPresentationContext() : {});
   const records = Array.isArray(input.records) ? input.records : gridlyStoryActiveRecords();
@@ -3823,6 +3836,8 @@ function buildGridlyAwarenessStory(input = {}) {
     template = `weather_${weatherEvidence.kind}`;
   } else if (hasRailBlock) {
     situation = evidence.rail?.delayCount > 0 && !evidence.rail?.blockedCount ? "Crossing delays reported." : "Train blocking crossing.";
+    const location = gridlyStoryCrossingLocation(records);
+    if (location) situation = `${situation.replace(/\.$/, "")} at ${location.replace(/\.$/, "")}.`;
     recommendation = "Allow extra travel time.";
     template = "train_blocking_crossing";
   } else if (hasTransport) {
@@ -5561,6 +5576,12 @@ function gridlyBriefInteractionSetExpanded(expanded, options) {
   const handle = document.querySelector("[data-gridly-brief-foundation-handle]");
   const panel = document.querySelector("[data-gridly-brief-panel]");
   if (!root || !handle || !panel) return false;
+  if (expanded) {
+    // The briefing takes foreground ownership; collapse never revives this popup.
+    if (window.__gridlyLp021AlertFocusLifecycle) window.__gridlyLp021AlertFocusLifecycle.canceledByBriefExpansion = true;
+    cancelPendingCrossingPopup("brief-expanded");
+    getGridlyMapInstance()?.closePopup?.();
+  }
   const shortLandscapeBrief = Boolean(gridlyShortLandscapeQuery?.matches);
   if (shortLandscapeBrief && expanded) {
     gridlyLandscapeCommandExpanded = false;
@@ -19640,6 +19661,7 @@ let gridlyAwarenessMapIdentityState = {
   errors: []
 };
 let crossingMarkers = new Map();
+let gridlyClusterFocusedCrossingId = "";
 let gridlyDriveTexasOfficialMarkers = new Map();
 let gridlyDriveTexasOfficialLayer;
 let gridlyLp019DriveTexasRenderState = { lastEligibleCount: 0, lastWithoutGeometryCount: 0, lastOutOfAreaCount: 0, lastDuplicateCount: 0, lastRenderedCount: 0, perRecordAwarenessLookupCount: 0, lastRenderAt: null };
@@ -25400,7 +25422,40 @@ let crossingLoadFailed = false;
 let activeGeoFilter = "nearby";
 let activeReportMode = REPORT_MODES.rail;
 let routeLauncherSource = "none";
-let showAllCrossingsLayer = false;
+const GRIDLY_RAILROAD_CROSSINGS_VISIBLE_KEY = "gridlyRailroadCrossingsVisibleV1";
+function readGridlyRailroadCrossingsVisible() {
+  try { return localStorage.getItem(GRIDLY_RAILROAD_CROSSINGS_VISIBLE_KEY) === "true"; }
+  catch (_error) { return false; }
+}
+// Keep the legacy control on the same device-wide presentation preference.
+let showAllCrossingsLayer = readGridlyRailroadCrossingsVisible();
+
+function syncGridlyRailroadCrossingsVisibilityControls() {
+  document.querySelectorAll("[data-gridly-crossings-visibility]").forEach((control) => {
+    control.setAttribute("aria-checked", String(showAllCrossingsLayer));
+    const state = control.querySelector("[data-gridly-crossings-visibility-state]");
+    if (state) state.textContent = showAllCrossingsLayer ? "On" : "Off";
+  });
+  const legacy = document.getElementById("allCrossingsLayerToggle");
+  if (legacy) legacy.checked = showAllCrossingsLayer;
+}
+
+function setGridlyRailroadCrossingsVisible(visible) {
+  const next = visible === true;
+  if (next === showAllCrossingsLayer) return;
+  showAllCrossingsLayer = next;
+  try { localStorage.setItem(GRIDLY_RAILROAD_CROSSINGS_VISIBLE_KEY, String(next)); } catch (_error) {}
+  crossingRenderFilterVersion += 1;
+  // Cancel pending batches immediately, including ON/OFF in the same frame.
+  gridlyV920MainThreadRepairState.crossingRenderGeneration += 1;
+  syncGridlyRailroadCrossingsVisibilityControls();
+  renderCrossings("ordinary-crossing-visibility-authoritative", { force: true });
+}
+
+function buildGridlyRailroadCrossingsVisibilityControl(surface = "portrait") {
+  const helpId = `gridlyCrossingsVisibilityHelp-${surface}`;
+  return `<section class="gridly-crossing-visibility-section" aria-label="Map overlays"><button class="gridly-v2-tile gridly-v2-report-action gridly-crossing-visibility-control" type="button" role="switch" aria-checked="${showAllCrossingsLayer}" aria-describedby="${helpId}" data-gridly-crossings-visibility data-v2-action="layers-crossings-toggle"><span>Railroad Crossings</span><strong data-gridly-crossings-visibility-state>${showAllCrossingsLayer ? "On" : "Off"}</strong></button><p class="gridly-v2-sheet-copy" id="${helpId}">Show crossing locations. Active crossing hazards always remain visible.</p></section>`;
+}
 let savedRouteCrossingIds = new Set();
 let activeDestinationPlace = null;
 let activeRouteOriginLabel = "";
@@ -28232,6 +28287,7 @@ function getGridlyPolicyVisibleCrossings({ activeCountyCrossings = [], activeCou
     visibleCrossings = phase("viewport/bounds filtering", () => visibleCrossings.filter((crossing) => !visibilityPolicy.useViewport || !bounds || bounds.contains?.([crossing.lat, crossing.lng])));
     visibleCrossings = phase("candidate list construction", () => visibleCrossings.filter((crossing) => {
       const activeTrainDelay = isActiveTrainDelayCrossing(crossing);
+      if (!showAllCrossingsLayer && !activeTrainDelay) return false;
       if (useStreetViewportSource) return true;
       const inDefaultSet = defaultRelevantCrossingIds.has(String(crossing.id));
       const inView = bounds ? bounds.contains([crossing.lat, crossing.lng]) : true;
@@ -33600,7 +33656,18 @@ function gridlyV921NormalizeRenderReason(reason = "unspecified") {
   return text === "unspecified" ? "unknown-caller" : text;
 }
 function gridlyV921MarkerSignature(crossing, report, visualState = "") {
-  return gridlyV920StableSignature([crossing?.id, Number(crossing?.lat).toFixed(6), Number(crossing?.lng).toFixed(6), report?.id || report?.type || "", report?.status || "", report?.updated_at || report?.timestamp || "", visualState]);
+  // Mutations preserve the original report ID. Identity alone cannot tell the
+  // incremental renderer that its blocked icon and cached popup are stale.
+  return gridlyV920StableSignature([
+    crossing?.id, crossing?.countyId || crossing?.county_id || "",
+    Number(crossing?.lat).toFixed(6), Number(crossing?.lng).toFixed(6),
+    report?.id || "", report?.type || report?.report_type || "",
+    report?.status || "", getIncidentLifecycleState(report),
+    report?.confidence || "", report?.expiresAt || report?.expires_at || "",
+    report?.updated_at || report?.timestamp || "",
+    report ? getReportCountForCrossing(crossing?.id || report?.crossingId || report?.crossing_id) : 0,
+    visualState
+  ]);
 }
 function gridlyV921RecordSignatureDiff(previousSignature = "", currentSignature = "", context = {}) {
   const changedFields = [];
@@ -35192,10 +35259,12 @@ function gridlyMarkAlertsSheetClosed() {
 
 function gridlyCanApplyAlertsSheetGeneration(generation) {
   const generationState = gridlyAlertsSheetLifecycleState.generationStates.get(generation)?.state;
+  const sheet = typeof document !== "undefined" ? document.getElementById?.("gridlyPortraitV2Sheet") : null;
   return Boolean(
     generation
     && gridlyAlertsSheetLifecycleState.activeGeneration === generation
     && (generationState === "PENDING_AUTHORITY" || generationState === "DOM_APPLIED")
+    && !(sheet?.dataset?.sheetState === "minimized" && Number(sheet.dataset.minimizedAlertsGeneration) === Number(generation))
   );
 }
 
@@ -50311,6 +50380,10 @@ function gridlyActiveCountyRuntimeAudit() {
 if (typeof window !== "undefined") window.gridlyActiveCountyRuntimeAudit = gridlyActiveCountyRuntimeAudit;
 
 function resyncGridlyActiveCountyVisibleSurfaces(reason = "active-county-resync") {
+  if (reason === "active-county-change") {
+    cancelPendingCrossingPopup("active-county-popup-dismiss");
+    getGridlyMapInstance()?.closePopup?.();
+  }
   const activeCountyId = gridlyGetActiveCountyId();
   const filterActiveCountyRecords = (records) => {
     return (Array.isArray(records) ? records : []).filter((record) => gridlyReportMatchesActiveCounty(record, activeCountyId));
@@ -53478,7 +53551,7 @@ function initMap() {
     satelliteLayer.addLayer(satelliteLabelsLayer);
   }
 
-  window.GridlyMapVisibility?.install(map, [standardLayer, satelliteImageryLayer]);
+  window.gridlyMapVisibilityRuntime = window.GridlyMapVisibility?.install(map, [standardLayer, satelliteImageryLayer]);
 
   const baseLayers = {
     Standard: standardLayer,
@@ -61585,6 +61658,8 @@ function renderCrossings(reason = "unspecified", options = {}) {
   recordGridlyCrossingFallbackAudit("renderCrossingsInputCount", { renderCrossingsInputCount });
   if (gridlyCrossingInventoryCountyId !== activeCountyId && typeof ensureGridlyActiveCountyCrossingInventory === "function") ensureGridlyActiveCountyCrossingInventory(`render:${reason}`);
   if (!crossingLayer || !activeCountyCrossings.length) {
+    // An empty county invalidates unfinished batches from the prior inventory.
+    gridlyV920MainThreadRepairState.crossingRenderGeneration += 1;
     if (crossingMarkers instanceof Map && crossingMarkers.size > 0) {
       crossingMarkers.forEach((marker) => { try { crossingLayer?.removeLayer?.(marker); } catch (_error) {} });
       crossingMarkers.clear();
@@ -61724,9 +61799,13 @@ function renderCrossings(reason = "unspecified", options = {}) {
   if (typeof isGridlyCrossingPopupInteractionActive === "function" && isGridlyCrossingPopupInteractionActive()) {
     gridlyV920MainThreadRepairState.crossingLayerClearedDuringPopupInteraction = false;
   }
-  const expectedCrossingIds = gridlyV921RNormalizeIdList(prioritizedVisibleCrossings.map((crossing) => String(crossing?.id || "")).filter(Boolean));
+  const smartClusterState = buildSmartIncidentClusters(prioritizedVisibleCrossings);
+  const clusterMembers = new Map(smartClusterState.representationLineage.map((row) => [row.renderedMarkerId, row.representedCrossingIds]));
+  const representedIds = (crossing) => gridlyV921RNormalizeIdList(clusterMembers.get(String(crossing.id)) || [String(crossing.id)]);
+  const expectedCrossingIds = gridlyV921RNormalizeIdList(prioritizedVisibleCrossings.filter((crossing) => !smartClusterState.hiddenIds.has(String(crossing.id))).map((crossing) => String(crossing?.id || "")).filter(Boolean));
   const desiredCrossingIds = new Set(expectedCrossingIds);
   const markerCountBeforeDiff = crossingMarkers instanceof Map ? crossingMarkers.size : 0;
+  const crossingOwnershipBeforeDiff = Array.from(gridlyGetCrossingLayerBlockedMarkerOwnershipKeys()).sort().join("|");
   const sourceAuthority = gridlyV921RClassifyRenderSourceAuthority(reasonText, renderCrossingsInputCount, expectedCrossingIds.length);
   const removalAllowed = gridlyV921RIsAuthoritativeSource(sourceAuthority);
   const markersPendingRemoval = [];
@@ -61739,10 +61818,10 @@ function renderCrossings(reason = "unspecified", options = {}) {
     const existing = crossingMarkers.get(id);
     const report = getLatestReportForCrossing(crossing.id);
     const nextSig = gridlyV921MarkerSignature(crossing, report);
-    if (existing && existing.__gridlyV921MarkerSignature === nextSig && crossingLayer.hasLayer?.(existing)) { reusableCrossingIds.add(id); gridlyV921RenderPipelineState.markerReuse.reused += 1; }
+    if (existing && !smartClusterState.hiddenIds.has(id) && existing.__gridlyV921MarkerSignature === nextSig
+      && (existing.__gridlyRepresentedCrossingIds || []).join("|") === representedIds(crossing).join("|") && crossingLayer.hasLayer?.(existing)) { reusableCrossingIds.add(id); gridlyV921RenderPipelineState.markerReuse.reused += 1; }
   });
 
-  const smartClusterState = buildSmartIncidentClusters(prioritizedVisibleCrossings);
   // Preserve the production clustering decision as identity-bearing audit
   // lineage.  A clustered crossing is represented, not lost, even though it
   // intentionally has no independent Leaflet marker.
@@ -61761,6 +61840,8 @@ function renderCrossings(reason = "unspecified", options = {}) {
     const reportType = String(report?.type || "").toLowerCase();
     const markerStateClass = isCleared
       ? "state-cleared"
+      : !hasActiveIssue
+        ? "state-normal"
       : reportType === "blocked"
         ? "state-blocked"
         : reportType === "heavy"
@@ -61930,6 +62011,11 @@ function renderCrossings(reason = "unspecified", options = {}) {
     });
 
     marker.on("popupclose", (event) => {
+      if (gridlyClusterFocusedCrossingId === String(crossing.id)) {
+        gridlyClusterFocusedCrossingId = "";
+        crossingRenderFilterVersion += 1;
+        scheduleRenderCrossings("cluster-focus-closed-authoritative", { force: true });
+      }
       const now = Date.now();
       const millisecondsOpenBeforeClose = gridlyPopupLastOpenAt ? Math.max(0, now - gridlyPopupLastOpenAt) : null;
       const closeCausedBySafeZonePositioning = Boolean(gridlyPopupRepositionNeededBeforeOpen && !gridlyPopupRepositionCompletedBeforeOpen);
@@ -61975,6 +62061,7 @@ function renderCrossings(reason = "unspecified", options = {}) {
     }
 
     marker.__gridlyV921MarkerSignature = gridlyV921MarkerSignature(crossing, report);
+    marker.__gridlyRepresentedCrossingIds = representedIds(crossing);
     gridlyV921RenderPipelineState.markerReuse.created += 1;
     gridlyV921RenderPipelineState.markerReuse.popupContentDeferred += 1;
     gridlyV921RenderPipelineState.markerReuse.listenerAttachments += 2;
@@ -61982,7 +62069,7 @@ function renderCrossings(reason = "unspecified", options = {}) {
     });
   };
 
-  const crossingsNeedingMarkers = prioritizedVisibleCrossings.filter((crossing) => !reusableCrossingIds.has(String(crossing?.id || "")));
+  const crossingsNeedingMarkers = prioritizedVisibleCrossings.filter((crossing) => !smartClusterState.hiddenIds.has(String(crossing.id)) && !reusableCrossingIds.has(String(crossing?.id || "")));
   crossingsNeedingMarkers.forEach((crossing) => {
     const id = String(crossing?.id || "");
     const staleMarker = crossingMarkers.get(id);
@@ -61998,9 +62085,16 @@ function renderCrossings(reason = "unspecified", options = {}) {
   if (gridlyV921RCrossingConsistencyState.recentGenerations.length > 20) gridlyV921RCrossingConsistencyState.recentGenerations.shift();
   const commitAuthoritativeCrossingGeneration = () => {
     if (renderGeneration !== gridlyV920MainThreadRepairState.crossingRenderGeneration) { gridlyV921RenderPipelineState.frameScheduling.cancelledAfterRemoval += 1; return; }
-    if (removalAllowed) {
-      markersPendingRemoval.forEach(([id, marker]) => { if (!desiredCrossingIds.has(id) && crossingMarkers.get(id) === marker) { crossingLayer.removeLayer?.(marker); crossingMarkers.delete(String(id)); gridlyV921RenderPipelineState.markerReuse.removed += 1; } });
-    }
+    // OFF may discard ordinary handles; active removals still require source authority.
+    markersPendingRemoval.forEach(([id, marker]) => {
+      if (desiredCrossingIds.has(id) || crossingMarkers.get(id) !== marker) return;
+      const representedByCluster = Array.from(crossingMarkers.values()).some((lead) => lead !== marker
+        && crossingLayer.hasLayer(lead) && lead.__gridlyRepresentedCrossingIds?.includes(id));
+      if (!removalAllowed && !representedByCluster && (showAllCrossingsLayer || isActiveTrainDelayCrossing({ id }))) return;
+      crossingLayer.removeLayer?.(marker);
+      crossingMarkers.delete(id);
+      gridlyV921RenderPipelineState.markerReuse.removed += 1;
+    });
     const actualIds = Array.from(crossingMarkers.keys());
     const consistency = gridlyV921RUpdateConsistency({ generation: renderGeneration, sourceAuthority, expectedIds: expectedCrossingIds, actualIds, completed: true });
     gridlyV921RCrossingConsistencyState.activeGenerations = [];
@@ -62013,6 +62107,11 @@ function renderCrossings(reason = "unspecified", options = {}) {
       const recovery = gridlyV921RUpdateConsistency({ generation: renderGeneration, sourceAuthority, expectedIds: expectedCrossingIds, actualIds: Array.from(crossingMarkers.keys()), completed: true });
       gridlyV921RCrossingConsistencyState.recoverySucceeded = Boolean(recovery.finalStateConsistent);
     }
+    const crossingOwnershipAfterDiff = gridlyGetCrossingLayerBlockedMarkerOwnershipKeys();
+    // Remove only duplicate visual handles here. Accepted clear/history fan-out
+    // retains its existing owner and must not be re-entered during its paint step.
+    gridlyRemoveDuplicateUnifiedCrossings(crossingOwnershipAfterDiff);
+    if (Array.from(crossingOwnershipAfterDiff).sort().join("|") !== crossingOwnershipBeforeDiff) renderUnifiedIncidents("crossing-marker-ownership-committed");
   };
   if (crossingsNeedingMarkers.length) {
     gridlyV920Measure("renderCrossingMarkersFromList", "crossing-marker-rendering", () => gridlyV921ScheduleBatches({ generation: renderGeneration, items: crossingsNeedingMarkers, batchSize: 8, timeBudgetMs: 12, generationOwner: "crossings", process: (crossing) => renderCrossingMarkersFromList([crossing]), done: commitAuthoritativeCrossingGeneration }), { itemCount: crossingsNeedingMarkers.length, layerRebuildDetected: false, listenerWiringDetected: true, triggeredBy: reasonText });
@@ -64936,7 +65035,10 @@ function splitGridlyCrossingCompositeLocation(value = "") {
 }
 
 function getGridlySpecificCrossingLocation(record = {}, options = {}) {
-  const crossingRecord = getGridlyCrossingRecordForSpecificLocation(record);
+  const exactId = options.allowCoordinateLookup === false ? getGridlyCrossingSpecificityId(record) : "";
+  const crossingRecord = options.allowCoordinateLookup === false
+    ? (exactId && Array.isArray(crossings) ? crossings.find(crossing => getGridlyCrossingRecordId(crossing) === exactId) : null)
+    : getGridlyCrossingRecordForSpecificLocation(record);
   const props = crossingRecord?.props || crossingRecord?.properties || {};
   const crossingId = getGridlyCrossingSpecificityId(record) || getGridlyCrossingRecordId(crossingRecord);
   const reviewContext = crossingRecord?.review || (crossingId ? crossingReviewOverrides?.[crossingId] : {}) || {};
@@ -77337,8 +77439,21 @@ function getMarkerLabel(report, markerStateClass, lifecycleState) {
   return "◦";
 }
 
-function buildSmartIncidentClusters(visibleCrossings = []) {
+function gridlyPrepareClusteredCrossingFocus(crossingId) {
+  const id = String(crossingId || "");
+  if (!id || gridlyClusterFocusedCrossingId === id || !isActiveTrainDelayCrossing({ id })) return;
+  const inventory = gridlyGetActiveCountyCrossingInventory().filter((crossing) => isGridlyReportableCrossing(crossing) && isGridlyPublicRoadwayCrossing(crossing));
+  const clusters = buildSmartIncidentClusters(inventory, { ignoreFocus: true });
+  if (!clusters.hiddenIds.has(id) && !clusters.leadCounts.has(id)) return;
+  // An active focused crossing needs its own exact popup, never an ordinary overlay.
+  gridlyClusterFocusedCrossingId = id;
+  crossingRenderFilterVersion += 1;
+  renderCrossings("active-crossing-focus-authoritative", { force: true });
+}
+
+function buildSmartIncidentClusters(visibleCrossings = [], { ignoreFocus = false } = {}) {
   const candidates = visibleCrossings
+    .filter((crossing) => ignoreFocus || String(crossing.id) !== gridlyClusterFocusedCrossingId)
     .map((crossing) => {
       const report = getLatestReportForCrossing(crossing.id);
       const lifecycleState = getIncidentLifecycleState(report);
@@ -77694,18 +77809,22 @@ function gridlyGetCrossingLayerBlockedMarkerOwnershipKeys() {
   const keys = new Set();
   if (!(crossingMarkers instanceof Map)) return keys;
   crossingMarkers.forEach((marker, crossingId) => {
-    if (!marker) return;
+    if (!marker || marker.options?.gridlyCommunityStatus !== "active"
+      || !crossingLayer?.hasLayer?.(marker) || !map?.hasLayer?.(crossingLayer)) return;
     const report = typeof getLatestReportForCrossing === "function" ? getLatestReportForCrossing(crossingId) : null;
     const state = typeof getIncidentLifecycleState === "function" ? getIncidentLifecycleState(report) : "";
     if (state !== "active") return;
-    const exactKey = gridlyGetBlockedCrossingMarkerOwnershipKey({
-      crossingId,
-      reportId: report?.id || report?.report_id || "",
-      report_type: report?.type || "rail_blockage_delay"
+    (marker.__gridlyRepresentedCrossingIds || [String(crossingId)]).forEach((representedId) => {
+      const representedReport = getLatestReportForCrossing(representedId);
+      if (getIncidentLifecycleState(representedReport) !== "active") return;
+      const exactKey = gridlyGetBlockedCrossingMarkerOwnershipKey({
+        crossingId: representedId, reportId: representedReport?.id || representedReport?.report_id || "",
+        report_type: representedReport?.type || "rail_blockage_delay"
+      });
+      if (exactKey) keys.add(exactKey);
+      const fallbackKey = gridlyGetBlockedCrossingMarkerOwnershipKey({ crossingId: representedId, report_type: representedReport?.type || "rail_blockage_delay" });
+      if (fallbackKey) keys.add(fallbackKey);
     });
-    if (exactKey) keys.add(exactKey);
-    const fallbackKey = gridlyGetBlockedCrossingMarkerOwnershipKey({ crossingId, report_type: report?.type || "rail_blockage_delay" });
-    if (fallbackKey) keys.add(fallbackKey);
   });
   return keys;
 }
@@ -77727,6 +77846,21 @@ function gridlyGetUnifiedBlockedCrossingMarkerSuppression(incident = {}, crossin
     };
   }
   return { suppress: false, reason: "no_crossingLayer_marker_for_report", ownershipKey: exactKey || fallbackKey };
+}
+
+function gridlyRemoveDuplicateUnifiedCrossings(ownershipKeys = new Set()) {
+  let removed = 0;
+  (unifiedIncidentLayer?.getLayers?.() || []).forEach((marker) => {
+    const incidentId = String(marker.options?.incidentId || "");
+    const crossingId = marker.options?.crossingId || (incidentId.startsWith("rail-") ? incidentId.slice(5) : "");
+    if (!crossingId) return;
+    const report = getLatestReportForCrossing(crossingId);
+    if (!gridlyGetUnifiedBlockedCrossingMarkerSuppression({ crossingId, reportId: report?.id, type: report?.type }, ownershipKeys).suppress) return;
+    unifiedIncidentLayer.removeLayer(marker);
+    removed += 1;
+  });
+  if (removed) gridlyV734RefreshReuseState.renderUnifiedReconciled = false;
+  return removed;
 }
 
 
@@ -78066,6 +78200,7 @@ function renderUnifiedIncidents(reason = "auto") {
   const renderCanonicalState = typeof gridlyGetCanonicalActiveCommunityState === "function" ? gridlyGetCanonicalActiveCommunityState() : null;
   const renderSignature = gridlyV734BuildRefreshReuseSignature({
     reasonScope: "renderUnifiedIncidents",
+    crossingMarkerOwnership: Array.from(gridlyGetCrossingLayerBlockedMarkerOwnershipKeys()).sort().join("|"),
     canonicalActiveCommunityRevision: renderCanonicalState?.revision || "canonical_unavailable",
     canonicalActiveCommunityCount: renderCanonicalState?.activeCount ?? "unknown",
     mapZoom: typeof map !== "undefined" && typeof map?.getZoom === "function" ? map.getZoom() : "",
@@ -86578,26 +86713,19 @@ function buildUnifiedIncidentPopup(incident, options = {}){
     ? ` data-lifecycle-report-id="${sanitizeText(communityLifecycleTarget.persistedReportId)}" data-lifecycle-report-type="${sanitizeText(communityLifecycleTarget.hazardType)}"`
     : "";
   if (typeCategory === "rail") {
-    const model = buildGridlyCrossingPopupConsumerModel(incident, { auditRow });
+    // Count current confirmations for the popup without changing the shared incident model.
+    const crossingId = incident.crossing_id || incident.crossingId || incident.id.slice(5);
+    const displayIncident = { ...incident, reports_count: getReportCountForCrossing(crossingId) };
+    const model = buildGridlyCrossingPopupConsumerModel(displayIncident, { auditRow });
     const lp021LocationPresentation = gridlyLp021ResolvedLocationPresentation(incident, { fallback: model.locationLine });
     gridlyLp021RecordLocationTrace("crossing-popup", incident?.id || incident?.crossing_id, incident, lp021LocationPresentation);
     model.locationLine = model.consumerLocation?.displayLocation ? model.locationLine : (lp021LocationPresentation.primaryLocation || model.locationLine);
     lastGridlyCrossingPopupConsumerState = model;
-    let htmlGenerationStart = gridlyNowMs();
-    const popupLines = `
-      <strong data-gridly-crossing-popup-field="title">${sanitizeText(model.title)}</strong>
-      <span class="gridly-popup-location" data-gridly-crossing-popup-field="locationLine">${sanitizeText(model.locationLine)}</span>
-      <span class="gridly-popup-guidance" data-gridly-crossing-popup-field="guidanceLine">${sanitizeText(model.guidanceLine)}</span>
-      <span class="gridly-popup-meta" data-gridly-crossing-popup-field="reportCountLine">Community reports</span>
-      <span class="gridly-popup-trust" data-gridly-crossing-popup-field="confidenceLine">${sanitizeText(model.confidenceLine)}</span>
-      <span class="gridly-popup-freshness" data-gridly-crossing-popup-field="freshnessLine">${sanitizeText(model.freshnessLine)}</span>
-      ${complianceControls}
-    `;
+    const htmlGenerationStart = gridlyNowMs();
+    const actionButtons = isActive ? `<button class="popup-report-btn warning" type="button" data-unified-action="confirm" data-incident-id="${sanitizeText(incident.id)}" data-incident-category="${sanitizeText(typeCategory)}" data-report-type="${sanitizeText(incident.report_type || "")}" data-crossing-id="${sanitizeText(incident.crossing_id || "")}" data-lat="${sanitizeText(String(incident.lat))}" data-lng="${sanitizeText(String(incident.lng))}">Still Blocked</button><button class="popup-report-btn blue" type="button" data-unified-action="cleared" data-incident-id="${sanitizeText(incident.id)}" data-incident-category="${sanitizeText(typeCategory)}" data-report-type="${sanitizeText(incident.report_type || "")}" data-crossing-id="${sanitizeText(incident.crossing_id || "")}" data-lat="${sanitizeText(String(incident.lat))}" data-lng="${sanitizeText(String(incident.lng))}">Crossing Clear</button>` : "";
+    const html = buildGridlyCrossingPopupCard(model, actionButtons, incident, "unified");
     gridlyAddPopupAuditDuration(auditRow, "htmlGenerationDurationMs", htmlGenerationStart);
-    if (!isActive) {
-      return finishPopupAudit(`<div class="gridly-popup" data-gridly-crossing-popup="consumer" data-gridly-crossing-popup-system="unified">${popupLines}</div>`);
-    }
-    return finishPopupAudit(`<div class="gridly-popup gridly-premium-popup" data-gridly-crossing-popup="consumer" data-gridly-crossing-popup-system="unified">${popupLines}<div class="popup-report-grid"><button class="popup-report-btn warning" type="button" data-unified-action="confirm" data-incident-id="${sanitizeText(incident.id)}" data-incident-category="${sanitizeText(typeCategory)}" data-report-type="${sanitizeText(incident.report_type || "")}" data-crossing-id="${sanitizeText(incident.crossing_id || "")}" data-lat="${sanitizeText(String(incident.lat))}" data-lng="${sanitizeText(String(incident.lng))}">Confirm Active</button><button class="popup-report-btn blue" type="button" data-unified-action="cleared" data-incident-id="${sanitizeText(incident.id)}" data-incident-category="${sanitizeText(typeCategory)}" data-report-type="${sanitizeText(incident.report_type || "")}" data-crossing-id="${sanitizeText(incident.crossing_id || "")}" data-lat="${sanitizeText(String(incident.lat))}" data-lng="${sanitizeText(String(incident.lng))}">Mark Cleared</button></div></div>`);
+    return finishPopupAudit(html);
   }
 
   const model = buildGridlyHazardPopupConsumerModel(incident, { auditRow });
@@ -92594,8 +92722,8 @@ function buildGridlyCrossingPopupActionButtons(crossing = {}, model = {}, report
 
   if (model.popupState === "active") {
     return `
-        <button class="popup-report-btn warning" type="button" data-unified-action="confirm" data-incident-id="${sanitizeText(incidentId)}" data-incident-category="rail" data-report-type="${sanitizeText(reportType)}" data-crossing-id="${sanitizeText(crossing.id)}" ${commonLocationAttributes}>Confirm Active</button>
-        <button class="popup-report-btn blue" type="button" data-unified-action="cleared" data-incident-id="${sanitizeText(incidentId)}" data-incident-category="rail" data-report-type="${sanitizeText(reportType)}" data-crossing-id="${sanitizeText(crossing.id)}" ${commonLocationAttributes}>Mark Cleared</button>
+        <button class="popup-report-btn warning" type="button" data-unified-action="confirm" data-incident-id="${sanitizeText(incidentId)}" data-incident-category="rail" data-report-type="${sanitizeText(reportType)}" data-crossing-id="${sanitizeText(crossing.id)}" ${commonLocationAttributes}>Still Blocked</button>
+        <button class="popup-report-btn blue" type="button" data-unified-action="cleared" data-incident-id="${sanitizeText(incidentId)}" data-incident-category="rail" data-report-type="${sanitizeText(reportType)}" data-crossing-id="${sanitizeText(crossing.id)}" ${commonLocationAttributes}>Crossing Clear</button>
         ${viewAreaButton}`;
   }
 
@@ -92605,27 +92733,78 @@ function buildGridlyCrossingPopupActionButtons(crossing = {}, model = {}, report
         ${viewAreaButton}`;
 }
 
+function buildGridlyCrossingPopupCard(model, actionButtons, record = {}, system = "leaflet") {
+  const type = String(record?.report_type || record?.type || "");
+  const title = model.popupState === "active" ? (/heavy|delay/i.test(type) ? "Crossing Delay" : "Crossing Blocked") : model.title;
+  // Suppress a duplicate inventory alias in this card, while retaining real intersections.
+  const roads = model.locationLine.split(/\s+&\s+/);
+  const locationLine = roads.length === 2 && roads[0].toLowerCase() === roads[1].replace(/\s+crossing$/i, "").toLowerCase()
+    ? roads[0] : model.locationLine;
+  // Public reporting responses deliberately omit ownership proof. Keep the
+  // existing Report/Hide controls; never offer deletion on an unverified claim.
+  const controls = gridlyCommunityComplianceControls(record).replace(/<button\b[^>]*data-gridly-ugc-action=["']delete["'][^>]*>[\s\S]*?<\/button>/gi, "");
+  return `
+    <div class="gridly-popup gridly-premium-popup" data-gridly-crossing-popup="consumer" data-gridly-crossing-popup-system="${sanitizeText(system)}" data-gridly-crossing-popup-state="${sanitizeText(model.popupState)}">
+      <header class="gridly-crossing-popup-heading">
+        <strong data-gridly-crossing-popup-field="title">${sanitizeText(title)}</strong>
+        <span class="gridly-popup-location" data-gridly-crossing-popup-field="locationLine">${sanitizeText(locationLine)}</span>
+      </header>
+      <span class="gridly-popup-guidance" data-gridly-crossing-popup-field="guidanceLine">${sanitizeText(model.guidanceLine)}</span>
+      <div class="gridly-crossing-popup-evidence" aria-label="Community report information">
+        <span class="gridly-crossing-popup-source" data-gridly-crossing-popup-field="reportCountLine">Community reports</span>
+        <span class="gridly-popup-freshness" data-gridly-crossing-popup-field="freshnessLine">${sanitizeText(model.freshnessLine)}</span>
+        <span class="gridly-popup-trust" data-gridly-crossing-popup-field="confidenceLine">${sanitizeText(model.confidenceLine)}</span>
+      </div>
+      ${actionButtons ? `<div class="popup-report-grid">${actionButtons}</div>` : ""}
+      ${controls ? `<details class="gridly-crossing-popup-more"><summary aria-label="More crossing actions">More</summary>${controls}</details>` : ""}
+    </div>
+  `;
+}
+
+function gridlyCrossingPopupMoreKeydown(event) {
+  if (event.key !== "Escape") return;
+  const details = event.target?.closest?.(".gridly-crossing-popup-more[open]");
+  if (!details) {
+    const mapRef = getGridlyMapInstance();
+    if (!event.target?.closest?.("#map") || !mapRef?._popup?.getElement?.()?.querySelector('[data-gridly-crossing-popup="consumer"]')) return;
+    event.preventDefault();
+    event.stopPropagation();
+    if (window.__gridlyLp021AlertFocusLifecycle) window.__gridlyLp021AlertFocusLifecycle.canceledByPopupEscape = true;
+    cancelPendingCrossingPopup("crossing-popup-escape");
+    mapRef.closePopup();
+    mapRef.getContainer()?.focus?.({ preventScroll: true });
+    return;
+  }
+  event.preventDefault();
+  event.stopPropagation();
+  details.open = false;
+  details.querySelector("summary")?.focus();
+}
+function gridlyCrossingPopupMoreToggle(event) {
+  const details = event.target;
+  if (!details?.matches?.(".gridly-crossing-popup-more")) return;
+  const mapRef = getGridlyMapInstance();
+  const popup = mapRef?._popup;
+  if (!popup?.getElement?.()?.contains(details)) return;
+  const focused = document.activeElement;
+  const content = popup.getElement().querySelector(".leaflet-popup-content");
+  const scrollTop = content?.scrollTop || 0;
+  // Leaflet updates string content by replacing its DOM. Retain the live card
+  // so disclosure state and the existing delegated action identities survive.
+  popup.setContent(details.closest('[data-gridly-crossing-popup="consumer"]'));
+  window.gridlyMapVisibilityRuntime?.fit?.(popup);
+  if (content) content.scrollTop = scrollTop;
+  if (focused?.isConnected) focused.focus?.({ preventScroll: true });
+}
+if (typeof document !== "undefined") {
+  document.addEventListener("keydown", gridlyCrossingPopupMoreKeydown, true);
+  document.addEventListener("toggle", gridlyCrossingPopupMoreToggle, true);
+}
+
 function buildPopup(crossing, report) {
   const model = buildGridlyLeafletCrossingPopupConsumerModel(crossing, report);
   lastGridlyCrossingPopupConsumerState = model;
-  const actionButtons = buildGridlyCrossingPopupActionButtons(crossing, model, report);
-  const complianceControls = gridlyCommunityComplianceControls(report || {});
-
-  return `
-    <div class="gridly-popup gridly-premium-popup" data-gridly-crossing-popup="consumer" data-gridly-crossing-popup-system="leaflet" data-gridly-crossing-popup-state="${sanitizeText(model.popupState)}">
-      <strong data-gridly-crossing-popup-field="title">${sanitizeText(model.title)}</strong>
-      <span class="gridly-popup-location" data-gridly-crossing-popup-field="locationLine">${sanitizeText(model.locationLine)}</span>
-      <span class="gridly-popup-guidance" data-gridly-crossing-popup-field="guidanceLine">${sanitizeText(model.guidanceLine)}</span>
-      <span class="gridly-popup-meta" data-gridly-crossing-popup-field="reportCountLine">Community reports</span>
-      <span class="gridly-popup-trust" data-gridly-crossing-popup-field="confidenceLine">${sanitizeText(model.confidenceLine)}</span>
-      <span class="gridly-popup-freshness" data-gridly-crossing-popup-field="freshnessLine">${sanitizeText(model.freshnessLine)}</span>
-
-      <div class="popup-report-grid">
-        ${actionButtons}
-      </div>
-      ${complianceControls}
-    </div>
-  `;
+  return buildGridlyCrossingPopupCard(model, buildGridlyCrossingPopupActionButtons(crossing, model, report), report || {}, "leaflet");
 }
 
 function getRouteImpactSummary(report, crossing) {
@@ -92883,7 +93062,8 @@ function bindEvents() {
       return;
     }
     const options = ["Standard", "Satellite"].map((name) => `<button type="button" data-layer-name="${name}">${name}</button>`).join("");
-    openTacticalDockSheet("layers", "Map Layers", `<div class="gridly-tactical-option-grid">${options}</div>`);
+    openTacticalDockSheet("layers", "Map Layers", `<div class="gridly-tactical-option-grid">${options}</div>${buildGridlyRailroadCrossingsVisibilityControl("tactical")}`);
+    document.querySelector("#gridlyTacticalDockSheet [data-gridly-crossings-visibility]")?.addEventListener("click", () => setGridlyRailroadCrossingsVisible(!showAllCrossingsLayer));
     document.querySelectorAll("#gridlyTacticalDockSheet [data-layer-name]").forEach((btn) => {
       btn.addEventListener("click", () => {
         applyMapStyle(btn.dataset.layerName || "Satellite");
@@ -93850,10 +94030,9 @@ function bindEvents() {
   });
 
   const allCrossingsToggle = document.getElementById("allCrossingsLayerToggle");
+  syncGridlyRailroadCrossingsVisibilityControls();
   allCrossingsToggle?.addEventListener("change", (event) => {
-    showAllCrossingsLayer = Boolean(event?.target?.checked);
-    crossingRenderFilterVersion += 1;
-    scheduleRenderCrossings("state-change", { force: true });
+    setGridlyRailroadCrossingsVisible(Boolean(event?.target?.checked));
   });
 
   highlightNearestCrossingOnFirstLoad();
@@ -110985,6 +111164,14 @@ function gridlyLp021AlertFocusLifecycleAudit() {
 }
 window.gridlyLp021AlertFocusLifecycleAudit = gridlyLp021AlertFocusLifecycleAudit;
 
+function gridlyAlertFocusContextKey() {
+  return JSON.stringify([
+    typeof gridlyGetActiveCountyId === "function" ? gridlyGetActiveCountyId() : null,
+    typeof gridlyActiveCountyTransitionGeneration !== "undefined" ? gridlyActiveCountyTransitionGeneration : null,
+    typeof gridlySelectedAwarenessAreaResolutionCache !== "undefined" ? gridlySelectedAwarenessAreaResolutionCache?.area || null : null
+  ]);
+}
+
 function focusGridlyAlertIncident(focus = {}) {
   const focusRecordIdentity = String(focus?.record?.consumerSituationId || focus?.record?.canonicalIncidentId || focus?.record?.incidentId || focus?.record?.id || focus?.incidentId || focus?.id || "").trim();
   const focusTargetType = focus?.targetType || (focus?.markerResolved && focus?.marker ? "governed_marker" : "governed_coordinates");
@@ -111000,9 +111187,10 @@ function focusGridlyAlertIncident(focus = {}) {
   const coords = normalizeCoordinatePair(focus?.lat, focus?.lng);
   const incidentId = String(focus?.incidentId || focus?.id || "").trim();
   const mapRef = getGridlyAlertMapInstance();
+  gridlyPrepareClusteredCrossingFocus(focus?.record?.crossingId || focus?.record?.crossing_id || "");
   const mapCenterActionAvailable = Boolean(mapRef && (typeof mapRef.flyTo === "function" || typeof mapRef.setView === "function"));
   const markerOptions = { incidentId, id: incidentId, record: focus?.record, lat: coords?.lat, lng: coords?.lng, requireIdentityMatch: focus?.markerResolved === true };
-  const marker = focus?.markerResolved === true && focus?.marker
+  let marker = focus?.markerResolved === true && focus?.marker
     ? focus.marker
     : (coords ? findGridlyAlertMarker(coords, markerOptions) : null);
   // Historical/presentation selection is adjacent metadata, not map-focus
@@ -111049,10 +111237,25 @@ function focusGridlyAlertIncident(focus = {}) {
   });
   window.__gridlyLp019AlertFocusDebug = debug;
   window.__gridlyLp021AlertFocusLifecycle = { available: true, selectedConditionId: incidentId || null, selectedMarkerId: String(marker?.options?.incidentId || marker?.options?.id || marker?._leaflet_id || "") || null, markerCoordinates: coords || null, focusEvents: [], lastMapMovementOwner: null, intendedFocusSequence: 0, laterOverrideDetected: false };
+  const focusOwner = window.__gridlyLp021AlertFocusLifecycle;
+  const focusContext = gridlyAlertFocusContextKey();
+  const isCurrentFocus = () => window.__gridlyLp021AlertFocusLifecycle === focusOwner && !focusOwner.canceledByBriefExpansion && !focusOwner.canceledByPopupEscape && gridlyAlertFocusContextKey() === focusContext;
   gridlyLp021FocusLifecycleRecord("focusGridlyAlertIncident", "resolved_condition_and_marker", mapRef, coords, marker);
 
   gridlyAlertFocusAuditState.lastFocusedIncident = { id: incidentId || null, lat: coords?.lat ?? null, lng: coords?.lng ?? null, type: String(focus?.type || "unknown"), source: String(focus?.source || "unknown"), at: new Date().toISOString() };
-  const complete = (reason = "") => {
+  const complete = (reason = "", markerAttempt = 0) => {
+    if (!isCurrentFocus()) { debug.focusCanceled = true; debug.failureReason = "focus_context_changed"; return; }
+    // Zoom/render or a same-ID lifecycle mutation can replace the object that
+    // was resolved when the alert was tapped. Reuse its current exact owner.
+    if (coords && mapRef && focus?.openPopup !== false) {
+      const currentOptions = { ...markerOptions, requireIdentityMatch: true };
+      const currentMarker = findGridlyAlertMarker(coords, currentOptions);
+      const attached = currentMarker && (typeof mapRef.hasLayer !== "function" || mapRef.hasLayer(currentMarker));
+      debug.markerReResolveAttempts = markerAttempt + 1;
+      if (!attached && markerAttempt < 20 && !reason) { window.setTimeout(() => complete(reason, markerAttempt + 1), 80); return; }
+      marker = attached ? currentMarker : null;
+      Object.assign(debug, currentOptions.debug || {}, { markerFound: Boolean(marker), popupRequested: Boolean(marker) });
+    }
     const result = confirmGridlyAlertFocusResult({ coords, mapRef, centerBefore, incidentId, source: String(focus?.source || "unknown"), marker });
     const finalCenter = getGridlyAlertMapCenter(mapRef);
     debug.finalZoom = typeof mapRef?.getZoom === "function" ? mapRef.getZoom() : null;
@@ -111087,6 +111290,27 @@ function focusGridlyAlertIncident(focus = {}) {
       clearGridlyFocusedAlertMarker();
       gridlyApplyFocusedMarkerPulseAfterRender(marker, debug);
       if (focus?.openPopup !== false && typeof marker.openPopup === "function") {
+        const popupMarker = marker;
+        let retainFocusedPopup = true;
+        popupMarker.once?.("popupclose", () => {
+          if (mapRef.hasLayer?.(popupMarker) !== false) retainFocusedPopup = false;
+        });
+        popupMarker.once?.("remove", () => {
+          // Follow replacement of an opened or still-opening popup, while a
+          // user close, a new focus or a context change must stay closed.
+          if (!retainFocusedPopup || !isCurrentFocus()) return;
+          window.setTimeout(() => {
+            if (!isCurrentFocus()) return;
+            if (window.__gridlyPopupPanSession?.marker === popupMarker && !window.__gridlyPopupPanSession.opened) cancelPendingCrossingPopup("alert-focus-marker-replaced");
+            complete();
+          }, 0);
+        });
+        marker.once?.("popupopen", () => window.setTimeout(() => {
+          if (!isCurrentFocus()) return;
+          debug.popupOpened = Boolean(marker?.isPopupOpen?.());
+          debug.popupStateVerified = true;
+          if (window.__gridlyAlertFocusDebugState) window.__gridlyAlertFocusDebugState.lastAlertFocusPopupOpened = debug.popupOpened;
+        }, 0));
         gridlyLp021FocusLifecycleRecord("focusGridlyAlertIncident", "before_popup_open", mapRef, coords, marker);
         const crossingTarget = gridlyLp0952ResolveCrossingAlertTarget(focus?.record, null);
         if (crossingTarget.crossingId && crossingTarget.marker === marker && crossingTarget.crossing) {
@@ -111096,6 +111320,8 @@ function focusGridlyAlertIncident(focus = {}) {
         debug.popupStateVerified = typeof marker.isPopupOpen === "function";
         debug.popupOpened = debug.popupStateVerified ? Boolean(marker.isPopupOpen()) : Boolean(marker.getPopup?.());
         gridlyLp021ApplyPostPopupFocusCorrection(mapRef, coords, marker, debug);
+        const focusedPopup = marker.getPopup?.();
+        if (focusedPopup?.getElement?.()?.querySelector('[data-gridly-crossing-popup="consumer"]')) window.gridlyMapVisibilityRuntime?.fit?.(focusedPopup);
         gridlyLp021FocusLifecycleRecord("gridlyLp021ApplyPostPopupFocusCorrection", "after_post_popup_correction", mapRef, coords, marker);
         Object.assign(debug, gridlyLp019UsableViewportVisibility(mapRef, coords, { popupRequested: true }));
         Object.assign(debug, { markerVisibleAfterPopupAutoPan: debug.usableViewportVisibilityCompleted });
@@ -111127,20 +111353,23 @@ function focusGridlyAlertIncident(focus = {}) {
     debug.sheetCloseCompleted = focus?.preserveSurface === true ? false : !isGridlyAlertSurfaceVisible();
     gridlyLp019WaitForLayoutSettle(() => {
       try {
+        if (!isCurrentFocus()) return;
         debug.sheetCloseCompleted = !isGridlyAlertSurfaceVisible();
         if (typeof mapRef.invalidateSize === "function") { debug.mapInvalidateRequested = true; gridlyLp021FocusLifecycleRecord("focusGridlyAlertIncident", "before_invalidateSize", mapRef, coords, marker); mapRef.invalidateSize({ pan: false }); debug.mapInvalidateCompleted = true; gridlyLp021FocusLifecycleRecord("focusGridlyAlertIncident", "after_invalidateSize", mapRef, coords, marker); }
-        const preserveZoom = focus?.source === "alerts_show_on_map";
-        const targetZoom = preserveZoom ? Number(mapRef?.getZoom?.() || gridlyLp019ConditionFocusZoom(mapRef)) : gridlyLp019ConditionFocusZoom(mapRef);
+        const targetZoom = gridlyLp019ConditionFocusZoom(mapRef);
         debug.targetZoom = targetZoom;
         debug.mapMovementRequested = true;
         gridlyLp019CrossingVisibilityState.beforeFocus = gridlyLp019ReadCrossingVisibilitySnapshot("before_focus");
         const offset = gridlyLp019UsableViewportOffset(mapRef);
         debug.viewportOffsetApplied = offset;
-        const alreadyVisible = preserveZoom && gridlyLp019UsableViewportVisibility(mapRef, coords).markerInsideUsableViewport === true;
+        const currentPoint = mapRef.latLngToContainerPoint?.([coords.lat, coords.lng]);
+        const currentDelta = gridlyLp019ViewportPixelDelta(currentPoint, gridlyLp019IntendedViewportTargetPoint(mapRef, offset));
+        const alreadyVisible = Number(mapRef.getZoom?.()) === targetZoom && currentDelta?.distance <= gridlyLp019ViewportCompletionThreshold(mapRef) && gridlyLp019UsableViewportVisibility(mapRef, coords).markerInsideUsableViewport === true;
         debug.alreadyVisibleNoCameraMove = alreadyVisible;
         let focusCompletionRecorded = false;
         let baseMoveCompleted = false;
         const finishAfterPanSettle = () => {
+          if (!isCurrentFocus()) return;
           if (focusCompletionRecorded) return;
           focusCompletionRecorded = true;
           debug.movementSettlementCompleted = true;
@@ -111157,9 +111386,11 @@ function focusGridlyAlertIncident(focus = {}) {
           }, 0);
         };
         const finishAfterMove = () => {
+          if (!isCurrentFocus()) return;
           if (baseMoveCompleted) return;
           baseMoveCompleted = true;
           window.setTimeout(() => {
+            if (!isCurrentFocus()) return;
             if (offset.applied && typeof mapRef.panBy === "function") {
               if (typeof mapRef.once === "function") mapRef.once("moveend", finishAfterPanSettle);
               gridlyLp021FocusLifecycleRecord("focusGridlyAlertIncident", "before_panBy_offset", mapRef, coords, marker);
@@ -116497,11 +116728,28 @@ function getConsolidatedIncidents() {
   highlightNearestCrossingOnFirstLoad();
 }
 
+function getGridlyCurrentCrossingConfirmationReports(reports, locationKey) {
+  const group = (Array.isArray(reports) ? reports : []).filter(report => report && !report.expired && getReportLocationKey(report) === locationKey);
+  const isCurrent = (report) => {
+    if (!report || getIncidentLifecycleState(report) !== "active") return false;
+    const sourceKind = String(report.sourceKind || report.source || report.collection || report.table || "").toLowerCase();
+    return !/historical_sidecar|historical/.test(sourceKind) && report.historicalSidecar !== true && report.historical_sidecar !== true;
+  };
+  // Reuse the existing location lifecycle authority and historical exclusion;
+  // do not let a cleared latest observation become a current confirmation.
+  if (!isCurrent(getLatestReportStateByLocation(group).get(locationKey))) return [];
+  const seen = new Set();
+  return group.filter(isCurrent).filter(report => {
+    const identity = report.id || report.report_id || report.reportId;
+    if (!identity) return true;
+    if (seen.has(String(identity))) return false;
+    seen.add(String(identity));
+    return true;
+  });
+}
+
 function getReportCountForCrossing(crossingId) {
-  const locationKey = getReportLocationKey({ crossingId });
-  return activeReports.filter(
-    (report) => !report.expired && getReportLocationKey(report) === locationKey
-  ).length;
+  return getGridlyCurrentCrossingConfirmationReports(activeReports, getReportLocationKey({ crossingId })).length;
 }
 
 function getDriverConfirmationLabel(count) {
@@ -121293,7 +121541,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     alerts: { title: "Current Alerts", html: buildAlertsSurfaceHtml },
     settings: { title: "Settings", html: buildSettingsSurfaceHtml },
     history: { title: "Historical Intelligence", html: buildGridlyHistoricalIntelligenceSheetHtml },
-    layers: { title: "Map Layers", html: `<div class="gridly-v2-list" role="radiogroup" aria-label="Map style"><p class="gridly-v2-sheet-copy">Choose map style:</p><button class="gridly-v2-tile gridly-v2-report-action" data-v2-action="layers-select" data-layer-name="Standard" type="button" role="radio" aria-checked="false">Standard</button><button class="gridly-v2-tile gridly-v2-report-action" data-v2-action="layers-select" data-layer-name="Satellite" type="button" role="radio" aria-checked="false">Satellite</button></div>` }
+    layers: { title: "Map Layers", html: () => `<div class="gridly-v2-list" role="radiogroup" aria-label="Map style"><p class="gridly-v2-sheet-copy">Choose map style:</p><button class="gridly-v2-tile gridly-v2-report-action" data-v2-action="layers-select" data-layer-name="Standard" type="button" role="radio" aria-checked="false">Standard</button><button class="gridly-v2-tile gridly-v2-report-action" data-v2-action="layers-select" data-layer-name="Satellite" type="button" role="radio" aria-checked="false">Satellite</button></div>${buildGridlyRailroadCrossingsVisibilityControl()}` }
   };
   const v2DockAdapterState = { lastDockActionTriggered: "", lastDockAdapterTarget: "", adapterBridgeFailures: [], adapterFallbackCount: 0, lastV2Action: "", lastV2ActionResult: "", lastV2ActionError: "", lastReportAction: "", lastReportActionResult: "", lastReportActionError: "" };
   const v1363RouteActionDebug = { routeDockClickHandled:false, routeWatchActionHandled:false, routePreviewActionHandled:false, routeManagePlacesActionHandled:false, lastRouteActionFailureReason:"" };
@@ -121726,7 +121974,12 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     const sheetName = sheet?.dataset?.activeSheet || activeSheet || "";
     if (!sheet || sheet.hidden || (expectedSheet && sheetName !== expectedSheet)) return false;
     const backdrop = document.getElementById("gridlyPortraitV2SheetBackdrop");
-    if (sheetName === "alerts") window.gridlyLP236CaptureDisclosureState?.(sheet);
+    if (sheetName === "alerts") {
+      window.gridlyLP236CaptureDisclosureState?.(sheet);
+      // Suspend this generation; a new explicit Alerts open may render again.
+      sheet.dataset.minimizedAlertsGeneration = String(gridlyAlertsSheetLifecycleState.activeGeneration || "");
+      gridlySetAlertsModalFocusOwnership(sheet, false);
+    }
     sheet.dataset.sheetState = "minimized";
     sheet.setAttribute("aria-hidden", "true");
     sheet.setAttribute("inert", "");
@@ -122464,6 +122717,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
       },
       "report-cancel": () => closePortraitV2Sheet(),
       "close": () => closePortraitV2Sheet(),
+      "layers-crossings-toggle": () => setGridlyRailroadCrossingsVisible(!showAllCrossingsLayer),
       "layers-select": () => {
         const requestedLayer = payload.layerName || "Standard";
         if (typeof applyMapStyle === "function") applyMapStyle(requestedLayer);
@@ -122507,7 +122761,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         "settings-feedback-submit",
         "settings-feedback-prepare"
       ].includes(canonicalAction);
-      const shouldKeepSheetOpen = canonicalAction === "report-select-hazard" || canonicalAction === "report-select-other-hazard-subtype";
+      const shouldKeepSheetOpen = canonicalAction === "report-select-hazard" || canonicalAction === "report-select-other-hazard-subtype" || canonicalAction === "layers-crossings-toggle";
       if (!shouldKeepSheetOpen && !actionManagesOwnSurface) closePortraitV2Sheet();
       applyPortraitV2SurfaceContainment();
     } catch (error) {

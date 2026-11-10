@@ -30220,6 +30220,354 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet[data-active-sheet="sett
   font-weight: 700;
 }
 
+/* Consumer dock refinement: fit the approved 256px PNG alpha bounds, rather
+   than their transparent canvases. Keep native safe-area and sheet ownership. */
+@media (max-width: 760px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock button {
+    min-height: 48px;
+    padding-block: 1px;
+    gap: 2px;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock .dock-icon {
+    position: relative;
+    width: 28px;
+    height: 28px;
+    min-height: 28px;
+    flex: 0 0 28px;
+    overflow: hidden;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock .dock-icon img {
+    position: absolute;
+    width: calc(26px * 256 / var(--gridly-dock-alpha-height));
+    height: calc(26px * 256 / var(--gridly-dock-alpha-height));
+    max-width: none;
+    max-height: none;
+    left: calc(14px - 26px * var(--gridly-dock-alpha-center-x) / var(--gridly-dock-alpha-height));
+    top: calc(14px - 26px * var(--gridly-dock-alpha-center-y) / var(--gridly-dock-alpha-height));
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyReportDockButton {
+    /* Alpha bounds: (70,43)–(189,215). */
+    --gridly-dock-alpha-height: 172;
+    --gridly-dock-alpha-center-x: 129.5;
+    --gridly-dock-alpha-center-y: 129;
+  }
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyAlertsDockButton {
+    /* Alpha bounds: (60,44)–(197,228). */
+    --gridly-dock-alpha-height: 184;
+    --gridly-dock-alpha-center-x: 128.5;
+    --gridly-dock-alpha-center-y: 136;
+  }
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyHistoryDockButton {
+    /* Alpha bounds: (55,51)–(206,221). */
+    --gridly-dock-alpha-height: 170;
+    --gridly-dock-alpha-center-x: 130.5;
+    --gridly-dock-alpha-center-y: 136;
+  }
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlySettingsDockButton {
+    /* Alpha bounds: (47,53)–(216,223). */
+    --gridly-dock-alpha-height: 170;
+    --gridly-dock-alpha-center-x: 131.5;
+    --gridly-dock-alpha-center-y: 138;
+  }
+
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-bottom-dock button em {
+    font-size: 0.71875rem;
+    line-height: 1.15;
+    white-space: nowrap;
+  }
+}
+
+/* Consumer map refinement: keep the existing in-flow briefing/filter owner.
+   Paint the upper canvas only through the last briefing row, so the complete
+   48px filter strip sits in the map. Paint excludes the strip, its margins and
+   its preceding row gap, retaining 4px of upper-canvas breathing room. */
+@media (max-width: 760px) and (orientation: portrait) {
+  body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV2::before {
+    height: var(--gridly-v2-awareness-card-top) !important;
+    background: var(--gridly-app-bg, #06101f) !important;
+    box-shadow: none !important;
+  }
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brief-stack {
+    --gridly-map-filter-start-gap: 12px;
+    --gridly-map-filter-end-gap: 18px;
+    --gridly-map-brief-row-gap: 6px;
+    pointer-events: none;
+  }
+  body[data-layout-mode="portrait"] #gridlyPortraitV2[data-gridly-brief-state="expanded"] .gridly-v2-brief-stack {
+    --gridly-map-filter-end-gap: 4px;
+    --gridly-map-brief-row-gap: 14px;
+  }
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brief-stack::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: calc(48px + var(--gridly-map-filter-end-gap) + var(--gridly-map-filter-start-gap) + var(--gridly-map-brief-row-gap) - 4px);
+    left: calc(-1 * var(--gridly-v2-command-left, 10px));
+    right: calc(-1 * var(--gridly-v2-command-right, 10px));
+    z-index: -1;
+    background: var(--gridly-app-bg, #06101f);
+    pointer-events: none;
+  }
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brief-stack > .gridly-v2-segments {
+    margin-block: var(--gridly-map-filter-start-gap) var(--gridly-map-filter-end-gap) !important;
+  }
+  body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV2 .gridly-v2-control-rail[aria-label="Map controls"][data-gridly-portrait-map-control="true"] {
+    /* The pulse card is capped at 68px; avoid a stale cold-start JS offset. */
+    top: calc(var(--gridly-v2-awareness-card-top) + 198px) !important;
+    inline-size: 44px !important;
+    width: 44px !important;
+    min-width: 44px !important;
+    max-width: 44px !important;
+    min-height: 0 !important;
+    gap: 6px !important;
+    right: max(var(--gridly-v2-control-rail-right, 10px), calc(10px + env(safe-area-inset-right, 0px))) !important;
+    background: transparent !important;
+    border: 0;
+    box-shadow: none !important;
+    pointer-events: none !important;
+  }
+  body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV2 .gridly-v2-control-rail[aria-label="Map controls"] > button[data-v2-control] {
+    inline-size: 44px !important;
+    width: 44px !important;
+    min-width: 44px !important;
+    max-width: 44px !important;
+    block-size: 44px !important;
+    height: 44px !important;
+    min-height: 44px !important;
+    border-radius: 12px !important;
+    background: #091827 !important;
+    color: #f4f8fc !important;
+    border: 1px solid rgba(190, 214, 235, 0.2);
+    box-shadow: none !important;
+    pointer-events: auto !important;
+  }
+  body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV2 .gridly-v2-control-rail[aria-label="Map controls"] > button[data-v2-control]:is(:active, .is-active, [aria-pressed="true"], [aria-expanded="true"]) {
+    background: #123b46 !important;
+    border-color: var(--gridly-accent, #22d3c5);
+  }
+  body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV2 .gridly-v2-control-rail[aria-label="Map controls"] > button[data-v2-control]:focus-visible {
+    outline: 2px solid var(--gridly-accent, #22d3c5);
+    outline-offset: 2px;
+  }
+}
+
+/* The compact portrait band still fits four 44px controls above Location
+   Context. Expanded Brief keeps its existing scroll owner and all content. */
+@media (max-width: 760px) and (orientation: portrait) and (max-height: 640px) {
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 .gridly-v2-brief-stack {
+    --gridly-map-filter-start-gap: 4px;
+  }
+  body[data-layout-mode="portrait"].gridly-v2-surface-containment #gridlyPortraitV2 .gridly-v2-control-rail[aria-label="Map controls"][data-gridly-portrait-map-control="true"] {
+    top: calc(var(--gridly-v2-awareness-card-top) + 178px) !important;
+    gap: 2px !important;
+  }
+  /* Existing larger-text preferences grow Location Context as well. Preserve
+     the original control height in this constrained band; width stays 44px. */
+  body[data-layout-mode="portrait"].gridly-v2-surface-containment:is(.gridly-text-large, .gridly-text-extra-large) #gridlyPortraitV2 .gridly-v2-control-rail[aria-label="Map controls"][data-gridly-portrait-map-control="true"] {
+    gap: 1px !important;
+  }
+  body[data-layout-mode="portrait"].gridly-v2-surface-containment:is(.gridly-text-large, .gridly-text-extra-large) #gridlyPortraitV2 .gridly-v2-control-rail[aria-label="Map controls"] > button[data-v2-control] {
+    block-size: 38px !important;
+    height: 38px !important;
+    min-height: 38px !important;
+  }
+  body[data-layout-mode="portrait"] #gridlyPortraitV2 #gridlyBriefInteractionPanel[data-gridly-brief-expanded="true"] {
+    max-height: min(250px, 36vh, calc(100dvh - 410px)) !important;
+  }
+  /* Temporary context adds the existing Return Home row. Four 44px-tall
+     controls cannot fit that band; retain their original 38px height while
+     widening targets to 44px. Observe existing DOM visibility, not new state. */
+  body[data-layout-mode="portrait"].gridly-v2-surface-containment:has(#gridlyTemporaryContextReturnHome:not([hidden])) #gridlyPortraitV2 .gridly-v2-control-rail[aria-label="Map controls"][data-gridly-portrait-map-control="true"] {
+    gap: 1px !important;
+  }
+  body[data-layout-mode="portrait"].gridly-v2-surface-containment:has(#gridlyTemporaryContextReturnHome:not([hidden])) #gridlyPortraitV2 .gridly-v2-control-rail[aria-label="Map controls"] > button[data-v2-control] {
+    block-size: 38px !important;
+    height: 38px !important;
+    min-height: 38px !important;
+  }
+  body[data-layout-mode="portrait"]:has(#gridlyTemporaryContextReturnHome:not([hidden])) #gridlyPortraitV2 #gridlyBriefInteractionPanel[data-gridly-brief-expanded="true"] {
+    max-height: min(250px, 36vh, calc(100dvh - 438px)) !important;
+  }
+}
+/* Consumer crossing popup refinement: Phase 2B, presentation only. */
+#map .leaflet-popup:has([data-gridly-crossing-popup="consumer"]) {
+  --gridly-crossing-card: #102934;
+  --gridly-crossing-ink: #edf7fa;
+  --gridly-crossing-muted: #bdd1da;
+  --gridly-crossing-border: #48636e;
+  --gridly-crossing-trust: #8de1d3;
+}
+:root[data-gridly-effective-theme="light"] #map .leaflet-popup:has([data-gridly-crossing-popup="consumer"]) {
+  --gridly-crossing-card: #f7fbfc;
+  --gridly-crossing-ink: #132e39;
+  --gridly-crossing-muted: #405d68;
+  --gridly-crossing-border: #bfD3d9;
+  --gridly-crossing-trust: #07675b;
+}
+#map .leaflet-popup:has([data-gridly-crossing-popup="consumer"]) .leaflet-popup-content-wrapper {
+  border-radius: 22px;
+  background: var(--gridly-crossing-card) !important;
+  border: 1px solid var(--gridly-crossing-border);
+  box-shadow: 0 8px 24px #061b2a33;
+  max-height: none !important;
+}
+#map .leaflet-popup:has([data-gridly-crossing-popup="consumer"]) .leaflet-popup-tip {
+  background: var(--gridly-crossing-card) !important;
+  border-color: var(--gridly-crossing-border);
+}
+#map .leaflet-popup:has([data-gridly-crossing-popup="consumer"]) .leaflet-popup-close-button {
+  color: var(--gridly-crossing-ink) !important;
+  width: 44px;
+  height: 44px;
+  padding: 8px !important;
+  box-sizing: border-box;
+  border-radius: 14px;
+  line-height: 26px;
+  z-index: 3;
+}
+#map .leaflet-popup:has([data-gridly-crossing-popup="consumer"]) .leaflet-popup-content {
+  margin: 8px 10px;
+  min-width: 0;
+  width: min(280px, calc(100vw - 68px));
+  max-height: var(--gridly-popup-content-height, min(42svh, 340px));
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-gutter: stable;
+}
+#map .leaflet-popup-content [data-gridly-crossing-popup="consumer"] {
+  min-width: 0;
+  max-width: none;
+  display: flex;
+  gap: 12px;
+  color: var(--gridly-crossing-ink);
+  line-height: 1.4;
+  padding: 0 2px 2px;
+}
+#map [data-gridly-crossing-popup="consumer"] .gridly-crossing-popup-heading {
+  display: grid;
+  gap: 5px;
+  padding-right: 22px;
+}
+#map [data-gridly-crossing-popup="consumer"] strong {
+  color: var(--gridly-crossing-ink);
+  font-size: 0.95rem;
+  font-weight: 750;
+  margin: 0;
+  line-height: 1.3;
+}
+#map [data-gridly-crossing-popup="consumer"] .gridly-popup-location {
+  color: var(--gridly-crossing-ink);
+  font-size: 1rem;
+  font-weight: 650;
+  margin: 0;
+  line-height: 1.4;
+}
+#map [data-gridly-crossing-popup="consumer"] .gridly-popup-guidance,
+#map [data-gridly-crossing-popup="consumer"] .gridly-popup-freshness,
+#map [data-gridly-crossing-popup="consumer"] .gridly-popup-trust {
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--gridly-crossing-muted);
+  margin: 0;
+}
+#map [data-gridly-crossing-popup="consumer"] .gridly-popup-trust { color: var(--gridly-crossing-trust); }
+#map [data-gridly-crossing-popup="consumer"] .gridly-crossing-popup-evidence { display: grid; gap: 3px; }
+#map .leaflet-popup-content .gridly-popup.gridly-premium-popup[data-gridly-crossing-popup="consumer"] .popup-report-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+#map .leaflet-popup-content [data-gridly-crossing-popup="consumer"] .popup-report-btn {
+  min-height: 48px;
+  height: auto;
+  min-width: 0;
+  padding: 8px;
+  border-radius: 14px;
+  border: 1px solid #087780;
+  font-size: 0.8125rem;
+  line-height: 1.35;
+  font-weight: 700;
+  text-transform: none;
+  white-space: normal;
+  box-shadow: none;
+}
+#map .leaflet-popup-content [data-gridly-crossing-popup="consumer"] .popup-report-btn:not(.is-success) {
+  background: #087780 !important;
+  color: #ffffff !important;
+}
+#map .leaflet-popup-content [data-gridly-crossing-popup="consumer"] .popup-report-btn:not(.is-success):not(.is-submitting) { opacity: 1; }
+#map .leaflet-popup-content [data-gridly-crossing-popup="consumer"] .popup-report-btn.blue:not(.is-success) {
+  background: var(--gridly-crossing-card) !important;
+  border-color: var(--gridly-crossing-border);
+  color: var(--gridly-crossing-ink) !important;
+}
+#map [data-gridly-crossing-popup="consumer"] .gridly-crossing-popup-more { border-top: 1px solid var(--gridly-crossing-border); }
+#map [data-gridly-crossing-popup="consumer"] .gridly-crossing-popup-more summary {
+  min-height: 44px;
+  padding: 10px 6px;
+  box-sizing: border-box;
+  cursor: pointer;
+  color: var(--gridly-crossing-muted);
+  font-size: 0.8125rem;
+  font-weight: 650;
+}
+#map [data-gridly-crossing-popup="consumer"] .gridly-ugc-community-controls {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px;
+  padding: 4px 0;
+}
+#map [data-gridly-crossing-popup="consumer"] .gridly-ugc-community-controls button {
+  min-height: 44px;
+  border: 1px solid var(--gridly-crossing-border);
+  border-radius: 12px;
+  background: var(--gridly-crossing-card) !important;
+  color: var(--gridly-crossing-ink) !important;
+  font: inherit;
+  font-size: 0.8125rem;
+  text-align: left;
+  padding: 8px 12px;
+}
+#map [data-gridly-crossing-popup="consumer"] :is(button, summary):focus-visible,
+#map .leaflet-popup:has([data-gridly-crossing-popup="consumer"]) .leaflet-popup-close-button:focus-visible {
+  outline: 2px solid var(--gridly-crossing-trust);
+  outline-offset: -3px;
+}
+#map [data-gridly-crossing-popup="consumer"] .gridly-crossing-popup-source {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Phase 3: one optional infrastructure overlay, separate from base maps. */
+.gridly-crossing-visibility-section { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--gridly-border-neutral); }
+:is(#gridlyPortraitV2Sheet, #gridlyTacticalDockSheet) .gridly-crossing-visibility-control {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  width: 100%; min-height: 52px !important; height: auto !important; padding: 14px 12px !important;
+  border: 1px solid var(--gridly-border-neutral) !important; border-radius: 16px !important;
+  background: var(--gridly-input-bg) !important; color: var(--gridly-text-primary) !important;
+  text-align: left; box-shadow: none !important;
+}
+:is(#gridlyPortraitV2Sheet, #gridlyTacticalDockSheet) .gridly-crossing-visibility-control :is(span, strong) {
+  font-size: .9375rem !important; line-height: 1.35 !important; font-weight: 650 !important;
+  color: inherit !important; text-shadow: none !important;
+}
+:is(#gridlyPortraitV2Sheet, #gridlyTacticalDockSheet) .gridly-crossing-visibility-control[aria-checked="true"] {
+  border-color: var(--gridly-accent) !important;
+}
+.gridly-crossing-visibility-control:focus-visible { outline: 2px solid var(--gridly-accent); outline-offset: 3px; }
+.gridly-crossing-visibility-section p { margin: 10px 0 0; }
+
 /* V6: native Android portrait density. The runtime marker is never set on
    iOS or the web. Width, rather than the viewport aspect ratio, keeps this
    portrait contract stable when Android resizes for the keyboard. */
