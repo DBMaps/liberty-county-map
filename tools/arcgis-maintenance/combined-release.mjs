@@ -15,7 +15,12 @@ const manifestPath = 'tools/arcgis-maintenance/combined-release.json';
 const combinedTool = 'tools/arcgis-maintenance/combined-release.mjs';
 const tooling = [manifestPath, combinedTool, 'tests/arcgis-maintenance/crossing-context.test.mjs'];
 const releaseTooling = {
-  ios: ['tools/apple_acceptance_build_only.py'],
+  ios: [
+    'tools/apple_acceptance_build_only.py',
+    'tools/arcgis-maintenance/mac-private-path.mjs',
+    'tests/arcgis-maintenance/mac-private-path.test.mjs',
+    'tests/arcgis-maintenance/no-network.mjs'
+  ],
   android: ['tools/arcgis-maintenance/android-combined-attest.py']
 };
 const digest = bytes => createHash('sha256').update(bytes).digest('hex');

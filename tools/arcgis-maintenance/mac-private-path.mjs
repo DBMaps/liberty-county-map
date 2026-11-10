@@ -28,6 +28,17 @@ export function macMountRows(text) {
 export function macVolumeSafe(rows) {
   return Array.isArray(rows)&&rows.length>0&&rows.every(row=>Array.isArray(row.options)&&['apfs','hfs'].includes(row.options[0])&&row.options.includes('local')&&!row.options.some(option=>['noowners','read-only'].includes(option)));
 }
+export function macEffectiveVolume(dfOutput, mountTable) {
+  const lines = dfOutput.trimEnd().split('\n');
+  if (lines.length !== 2) return null;
+  const volume = lines[1].match(/^(\S+)[ \t]+\d+[ \t]+\d+[ \t]+-?\d+[ \t]+-?\d+%[ \t]+(\/[^\r\n]*)$/);
+  if (!volume) return null;
+  const [, source, mountpoint] = volume;
+  const prefix = source + ' on ' + mountpoint + ' (';
+  const matching = mountTable.split('\n').filter(row =>
+    row.startsWith(prefix) && /^[^()\r\n]+\)$/.test(row.slice(prefix.length)));
+  return matching.length === 1 && macVolumeSafe(macMountRows(matching[0])) ? matching[0] : null;
+}
 function lexicalPath(path) {
   return typeof path==='string'&&isAbsolute(path)&&!path.includes('\\')&&!/[\u0000-\u001f\u007f]/.test(path)
     &&!path.split('/').some(part=>part==='.'||part==='..')&&resolve(path)===path
@@ -41,13 +52,15 @@ export async function macPrivatePathVerified(path,kind='File',{authorizedRoot}={
     await assertPlainPath(path);await assertPlainPath(authorizedRoot);await assertOutsideRepository(authorizedRoot);
     if(await realpath(path)!==path||await realpath(authorizedRoot)!==authorizedRoot)return false;
     const first=await lstat(path);
-    const mounted=()=>execFileSync('/sbin/mount',[],{encoding:'utf8',stdio:['ignore','pipe','pipe'],timeout:3000,maxBuffer:131072,env:{...process.env,LC_ALL:'C'}});
-    const mountTable=mounted(),matching=[];
-    for(const row of macMountRows(mountTable)){
-      if(!row.options.includes('local'))continue; // Never probe remote mounts.
-      try{if((await lstat(row.mountpoint)).dev===first.dev)matching.push(row);}catch{return false;}
-    }
-    if(!macVolumeSafe(matching))return false;
+    if (kind === 'File' ? !first.isFile() : !first.isDirectory()) return false;
+    const volumeOptions = {encoding:'utf8',stdio:['ignore','pipe','pipe'],timeout:3000,maxBuffer:131072,env:{...process.env,LC_ALL:'C'}};
+    // Darwin df calls statfs on the exact path, including paths on APFS firmlinks.
+    const effectiveVolume = () => macEffectiveVolume(
+      execFileSync('/bin/df', ['-PlI', path], volumeOptions),
+      execFileSync('/sbin/mount', [], volumeOptions)
+    );
+    const firstVolume = effectiveVolume();
+    if (!firstVolume) return false;
     let current=path;
     while(true){
       const info=await lstat(current);
@@ -59,7 +72,7 @@ export async function macPrivatePathVerified(path,kind='File',{authorizedRoot}={
     }
     const end=await lstat(path);
     if(['dev','ino','uid','mode','nlink','size','mtimeMs','ctimeMs'].some(field=>first[field]!==end[field]))return false;
-    if(mounted()!==mountTable)return false;
+    if(effectiveVolume()!==firstVolume)return false;
     if(!end.isFile()&&kind==='File')return false;
     return kind!=='File'||(end.size>0&&end.size<=16384);
   }catch{return false;}
