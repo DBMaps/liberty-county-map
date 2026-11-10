@@ -6,8 +6,8 @@ name: Gridly Apple 1.0.2 Build 18 authorized certification and Apple upload
 on:
   workflow_dispatch:
     inputs:
-      testflight_manual_only:
-        description: Confirm automatic distribution is off for all applicable internal TestFlight groups
+      authorize_gridly_internal_automatic_distribution:
+        description: Authorize automatic distribution only to the two verified owner accounts in Gridly Internal
         required: true
         default: false
         type: boolean
@@ -25,7 +25,7 @@ on:
         required: true
         type: string
       apple_checked_at:
-        description: UTC time of fresh Build 18 inventory and TestFlight distribution inspection
+        description: UTC time of the fresh Build 18 inventory, Gridly Internal roster, and distribution check
         required: true
         type: string
 
@@ -39,7 +39,7 @@ concurrency:
 
 jobs:
   build-and-transfer:
-    if: github.repository == 'DBMaps/liberty-county-map' && github.actor == 'DBMaps' && github.event_name == 'workflow_dispatch' && inputs.upload_to_app_store_connect == true && inputs.testflight_manual_only == true && github.run_attempt == 1 && startsWith(github.ref, 'refs/tags/gridly-apple-delivery-18-')
+    if: github.repository == 'DBMaps/liberty-county-map' && github.actor == 'DBMaps' && github.event_name == 'workflow_dispatch' && inputs.upload_to_app_store_connect == true && inputs.authorize_gridly_internal_automatic_distribution == true && github.run_attempt == 1 && startsWith(github.ref, 'refs/tags/gridly-apple-delivery-18-')
     runs-on: macos-26
     timeout-minutes: 90
     # Owner-configured environment restricted to the reviewed delivery tag.
@@ -49,6 +49,7 @@ jobs:
       PREVIOUS_DELIVERY_CONTROL_SHA: 'f0a1d0496bd736d0d3ee821ee6e8fcbe36fdd27e'
       REPAIRED_DELIVERY_CONTROL_SHA: 'dfd318106f12342fe2423beba6320b5b132f65a3'
       DIAGNOSTIC_DELIVERY_CONTROL_SHA: 'b91cd712a27c31977339c2623d60110fece09999'
+      ARCGIS_STAGING_DIAGNOSTIC_CONTROL_SHA: '987eb74f5223e81dc8c617f517e708c2c5d383c0'
       BUILD_NUMBER: '18'
       MAINTENANCE_PROFILE: arcgis-satellite-labels-2026-11
       BUILD17_DELIVERY_SHA: '3f9f1fcb49ac343016acd7f787bd1d47e9c95ec0'
@@ -78,7 +79,7 @@ jobs:
           REVIEWED_CONTROL_COMMIT: ${{ inputs.control_commit }}
           REQUESTED_APPLICATION_SHA: ${{ inputs.commit_sha }}
           UPLOAD_REQUESTED: ${{ inputs.upload_to_app_store_connect }}
-          TESTFLIGHT_MANUAL_ONLY: ${{ inputs.testflight_manual_only }}
+          AUTHORIZE_GRIDLY_INTERNAL_AUTOMATIC_DISTRIBUTION: ${{ inputs.authorize_gridly_internal_automatic_distribution }}
           APPLE_CHECKED_AT: ${{ inputs.apple_checked_at }}
           CERTIFICATION_TOKEN: ${{ github.token }}
         run: |
@@ -87,7 +88,7 @@ jobs:
           test "$GITHUB_ACTOR" = DBMaps
           test "$GITHUB_EVENT_NAME" = workflow_dispatch
           test "$UPLOAD_REQUESTED" = true
-          test "$TESTFLIGHT_MANUAL_ONLY" = true
+          test "$AUTHORIZE_GRIDLY_INTERNAL_AUTOMATIC_DISTRIBUTION" = true
           test "$GITHUB_RUN_ATTEMPT" = 1
           [[ "$REVIEWED_CONTROL_COMMIT" =~ ^[0-9a-f]{40}$ ]]
           test "$REQUESTED_APPLICATION_SHA" = "$APPLICATION_SHA"
@@ -98,11 +99,12 @@ jobs:
           test "$(git -C control rev-parse HEAD)" = "$REVIEWED_CONTROL_COMMIT"
           test "$(git -C control cat-file -t "$GITHUB_REF")" = tag
           test "$(git -C control rev-parse "$GITHUB_REF^{commit}")" = "$REVIEWED_CONTROL_COMMIT"
-          test "$(git -C control show -s --format=%P HEAD)" = "$DIAGNOSTIC_DELIVERY_CONTROL_SHA"
+          test "$(git -C control show -s --format=%P HEAD)" = "$ARCGIS_STAGING_DIAGNOSTIC_CONTROL_SHA"
+          test "$(git -C control show -s --format=%P "$ARCGIS_STAGING_DIAGNOSTIC_CONTROL_SHA")" = "$DIAGNOSTIC_DELIVERY_CONTROL_SHA"
           test "$(git -C control show -s --format=%P "$DIAGNOSTIC_DELIVERY_CONTROL_SHA")" = "$REPAIRED_DELIVERY_CONTROL_SHA"
           test "$(git -C control show -s --format=%P "$REPAIRED_DELIVERY_CONTROL_SHA")" = "$PREVIOUS_DELIVERY_CONTROL_SHA"
           test "$(git -C control show -s --format=%P "$PREVIOUS_DELIVERY_CONTROL_SHA")" = "$APPLICATION_SHA"
-          test "$(git -C control diff --name-only --no-renames "$DIAGNOSTIC_DELIVERY_CONTROL_SHA" HEAD)" = .github/workflows/gridly-apple-build-9.yml
+          test "$(git -C control diff --name-only --no-renames "$ARCGIS_STAGING_DIAGNOSTIC_CONTROL_SHA" HEAD)" = .github/workflows/gridly-apple-build-9.yml
           test "$(git -C control diff --name-only --no-renames "$APPLICATION_SHA" HEAD)" = .github/workflows/gridly-apple-build-9.yml
           control_state="$(git -C control status --porcelain --untracked-files=normal)"
           test -z "$control_state"
@@ -430,7 +432,7 @@ jobs:
           APPLE_ID_USERNAME: ${{ secrets.APPLE_ID_USERNAME }}
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
           UPLOAD_REQUESTED: ${{ inputs.upload_to_app_store_connect }}
-          TESTFLIGHT_MANUAL_ONLY: ${{ inputs.testflight_manual_only }}
+          AUTHORIZE_GRIDLY_INTERNAL_AUTOMATIC_DISTRIBUTION: ${{ inputs.authorize_gridly_internal_automatic_distribution }}
           APPLE_CHECKED_AT: ${{ inputs.apple_checked_at }}
         run: |
           set +x
@@ -485,7 +487,8 @@ jobs:
                   require(root.stat().st_uid == os.getuid() and root.stat().st_mode & 0o077 == 0, "PRIVATE_OWNERSHIP_REJECTED")
               require(env["GITHUB_RUN_ATTEMPT"] == "1", "RERUN_REJECTED")
               require(env["GITHUB_REPOSITORY"] == "DBMaps/liberty-county-map" and env["GITHUB_ACTOR"] == "DBMaps", "OWNER_REJECTED")
-              require(env["UPLOAD_REQUESTED"] == "true" and env["TESTFLIGHT_MANUAL_ONLY"] == "true"
+              require(env["UPLOAD_REQUESTED"] == "true"
+                      and env.get("AUTHORIZE_GRIDLY_INTERNAL_AUTOMATIC_DISTRIBUTION") == "true"
                       and env["APPLICATION_SHA"] == APP, "UPLOAD_NOT_AUTHORIZED")
               require(re.fullmatch(r"[0-9a-f]{40}", env["GITHUB_SHA"]), "CONTROL_REJECTED")
               require(env["GITHUB_REF"] == "refs/tags/gridly-apple-delivery-18-" + env["GITHUB_SHA"], "CONTROL_REJECTED")
