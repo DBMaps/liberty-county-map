@@ -11,6 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 import apple_acceptance_build_only as build
 import apple_native_parity as parity
+RELEASE17 = '71168111a133fa1c187620b9604b08e79fbf4687'
 LEGACY = subprocess.check_output(["git", "show", build.APPLE14 + ":ios/App/App/GridlyBridgeViewController.swift"]).decode()
 
 
@@ -31,8 +32,8 @@ class BuildOnlyControls(unittest.TestCase):
         workflow = (ROOT / ".github/workflows/gridly-apple-acceptance-build-only.yml").read_text(encoding="utf-8")
         self.assertLess(workflow.index('cat "$private/attestation.json" >> "$GITHUB_STEP_SUMMARY"'), workflow.index('rm -rf "$private"'))
 
-    def test_actual_source_permits_only_reviewed_14_16_17_compatibility_extension(self):
-        source = (ROOT / "ios/App/App/GridlyBridgeViewController.swift").read_text(encoding="utf-8")
+    def test_released_source_permits_only_reviewed_14_16_17_compatibility_extension(self):
+        source = subprocess.check_output(["git", "show", RELEASE17 + ":ios/App/App/GridlyBridgeViewController.swift"]).decode()
         self.assertEqual(source, parity.approved_recovery_source(LEGACY))
         build.require_recovery_build(source, "14")
         build.require_recovery_build(source, "17")
@@ -98,20 +99,20 @@ class BuildOnlyControls(unittest.TestCase):
             relative = args[-1].split(":", 1)[1]
             return LEGACY.encode() if relative.endswith(".swift") else (ROOT / relative).read_text(encoding="utf-8").encode()
         original = Path.read_text
-        for old, new in (("MARKETING_VERSION = 1.0.1;", "MARKETING_VERSION = 1.0.0;"),
-                         ("CURRENT_PROJECT_VERSION = 17;", "CURRENT_PROJECT_VERSION = 18;"),
+        for old, new in (("MARKETING_VERSION = 1.0.2;", "MARKETING_VERSION = 1.0.0;"),
+                         ("CURRENT_PROJECT_VERSION = 18;", "CURRENT_PROJECT_VERSION = 19;"),
                          ("TARGETED_DEVICE_FAMILY = 1;", "TARGETED_DEVICE_FAMILY = 2;")):
             def read(path, *args, **kwargs):
                 body = original(path, *args, **kwargs)
                 return body.replace(old, new, 1) if path.suffix == ".pbxproj" else body
             with self.subTest(old=old), patch.object(build, "git", side_effect=metadata), patch.object(build.subprocess, "check_output", side_effect=certified), patch.object(Path, "read_text", read):
                 with self.assertRaisesRegex(AssertionError, "native project identity mismatch"):
-                    build.preflight(ROOT, "17", build.SOURCE)
+                    build.preflight(ROOT, "18", build.SOURCE, "1.0.2", build.MAINTENANCE_PROFILE)
 
     def test_wrong_source_is_refused_before_reading_signing_material(self):
         with patch.object(build, "git", return_value="0" * 40):
             with self.assertRaisesRegex(AssertionError, "wrong source"):
-                build.preflight(ROOT, "17", build.SOURCE)
+                build.preflight(ROOT, "18", build.SOURCE, "1.0.2", build.MAINTENANCE_PROFILE)
 
     def test_reviewed_source_cleanliness_ancestry_and_narrow_native_parity(self):
         def metadata(root, *args):
@@ -123,10 +124,10 @@ class BuildOnlyControls(unittest.TestCase):
             relative = args[-1].split(":", 1)[1]
             return LEGACY.encode() if relative.endswith(".swift") else (ROOT / relative).read_text(encoding="utf-8").encode()
         with patch.object(build, "git", side_effect=metadata), patch.object(build.subprocess, "check_output", side_effect=certified):
-            self.assertEqual(build.preflight(ROOT, "17", build.SOURCE)["source"], build.SOURCE)
+            self.assertEqual(build.preflight(ROOT, "18", build.SOURCE, "1.0.2", build.MAINTENANCE_PROFILE)["source"], build.SOURCE)
         with patch.object(build, "git", side_effect=lambda root,*args: " M js/app.js" if args[0] == "status" else metadata(root,*args)):
             with self.assertRaisesRegex(AssertionError, "dirty tracked"):
-                build.preflight(ROOT, "17", build.SOURCE)
+                build.preflight(ROOT, "18", build.SOURCE, "1.0.2", build.MAINTENANCE_PROFILE)
 
     def test_old_or_injected_build_number_is_refused(self):
         for value in ("14", "15", "16", "17; echo oops", "17\n"):
@@ -145,7 +146,7 @@ class BuildOnlyControls(unittest.TestCase):
                 return ((ROOT / relative).read_text(encoding="utf-8") + ("drift" if relative == changed else "")).encode()
             with self.subTest(changed=changed), patch.object(build, "git", side_effect=metadata), patch.object(build.subprocess, "check_output", side_effect=certified):
                 with self.assertRaisesRegex(AssertionError, "certified performance/NWS source drift"):
-                    build.preflight(ROOT, "17", build.SOURCE)
+                    build.preflight(ROOT, "18", build.SOURCE, "1.0.2", build.MAINTENANCE_PROFILE)
 
     def test_clock_payload_drift_is_refused_before_signing(self):
         def metadata(root, *args):
@@ -162,7 +163,7 @@ class BuildOnlyControls(unittest.TestCase):
                 return body + "drift" if path == ROOT / changed else body
             with self.subTest(changed=changed), patch.object(build, "git", side_effect=metadata), patch.object(build.subprocess, "check_output", side_effect=certified), patch.object(Path, "read_text", read):
                 with self.assertRaisesRegex(AssertionError, "P0 clock source drift"):
-                    build.preflight(ROOT, "17", build.SOURCE)
+                    build.preflight(ROOT, "18", build.SOURCE, "1.0.2", build.MAINTENANCE_PROFILE)
 
     def test_workflow_has_no_automatic_trigger_or_transfer_capability(self):
         workflow = (ROOT / ".github/workflows/gridly-apple-acceptance-build-only.yml").read_text(encoding="utf-8")

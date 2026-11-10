@@ -8,9 +8,11 @@ import { execFileSync } from 'node:child_process';
 import { composeProductionRuntimeConfig } from './lp1831/prepare-cloudflare-preview-artifact.mjs';
 import {productionAndroidSource,PRODUCTION_SPECIALIZED_MODULES} from './android-production-sources.mjs';
 import {GOOGLE_REVIEW_BUILD_VERSION} from '../js/gridly-google-review-proof.mjs';
+import {PROFILE as ARCGIS_MAINTENANCE_PROFILE,maintenanceAndroidIdentity,maintenanceIosIdentity} from './arcgis-maintenance/contracts.mjs';
+import {assertMaintenanceOutput,composeMaintenanceRuntime,readMaintenanceProviderInputs,verifyMaintenanceRuntime} from './arcgis-maintenance/staging.mjs';
+import {privatePathVerified} from './arcgis-maintenance/windows-private-path.mjs';
 
 const root = resolve(import.meta.dirname, '..');
-const output = resolve(root, process.argv.includes('--output') ? process.argv[process.argv.indexOf('--output') + 1] : 'www');
 // This is intentionally an allowlist.  These are consumer artifacts, not a list
 // of things which happen not to be forbidden today.  Manufacturing trees remain
 // in the repository, but can enter a native bundle only through this contract.
@@ -176,7 +178,8 @@ export async function stageNativeAddressRuntime(sourceRoot, destination) {
 
 const licenseTestOff='const GRIDLY_ANDROID_LICENSE_TEST_CANDIDATE = false;';
 const licenseTestOn='const GRIDLY_ANDROID_LICENSE_TEST_CANDIDATE = true;';
-export function androidProductionBuildIdentity(metadata,reviewVersion=GOOGLE_REVIEW_BUILD_VERSION) {
+export function androidProductionBuildIdentity(metadata,reviewVersion=GOOGLE_REVIEW_BUILD_VERSION,{maintenanceProfile}={}) {
+  if(maintenanceProfile!==undefined)return maintenanceAndroidIdentity(metadata,maintenanceProfile);
   const codes=[...metadata.matchAll(/^\s*versionCode (\d+)\s*$/gm)].map(match=>match[1]);
   const names=[...metadata.matchAll(/^\s*versionName ["']([^"']+)["']\s*$/gm)].map(match=>match[1]);
   const reviewedNames={'14':'1.0.0','15':'1.0.1'};
@@ -186,27 +189,42 @@ export function androidProductionBuildIdentity(metadata,reviewVersion=GOOGLE_REV
     throw Error('Production staging requires matching reviewed Gridly package/version/build and Google review authority');
   return {applicationId:'com.gridlygo.gridly',versionName:names[0],versionCode:codes[0],reviewBuildVersion:reviewVersion};
 }
-export async function stage(destination, { runtimeConfigFile, googleLicenseTest=false,androidProduction=false } = {}) {
+export async function stage(destination, { runtimeConfigFile, googleLicenseTest=false,androidProduction=false,maintenanceProfile,maintenanceOriginalFile,maintenancePrivateRoot } = {}) {
+  let maintenanceInputs;
+  if(maintenanceProfile!==undefined){
+    if(maintenanceProfile!==ARCGIS_MAINTENANCE_PROFILE||googleLicenseTest||!runtimeConfigFile||!maintenanceOriginalFile)throw Error('MAINTENANCE_EXPLICIT_PRIVATE_INPUTS_REQUIRED');
+    await assertMaintenanceOutput({repositoryRoot:root,outputDirectory:destination});
+    maintenanceInputs=await readMaintenanceProviderInputs({candidateFile:runtimeConfigFile,originalFile:maintenanceOriginalFile,verifyPrivateFile:path=>privatePathVerified(path,'File',{authorizedRoot:maintenancePrivateRoot})});
+    if(!androidProduction)maintenanceIosIdentity({project:await readFile(join(root,'ios/App/App.xcodeproj/project.pbxproj'),'utf8'),recovery:await readFile(join(root,'ios/App/App/GridlyBridgeViewController.swift'),'utf8'),profile:maintenanceProfile});
+  }
   if(androidProduction&&googleLicenseTest)throw Error('Production and license-test staging are mutually exclusive');
   if(androidProduction) {
     const metadata=await readFile(join(root,'android/app/build.gradle'),'utf8');
-    androidProductionBuildIdentity(metadata);
+    androidProductionBuildIdentity(metadata,GOOGLE_REVIEW_BUILD_VERSION,{maintenanceProfile});
   }
   const consumerScriptManifest = await readConsumerScriptManifest(root);
   let composedRuntimeConfig = null;
   if (runtimeConfigFile) {
     const ownerInput = resolve(runtimeConfigFile);
     let ownerBytes;
-    try { ownerBytes = await readFile(ownerInput); }
+    try { ownerBytes = maintenanceInputs?.candidateBytes || await readFile(ownerInput); }
     catch (error) {
       if (error.code === 'ENOENT') throw new Error(`NATIVE_PROVIDER_CONFIG_MISSING:${runtimeConfigFile}. On Windows run: powershell -ExecutionPolicy Bypass -File tools/Prepare-GridlyNative.ps1`);
       throw error;
     }
     if (ownerInput.startsWith(`${destination}/`) || ownerInput === resolve(root, runtimeConfigPath)) throw new Error('Native runtime config input must be external to the output and canonical config.');
-    composedRuntimeConfig = composeProductionRuntimeConfig(await readFile(join(root, runtimeConfigPath)), ownerBytes);
+    const canonicalBytes = await readFile(join(root, runtimeConfigPath));
+    composedRuntimeConfig = maintenanceInputs
+      ? composeMaintenanceRuntime({ ...maintenanceInputs, canonicalBytes, profile: maintenanceProfile })
+      : composeProductionRuntimeConfig(canonicalBytes, ownerBytes);
   }
-  await rm(destination, { recursive: true, force: true });
-  await mkdir(destination, { recursive: true });
+  if (maintenanceInputs) {
+    // Reserve a fresh output. An overlapping or interrupted stage must never erase another bundle.
+    await mkdir(destination, { mode: 0o700 });
+  } else {
+    await rm(destination, { recursive: true, force: true });
+    await mkdir(destination, { recursive: true });
+  }
   const copyRuntime = (entry) => copyGovernedRuntime(root, destination, entry);
   for (const entry of [...runtimePolicy.trees, ...runtimePolicy.files]) await copyRuntime(entry);
   for (const entry of nativePackagedScriptPaths(consumerScriptManifest)) await copyRuntime(entry);
@@ -373,7 +391,14 @@ async function identity(directory) {
   return { digest: `sha256:${hash.digest('hex')}`, files: records };
 }
 
-async function verify(directory, { reportFile, googleLicenseTest=false,androidProduction=false } = {}) {
+async function verify(directory, { reportFile, googleLicenseTest=false,androidProduction=false,maintenanceProfile,maintenanceOriginalFile,runtimeConfigFile,maintenancePrivateRoot } = {}) {
+  if(maintenanceProfile!==undefined){
+    if(maintenanceProfile!==ARCGIS_MAINTENANCE_PROFILE||googleLicenseTest||!reportFile)throw Error('MAINTENANCE_EXPLICIT_PRIVATE_INPUTS_REQUIRED');
+    await assertMaintenanceOutput({repositoryRoot:root,outputDirectory:directory,requireNew:false});
+    const inputs=await readMaintenanceProviderInputs({candidateFile:runtimeConfigFile,originalFile:maintenanceOriginalFile,verifyPrivateFile:path=>privatePathVerified(path,'File',{authorizedRoot:maintenancePrivateRoot})});
+    verifyMaintenanceRuntime({...inputs,canonicalBytes:await readFile(join(root,runtimeConfigPath)),runtimeBytes:await readFile(join(directory,runtimeConfigPath))});
+    if(!androidProduction)maintenanceIosIdentity({project:await readFile(join(root,'ios/App/App.xcodeproj/project.pbxproj'),'utf8'),recovery:await readFile(join(root,'ios/App/App/GridlyBridgeViewController.swift'),'utf8'),profile:maintenanceProfile});
+  }
   if(androidProduction&&googleLicenseTest)throw Error('Production and license-test staging are mutually exclusive');
   await verifyCommunitySubmissionBundle(directory);
   const consumerScriptManifest = await readConsumerScriptManifest(root);
@@ -447,24 +472,52 @@ async function verify(directory, { reportFile, googleLicenseTest=false,androidPr
     const actual = await identity(directory);
     if (reportFile) {
       const report = JSON.parse(await readFile(reportFile, 'utf8'));
+      if((report.maintenanceProfile||undefined)!==maintenanceProfile)throw Error('MAINTENANCE_REPORT_PROFILE_MISMATCH');
       if (report.bundleDigest !== actual.digest || report.googleLicenseTest !== googleLicenseTest || !!report.androidProduction !== androidProduction || JSON.stringify(report.files) !== JSON.stringify(actual.files)) throw new Error('Native configured bundle identity report mismatch.');
-      if(androidProduction&&JSON.stringify(report.androidBuildIdentity)!==JSON.stringify(androidProductionBuildIdentity(await readFile(join(root,'android/app/build.gradle'),'utf8'))))throw Error('Native Android build identity mismatch.');
+      if(androidProduction&&JSON.stringify(report.androidBuildIdentity)!==JSON.stringify(androidProductionBuildIdentity(await readFile(join(root,'android/app/build.gradle'),'utf8'),GOOGLE_REVIEW_BUILD_VERSION,{maintenanceProfile})))throw Error('Native Android build identity mismatch.');
     } else {
       await stage(temporary,{googleLicenseTest,androidProduction});
       const repeated = await identity(temporary);
       if (actual.digest !== repeated.digest) throw new Error(`Staged web identity differs from a clean repeat (${actual.digest} != ${repeated.digest}).`);
     }
-    console.log(`Native web stage verified: ${paths.length} files, ${totalBytes} bytes, 86 POI shards, digest ${actual.digest}`);
+    if (!maintenanceProfile) console.log(`Native web stage verified: ${paths.length} files, ${totalBytes} bytes, 86 POI shards, digest ${actual.digest}`);
   } finally { await rm(temporary, { recursive: true, force: true }); }
 }
 
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+async function runCli() {
+  const outputIndex = process.argv.indexOf('--output');
+  const outputArgument = process.argv[outputIndex + 1];
+  if (outputIndex >= 0 && (!outputArgument || outputArgument.startsWith('--'))) throw Error('Missing native output path.');
+  const output = resolve(root, outputIndex < 0 ? 'www' : outputArgument);
   const runtimeConfigFile = option('--runtime-config-file');
   const reportFile = option('--report-file');
   const googleLicenseTest=process.argv.includes('--google-license-test');
   const androidProduction=process.argv.includes('--android-production');
-  if (process.argv.includes('--verify')) await verify(output, { reportFile,googleLicenseTest,androidProduction }); else {
-    await stage(output, { runtimeConfigFile,googleLicenseTest,androidProduction });
+  const maintenanceFlagIndex=process.argv.indexOf('--arcgis-maintenance-profile');
+  const maintenanceProfile=maintenanceFlagIndex<0?undefined:process.argv[maintenanceFlagIndex+1];
+  if(maintenanceFlagIndex>=0&&maintenanceProfile!==ARCGIS_MAINTENANCE_PROFILE)throw Error('MAINTENANCE_PROFILE_REQUIRED');
+  const maintenanceOriginalFile=option('--original-runtime-config-file');
+  const maintenancePrivateRoot=option('--maintenance-private-root');
+  const checkInputs = process.argv.includes('--check-maintenance-inputs');
+  if (!maintenanceProfile && (maintenanceOriginalFile || maintenancePrivateRoot || checkInputs))
+    throw Error('MAINTENANCE_PROFILE_REQUIRED');
+  if (checkInputs) {
+    if (googleLicenseTest || process.argv.includes('--verify') || reportFile || outputIndex >= 0)
+      throw Error('MAINTENANCE_CHECK_INPUTS_ONLY');
+    await readMaintenanceProviderInputs({
+      candidateFile: runtimeConfigFile,
+      originalFile: maintenanceOriginalFile,
+      verifyPrivateFile: path => privatePathVerified(path, 'File', { authorizedRoot: maintenancePrivateRoot })
+    });
+    console.log('MAINTENANCE_INPUTS_VALID');
+    return;
+  }
+  if (maintenanceProfile && !reportFile) throw Error('MAINTENANCE_REPORT_REQUIRED');
+  if (process.argv.includes('--verify')) {
+    await verify(output, { reportFile,googleLicenseTest,androidProduction,maintenanceProfile,maintenanceOriginalFile,runtimeConfigFile,maintenancePrivateRoot });
+    if (maintenanceProfile) console.log('MAINTENANCE_STAGE_VERIFIED');
+  } else {
+    await stage(output, { runtimeConfigFile,googleLicenseTest,androidProduction,maintenanceProfile,maintenanceOriginalFile,maintenancePrivateRoot });
     if (runtimeConfigFile) {
       if (!reportFile) throw new Error('--report-file is required with --runtime-config-file.');
       const attestation = await identity(output);
@@ -474,7 +527,8 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
         candidateGitSha: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim(),
         googleLicenseTest,
         androidProduction,
-        androidBuildIdentity: androidProduction ? androidProductionBuildIdentity(await readFile(join(root,'android/app/build.gradle'),'utf8')) : null,
+        ...(maintenanceProfile?{maintenanceProfile}:{}),
+        androidBuildIdentity: androidProduction ? androidProductionBuildIdentity(await readFile(join(root,'android/app/build.gradle'),'utf8'),GOOGLE_REVIEW_BUILD_VERSION,{maintenanceProfile}) : null,
         sourceGitState: {
           trackedDirty: !!execFileSync('git',['status','--porcelain','--untracked-files=no'],{cwd:root,encoding:'utf8'}).trim(),
           trackedDiffSha256: createHash('sha256').update(execFileSync('git',['diff','HEAD','--binary'],{cwd:root,maxBuffer:32*1024*1024})).digest('hex')
@@ -483,9 +537,22 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
         runtimeConfig: { path: runtimeConfigPath, bytes: runtimeBytes.length, sha256: createHash('sha256').update(runtimeBytes).digest('hex'), classification: 'OWNER_COMPOSED_BROWSER_PUBLIC_CONFIG' },
         files: attestation.files
       };
-      await mkdir(dirname(reportFile), { recursive: true });
-      await writeFile(reportFile, `${JSON.stringify(report, null, 2)}\n`);
+      if (!maintenanceProfile) await mkdir(dirname(reportFile), { recursive: true });
+      await writeFile(reportFile, `${JSON.stringify(report, null, 2)}\n`, maintenanceProfile ? { flag: 'wx', mode: 0o600 } : undefined);
     }
-    console.log(`Staged Gridly native web bundle at ${relative(root, output) || '.'}.`);
+    if (maintenanceProfile) console.log('MAINTENANCE_STAGE_WRITTEN');
+    else console.log(`Staged Gridly native web bundle at ${relative(root, output) || '.'}.`);
+  }
+}
+
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  const maintenanceRequested = ['--arcgis-maintenance-profile', '--original-runtime-config-file', '--maintenance-private-root', '--check-maintenance-inputs']
+    .some(flag => process.argv.includes(flag));
+  try {
+    await runCli();
+  } catch (error) {
+    if (!maintenanceRequested) throw error;
+    console.error(/^MAINTENANCE_[A-Z_]+$/.test(error.message) ? error.message : 'MAINTENANCE_OPERATION_FAILED');
+    process.exitCode = 1;
   }
 }

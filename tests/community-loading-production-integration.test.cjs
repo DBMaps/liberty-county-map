@@ -36,13 +36,13 @@ test('production Google and reporting authority retain baseline contracts plus c
   for(const file of ['js/gridly-paid-ui.mjs','js/gridly-paid-bootstrap.js','js/gridly-paid-onboarding.mjs','js/gridly-entitlement.mjs','js/gridly-google-play-billing.mjs','js/gridly-native-attested-invoke.mjs','js/gridly-native-edge-transport.mjs','tools/android-production-sources.mjs','js/gridly-ugc-compliance.js'])assertRetained(BASE,file);
   // Explicit approved exception: version guard + source/build attestation only.
   // Pin the complete reviewed tool, rather than allowing arbitrary packaging edits.
-  assert.equal(require('node:crypto').createHash('sha256').update(current('tools/native-web.mjs')).digest('hex'),'0d0d3dd3b627c5974388ae32f86a3d45b6ec44d49043d1910dbe675fdf47d65c');
+  assert.equal(require('node:crypto').createHash('sha256').update(current('tools/native-web.mjs')).digest('hex'),'56a27c8992f0b1b8835036646f196dd23970a6d516e1bc62bff0df410a44c954');
 });
 test('portrait, consumer entrypoint, service worker, dependencies and native configurations retain only the reviewed maintenance version metadata',()=>{
   for(const file of ['css/styles.css','css/gridly-paid-access.css','index.html','service-worker.js','package.json','package-lock.json'])assert.equal(current(file),source(BASE,file),file);
   assert.equal(current('android/app/build.gradle'),source(BASE,'android/app/build.gradle').replace('versionCode 14','versionCode 16').replace("versionName '1.0.0'","versionName '1.0.1'"));
   const project='ios/App/App.xcodeproj/project.pbxproj';
-  assert.equal(current(project),source(BASE,project).replaceAll('CURRENT_PROJECT_VERSION = 1;','CURRENT_PROJECT_VERSION = 17;').replaceAll('MARKETING_VERSION = 1.0.0;','MARKETING_VERSION = 1.0.1;'));
+  assert.equal(current(project),source(BASE,project).replaceAll('CURRENT_PROJECT_VERSION = 1;','CURRENT_PROJECT_VERSION = 18;').replaceAll('MARKETING_VERSION = 1.0.0;','MARKETING_VERSION = 1.0.2;'));
 });
 test('later owner-only Apple diagnostic code is excluded',()=>{
   assert.doesNotMatch(current('js/gridly-paid-ui.mjs'),/STOREKIT DIAGNOSTIC BUILD|initializeDiagnostics|diagnosticPort/);
