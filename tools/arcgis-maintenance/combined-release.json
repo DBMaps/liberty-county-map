@@ -1,6 +1,10 @@
 {
   "profile": "gridly-102-combined-2026-11",
-  "scope": "SYNTHETIC_REVIEW_ONLY",
+  "scope": "COMBINED_RELEASE_AND_SYNTHETIC_REVIEW",
+  "approved": {
+    "ios": "a9d9506b132c7d7ea82d8885c5a5ee3f4a9e7f4f",
+    "android": "775a0658059a547c8dcffb370bf65400a6c0907f"
+  },
   "blocked": [],
   "fallback": {
     "ios": "638e4b778e3c4ab754f51c12fd121f9c39423c0d",

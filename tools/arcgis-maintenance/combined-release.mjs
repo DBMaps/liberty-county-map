@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
-import { readFile, readdir, writeFile } from 'node:fs/promises';
-import { join, resolve } from 'node:path';
+import { lstat, readFile, readdir, writeFile } from 'node:fs/promises';
+import { dirname, join, resolve } from 'node:path';
 import { PROFILE, requireSyntheticProviders } from './contracts.mjs';
 import { readMaintenanceProviderInputs, verifyMaintenanceRuntime } from './staging.mjs';
 import { privatePathVerified } from './windows-private-path.mjs';
@@ -12,7 +12,12 @@ const reportName = 'community-submission-contract.json';
 const config = 'js/gridlyRuntimeEnvironmentConfig.js';
 const profile = 'gridly-102-combined-2026-11';
 const manifestPath = 'tools/arcgis-maintenance/combined-release.json';
-const tooling = [manifestPath, 'tools/arcgis-maintenance/combined-release.mjs', 'tests/arcgis-maintenance/crossing-context.test.mjs'];
+const combinedTool = 'tools/arcgis-maintenance/combined-release.mjs';
+const tooling = [manifestPath, combinedTool, 'tests/arcgis-maintenance/crossing-context.test.mjs'];
+const releaseTooling = {
+  ios: ['tools/apple_acceptance_build_only.py'],
+  android: ['tools/arcgis-maintenance/android-combined-attest.py']
+};
 const digest = bytes => createHash('sha256').update(bytes).digest('hex');
 const reject = code => { throw Error(code); };
 
@@ -20,16 +25,26 @@ function git(...args) {
   return execFileSync('git', args, { cwd:root, stdio:['ignore','pipe','ignore'], maxBuffer:16*1024*1024 });
 }
 
-async function checkSource(platform) {
+async function checkSource(platform, releaseCommit) {
   const manifest = JSON.parse(await readFile(join(root,manifestPath),'utf8'));
-  if (manifest.profile !== profile || manifest.scope !== 'SYNTHETIC_REVIEW_ONLY' || !Object.hasOwn(manifest.fallback,platform))
+  if (manifest.profile !== profile || manifest.scope !== 'COMBINED_RELEASE_AND_SYNTHETIC_REVIEW' || !Object.hasOwn(manifest.fallback,platform))
     reject('COMBINED_PROFILE_REJECTED');
   const fallback = manifest.fallback[platform];
+  const head = git('rev-parse','HEAD').toString().trim();
   if (git('merge-base',fallback,'HEAD').toString().trim() !== fallback) reject('COMBINED_BASELINE_REJECTED');
+  const approved = manifest.approved[platform];
+  if (git('merge-base',approved,'HEAD').toString().trim() !== approved ||
+      git('diff','--name-only',approved,'--',...sourcePaths).length)
+    reject('COMBINED_APPROVED_SOURCE_MISMATCH');
+  if (releaseCommit !== undefined && (!/^[a-f0-9]{40}$/.test(releaseCommit) || head !== releaseCommit ||
+      git('status','--porcelain','--untracked-files=all').length ||
+      git('diff','--name-only','-z',approved,'HEAD').toString().split('\0').filter(Boolean)
+        .some(path => ![manifestPath,combinedTool,...releaseTooling[platform]].includes(path))))
+    reject('COMBINED_RELEASE_SOURCE_REJECTED');
   const changes = [
     git('diff','--name-only','-z',fallback,'--'), git('ls-files','-z','--others','--exclude-standard')
   ].flatMap(output => output.toString().split('\0').filter(Boolean));
-  const allowed = new Set([...sourcePaths,...tooling]);
+  const allowed = new Set([...sourcePaths,...tooling,...releaseTooling[platform]]);
   if (changes.some(path => !allowed.has(path))) reject('COMBINED_UNRELATED_SOURCE_CHANGE');
   const source = new Map();
   for (const path of sourcePaths) {
@@ -75,6 +90,7 @@ async function androidOverlay(www, source) {
 }
 
 async function verifyStage(www, expected) {
+  if (!(await lstat(www)).isDirectory()) reject('COMBINED_STAGE_INVALID_ENTRY');
   const paths = [];
   async function walk(relative = '') {
     for (const entry of await readdir(join(www,relative), {withFileTypes:true})) {
@@ -93,18 +109,41 @@ async function verifyStage(www, expected) {
   return paths.length;
 }
 
-async function certify(platform, syntheticRoot, aab) {
-  const { manifest, source } = await checkSource(platform);
-  const candidateFile = join(syntheticRoot,'native-provider-config.json');
-  const originalFile = join(syntheticRoot,'original-native-provider-config.json');
+function bundleDigest(records) {
+  return 'sha256:'+digest([...records].sort((a,b)=>a.path<b.path?-1:a.path>b.path?1:0)
+    .map(row => row.path+'\0'+row.bytes+'\0'+row.sha256+'\n').join(''));
+}
+
+async function requireAbsent(path) {
+  try { await lstat(path); } catch (error) { if (error.code === 'ENOENT') return; throw error; }
+  reject('COMBINED_REPORT_ALREADY_EXISTS');
+}
+
+async function certify(platform, { privateRoot, candidateFile, originalFile, aab, releaseCommit }) {
+  const { manifest, source } = await checkSource(platform,releaseCommit);
+  const release = releaseCommit !== undefined;
+  const identityFile = join(privateRoot,release ? 'combined-release-identity.json' : 'combined-review-identity.json');
+  const reportFile = join(privateRoot,'runtime-stage-identity.json');
+  await requireAbsent(identityFile);
+  await requireAbsent(reportFile);
+  if (release && (!await privatePathVerified(privateRoot,'Directory',{authorizedRoot:privateRoot}) ||
+      !await privatePathVerified(originalFile,'File',{authorizedRoot:dirname(originalFile)})))
+    reject('COMBINED_RELEASE_PRIVATE_PATH_REJECTED');
   const inputs = await readMaintenanceProviderInputs({
     candidateFile, originalFile,
-    verifyPrivateFile: path => privatePathVerified(path,'File',{authorizedRoot:syntheticRoot})
+    verifyPrivateFile: path => privatePathVerified(path,'File',{authorizedRoot:privateRoot})
   });
-  requireSyntheticProviders(inputs);
-  const reportFile = join(syntheticRoot,'runtime-stage-identity.json');
+  if (release) {
+    for (const bytes of Object.values(inputs)) {
+      const providers = JSON.parse(bytes.toString('utf8').replace(/^\uFEFF/,''));
+      if ([providers.arcgisStaticBasemapApiKey,providers.driveTexas.apiKey].some(value => value.startsWith('SYNTHETIC_')))
+        reject('COMBINED_RELEASE_REQUIRES_REAL_INPUTS');
+    }
+  } else {
+    requireSyntheticProviders(inputs);
+  }
   const stageArgs = ['tools/native-web.mjs','--arcgis-maintenance-profile',PROFILE,'--runtime-config-file',candidateFile,
-    '--original-runtime-config-file',originalFile,'--maintenance-private-root',syntheticRoot,'--report-file',reportFile];
+    '--original-runtime-config-file',originalFile,'--maintenance-private-root',privateRoot,'--report-file',reportFile];
   if (platform === 'android') stageArgs.push('--android-production','--android-baseline-aab',aab);
 
   // The unchanged credential stage and verifier provide the platform baseline.
@@ -135,29 +174,84 @@ async function certify(platform, syntheticRoot, aab) {
   verifyMaintenanceRuntime({
     ...inputs, canonicalBytes:await readFile(join(root,config)), runtimeBytes:await readFile(join(www,config))
   });
+  if (release) {
+    await checkSource(platform,releaseCommit);
+    if (legacy.candidateGitSha !== releaseCommit || legacy.sourceGitState.trackedDirty) reject('COMBINED_RELEASE_SOURCE_REJECTED');
+    const records = [...expected.values()];
+    await writeFile(identityFile,JSON.stringify({
+      ...legacy, combinedReleaseProfile:profile, scope:'RELEASE', platform,
+      files:records, bundleDigest:bundleDigest(records)
+    },null,2)+'\n',{flag:'wx',mode:0o600});
+    return;
+  }
   const combinedPaths = [...sourcePaths,reportName];
   const report = {
-    profile, scope:manifest.scope, blocked:manifest.blocked, platform, sourceCommit:legacy.candidateGitSha,
+    profile, scope:'SYNTHETIC_REVIEW_ONLY', blocked:manifest.blocked, platform, sourceCommit:legacy.candidateGitSha,
     trackedDirty:legacy.sourceGitState.trackedDirty, fallback:manifest.fallback[platform],
     sourceSha256:manifest.sourceSha256, files,
     approvedPayload:combinedPaths.map(path => expected.get(path)),
     androidRetainedOutsideApprovedPayloadAndConfig:platform === 'android' ? files-combinedPaths.length-1 : null,
-    bundleDigest: 'sha256:'+digest([...expected.values()].sort((a,b)=>a.path<b.path?-1:a.path>b.path?1:0)
-      .map(row => row.path+'\0'+row.bytes+'\0'+row.sha256+'\n').join(''))
+    bundleDigest: bundleDigest(expected.values())
   };
-  await writeFile(join(syntheticRoot,'combined-review-identity.json'), JSON.stringify(report,null,2)+'\n',
+  await writeFile(identityFile, JSON.stringify(report,null,2)+'\n',
     {flag:'wx',mode:0o600});
 }
 
+async function verifyReleaseStage(platform, commit, identityFile) {
+  const { manifest } = await checkSource(platform,commit);
+  const privateRoot = dirname(identityFile);
+  if (identityFile !== join(privateRoot,'combined-release-identity.json') ||
+      !await privatePathVerified(privateRoot,'Directory',{authorizedRoot:privateRoot}))
+    reject('COMBINED_RELEASE_PRIVATE_PATH_REJECTED');
+  const info = await lstat(identityFile);
+  if (!info.isFile() || info.nlink !== 1 ||
+      (process.platform === 'win32' && !await privatePathVerified(identityFile,'File')) ||
+      (process.platform === 'darwin' && (info.uid !== process.getuid() || (info.mode & 0o7777) !== 0o600)))
+    reject('COMBINED_RELEASE_PRIVATE_PATH_REJECTED');
+  const report = JSON.parse(await readFile(identityFile,'utf8'));
+  if (report.schemaVersion !== 'gridly.nativeConfiguredWebBundle.v1' || report.combinedReleaseProfile !== profile ||
+      report.scope !== 'RELEASE' || report.platform !== platform || report.candidateGitSha !== commit ||
+      report.maintenanceProfile !== PROFILE || report.googleLicenseTest !== false ||
+      report.androidProduction !== (platform === 'android') || report.sourceGitState?.trackedDirty !== false ||
+      report.sourceGitState?.trackedDiffSha256 !== digest('') || report.files.length !== 1007 ||
+      report.bundleDigest !== bundleDigest(report.files))
+    reject('COMBINED_RELEASE_IDENTITY_REJECTED');
+  const expected = new Map(report.files.map(row => [row.path,row]));
+  if (expected.size !== 1007 || expected.get('js/app.js')?.sha256 !== manifest.sourceSha256['js/app.js'] ||
+      report.runtimeConfig?.path !== config || expected.get(config)?.sha256 !== report.runtimeConfig.sha256 ||
+      expected.get(config)?.bytes !== report.runtimeConfig.bytes)
+    reject('COMBINED_RELEASE_IDENTITY_REJECTED');
+  const www = join(root,'www');
+  await verifyStage(www,expected);
+  if (/["']SYNTHETIC_/.test(await readFile(join(www,config),'utf8')))
+    reject('COMBINED_RELEASE_REQUIRES_REAL_INPUTS');
+}
+
 try {
-  const [platform, syntheticRoot, aab, ...unexpected] = process.argv.slice(2);
-  if (!['ios','android'].includes(platform) || unexpected.length) reject('COMBINED_ARGUMENTS_INVALID');
-  if (syntheticRoot === '--check-source' && !aab) {
+  const [platform, mode, ...args] = process.argv.slice(2);
+  if (!['ios','android'].includes(platform)) reject('COMBINED_ARGUMENTS_INVALID');
+  if (mode === '--check-source' && !args.length) {
     await checkSource(platform);
     console.log('COMBINED_SOURCE_VERIFIED');
+  } else if (mode === '--check-release-source' && args.length === 1) {
+    await checkSource(platform,args[0]);
+    console.log('COMBINED_RELEASE_SOURCE_VERIFIED');
+  } else if (mode === '--verify-release-stage' && args.length === 2) {
+    await verifyReleaseStage(platform,args[0],resolve(args[1]));
+    console.log('COMBINED_RELEASE_STAGE_VERIFIED');
+  } else if (mode === '--release' && args.length === (platform === 'android' ? 4 : 3)) {
+    const [releaseCommit,candidate,original,aab] = args;
+    if (args.some(arg => !arg || arg.startsWith('--'))) reject('COMBINED_ARGUMENTS_INVALID');
+    const candidateFile = resolve(candidate);
+    await certify(platform,{privateRoot:dirname(candidateFile),candidateFile,
+      originalFile:resolve(original),aab:aab && resolve(aab),releaseCommit});
+    console.log('COMBINED_RELEASE_PAYLOAD_VERIFIED');
   } else {
-    if (!syntheticRoot || (platform==='android') !== Boolean(aab)) reject('COMBINED_ARGUMENTS_INVALID');
-    await certify(platform,resolve(syntheticRoot),aab && resolve(aab));
+    if (!mode || mode.startsWith('--') || args.length !== (platform === 'android' ? 1 : 0))
+      reject('COMBINED_ARGUMENTS_INVALID');
+    const privateRoot = resolve(mode);
+    await certify(platform,{privateRoot,candidateFile:join(privateRoot,'native-provider-config.json'),
+      originalFile:join(privateRoot,'original-native-provider-config.json'),aab:args[0] && resolve(args[0])});
     console.log('COMBINED_SYNTHETIC_PAYLOAD_VERIFIED');
   }
 } catch (error) {
