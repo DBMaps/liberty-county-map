@@ -48,6 +48,7 @@ jobs:
       APPLICATION_SHA: 'c191cef94e3468dfcdca5e4566ae82604f3605a6'
       APPROVED_CONSUMER_SOURCE_SHA: '79750810f8ff7ebf1ba8ed4b125c97a13a6ae90c'
       VOLUME_REPAIR_SOURCE_SHA: '1d76da123a24d5850db4d29aae70f83074cae74d'
+      PREVIOUS_DELIVERY_CONTROL_SHA: '3442ba52ae28a58b353f524055c0bd5091aa6dc9'
       BUILD_NUMBER: '18'
       MAINTENANCE_PROFILE: arcgis-satellite-labels-2026-11
       BUILD17_DELIVERY_SHA: '3f9f1fcb49ac343016acd7f787bd1d47e9c95ec0'
@@ -97,7 +98,8 @@ jobs:
           test "$(git -C control rev-parse HEAD)" = "$REVIEWED_CONTROL_COMMIT"
           test "$(git -C control cat-file -t "$GITHUB_REF")" = tag
           test "$(git -C control rev-parse "$GITHUB_REF^{commit}")" = "$REVIEWED_CONTROL_COMMIT"
-          test "$(git -C control show -s --format=%P HEAD)" = "$APPLICATION_SHA"
+          test "$(git -C control show -s --format=%P HEAD)" = "$PREVIOUS_DELIVERY_CONTROL_SHA"
+          test "$(git -C control show -s --format=%P "$PREVIOUS_DELIVERY_CONTROL_SHA")" = "$APPLICATION_SHA"
           test "$(git -C control show -s --format=%P "$APPLICATION_SHA")" = "$VOLUME_REPAIR_SOURCE_SHA"
           test "$(git -C control show -s --format=%P "$VOLUME_REPAIR_SOURCE_SHA")" = "$APPROVED_CONSUMER_SOURCE_SHA"
           test "$(git -C control diff --name-only --no-renames "$APPLICATION_SHA" HEAD)" = .github/workflows/gridly-apple-build-9.yml
@@ -394,12 +396,37 @@ jobs:
           ipa="${ipas[0]}"
           chmod 600 "$ipa"
           phase=COMBINED_ATTESTATION
-          python3 -B tools/apple_acceptance_build_only.py attest --source . --source-commit "$APPLICATION_SHA" --build-number "$BUILD_NUMBER" --marketing-version 1.0.2 --app "$private/Gridly.xcarchive/Products/Applications/App.app" --ipa "$ipa" --identity "$identity" --maintenance-profile "$MAINTENANCE_PROFILE" --combined-release > "$private/attestation.json"
-          # Bind the private signed report to this workflow and its verified combined stage.
-          python3 - "$private/attestation.json" "$identity" <<'PY'
-          import hashlib, json, os, pathlib, re, subprocess, sys
+          python3 -B - "$private/attestation.json" "$identity" "$private/Gridly.xcarchive/Products/Applications/App.app" "$ipa" <<'PY'
+          import hashlib, json, os, pathlib, re, subprocess, sys, traceback
+          sys.path.insert(0, str(pathlib.Path("tools").resolve()))
+          import apple_acceptance_build_only as certifier
+
+          # Only public source locations identify failures. Raw exceptions stay private.
+          binding_code = sys._getframe().f_code
+          known_files = {
+              pathlib.Path(certifier.__file__).resolve(): "BUILD",
+              pathlib.Path(certifier.certify_native_parity.__code__.co_filename).resolve(): "NATIVE",
+          }
+          def attestation_failure(kind, error, trace):
+              identifier = "COMBINED_ATTEST_UNCLASSIFIED"
+              category = "ASSERTION" if issubclass(kind, AssertionError) else "OPERATION"
+              current = trace
+              while current is not None:
+                  code = current.tb_frame.f_code
+                  owner = "BINDING" if code is binding_code else known_files.get(pathlib.Path(code.co_filename).resolve())
+                  lines = {line for _, _, line in code.co_lines() if line is not None}
+                  if owner is not None and current.tb_lineno in lines:
+                      identifier = f"COMBINED_ATTEST_{category}_{owner}_L{current.tb_lineno}"
+                  current = current.tb_next
+              traceback.print_exception(kind, error, trace, file=sys.stderr)
+              os.write(3, (identifier + "\n").encode("ascii"))
+          sys.excepthook = attestation_failure
+
+          report = certifier.attest(
+              pathlib.Path("."), pathlib.Path(sys.argv[3]), pathlib.Path(sys.argv[4]), pathlib.Path(sys.argv[2]),
+              os.environ["BUILD_NUMBER"], os.environ["APPLICATION_SHA"], "1.0.2",
+              os.environ["MAINTENANCE_PROFILE"], True)
           path = pathlib.Path(sys.argv[1])
-          report = json.loads(path.read_text())
           control = os.environ["GITHUB_SHA"]
           assert re.fullmatch(r"[0-9a-f]{40}", control)
           assert report["source"] == os.environ["APPLICATION_SHA"]
