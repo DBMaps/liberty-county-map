@@ -30568,6 +30568,54 @@ body[data-layout-mode="portrait"] #gridlyPortraitV2Sheet[data-active-sheet="sett
 .gridly-crossing-visibility-control:focus-visible { outline: 2px solid var(--gridly-accent); outline-offset: 3px; }
 .gridly-crossing-visibility-section p { margin: 10px 0 0; }
 
+/* Independent crossing reports: scoped to the existing Report sheet. */
+.gridly-v2-crossing-report .gridly-crossing-choice {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  gap: 5px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.gridly-v2-crossing-report input {
+  min-height: 48px;
+}
+.gridly-v2-crossing-report .gridly-crossing-choice span {
+  font-size: 12px;
+  line-height: 1.4;
+}
+.gridly-v2-crossing-report .gridly-crossing-search { display: grid; gap: 6px; }
+.gridly-v2-crossing-report .gridly-crossing-search input {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid currentColor;
+  border-radius: 12px;
+  padding: 10px 12px;
+  color: inherit;
+  background: transparent;
+  font-size: 16px;
+}
+#gridlyPortraitV2SheetBody .gridly-v2-crossing-report {
+  color: var(--gridly-text-primary, #173c46);
+  gap: 10px;
+}
+#gridlyPortraitV2SheetBody .gridly-v2-crossing-report .gridly-v2-sheet-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  color: var(--gridly-text-primary, #173c46);
+  font-size: 14px;
+  line-height: 1.5;
+}
+#gridlyPortraitV2SheetBody .gridly-v2-crossing-report button {
+  min-height: 48px !important;
+  height: auto !important;
+  font-size: 14px !important;
+  line-height: 1.4 !important;
+}
+
 /* V6: native Android portrait density. The runtime marker is never set on
    iOS or the web. Width, rather than the viewport aspect ratio, keeps this
    portrait contract stable when Android resizes for the keyboard. */

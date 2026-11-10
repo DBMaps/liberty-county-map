@@ -89685,6 +89685,14 @@ const GRIDLY_REPORTING_AVAILABILITY_STATES = Object.freeze({ UNKNOWN: "UNKNOWN",
 const GRIDLY_REPORTING_AVAILABILITY_MAX_AGE_MS = 60 * 1000;
 const GRIDLY_REPORTING_UNAVAILABLE_MESSAGE = "Community reporting is temporarily unavailable. Please try again later.";
 
+const GRIDLY_INVALID_CROSSING_CONTEXT = Object.freeze({ status: "invalid_request", blockedBeforeBegin: true });
+
+function gridlyReportContextIsValid(validateContext) {
+  if (validateContext === undefined) return true;
+  try { return validateContext() === true; }
+  catch (_) { return false; }
+}
+
 function gridlyCreateReportingAvailabilityRuntime({ now = () => Date.now(), maxAgeMs = GRIDLY_REPORTING_AVAILABILITY_MAX_AGE_MS } = {}) {
   const guardedKinds = new Set(["create", "confirm", "edit", "clear"]);
   let state = GRIDLY_REPORTING_AVAILABILITY_STATES.UNKNOWN;
@@ -89747,13 +89755,14 @@ function gridlyCreateReportingAvailabilityRuntime({ now = () => Date.now(), maxA
     return snapshot();
   }
 
-  async function submit(kind, payload, protocolClient, transportClient, device) {
+  async function submit(kind, payload, protocolClient, transportClient, device, validateContext) {
     if (guardedKinds.has(kind)) {
       if (snapshot().state === GRIDLY_REPORTING_AVAILABILITY_STATES.UNKNOWN) await refresh(transportClient);
       if (snapshot().state === GRIDLY_REPORTING_AVAILABILITY_STATES.DISABLED) {
         return Object.freeze({ status: "maintenance", blockedBeforeBegin: true });
       }
     }
+    if (!gridlyReportContextIsValid(validateContext)) return GRIDLY_INVALID_CROSSING_CONTEXT;
     const result = await protocolClient.submit(kind, payload, transportClient, device);
     observeResult(result);
     return result;
@@ -89788,10 +89797,11 @@ function gridlyReportingSubmissionErrorMessage(error, fallback) {
   if (error?.code === "authorization_required") return window.gridlyReportProtocol.outcome("authorization_required").message;
   return fallback;
 }
-async function gridlySubmitCommunityOperation(kind, payload, client = supabaseClient, device = deviceId) {
+async function gridlySubmitCommunityOperation(kind, payload, client = supabaseClient, device = deviceId, validateContext) {
   if (kind === "create") {
     const accepted = await window.gridlyUgcCompliance?.ensureAccepted?.();
     if (!accepted) return Object.freeze({ status: "terms_required", blockedBeforeBegin: true });
+    if (!gridlyReportContextIsValid(validateContext)) return GRIDLY_INVALID_CROSSING_CONTEXT;
   }
   // Review validation never enters the persisted/replayed production queue.
   // The server still verifies the signed authority and the complete request.
@@ -89803,7 +89813,7 @@ async function gridlySubmitCommunityOperation(kind, payload, client = supabaseCl
       : { operation_id: token, observation_id: payload.observation_id, action: kind, changes: payload.changes || {}, reporter_device_id: device };
     return window.gridlyPaidReporting.validateReviewOperation(operation, args, client);
   }
-  return gridlyReportingAvailabilityRuntime.submit(kind, payload, gridlyGetCommunityProtocolClient(), gridlyAuthorizedReportTransport(client), device);
+  return gridlyReportingAvailabilityRuntime.submit(kind, payload, gridlyGetCommunityProtocolClient(), gridlyAuthorizedReportTransport(client), device, validateContext);
 }
 window.gridlyUgcComplianceBridge = Object.freeze({
   notify: (message, kind = "success") => setConfirmation(message, kind),
@@ -89920,7 +89930,7 @@ async function gridlyInsertWithCountyMetadataFallback(client, tableName, row, op
       const target = String(row.detail || "").match(/lifecycle_report_id:\s*([^\s)]+)/)?.[1];
       if (isClear && !target) return { error: { code: "ORIGINAL_REQUIRED", message: "Original report unavailable." } };
       const result = await gridlySubmitCommunityOperation(isClear ? "clear" : "create",
-        isClear ? { observation_id: target, changes: {} } : payload, client, deviceId);
+        isClear ? { observation_id: target, changes: {} } : payload, client, deviceId, isClear ? undefined : options.validateContext);
       if (result.status === "review_validated") return { reviewMode: true, data: [], error: null, insertedRow: null };
       if (!["accepted", "already_processed"].includes(result.status)) return { error: { code: result.status, message: gridlyReportingResultMessage(result) } };
       let returned = result.report;
@@ -94848,7 +94858,7 @@ function gridlyTryPassiveHistoryCapturePhase1A(eventInput) {
   }
 }
 
-async function createSharedReport(crossing, reportType, confidence, buttonEl = null) {
+async function createSharedReport(crossing, reportType, confidence, buttonEl = null, options = {}) {
   if (/confirm/i.test(confidence || "")) {
     const target = (Array.isArray(activeReports) ? activeReports : []).filter(r => String(r.crossingId || r.crossing_id) === String(crossing.id) && !["cleared", "hazard_cleared"].includes(r.type || r.report_type)).sort((a,b) => new Date(b.submittedAt || b.created_at) - new Date(a.submittedAt || a.created_at))[0];
     return gridlySubmitCommunityMutation("confirm", target ? gridlyCanonicalReportIdForRecord(target, "") : "");
@@ -94931,7 +94941,7 @@ async function createSharedReport(crossing, reportType, confidence, buttonEl = n
 
     if (reportType === "cleared") gridlyLp0534bClearDiagnostics.crossingClearSubmitStartCount += 1;
     gridlyMarkReportSubmissionRecovery("writeStarted", { flow: "crossing", reportType });
-    const insertResult = await gridlyInsertWithCountyMetadataFallback(supabaseClient, "reports", row);
+    const insertResult = await gridlyInsertWithCountyMetadataFallback(supabaseClient, "reports", row, options);
     const { error } = insertResult;
 
     if (error) throw error;
@@ -121496,7 +121506,163 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     return html;
   }
 
+  // Independent reporting uses the governed inventory, never map marker state.
+  let crossingReportFlow = null;
+  const crossingReportText = (value) => String(value || "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  function crossingReportInventory() {
+    const countyId = gridlyGetActiveCountyId();
+    const inventory = gridlyGetActiveCountyCrossingInventory();
+    const counts = new Map();
+    inventory.forEach(c => counts.set(String(c.id), (counts.get(String(c.id)) || 0) + 1));
+    const eligible = inventory.filter(c => String(c.countyId || c.county_id || "") === countyId
+      && counts.get(String(c.id)) === 1 && /^(?:FRA-)?[0-9]{6}[A-Z]$/i.test(String(c.id))
+      && Number.isFinite(c.lat) && Number.isFinite(c.lng)
+      && isGridlyPublicRoadwayCrossing(c) && isGridlyReportableCrossing(c));
+    // Distinct identities with indistinguishable consumer locations must not
+    // become two identical choices. Never guess which track the user means.
+    const locationKey = c => JSON.stringify([crossingReportLocation(c),c.city,c.county,c.railroad,c.lat.toFixed(5),c.lng.toFixed(5)]);
+    const locations = new Map();
+    eligible.forEach(c => locations.set(locationKey(c),(locations.get(locationKey(c)) || 0)+1));
+    return eligible.filter(c => locations.get(locationKey(c)) === 1);
+  }
+  function crossingReportLocation(crossing) {
+    return getGridlySpecificCrossingLocation(crossing)?.label || "Railroad crossing";
+  }
+  function crossingReportCounty(crossing) {
+    return crossing.county ? `${String(crossing.county).replace(/\s+County$/i,'')} County` : '';
+  }
+  function crossingReportContextValid(flow) {
+    return crossingReportFlow === flow && activeSheet === "report"
+      && !!document.querySelector("[data-v2-crossing-report]")
+      && flow.countyId === gridlyGetActiveCountyId()
+      && flow.countyId === gridlyCrossingInventoryCountyId
+      && flow.generation === gridlyActiveCountyTransitionGeneration
+      && flow.revision === gridlyCrossingInventoryRevision;
+  }
+  function crossingReportSelected(flow) {
+    if (!crossingReportContextValid(flow)) return null;
+    const selected = crossingReportInventory().find(c => String(c.id) === flow.selected?.id);
+    return selected && gridlyResolveCountyIdForCoordinate(selected.lat,selected.lng)?.countyId === flow.countyId
+      && selected.lat === flow.selected.lat && selected.lng === flow.selected.lng
+      && crossingReportLocation(selected) === flow.selected.label ? selected : null;
+  }
+  function crossingReportResultsHtml(flow) {
+    if (!crossingReportContextValid(flow)) return '<p role="status">The area or crossing data changed. Return to Report and choose again.</p>';
+    let rows = crossingReportInventory().map(c => ({ crossing: c, label: crossingReportLocation(c) }));
+    const query = flow.query.trim().toLocaleLowerCase();
+    rows = rows.filter(({crossing:c,label}) => `${label} ${c.city || ""} ${c.county || ""} ${c.railroad || ""}`.toLocaleLowerCase().includes(query));
+    if (flow.location) rows = rows.map(row => ({...row, distance:calculateDistanceKm(flow.location.lat,flow.location.lng,row.crossing.lat,row.crossing.lng)})).filter(row => row.distance <= 25).sort((a,b)=>a.distance-b.distance);
+    else rows.sort((a,b)=>a.label.localeCompare(b.label) || a.crossing.lat-b.crossing.lat || a.crossing.lng-b.crossing.lng);
+    flow.results = rows.slice(0,20);
+    if (!rows.length) return `<p role="status">${flow.location ? 'No eligible crossings within 25 km. Choose All crossings to search this county.' : 'No matching eligible crossings. Try another road or town, or change your awareness area in Settings.'}</p>`;
+    const names = new Map();
+    rows.forEach(row => names.set(row.label,(names.get(row.label)||0)+1));
+    return `<p class="gridly-v2-sheet-copy" role="status">${rows.length > 20 ? 'First 20 matches. Search to narrow the list.' : `${rows.length} crossing${rows.length===1?'':'s'}`}</p>` + flow.results.map(({crossing:c,label,distance},index)=>{
+      const context = [c.city,crossingReportCounty(c),c.railroad].filter(Boolean).join(' · ');
+      const position = names.get(label)>1 ? ` · Location ${c.lat.toFixed(5)}, ${c.lng.toFixed(5)}` : '';
+      return `<button class="secondary-btn gridly-crossing-choice" data-v2-action="report-crossing-select" data-crossing-index="${index}" type="button"><strong>${crossingReportText(label)}</strong><span>${crossingReportText(context + position)}${distance===undefined?'':` · ${distance.toFixed(1)} km away`}</span></button>`;
+    }).join('');
+  }
+  function showCrossingReport(flow) {
+    if (crossingReportFlow !== flow) return;
+    const selected = flow.selected ? crossingReportSelected(flow) : null;
+    let html;
+    if (flow.selected && !selected) html = '<p role="alert">The area or crossing data changed. Return to Report and choose again.</p>';
+    else if (selected) {
+      const label = crossingReportText(crossingReportLocation(selected));
+      const where = crossingReportText([selected.city,crossingReportCounty(selected),selected.railroad].filter(Boolean).join(' · '));
+      html = `<p class="gridly-v2-sheet-copy"><strong>${flow.condition ? 'Review your report' : 'What are you seeing?'}</strong><span>${label}</span><span>${where}</span><span>Location ${selected.lat.toFixed(5)}, ${selected.lng.toFixed(5)}</span></p>`;
+      if (flow.condition) html += `<p class="gridly-v2-sheet-copy"><strong>${flow.condition==='blocked'?'Blocked crossing':'Train delay'}</strong><span>Confirm this crossing and condition before sharing.</span></p><button class="primary-btn" data-v2-action="report-crossing-submit" type="button" ${flow.submitting?'disabled':''}>${flow.submitting?'Submitting…':'Submit Report'}</button>`;
+      else html += '<button class="secondary-btn" data-v2-action="report-crossing-condition" data-crossing-condition="blocked" type="button">Blocked crossing</button><button class="secondary-btn" data-v2-action="report-crossing-condition" data-crossing-condition="heavy" type="button">Train delay</button>';
+      html += `<button class="secondary-btn" data-v2-action="report-crossing-back" type="button" ${flow.submitting?'disabled':''}>Back</button>`;
+    } else {
+      html = '<p class="gridly-v2-sheet-copy"><strong>Choose a railroad crossing</strong><span>Search the current county by road or town. Location permission is optional.</span></p>';
+      if (flow.loading) html += '<p role="status">Loading crossing data…</p>';
+      else if (gridlyCrossingInventoryCountyId !== flow.countyId || crossingLoadFailed) html += '<p role="status">Crossing data is unavailable. Return to Report to try again.</p>';
+      else html += `<label class="gridly-crossing-search">Road or town<input type="search" data-v2-crossing-search autocomplete="off" maxlength="100" value="${crossingReportText(flow.query)}"></label><button class="secondary-btn" data-v2-action="report-crossing-nearby" type="button">Nearby crossings</button><button class="secondary-btn" data-v2-action="report-crossing-all" type="button">All crossings in this county</button><p role="status" data-crossing-location-status>${crossingReportText(flow.message)}</p><div class="gridly-v2-list" data-crossing-results></div>`;
+    }
+    openPortraitV2Sheet('report','Railroad Crossing',`<div class="gridly-v2-crossing-report gridly-v2-list" data-v2-crossing-report>${html}<button class="secondary-btn" data-v2-action="report-crossing-cancel" type="button">Return to Report</button></div>`);
+    if (!selected && !flow.selected) {
+      const resultRoot = document.querySelector('[data-crossing-results]');
+      if (resultRoot) resultRoot.innerHTML = crossingReportResultsHtml(flow);
+      document.querySelector('[data-v2-crossing-search]')?.addEventListener('input', event => {
+        flow.query = event.target.value.slice(0,100);
+        resultRoot.innerHTML = crossingReportResultsHtml(flow);
+      });
+    }
+  }
+  async function beginCrossingReport() {
+    const flow = {countyId:gridlyGetActiveCountyId(),generation:gridlyActiveCountyTransitionGeneration,revision:gridlyCrossingInventoryRevision,query:'',results:[],message:'',loading:true};
+    crossingReportFlow = flow;
+    showCrossingReport(flow);
+    try {
+      ensureGridlyActiveCountyCrossingInventory('independent_crossing_report');
+      await gridlyCrossingInventoryReloadPromise;
+    }
+    catch (_) { /* Existing hydration state owns the unavailable result. */ }
+    if (crossingReportFlow !== flow || activeSheet !== 'report') return;
+    flow.loading = false;
+    if (flow.countyId === gridlyGetActiveCountyId() && flow.generation === gridlyActiveCountyTransitionGeneration) flow.revision = gridlyCrossingInventoryRevision;
+    showCrossingReport(flow);
+  }
+  function handleCrossingReportAction(action,payload) {
+    if (action === 'report-crossing-open') { void beginCrossingReport(); return; }
+    const flow = crossingReportFlow;
+    if (!flow) return;
+    if (action !== 'report-crossing-nearby') flow.locationRequest=null;
+    if (action === 'report-crossing-cancel') { crossingReportFlow=null; openGridlyPortraitV2Sheet('report'); return; }
+    if (flow.submitting) return;
+    if (flow.submitting) return;
+    if (action === 'report-crossing-back') { if(flow.condition) flow.condition=null; else flow.selected=null; showCrossingReport(flow); return; }
+    if (action === 'report-crossing-all') { flow.location=null; flow.message=''; showCrossingReport(flow); return; }
+    if (action === 'report-crossing-nearby') {
+      const request = flow.locationRequest = {};
+      flow.message='Finding nearby crossings…'; showCrossingReport(flow);
+      const unavailable = () => {
+        if (flow.locationRequest!==request || !crossingReportContextValid(flow)) return;
+        flow.message='Location is unavailable. Search by road or town without location permission.'; showCrossingReport(flow);
+      };
+      if (!navigator.geolocation) { unavailable(); return; }
+      navigator.geolocation.getCurrentPosition(position=>{
+        if (flow.locationRequest!==request || !crossingReportContextValid(flow)) return;
+        const {latitude:lat,longitude:lng}=position.coords;
+        if (!Number.isFinite(lat)||!Number.isFinite(lng)) { unavailable(); return; }
+        flow.location={lat,lng};flow.message='Showing crossings within 25 km.';showCrossingReport(flow);
+      },unavailable,{enableHighAccuracy:false,timeout:10000,maximumAge:0});
+      return;
+    }
+    flow.locationRequest=null;
+    if (action === 'report-crossing-select') {
+      if (!crossingReportContextValid(flow)) { showCrossingReport(flow); return; }
+      if (!/^(?:0|[1-9]\d*)$/.test(payload.crossingIndex)) return;
+      const c=flow.results[Number(payload.crossingIndex)]?.crossing;
+      if (!c) return;
+      flow.selected=Object.freeze({id:String(c.id),lat:c.lat,lng:c.lng,label:crossingReportLocation(c)});
+      showCrossingReport(flow);return;
+    }
+    if (action === 'report-crossing-condition' && ['blocked','heavy'].includes(payload.crossingCondition)) {
+      flow.condition=payload.crossingCondition;showCrossingReport(flow);return;
+    }
+    if (action === 'report-crossing-submit' && ['blocked','heavy'].includes(flow.condition)) {
+      const crossing=crossingReportSelected(flow);
+      if (!crossing) { showCrossingReport(flow);return; }
+      flow.submitting=true;showCrossingReport(flow);
+      const button=document.querySelector('[data-v2-action="report-crossing-submit"]');
+      const selection = flow.selected;
+      const condition = flow.condition;
+      const validateContext = () => flow.selected === selection && flow.condition === condition && !!crossingReportSelected(flow);
+      void createSharedReport(crossing,condition,'selected crossing',button,{validateContext}).catch(error=>setConfirmation(String(error?.message||'Report unavailable.'),'error')).finally(()=>{
+        flow.submitting=false;
+        if (crossingReportFlow===flow && activeSheet==='report') {
+          if (button?.textContent.includes('Shared')) closePortraitV2Sheet();
+          else showCrossingReport(flow);
+        }
+      });
+    }
+  }
+
   function buildReportHazardSurfaceHtml() {
+    crossingReportFlow = null;
     const readyDraft = governedRoadHazardReportDraft?.reviewState === "ready" ? governedRoadHazardReportDraft : null;
     if (readyDraft) {
       const hazardLabel = governedRoadHazardReviewText(HAZARD_TYPES[readyDraft.hazardType]?.label || readyDraft.hazardType);
@@ -121522,7 +121688,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
     ).join("");
     return `<div class="gridly-v2-report-picker" data-v2-report-hazard-picker>
       <p class="gridly-v2-sheet-copy gridly-v2-report-prompt"><strong>What are you seeing?</strong><span>Choose the closest match.</span></p>
-      <div class="gridly-v2-tiles gridly-v2-report-tiles">${primaryOptionsHtml}</div>
+      <div class="gridly-v2-tiles gridly-v2-report-tiles">${primaryOptionsHtml}<button class="gridly-v2-tile gridly-v2-report-action" data-v2-action="report-crossing-open" type="button"><span>Railroad Crossing</span></button></div>
       <details class="settings-list-section" data-v2-winter-hazards><summary class="settings-list-summary"><span class="settings-list-title">Winter road conditions</span><span class="settings-list-meta">Ice, snow and visibility</span></summary><div class="gridly-v2-tiles gridly-v2-report-tiles">${GridlyHazardNormalization.winterOptions.map(option => `<button class="gridly-v2-tile gridly-v2-report-action" data-v2-action="report-select-hazard" data-hazard-type="${option.type}" type="button"><span>${option.label}</span></button>`).join("")}</div></details>
       <details class="gridly-v2-other-hazard-subtypes settings-list-section" data-v2-other-hazard-subtypes hidden>
         <summary class="settings-list-summary gridly-v2-other-hazard-summary"><span class="settings-list-title">Other Hazard</span><span class="settings-list-meta">Choose subtype</span></summary>
@@ -121996,6 +122162,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
   }
 
   function closePortraitV2Sheet(){
+    crossingReportFlow = null;
     const sheet = document.getElementById("gridlyPortraitV2Sheet");
     const closingSheetName = sheet?.dataset?.activeSheet || activeSheet || "";
     if (closingSheetName === "alerts") gridlyMarkAlertsSheetClosed();
@@ -122724,7 +122891,8 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         syncGridlyLayersAccessibilityState("layers");
       }
     };
-    const bridge = bridges[canonicalAction];
+    const bridge = canonicalAction.startsWith("report-crossing-")
+      ? () => handleCrossingReportAction(canonicalAction, payload) : bridges[canonicalAction];
     v2DockAdapterState.lastDockActionTriggered = canonicalAction || "";
     v2DockAdapterState.lastDockAdapterTarget = canonicalAction ? `intent:${canonicalAction}` : "";
     if (typeof bridge !== "function") {
@@ -122760,7 +122928,7 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         "settings-feedback-open",
         "settings-feedback-submit",
         "settings-feedback-prepare"
-      ].includes(canonicalAction);
+      ].includes(canonicalAction) || canonicalAction.startsWith("report-crossing-");
       const shouldKeepSheetOpen = canonicalAction === "report-select-hazard" || canonicalAction === "report-select-other-hazard-subtype" || canonicalAction === "layers-crossings-toggle";
       if (!shouldKeepSheetOpen && !actionManagesOwnSurface) closePortraitV2Sheet();
       applyPortraitV2SurfaceContainment();
@@ -122804,6 +122972,8 @@ window.gridlyRouteIntelligenceDebug = function gridlyRouteIntelligenceDebug() {
         event.stopPropagation();
         triggerV2DockAdapter(action, {
           hazardType: actionEl.dataset.hazardType || "",
+          crossingIndex: actionEl.dataset.crossingIndex || "",
+          crossingCondition: actionEl.dataset.crossingCondition || "",
           otherHazardSubtype: actionEl.dataset.otherHazardSubtype || "",
           layerName: actionEl.dataset.layerName || "",
           awarenessArea: actionEl.dataset.gridlyAwarenessArea || actionEl.dataset.gridlySettingsAwarenessOption || ""

@@ -12,7 +12,7 @@ const reportName = 'community-submission-contract.json';
 const config = 'js/gridlyRuntimeEnvironmentConfig.js';
 const profile = 'gridly-102-combined-2026-11';
 const manifestPath = 'tools/arcgis-maintenance/combined-release.json';
-const tooling = [manifestPath, 'tools/arcgis-maintenance/combined-release.mjs'];
+const tooling = [manifestPath, 'tools/arcgis-maintenance/combined-release.mjs', 'tests/arcgis-maintenance/crossing-context.test.mjs'];
 const digest = bytes => createHash('sha256').update(bytes).digest('hex');
 const reject = code => { throw Error(code); };
 

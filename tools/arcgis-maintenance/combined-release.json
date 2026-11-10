@@ -1,17 +1,15 @@
 {
   "profile": "gridly-102-combined-2026-11",
   "scope": "SYNTHETIC_REVIEW_ONLY",
-  "blocked": [
-    "independent-crossing-reporting"
-  ],
+  "blocked": [],
   "fallback": {
     "ios": "638e4b778e3c4ab754f51c12fd121f9c39423c0d",
     "android": "cf5aafb8ca78d1519b6ef6029a893d3f8b996048"
   },
   "sourceSha256": {
     "consumer-script-manifest.json": "482f3a56e647e5b22e1a0a3df545e7da8a97d00ad44a44a0063efee296ccf8a6",
-    "css/styles.css": "80d2a253b42b4d2300775ea52b80f3e9e0fab2f35696780425170274a54461c0",
+    "css/styles.css": "681f1d66815f03f3750f616ec81efc0c863a5f3dfd251f286ea1cd0356de9bce",
     "index.html": "b15b528e407ddd0b2f96c646fb8624e72f5f0980b1adb6564321bc2f65fc411c",
-    "js/app.js": "4b736acccdfa8bfaddd1d7ac72bdc36f1447241f948b9b909e39ad1e60db0df2"
+    "js/app.js": "d51baa6943d498fbc5aa0542491dbb585f5ba2fe354ee2af030a3c69379ec89c"
   }
 }
