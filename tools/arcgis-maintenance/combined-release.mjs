@@ -13,9 +13,12 @@ const config = 'js/gridlyRuntimeEnvironmentConfig.js';
 const profile = 'gridly-102-combined-2026-11';
 const manifestPath = 'tools/arcgis-maintenance/combined-release.json';
 const combinedTool = 'tools/arcgis-maintenance/combined-release.mjs';
+const iosPackageLock = 'ios/App/App.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved';
+const iosPackageLockSha256 = '6922debd29edb339290d4910bf91dd151731506f4bfe6f553d2899314608a94d';
 const tooling = [manifestPath, combinedTool, 'tests/arcgis-maintenance/crossing-context.test.mjs'];
 const releaseTooling = {
   ios: [
+    iosPackageLock,
     'tools/apple_acceptance_build_only.py',
     'tools/arcgis-maintenance/mac-private-path.mjs',
     'tools/arcgis-maintenance/staging.mjs',
@@ -52,6 +55,8 @@ async function checkSource(platform, releaseCommit) {
   ].flatMap(output => output.toString().split('\0').filter(Boolean));
   const allowed = new Set([...sourcePaths,...tooling,...releaseTooling[platform]]);
   if (changes.some(path => !allowed.has(path))) reject('COMBINED_UNRELATED_SOURCE_CHANGE');
+  if (platform === 'ios' && digest(await readFile(join(root,iosPackageLock))) !== iosPackageLockSha256)
+    reject('COMBINED_RELEASE_SOURCE_REJECTED');
   const source = new Map();
   for (const path of sourcePaths) {
     const body = await readFile(join(root,path));
