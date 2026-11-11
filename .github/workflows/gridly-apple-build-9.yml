@@ -1,4 +1,4 @@
-name: Gridly Build 18 macOS resolver replay
+name: Gridly Build 18 Xcode lockfile retrieval
 
 on: workflow_dispatch
 
@@ -23,14 +23,17 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Verify source, resolve Swift packages once, and verify source again
+      - name: Resolve and verify the single public Xcode lockfile
         shell: bash
         run: |
           set -euo pipefail
           python3 -B - <<'PY'
+          import hashlib
           import json
           import os
           import pathlib
+          import re
+          import stat
           import subprocess
 
           source = "c191cef94e3468dfcdca5e4566ae82604f3605a6"
@@ -85,7 +88,7 @@ jobs:
           tracked, untracked = status()
           after = verify()
           path = pathlib.Path(lock)
-          lock_present = path.is_file() and not path.is_symlink()
+          lock_present = path.is_file() and path.resolve() == path.absolute()
           lock_alone = (resolved.returncode == 0 and not tracked and untracked == [lock] and lock_present
                         and after == {"exit": 1, "code": "COMBINED_RELEASE_SOURCE_REJECTED"})
           print(json.dumps({
@@ -94,5 +97,61 @@ jobs:
               "expected_lock_present": lock_present, "source_after": after,
               "lockfile_reproduced": lock_alone,
           }), flush=True)
-          raise SystemExit(int(resolved.returncode != 0))
+          if not lock_alone:
+              raise SystemExit("LOCKFILE_RESOLUTION_REJECTED")
+
+          def unique_keys(pairs):
+              result = {}
+              for key, value in pairs:
+                  if key in result:
+                      raise ValueError("duplicate field")
+                  result[key] = value
+              return result
+
+          package = {
+              "identity": "capacitor-swift-pm",
+              "kind": "remoteSourceControl",
+              "location": "https://github.com/ionic-team/capacitor-swift-pm.git",
+              "state": {"version": "8.3.4", "revision": "992959f0467c781eb6a1637e69d87481238c3672"},
+          }
+          try:
+              with path.open("rb") as stream:
+                  info = os.fstat(stream.fileno())
+                  if not stat.S_ISREG(info.st_mode) or info.st_nlink != 1 or not 0 < info.st_size <= 4096:
+                      raise ValueError("invalid file")
+                  body = stream.read(4097)
+              if len(body) != info.st_size:
+                  raise ValueError("invalid size")
+              document = json.loads(body.decode("utf-8"), object_pairs_hook=unique_keys)
+              version = document["version"]
+              if type(version) is not int or version not in (2, 3) or document["pins"] != [package]:
+                  raise ValueError("invalid pins")
+              expected_fields = {"version", "pins"}
+              if version == 3 and "originHash" in document:
+                  expected_fields.add("originHash")
+                  if not re.fullmatch(r"[0-9a-f]{64}", document["originHash"]):
+                      raise ValueError("invalid origin hash")
+              if set(document) != expected_fields:
+                  raise ValueError("unexpected fields")
+          except (OSError, ValueError, KeyError, TypeError):
+              raise SystemExit("LOCKFILE_METADATA_REJECTED") from None
+
+          artifact_root = temp / "gridly-verified-lockfile"
+          artifact_root.mkdir(mode=0o700, exist_ok=False)
+          retained = artifact_root / lock
+          retained.parent.mkdir(parents=True)
+          with retained.open("xb") as stream:
+              stream.write(body)
+          print(json.dumps({
+              "lockfile": lock, "sha256": hashlib.sha256(body).hexdigest(), "bytes": len(body),
+              "package": package["identity"], "version": package["state"]["version"],
+              "revision": package["state"]["revision"],
+          }), flush=True)
           PY
+      - name: Retain only the verified public lockfile
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: gridly-build18-verified-package-resolved
+          path: ${{ runner.temp }}/gridly-verified-lockfile/
+          if-no-files-found: error
+          retention-days: 1
