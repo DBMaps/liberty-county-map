@@ -140,7 +140,6 @@ jobs:
           fi
           xcrun simctl bootstatus "$id" -b
           app="$RUNNER_TEMP/label-derived/Build/Products/Debug-iphonesimulator/LabelTileHarness.app"
-          xcrun simctl status_bar "$id" override --time '9:41' --dataNetwork wifi --wifiMode active --wifiBars 3 --batteryState unplugged --batteryLevel 100
           xcrun simctl install "$id" "$app"
           launched="$(xcrun simctl launch "$id" com.gridlygo.prototype.labeltiles)"
           [[ "$launched" =~ ^com\.gridlygo\.prototype\.labeltiles:\ ([0-9]+)$ ]]
