@@ -63,7 +63,7 @@ jobs:
           e526bfe392602823859ffc7e53bdb8568f7ae96aa7663e6c7361953bb190aca5  prototypes/ios-arcgis-labels-integration/App/GatewayLabelTransport.swift
           591815db1a51ea89603e2cb5a3ac76078945a272a2f11967342246a71ce5631e  prototypes/ios-arcgis-labels-integration/App/GridlyLabelTileSchemeHandler.swift
           a1e76a1dfc60747fee356200de94da382cc5ce78d1d63409706338d6d9f29650  prototypes/ios-arcgis-labels-integration/App/LabelTileHarness.swift
-          0caa4460821e9a1202182ee043685e51df3dc95347df7ead55cbaef0b4402e6f  prototypes/ios-arcgis-labels-integration/LabelTileHarness.xcodeproj/project.pbxproj
+          673b0aab3c2e49a077226c41112c2d40f9a95aec5df29f6cfbae3b4158940c31  prototypes/ios-arcgis-labels-integration/LabelTileHarness.xcodeproj/project.pbxproj
           88c4f8ff3cde89deb25a71c7e2a5424e563dd611d89936ffe44c6e93beb5e3ad  prototypes/ios-arcgis-labels-integration/LabelTileHarness.xcodeproj/xcshareddata/xcschemes/LabelTileHarness.xcscheme
           ef1a72b89e01de844829c4c58440a406f40d042b298fa1a69edd328338f97371  prototypes/ios-arcgis-labels-integration/Package.swift
           8e8881c80f042ee1a930bfc7b3dba7c7d1ad8530d2de880ba0322750b1365d71  prototypes/ios-arcgis-labels-integration/README.md
@@ -83,7 +83,7 @@ jobs:
           4cbdfb51003e1970ed4edbef6394ba24949a4f57fb2a4cd26417e99b101d25a4  prototypes/ios-arcgis-labels-integration/integration.test.mjs
           9602ab306d36bda67614c410357a77d3752db1e73a095f3f7224cdcd37565950  prototypes/ios-arcgis-labels-integration/local-integration.mjs
           e677fa6c75cbcc2b36c448fb353c44ff101c08c997773d293f63a82349763c74  prototypes/ios-arcgis-labels-integration/map-fixture.mjs
-          45d4d635691bb79f17984a8a468191aae8e7388db0750b6a0c7cf4f10cc99936  prototypes/ios-arcgis-labels-integration/source-copies.sha256
+          bd470ca6e9cfdd201667295dd7c0ca6eb0494576dd3e2b3f3ec391f96b1515d2  prototypes/ios-arcgis-labels-integration/source-copies.sha256
           532ecfa4a0125baa84221d092373538d674ef3af39fff9327cf22936256c6091  prototypes/ios-arcgis-labels-integration/verify-source.mjs
           db24ccf98fd276f83fa31ea35deb95e945b4fcf9364c92b99f2feeae59c9f3c9  prototypes/ios-arcgis-labels/.gitignore
           591815db1a51ea89603e2cb5a3ac76078945a272a2f11967342246a71ce5631e  prototypes/ios-arcgis-labels/App/GridlyLabelTileSchemeHandler.swift

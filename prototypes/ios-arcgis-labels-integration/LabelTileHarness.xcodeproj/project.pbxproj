@@ -76,6 +76,7 @@
 		100000000000000000000062 = {isa = XCBuildConfiguration; name = Release; buildSettings = { SDKROOT = iphoneos; IPHONEOS_DEPLOYMENT_TARGET = 16.4; }; };
 		100000000000000000000063 = {isa = XCBuildConfiguration; name = Debug; buildSettings = {
 			CODE_SIGN_STYLE = Automatic;
+			COMPRESS_PNG_FILES = NO;
 			CURRENT_PROJECT_VERSION = 1;
 			GENERATE_INFOPLIST_FILE = YES;
 			INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -83,12 +84,14 @@
 			MARKETING_VERSION = 0.1;
 			PRODUCT_BUNDLE_IDENTIFIER = com.gridlygo.prototype.labeltiles.integration;
 			PRODUCT_NAME = "$(TARGET_NAME)";
+			STRIP_PNG_TEXT = NO;
 			SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 			SWIFT_VERSION = 5.0;
 			TARGETED_DEVICE_FAMILY = 1;
 		}; };
 		100000000000000000000064 = {isa = XCBuildConfiguration; name = Release; buildSettings = {
 			CODE_SIGN_STYLE = Automatic;
+			COMPRESS_PNG_FILES = NO;
 			CURRENT_PROJECT_VERSION = 1;
 			GENERATE_INFOPLIST_FILE = YES;
 			INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -96,6 +99,7 @@
 			MARKETING_VERSION = 0.1;
 			PRODUCT_BUNDLE_IDENTIFIER = com.gridlygo.prototype.labeltiles.integration;
 			PRODUCT_NAME = "$(TARGET_NAME)";
+			STRIP_PNG_TEXT = NO;
 			SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 			SWIFT_VERSION = 5.0;
 			TARGETED_DEVICE_FAMILY = 1;
