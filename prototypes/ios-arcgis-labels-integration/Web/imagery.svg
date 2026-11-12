@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 800" preserveAspectRatio="none" role="img" aria-label="Synthetic terrain">
+  <defs>
+    <pattern id="fields" width="96" height="74" patternUnits="userSpaceOnUse">
+      <rect width="96" height="74" fill="#526446"/>
+      <path d="M4 5h54v28H4zM62 7h30v60H62zM4 40h53v25H4z" fill="#697654"/>
+      <path d="M9 13h43M9 20h43M9 27h43M10 48h39M10 55h39" stroke="#586748" stroke-width="2"/>
+    </pattern>
+  </defs>
+  <rect width="1000" height="800" fill="url(#fields)"/>
+  <path d="M0 78L220 30 350 165 273 296 89 285 0 365ZM700 50l220 10 80 123v170L824 381 729 274 603 240Z" fill="#3c5740"/>
+  <path d="M0 655Q130 500 263 584T514 603T738 541T1000 493" fill="none" stroke="#294e57" stroke-width="42"/>
+  <path d="M0 453L323 374 472 443 617 477 1000 325M167 0l217 277 130 166 178 357" fill="none" stroke="#404034" stroke-width="15"/>
+  <path d="M0 453L323 374 472 443 617 477 1000 325M167 0l217 277 130 166 178 357" fill="none" stroke="#b9a78a" stroke-width="8"/>
+  <path d="M319 360h24v18h-24zM377 332h18v19h-18zM547 471h23v17h-23zM599 490h19v15h-19zM439 525h20v16h-20z" fill="#aaa08c" stroke="#625d51" stroke-width="2"/>
+</svg>

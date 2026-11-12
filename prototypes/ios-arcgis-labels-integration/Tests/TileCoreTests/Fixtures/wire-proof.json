@@ -1,0 +1,12 @@
+{
+  "publicKeySPKI": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEkqX3IukYjA1zcWs/+1Xo3ysAEFTHlRhCwUHT5d0he6Zp6xEl6AOhJ+C6I7Y5HoLupEYv09ZTWqpTP/U+reINVg==",
+  "canonical": "[\"gridly-labels-gateway-mock-v1\",\"GET\",\"https://labels.mock.invalid/v1/imagery-labels/12/1689/968\",\"00000000-0000-4000-8000-000000000001\",1794484800000,\"00000000-0000-4000-8000-000000000002\"]",
+  "proof": {
+    "method": "GET",
+    "target": "/v1/imagery-labels/12/1689/968",
+    "leaseId": "00000000-0000-4000-8000-000000000001",
+    "timestamp": 1794484800000,
+    "requestId": "00000000-0000-4000-8000-000000000002",
+    "signature": "znVMQIc7kPPn6U_ns_hPPKNxL8jmN-SSG6yAbzQ-KUQqjEMAVqCJcL2mExFRqEr1_8T32S8-b9PQqvuiPTm1SA"
+  }
+}
