@@ -1,0 +1,94 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {};
+	objectVersion = 56;
+	objects = {
+		100000000000000000000001 = {isa = PBXBuildFile; fileRef = 100000000000000000000011; };
+		100000000000000000000002 = {isa = PBXBuildFile; fileRef = 100000000000000000000012; };
+		100000000000000000000003 = {isa = PBXBuildFile; fileRef = 100000000000000000000013; };
+		100000000000000000000004 = {isa = PBXBuildFile; fileRef = 100000000000000000000014; };
+
+		100000000000000000000011 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App/LabelTileHarness.swift; sourceTree = "<group>"; };
+		100000000000000000000012 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App/GridlyLabelTileSchemeHandler.swift; sourceTree = "<group>"; };
+		100000000000000000000013 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/TileCore/LabelTileCore.swift; sourceTree = "<group>"; };
+		100000000000000000000014 = {isa = PBXFileReference; lastKnownFileType = folder; path = Web; sourceTree = "<group>"; };
+		100000000000000000000015 = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LabelTileHarness.app; sourceTree = BUILT_PRODUCTS_DIR; };
+
+		100000000000000000000021 = {isa = PBXGroup; children = (
+			100000000000000000000011,
+			100000000000000000000012,
+			100000000000000000000013,
+			100000000000000000000014,
+			100000000000000000000022,
+		); sourceTree = "<group>"; };
+		100000000000000000000022 = {isa = PBXGroup; children = (100000000000000000000015,); name = Products; sourceTree = "<group>"; };
+
+		100000000000000000000031 = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (
+			100000000000000000000001,
+			100000000000000000000002,
+			100000000000000000000003,
+		); runOnlyForDeploymentPostprocessing = 0; };
+		100000000000000000000032 = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (100000000000000000000004,); runOnlyForDeploymentPostprocessing = 0; };
+		100000000000000000000033 = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+
+		100000000000000000000041 = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 100000000000000000000052;
+			buildPhases = (100000000000000000000031, 100000000000000000000033, 100000000000000000000032,);
+			buildRules = ();
+			dependencies = ();
+			name = LabelTileHarness;
+			productName = LabelTileHarness;
+			productReference = 100000000000000000000015;
+			productType = "com.apple.product-type.application";
+		};
+		100000000000000000000042 = {
+			isa = PBXProject;
+			attributes = {LastUpgradeCheck = 1600; };
+			buildConfigurationList = 100000000000000000000051;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (en, Base,);
+			mainGroup = 100000000000000000000021;
+			productRefGroup = 100000000000000000000022;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (100000000000000000000041,);
+		};
+
+		100000000000000000000051 = {isa = XCConfigurationList; buildConfigurations = (100000000000000000000061, 100000000000000000000062,); defaultConfigurationIsVisible = 0; defaultConfigurationName = Debug; };
+		100000000000000000000052 = {isa = XCConfigurationList; buildConfigurations = (100000000000000000000063, 100000000000000000000064,); defaultConfigurationIsVisible = 0; defaultConfigurationName = Debug; };
+
+		100000000000000000000061 = {isa = XCBuildConfiguration; name = Debug; buildSettings = { SDKROOT = iphoneos; IPHONEOS_DEPLOYMENT_TARGET = 16.4; }; };
+		100000000000000000000062 = {isa = XCBuildConfiguration; name = Release; buildSettings = { SDKROOT = iphoneos; IPHONEOS_DEPLOYMENT_TARGET = 16.4; }; };
+		100000000000000000000063 = {isa = XCBuildConfiguration; name = Debug; buildSettings = {
+			CODE_SIGN_STYLE = Automatic;
+			CURRENT_PROJECT_VERSION = 1;
+			GENERATE_INFOPLIST_FILE = YES;
+			INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+			INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+			MARKETING_VERSION = 0.1;
+			PRODUCT_BUNDLE_IDENTIFIER = com.gridlygo.prototype.labeltiles;
+			PRODUCT_NAME = "$(TARGET_NAME)";
+			SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+			SWIFT_VERSION = 5.0;
+			TARGETED_DEVICE_FAMILY = 1;
+		}; };
+		100000000000000000000064 = {isa = XCBuildConfiguration; name = Release; buildSettings = {
+			CODE_SIGN_STYLE = Automatic;
+			CURRENT_PROJECT_VERSION = 1;
+			GENERATE_INFOPLIST_FILE = YES;
+			INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+			INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+			MARKETING_VERSION = 0.1;
+			PRODUCT_BUNDLE_IDENTIFIER = com.gridlygo.prototype.labeltiles;
+			PRODUCT_NAME = "$(TARGET_NAME)";
+			SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+			SWIFT_VERSION = 5.0;
+			TARGETED_DEVICE_FAMILY = 1;
+		}; };
+	};
+	rootObject = 100000000000000000000042;
+}

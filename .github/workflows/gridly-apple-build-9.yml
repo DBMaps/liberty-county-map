@@ -1,188 +1,170 @@
-name: Gridly Apple Build 9
+name: Gridly iOS Label Prototype Certification
 
 on:
   workflow_dispatch:
     inputs:
-      commit_sha:
-        description: Exact certified launch commit to package
+      expected_commit_sha:
+        description: Exact reviewed prototype certification commit
         required: true
         type: string
-      upload_to_app_store_connect:
-        description: Validate and upload the signed Build 9 IPA
-        required: true
-        default: false
-        type: boolean
 
 permissions:
   contents: read
 
+concurrency:
+  group: gridly-ios-label-prototype-certification
+  cancel-in-progress: false
+
 jobs:
-  apple-build-9:
-    if: ${{ inputs.upload_to_app_store_connect == true && github.ref == 'refs/heads/main' }}
+  certify:
+    if: github.repository == 'DBMaps/liberty-county-map' && github.actor == 'DBMaps' && github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/codex/gridly-ios-label-prototype-certification' && github.run_attempt == 1
     runs-on: macos-26
-    timeout-minutes: 90
+    timeout-minutes: 25
+    defaults:
+      run:
+        shell: bash
+    env:
+      EXPECTED_SHA: ${{ inputs.expected_commit_sha }}
+      PROTOTYPE: prototypes/ios-arcgis-labels
     steps:
-      - name: Checkout exact certified commit
-        uses: actions/checkout@v4
+      - name: Verify the requested commit before checkout
+        run: |
+          set -euo pipefail
+          [[ "$EXPECTED_SHA" =~ ^[0-9a-f]{40}$ ]]
+          test "$GITHUB_SHA" = "$EXPECTED_SHA"
+
+      - name: Checkout the exact reviewed commit
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
-          ref: ${{ inputs.commit_sha }}
+          ref: ${{ inputs.expected_commit_sha }}
           persist-credentials: false
-      - name: Verify source and Xcode
-        shell: bash
-        env:
-          EXPECTED_COMMIT_SHA: ${{ inputs.commit_sha }}
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /prototypes/ios-arcgis-labels/
+            /.github/workflows/gridly-apple-build-9.yml
+
+      - name: Record toolchain, verify inventory, and hash prototype files
         run: |
           set -euo pipefail
-          [[ "$EXPECTED_COMMIT_SHA" =~ ^[0-9a-f]{40}$ ]]
-          test "$EXPECTED_COMMIT_SHA" = "fe398ff8ffb38604a4f8f2200b0c9b48469286ea"
-          test "$(git rev-parse HEAD)" = "$EXPECTED_COMMIT_SHA"
-          xcodebuild -version | grep -E '^Xcode 26([. ]|$)'
-          grep -q 'GRIDLY_ANDROID_LICENSE_TEST_CANDIDATE = false' js/gridly-paid-ui.mjs
-          grep -q 'gridly-paid-report' js/app.js
-          grep -q 'versionCode 8' android/app/build.gradle
-      - name: Set up Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: npm
-      - name: Install dependencies and test paid reporting
-        shell: bash
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          test -z "$(git status --porcelain --untracked-files=all)"
+          diff -u <(cat <<'FILES'
+          prototypes/ios-arcgis-labels/.gitignore
+          prototypes/ios-arcgis-labels/App/GridlyLabelTileSchemeHandler.swift
+          prototypes/ios-arcgis-labels/App/LabelTileHarness.swift
+          prototypes/ios-arcgis-labels/LabelTileHarness.xcodeproj/project.pbxproj
+          prototypes/ios-arcgis-labels/LabelTileHarness.xcodeproj/xcshareddata/xcschemes/LabelTileHarness.xcscheme
+          prototypes/ios-arcgis-labels/Package.swift
+          prototypes/ios-arcgis-labels/README.md
+          prototypes/ios-arcgis-labels/Sources/TileCore/LabelTileCore.swift
+          prototypes/ios-arcgis-labels/Tests/TileCoreTests/Fixtures/valid.png
+          prototypes/ios-arcgis-labels/Tests/TileCoreTests/LabelTileSchemeHandlerTests.swift
+          prototypes/ios-arcgis-labels/Tests/map.test.mjs
+          prototypes/ios-arcgis-labels/Web/imagery.svg
+          prototypes/ios-arcgis-labels/Web/map.html
+          prototypes/ios-arcgis-labels/Web/map.js
+          prototypes/ios-arcgis-labels/Web/vendor/LICENSE
+          prototypes/ios-arcgis-labels/Web/vendor/leaflet.css
+          prototypes/ios-arcgis-labels/Web/vendor/leaflet.js
+          FILES
+          ) <(git ls-files -- "$PROTOTYPE")
+          git ls-files -- "$PROTOTYPE" | while IFS= read -r file; do
+            test -f "$file" && test ! -L "$file" || exit 1
+            shasum -a 256 "$file"
+          done
+          sw_vers
+          xcodebuild -version
+          swift --version
+          node --version
+
+      - name: Run seven Node tests and verify local mock resources
         run: |
           set -euo pipefail
-          npm ci
-          node --test tests/paid-report-authorization.test.mjs tests/lp24465-paid-access.test.mjs
-      - name: Stage production web runtime and sync iOS
-        shell: bash
-        env:
-          GRIDLY_NATIVE_PROVIDER_CONFIG_BASE64: ${{ secrets.GRIDLY_NATIVE_PROVIDER_CONFIG_BASE64 }}
-        run: |
-          set -euo pipefail
-          test -n "$GRIDLY_NATIVE_PROVIDER_CONFIG_BASE64"
-          printf '%s' "$GRIDLY_NATIVE_PROVIDER_CONFIG_BASE64" | base64 -D > "$RUNNER_TEMP/native-provider-config.json"
-          npm run build:native-assets
-          node tools/native-web.mjs --runtime-config-file "$RUNNER_TEMP/native-provider-config.json" --report-file .artifacts/native-web-identity.json
-          node tools/native-web.mjs --verify --report-file .artifacts/native-web-identity.json
-          rm -f "$RUNNER_TEMP/native-provider-config.json"
-          npx cap sync ios
-          if test -f ios/App/Podfile; then (cd ios/App && pod install); fi
-          xcodebuild -resolvePackageDependencies -project ios/App/App.xcodeproj -scheme App
-      - name: Install distribution signing
-        shell: bash
-        env:
-          APPLE_DIST_PRIVATE_KEY_PEM_BASE64: ${{ secrets.APPLE_DIST_PRIVATE_KEY_PEM_BASE64 }}
-          APPLE_DIST_CERT_PEM_BASE64: ${{ secrets.APPLE_DIST_CERT_PEM_BASE64 }}
-          APPLE_PROVISION_PROFILE_BASE64: ${{ secrets.APPLE_PROVISION_PROFILE_BASE64 }}
-        run: |
-          set -euo pipefail
-          umask 077
-          cleanup_signing_material() {
-            rm -f "$RUNNER_TEMP/distribution-private.key" "$RUNNER_TEMP/distribution-cert.pem" "$RUNNER_TEMP/distribution.p12"
-            unset TEMP_P12_PASSWORD KEYCHAIN_PASSWORD
-          }
-          trap cleanup_signing_material EXIT
-          test -n "$APPLE_DIST_PRIVATE_KEY_PEM_BASE64" && test -n "$APPLE_DIST_CERT_PEM_BASE64" && test -n "$APPLE_PROVISION_PROFILE_BASE64"
-          printf '%s' "$APPLE_DIST_PRIVATE_KEY_PEM_BASE64" | base64 -D > "$RUNNER_TEMP/distribution-private.key"
-          printf '%s' "$APPLE_DIST_CERT_PEM_BASE64" | base64 -D > "$RUNNER_TEMP/distribution-cert.pem"
-          printf '%s' "$APPLE_PROVISION_PROFILE_BASE64" | base64 -D > "$RUNNER_TEMP/distribution.mobileprovision"
-          KEY_PUBLIC_SHA=$(openssl pkey -in "$RUNNER_TEMP/distribution-private.key" -pubout -outform DER | shasum -a 256 | awk '{print $1}')
-          CERT_PUBLIC_SHA=$(openssl x509 -in "$RUNNER_TEMP/distribution-cert.pem" -pubkey -noout | openssl pkey -pubin -outform DER | shasum -a 256 | awk '{print $1}')
-          test -n "$KEY_PUBLIC_SHA" && test "$KEY_PUBLIC_SHA" = "$CERT_PUBLIC_SHA"
-          openssl version
-          TEMP_P12_PASSWORD="$(openssl rand -hex 32)"
-          export TEMP_P12_PASSWORD
-          openssl pkcs12 -export -legacy -inkey "$RUNNER_TEMP/distribution-private.key" -in "$RUNNER_TEMP/distribution-cert.pem" \
-            -out "$RUNNER_TEMP/distribution.p12" -passout env:TEMP_P12_PASSWORD
-          openssl pkcs12 -legacy -in "$RUNNER_TEMP/distribution.p12" -passin env:TEMP_P12_PASSWORD -info -noout >/dev/null 2>&1
-          KEYCHAIN_PASSWORD="$(openssl rand -base64 32)"
-          security create-keychain -p "$KEYCHAIN_PASSWORD" gridly-build.keychain
-          security unlock-keychain -p "$KEYCHAIN_PASSWORD" gridly-build.keychain
-          security import "$RUNNER_TEMP/distribution.p12" -k gridly-build.keychain -P "$TEMP_P12_PASSWORD" -T /usr/bin/codesign
-          security set-key-partition-list -S apple-tool:,apple: -s -k "$KEYCHAIN_PASSWORD" gridly-build.keychain >/dev/null
-          security list-keychains -d user -s gridly-build.keychain
-          security cms -D -i "$RUNNER_TEMP/distribution.mobileprovision" > "$RUNNER_TEMP/profile.plist"
-          PROFILE_NAME=$(/usr/libexec/PlistBuddy -c 'Print :Name' "$RUNNER_TEMP/profile.plist")
-          PROFILE_UUID=$(/usr/libexec/PlistBuddy -c 'Print :UUID' "$RUNNER_TEMP/profile.plist")
-          TEAM_ID=$(/usr/libexec/PlistBuddy -c 'Print :TeamIdentifier:0' "$RUNNER_TEMP/profile.plist")
-          APP_ID=$(/usr/libexec/PlistBuddy -c 'Print :Entitlements:application-identifier' "$RUNNER_TEMP/profile.plist")
-          test "$APP_ID" = "$TEAM_ID.com.gridlygo.gridly"
-          mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
-          cp "$RUNNER_TEMP/distribution.mobileprovision" "$HOME/Library/MobileDevice/Provisioning Profiles/$PROFILE_UUID.mobileprovision"
-          { printf 'PROFILE_NAME=%s\n' "$PROFILE_NAME"; printf 'TEAM_ID=%s\n' "$TEAM_ID"; } >> "$GITHUB_ENV"
-          rm -f "$RUNNER_TEMP/distribution.mobileprovision" "$RUNNER_TEMP/profile.plist"
-      - name: Archive and export Build 9
-        shell: bash
-        run: |
-          set -euo pipefail
-          SIGNING_IDENTITIES="$(security find-identity -v -p codesigning gridly-build.keychain)"
-          printf '%s\n' "$SIGNING_IDENTITIES"
-          printf '%s\n' "$SIGNING_IDENTITIES" | grep -Eq '^[[:space:]]*[0-9]+\) [[:xdigit:]]{40} "Apple Distribution: [^"]+"'
-          xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release -destination 'generic/platform=iOS' \
-            -showBuildSettings CURRENT_PROJECT_VERSION=9 DEVELOPMENT_TEAM="$TEAM_ID" CODE_SIGN_STYLE=Manual \
-            CODE_SIGN_IDENTITY="Apple Distribution" PROVISIONING_PROFILE_SPECIFIER="$PROFILE_NAME" 2>&1 | \
-            awk -F ' = ' '/^Build settings for action .* and target App:$/ { in_app=1; next } /^Build settings for action .* and target / { in_app=0 } in_app && NF >= 2 { key=$1; sub(/^[[:space:]]+/, "", key); if (key ~ /^(CODE_SIGN_IDENTITY|CODE_SIGN_STYLE|DEVELOPMENT_TEAM|PROVISIONING_PROFILE_SPECIFIER|PRODUCT_BUNDLE_IDENTIFIER)$/) print key " = " $2 }' | \
-            tee "$RUNNER_TEMP/effective-signing-settings.txt"
-          grep -Fxq 'CODE_SIGN_IDENTITY = Apple Distribution' "$RUNNER_TEMP/effective-signing-settings.txt"
-          grep -Fxq 'CODE_SIGN_STYLE = Manual' "$RUNNER_TEMP/effective-signing-settings.txt"
-          grep -Fxq 'DEVELOPMENT_TEAM = 2XSH6R7K37' "$RUNNER_TEMP/effective-signing-settings.txt"
-          grep -Fxq 'PROVISIONING_PROFILE_SPECIFIER = Gridly App Store Build 9' "$RUNNER_TEMP/effective-signing-settings.txt"
-          grep -Fxq 'PRODUCT_BUNDLE_IDENTIFIER = com.gridlygo.gridly' "$RUNNER_TEMP/effective-signing-settings.txt"
-          cat > "$RUNNER_TEMP/ExportOptions.plist" <<EOF
-          <?xml version="1.0" encoding="UTF-8"?>
-          <plist version="1.0"><dict>
-            <key>method</key><string>app-store-connect</string>
-            <key>signingStyle</key><string>manual</string>
-            <key>teamID</key><string>$TEAM_ID</string>
-            <key>provisioningProfiles</key><dict><key>com.gridlygo.gridly</key><string>$PROFILE_NAME</string></dict>
-          </dict></plist>
-          EOF
-          xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release -destination 'generic/platform=iOS' \
-            -archivePath "$RUNNER_TEMP/Gridly-Build-9.xcarchive" CURRENT_PROJECT_VERSION=9 \
-            DEVELOPMENT_TEAM="$TEAM_ID" CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY="Apple Distribution" \
-            PROVISIONING_PROFILE_SPECIFIER="$PROFILE_NAME" archive
-          xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/Gridly-Build-9.xcarchive" \
-            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" -exportPath "$RUNNER_TEMP/gridly-export"
-          IPA=$(find "$RUNNER_TEMP/gridly-export" -maxdepth 1 -name '*.ipa' -print -quit)
-          test -n "$IPA" && test -f "$IPA"
-          printf 'IPA_PATH=%s\n' "$IPA" >> "$GITHUB_ENV"
-          shasum -a 256 "$IPA"
-          /usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$RUNNER_TEMP/Gridly-Build-9.xcarchive/Products/Applications/App.app/Info.plist" | grep -x 9
-          /usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$RUNNER_TEMP/Gridly-Build-9.xcarchive/Products/Applications/App.app/Info.plist" | grep -x 1.0.0
-          /usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$RUNNER_TEMP/Gridly-Build-9.xcarchive/Products/Applications/App.app/Info.plist" | grep -x com.gridlygo.gridly
-      - name: Validate and upload IPA
-        shell: bash
-        env:
-          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
-          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
-          ASC_PRIVATE_KEY_P8_BASE64: ${{ secrets.ASC_PRIVATE_KEY_P8_BASE64 }}
-          APPLE_ID_USERNAME: ${{ secrets.APPLE_ID_USERNAME }}
-          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
-        run: |
-          set -euo pipefail
-          if test -n "$ASC_KEY_ID" && test -n "$ASC_ISSUER_ID" && test -n "$ASC_PRIVATE_KEY_P8_BASE64"; then
-            mkdir -p "$HOME/.appstoreconnect/private_keys"
-            printf '%s' "$ASC_PRIVATE_KEY_P8_BASE64" | base64 -D > "$HOME/.appstoreconnect/private_keys/AuthKey_$ASC_KEY_ID.p8"
-            chmod 600 "$HOME/.appstoreconnect/private_keys/AuthKey_$ASC_KEY_ID.p8"
-            xcrun altool --validate-app --type ios --file "$IPA_PATH" --apiKey "$ASC_KEY_ID" --apiIssuer "$ASC_ISSUER_ID"
-            xcrun altool --upload-app --type ios --file "$IPA_PATH" --apiKey "$ASC_KEY_ID" --apiIssuer "$ASC_ISSUER_ID"
-          else
-            test -n "$APPLE_ID_USERNAME" && test -n "$APPLE_APP_SPECIFIC_PASSWORD"
-            xcrun altool --validate-app --type ios --file "$IPA_PATH" --username "$APPLE_ID_USERNAME" --password "$APPLE_APP_SPECIFIC_PASSWORD"
-            xcrun altool --upload-app --type ios --file "$IPA_PATH" --username "$APPLE_ID_USERNAME" --password "$APPLE_APP_SPECIFIC_PASSWORD"
+          cd "$PROTOTYPE"
+          test -f Web/imagery.svg && test -f Web/vendor/leaflet.js && test -f Web/vendor/leaflet.css
+          if git grep -iE 'arcgis[.]com|GRIDLY_RUNTIME_CONFIG|native-provider-config|secrets[.]' -- App Sources Web/map.html Web/map.js; then
+            echo 'External service or production configuration reference found'
+            exit 1
           fi
-      - name: Preserve signed artifact for owner review
-        if: ${{ github.event.repository.private }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: gridly-apple-build-9
-          path: |
-            ${{ runner.temp }}/gridly-export/*.ipa
-            ${{ runner.temp }}/Gridly-Build-9.xcarchive
-          retention-days: 3
-          if-no-files-found: error
-      - name: Remove temporary signing material
-        if: always()
-        shell: bash
+          node --test --test-reporter=tap Tests/map.test.mjs | tee "$RUNNER_TEMP/label-node-tests.log"
+          grep -Fx '# tests 7' "$RUNNER_TEMP/label-node-tests.log"
+          grep -Fx '# pass 7' "$RUNNER_TEMP/label-node-tests.log"
+
+      - name: Run eleven Swift tests
         run: |
-          rm -f "$RUNNER_TEMP/native-provider-config.json" "$RUNNER_TEMP/distribution-private.key" "$RUNNER_TEMP/distribution-cert.pem" "$RUNNER_TEMP/distribution.p12" "$RUNNER_TEMP/distribution.mobileprovision" "$RUNNER_TEMP/profile.plist"
-          rm -f "$HOME/.appstoreconnect/private_keys/AuthKey_"*.p8
-          security delete-keychain gridly-build.keychain 2>/dev/null || true
+          set -euo pipefail
+          swift test --package-path "$PROTOTYPE" --scratch-path "$RUNNER_TEMP/label-swift" 2>&1 | tee "$RUNNER_TEMP/label-swift-tests.log"
+          grep -Eq 'Executed 11 tests, with 0 failures' "$RUNNER_TEMP/label-swift-tests.log"
+
+      - name: Build the unsigned iOS Simulator harness
+        run: |
+          set -euo pipefail
+          xcodebuild build -project "$PROTOTYPE/LabelTileHarness.xcodeproj" \
+            -scheme LabelTileHarness -configuration Debug -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' -derivedDataPath "$RUNNER_TEMP/label-derived" \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY= 2>&1 | tee "$RUNNER_TEMP/label-build.log"
+          if grep -F 'range of supported deployment target versions' "$RUNNER_TEMP/label-build.log"; then
+            echo 'Selected SDK does not support the prototype deployment target'
+            exit 1
+          fi
+          app="$RUNNER_TEMP/label-derived/Build/Products/Debug-iphonesimulator/LabelTileHarness.app"
+          test "$(/usr/libexec/PlistBuddy -c 'Print CFBundleIdentifier' "$app/Info.plist")" = com.gridlygo.prototype.labeltiles
+          test ! -e "$app/_CodeSignature"
+          test ! -e "$app/embedded.mobileprovision"
+          diff -r "$PROTOTYPE/Web" "$app/Web"
+
+      - name: Try the harness on an installed iPhone simulator
+        id: simulator
+        timeout-minutes: 7
+        run: |
+          set -euo pipefail
+          id="$(xcrun simctl list devices booted --json | python3 -c '
+          import json, sys
+          devices = json.load(sys.stdin)["devices"]
+          print(next((d["udid"] for runtime, group in devices.items() if ".iOS-" in runtime
+                      for d in group if d["name"].startswith("iPhone")), ""))
+          ')"
+          if [[ -z "$id" ]]; then
+            id="$(xcrun simctl list devices available --json | python3 -c '
+          import json, sys
+          devices = json.load(sys.stdin)["devices"]
+          print(next((d["udid"] for runtime, group in devices.items() if ".iOS-" in runtime
+                      for d in group if d["name"].startswith("iPhone") and d["state"] == "Shutdown"), ""))
+          ')"
+            if [[ -z "$id" ]]; then
+              echo 'SIMULATOR_UNAVAILABLE'
+              exit 0
+            fi
+            trap 'xcrun simctl shutdown "$id" >/dev/null 2>&1 || true' EXIT
+            xcrun simctl boot "$id"
+          fi
+          xcrun simctl bootstatus "$id" -b
+          app="$RUNNER_TEMP/label-derived/Build/Products/Debug-iphonesimulator/LabelTileHarness.app"
+          xcrun simctl status_bar "$id" override --time '9:41' --dataNetwork wifi --wifiMode active --wifiBars 3 --batteryState unplugged --batteryLevel 100
+          xcrun simctl install "$id" "$app"
+          launched="$(xcrun simctl launch "$id" com.gridlygo.prototype.labeltiles)"
+          [[ "$launched" =~ ^com\.gridlygo\.prototype\.labeltiles:\ ([0-9]+)$ ]]
+          pid="${BASH_REMATCH[1]}"
+          sleep 10
+          kill -0 "$pid"
+          echo 'SIMULATOR_PROCESS_RUNNING'
+          xcrun simctl spawn "$id" log show --last 45s --style compact \
+            --predicate 'process == "LabelTileHarness" AND (messageType == error OR messageType == fault)'
+          xcrun simctl io "$id" screenshot "$RUNNER_TEMP/label-simulator.png"
+          echo 'screenshot=true' >> "$GITHUB_OUTPUT"
+
+      - name: Retain the mock simulator screenshot
+        if: steps.simulator.outputs.screenshot == 'true'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: gridly-label-prototype-simulator
+          path: ${{ runner.temp }}/label-simulator.png
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Verify checkout was left clean
+        if: always()
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          test -z "$(git status --porcelain --untracked-files=all)"
