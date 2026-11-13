@@ -2,7 +2,7 @@
 9279f0dcd3a297092f21e68e06cb6414a39c6e66fe8e0632ca842d64c4f9dd5a  prototypes/ios-arcgis-labels-gateway-deploy/FIXED-PATH-PRIVACY.md
 39d902f63689789de730f43be64f199808ffe52e5236e1463e253c779c59b80a  prototypes/ios-arcgis-labels-gateway-deploy/HOSTING-READINESS.md
 655cac2213febd2bdec017c7485df3c99e98dcf29a9faa86398c0e5c42b86536  prototypes/ios-arcgis-labels-gateway-deploy/README.md
-2240af11b5e401eed66b2d5b61b3e5c8f77ef69dee3a8768e68cc9b0df13eea1  prototypes/ios-arcgis-labels-gateway-deploy/certification-workflow.yml.in
+238c929dc42222ae9fd361dbd443468fa8954854d5360438dae830641cfcebf6  prototypes/ios-arcgis-labels-gateway-deploy/certification-workflow.yml.in
 3ea28115b62571ae2959d55c6f257b45ac2a17d9fd7eaa984242424418c989fd  prototypes/ios-arcgis-labels-gateway-deploy/edge.test.mjs
 fc8ef1f440b09791bcfd93919295dcbcbacb0ef06453646dd7603e7ef1067022  prototypes/ios-arcgis-labels-gateway-deploy/foundation.sha256
 72493a683041de5def00fa80284ac579635834f48fbe0ed9fd82a01f1d8abe87  prototypes/ios-arcgis-labels-gateway-deploy/ingress.nginx.conf.example

@@ -42,6 +42,7 @@ jobs:
           persist-credentials: false
           sparse-checkout-cone-mode: false
           sparse-checkout: |
+            /package.json
             /prototypes/ios-arcgis-labels/
             /prototypes/ios-arcgis-labels-gateway/
             /prototypes/ios-arcgis-labels-integration/
