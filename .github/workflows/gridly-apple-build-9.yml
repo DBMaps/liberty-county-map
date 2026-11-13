@@ -1,10 +1,10 @@
-name: Gridly iOS Label Integration Certification
+name: Gridly iOS Native Labels Foundation Certification
 
 on:
   workflow_dispatch:
     inputs:
       expected_commit_sha:
-        description: Exact reviewed mock integration certification commit
+        description: Exact reviewed Stage 3C certification commit
         required: true
         type: string
 
@@ -25,17 +25,16 @@ jobs:
         shell: bash
     env:
       EXPECTED_SHA: ${{ inputs.expected_commit_sha }}
-      HARNESS: prototypes/ios-arcgis-labels-integration
-      APP_ID: com.gridlygo.prototype.labeltiles.integration
+      CANDIDATE: prototypes/ios-arcgis-labels-live-candidate
+      APP_ID: com.gridlygo.prototype.labeltiles.pilot-cert
     steps:
-      - name: Verify the requested commit before checkout
+      - name: Verify dispatch SHA
         run: |
           set -euo pipefail
           [[ "$EXPECTED_SHA" =~ ^[0-9a-f]{40}$ ]]
-          test "$GITHUB_SHA" = "$EXPECTED_SHA"
-
-      - name: Checkout the exact reviewed commit
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+          test "$EXPECTED_SHA" = "$GITHUB_SHA"
+      - name: Checkout reviewed prototype sources
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           ref: ${{ inputs.expected_commit_sha }}
           persist-credentials: false
@@ -44,185 +43,111 @@ jobs:
             /prototypes/ios-arcgis-labels/
             /prototypes/ios-arcgis-labels-gateway/
             /prototypes/ios-arcgis-labels-integration/
+            /prototypes/ios-arcgis-labels-live-candidate/
             /.github/workflows/gridly-apple-build-9.yml
-
-      - name: Verify prototype inventory, hashes, and isolation
+      - name: Verify source identity and inventories
         run: |
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
           test -z "$(git status --porcelain --untracked-files=all)"
-          cat > "$RUNNER_TEMP/mock-sources.sha256" <<'FILES'
-          311d06cf45d216ddc7d13d58e66753adfbf9902b0e7a3632c674639bc58d67f7  prototypes/ios-arcgis-labels-gateway/README.md
-          c4dab7a11e2ce4f29369afac168b3408f2bd8c8d89fd70673283b576a31dbab1  prototypes/ios-arcgis-labels-gateway/contract.md
-          4230e7b5050663ad8ac8fdfeeb51d0113529eae877922fec22fe5fed213af318  prototypes/ios-arcgis-labels-gateway/gateway.bench.mjs
-          c024624eb9622eca5fbf164e49293f6199e345565d1a398983e6dbc173dbc179  prototypes/ios-arcgis-labels-gateway/gateway.mjs
-          8ac60bcf965bde4c754aaf700255fd7a878828c81183d75469d0c4229ebc69f6  prototypes/ios-arcgis-labels-gateway/gateway.test.mjs
-          074065f07e35265d9695cced0f42844dbb02e5766c4ed185d0a372b2d033b093  prototypes/ios-arcgis-labels-gateway/mock-tile.png
-          507e0f8913dda30439b583c9c8e18f40d961096a56cb90aa95864cd8988aad11  prototypes/ios-arcgis-labels-gateway/png.mjs
-          e1f0933f9e3f0ddd9daf4c8a2a66802c06ffb12f93f59973277cad79b4faa36f  prototypes/ios-arcgis-labels-gateway/synthetic.mjs
-          e526bfe392602823859ffc7e53bdb8568f7ae96aa7663e6c7361953bb190aca5  prototypes/ios-arcgis-labels-integration/App/GatewayLabelTransport.swift
-          591815db1a51ea89603e2cb5a3ac76078945a272a2f11967342246a71ce5631e  prototypes/ios-arcgis-labels-integration/App/GridlyLabelTileSchemeHandler.swift
-          a1e76a1dfc60747fee356200de94da382cc5ce78d1d63409706338d6d9f29650  prototypes/ios-arcgis-labels-integration/App/LabelTileHarness.swift
-          673b0aab3c2e49a077226c41112c2d40f9a95aec5df29f6cfbae3b4158940c31  prototypes/ios-arcgis-labels-integration/LabelTileHarness.xcodeproj/project.pbxproj
-          88c4f8ff3cde89deb25a71c7e2a5424e563dd611d89936ffe44c6e93beb5e3ad  prototypes/ios-arcgis-labels-integration/LabelTileHarness.xcodeproj/xcshareddata/xcschemes/LabelTileHarness.xcscheme
-          ef1a72b89e01de844829c4c58440a406f40d042b298fa1a69edd328338f97371  prototypes/ios-arcgis-labels-integration/Package.swift
-          8e8881c80f042ee1a930bfc7b3dba7c7d1ad8530d2de880ba0322750b1365d71  prototypes/ios-arcgis-labels-integration/README.md
-          f3f09d3eef861288ed4cb36568a595a1ac4653fe566db29b6073aeda71d3e79c  prototypes/ios-arcgis-labels-integration/Sources/TileCore/LabelTileCore.swift
-          1e7c848c91d040f5514d997f0a372967bee59e06e0e67e9beb424def69ef325f  prototypes/ios-arcgis-labels-integration/Sources/TileCore/MockGateway.swift
-          074065f07e35265d9695cced0f42844dbb02e5766c4ed185d0a372b2d033b093  prototypes/ios-arcgis-labels-integration/Tests/TileCoreTests/Fixtures/valid.png
-          852144bff24fa645e376dc3c02d480e20d298cb232cb6081ea616ac87b8635bb  prototypes/ios-arcgis-labels-integration/Tests/TileCoreTests/Fixtures/wire-proof.json
-          edd19b086426b6cb1c33b6e0e9bc3f7f9f8f70f2c1af499a8cb78e7a84d13321  prototypes/ios-arcgis-labels-integration/Tests/TileCoreTests/LabelTileSchemeHandlerTests.swift
-          749dc742cb655cb6d73e3b714f7b4737dc6c3f9852eda59f0fed84fa7cf47de5  prototypes/ios-arcgis-labels-integration/Tests/TileCoreTests/MockGatewayTests.swift
-          746ec7b5a9e3faeba9fa874096e214f25b33671f0d77ca2831969b8a470d4f90  prototypes/ios-arcgis-labels-integration/Web/imagery.svg
-          261cc07a00f072a54642ab25100e65f48b9d5a1e83c6cc49a75f4c44374a99d9  prototypes/ios-arcgis-labels-integration/Web/map.html
-          bc8bfa03ac0341a604069852d8c0305b0f6a6323f5c691325ec85d7aea19bdec  prototypes/ios-arcgis-labels-integration/Web/map.js
-          53e8dc25862014e4324741ca18fbe3611e11d42ef69f59f86ea8c5389647d4cb  prototypes/ios-arcgis-labels-integration/Web/vendor/LICENSE
-          a7837102824184820dfa198d1ebcd109ff6d0ff9a2672a074b9a1b4d147d04c6  prototypes/ios-arcgis-labels-integration/Web/vendor/leaflet.css
-          db49d009c841f5ca34a888c96511ae936fd9f5533e90d8b2c4d57596f4e5641a  prototypes/ios-arcgis-labels-integration/Web/vendor/leaflet.js
-          a4727d25f368f88470c9cd0cb8d752eddbb5c20f36c8b11714c6a8a270cb6e45  prototypes/ios-arcgis-labels-integration/integration.bench.mjs
-          4cbdfb51003e1970ed4edbef6394ba24949a4f57fb2a4cd26417e99b101d25a4  prototypes/ios-arcgis-labels-integration/integration.test.mjs
-          9602ab306d36bda67614c410357a77d3752db1e73a095f3f7224cdcd37565950  prototypes/ios-arcgis-labels-integration/local-integration.mjs
-          e677fa6c75cbcc2b36c448fb353c44ff101c08c997773d293f63a82349763c74  prototypes/ios-arcgis-labels-integration/map-fixture.mjs
-          bd470ca6e9cfdd201667295dd7c0ca6eb0494576dd3e2b3f3ec391f96b1515d2  prototypes/ios-arcgis-labels-integration/source-copies.sha256
-          532ecfa4a0125baa84221d092373538d674ef3af39fff9327cf22936256c6091  prototypes/ios-arcgis-labels-integration/verify-source.mjs
-          db24ccf98fd276f83fa31ea35deb95e945b4fcf9364c92b99f2feeae59c9f3c9  prototypes/ios-arcgis-labels/.gitignore
-          591815db1a51ea89603e2cb5a3ac76078945a272a2f11967342246a71ce5631e  prototypes/ios-arcgis-labels/App/GridlyLabelTileSchemeHandler.swift
-          1018049a98e73c65b07dcb83746ab3dd8950b7696f808a116ff349091440e118  prototypes/ios-arcgis-labels/App/LabelTileHarness.swift
-          ad27670b2fc575656aedd8bf185853def907bf21b2401e82cb1c94f9175e1739  prototypes/ios-arcgis-labels/LabelTileHarness.xcodeproj/project.pbxproj
-          88c4f8ff3cde89deb25a71c7e2a5424e563dd611d89936ffe44c6e93beb5e3ad  prototypes/ios-arcgis-labels/LabelTileHarness.xcodeproj/xcshareddata/xcschemes/LabelTileHarness.xcscheme
-          27d552b983b8102261ff9fe3756854c81df586a39355f9246d73d9eb848c00f5  prototypes/ios-arcgis-labels/Package.swift
-          50a2414fe58bab08fa1e4448f6c3b60435aa8ae6ac020a104a1c4e401891c63f  prototypes/ios-arcgis-labels/README.md
-          f3f09d3eef861288ed4cb36568a595a1ac4653fe566db29b6073aeda71d3e79c  prototypes/ios-arcgis-labels/Sources/TileCore/LabelTileCore.swift
-          074065f07e35265d9695cced0f42844dbb02e5766c4ed185d0a372b2d033b093  prototypes/ios-arcgis-labels/Tests/TileCoreTests/Fixtures/valid.png
-          edd19b086426b6cb1c33b6e0e9bc3f7f9f8f70f2c1af499a8cb78e7a84d13321  prototypes/ios-arcgis-labels/Tests/TileCoreTests/LabelTileSchemeHandlerTests.swift
-          bd034108f6429d54f4a3b8209c125e309f2858fc0e6b0ce166e85f78da082921  prototypes/ios-arcgis-labels/Tests/map.test.mjs
-          746ec7b5a9e3faeba9fa874096e214f25b33671f0d77ca2831969b8a470d4f90  prototypes/ios-arcgis-labels/Web/imagery.svg
-          261cc07a00f072a54642ab25100e65f48b9d5a1e83c6cc49a75f4c44374a99d9  prototypes/ios-arcgis-labels/Web/map.html
-          bc8bfa03ac0341a604069852d8c0305b0f6a6323f5c691325ec85d7aea19bdec  prototypes/ios-arcgis-labels/Web/map.js
-          53e8dc25862014e4324741ca18fbe3611e11d42ef69f59f86ea8c5389647d4cb  prototypes/ios-arcgis-labels/Web/vendor/LICENSE
-          a7837102824184820dfa198d1ebcd109ff6d0ff9a2672a074b9a1b4d147d04c6  prototypes/ios-arcgis-labels/Web/vendor/leaflet.css
-          db49d009c841f5ca34a888c96511ae936fd9f5533e90d8b2c4d57596f4e5641a  prototypes/ios-arcgis-labels/Web/vendor/leaflet.js
-          FILES
-          diff -u <(cut -c67- "$RUNNER_TEMP/mock-sources.sha256") <(git ls-files -- prototypes/ios-arcgis-labels prototypes/ios-arcgis-labels-gateway "$HARNESS")
-          test -z "$(find prototypes/ios-arcgis-labels prototypes/ios-arcgis-labels-gateway "$HARNESS" -type l -print)"
-          shasum -a 256 -c "$RUNNER_TEMP/mock-sources.sha256"
-          node "$HARNESS/verify-source.mjs"
+          cmp "$CANDIDATE/hosted-certification.yml.in" .github/workflows/gridly-apple-build-9.yml
+          test -z "$(find prototypes/ios-arcgis-labels* -type l -print)"
+          diff -u <(cut -c67- "$CANDIDATE/certification.sha256") \
+            <(git ls-files -- prototypes/ios-arcgis-labels prototypes/ios-arcgis-labels-gateway \
+              prototypes/ios-arcgis-labels-integration "$CANDIDATE" | sed '\|/certification.sha256$|d')
+          shasum -a 256 -c "$CANDIDATE/certification.sha256"
+          node prototypes/ios-arcgis-labels-integration/verify-source.mjs
           sw_vers
           xcodebuild -version
           swift --version
-          node --version
-
-      - name: Run all 62 Node tests
+      - name: Run 89 Node tests
         run: |
           set -euo pipefail
           run_suite() {
-            node --test --test-reporter=tap "$1" | tee "$RUNNER_TEMP/mock-node.log"
-            grep -Fx "# tests $2" "$RUNNER_TEMP/mock-node.log"
-            grep -Fx "# pass $2" "$RUNNER_TEMP/mock-node.log"
-            grep -Fx '# skipped 0' "$RUNNER_TEMP/mock-node.log"
+            node --test --test-reporter=tap "$1" | tee "$RUNNER_TEMP/labels-node.log"
+            grep -Fx "# tests $2" "$RUNNER_TEMP/labels-node.log"
+            grep -Fx "# pass $2" "$RUNNER_TEMP/labels-node.log"
+            grep -Fx '# skipped 0' "$RUNNER_TEMP/labels-node.log"
           }
+          run_suite "$CANDIDATE/foundation.test.mjs" 27
           run_suite prototypes/ios-arcgis-labels-gateway/gateway.test.mjs 37
           run_suite prototypes/ios-arcgis-labels/Tests/map.test.mjs 7
-          run_suite "$HARNESS/integration.test.mjs" 18
-
-      - name: Run all 17 Swift tests and signing parity checks
+          run_suite prototypes/ios-arcgis-labels-integration/integration.test.mjs 18
+      - name: Run certified and candidate Swift tests
         run: |
           set -euo pipefail
-          swift test --package-path "$HARNESS" --scratch-path "$RUNNER_TEMP/mock-swift" 2>&1 | tee "$RUNNER_TEMP/mock-swift.log"
-          grep -Eq 'Executed 17 tests, with 0 failures' "$RUNNER_TEMP/mock-swift.log"
-          for test_case in \
-            testNodeWireVectorMatchesCanonicalBytesAndVerifiesInCryptoKit \
-            testSyntheticAdmissionToSignedFixtureAndReplay \
-            testWrongEnvironmentAndUnverifiedDecisionNeverIssue \
-            testWrongKeyAlteredPathSkewAndExpiredLeaseFailClosed \
-            testQuotaCancellationAndRevocationWhileTileIsInFlight \
-            testInvalidPNGCountsProviderAttempt; do
-            grep -F "$test_case]' passed" "$RUNNER_TEMP/mock-swift.log"
-          done
-
-      - name: Build and inspect the unsigned mock simulator app
+          swift test --package-path prototypes/ios-arcgis-labels-integration --scratch-path "$RUNNER_TEMP/swift-reference" \
+            2>&1 | tee "$RUNNER_TEMP/labels-reference-swift.log"
+          grep -Eq 'Executed 17 tests, with 0 failures' "$RUNNER_TEMP/labels-reference-swift.log"
+          swift test --package-path "$CANDIDATE/ios" --scratch-path "$RUNNER_TEMP/swift-candidate" \
+            2>&1 | tee "$RUNNER_TEMP/labels-candidate-swift.log"
+          grep -Eq 'Executed 3 tests, with 0 failures' "$RUNNER_TEMP/labels-candidate-swift.log"
+          grep -E 'testCertifiedCanonicalVectorAndCryptoKitSignature.*passed' "$RUNNER_TEMP/labels-candidate-swift.log"
+          grep -E 'testPilotLeaseBindingMatchesNodeVector.*passed' "$RUNNER_TEMP/labels-candidate-swift.log"
+      - name: Build unsigned simulator-only harness
         run: |
           set -euo pipefail
-          xcodebuild build -project "$HARNESS/LabelTileHarness.xcodeproj" \
-            -scheme LabelTileHarness -configuration Debug -sdk iphonesimulator \
-            -destination 'generic/platform=iOS Simulator' -derivedDataPath "$RUNNER_TEMP/integration-derived" \
+          harness="$RUNNER_TEMP/labels-harness"
+          cp -R "$CANDIDATE/ios" "$harness"
+          node "$CANDIDATE/ios/Harness/prepare-assets.mjs" "$harness/Harness"
+          xcodebuild build -project "$harness/PilotHarness.xcodeproj" -scheme PilotHarness \
+            -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath "$RUNNER_TEMP/labels-derived" \
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=
-          app="$RUNNER_TEMP/integration-derived/Build/Products/Debug-iphonesimulator/LabelTileHarness.app"
+          app="$RUNNER_TEMP/labels-derived/Build/Products/Debug-iphonesimulator/PilotHarness.app"
           test "$(/usr/libexec/PlistBuddy -c 'Print CFBundleIdentifier' "$app/Info.plist")" = "$APP_ID"
           test ! -e "$app/_CodeSignature"
           test ! -e "$app/embedded.mobileprovision"
-          test -z "$(find "$app" -type l -print)"
-          diff -r "$HARNESS/Web" "$app/Web"
-          cmp "$HARNESS/Tests/TileCoreTests/Fixtures/valid.png" "$app/valid.png"
-          (cd "$app" && find . -type f -print) | while IFS= read -r file; do
-            case "$file" in
-              ./Info.plist|./PkgInfo|./LabelTileHarness|./LabelTileHarness.debug.dylib|./__preview.dylib|./valid.png|./Web/*) ;;
-              *) echo 'UNEXPECTED_APP_RESOURCE'; exit 1 ;;
-            esac
-          done
-
-      - name: Try the harness on an installed iPhone simulator
-        id: simulator
-        timeout-minutes: 10
+          cmp "$harness/Harness/valid.png" "$app/valid.png"
+          diff -r "$harness/Harness/Web" "$app/Web"
+      - name: Verify signed native tile delivery and WebKit rendering
+        timeout-minutes: 12
         run: |
           set -euo pipefail
-          id="$(xcrun simctl list devices booted --json | python3 -c '
-          import json, sys
-          devices = json.load(sys.stdin)["devices"]
-          print(next((d["udid"] for runtime, group in devices.items() if ".iOS-" in runtime
-                      for d in group if d["name"].startswith("iPhone")), ""))
-          ')"
-          if [[ -z "$id" ]]; then
-            id="$(xcrun simctl list devices available --json | python3 -c '
+          device="$(xcrun simctl list devices available --json | python3 -c '
           import json, sys
           devices = json.load(sys.stdin)["devices"]
           print(next((d["udid"] for runtime, group in devices.items() if ".iOS-" in runtime
                       for d in group if d["name"].startswith("iPhone") and d["state"] == "Shutdown"), ""))
           ')"
-            if [[ -z "$id" ]]; then
-              echo 'SIMULATOR_UNAVAILABLE'
-              exit 1
-            fi
-            trap 'xcrun simctl shutdown "$id" >/dev/null 2>&1 || true' EXIT
-            xcrun simctl boot "$id"
-          fi
-          xcrun simctl bootstatus "$id" -b
-          app="$RUNNER_TEMP/integration-derived/Build/Products/Debug-iphonesimulator/LabelTileHarness.app"
-          xcrun simctl install "$id" "$app"
-          launched="$(xcrun simctl launch "$id" "$APP_ID")"
-          [[ "$launched" =~ ^com\.gridlygo\.prototype\.labeltiles\.integration:\ ([0-9]+)$ ]]
-          pid="${BASH_REMATCH[1]}"
-          echo 'SIMULATOR_INSTALLED_AND_LAUNCHED'
-          predicate="process == \"LabelTileHarness\" AND subsystem == \"$APP_ID\" AND category == \"mock-gateway\" AND eventMessage == \"MOCK_GATEWAY_PNG_DELIVERED\""
-          for attempt in {1..6}; do
-            sleep 5
+          test -n "$device"
+          trap 'xcrun simctl shutdown "$device" >/dev/null 2>&1 || true' EXIT
+          xcrun simctl boot "$device"
+          xcrun simctl bootstatus "$device" -b
+          app="$RUNNER_TEMP/labels-derived/Build/Products/Debug-iphonesimulator/PilotHarness.app"
+          xcrun simctl install "$device" "$app"
+          started="$(xcrun simctl launch "$device" "$APP_ID")"
+          test "${started%: *}" = "$APP_ID"
+          pid="${started##*: }"
+          [[ "$pid" =~ ^[0-9]+$ ]]
+          predicate="process == 'PilotHarness' AND subsystem == '$APP_ID' AND category == 'certification'"
+          for check in {1..8}; do
+            sleep 3
             kill -0 "$pid"
-            xcrun simctl spawn "$id" log show --last 2m --style compact --predicate "$predicate" > "$RUNNER_TEMP/integration-delivery.log"
-            if grep -Eq 'MOCK_GATEWAY_PNG_DELIVERED$' "$RUNNER_TEMP/integration-delivery.log"; then break; fi
+            xcrun simctl spawn "$device" log show --last 2m --style compact --predicate "$predicate" \
+              > "$RUNNER_TEMP/labels-runtime.log"
+            if grep -q 'PILOT_WEBKIT_LABELS_RENDERED$' "$RUNNER_TEMP/labels-runtime.log"; then break; fi
           done
-          sleep 3
+          grep -q 'PILOT_SIGNED_PNG_DELIVERED$' "$RUNNER_TEMP/labels-runtime.log"
+          grep -q 'PILOT_WEBKIT_LABELS_RENDERED$' "$RUNNER_TEMP/labels-runtime.log"
+          ! grep -q 'PILOT_HARNESS_REQUEST_REJECTED$' "$RUNNER_TEMP/labels-runtime.log"
+          xcrun simctl spawn "$device" log show --last 2m --style compact \
+            --predicate "process == 'PilotHarness' AND (messageType == error OR messageType == fault)" \
+            > "$RUNNER_TEMP/labels-diagnostics.log"
+          for category in 'WebContent process' 'GPU process' 'WebPrivacy' 'Unable to filter'; do
+            printf '%s occurrences: %s\n' "$category" "$(grep -Fc "$category" "$RUNNER_TEMP/labels-diagnostics.log" || true)"
+          done
           kill -0 "$pid"
-          echo 'SIMULATOR_PROCESS_RUNNING'
-          xcrun simctl io "$id" screenshot "$RUNNER_TEMP/integration-simulator.png"
-          echo 'screenshot=true' >> "$GITHUB_OUTPUT"
-          xcrun simctl spawn "$id" log show --last 2m --style compact \
-            --predicate "process == \"LabelTileHarness\" AND (messageType == error OR messageType == fault)" > "$RUNNER_TEMP/integration-diagnostics.log"
-          for category in 'WebContent process' 'GPU process' 'WebPrivacy' 'Unable to filter' 'Failed to resolve host network app id'; do
-            printf '%s occurrences: %s\n' "$category" "$(grep -Fc "$category" "$RUNNER_TEMP/integration-diagnostics.log" || true)"
-          done
-          grep -Eq 'MOCK_GATEWAY_PNG_DELIVERED$' "$RUNNER_TEMP/integration-delivery.log"
-          echo 'NATIVE_MOCK_GATEWAY_PNG_DELIVERY_CONFIRMED'
-
-      - name: Retain the mock simulator screenshot
-        if: always() && steps.simulator.outputs.screenshot == 'true'
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+          xcrun simctl io "$device" screenshot "$RUNNER_TEMP/labels-simulator.png"
+          printf '%s\n' PILOT_SIGNED_PNG_DELIVERED PILOT_WEBKIT_LABELS_RENDERED
+      - name: Retain synthetic screenshot only
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: gridly-label-integration-simulator
-          path: ${{ runner.temp }}/integration-simulator.png
+          name: gridly-labels-foundation-simulator
+          path: ${{ runner.temp }}/labels-simulator.png
           if-no-files-found: error
           retention-days: 7
-
-      - name: Verify checkout was left clean
+      - name: Confirm source checkout remains clean
         if: always()
         run: |
           set -euo pipefail

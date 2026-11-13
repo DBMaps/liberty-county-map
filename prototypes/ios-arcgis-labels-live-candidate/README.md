@@ -1,0 +1,47 @@
+# Gridly iOS labels pilot candidate
+
+This directory is an isolated implementation candidate for a later Build 19 integration. The certified native queue and tile parsing were adapted from the Stage 2F.2 prototype. The HTTP implementation has no entry point that starts a listener. The default gateway, database state, Esri adapter and Swift transport all deny live use.
+
+## Local checks
+
+```powershell
+node --test prototypes/ios-arcgis-labels-live-candidate/foundation.test.mjs
+node --expose-gc prototypes/ios-arcgis-labels-live-candidate/benchmark.mjs
+& ./prototypes/ios-arcgis-labels-live-candidate/test-disposable-postgres.ps1
+```
+
+The Node checks use injected responses and certified local fixtures. The benchmark records process overhead, request counts, reservations and memory deltas for one local workload. The Postgres script needs Windows PostgreSQL binaries and an unused loopback port. It starts a disposable cluster, runs the migration and concurrency checks through separate connections, and stops and removes its own cluster. Run the new Swift package tests on macOS and compile the UIKit/WebKit code for iOS Simulator separately. Use an external Swift scratch directory to preserve the existing certified prototypes.
+
+## Stage 3C hosted certification proposal
+
+`hosted-certification.yml.in` is an inert workflow draft. After explicit owner authorization, use the existing clean certification checkout on `codex/gridly-ios-label-integration-certification` and require parent `2d3a36a029a706178e0bb858d8410b354b72f36c`. Copy only this directory and install the draft byte-for-byte at `.github/workflows/gridly-apple-build-9.yml` in that checkout. Verify the exact staged inventory and diff, the manifest, and the absence of a push trigger. Create one commit and verify its parent, clean checkout, and exact SHA. Fast-forward only the certification branch. Check its remote SHA before dispatching registered workflow ID `372242032` once with `expected_commit_sha` set to that exact commit. Keep the workflow on the default branch and all delivery tags unchanged.
+
+The manifest pins all 50 certified reference files and every candidate file except the manifest itself. The immutable Git SHA covers that file and the branch workflow, which must match its pinned template byte-for-byte. The checkout excludes the consumer app. The hosted runner runs the 89 Node checks and the 17 reference plus 3 candidate Swift tests. The two Swift package commands and unsigned simulator build command are in the draft. Asset generation and build outputs stay in runner scratch space.
+
+The iOS project targets the simulator at iOS 16.4. It compiles the candidate Swift sources and uses the candidate WebKit handler and ephemeral URLSession. A harness-only URLProtocol intercepts every HTTPS request, independently validates each CryptoKit tile signature and serves the certified synthetic label renderer. WebKit serves its page, Leaflet, and imagery from an allowlisted local custom scheme with a restrictive CSP. There is no HTTPS server or socket in this harness. The Swift package tests cover the certified P1363 vector and the shared labels lease-binding digest. The simulator step requires signed PNG delivery and the WebKit marker emitted after both imagery and a label tile load. Manually verify visible and aligned West Ridge, Cedar Lane and Mill Creek in the retained screenshot. The existing mock suite and local PostgreSQL checks cover replay, expiry, revocation and quota behavior. The hosted job produces only the synthetic screenshot artifact.
+
+## Server contract
+
+Compose `createPilotApplication` behind an isolated HTTPS endpoint. Supply a trusted, explicit origin, app ID and database query driver. Use `createPostgresState` against a dedicated pilot database role. The memory state is for local tests. Configure connection/statement deadlines, a bounded request/header size and timeout, and a trusted ingress limiter before the route. The proxy must preserve the original request target, restrict authority to the pilot origin, and disable access logging of tile paths and headers.
+
+- `POST /v1/labels/lease` accepts a single native challenge ID, opaque paid and App Attest evidence, and canonical base64url P-256 SPKI. The App Attest port verifies the registered native key or initial attestation, exact app identity, purpose, request binding, environment, challenge freshness and replay controls. Its verdict supplies the pseudonymous installation. The paid port independently validates the exact submitted StoreKit evidence and supplies a fresh paid decision, period end, revocation status and pseudonymous purchase lineage. Ordinary admission or continuity proofs and reviewer access are insufficient.
+- The App Attest client data hash binds the purpose `gridly-labels-lease-v1`, app ID, StoreKit Sandbox, App Attest production, challenge UUID, SHA-256 of the submitted paid evidence and fingerprint of the native tile signing key. The challenge acquisition and production-verifier adapters are deliberately unconfigured. A real pilot needs its own approved app identity and environment policy.
+- `GET /v1/imagery-labels/{level}/{row}/{column}` accepts only canonical coordinates in the existing level range 0–19. The four `X-Gridly-Labels-*` headers carry lease, timestamp, UUID and the P1363 signature. The signed array contains the pilot audience, method, exact HTTPS target, lease, timestamp and UUID. The lease lasts at most five minutes and is bounded by the verified paid period. The signed request has a ±30-second clock window. The approved Stage 2F.2 vector tests wire compatibility while the new audience and origin keep the pilot separate.
+- Postgres serializes short state transitions under one control-row lock. A reservation records replay and charges installation, purchase and aggregate quotas before any provider operation. The defaults are 500/1,000/10,000 per UTC day, 60 per rolling minute per installation, four simultaneous requests per installation and 64 in total. Aborts and failed upstream calls consume the reservation. Revocation or emergency disable withholds any late image. A stalled worker keeps its slot until completion. If a worker is permanently lost, the operator must reconcile its abandoned slots after confirming that its outbound requests have stopped.
+- Responses are `no-store`. Each user request gets its own upstream response. App code, proxy logs and metrics must omit credentials, purchase evidence, exact map coordinates and native proofs.
+
+## Disabled configuration
+
+Use a dedicated server secret environment for `GRIDLY_LABELS_ESRI_CLIENT_ID` and `GRIDLY_LABELS_ESRI_CLIENT_SECRET`. Leave those variables unset and both `GRIDLY_LABELS_PILOT_ENABLED` and `GRIDLY_LABELS_ESRI_ENABLED` false until separately authorized. Leave the database control row disabled. The Esri adapter requires an explicitly supplied HTTP transport and does not install a default fetch transport. Its fixed POST uses the Location Platform token endpoint and form-encoded client credentials. It reuses a server-held token until its early refresh window, applies a minimum token request interval, and shares one in-flight refresh per process. Coordinate a shared refresh strategy or a single instance before scaling beyond one worker.
+
+The fixed Imagery Labels GET uses a bearer header with level, row and column in provider order. Redirects, unsuccessful replies and oversized or invalid images fail closed. The server validates the 512 × 512 PNG structure, CRCs and bounded scanlines, including supported palette, grayscale, truecolor and Adam7 encodings. The native decoder independently checks image validity. Use the reviewed Esri and data-provider attribution in Leaflet. Do not pass live provider metadata into the map as unreviewed HTML.
+
+## Later Capacitor integration
+
+In the separately authorized consumer integration, use Capacitor 8.3.4's `CAPBridgeViewController.webViewConfiguration(for:)` override. Start with the superclass configuration and install one `LabelsSchemeHandler` before constructing the WebView. Retain it for one trusted local WebView/session, maintain the local-origin navigation and frame restrictions, and wire background/resume and account or entitlement changes to suspension and invalidation. The native pilot must supply the HTTPS origin and the verified evidence adapter. The scheme handler handles only `gridly-label://pilot/tile/…`. It does not intercept standard WebView requests.
+
+At the existing Leaflet labels construction point, pass the original Satellite layer group and existing pane to the adapter. Preserve the Standard layer, World Imagery, controls, and basemap switching. Use reviewed attribution. The adapter keeps the 512-pixel tile size and −1 zoom offset, cancels unloaded tiles, leaves the imagery visible through label failures, and uses the existing layer on network recovery. Wire online/resume callbacks explicitly.
+
+## Gates before live use
+
+Confirm with Esri whether a dedicated nonproduction credential may serve each Imagery Labels response to one verified subscriber in the paid app. Confirm the applicable caching and attribution rules, request limits and billing scope, and whether the proposed telemetry requires written benchmarking permission. Separately authorize the isolated database and HTTPS deployment, real verification adapters, pilot credential, and bounded provider test. A later reviewed consumer integration and physical iPhone certification are required before Build 19 signing or delivery.
