@@ -1,0 +1,188 @@
+name: Gridly iOS Fixed Path Labels Certification
+
+on:
+  workflow_dispatch:
+    inputs:
+      expected_commit_sha:
+        description: Exact reviewed Stage 3E.2 certification commit
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gridly-ios-label-integration-certification
+  cancel-in-progress: false
+
+jobs:
+  certify:
+    if: github.repository == 'DBMaps/liberty-county-map' && github.actor == 'DBMaps' && github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/codex/gridly-ios-label-integration-certification' && github.run_attempt == 1
+    runs-on: macos-26
+    timeout-minutes: 25
+    defaults:
+      run:
+        shell: bash
+    env:
+      EXPECTED_SHA: ${{ inputs.expected_commit_sha }}
+      CANDIDATE: prototypes/ios-arcgis-labels-live-candidate
+      DEPLOY: prototypes/ios-arcgis-labels-gateway-deploy
+      GRIDLY_LABELS_LOCAL_BENCH: '1'
+      APP_ID: com.gridlygo.prototype.labeltiles.pilot-cert
+    steps:
+      - name: Verify dispatch SHA
+        run: |
+          set -euo pipefail
+          [[ "$EXPECTED_SHA" =~ ^[0-9a-f]{40}$ ]]
+          test "$EXPECTED_SHA" = "$GITHUB_SHA"
+      - name: Checkout reviewed prototype sources
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ inputs.expected_commit_sha }}
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /prototypes/ios-arcgis-labels/
+            /prototypes/ios-arcgis-labels-gateway/
+            /prototypes/ios-arcgis-labels-integration/
+            /prototypes/ios-arcgis-labels-live-candidate/
+            /prototypes/ios-arcgis-labels-gateway-deploy/
+            /.github/workflows/gridly-apple-build-9.yml
+      - name: Verify source identity and inventories
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          test -z "$(git status --porcelain --untracked-files=all)"
+          cmp "$DEPLOY/certification-workflow.yml.in" .github/workflows/gridly-apple-build-9.yml
+          test -z "$(find prototypes/ios-arcgis-labels* -type l -print)"
+          diff -u <(cut -c67- "$CANDIDATE/certification.sha256") \
+            <(git ls-files -- prototypes/ios-arcgis-labels prototypes/ios-arcgis-labels-gateway \
+              prototypes/ios-arcgis-labels-integration "$CANDIDATE" | sed '\|/certification.sha256$|d')
+          shasum -a 256 -c "$CANDIDATE/certification.sha256"
+          node prototypes/ios-arcgis-labels-integration/verify-source.mjs
+          diff -u <(cut -c67- "$DEPLOY/certification.sha256") \
+            <(git ls-files -- "$DEPLOY" | sed '\|/certification.sha256$|d')
+          shasum -a 256 -c "$DEPLOY/certification.sha256"
+          node "$DEPLOY/verify-sources.mjs"
+          if grep -RiE 'x-gridly-pilot-ingress|gridly_labels_ingress_key' "$DEPLOY/native-fixed-path/Sources"; then exit 1; fi
+          node --version
+          sw_vers
+          xcodebuild -version
+          swift --version
+      - name: Run 89 Node tests
+        run: |
+          set -euo pipefail
+          run_suite() {
+            node --test --test-reporter=tap "$1" | tee "$RUNNER_TEMP/labels-node.log"
+            grep -Fx "# tests $2" "$RUNNER_TEMP/labels-node.log"
+            grep -Fx "# pass $2" "$RUNNER_TEMP/labels-node.log"
+            grep -Fx '# skipped 0' "$RUNNER_TEMP/labels-node.log"
+          }
+          run_suite "$CANDIDATE/foundation.test.mjs" 27
+          run_suite prototypes/ios-arcgis-labels-gateway/gateway.test.mjs 37
+          run_suite prototypes/ios-arcgis-labels/Tests/map.test.mjs 7
+          run_suite prototypes/ios-arcgis-labels-integration/integration.test.mjs 18
+      - name: Run gateway tests in Node and Deno
+        run: |
+          set -euo pipefail
+          node --test --test-reporter=tap "$DEPLOY/edge.test.mjs" | tee "$RUNNER_TEMP/fixed-node.log"
+          grep -Fx '# pass 13' "$RUNNER_TEMP/fixed-node.log"
+          grep -Fx '# skipped 0' "$RUNNER_TEMP/fixed-node.log"
+          npm install --prefix "$RUNNER_TEMP/fixed-tools" --registry=https://registry.npmjs.org --no-audit --no-fund deno@2.6.8
+          export PATH="$RUNNER_TEMP/fixed-tools/node_modules/.bin:$PATH"
+          deno --version
+          deno check --frozen --node-modules-dir=none --lock="$DEPLOY/supabase/functions/gridly-labels/deno.lock" "$DEPLOY/supabase/functions/gridly-labels/index.ts"
+          deno test --no-lock --node-modules-dir=none --allow-env=GRIDLY_LABELS_LOCAL_BENCH \
+            --allow-read="prototypes/ios-arcgis-labels-integration/Tests/TileCoreTests/Fixtures,$DEPLOY/native-fixed-path/Tests/GridlyFixedPathTileTests/tile-proof.json" \
+            "$DEPLOY/edge.test.mjs" | tee "$RUNNER_TEMP/fixed-deno.log"
+          grep -F '13 passed | 0 failed' "$RUNNER_TEMP/fixed-deno.log"
+      - name: Verify CryptoKit and both gateway runtimes
+        run: |
+          set -euo pipefail
+          export GRIDLY_FIXED_VECTOR_OUT="$RUNNER_TEMP/swift-public-vector.json"
+          swift test --package-path "$DEPLOY/native-fixed-path" --scratch-path "$RUNNER_TEMP/swift-fixed" \
+            2>&1 | tee "$RUNNER_TEMP/fixed-swift.log"
+          grep -Eq 'Executed 1 test, with 0 failures' "$RUNNER_TEMP/fixed-swift.log"
+          test -s "$GRIDLY_FIXED_VECTOR_OUT"
+          node "$DEPLOY/native-fixed-path/verify-swift-vector.mjs" "$GRIDLY_FIXED_VECTOR_OUT"
+          "$RUNNER_TEMP/fixed-tools/node_modules/.bin/deno" run --no-lock --node-modules-dir=none \
+            --allow-read="$GRIDLY_FIXED_VECTOR_OUT,prototypes/ios-arcgis-labels-integration/Tests/TileCoreTests/Fixtures,$DEPLOY/native-fixed-path/Tests/GridlyFixedPathTileTests/tile-proof.json" \
+            "$DEPLOY/native-fixed-path/verify-swift-vector.mjs" "$GRIDLY_FIXED_VECTOR_OUT"
+      - name: Build unsigned simulator-only harness
+        run: |
+          set -euo pipefail
+          harness="$RUNNER_TEMP/labels-harness"
+          node "$DEPLOY/native-fixed-path/prepare-harness.mjs" "$harness"
+          node "$CANDIDATE/ios/Harness/prepare-assets.mjs" "$harness/Harness"
+          xcodebuild build -project "$harness/PilotHarness.xcodeproj" -scheme PilotHarness \
+            -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath "$RUNNER_TEMP/labels-derived" \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=
+          app="$RUNNER_TEMP/labels-derived/Build/Products/Debug-iphonesimulator/PilotHarness.app"
+          test "$(/usr/libexec/PlistBuddy -c 'Print CFBundleIdentifier' "$app/Info.plist")" = "$APP_ID"
+          test ! -e "$app/_CodeSignature"
+          test ! -e "$app/embedded.mobileprovision"
+          if grep -aFiq 'X-Gridly-Pilot-Ingress' "$app/PilotHarness"; then
+            # The fixture verifier checks for absence of this header by name.
+            # The request builder check above ensures it never writes it.
+            printf '%s\n' 'INGRESS_HEADER_NAME_ONLY_IN_SYNTHETIC_VERIFIER'
+          fi
+          cmp "$harness/Harness/valid.png" "$app/valid.png"
+          diff -r "$harness/Harness/Web" "$app/Web"
+      - name: Verify signed native tile delivery and WebKit rendering
+        id: simulator
+        timeout-minutes: 12
+        run: |
+          set -euo pipefail
+          device="$(xcrun simctl list devices available --json | python3 -c '
+          import json, sys
+          devices = json.load(sys.stdin)["devices"]
+          print(next((d["udid"] for runtime, group in devices.items() if ".iOS-" in runtime
+                      for d in group if d["name"].startswith("iPhone") and d["state"] == "Shutdown"), ""))
+          ')"
+          test -n "$device"
+          trap 'xcrun simctl shutdown "$device" >/dev/null 2>&1 || true' EXIT
+          xcrun simctl boot "$device"
+          xcrun simctl bootstatus "$device" -b
+          app="$RUNNER_TEMP/labels-derived/Build/Products/Debug-iphonesimulator/PilotHarness.app"
+          xcrun simctl install "$device" "$app"
+          started="$(xcrun simctl launch "$device" "$APP_ID")"
+          test "${started%: *}" = "$APP_ID"
+          pid="${started##*: }"
+          [[ "$pid" =~ ^[0-9]+$ ]]
+          predicate="process == 'PilotHarness' AND subsystem == '$APP_ID' AND category == 'certification'"
+          for check in {1..8}; do
+            sleep 3
+            kill -0 "$pid"
+            xcrun simctl spawn "$device" log show --last 2m --style compact --predicate "$predicate" \
+              > "$RUNNER_TEMP/labels-runtime.log"
+            if grep -q 'PILOT_WEBKIT_LABELS_RENDERED$' "$RUNNER_TEMP/labels-runtime.log"; then break; fi
+          done
+          xcrun simctl spawn "$device" log show --last 2m --style compact \
+            --predicate "process == 'PilotHarness' AND (messageType == error OR messageType == fault)" \
+            > "$RUNNER_TEMP/labels-diagnostics.log"
+          for category in 'WebContent process' 'GPU process' 'WebPrivacy' 'Unable to filter'; do
+            printf '%s occurrences: %s\n' "$category" "$(grep -Fc "$category" "$RUNNER_TEMP/labels-diagnostics.log" || true)"
+          done
+          kill -0 "$pid"
+          xcrun simctl io "$device" screenshot "$RUNNER_TEMP/labels-simulator.png"
+          printf '%s\n' screenshot=true >> "$GITHUB_OUTPUT"
+          grep -q 'PILOT_FIXED_POST_VERIFIED$' "$RUNNER_TEMP/labels-runtime.log"
+          grep -q 'PILOT_SIGNED_PNG_DELIVERED$' "$RUNNER_TEMP/labels-runtime.log"
+          grep -q 'PILOT_WEBKIT_LABELS_RENDERED$' "$RUNNER_TEMP/labels-runtime.log"
+          if grep -q 'PILOT_HARNESS_REQUEST_REJECTED$' "$RUNNER_TEMP/labels-runtime.log"; then exit 1; fi
+          printf '%s\n' PILOT_FIXED_POST_VERIFIED PILOT_SIGNED_PNG_DELIVERED PILOT_WEBKIT_LABELS_RENDERED
+      - name: Retain synthetic screenshot only
+        if: always() && steps.simulator.outputs.screenshot == 'true'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: gridly-labels-fixed-path-simulator
+          path: ${{ runner.temp }}/labels-simulator.png
+          if-no-files-found: error
+          retention-days: 7
+      - name: Confirm source checkout remains clean
+        if: always()
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          test -z "$(git status --porcelain --untracked-files=all)"

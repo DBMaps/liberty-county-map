@@ -1,0 +1,4 @@
+project_id = "gridly-labels-pilot"
+
+[functions.gridly-labels]
+verify_jwt = false

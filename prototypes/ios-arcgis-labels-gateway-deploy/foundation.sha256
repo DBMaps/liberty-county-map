@@ -1,0 +1,6 @@
+2c527dad7e6c36692a69454ebdfb03e12ca7ab4c5ccbbb59e2e4868edf9dcc69  ../ios-arcgis-labels-live-candidate/esri.mjs  supabase/functions/gridly-labels/foundation/esri.mjs
+22ed0455d38010488e0631e050bad47a1fc85e59a64b4dba3eb643ba3645fbde  ../ios-arcgis-labels-live-candidate/gateway.mjs  supabase/functions/gridly-labels/foundation/gateway.mjs
+21ca773271bec4d648b12b3223cfc35d6b1c03fd0c11c84f04609a205f3f7d18  ../ios-arcgis-labels-live-candidate/png.mjs  supabase/functions/gridly-labels/foundation/png.mjs
+143efe6a6d3985fd60092c8901befd63dd161b948da2bdc6c4ce1232d9f89d3a  ../ios-arcgis-labels-live-candidate/protocol.mjs  supabase/functions/gridly-labels/foundation/protocol.mjs
+8c8f31947a6f52b3d69291008e2872c44054dbc103ff151c5f2d6b8d275d1422  ../ios-arcgis-labels-live-candidate/state.mjs  supabase/functions/gridly-labels/foundation/state.mjs
+0b727113b23f5a125a76c47012e54d4dbc6bb03d35bb2be0491dd95860f079eb  ../ios-arcgis-labels-live-candidate/pilot-state.sql  supabase/migrations/20261113000100_labels_foundation.sql

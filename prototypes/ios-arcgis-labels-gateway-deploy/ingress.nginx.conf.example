@@ -1,0 +1,66 @@
+# Pilot-only Nginx template. Replace labels-pilot.invalid and PROJECTREF, set
+# certificates, and supply the private include. Do not expose an alternate route.
+# Include inside http {}; the proxy must see the original request target and IP.
+limit_req_zone $binary_remote_addr zone=label_pilot_source:1m rate=10r/s;
+limit_conn_zone $binary_remote_addr zone=label_pilot_connections:1m;
+limit_req_zone $server_name zone=label_pilot_total:1m rate=5r/s;
+limit_conn_zone $server_name zone=label_pilot_total_connections:1m;
+map "$request_method:$request_uri" $gridly_route {
+    default 0;
+    "~^GET:/health$" 1;
+    "~^POST:/v1/labels/(challenge|lease)$" 1;
+    "~^POST:/v1/imagery-labels/tile$" 1;
+}
+server {
+    listen 443 ssl;
+    server_name labels-pilot.invalid;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_certificate /etc/gridly-labels/fullchain.pem;
+    ssl_certificate_key /etc/gridly-labels/tls-key.pem;
+    access_log off;
+    error_log /dev/null crit;
+    client_max_body_size 48k;
+    client_body_buffer_size 48k;
+    client_header_timeout 5s;
+    client_body_timeout 5s;
+    send_timeout 7s;
+    keepalive_timeout 5s;
+    location / {
+        if ($host != labels-pilot.invalid) { return 404; }
+        if ($gridly_route = 0) { return 404; }
+        limit_req zone=label_pilot_source burst=16 nodelay;
+        limit_req zone=label_pilot_total burst=24 nodelay;
+        limit_req_status 429;
+        limit_conn label_pilot_connections 8;
+        limit_conn label_pilot_total_connections 24;
+        limit_conn_status 429;
+        add_header Cache-Control "no-store" always;
+        proxy_hide_header Cache-Control;
+        proxy_hide_header Set-Cookie;
+        proxy_hide_header Access-Control-Allow-Origin;
+        proxy_cache off;
+        proxy_buffering off;
+        proxy_request_buffering on;
+        proxy_pass_request_headers off;
+        proxy_set_header Host PROJECTREF.supabase.co;
+        proxy_set_header Content-Type $http_content_type;
+        proxy_set_header Content-Encoding $http_content_encoding;
+        proxy_set_header X-Gridly-Labels-Lease $http_x_gridly_labels_lease;
+        proxy_set_header X-Gridly-Labels-Timestamp $http_x_gridly_labels_timestamp;
+        proxy_set_header X-Gridly-Labels-Request $http_x_gridly_labels_request;
+        proxy_set_header X-Gridly-Labels-Signature $http_x_gridly_labels_signature;
+        # Private file contains a single proxy_set_header for X-Gridly-Pilot-Ingress.
+        include /etc/gridly-labels/private-ingress-header.conf;
+        proxy_ssl_server_name on;
+        proxy_ssl_name PROJECTREF.supabase.co;
+        proxy_ssl_verify on;
+        proxy_ssl_verify_depth 4;
+        proxy_ssl_trusted_certificate /etc/ssl/certs/ca-certificates.crt;
+        proxy_connect_timeout 3s;
+        proxy_send_timeout 7s;
+        proxy_read_timeout 10s;
+        proxy_next_upstream off;
+        rewrite ^ /functions/v1/gridly-labels$uri break;
+        proxy_pass https://PROJECTREF.supabase.co;
+    }
+}
