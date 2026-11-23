@@ -1,0 +1,972 @@
+{
+  "sourceCommit": "cf60e7a7158501b7229b31f1c970547180bf57a6",
+  "parentCommit": "beef28b9cb6ffab60d83f1e04baa19c008cb34b6",
+  "tests": [
+    "tests/lp24461-subscription-entitlement.test.mjs",
+    "tests/lp24462-server-verification.test.mjs",
+    "tests/lp24463-apple-storekit.test.mjs",
+    "tests/lp24465-continuity.test.mjs",
+    "tests/lp24466-window3c-native-authorization.test.mjs",
+    "tests/lp24466-window3d-apple-attest.test.mjs",
+    "tests/lp24466-window3d-challenge-gateway.test.mjs",
+    "tests/lp24466s-apple-node.test.mjs",
+    "tests/lp24465-paid-access.test.mjs",
+    "tests/lp24466r-testflight-admission.test.mjs"
+  ],
+  "files": [
+    {
+      "path": "android/app/src/main/java/com/gridlygo/gridly/GridlyContinuityPlugin.kt",
+      "gitBlob": "fec7c53813eeaf642992aefbb23bc636d21c08cd",
+      "sha256": "977b9ce1e6dba53fa37211cac520820d7d7035d71b3e41d66fe756659ce171fb",
+      "bytes": 6275
+    },
+    {
+      "path": "android/app/src/main/java/com/gridlygo/gridly/MainActivity.kt",
+      "gitBlob": "05e500ab15f66bf7a734cb85417877c50d58dac1",
+      "sha256": "5f87455bf7aaeee857b4889b66510305fe8f310968b8787b481008abd39dfb8c",
+      "bytes": 882
+    },
+    {
+      "path": "consumer-script-manifest.json",
+      "gitBlob": "171fafa815c79cb0b2a63e6f03c85f9cbd458de8",
+      "sha256": "f09a6983ba5b212686a260b29fa3670f84506faa45ca7f047b3f88e261a39a16",
+      "bytes": 7717
+    },
+    {
+      "path": "data/generated/lp104/txgio-addresses/runtime-manifest.json",
+      "gitBlob": "1e62fbc0a0d6ebf5be83f7cbc5f484fef1e45971",
+      "sha256": "9680601f4ecbdcd51f54523ec4b09e6757dc2dfb33a9520e4da0222c4a35963a",
+      "bytes": 471
+    },
+    {
+      "path": "data/roadway-runtime-manifest.json",
+      "gitBlob": "8b46646a719e35ce39acaa6c86ebfcb095088e48",
+      "sha256": "e4c9ac7168ec84dc462695a93ea4561dbd62486131f3f78b70ed05ab5ba39a0c",
+      "bytes": 233989
+    },
+    {
+      "path": "index.html",
+      "gitBlob": "805ae0372b62165cb380ab2ad902455b1b7a93ad",
+      "sha256": "3449aef872f0f0adc9d70f201ed0b6054b8f8cddf02754d22657ed5afdae8e97",
+      "bytes": 107747
+    },
+    {
+      "path": "ios/App/App.xcodeproj/project.pbxproj",
+      "gitBlob": "7cfe6e55eeb41b9670894d7cb14cc51128da5123",
+      "sha256": "8f302311c42cc816f914225e9f7ca9e3cc5f9797ee7e192d23083b956a870ced",
+      "bytes": 17089
+    },
+    {
+      "path": "ios/App/App/Base.lproj/Main.storyboard",
+      "gitBlob": "d2f4004741393b5a9ccac77d2e00981370936d96",
+      "sha256": "897ef516f893bb36e5ea59bffd0dff50b30e476fe3be8af85afb131f802768da",
+      "bytes": 1046
+    },
+    {
+      "path": "ios/App/App/GridlyBridgeViewController.swift",
+      "gitBlob": "0bb2555b6d9869bc23e2ae954891d00a90a35387",
+      "sha256": "13dacfdb3c7267a25a7bb88ef93de1f11fc43475a5436efef849ae94f3e31ff8",
+      "bytes": 351
+    },
+    {
+      "path": "ios/App/App/GridlyContinuityPlugin.swift",
+      "gitBlob": "1ade6622440fdce40995629f0ab1a1adccb93ea2",
+      "sha256": "99271c0b60f3ef96430b1962447585bcbd9b20bf6f5e5be747bb138d6ba09ba7",
+      "bytes": 7654
+    },
+    {
+      "path": "ios/App/App/GridlyStoreKitPlugin.swift",
+      "gitBlob": "20ae39f2bff138521ee62766a01a1c922e1e8930",
+      "sha256": "82444a5e1c2cd1a192c7cde9c8d2c14b2ba40fe55b5c2f62fba853306f1f2d86",
+      "bytes": 10382
+    },
+    {
+      "path": "js/app.js",
+      "gitBlob": "981c64958c503e6e48a071eeb6be88487318867f",
+      "sha256": "f1df93dd0a34cb179e860c11024a693bf44cb23aaf7926dca40d17116d7584c1",
+      "bytes": 8845823
+    },
+    {
+      "path": "js/governed-awareness.js",
+      "gitBlob": "693b3c7d5d6c7e49fab4a358685029b9b9ffaba7",
+      "sha256": "4fbf603c481eb4082a07ddbff6690c739ab7607d0fab0224066d337afe54bb7b",
+      "bytes": 53900
+    },
+    {
+      "path": "js/gridly-apple-storekit.mjs",
+      "gitBlob": "faa43fe60bcafb36232be32df8953a692a977209",
+      "sha256": "b94b2158907b2e9de9f25f89476d17f023a7a153f9bdb84e0678ee4b657ad907",
+      "bytes": 7609
+    },
+    {
+      "path": "js/gridly-continuity.mjs",
+      "gitBlob": "93e7282473686084c34a31b0fb0c5d9e55c8e82d",
+      "sha256": "088924c2aeb46ed9269695c8f311b5f741ee1d46df838f7f46b4db55af96a9eb",
+      "bytes": 2537
+    },
+    {
+      "path": "js/gridly-entitlement-public-key.mjs",
+      "gitBlob": "22c0a6f6e1643c9522b06e6489eb13256f1f99a9",
+      "sha256": "8920141092b7625432cafb6547035534e634656ac42b2241676570aa6976bed5",
+      "bytes": 944
+    },
+    {
+      "path": "js/gridly-entitlement.mjs",
+      "gitBlob": "fba384c54df839989936b6872ab5b28efff01473",
+      "sha256": "a34badd2439ede4fa4a5d51a6d0aaa9ed805567d34620636a11dbb1e66d0399e",
+      "bytes": 9747
+    },
+    {
+      "path": "js/gridly-geocoding-client.js",
+      "gitBlob": "aece806ef56b37e61c8eff683c4f04a14fb6e92d",
+      "sha256": "a65dbf51ae24c9a158048079aca5046b45262be22d5dc37fd641ecab10f40191",
+      "bytes": 12186
+    },
+    {
+      "path": "js/gridly-google-play-billing.mjs",
+      "gitBlob": "6d9bccac377453f380aecd7787dcd1a2ef0c5ddb",
+      "sha256": "f6c95b5f0636b95a18c31f9c4f2c7b87fe15a9a6d638089a92599c63cef90f2a",
+      "bytes": 6192
+    },
+    {
+      "path": "js/gridly-map-visibility.js",
+      "gitBlob": "a22feb5744be9d18be5031c1ff61df60fa776ece",
+      "sha256": "c1a198de81c3ef4fc74178e05dc37594e0c1c1f3d6d64981ecbdf161c0e048b8",
+      "bytes": 6250
+    },
+    {
+      "path": "js/gridly-native-attested-invoke.mjs",
+      "gitBlob": "838196de6db9e276e22045f5a94d97c06f896ebd",
+      "sha256": "3527e88a03822288344d643cc6af796762ba2c1d81323e9b39a1b831ab5be606",
+      "bytes": 2600
+    },
+    {
+      "path": "js/gridly-native-edge-transport.mjs",
+      "gitBlob": "2f7eeac4fdc40692ee23bfc80c800a63445950c0",
+      "sha256": "e89d7b84ac9a412c12c16b8a5270a9e6ea9f65f777ae380fefd20b5dd4c6c5fd",
+      "bytes": 2686
+    },
+    {
+      "path": "js/gridly-native-verification-binding.mjs",
+      "gitBlob": "7f22331fb5c940cffd5efd533b31c6f015de99b0",
+      "sha256": "2c47083036a1df08ab69a7c67e70a52bb4c81c4974e5956e506f0ee405a2feb8",
+      "bytes": 1732
+    },
+    {
+      "path": "js/gridly-paid-access.mjs",
+      "gitBlob": "e1c41ade53ef12dc39d38821d4971e9ef5c21eb0",
+      "sha256": "6ca894abfa006baa01089f8df445ea138bb888ba8ed258632ec2b89a4cc4a2f9",
+      "bytes": 10609
+    },
+    {
+      "path": "js/gridly-paid-bootstrap.js",
+      "gitBlob": "86c7f8202427d5d9b50eba6fb31a57f10c830c03",
+      "sha256": "0799efdf6662dc859254003d1255c3dae38dd3efe53fb4e0d75d549650664328",
+      "bytes": 503
+    },
+    {
+      "path": "js/gridly-paid-config.mjs",
+      "gitBlob": "6835da5b46fb8bc40665cdbce5740a3599dbb26c",
+      "sha256": "564ac271d391efc997468dc55508b51bdda82eb24d8a38215f1109f97ba563b2",
+      "bytes": 1753
+    },
+    {
+      "path": "js/gridly-paid-onboarding.mjs",
+      "gitBlob": "cbbac37c96bd2e64b925596f27f99fce20db2278",
+      "sha256": "ff51ac8a099ca2cdb65b5c30f088e9d9931007d6024b5a71333f7ccd018c2564",
+      "bytes": 38246
+    },
+    {
+      "path": "js/gridly-paid-startup.mjs",
+      "gitBlob": "c21762c42adc062ba07bc01059c121c84c1d3055",
+      "sha256": "bed9442ba46630d22bd4a9a89337475574f593274ce090a8a01a427327a5eef6",
+      "bytes": 2771
+    },
+    {
+      "path": "js/gridly-paid-ui.mjs",
+      "gitBlob": "9f2081fdb2a3ed2c69dc19e30f81a56c3976ffa8",
+      "sha256": "0d43d949c316d6661a83e920c3f07a3f8d47540f2914c6d4250394424d61a9fe",
+      "bytes": 7312
+    },
+    {
+      "path": "js/gridly-report-protocol.js",
+      "gitBlob": "5c985198be44a4f94b3a51d85c50efd9c5fe6117",
+      "sha256": "bd779ff2e52aa605311566ff34d32190e714609dc5ac921312f82894c0f3c803",
+      "bytes": 6619
+    },
+    {
+      "path": "js/gridly-route-publication-ownership.js",
+      "gitBlob": "012e7fb1820c7457e0c9ec05f042ae962eefcf7e",
+      "sha256": "2f1ca581d9f68092e31b972e9320f6059defb8532abc06581f955bc47e5caca8",
+      "bytes": 3579
+    },
+    {
+      "path": "js/gridly-saved-address-integrity.js",
+      "gitBlob": "19e57b75c86fdc259d9455ae2f77ae14d689f134",
+      "sha256": "07b69c600b7598991d3e16652afde9996db157f2ac41e1700e3e47890510c453",
+      "bytes": 15257
+    },
+    {
+      "path": "js/gridly-saved-address-ui-state.js",
+      "gitBlob": "67ec09916f87cf6008078b54c58626660f965cac",
+      "sha256": "1e8a0c5e8df77d55c55104b192fafd988cb2ab5fc5599ea862dbd2a861bcfc59",
+      "bytes": 4116
+    },
+    {
+      "path": "js/gridly-saved-place-revalidation-ownership.js",
+      "gitBlob": "ec717912ff23a413d9fa7c7839fbda3946d8f3f7",
+      "sha256": "05abe6af1fe77cf082c5169d83e02d5df5a7f93f013a28373284f80d68cdcb56",
+      "bytes": 5309
+    },
+    {
+      "path": "js/gridly-statewide-zip-resolver.js",
+      "gitBlob": "b3e3cbd833a2eeb843e6ef85682224363ca1ee35",
+      "sha256": "3c8b2543035001f17f0e0248d28b689f61bba332acb4d2f3f864a48de3cf405d",
+      "bytes": 3601
+    },
+    {
+      "path": "js/gridly-store-verification.mjs",
+      "gitBlob": "e6c6b74dd82a376ede10acf00710b0c4894eb2d6",
+      "sha256": "f84c33199732b64339ddc5d291d67196153f082736c69b7e8fd690cfe43313a4",
+      "bytes": 2863
+    },
+    {
+      "path": "js/gridly-ugc-compliance.js",
+      "gitBlob": "2b01b6a803af271deca9702d63fb270819811eb4",
+      "sha256": "57d3d0a766f2bead2cbd7034fd6883b101700d9c22e182ad64f1ac627ca040c6",
+      "bytes": 13705
+    },
+    {
+      "path": "js/gridlyAlertSemanticContract.js",
+      "gitBlob": "ecdf21fbe9f0824013dc33ef45e74532cafc03f7",
+      "sha256": "f4ed807708b25fa8f707d7dfed6e8bfab13a33145ca35df6a1f2d3703057a2d0",
+      "bytes": 6636
+    },
+    {
+      "path": "js/gridlyAlertsPublishedAwareness.js",
+      "gitBlob": "e33d29a8a5fdd57cab2c13d5461b5ed80002254f",
+      "sha256": "457b94d86a6e950e6e4a12ac9110d4d85cceac70c8858fed689037639d701d41",
+      "bytes": 14013
+    },
+    {
+      "path": "js/gridlyAlertsWeatherAuthorityHandoff.js",
+      "gitBlob": "8a2b8510f2d0f7f7cb9fe40d698fd4bec5155e21",
+      "sha256": "88b583f42782f526757e9a1a9914e7d4b97bbacbfee3c12078e2bff0e3894722",
+      "bytes": 2588
+    },
+    {
+      "path": "js/gridlyAwarenessOfficialRoadwayPublisherRepair.js",
+      "gitBlob": "9891c7466d1165aefb47e62625ef0882099686f6",
+      "sha256": "615c6f1bdfab006e79f3a25f44c606b984e74eb03b455b177722d6d6e85100de",
+      "bytes": 39390
+    },
+    {
+      "path": "js/gridlyCanonicalCrossingRuntime.js",
+      "gitBlob": "5ba9dce113c8df9f1959c5476f07eb2b6d6ac500",
+      "sha256": "3fe3497ce31f6cfe73cf4c8dcaf9ea71eb9e58fe0df7614d764d1578e9825630",
+      "bytes": 3332
+    },
+    {
+      "path": "js/gridlyConditionDisplayLabel.js",
+      "gitBlob": "a16efe5ec2700136f72b7aee1dc534e70f919503",
+      "sha256": "bab7d533d957815921a43c9b36b8ffd8b4c1ec6c5e071e34ff4ba763b593b772",
+      "bytes": 4949
+    },
+    {
+      "path": "js/gridlyCrossProviderEvaluationAudit.js",
+      "gitBlob": "8790dd40eed46a30f11eb0d3a9ecb05dcc675486",
+      "sha256": "9e5d9ff15f394e3e5254a6350286f1aedd0082ac0b4baa28bd4084d8d33159ca",
+      "bytes": 16238
+    },
+    {
+      "path": "js/gridlyCrossingCoverageAuthority.js",
+      "gitBlob": "6a04421e9ecf5ba75f75a2b11360e69df4c4c786",
+      "sha256": "bb54d6ac0bbda44ed5de4a36d295e2e7a62f74d6b6edf52e158de7ac46081099",
+      "bytes": 21438
+    },
+    {
+      "path": "js/gridlyCrossingPackageAdapter.js",
+      "gitBlob": "349a627f28d876409ee56766841afb5d26ec9450",
+      "sha256": "ef6c88ca270d9577c1f4db1bf6ac00d3f212e3fbc18f38c2b46b801a5a611f38",
+      "bytes": 9288
+    },
+    {
+      "path": "js/gridlyCrossingPackageValidationAudit.js",
+      "gitBlob": "f0e7f115f5fc8bbd52de130125a9f4995e56de9d",
+      "sha256": "a2b248b60cd04bc7bf60a98e7e6ee0b63da8c30b4b2cc144b2d8b0bba5359126",
+      "bytes": 7146
+    },
+    {
+      "path": "js/gridlyCrossingProvider.js",
+      "gitBlob": "20b6540dab5c1fee2e73b923dd9ef13d189d6112",
+      "sha256": "fd7b06acd4bd871b60edfa49f2fe7168973bf6c30fd8da5883f1101d0dbd167e",
+      "bytes": 8670
+    },
+    {
+      "path": "js/gridlyCrossingProviderActivationAudit.js",
+      "gitBlob": "4526c0b5acd2b266a4ade9c3ee46bf413abe41c4",
+      "sha256": "f6ce7db1e92e9939fe1f175bd4174c444c57e8ade7ceafb608211557409d48be",
+      "bytes": 9466
+    },
+    {
+      "path": "js/gridlyDirectionalAwarenessLayer.js",
+      "gitBlob": "395ba08d1f796aef4dcfc7abb5eaddfb00374694",
+      "sha256": "0a409f1ea6d9e6c9451f474e51fe9cf6fc8d1550f9b75d42b437e9512985d585",
+      "bytes": 8616
+    },
+    {
+      "path": "js/gridlyDirectionalRuntimeCandidatePrototype.js",
+      "gitBlob": "2d10e7f4a49e2040ca21696f139011c70e9a2756",
+      "sha256": "745ce6a22f1462a6f92ab5162b0eab27ccc438f6ad1dc1494e923b43b8c45a03",
+      "bytes": 5732
+    },
+    {
+      "path": "js/gridlyDirectionalServiceConsumer.js",
+      "gitBlob": "9e5b317b7a4928ba4df910a6c7ada30ba52db401",
+      "sha256": "b2ab783bab8923d77751477237a288806b6a4cf2d11d0d5eb95236189c557624",
+      "bytes": 5175
+    },
+    {
+      "path": "js/gridlyDirectionalServiceLayer.js",
+      "gitBlob": "dd194981d1d0396c61c4ad625f8f84cb5298894c",
+      "sha256": "e505fb4ea0809524eee053520fbf94ff95ed2455db1c7d27dd3625cf91da77ae",
+      "bytes": 4989
+    },
+    {
+      "path": "js/gridlyDriveTexasAuthoritySourceIntegration.js",
+      "gitBlob": "d9945056f66792abd64668bb1b7b2c0f21e1c2ad",
+      "sha256": "866a3b6c20255cefab857b53370d80395f8bf974a54370d3d479d4556ceb2be8",
+      "bytes": 110432
+    },
+    {
+      "path": "js/gridlyDriveTexasConnectorEndpointAudit.js",
+      "gitBlob": "c75651c259efa9cce06e2d3eda69ab171d9ddc20",
+      "sha256": "758d0260ccad185498e7ca3ce6edc03f0770e565c04f14605ed421dd3f778ef4",
+      "bytes": 3841
+    },
+    {
+      "path": "js/gridlyDriveTexasGeometryAuthority.js",
+      "gitBlob": "cb62d7ffa76e6b455b004d33bab1aa3af0ca3e1b",
+      "sha256": "28d9072851fbc6326e46f171f422b2d07607132721c26c9200e2687bb9f70ba6",
+      "bytes": 8994
+    },
+    {
+      "path": "js/gridlyDriveTexasLiveConnector.js",
+      "gitBlob": "6e48419f1c08db4180104e3864cc6ad71c95304c",
+      "sha256": "89909aaa0136e93b47d463950af25244af73dbb64b9bb49250c38ee6624e7994",
+      "bytes": 74332
+    },
+    {
+      "path": "js/gridlyDriveTexasProvider.js",
+      "gitBlob": "9a4c4f4fe773f24755bb8bb186b692b800753588",
+      "sha256": "6a51581a6b1a42d6728b37e99c79083eec0f42dc3b45a700a27dc5a74d43c812",
+      "bytes": 13720
+    },
+    {
+      "path": "js/gridlyEndToEndPerformanceAudit.js",
+      "gitBlob": "c37f6d0127b7cf274af789a974ff9e9b097635c5",
+      "sha256": "8e584a051fb1f95839b4dd2e0e1e1b3051bc5380c3c182c92a6c7ce63be5ab22",
+      "bytes": 40561
+    },
+    {
+      "path": "js/gridlyGovernedActiveConditionParity.js",
+      "gitBlob": "3e145aa9d1f586b2c2b29430ff3d1876ee2c31e6",
+      "sha256": "2af539564c6f86154a3b46ba155ad2010106d0c816e0d92a8cb29504d2e036fe",
+      "bytes": 6888
+    },
+    {
+      "path": "js/gridlyHazardNormalization.js",
+      "gitBlob": "31d514f4796db3b4879d6a8ad3f730e3220df671",
+      "sha256": "7fb8082d50ad474d79435e5f1438364ceada104542b00e944df3f585f41c0a77",
+      "bytes": 13868
+    },
+    {
+      "path": "js/gridlyIncidentLocationIdentity.js",
+      "gitBlob": "fc5602dd55bc5b2d57875396d1a851ddb67713d6",
+      "sha256": "082bfd4bfc6e1e1e39968245a54b2520d2a3dc2c61f5b26381839dcda46cb625",
+      "bytes": 4976
+    },
+    {
+      "path": "js/gridlyIntelligenceActivationReadiness.js",
+      "gitBlob": "cd5fe77fe9d17c0f7369aa19d257f943c64bf29a",
+      "sha256": "76a9744eaa0675adfd4ca20f79c729126eac3958724caa969ac8466b5bf075cd",
+      "bytes": 6392
+    },
+    {
+      "path": "js/gridlyLP240WeatherAuthorityAudit.js",
+      "gitBlob": "d71fd0d7f67a2cbc6b753d4f69bc2cb8538787d1",
+      "sha256": "bc84fc45beabd38bab066feb3b855b0947c8094e1dccaaf9837ac4302c1adac5",
+      "bytes": 35456
+    },
+    {
+      "path": "js/gridlyLiveConnectorDesignReadinessAudit.js",
+      "gitBlob": "98a06b20e8177e0b9d85d7bba9658fa7d4ba7cda",
+      "sha256": "a0492097051214a21f54a59e633ac53935b90b87df16c5567cb98c306b304248",
+      "bytes": 7084
+    },
+    {
+      "path": "js/gridlyLp0361cRuntimeCountyGeometryPackageAudit.js",
+      "gitBlob": "e1ed341661894c5e9ac4e1088ff632a30ae881f5",
+      "sha256": "98baa7a92037c92432bfafe66d6621e2f1ad339460fb83bb55aac3e9985e4159",
+      "bytes": 17461
+    },
+    {
+      "path": "js/gridlyLp0371ConsumerCrossingCountAuthorityAudit.js",
+      "gitBlob": "22034288d5fc207feb78ceafc1e257bb8c898b7e",
+      "sha256": "d221f8315114106de57fb5919e6775611608deee29a6aa5575e7352dd738d65b",
+      "bytes": 5969
+    },
+    {
+      "path": "js/gridlyLp044DriveTexasCommunityAuthorityInventory.js",
+      "gitBlob": "2c337936c9b51d7585c5c8cb5a4434f705d0baf7",
+      "sha256": "c4e4af3c8efc0b8bbe951f311e7b1f9c25f5e4a8f9c969578e4b619e5683dfa6",
+      "bytes": 24939
+    },
+    {
+      "path": "js/gridlyLp0941LaunchSurfaceAudit.js",
+      "gitBlob": "27636b7c51d88e9f47bd970287cc169500dec6b2",
+      "sha256": "2186efcf0d0676c202dd19a9fb40d3a71769c2dd357579be23a0c40f3041f9e5",
+      "bytes": 2061
+    },
+    {
+      "path": "js/gridlyLp0952CrossingAlertInteractionAudit.js",
+      "gitBlob": "9842cf5142b952bf13cd4e95dcdba55c97e51cbc",
+      "sha256": "a3f2e232c20451aef1200003632794e0348d00731f28c529a66d2ce61b9e27c3",
+      "bytes": 2444
+    },
+    {
+      "path": "js/gridlyLp095UnifiedPresentationAudit.js",
+      "gitBlob": "fe305a0b908d2a0c468651ec00334728e478d43c",
+      "sha256": "4188be4e9fa96acfb62afe898aed4b6fef652e725c8511c72ab65fa257c30fd1",
+      "bytes": 924
+    },
+    {
+      "path": "js/gridlyMarkerRegistry.js",
+      "gitBlob": "1f912409a44e0af67771348bb0a6511ef04e6454",
+      "sha256": "a27db031b29dfd736b8970f75aee4af090a1930d8a1ab7d4e921bd97cc88739a",
+      "bytes": 11736
+    },
+    {
+      "path": "js/gridlyNativeProviderOriginAudit.js",
+      "gitBlob": "9e190b2af3ba9a799bfafb0f8646ccc1788f162a",
+      "sha256": "1393110067ced7ec1de8c6ff3a9a0500f4110748788661cb9f5c28db1d5eba0a",
+      "bytes": 3009
+    },
+    {
+      "path": "js/gridlyOfficialProviderActivation.js",
+      "gitBlob": "fdab1d6407b1b346f17451a29b9b3c39ed1dc4d1",
+      "sha256": "ed705405dea76c14161afb1faf17671088b001863e1441e1f814808f5c10b53d",
+      "bytes": 12476
+    },
+    {
+      "path": "js/gridlyOfficialProviderSourceEvaluation.js",
+      "gitBlob": "ec4163c81d204fb78cb852e101f82b4083948a06",
+      "sha256": "b03e1de82bcf5328c2c7c559f78d6241cef6bfb65035929ff0e4f4ebdb28aeab",
+      "bytes": 4731
+    },
+    {
+      "path": "js/gridlyOfficialRoadwayMarkerPublication.js",
+      "gitBlob": "ecc3c9a1a19884997f6a4c58aa01f83067551df8",
+      "sha256": "9a6d9a8b9382f1be01586a6e2c4b55ec9d02ee21989d3b73efe256e3432c605c",
+      "bytes": 4648
+    },
+    {
+      "path": "js/gridlyPackageDiscovery.js",
+      "gitBlob": "73d4658247cc78372b919feae7a98b5e27cfd5c5",
+      "sha256": "1dcad3461e9ad1ee2f9c4d4e5f860f55a77b507fd2aaac61602591ff7778f11f",
+      "bytes": 3694
+    },
+    {
+      "path": "js/gridlyPackageLoader.js",
+      "gitBlob": "5ee6ab14eb9a42c12e05d4c44c91072bd82e7c2e",
+      "sha256": "4335c4d7cd37940fd0168de20c27855d086c164dbfbb236b8b1fb75a87c75c3d",
+      "bytes": 1477
+    },
+    {
+      "path": "js/gridlyPackageRegistry.js",
+      "gitBlob": "ccb41f413c07c2cf19d7e1b3ccca9b54164187a1",
+      "sha256": "7d5ab8fa259ca2705d31c0b6ae429bdf62b6ee7db3b4c40ecb4c0298ef62accb",
+      "bytes": 230133
+    },
+    {
+      "path": "js/gridlyPoiBrowserProvider.js",
+      "gitBlob": "607215722a3f2f48a0b7025123a337e1e7870bc3",
+      "sha256": "13070d911d0dee4498c82de7e7493fcc3f1736d131fece5651f097807e13fb4e",
+      "bytes": 25768
+    },
+    {
+      "path": "js/gridlyRouteWatchGeometryRuntimeShadowAudit.js",
+      "gitBlob": "ce741576dc62f09f46a04f8f38092a08852c4e74",
+      "sha256": "b230bd128b5f12aec34385185b75598881d9f3a7ef6e3b08a4328a0b4676026f",
+      "bytes": 28402
+    },
+    {
+      "path": "js/gridlyRuntimeCountyIdentity.js",
+      "gitBlob": "9cf1d145c24f5de1311ad78b05384b74a9b5c189",
+      "sha256": "0b3f31cdf9629f733ec9f938dd062eade5ea9327ddc937155c0d03c97c858572",
+      "bytes": 10917
+    },
+    {
+      "path": "js/gridlyRuntimeEnvironmentConfig.js",
+      "gitBlob": "aff9519c9c6c38ce2695bcc54fba9c4c47ee9c76",
+      "sha256": "9a02cf6adf3943c2ddc7ed2f4d28dd82ba3a1ed1444014279bf3db3555552caa",
+      "bytes": 984
+    },
+    {
+      "path": "js/gridlyRuntimePerformanceAudit.js",
+      "gitBlob": "a8236efedcf376b93190233ebc7bb3f8850a8a4f",
+      "sha256": "d8e66cb8b4b3f2411b27c3a2eff5ddfda847f405b43d3335e80e8f2dd3f83c9d",
+      "bytes": 29528
+    },
+    {
+      "path": "js/gridlyRuntimeSourceBridgeActivation.js",
+      "gitBlob": "c1d0bc4999c61eeb2ac5a966bbb9c3b21cf02fef",
+      "sha256": "d5f018be50504d8de98cfa8b7c41fc6ee1817f2c2ffe9526fc3354768e6c5322",
+      "bytes": 25346
+    },
+    {
+      "path": "js/gridlyRuntimeSourceComparisonAudit.js",
+      "gitBlob": "38bfe2fc82f51569bd23b5f3e6ff643dcfe77e47",
+      "sha256": "1259a41f8073d542511d97de37aa8451dc8e21dc56d7c009331dac6cfa9e2af7",
+      "bytes": 2996
+    },
+    {
+      "path": "js/gridlyRuntimeSourceRegistryBridge.js",
+      "gitBlob": "90cd3a61b5c1649e8bb3f5330c88e9df39e99f95",
+      "sha256": "4344689c2f7065c2f8f55f12ac61ba04ca0143244909a2cdc90a77c4fca52367",
+      "bytes": 14593
+    },
+    {
+      "path": "js/gridlyStartupDiagnostics.js",
+      "gitBlob": "149d430b2776dea4a749b4cf82b29bad5e6611fc",
+      "sha256": "2d329d9096b8435b9be38c7929bc48a22e6aac46ad98a63e1f6543426a35082f",
+      "bytes": 32398
+    },
+    {
+      "path": "js/gridlyTxdotGeometryRetentionPrototype.js",
+      "gitBlob": "23583a2b4ed122c43e759e2ebaba119286167909",
+      "sha256": "20396ab4519292b7ffa9528c8592151a076bcea6eadb7610cf118aca1286ddc5",
+      "bytes": 8344
+    },
+    {
+      "path": "js/gridlyTxdotService.js",
+      "gitBlob": "32941e2c0d1cb7f04477fbedaa069b664155d713",
+      "sha256": "b01981ed7d7659cc6099bb5045c0a9814a7fc9b17bef6340855869b9a00b7dd4",
+      "bytes": 20298
+    },
+    {
+      "path": "js/gridlyUnifiedIntelligence.js",
+      "gitBlob": "f61993f6853f6a18a5cefef3f109a5c6ae7b360c",
+      "sha256": "50f151227e1aade647c431409ad510908c25646f7c654b6b3c302276c7a55b6b",
+      "bytes": 4931
+    },
+    {
+      "path": "js/gridlyUnifiedIntelligenceObservationAudit.js",
+      "gitBlob": "7523281eee40598a53e17204833ce84f19dea24f",
+      "sha256": "1a43088b13564b0a7813ba875898ebc5c6598f88a781af51e9694e1c7096dfc2",
+      "bytes": 6436
+    },
+    {
+      "path": "js/gridlyUnifiedIntelligencePrototype.js",
+      "gitBlob": "7fee6e98a7f4db14144c624c6b5b9cb170c79016",
+      "sha256": "404bb14ecf062212cb10adb1b2701901561042a9acd92c4042d2c876916e7a2e",
+      "bytes": 21466
+    },
+    {
+      "path": "js/gridlyUnifiedIntelligenceReadinessAudit.js",
+      "gitBlob": "b5054775c3f3330bd5aefabaa9d4ef919846a48e",
+      "sha256": "7dcd57ba3bcea26149948c7262d42734c7d3f0d67c4ace8ef8521b665ec1de0f",
+      "bytes": 6775
+    },
+    {
+      "path": "js/gridlyUnifiedIntelligenceSimulation.js",
+      "gitBlob": "6173aad876e5d41fb4020b14e8cf859cb417da9b",
+      "sha256": "301454ec7b8a3b4d8c1acbbfd24e3c649a7b6269d4876757208cd377343f132f",
+      "bytes": 7001
+    },
+    {
+      "path": "js/gridlyWeatherAuthorityFoundation.js",
+      "gitBlob": "38787e7a72dfc2c4f6e3cbd8c9f9573e6c1a56d2",
+      "sha256": "660c2f5bc128e8b87c7ccc1c4eef4b963c1df3f7ef0d778c845bd8c6986a75d6",
+      "bytes": 13385
+    },
+    {
+      "path": "js/gridlyWeatherAuthoritySourceIntegration.js",
+      "gitBlob": "122acf387b31d6beb0aad6662c1147d2e8f900a5",
+      "sha256": "2f5f53962661c1480e000e861c23a05168cd319aced5a3c6455b3917ebf215cf",
+      "bytes": 24999
+    },
+    {
+      "path": "js/gridlyWeatherConnectorEndpointAudit.js",
+      "gitBlob": "fac64a381c685b78f10dee2d738433a0dbbaaf97",
+      "sha256": "577ee3ead6b890b6ac45dc709259b7b91c55029ab91668c77c4d7280ef5a2892",
+      "bytes": 5836
+    },
+    {
+      "path": "js/gridlyWeatherLiveConnector.js",
+      "gitBlob": "cce2b9f0d776e4431de0c530177d8f7314a39e33",
+      "sha256": "e08b664aae8bffdb9b8b9996e020fcc512c43f09ab8dce4bfb21d75f12867fc2",
+      "bytes": 15609
+    },
+    {
+      "path": "js/gridlyWeatherProvider.js",
+      "gitBlob": "d8b7e5fabe12fe05a7d7f4ce488b67ce4d49e118",
+      "sha256": "d04df6a98aff611d87bc53bf22174f1409e4dd59a773b4e36578ba914641b5a5",
+      "bytes": 13186
+    },
+    {
+      "path": "js/history-capture/historyAggregationEngine.js",
+      "gitBlob": "0403c56c4e8cce25bb8f5c1be6f490b61a9e4c9c",
+      "sha256": "565308f07dcbf2f90266de39c7fa312f9be27db9fb7aa43d26dcd9ad2a205c21",
+      "bytes": 11886
+    },
+    {
+      "path": "js/history-capture/historyAwarenessAdapter.js",
+      "gitBlob": "ea4b146ce2ca3f1ef019c961d6bb223125b949be",
+      "sha256": "6ab2e3450c843950fa2f3025d0d046c274300d64edbbda11bcc2fd5b7976a6a1",
+      "bytes": 39582
+    },
+    {
+      "path": "js/history-capture/historyCaptureEnvelope.js",
+      "gitBlob": "335ffb33baffff7dd0aa2c31c318168d9ef7f2c3",
+      "sha256": "633ec4728d68cee332621bbfe7e82efda1438a52aedd74d68732ec55ef721392",
+      "bytes": 14892
+    },
+    {
+      "path": "js/history-capture/historyCaptureFlags.js",
+      "gitBlob": "08a6767d5712a8a58871a75c37ba66e18617a096",
+      "sha256": "744c4c5df313522f67da38c55ee429e3df2758fd234e16020fffc8d02517e172",
+      "bytes": 1560
+    },
+    {
+      "path": "js/history-capture/historyCaptureIdempotency.js",
+      "gitBlob": "5487e3a5dac0fc11433cbdcd31c09a3622647d77",
+      "sha256": "5fbcd6410803cc0b07492fc433ea72188f1ab9b8060ff926a1e29f64ea60bc55",
+      "bytes": 1629
+    },
+    {
+      "path": "js/history-capture/historyCaptureMonitoring.js",
+      "gitBlob": "c0d642cdfd72b6df7815526df7b271a4c968eb3d",
+      "sha256": "c106af7d63c08de4dfd237748923769b714d37243503cc4c9c29271d960548c7",
+      "bytes": 3381
+    },
+    {
+      "path": "js/history-capture/historyCapturePhase1A.js",
+      "gitBlob": "2980e32dc4d25e051aed20a7f6a294635196a314",
+      "sha256": "4b8785ea99d794c932f7cd9d67edd7843e40578d6da88e4b9566164fc9082b4e",
+      "bytes": 5846
+    },
+    {
+      "path": "js/history-capture/historyCaptureWriter.js",
+      "gitBlob": "6156f8f7cf0576a9ff366de7060d92e19ed0757a",
+      "sha256": "a74a2891797c690caca23a538fec2ea0516491b347f787b3f3bebb144d0183a9",
+      "bytes": 9914
+    },
+    {
+      "path": "js/history-capture/historyEpisodeResolver.js",
+      "gitBlob": "cd3fb15cb124eac4ac6e2ff5dd891af517708e6a",
+      "sha256": "37d76d199b5a5d0125328b3629f4eca992530b1dc3bf37b2cd909634d9c38bbf",
+      "bytes": 17379
+    },
+    {
+      "path": "js/history-capture/historyEpisodeRuntimeBridge.js",
+      "gitBlob": "6194b4828833e2d49007186d6ae16c4e784405ec",
+      "sha256": "a72bc228aa421c4b4765148b99affca02b6c9c406391e6ee7537358293c2654f",
+      "bytes": 12284
+    },
+    {
+      "path": "js/history-capture/historyEvidenceInterpretationAdapter.js",
+      "gitBlob": "5681ca630357359df8ae92829e9fca13a9fc9c1a",
+      "sha256": "3667e3e638f6aae71304f0203fa6c7a060ba35e49ea4a26bf641909eb7b79a94",
+      "bytes": 19707
+    },
+    {
+      "path": "js/history-capture/historyIdentity.js",
+      "gitBlob": "40f7192fdbb6ddaad3d8cc078aca6b93db6d7b8f",
+      "sha256": "92ac59fef627249a224f454ac789ca58a1d158db86c19b2fa55c6c7fbc2db4b1",
+      "bytes": 7769
+    },
+    {
+      "path": "js/history-capture/historyIntelligenceEngine.js",
+      "gitBlob": "77a8b2e4d180dbcaa9ee505a0bb4c6c927a60945",
+      "sha256": "034041ecee4858470f380feca907f05082a04a2c633070c658ee51c23f1af7f7",
+      "bytes": 23623
+    },
+    {
+      "path": "js/history-capture/historyIntelligenceReadinessIndex.js",
+      "gitBlob": "b1a7762955854de229d62445f4633d102e1e1186",
+      "sha256": "0a701b2e33cddfb3eb6b69ff0de3dcf07ace40631890ffabc6376650685e0dcc",
+      "bytes": 25472
+    },
+    {
+      "path": "js/history-capture/historyIntelligenceRuntimeIntegration.js",
+      "gitBlob": "55d891826a3668876595f7115a5704490257670d",
+      "sha256": "b6fa4d269c735eb63e7ae38f7a1e4cfc62c1b67f5518e8b927a01036d5847ce5",
+      "bytes": 15182
+    },
+    {
+      "path": "js/history-capture/historyPatternQualificationEngine.js",
+      "gitBlob": "3404f1812164345cdd800db395f6f84d59823663",
+      "sha256": "19597c70fbf972e04d258f689c4297f4706e636690659bf7bece8fdfa470595e",
+      "bytes": 18593
+    },
+    {
+      "path": "js/history-capture/historyPatternRegistry.js",
+      "gitBlob": "7d60a355c69fd0cc750b293769f9fb38d93e0e17",
+      "sha256": "467e2d34c2856ede25a7ef71f9d83c42b173eff330b3ec5f99bb9ce067405949",
+      "bytes": 15200
+    },
+    {
+      "path": "js/lp097-curated-destinations.js",
+      "gitBlob": "2e11e06e73c5991a781a748d73aa1f0bfe54a7d4",
+      "sha256": "7d4986d96cb55fb8b2eaac72eb49d80797bbf21ee3292d58e6a665f26479196c",
+      "bytes": 4917
+    },
+    {
+      "path": "js/lp097-search-governance.js",
+      "gitBlob": "d5f28d5dd86980a3cd13fe051c458234b379dcaa",
+      "sha256": "2f6f6a343e77a822d9cf3926d2ada5ed0a5e2043418b6978d3ef097e65f9302e",
+      "bytes": 8038
+    },
+    {
+      "path": "js/lp098-curated-destinations.js",
+      "gitBlob": "a7b77425183c6e75b3feb7c6ba59c3fa569cbe4b",
+      "sha256": "96cf177621611335aed8cc8e1b55628a1f9b8283366ccbbbf8da0938b1ab4572",
+      "bytes": 8635
+    },
+    {
+      "path": "js/lp099-business-search.js",
+      "gitBlob": "c13e5b5a6a908aace11718e43bbf3cc8eea08b55",
+      "sha256": "1115f2e5f902f8e390213de4ceca85a800b4d133a26664f853ce5b9c79570181",
+      "bytes": 6823
+    },
+    {
+      "path": "js/lp101-search-quality.js",
+      "gitBlob": "ecbfd34de5dcf61253f78101a8251b614b8e581e",
+      "sha256": "072431e315b654db99261c72a8e749814c2fa2eb9af7cc0417e83f950ad2ba59",
+      "bytes": 34640
+    },
+    {
+      "path": "js/lp102-rural-address-cases.js",
+      "gitBlob": "717e97b9b1ffb8945e02482202d89a58da9537de",
+      "sha256": "aa5dd33403f94e7abaaf4a81c7e5e13cc3b4a677f78f4f6789d12860d71630e9",
+      "bytes": 1273
+    },
+    {
+      "path": "js/lp104-regional-rural-address-audit.js",
+      "gitBlob": "cef0a2ce87f6af22dde0aa8ef858a9cb95cf5dd3",
+      "sha256": "6577e26d14fc601cbc91a441805c65a7daeee9dfbac0f15343a2a591e1c3a51d",
+      "bytes": 5319
+    },
+    {
+      "path": "js/lp24110-poi-search-certification.js",
+      "gitBlob": "1a168fb9dea3cba38a2019eef8ba7e0997f7f470",
+      "sha256": "2f0ae1c021569ef3c1035c98f784451baa694df49c6e8e2f9f65374f7277f8f7",
+      "bytes": 4963
+    },
+    {
+      "path": "package.json",
+      "gitBlob": "06a40bb55b61a209f890a1e58e64ec2533d79421",
+      "sha256": "5fddd3932b73cac1539063a031047dfa4479eab59ae524929c829528dabbf2f7",
+      "bytes": 63785
+    },
+    {
+      "path": "public-site/index.html",
+      "gitBlob": "6c2d85cc5178bf7b6bae82b138eb2172cd5e7873",
+      "sha256": "3d9a9588fb5e72ec7f9ed4c3a881708360a160f8fa73edb7899463db9978a79f",
+      "bytes": 8365
+    },
+    {
+      "path": "supabase/functions/_shared/entitlement/acknowledgment.mjs",
+      "gitBlob": "4662a5f7638dca58d5181dea643f56f4830a06a0",
+      "sha256": "4b8b537012c9510a494cac25210c5b35cddc79ecb2c3467083a17677dab3f3f4",
+      "bytes": 6701
+    },
+    {
+      "path": "supabase/functions/_shared/entitlement/apple-app-attest.mjs",
+      "gitBlob": "48e2dff839723587da929fd3935a8ec0698ace60",
+      "sha256": "9154df9e801f892b4f1e89835613d37e8cdaadc3f7259c33820274b07c1afd13",
+      "bytes": 15327
+    },
+    {
+      "path": "supabase/functions/_shared/entitlement/apple-node-provider.mjs",
+      "gitBlob": "8bf64d1b0c57674f390bc19f3b6da404dea23930",
+      "sha256": "3114e5013053a2170aa07d43e5e1e15ca6bcfd2bcc18dfa296dd4ddade64fa41",
+      "bytes": 4035
+    },
+    {
+      "path": "supabase/functions/_shared/entitlement/challenge-gateway.mjs",
+      "gitBlob": "379ceee1561ce6d71fd615d8e55445c1e1518893",
+      "sha256": "9a68c13557bd6c3b75357cd7dc54b31eb7b2b86a360f43515b27132213314821",
+      "bytes": 803
+    },
+    {
+      "path": "supabase/functions/_shared/entitlement/composition.mjs",
+      "gitBlob": "180d1efa2531c67a14c1553d723e1c7f7eb7217d",
+      "sha256": "24d57ef2a4d2792c27c6baab8471a2a789d279be49b811f2a17cc76831fdb920",
+      "bytes": 2752
+    },
+    {
+      "path": "supabase/functions/_shared/entitlement/core.mjs",
+      "gitBlob": "6a2427f6fd7cc9dbd08e326933a93cb618376a24",
+      "sha256": "eecc79e8d9c3e37dd492906cdc84d539398cac780e6eff0b54fb5083c002f2da",
+      "bytes": 8457
+    },
+    {
+      "path": "supabase/functions/_shared/entitlement/edge-runtime.ts",
+      "gitBlob": "10253b47aca39eb8228f027a3d18c87598bd648d",
+      "sha256": "547dc2dfccf83b28b24efe60cef8c64efed2576f6b98877122a4375cf64e1754",
+      "bytes": 2945
+    },
+    {
+      "path": "supabase/functions/_shared/entitlement/google-integrity.mjs",
+      "gitBlob": "16726fa8cf01127e35efe5f16c8db25497290358",
+      "sha256": "e81ad7efa15c32e0228c727097af3f724a41c008d709e401c0dc7889b78e4509",
+      "bytes": 2603
+    },
+    {
+      "path": "supabase/functions/_shared/entitlement/google-oauth.mjs",
+      "gitBlob": "a409a9a1b4ad76e09d5e94e61bcb437e2693d8ab",
+      "sha256": "0a1021dbec5f5575617bd5b1204bc8c5096189ff7a9a1a9aeb63e51dab824880",
+      "bytes": 2972
+    },
+    {
+      "path": "supabase/functions/_shared/entitlement/handler.mjs",
+      "gitBlob": "0a671b3380b96dde23eb9e479ae16230f311f9fe",
+      "sha256": "85e6e40395cb937ee28b08b607dd085b49216a4fc416340d44c7c05d567cb3c6",
+      "bytes": 4130
+    },
+    {
+      "path": "supabase/functions/_shared/entitlement/native-authorization.mjs",
+      "gitBlob": "d9c42d27fbbc3d89cc59a51feb495bf9b234154d",
+      "sha256": "d4670944b9f1681d01d01a746aee9d5970646770681eaac286940093fab446a7",
+      "bytes": 4505
+    },
+    {
+      "path": "supabase/functions/_shared/entitlement/native-rpc-ports.mjs",
+      "gitBlob": "d8470a12b797369d61c156771b31f5ce8adeae15",
+      "sha256": "577a0dd625f4b23a51529c31671618c99c639bae4c8ea39607b00b903c0720d5",
+      "bytes": 1577
+    },
+    {
+      "path": "supabase/functions/_shared/entitlement/providers.mjs",
+      "gitBlob": "13ec8aac01906eec274c71639747e3b398b45bb6",
+      "sha256": "7ebc9d2b1141ce86672eef8310207fbd10ea1918bca34afd6cb53904a5b82cd0",
+      "bytes": 4341
+    },
+    {
+      "path": "supabase/functions/_shared/entitlement/rpc-ports.mjs",
+      "gitBlob": "87de7cf7e0923f88b02f7a7258cac11f19d082b6",
+      "sha256": "e6aa28503ba538ecc5901d5908cc3e4cba80517b2f81ede92a37aa63122daca1",
+      "bytes": 1751
+    },
+    {
+      "path": "supabase/functions/_shared/entitlement/server-setup.mjs",
+      "gitBlob": "8e6eab88f80946765500e757f6274dfd82aa5195",
+      "sha256": "9daf311757f98353f61f159260d74d95a3b5049ef36fd7031fbf91b5b11ea931",
+      "bytes": 5602
+    },
+    {
+      "path": "supabase/functions/gridly-verify-apple-subscription/index.ts",
+      "gitBlob": "8883289e0e4a68333f08df638d0ce38c94388841",
+      "sha256": "4d30866387e4665dcc1f25c978009753dc409ad6fb56a1c377158037bc51978a",
+      "bytes": 150
+    },
+    {
+      "path": "supabase/functions/gridly-verify-google-subscription/index.ts",
+      "gitBlob": "4140a6a6115edb90bd4d13f31dab3a55437648a9",
+      "sha256": "05fed84aa66e3f6afa07e10ed8b3b04e4e59ef155e921fdfd38cbc6541c06b99",
+      "bytes": 151
+    },
+    {
+      "path": "tests/lp24461-subscription-entitlement.test.mjs",
+      "gitBlob": "e661372740eabc7266964717f463a0f84b0ab2ed",
+      "sha256": "ae1a5bbdfc862b77dfaf2c108ece855a57b5bfc7f5c50eda4e70c212338903fa",
+      "bytes": 10862
+    },
+    {
+      "path": "tests/lp24462-server-verification.test.mjs",
+      "gitBlob": "a347bbe0af83748c6ade9c52446e720fa7f6fcc8",
+      "sha256": "16a0d00defe6d180575107f8c6e62d16b93f6f2a15cf59bb5b2bfdc832da46ff",
+      "bytes": 11470
+    },
+    {
+      "path": "tests/lp24463-apple-storekit.test.mjs",
+      "gitBlob": "3f776d525d35fd580d306812508e09f456688d36",
+      "sha256": "14a5d6f3425a39e9c503a679f1a17541ce5575df70b994c0b69142a6afbc63d1",
+      "bytes": 11642
+    },
+    {
+      "path": "tests/lp24465-continuity.test.mjs",
+      "gitBlob": "4ac2b1d6a65a4041fe3684c3e0436b7c5c733867",
+      "sha256": "fc00c1dcc12ed02ec336e819379aefb1817f6b0cee3ea8f1adb9a328f52bdb79",
+      "bytes": 18266
+    },
+    {
+      "path": "tests/lp24465-paid-access.test.mjs",
+      "gitBlob": "816077899e67f30718fde086e12fa62deb771798",
+      "sha256": "903c4d854ea798e306b5d8c4b6f3683df2b839b66074de786cdff2f8196d7c33",
+      "bytes": 15619
+    },
+    {
+      "path": "tests/lp24466-window3c-native-authorization.test.mjs",
+      "gitBlob": "dbdfe0728edbd1105e36487f5cf740a443a0e40e",
+      "sha256": "8ca384944c423bdc54fc431b9ac5c767f7c2d5ade1af5600e0c77f47ac3baf06",
+      "bytes": 10998
+    },
+    {
+      "path": "tests/lp24466-window3d-apple-attest.test.mjs",
+      "gitBlob": "114bb762db1dddcc58d70cdeaa5202be43b1eacb",
+      "sha256": "bec4b968900691c0206bafdcda78260c7da37891c4240471c7d10e8f99efce43",
+      "bytes": 8923
+    },
+    {
+      "path": "tests/lp24466-window3d-challenge-gateway.test.mjs",
+      "gitBlob": "99b2a66c636fc17ecd83dab31a28d38cc75d2dfc",
+      "sha256": "13b15b32a827f5ccbd9a4671f95f008bf1ed3c2c37f610883b49ae828af96389",
+      "bytes": 6022
+    },
+    {
+      "path": "tests/lp24466r-testflight-admission.test.mjs",
+      "gitBlob": "5c6e517269d519562caee61cd902ff7455e947a8",
+      "sha256": "6adc9fb1c038d2545ba53b97141b77114cc5162ed33a613cd8e02b71bdd5455a",
+      "bytes": 10213
+    },
+    {
+      "path": "tests/lp24466s-apple-node.test.mjs",
+      "gitBlob": "21c8919da73f76c5a4c7d9748852b36bd96c28fa",
+      "sha256": "cbbdadbab644b702a52eb483a8ef4b4af0de768abaadc20efd26a71a77656670",
+      "bytes": 4804
+    },
+    {
+      "path": "tools/lp1831/prepare-cloudflare-preview-artifact.mjs",
+      "gitBlob": "6d3089fc6ea82ff0664bd9f7d5ca7a015ce07fdd",
+      "sha256": "2fea23c2f9202e113daff9bc24673198b22f24e0847e4819a3838b80aa9012fd",
+      "bytes": 28440
+    },
+    {
+      "path": "tools/lp18321/git-asset-identity.mjs",
+      "gitBlob": "ea769a856ab07c701f4f789e4512ddd6beebf3b1",
+      "sha256": "f583b71d189f541acf7e7d84a9d177d9f2b3b0f3dd60ef4ec29e139befa0fccd",
+      "bytes": 3472
+    },
+    {
+      "path": "tools/native-web.mjs",
+      "gitBlob": "ca28a62e29110e8278a7f3187123ee1f11aff54a",
+      "sha256": "798044f5ac395b77a2d82a091fe838e44beee42923a04879fcb05347d8abda5d",
+      "bytes": 31708
+    },
+    {
+      "path": "tools/subscription-challenge-gateway/worker.mjs",
+      "gitBlob": "10a095610557f31c9849b8c46d2c23faa88aa0ed",
+      "sha256": "15ef6a91346b7de1419a969a16cea1a1033d9ecfd99eabea9de97dafe23eb078",
+      "bytes": 2826
+    },
+    {
+      "path": "tools/subscription-challenge-gateway/wrangler.jsonc",
+      "gitBlob": "0cc87aa0d948bea824d663e70bfc432071e97c6f",
+      "sha256": "51835c501560adbdb17d0e1eccc93f08294e9db224b68ea8b16b738d78bd8a65",
+      "bytes": 361
+    }
+  ]
+}

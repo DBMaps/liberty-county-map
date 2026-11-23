@@ -1,10 +1,10 @@
-name: Gridly Labels Authorization Native Certification
+name: Gridly First-party Labels Authorization Certification
 
 on:
   workflow_dispatch:
     inputs:
       expected_commit_sha:
-        description: Exact owner-reviewed authorization-only certification SHA
+        description: Exact first-party certification commit
         required: true
         type: string
 
@@ -26,15 +26,16 @@ jobs:
     env:
       EXPECTED_SHA: ${{ inputs.expected_commit_sha }}
       CANDIDATE: prototypes/ios-arcgis-labels-authorization-candidate
+      CERT: prototypes/ios-arcgis-labels-authorization-candidate/evidence/stage4g/certification
       GRIDLY_LABELS_PILOT_ENABLED: 'false'
       GRIDLY_LABELS_ESRI_ENABLED: 'false'
     steps:
-      - name: Verify exact owner dispatch
+      - name: Verify exact owner dispatch before checkout
         run: |
           set -euo pipefail
           [[ "$EXPECTED_SHA" =~ ^[0-9a-f]{40}$ ]]
           test "$EXPECTED_SHA" = "$GITHUB_SHA"
-      - name: Checkout candidate only
+      - name: Checkout immutable certification and inherited regression assets
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           ref: ${{ inputs.expected_commit_sha }}
@@ -43,73 +44,213 @@ jobs:
           sparse-checkout: |
             /prototypes/ios-arcgis-labels-authorization-candidate/
             /.github/workflows/gridly-apple-build-9.yml
-      - name: Verify immutable package and source boundaries
+            /android/app/src/main/java/com/gridlygo/gridly/GridlyContinuityPlugin.kt
+            /android/app/src/main/java/com/gridlygo/gridly/MainActivity.kt
+            /consumer-script-manifest.json
+            /data/generated/lp104/txgio-addresses/runtime-manifest.json
+            /data/roadway-runtime-manifest.json
+            /index.html
+            /ios/App/App.xcodeproj/project.pbxproj
+            /ios/App/App/Base.lproj/Main.storyboard
+            /ios/App/App/GridlyBridgeViewController.swift
+            /ios/App/App/GridlyContinuityPlugin.swift
+            /ios/App/App/GridlyStoreKitPlugin.swift
+            /js/app.js
+            /js/governed-awareness.js
+            /js/gridly-apple-storekit.mjs
+            /js/gridly-continuity.mjs
+            /js/gridly-entitlement-public-key.mjs
+            /js/gridly-entitlement.mjs
+            /js/gridly-geocoding-client.js
+            /js/gridly-google-play-billing.mjs
+            /js/gridly-map-visibility.js
+            /js/gridly-native-attested-invoke.mjs
+            /js/gridly-native-edge-transport.mjs
+            /js/gridly-native-verification-binding.mjs
+            /js/gridly-paid-access.mjs
+            /js/gridly-paid-bootstrap.js
+            /js/gridly-paid-config.mjs
+            /js/gridly-paid-onboarding.mjs
+            /js/gridly-paid-startup.mjs
+            /js/gridly-paid-ui.mjs
+            /js/gridly-report-protocol.js
+            /js/gridly-route-publication-ownership.js
+            /js/gridly-saved-address-integrity.js
+            /js/gridly-saved-address-ui-state.js
+            /js/gridly-saved-place-revalidation-ownership.js
+            /js/gridly-statewide-zip-resolver.js
+            /js/gridly-store-verification.mjs
+            /js/gridly-ugc-compliance.js
+            /js/gridlyAlertSemanticContract.js
+            /js/gridlyAlertsPublishedAwareness.js
+            /js/gridlyAlertsWeatherAuthorityHandoff.js
+            /js/gridlyAwarenessOfficialRoadwayPublisherRepair.js
+            /js/gridlyCanonicalCrossingRuntime.js
+            /js/gridlyConditionDisplayLabel.js
+            /js/gridlyCrossProviderEvaluationAudit.js
+            /js/gridlyCrossingCoverageAuthority.js
+            /js/gridlyCrossingPackageAdapter.js
+            /js/gridlyCrossingPackageValidationAudit.js
+            /js/gridlyCrossingProvider.js
+            /js/gridlyCrossingProviderActivationAudit.js
+            /js/gridlyDirectionalAwarenessLayer.js
+            /js/gridlyDirectionalRuntimeCandidatePrototype.js
+            /js/gridlyDirectionalServiceConsumer.js
+            /js/gridlyDirectionalServiceLayer.js
+            /js/gridlyDriveTexasAuthoritySourceIntegration.js
+            /js/gridlyDriveTexasConnectorEndpointAudit.js
+            /js/gridlyDriveTexasGeometryAuthority.js
+            /js/gridlyDriveTexasLiveConnector.js
+            /js/gridlyDriveTexasProvider.js
+            /js/gridlyEndToEndPerformanceAudit.js
+            /js/gridlyGovernedActiveConditionParity.js
+            /js/gridlyHazardNormalization.js
+            /js/gridlyIncidentLocationIdentity.js
+            /js/gridlyIntelligenceActivationReadiness.js
+            /js/gridlyLP240WeatherAuthorityAudit.js
+            /js/gridlyLiveConnectorDesignReadinessAudit.js
+            /js/gridlyLp0361cRuntimeCountyGeometryPackageAudit.js
+            /js/gridlyLp0371ConsumerCrossingCountAuthorityAudit.js
+            /js/gridlyLp044DriveTexasCommunityAuthorityInventory.js
+            /js/gridlyLp0941LaunchSurfaceAudit.js
+            /js/gridlyLp0952CrossingAlertInteractionAudit.js
+            /js/gridlyLp095UnifiedPresentationAudit.js
+            /js/gridlyMarkerRegistry.js
+            /js/gridlyNativeProviderOriginAudit.js
+            /js/gridlyOfficialProviderActivation.js
+            /js/gridlyOfficialProviderSourceEvaluation.js
+            /js/gridlyOfficialRoadwayMarkerPublication.js
+            /js/gridlyPackageDiscovery.js
+            /js/gridlyPackageLoader.js
+            /js/gridlyPackageRegistry.js
+            /js/gridlyPoiBrowserProvider.js
+            /js/gridlyRouteWatchGeometryRuntimeShadowAudit.js
+            /js/gridlyRuntimeCountyIdentity.js
+            /js/gridlyRuntimeEnvironmentConfig.js
+            /js/gridlyRuntimePerformanceAudit.js
+            /js/gridlyRuntimeSourceBridgeActivation.js
+            /js/gridlyRuntimeSourceComparisonAudit.js
+            /js/gridlyRuntimeSourceRegistryBridge.js
+            /js/gridlyStartupDiagnostics.js
+            /js/gridlyTxdotGeometryRetentionPrototype.js
+            /js/gridlyTxdotService.js
+            /js/gridlyUnifiedIntelligence.js
+            /js/gridlyUnifiedIntelligenceObservationAudit.js
+            /js/gridlyUnifiedIntelligencePrototype.js
+            /js/gridlyUnifiedIntelligenceReadinessAudit.js
+            /js/gridlyUnifiedIntelligenceSimulation.js
+            /js/gridlyWeatherAuthorityFoundation.js
+            /js/gridlyWeatherAuthoritySourceIntegration.js
+            /js/gridlyWeatherConnectorEndpointAudit.js
+            /js/gridlyWeatherLiveConnector.js
+            /js/gridlyWeatherProvider.js
+            /js/history-capture/historyAggregationEngine.js
+            /js/history-capture/historyAwarenessAdapter.js
+            /js/history-capture/historyCaptureEnvelope.js
+            /js/history-capture/historyCaptureFlags.js
+            /js/history-capture/historyCaptureIdempotency.js
+            /js/history-capture/historyCaptureMonitoring.js
+            /js/history-capture/historyCapturePhase1A.js
+            /js/history-capture/historyCaptureWriter.js
+            /js/history-capture/historyEpisodeResolver.js
+            /js/history-capture/historyEpisodeRuntimeBridge.js
+            /js/history-capture/historyEvidenceInterpretationAdapter.js
+            /js/history-capture/historyIdentity.js
+            /js/history-capture/historyIntelligenceEngine.js
+            /js/history-capture/historyIntelligenceReadinessIndex.js
+            /js/history-capture/historyIntelligenceRuntimeIntegration.js
+            /js/history-capture/historyPatternQualificationEngine.js
+            /js/history-capture/historyPatternRegistry.js
+            /js/lp097-curated-destinations.js
+            /js/lp097-search-governance.js
+            /js/lp098-curated-destinations.js
+            /js/lp099-business-search.js
+            /js/lp101-search-quality.js
+            /js/lp102-rural-address-cases.js
+            /js/lp104-regional-rural-address-audit.js
+            /js/lp24110-poi-search-certification.js
+            /package.json
+            /public-site/index.html
+            /supabase/functions/_shared/entitlement/acknowledgment.mjs
+            /supabase/functions/_shared/entitlement/apple-app-attest.mjs
+            /supabase/functions/_shared/entitlement/apple-node-provider.mjs
+            /supabase/functions/_shared/entitlement/challenge-gateway.mjs
+            /supabase/functions/_shared/entitlement/composition.mjs
+            /supabase/functions/_shared/entitlement/core.mjs
+            /supabase/functions/_shared/entitlement/edge-runtime.ts
+            /supabase/functions/_shared/entitlement/google-integrity.mjs
+            /supabase/functions/_shared/entitlement/google-oauth.mjs
+            /supabase/functions/_shared/entitlement/handler.mjs
+            /supabase/functions/_shared/entitlement/native-authorization.mjs
+            /supabase/functions/_shared/entitlement/native-rpc-ports.mjs
+            /supabase/functions/_shared/entitlement/providers.mjs
+            /supabase/functions/_shared/entitlement/rpc-ports.mjs
+            /supabase/functions/_shared/entitlement/server-setup.mjs
+            /supabase/functions/gridly-verify-apple-subscription/index.ts
+            /supabase/functions/gridly-verify-google-subscription/index.ts
+            /tests/lp24461-subscription-entitlement.test.mjs
+            /tests/lp24462-server-verification.test.mjs
+            /tests/lp24463-apple-storekit.test.mjs
+            /tests/lp24465-continuity.test.mjs
+            /tests/lp24465-paid-access.test.mjs
+            /tests/lp24466-window3c-native-authorization.test.mjs
+            /tests/lp24466-window3d-apple-attest.test.mjs
+            /tests/lp24466-window3d-challenge-gateway.test.mjs
+            /tests/lp24466r-testflight-admission.test.mjs
+            /tests/lp24466s-apple-node.test.mjs
+            /tools/lp1831/prepare-cloudflare-preview-artifact.mjs
+            /tools/lp18321/git-asset-identity.mjs
+            /tools/native-web.mjs
+            /tools/subscription-challenge-gateway/worker.mjs
+            /tools/subscription-challenge-gateway/wrangler.jsonc
+      - name: Verify immutable sources and record actual runtime
         run: |
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
           test -z "$(git status --porcelain --untracked-files=all)"
-          cmp "$CANDIDATE/certification/workflow.yml.in" .github/workflows/gridly-apple-build-9.yml
-          test ! -d ios && test ! -d android && test ! -d supabase
-          test -z "$(find "$CANDIDATE" -type l -print)"
+          cmp "$CERT/workflow.yml.in" .github/workflows/gridly-apple-build-9.yml
           node -e 'if(Number(process.versions.node.split(".")[0])<24)process.exit(1)'
-          node "$CANDIDATE/certification/verify-package.mjs"
+          node "$CERT/verify.mjs"
           sw_vers
+          node --version
+          python3 --version
           xcodebuild -version
-          swift --version
-      - name: Run packaged server and gateway regressions
+          mkdir -p "$RUNNER_TEMP/first-party-results"
+          echo "GRIDLY_CERT_OUTPUT=$RUNNER_TEMP/first-party-results" >> "$GITHUB_ENV"
+      - name: Run first-party and protected Node regressions without network
         run: |
           set -euo pipefail
-          node --test --test-reporter=tap "$CANDIDATE/tests/server.test.mjs" "$CANDIDATE/tests/preservation-and-reporting.test.mjs" "$CANDIDATE/tests/certification-readiness.test.mjs" | tee "$RUNNER_TEMP/auth-node.log"
-          grep -Fx '# pass 19' "$RUNNER_TEMP/auth-node.log"
-          grep -Fx '# fail 0' "$RUNNER_TEMP/auth-node.log"
-          node --test --test-reporter=tap "$CANDIDATE/reference/prototypes/ios-arcgis-labels-gateway-deploy/edge.test.mjs" "$CANDIDATE/reference/prototypes/ios-arcgis-labels-live-candidate/foundation.test.mjs" | tee "$RUNNER_TEMP/auth-gateway.log"
-          grep -Fx '# pass 39' "$RUNNER_TEMP/auth-gateway.log"
-          grep -Fx '# fail 0' "$RUNNER_TEMP/auth-gateway.log"
-      - name: Run existing native security regressions
+          node "$CERT/run-node.mjs"
+      - name: Recheck historical native public vector without new native execution
         run: |
           set -euo pipefail
-          swift test --package-path "$CANDIDATE/reference/prototypes/ios-arcgis-labels-integration" --scratch-path "$RUNNER_TEMP/auth-reference-core" 2>&1 | tee "$RUNNER_TEMP/auth-reference-core.log"
-          grep -Eq 'Executed [1-9][0-9]* tests?, with 0 failures' "$RUNNER_TEMP/auth-reference-core.log"
-          swift test --package-path "$CANDIDATE/reference/prototypes/ios-arcgis-labels-gateway-deploy/native-fixed-path" --scratch-path "$RUNNER_TEMP/auth-reference-fixed" 2>&1 | tee "$RUNNER_TEMP/auth-reference-fixed.log"
-          grep -F 'Executed 1 test, with 0 failures' "$RUNNER_TEMP/auth-reference-fixed.log"
-      - name: Resolve pinned Capacitor in scratch package
+          node "$CANDIDATE/certification/verify-vector.mjs" "$CERT/native-public-vector.log"
+      - name: Acquire PostgreSQL 17 tooling only
         run: |
           set -euo pipefail
-          cp -R "$CANDIDATE" "$RUNNER_TEMP/auth-package"
-          cd "$RUNNER_TEMP/auth-package"
-          xcodebuild -resolvePackageDependencies -scheme GridlyLabelsAuthorizationCandidate -clonedSourcePackagesDirPath "$RUNNER_TEMP/auth-sdk"
-          python3 - <<'PY'
-          import json, os, pathlib
-          root=pathlib.Path(os.environ['RUNNER_TEMP'])/'auth-package'
-          pins=[p for f in root.rglob('Package.resolved') for p in json.loads(f.read_text()).get('pins',[]) if p.get('identity')=='capacitor-swift-pm']
-          assert pins and all(p['state']['version']=='8.3.4' and p['state']['revision']=='992959f0467c781eb6a1637e69d87481238c3672' for p in pins)
-          PY
-          cmp certification/capacitor-8.3.4-Package.swift "$RUNNER_TEMP/auth-sdk/checkouts/capacitor-swift-pm/Package.swift"
-      - name: Compile and test unsigned iOS 16.4-compatible candidate
+          export HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_INSTALL_CLEANUP=1
+          if ! brew list --versions postgresql@17 >/dev/null 2>&1; then
+            brew install postgresql@17
+          fi
+          pg_bin="$(brew --prefix postgresql@17)/bin"
+          test -x "$pg_bin/postgres"
+          "$pg_bin/postgres" --version
+          echo "GRIDLY_CERT_PG_BIN=$pg_bin" >> "$GITHUB_ENV"
+      - name: Run both suites on owned disposable loopback clusters
         run: |
           set -euo pipefail
-          cd "$RUNNER_TEMP/auth-package"
-          device="$(xcrun simctl list devices available --json | python3 -c 'import json,sys; print(next((d["udid"] for r,g in json.load(sys.stdin)["devices"].items() if ".iOS-" in r for d in g if d["name"].startswith("iPhone") and d["state"]=="Shutdown"),""))')"
-          test -n "$device"
-          trap 'xcrun simctl shutdown "$device" >/dev/null 2>&1 || true' EXIT
-          xcodebuild test -scheme GridlyLabelsAuthorizationCandidate -destination "platform=iOS Simulator,id=$device" -derivedDataPath "$RUNNER_TEMP/auth-derived" -clonedSourcePackagesDirPath "$RUNNER_TEMP/auth-sdk" -disableAutomaticPackageResolution -onlyUsePackageVersionsFromResolvedFile -resultBundlePath "$RUNNER_TEMP/auth-native.xcresult" IPHONEOS_DEPLOYMENT_TARGET=16.4 SWIFT_VERSION=5.0 CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY= 2>&1 | tee "$RUNNER_TEMP/auth-native.log"
-          grep -F 'Executed 6 tests, with 0 failures' "$RUNNER_TEMP/auth-native.log"
-          node certification/verify-vector.mjs "$RUNNER_TEMP/auth-native.log"
+          node "$CERT/postgres.mjs"
       - name: Verify source checkout remained unchanged
         run: |
           set -euo pipefail
           test -z "$(git status --porcelain --untracked-files=all)"
-      - name: Retain synthetic certification evidence
+          node "$CERT/verify.mjs"
+      - name: Retain synthetic certification diagnostics
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: gridly-labels-authorization-native-certification
-          path: |
-            ${{ runner.temp }}/auth-node.log
-            ${{ runner.temp }}/auth-gateway.log
-            ${{ runner.temp }}/auth-reference-core.log
-            ${{ runner.temp }}/auth-reference-fixed.log
-            ${{ runner.temp }}/auth-native.log
-            ${{ runner.temp }}/auth-native.xcresult
+          name: gridly-first-party-authorization-certification
+          path: ${{ runner.temp }}/first-party-results
           retention-days: 7
           if-no-files-found: warn
+
