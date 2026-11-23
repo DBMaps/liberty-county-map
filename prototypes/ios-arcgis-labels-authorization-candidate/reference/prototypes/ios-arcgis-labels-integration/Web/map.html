@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' gridly-label: data:; connect-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>Mock satellite labels</title>
+  <link rel="stylesheet" href="vendor/leaflet.css">
+  <style>
+    html, body { height: 100%; margin: 0; font: 16px system-ui, sans-serif; }
+    body { display: flex; flex-direction: column; }
+    header { display: flex; align-items: center; gap: .75rem; padding: .5rem; }
+    #map { flex: 1; background: #344133; }
+    #status { font-size: .875rem; }
+  </style>
+  <script defer src="vendor/leaflet.js"></script>
+  <script defer src="map.js"></script>
+</head>
+<body>
+  <header>
+    <button id="labels" type="button" aria-pressed="true">Mock labels</button>
+    <span id="status" role="status">Waiting for tiles</span>
+  </header>
+  <main id="map" aria-label="Mock satellite imagery map"></main>
+</body>
+</html>

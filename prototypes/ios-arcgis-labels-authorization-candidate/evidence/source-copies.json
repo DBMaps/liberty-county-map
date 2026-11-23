@@ -1,0 +1,712 @@
+{
+  "commit": "8cb40f70fc29bcfb441245751b667790b0e9e6b2",
+  "gitdir": "C:/Users/gulfi/.codex/worktrees/f695/liberty-county-map/.artifacts/lk18s/.git",
+  "reference": "C:/Users/gulfi/.codex/worktrees/f695/liberty-county-map",
+  "files": [
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-gateway-deploy\\.env.example",
+      "copy": "reference/prototypes/ios-arcgis-labels-gateway-deploy/.env.example",
+      "sha256": "937e77de0094c5af22c7ef164c8d831119c1cf0f99ddc7702a8a0a20f60299c6"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-gateway-deploy\\certification-workflow.yml.in",
+      "copy": "reference/prototypes/ios-arcgis-labels-gateway-deploy/certification-workflow.yml.in",
+      "sha256": "2240af11b5e401eed66b2d5b61b3e5c8f77ef69dee3a8768e68cc9b0df13eea1"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-gateway-deploy\\certification.sha256",
+      "copy": "reference/prototypes/ios-arcgis-labels-gateway-deploy/certification.sha256",
+      "sha256": "264e4022755926a8c122b4e54fe73f29a1439f81bcab4e817246f35764f81891"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-gateway-deploy\\edge.test.mjs",
+      "copy": "reference/prototypes/ios-arcgis-labels-gateway-deploy/edge.test.mjs",
+      "sha256": "3ea28115b62571ae2959d55c6f257b45ac2a17d9fd7eaa984242424418c989fd"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-gateway-deploy\\FIXED-PATH-PRIVACY.md",
+      "copy": "reference/prototypes/ios-arcgis-labels-gateway-deploy/FIXED-PATH-PRIVACY.md",
+      "sha256": "9279f0dcd3a297092f21e68e06cb6414a39c6e66fe8e0632ca842d64c4f9dd5a"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-gateway-deploy\\foundation.sha256",
+      "copy": "reference/prototypes/ios-arcgis-labels-gateway-deploy/foundation.sha256",
+      "sha256": "fc8ef1f440b09791bcfd93919295dcbcbacb0ef06453646dd7603e7ef1067022"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-gateway-deploy\\HOSTING-READINESS.md",
+      "copy": "reference/prototypes/ios-arcgis-labels-gateway-deploy/HOSTING-READINESS.md",
+      "sha256": "39d902f63689789de730f43be64f199808ffe52e5236e1463e253c779c59b80a"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-gateway-deploy\\ingress.nginx.conf.example",
+      "copy": "reference/prototypes/ios-arcgis-labels-gateway-deploy/ingress.nginx.conf.example",
+      "sha256": "72493a683041de5def00fa80284ac579635834f48fbe0ed9fd82a01f1d8abe87"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-gateway-deploy\\native-fixed-path\\Package.swift",
+      "copy": "reference/prototypes/ios-arcgis-labels-gateway-deploy/native-fixed-path/Package.swift",
+      "sha256": "be438517018363f80f438d3fec8b07d2e00791a4f92c7550df2307c8b99e6211"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-gateway-deploy\\native-fixed-path\\prepare-harness.mjs",
+      "copy": "reference/prototypes/ios-arcgis-labels-gateway-deploy/native-fixed-path/prepare-harness.mjs",
+      "sha256": "4de06f15c4f93b74d6425281d02b8dc2c0cafaf56ae26ec72c6018f5c400905c"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-gateway-deploy\\native-fixed-path\\Sources\\GridlyFixedPathTile\\FixedPathTile.swift",
+      "copy": "reference/prototypes/ios-arcgis-labels-gateway-deploy/native-fixed-path/Sources/GridlyFixedPathTile/FixedPathTile.swift",
+      "sha256": "6cb572f2b6b5556cdcefaa8943a0e172dd59266769048b765197ac83f3bd903f"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-gateway-deploy\\native-fixed-path\\Tests\\GridlyFixedPathTileTests\\FixedPathTileTests.swift",
+      "copy": "reference/prototypes/ios-arcgis-labels-gateway-deploy/native-fixed-path/Tests/GridlyFixedPathTileTests/FixedPathTileTests.swift",
+      "sha256": "7b95867bd633353c6a1ed48b2e23d2bf548613010a4ca4cbc561bab299f077b8"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-gateway-deploy\\native-fixed-path\\Tests\\GridlyFixedPathTileTests\\tile-proof.json",
+      "copy": "reference/prototypes/ios-arcgis-labels-gateway-deploy/native-fixed-path/Tests/GridlyFixedPathTileTests/tile-proof.json",
+      "sha256": "2d16ffdad0cd4f10331faa086d0bc6d06ee30d632bbea4ed19fbe30c30533ac8"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-gateway-deploy\\native-fixed-path\\verify-swift-vector.mjs",
+      "copy": "reference/prototypes/ios-arcgis-labels-gateway-deploy/native-fixed-path/verify-swift-vector.mjs",
+      "sha256": "fb76f6602581cf2a3c2a0c9485c9e7c3d2438388ba82e439b120be1be1a76a78"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-gateway-deploy\\postgres.test.mjs",
+      "copy": "reference/prototypes/ios-arcgis-labels-gateway-deploy/postgres.test.mjs",
+      "sha256": "d9285d74cbcfc74d937d09d0d66562d1ebf1d0f50bd298a65196dde056e9063f"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-gateway-deploy\\README.md",
+      "copy": "reference/prototypes/ios-arcgis-labels-gateway-deploy/README.md",
+      "sha256": "655cac2213febd2bdec017c7485df3c99e98dcf29a9faa86398c0e5c42b86536"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-gateway-deploy\\STAGE-3F-HOSTED-PRIVACY-PLAN.md",
+      "copy": "reference/prototypes/ios-arcgis-labels-gateway-deploy/STAGE-3F-HOSTED-PRIVACY-PLAN.md",
+      "sha256": "a9bb2595b80bbed9d0fe3c77d2d2cee2b46a4a06afbf473a2d445a899fa654ab"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-gateway-deploy\\supabase\\config.toml",
+      "copy": "reference/prototypes/ios-arcgis-labels-gateway-deploy/supabase/config.toml",
+      "sha256": "47b606b4f64637ce66095d0e782613ccf5a4e10fe313434ec6c6bb9362082fad"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-gateway-deploy\\supabase\\functions\\gridly-labels\\deno.lock",
+      "copy": "reference/prototypes/ios-arcgis-labels-gateway-deploy/supabase/functions/gridly-labels/deno.lock",
+      "sha256": "4af5aab539d8230f2dde20f1f57dffefcdf899420e311a642c386c322571b40c"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-gateway-deploy\\supabase\\functions\\gridly-labels\\edge.mjs",
+      "copy": "reference/prototypes/ios-arcgis-labels-gateway-deploy/supabase/functions/gridly-labels/edge.mjs",
+      "sha256": "1827b967554c56a37ed8b1438ee3610367be0953720a7bfa4ef52bbc6771ca7f"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-gateway-deploy\\supabase\\functions\\gridly-labels\\foundation\\esri.mjs",
+      "copy": "reference/prototypes/ios-arcgis-labels-gateway-deploy/supabase/functions/gridly-labels/foundation/esri.mjs",
+      "sha256": "2c527dad7e6c36692a69454ebdfb03e12ca7ab4c5ccbbb59e2e4868edf9dcc69"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-gateway-deploy\\supabase\\functions\\gridly-labels\\foundation\\gateway.mjs",
+      "copy": "reference/prototypes/ios-arcgis-labels-gateway-deploy/supabase/functions/gridly-labels/foundation/gateway.mjs",
+      "sha256": "22ed0455d38010488e0631e050bad47a1fc85e59a64b4dba3eb643ba3645fbde"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-gateway-deploy\\supabase\\functions\\gridly-labels\\foundation\\png.mjs",
+      "copy": "reference/prototypes/ios-arcgis-labels-gateway-deploy/supabase/functions/gridly-labels/foundation/png.mjs",
+      "sha256": "21ca773271bec4d648b12b3223cfc35d6b1c03fd0c11c84f04609a205f3f7d18"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-gateway-deploy\\supabase\\functions\\gridly-labels\\foundation\\protocol.mjs",
+      "copy": "reference/prototypes/ios-arcgis-labels-gateway-deploy/supabase/functions/gridly-labels/foundation/protocol.mjs",
+      "sha256": "143efe6a6d3985fd60092c8901befd63dd161b948da2bdc6c4ce1232d9f89d3a"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-gateway-deploy\\supabase\\functions\\gridly-labels\\foundation\\state.mjs",
+      "copy": "reference/prototypes/ios-arcgis-labels-gateway-deploy/supabase/functions/gridly-labels/foundation/state.mjs",
+      "sha256": "8c8f31947a6f52b3d69291008e2872c44054dbc103ff151c5f2d6b8d275d1422"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-gateway-deploy\\supabase\\functions\\gridly-labels\\index.ts",
+      "copy": "reference/prototypes/ios-arcgis-labels-gateway-deploy/supabase/functions/gridly-labels/index.ts",
+      "sha256": "8485e5a68cd5ca75f16350116d6778822788225d0fc48e33b443d57e86a5ec12"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-gateway-deploy\\supabase\\functions\\gridly-labels\\runtime.mjs",
+      "copy": "reference/prototypes/ios-arcgis-labels-gateway-deploy/supabase/functions/gridly-labels/runtime.mjs",
+      "sha256": "163006e00e7ca942c5e3ced46d186645b556e76e9fd7086a548a00b9dc06d441"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-gateway-deploy\\supabase\\functions\\gridly-labels\\tile-wire.mjs",
+      "copy": "reference/prototypes/ios-arcgis-labels-gateway-deploy/supabase/functions/gridly-labels/tile-wire.mjs",
+      "sha256": "6e7a88a752c9b1a5b00cfa688cbc9092b6aefb4800752944d665ca7d09883e26"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-gateway-deploy\\supabase\\functions\\gridly-labels\\web-gateway.mjs",
+      "copy": "reference/prototypes/ios-arcgis-labels-gateway-deploy/supabase/functions/gridly-labels/web-gateway.mjs",
+      "sha256": "ddf27778104fadcf12e80a31956bbd5b6c3593d3c909dc5a43e05d5c93368274"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-gateway-deploy\\supabase\\functions\\gridly-labels\\web-proof.mjs",
+      "copy": "reference/prototypes/ios-arcgis-labels-gateway-deploy/supabase/functions/gridly-labels/web-proof.mjs",
+      "sha256": "0aab4a1b8d9cc7f1c26824eb09bb1eac153b8e243608d510cd18a67ebc523815"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-gateway-deploy\\supabase\\migrations\\20261113000100_labels_foundation.sql",
+      "copy": "reference/prototypes/ios-arcgis-labels-gateway-deploy/supabase/migrations/20261113000100_labels_foundation.sql",
+      "sha256": "0b727113b23f5a125a76c47012e54d4dbc6bb03d35bb2be0491dd95860f079eb"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-gateway-deploy\\supabase\\migrations\\20261113000200_labels_edge_state.sql",
+      "copy": "reference/prototypes/ios-arcgis-labels-gateway-deploy/supabase/migrations/20261113000200_labels_edge_state.sql",
+      "sha256": "5dc26fd0eedf8ec9921a5d60bb10a5ea35f915699ef393ebc62ad7e005e6ab97"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-gateway-deploy\\test-disposable-postgres.ps1",
+      "copy": "reference/prototypes/ios-arcgis-labels-gateway-deploy/test-disposable-postgres.ps1",
+      "sha256": "e88ab2e70b7742c51a89842a762a344a636d74eb33bcdb6c0694d7c909bd116a"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-gateway-deploy\\verify-sources.mjs",
+      "copy": "reference/prototypes/ios-arcgis-labels-gateway-deploy/verify-sources.mjs",
+      "sha256": "b63cf1dc46272f119458631fbc221a530c5a36d657c97c0c95794de790477722"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-live-candidate\\benchmark.mjs",
+      "copy": "reference/prototypes/ios-arcgis-labels-live-candidate/benchmark.mjs",
+      "sha256": "f64790481b29a3e6ccf704d05b070d4dddb7332327b29ab70c79ceb7c0b4e7f1"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-live-candidate\\certification.sha256",
+      "copy": "reference/prototypes/ios-arcgis-labels-live-candidate/certification.sha256",
+      "sha256": "d3ece1e25b60cb912d3f5fa78cbb2a3237a7eee6af4343f76499cfc61afa7421"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-live-candidate\\esri.mjs",
+      "copy": "reference/prototypes/ios-arcgis-labels-live-candidate/esri.mjs",
+      "sha256": "2c527dad7e6c36692a69454ebdfb03e12ca7ab4c5ccbbb59e2e4868edf9dcc69"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-live-candidate\\foundation.test.mjs",
+      "copy": "reference/prototypes/ios-arcgis-labels-live-candidate/foundation.test.mjs",
+      "sha256": "9f41e6bdfb8229696074e509731ca832c5d15d7e22f0288b4769abdd9b60dd9f"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-live-candidate\\gateway.mjs",
+      "copy": "reference/prototypes/ios-arcgis-labels-live-candidate/gateway.mjs",
+      "sha256": "22ed0455d38010488e0631e050bad47a1fc85e59a64b4dba3eb643ba3645fbde"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-live-candidate\\hosted-certification.yml.in",
+      "copy": "reference/prototypes/ios-arcgis-labels-live-candidate/hosted-certification.yml.in",
+      "sha256": "9ae6b7eff7c6fc12e8d25ae7a416e350e50124c5af39984c6d21b1a730837d27"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-live-candidate\\http.mjs",
+      "copy": "reference/prototypes/ios-arcgis-labels-live-candidate/http.mjs",
+      "sha256": "f8a4d10a24cba2634482480fcf42596a90f7b964b6b6f25ee6c5934cc13980da"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-live-candidate\\ios\\Harness\\Harness.swift",
+      "copy": "reference/prototypes/ios-arcgis-labels-live-candidate/ios/Harness/Harness.swift",
+      "sha256": "3b6e65336cb4cd779fdd183a134c6eaeb06aea41754f643d56918d3a2146f52d"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-live-candidate\\ios\\Harness\\HarnessRenderer.swift",
+      "copy": "reference/prototypes/ios-arcgis-labels-live-candidate/ios/Harness/HarnessRenderer.swift",
+      "sha256": "5f3730276dece511d8ba3476eeab9e30274ec29cf1825779aa870283a9e5eaac"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-live-candidate\\ios\\Harness\\prepare-assets.mjs",
+      "copy": "reference/prototypes/ios-arcgis-labels-live-candidate/ios/Harness/prepare-assets.mjs",
+      "sha256": "f68f20c8c8ce6c277427c435841a54d45739a4db5c8be576fe6640af85396675"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-live-candidate\\ios\\Package.swift",
+      "copy": "reference/prototypes/ios-arcgis-labels-live-candidate/ios/Package.swift",
+      "sha256": "4fbd0eec5bb5339ade74ac4714496c29f956467245ff06d5a5b3b4d8892c8234"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-live-candidate\\ios\\PilotHarness.xcodeproj\\project.pbxproj",
+      "copy": "reference/prototypes/ios-arcgis-labels-live-candidate/ios/PilotHarness.xcodeproj/project.pbxproj",
+      "sha256": "383c990b675ae1f102f160a826e7e340d22cd70c2310ccd39d1d7e8fa3aa2a74"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-live-candidate\\ios\\PilotHarness.xcodeproj\\xcshareddata\\xcschemes\\PilotHarness.xcscheme",
+      "copy": "reference/prototypes/ios-arcgis-labels-live-candidate/ios/PilotHarness.xcodeproj/xcshareddata/xcschemes/PilotHarness.xcscheme",
+      "sha256": "a47b901fab448a71e51c8c0c50c78ca315cfc82f16f56a2963fd01f8f97d3989"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-live-candidate\\ios\\Sources\\GridlyLabelsPilot\\HTTPSLabelTransport.swift",
+      "copy": "reference/prototypes/ios-arcgis-labels-live-candidate/ios/Sources/GridlyLabelsPilot/HTTPSLabelTransport.swift",
+      "sha256": "9de983392f0af17fde5206b33b386147c9fea11eb8f5bb0ea9976901aff4f760"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-live-candidate\\ios\\Sources\\GridlyLabelsPilot\\LabelsSchemeHandler.swift",
+      "copy": "reference/prototypes/ios-arcgis-labels-live-candidate/ios/Sources/GridlyLabelsPilot/LabelsSchemeHandler.swift",
+      "sha256": "2a40163d656e373c330fcffc5a6ac0fbdc5080369de32e1941eebb5dea65bcf0"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-live-candidate\\ios\\Sources\\GridlyLabelsPilot\\LabelTileCore.swift",
+      "copy": "reference/prototypes/ios-arcgis-labels-live-candidate/ios/Sources/GridlyLabelsPilot/LabelTileCore.swift",
+      "sha256": "d30861bc2193a5b197a880e29e938df8e1ec8f6b8b272d8a39946e2263d9eeb0"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-live-candidate\\ios\\Tests\\GridlyLabelsPilotTests\\TransportTests.swift",
+      "copy": "reference/prototypes/ios-arcgis-labels-live-candidate/ios/Tests/GridlyLabelsPilotTests/TransportTests.swift",
+      "sha256": "4b51f669f05c444f1f6ea7bee79736acf6846492275a90584f6b820e613a35c2"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-live-candidate\\leaflet-overlay.mjs",
+      "copy": "reference/prototypes/ios-arcgis-labels-live-candidate/leaflet-overlay.mjs",
+      "sha256": "47ce2c2487b634bd4f6a0e44c899ab906da97f746cb7b18cdf0577806b00b7b7"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-live-candidate\\pilot-state.sql",
+      "copy": "reference/prototypes/ios-arcgis-labels-live-candidate/pilot-state.sql",
+      "sha256": "0b727113b23f5a125a76c47012e54d4dbc6bb03d35bb2be0491dd95860f079eb"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-live-candidate\\pilot.mjs",
+      "copy": "reference/prototypes/ios-arcgis-labels-live-candidate/pilot.mjs",
+      "sha256": "432bea33f59013b04a0d4b3782c186f8f95a720460c7d5886c541b06a6207ba4"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-live-candidate\\png.mjs",
+      "copy": "reference/prototypes/ios-arcgis-labels-live-candidate/png.mjs",
+      "sha256": "21ca773271bec4d648b12b3223cfc35d6b1c03fd0c11c84f04609a205f3f7d18"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-live-candidate\\postgres.test.mjs",
+      "copy": "reference/prototypes/ios-arcgis-labels-live-candidate/postgres.test.mjs",
+      "sha256": "a1591a042aee4dbdb65cc4636d1eab6941540641434cdef78b9cd102b2d0af2a"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-live-candidate\\protocol.mjs",
+      "copy": "reference/prototypes/ios-arcgis-labels-live-candidate/protocol.mjs",
+      "sha256": "143efe6a6d3985fd60092c8901befd63dd161b948da2bdc6c4ce1232d9f89d3a"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-live-candidate\\README.md",
+      "copy": "reference/prototypes/ios-arcgis-labels-live-candidate/README.md",
+      "sha256": "29b8d946c0cb1ad5d082ab9adfa3f6c5782e81c64c558786b4ba636cf977db30"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-live-candidate\\state.mjs",
+      "copy": "reference/prototypes/ios-arcgis-labels-live-candidate/state.mjs",
+      "sha256": "8c8f31947a6f52b3d69291008e2872c44054dbc103ff151c5f2d6b8d275d1422"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-live-candidate\\test-disposable-postgres.ps1",
+      "copy": "reference/prototypes/ios-arcgis-labels-live-candidate/test-disposable-postgres.ps1",
+      "sha256": "837a2bdc59bfaefbca7014e0ff5cd2104cf75f6cc2f36c8bc7fe6ed7a7ee28ad"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-integration\\App\\GatewayLabelTransport.swift",
+      "copy": "reference/prototypes/ios-arcgis-labels-integration/App/GatewayLabelTransport.swift",
+      "sha256": "e526bfe392602823859ffc7e53bdb8568f7ae96aa7663e6c7361953bb190aca5"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-integration\\App\\GridlyLabelTileSchemeHandler.swift",
+      "copy": "reference/prototypes/ios-arcgis-labels-integration/App/GridlyLabelTileSchemeHandler.swift",
+      "sha256": "591815db1a51ea89603e2cb5a3ac76078945a272a2f11967342246a71ce5631e"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-integration\\App\\LabelTileHarness.swift",
+      "copy": "reference/prototypes/ios-arcgis-labels-integration/App/LabelTileHarness.swift",
+      "sha256": "a1e76a1dfc60747fee356200de94da382cc5ce78d1d63409706338d6d9f29650"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-integration\\integration.bench.mjs",
+      "copy": "reference/prototypes/ios-arcgis-labels-integration/integration.bench.mjs",
+      "sha256": "a4727d25f368f88470c9cd0cb8d752eddbb5c20f36c8b11714c6a8a270cb6e45"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-integration\\integration.test.mjs",
+      "copy": "reference/prototypes/ios-arcgis-labels-integration/integration.test.mjs",
+      "sha256": "4cbdfb51003e1970ed4edbef6394ba24949a4f57fb2a4cd26417e99b101d25a4"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-integration\\LabelTileHarness.xcodeproj\\project.pbxproj",
+      "copy": "reference/prototypes/ios-arcgis-labels-integration/LabelTileHarness.xcodeproj/project.pbxproj",
+      "sha256": "673b0aab3c2e49a077226c41112c2d40f9a95aec5df29f6cfbae3b4158940c31"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-integration\\LabelTileHarness.xcodeproj\\xcshareddata\\xcschemes\\LabelTileHarness.xcscheme",
+      "copy": "reference/prototypes/ios-arcgis-labels-integration/LabelTileHarness.xcodeproj/xcshareddata/xcschemes/LabelTileHarness.xcscheme",
+      "sha256": "88c4f8ff3cde89deb25a71c7e2a5424e563dd611d89936ffe44c6e93beb5e3ad"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-integration\\local-integration.mjs",
+      "copy": "reference/prototypes/ios-arcgis-labels-integration/local-integration.mjs",
+      "sha256": "9602ab306d36bda67614c410357a77d3752db1e73a095f3f7224cdcd37565950"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-integration\\map-fixture.mjs",
+      "copy": "reference/prototypes/ios-arcgis-labels-integration/map-fixture.mjs",
+      "sha256": "e677fa6c75cbcc2b36c448fb353c44ff101c08c997773d293f63a82349763c74"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-integration\\Package.swift",
+      "copy": "reference/prototypes/ios-arcgis-labels-integration/Package.swift",
+      "sha256": "ef1a72b89e01de844829c4c58440a406f40d042b298fa1a69edd328338f97371"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-integration\\README.md",
+      "copy": "reference/prototypes/ios-arcgis-labels-integration/README.md",
+      "sha256": "8e8881c80f042ee1a930bfc7b3dba7c7d1ad8530d2de880ba0322750b1365d71"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-integration\\source-copies.sha256",
+      "copy": "reference/prototypes/ios-arcgis-labels-integration/source-copies.sha256",
+      "sha256": "bd470ca6e9cfdd201667295dd7c0ca6eb0494576dd3e2b3f3ec391f96b1515d2"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-integration\\Sources\\TileCore\\LabelTileCore.swift",
+      "copy": "reference/prototypes/ios-arcgis-labels-integration/Sources/TileCore/LabelTileCore.swift",
+      "sha256": "f3f09d3eef861288ed4cb36568a595a1ac4653fe566db29b6073aeda71d3e79c"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-integration\\Sources\\TileCore\\MockGateway.swift",
+      "copy": "reference/prototypes/ios-arcgis-labels-integration/Sources/TileCore/MockGateway.swift",
+      "sha256": "1e7c848c91d040f5514d997f0a372967bee59e06e0e67e9beb424def69ef325f"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-integration\\Tests\\TileCoreTests\\Fixtures\\valid.png",
+      "copy": "reference/prototypes/ios-arcgis-labels-integration/Tests/TileCoreTests/Fixtures/valid.png",
+      "sha256": "074065f07e35265d9695cced0f42844dbb02e5766c4ed185d0a372b2d033b093"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-integration\\Tests\\TileCoreTests\\Fixtures\\wire-proof.json",
+      "copy": "reference/prototypes/ios-arcgis-labels-integration/Tests/TileCoreTests/Fixtures/wire-proof.json",
+      "sha256": "852144bff24fa645e376dc3c02d480e20d298cb232cb6081ea616ac87b8635bb"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-integration\\Tests\\TileCoreTests\\LabelTileSchemeHandlerTests.swift",
+      "copy": "reference/prototypes/ios-arcgis-labels-integration/Tests/TileCoreTests/LabelTileSchemeHandlerTests.swift",
+      "sha256": "edd19b086426b6cb1c33b6e0e9bc3f7f9f8f70f2c1af499a8cb78e7a84d13321"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-integration\\Tests\\TileCoreTests\\MockGatewayTests.swift",
+      "copy": "reference/prototypes/ios-arcgis-labels-integration/Tests/TileCoreTests/MockGatewayTests.swift",
+      "sha256": "749dc742cb655cb6d73e3b714f7b4737dc6c3f9852eda59f0fed84fa7cf47de5"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-integration\\verify-source.mjs",
+      "copy": "reference/prototypes/ios-arcgis-labels-integration/verify-source.mjs",
+      "sha256": "532ecfa4a0125baa84221d092373538d674ef3af39fff9327cf22936256c6091"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-integration\\Web\\imagery.svg",
+      "copy": "reference/prototypes/ios-arcgis-labels-integration/Web/imagery.svg",
+      "sha256": "746ec7b5a9e3faeba9fa874096e214f25b33671f0d77ca2831969b8a470d4f90"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-integration\\Web\\map.html",
+      "copy": "reference/prototypes/ios-arcgis-labels-integration/Web/map.html",
+      "sha256": "261cc07a00f072a54642ab25100e65f48b9d5a1e83c6cc49a75f4c44374a99d9"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-integration\\Web\\map.js",
+      "copy": "reference/prototypes/ios-arcgis-labels-integration/Web/map.js",
+      "sha256": "bc8bfa03ac0341a604069852d8c0305b0f6a6323f5c691325ec85d7aea19bdec"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-integration\\Web\\vendor\\leaflet.css",
+      "copy": "reference/prototypes/ios-arcgis-labels-integration/Web/vendor/leaflet.css",
+      "sha256": "a7837102824184820dfa198d1ebcd109ff6d0ff9a2672a074b9a1b4d147d04c6"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-integration\\Web\\vendor\\leaflet.js",
+      "copy": "reference/prototypes/ios-arcgis-labels-integration/Web/vendor/leaflet.js",
+      "sha256": "db49d009c841f5ca34a888c96511ae936fd9f5533e90d8b2c4d57596f4e5641a"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-integration\\Web\\vendor\\LICENSE",
+      "copy": "reference/prototypes/ios-arcgis-labels-integration/Web/vendor/LICENSE",
+      "sha256": "53e8dc25862014e4324741ca18fbe3611e11d42ef69f59f86ea8c5389647d4cb"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-gateway\\contract.md",
+      "copy": "reference/prototypes/ios-arcgis-labels-gateway/contract.md",
+      "sha256": "c4dab7a11e2ce4f29369afac168b3408f2bd8c8d89fd70673283b576a31dbab1"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-gateway\\gateway.bench.mjs",
+      "copy": "reference/prototypes/ios-arcgis-labels-gateway/gateway.bench.mjs",
+      "sha256": "4230e7b5050663ad8ac8fdfeeb51d0113529eae877922fec22fe5fed213af318"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-gateway\\gateway.mjs",
+      "copy": "reference/prototypes/ios-arcgis-labels-gateway/gateway.mjs",
+      "sha256": "c024624eb9622eca5fbf164e49293f6199e345565d1a398983e6dbc173dbc179"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-gateway\\gateway.test.mjs",
+      "copy": "reference/prototypes/ios-arcgis-labels-gateway/gateway.test.mjs",
+      "sha256": "8ac60bcf965bde4c754aaf700255fd7a878828c81183d75469d0c4229ebc69f6"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-gateway\\mock-tile.png",
+      "copy": "reference/prototypes/ios-arcgis-labels-gateway/mock-tile.png",
+      "sha256": "074065f07e35265d9695cced0f42844dbb02e5766c4ed185d0a372b2d033b093"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-gateway\\png.mjs",
+      "copy": "reference/prototypes/ios-arcgis-labels-gateway/png.mjs",
+      "sha256": "507e0f8913dda30439b583c9c8e18f40d961096a56cb90aa95864cd8988aad11"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-gateway\\README.md",
+      "copy": "reference/prototypes/ios-arcgis-labels-gateway/README.md",
+      "sha256": "311d06cf45d216ddc7d13d58e66753adfbf9902b0e7a3632c674639bc58d67f7"
+    },
+    {
+      "source": "C:\\Users\\gulfi\\.codex\\worktrees\\f695\\liberty-county-map\\prototypes\\ios-arcgis-labels-gateway\\synthetic.mjs",
+      "copy": "reference/prototypes/ios-arcgis-labels-gateway/synthetic.mjs",
+      "sha256": "e1f0933f9e3f0ddd9daf4c8a2a66802c06ffb12f93f59973277cad79b4faa36f"
+    },
+    {
+      "source": "8cb40f70fc29bcfb441245751b667790b0e9e6b2:ios/App/App/AppDelegate.swift",
+      "copy": "reference/build18/ios/App/App/AppDelegate.swift",
+      "sha256": "5963d47ceba89e0d5694376ebf0bca630284db3de794bdf8666ea3093fe38a2f"
+    },
+    {
+      "source": "8cb40f70fc29bcfb441245751b667790b0e9e6b2:ios/App/App/GridlyAppAttestPlugin.swift",
+      "copy": "reference/build18/ios/App/App/GridlyAppAttestPlugin.swift",
+      "sha256": "3478b0828b5c8fac94b31abb03b92ccef9be38875b1742c4e260b0857c87a492"
+    },
+    {
+      "source": "8cb40f70fc29bcfb441245751b667790b0e9e6b2:ios/App/App/GridlyBridgeViewController.swift",
+      "copy": "reference/build18/ios/App/App/GridlyBridgeViewController.swift",
+      "sha256": "9c707994f0b5ac7ce84dbf8161bff4f9848b401e92a8f64216d73d68cf38c60e"
+    },
+    {
+      "source": "8cb40f70fc29bcfb441245751b667790b0e9e6b2:ios/App/App/GridlyContinuityPlugin.swift",
+      "copy": "reference/build18/ios/App/App/GridlyContinuityPlugin.swift",
+      "sha256": "99271c0b60f3ef96430b1962447585bcbd9b20bf6f5e5be747bb138d6ba09ba7"
+    },
+    {
+      "source": "8cb40f70fc29bcfb441245751b667790b0e9e6b2:ios/App/App/GridlyStoreKitPlugin.swift",
+      "copy": "reference/build18/ios/App/App/GridlyStoreKitPlugin.swift",
+      "sha256": "82444a5e1c2cd1a192c7cde9c8d2c14b2ba40fe55b5c2f62fba853306f1f2d86"
+    },
+    {
+      "source": "8cb40f70fc29bcfb441245751b667790b0e9e6b2:js/gridly-apple-storekit.mjs",
+      "copy": "reference/build18/js/gridly-apple-storekit.mjs",
+      "sha256": "0287c4a8d7732b8571c88e002e1780f3c333345e416373ad3c011d0f1f68e9ae"
+    },
+    {
+      "source": "8cb40f70fc29bcfb441245751b667790b0e9e6b2:js/gridly-continuity.mjs",
+      "copy": "reference/build18/js/gridly-continuity.mjs",
+      "sha256": "717a1aca18f1b03fdd49c172cb051a0fa0f771930cb1dff1070df706499aefd9"
+    },
+    {
+      "source": "8cb40f70fc29bcfb441245751b667790b0e9e6b2:js/gridly-entitlement-public-key.mjs",
+      "copy": "reference/build18/js/gridly-entitlement-public-key.mjs",
+      "sha256": "8920141092b7625432cafb6547035534e634656ac42b2241676570aa6976bed5"
+    },
+    {
+      "source": "8cb40f70fc29bcfb441245751b667790b0e9e6b2:js/gridly-entitlement.mjs",
+      "copy": "reference/build18/js/gridly-entitlement.mjs",
+      "sha256": "25e214bf02bf0701d9cf16b9f77167e0b4d3143d701a0d5cfe664022e9e30449"
+    },
+    {
+      "source": "8cb40f70fc29bcfb441245751b667790b0e9e6b2:js/gridly-google-play-billing.mjs",
+      "copy": "reference/build18/js/gridly-google-play-billing.mjs",
+      "sha256": "a3937b596990b776f6946caea6d45f5e1bda2e4235d4ed5f22b589574db2153c"
+    },
+    {
+      "source": "8cb40f70fc29bcfb441245751b667790b0e9e6b2:js/gridly-google-review-access.mjs",
+      "copy": "reference/build18/js/gridly-google-review-access.mjs",
+      "sha256": "adaaf9f4468a9f8bbd7c2a9cd709fe704e7687918aaf7231db74c73d9e8100e2"
+    },
+    {
+      "source": "8cb40f70fc29bcfb441245751b667790b0e9e6b2:js/gridly-google-review-proof.mjs",
+      "copy": "reference/build18/js/gridly-google-review-proof.mjs",
+      "sha256": "10315b63831d7ce4404ae8b9eae7dfa4e8e6a79eedf169edfa690a1034a05783"
+    },
+    {
+      "source": "8cb40f70fc29bcfb441245751b667790b0e9e6b2:js/gridly-native-attested-invoke.mjs",
+      "copy": "reference/build18/js/gridly-native-attested-invoke.mjs",
+      "sha256": "cb3405afcd51593f0d7b3b9bf7e52438ac0d79473cf934cfb4231b46f0c94c7b"
+    },
+    {
+      "source": "8cb40f70fc29bcfb441245751b667790b0e9e6b2:js/gridly-native-edge-transport.mjs",
+      "copy": "reference/build18/js/gridly-native-edge-transport.mjs",
+      "sha256": "df0c78b267cf9ae536cd03724cdd2386ed29383b379246fd5bf24887a06b7f68"
+    },
+    {
+      "source": "8cb40f70fc29bcfb441245751b667790b0e9e6b2:js/gridly-native-verification-binding.mjs",
+      "copy": "reference/build18/js/gridly-native-verification-binding.mjs",
+      "sha256": "2c47083036a1df08ab69a7c67e70a52bb4c81c4974e5956e506f0ee405a2feb8"
+    },
+    {
+      "source": "8cb40f70fc29bcfb441245751b667790b0e9e6b2:js/gridly-paid-access.mjs",
+      "copy": "reference/build18/js/gridly-paid-access.mjs",
+      "sha256": "847485b4cd00ad5ec7bffbce97bb114c75d42128eb101fe4c4d81da380c8d9ba"
+    },
+    {
+      "source": "8cb40f70fc29bcfb441245751b667790b0e9e6b2:js/gridly-paid-config.mjs",
+      "copy": "reference/build18/js/gridly-paid-config.mjs",
+      "sha256": "337a6c4c09f40c4a4351e19f89d901c953ec9ea2ae489905082a4578c86b0082"
+    },
+    {
+      "source": "8cb40f70fc29bcfb441245751b667790b0e9e6b2:js/gridly-paid-onboarding.mjs",
+      "copy": "reference/build18/js/gridly-paid-onboarding.mjs",
+      "sha256": "d4915531b1b6458737f71b96589a18ca1f93dbe7ca05ac89bb741736100ac932"
+    },
+    {
+      "source": "8cb40f70fc29bcfb441245751b667790b0e9e6b2:js/gridly-paid-startup.mjs",
+      "copy": "reference/build18/js/gridly-paid-startup.mjs",
+      "sha256": "bed9442ba46630d22bd4a9a89337475574f593274ce090a8a01a427327a5eef6"
+    },
+    {
+      "source": "8cb40f70fc29bcfb441245751b667790b0e9e6b2:js/gridly-paid-ui.mjs",
+      "copy": "reference/build18/js/gridly-paid-ui.mjs",
+      "sha256": "a0d9cba7c9b777305a2aeec3221a3aec6171cebcea170ad0b26bfd9a196ef86f"
+    },
+    {
+      "source": "8cb40f70fc29bcfb441245751b667790b0e9e6b2:js/gridly-sandbox-entitlement-public-key.mjs",
+      "copy": "reference/build18/js/gridly-sandbox-entitlement-public-key.mjs",
+      "sha256": "f32df45b92a02fe4d9507edddcf2fd43f371954b69cfaca0cfd0418bb99ffaef"
+    },
+    {
+      "source": "8cb40f70fc29bcfb441245751b667790b0e9e6b2:js/gridly-store-verification.mjs",
+      "copy": "reference/build18/js/gridly-store-verification.mjs",
+      "sha256": "3b001abae55c7801fa0566fb80bb999bd360370cc137641d4019996edf7fc795"
+    },
+    {
+      "source": "8cb40f70fc29bcfb441245751b667790b0e9e6b2:supabase/functions/_shared/entitlement/ack-health.mjs",
+      "copy": "reference/build18/supabase/functions/_shared/entitlement/ack-health.mjs",
+      "sha256": "8212f962e022268ca55d33e0c2779a53bd33653a6e0855921f00045856589b09"
+    },
+    {
+      "source": "8cb40f70fc29bcfb441245751b667790b0e9e6b2:supabase/functions/_shared/entitlement/acknowledgment.mjs",
+      "copy": "reference/build18/supabase/functions/_shared/entitlement/acknowledgment.mjs",
+      "sha256": "8f39bd93fbf01f24affe2eabc0479842f468bf7971daf1d03087a7ab740ebc69"
+    },
+    {
+      "source": "8cb40f70fc29bcfb441245751b667790b0e9e6b2:supabase/functions/_shared/entitlement/apple-app-attest.mjs",
+      "copy": "reference/build18/supabase/functions/_shared/entitlement/apple-app-attest.mjs",
+      "sha256": "9154df9e801f892b4f1e89835613d37e8cdaadc3f7259c33820274b07c1afd13"
+    },
+    {
+      "source": "8cb40f70fc29bcfb441245751b667790b0e9e6b2:supabase/functions/_shared/entitlement/apple-node-provider.mjs",
+      "copy": "reference/build18/supabase/functions/_shared/entitlement/apple-node-provider.mjs",
+      "sha256": "3114e5013053a2170aa07d43e5e1e15ca6bcfd2bcc18dfa296dd4ddade64fa41"
+    },
+    {
+      "source": "8cb40f70fc29bcfb441245751b667790b0e9e6b2:supabase/functions/_shared/entitlement/challenge-gateway.mjs",
+      "copy": "reference/build18/supabase/functions/_shared/entitlement/challenge-gateway.mjs",
+      "sha256": "9a68c13557bd6c3b75357cd7dc54b31eb7b2b86a360f43515b27132213314821"
+    },
+    {
+      "source": "8cb40f70fc29bcfb441245751b667790b0e9e6b2:supabase/functions/_shared/entitlement/composition.mjs",
+      "copy": "reference/build18/supabase/functions/_shared/entitlement/composition.mjs",
+      "sha256": "927622082e5484f4c8ed4773db942bccab1df0b1b8f5ae1652e7645ead7a5ece"
+    },
+    {
+      "source": "8cb40f70fc29bcfb441245751b667790b0e9e6b2:supabase/functions/_shared/entitlement/core.mjs",
+      "copy": "reference/build18/supabase/functions/_shared/entitlement/core.mjs",
+      "sha256": "859d4279690587f40f0608c95e80607216f523b8aa428f51d89a4d47882142ea"
+    },
+    {
+      "source": "8cb40f70fc29bcfb441245751b667790b0e9e6b2:supabase/functions/_shared/entitlement/edge-runtime.ts",
+      "copy": "reference/build18/supabase/functions/_shared/entitlement/edge-runtime.ts",
+      "sha256": "547dc2dfccf83b28b24efe60cef8c64efed2576f6b98877122a4375cf64e1754"
+    },
+    {
+      "source": "8cb40f70fc29bcfb441245751b667790b0e9e6b2:supabase/functions/_shared/entitlement/google-integrity.mjs",
+      "copy": "reference/build18/supabase/functions/_shared/entitlement/google-integrity.mjs",
+      "sha256": "1ecde1c0b1803737f6aeb48ec2bf3d9c8acf6d743601a563ee905c823c044e8c"
+    },
+    {
+      "source": "8cb40f70fc29bcfb441245751b667790b0e9e6b2:supabase/functions/_shared/entitlement/google-license-test-policy.mjs",
+      "copy": "reference/build18/supabase/functions/_shared/entitlement/google-license-test-policy.mjs",
+      "sha256": "2c6662c443255bd523643b5599f64dd34778f9cd2d61b52d61532d9f34175083"
+    },
+    {
+      "source": "8cb40f70fc29bcfb441245751b667790b0e9e6b2:supabase/functions/_shared/entitlement/google-oauth.mjs",
+      "copy": "reference/build18/supabase/functions/_shared/entitlement/google-oauth.mjs",
+      "sha256": "0a1021dbec5f5575617bd5b1204bc8c5096189ff7a9a1a9aeb63e51dab824880"
+    },
+    {
+      "source": "8cb40f70fc29bcfb441245751b667790b0e9e6b2:supabase/functions/_shared/entitlement/handler.mjs",
+      "copy": "reference/build18/supabase/functions/_shared/entitlement/handler.mjs",
+      "sha256": "d12db7c667cc3421e05a302a579bfbd0df738a56188beb74a57268f49576ad50"
+    },
+    {
+      "source": "8cb40f70fc29bcfb441245751b667790b0e9e6b2:supabase/functions/_shared/entitlement/native-authorization.mjs",
+      "copy": "reference/build18/supabase/functions/_shared/entitlement/native-authorization.mjs",
+      "sha256": "d4670944b9f1681d01d01a746aee9d5970646770681eaac286940093fab446a7"
+    },
+    {
+      "source": "8cb40f70fc29bcfb441245751b667790b0e9e6b2:supabase/functions/_shared/entitlement/native-rpc-ports.mjs",
+      "copy": "reference/build18/supabase/functions/_shared/entitlement/native-rpc-ports.mjs",
+      "sha256": "577a0dd625f4b23a51529c31671618c99c639bae4c8ea39607b00b903c0720d5"
+    },
+    {
+      "source": "8cb40f70fc29bcfb441245751b667790b0e9e6b2:supabase/functions/_shared/entitlement/operations.mjs",
+      "copy": "reference/build18/supabase/functions/_shared/entitlement/operations.mjs",
+      "sha256": "ccd97fc0f69137b00b141567e4e70673259a884b2910b62dc2fdd865975ef33a"
+    },
+    {
+      "source": "8cb40f70fc29bcfb441245751b667790b0e9e6b2:supabase/functions/_shared/entitlement/providers.mjs",
+      "copy": "reference/build18/supabase/functions/_shared/entitlement/providers.mjs",
+      "sha256": "5f546ec1bee16a60f06e219afea4a1bb8cb06d93c64a5750f6bb729e27d4278e"
+    },
+    {
+      "source": "8cb40f70fc29bcfb441245751b667790b0e9e6b2:supabase/functions/_shared/entitlement/rpc-ports.mjs",
+      "copy": "reference/build18/supabase/functions/_shared/entitlement/rpc-ports.mjs",
+      "sha256": "a43124dfca550c3da1fe16e5d178f268cbd7223209b558892e091ad28d037055"
+    },
+    {
+      "source": "8cb40f70fc29bcfb441245751b667790b0e9e6b2:supabase/functions/_shared/entitlement/rtdn-auth.mjs",
+      "copy": "reference/build18/supabase/functions/_shared/entitlement/rtdn-auth.mjs",
+      "sha256": "ef50369803e18a6bf098ca945027adaf210098ca523b614f97cec044eb9fe914"
+    },
+    {
+      "source": "8cb40f70fc29bcfb441245751b667790b0e9e6b2:supabase/functions/_shared/entitlement/rtdn-ports.mjs",
+      "copy": "reference/build18/supabase/functions/_shared/entitlement/rtdn-ports.mjs",
+      "sha256": "24f8472883c4935c0fa0b337765eef16c4563208eb84675a3aff6e80ca30945e"
+    },
+    {
+      "source": "8cb40f70fc29bcfb441245751b667790b0e9e6b2:supabase/functions/_shared/entitlement/rtdn-setup.mjs",
+      "copy": "reference/build18/supabase/functions/_shared/entitlement/rtdn-setup.mjs",
+      "sha256": "ecab182ca2e5472b44d122809f8dfd14e0c044abe34a55aa840f0d96a3710022"
+    },
+    {
+      "source": "8cb40f70fc29bcfb441245751b667790b0e9e6b2:supabase/functions/_shared/entitlement/rtdn.mjs",
+      "copy": "reference/build18/supabase/functions/_shared/entitlement/rtdn.mjs",
+      "sha256": "67a13c1e1c8bb2d23f91664eb83c5f01ae0fe26cea304d0a4250dcea0de6a8e4"
+    },
+    {
+      "source": "8cb40f70fc29bcfb441245751b667790b0e9e6b2:supabase/functions/_shared/entitlement/sandbox-google-edge-runtime.ts",
+      "copy": "reference/build18/supabase/functions/_shared/entitlement/sandbox-google-edge-runtime.ts",
+      "sha256": "87a6b6e0cfacb966463b669dc63ffbadaa4152e604baa9b379d4d490ddff9c88"
+    },
+    {
+      "source": "8cb40f70fc29bcfb441245751b667790b0e9e6b2:supabase/functions/_shared/entitlement/server-setup.mjs",
+      "copy": "reference/build18/supabase/functions/_shared/entitlement/server-setup.mjs",
+      "sha256": "1b3af9ec63be159157f7277d0b55ee9d8196ef47c2cfdee21f55bc356507c949"
+    },
+    {
+      "source": "8cb40f70fc29bcfb441245751b667790b0e9e6b2:supabase/functions/_shared/paid-report.mjs",
+      "copy": "reference/build18/supabase/functions/_shared/paid-report.mjs",
+      "sha256": "bef0f8986dd9036ce8adceddcfa74669a49eb4f812a76d9adb3e033a4b28d60d"
+    },
+    {
+      "source": "8cb40f70fc29bcfb441245751b667790b0e9e6b2:supabase/migrations/20260926205345_lp24462_store_entitlement_cache.sql",
+      "copy": "reference/build18/supabase/migrations/20260926205345_lp24462_store_entitlement_cache.sql",
+      "sha256": "4ed076fe114e6d69b8104ea1e6de10c71031f7310d6a2bbbb2cd784158f24e6a"
+    },
+    {
+      "source": "8cb40f70fc29bcfb441245751b667790b0e9e6b2:supabase/migrations/20260928030000_lp24466_native_authorization.sql",
+      "copy": "reference/build18/supabase/migrations/20260928030000_lp24466_native_authorization.sql",
+      "sha256": "48c5432eae8f89c5809b74afe499ec83cc6bd0f15f566c3e67de3088fe2976d8"
+    }
+  ]
+}

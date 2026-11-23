@@ -1,0 +1,115 @@
+name: Gridly Labels Authorization Native Certification
+
+on:
+  workflow_dispatch:
+    inputs:
+      expected_commit_sha:
+        description: Exact owner-reviewed authorization-only certification SHA
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gridly-ios-label-integration-certification
+  cancel-in-progress: false
+
+jobs:
+  certify:
+    if: github.repository == 'DBMaps/liberty-county-map' && github.actor == 'DBMaps' && github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/codex/gridly-ios-label-integration-certification' && github.run_attempt == 1
+    runs-on: macos-26
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: bash
+    env:
+      EXPECTED_SHA: ${{ inputs.expected_commit_sha }}
+      CANDIDATE: prototypes/ios-arcgis-labels-authorization-candidate
+      GRIDLY_LABELS_PILOT_ENABLED: 'false'
+      GRIDLY_LABELS_ESRI_ENABLED: 'false'
+    steps:
+      - name: Verify exact owner dispatch
+        run: |
+          set -euo pipefail
+          [[ "$EXPECTED_SHA" =~ ^[0-9a-f]{40}$ ]]
+          test "$EXPECTED_SHA" = "$GITHUB_SHA"
+      - name: Checkout candidate only
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ inputs.expected_commit_sha }}
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /prototypes/ios-arcgis-labels-authorization-candidate/
+            /.github/workflows/gridly-apple-build-9.yml
+      - name: Verify immutable package and source boundaries
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          test -z "$(git status --porcelain --untracked-files=all)"
+          cmp "$CANDIDATE/certification/workflow.yml.in" .github/workflows/gridly-apple-build-9.yml
+          test ! -d ios && test ! -d android && test ! -d supabase
+          test -z "$(find "$CANDIDATE" -type l -print)"
+          node -e 'if(Number(process.versions.node.split(".")[0])<24)process.exit(1)'
+          node "$CANDIDATE/certification/verify-package.mjs"
+          sw_vers
+          xcodebuild -version
+          swift --version
+      - name: Run packaged server and gateway regressions
+        run: |
+          set -euo pipefail
+          node --test --test-reporter=tap "$CANDIDATE/tests/server.test.mjs" "$CANDIDATE/tests/preservation-and-reporting.test.mjs" "$CANDIDATE/tests/certification-readiness.test.mjs" | tee "$RUNNER_TEMP/auth-node.log"
+          grep -Fx '# pass 19' "$RUNNER_TEMP/auth-node.log"
+          grep -Fx '# fail 0' "$RUNNER_TEMP/auth-node.log"
+          node --test --test-reporter=tap "$CANDIDATE/reference/prototypes/ios-arcgis-labels-gateway-deploy/edge.test.mjs" "$CANDIDATE/reference/prototypes/ios-arcgis-labels-live-candidate/foundation.test.mjs" | tee "$RUNNER_TEMP/auth-gateway.log"
+          grep -Fx '# pass 39' "$RUNNER_TEMP/auth-gateway.log"
+          grep -Fx '# fail 0' "$RUNNER_TEMP/auth-gateway.log"
+      - name: Run existing native security regressions
+        run: |
+          set -euo pipefail
+          swift test --package-path "$CANDIDATE/reference/prototypes/ios-arcgis-labels-integration" --scratch-path "$RUNNER_TEMP/auth-reference-core" 2>&1 | tee "$RUNNER_TEMP/auth-reference-core.log"
+          grep -Eq 'Executed [1-9][0-9]* tests?, with 0 failures' "$RUNNER_TEMP/auth-reference-core.log"
+          swift test --package-path "$CANDIDATE/reference/prototypes/ios-arcgis-labels-gateway-deploy/native-fixed-path" --scratch-path "$RUNNER_TEMP/auth-reference-fixed" 2>&1 | tee "$RUNNER_TEMP/auth-reference-fixed.log"
+          grep -F 'Executed 1 test, with 0 failures' "$RUNNER_TEMP/auth-reference-fixed.log"
+      - name: Resolve pinned Capacitor in scratch package
+        run: |
+          set -euo pipefail
+          cp -R "$CANDIDATE" "$RUNNER_TEMP/auth-package"
+          cd "$RUNNER_TEMP/auth-package"
+          xcodebuild -resolvePackageDependencies -scheme GridlyLabelsAuthorizationCandidate -clonedSourcePackagesDirPath "$RUNNER_TEMP/auth-sdk"
+          python3 - <<'PY'
+          import json, os, pathlib
+          root=pathlib.Path(os.environ['RUNNER_TEMP'])/'auth-package'
+          pins=[p for f in root.rglob('Package.resolved') for p in json.loads(f.read_text()).get('pins',[]) if p.get('identity')=='capacitor-swift-pm']
+          assert pins and all(p['state']['version']=='8.3.4' and p['state']['revision']=='992959f0467c781eb6a1637e69d87481238c3672' for p in pins)
+          PY
+          cmp certification/capacitor-8.3.4-Package.swift "$RUNNER_TEMP/auth-sdk/checkouts/capacitor-swift-pm/Package.swift"
+      - name: Compile and test unsigned iOS 16.4-compatible candidate
+        run: |
+          set -euo pipefail
+          cd "$RUNNER_TEMP/auth-package"
+          device="$(xcrun simctl list devices available --json | python3 -c 'import json,sys; print(next((d["udid"] for r,g in json.load(sys.stdin)["devices"].items() if ".iOS-" in r for d in g if d["name"].startswith("iPhone") and d["state"]=="Shutdown"),""))')"
+          test -n "$device"
+          trap 'xcrun simctl shutdown "$device" >/dev/null 2>&1 || true' EXIT
+          xcodebuild test -scheme GridlyLabelsAuthorizationCandidate -destination "platform=iOS Simulator,id=$device" -derivedDataPath "$RUNNER_TEMP/auth-derived" -clonedSourcePackagesDirPath "$RUNNER_TEMP/auth-sdk" -disableAutomaticPackageResolution -onlyUsePackageVersionsFromResolvedFile -resultBundlePath "$RUNNER_TEMP/auth-native.xcresult" IPHONEOS_DEPLOYMENT_TARGET=16.4 SWIFT_VERSION=5.0 CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY= 2>&1 | tee "$RUNNER_TEMP/auth-native.log"
+          grep -F 'Executed 6 tests, with 0 failures' "$RUNNER_TEMP/auth-native.log"
+          node certification/verify-vector.mjs "$RUNNER_TEMP/auth-native.log"
+      - name: Verify source checkout remained unchanged
+        run: |
+          set -euo pipefail
+          test -z "$(git status --porcelain --untracked-files=all)"
+      - name: Retain synthetic certification evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: gridly-labels-authorization-native-certification
+          path: |
+            ${{ runner.temp }}/auth-node.log
+            ${{ runner.temp }}/auth-gateway.log
+            ${{ runner.temp }}/auth-reference-core.log
+            ${{ runner.temp }}/auth-reference-fixed.log
+            ${{ runner.temp }}/auth-native.log
+            ${{ runner.temp }}/auth-native.xcresult
+          retention-days: 7
+          if-no-files-found: warn

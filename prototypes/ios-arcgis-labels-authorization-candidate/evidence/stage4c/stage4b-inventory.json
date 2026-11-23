@@ -1,0 +1,947 @@
+[
+  {
+    "path": "DESIGN.md",
+    "bytes": 2351,
+    "sha256": "211b452de62d6207a12bfe77f26fde2f401770a44cb7b8f60c9e30e4d3ccbcfd"
+  },
+  {
+    "path": "evidence/candidate.tap",
+    "bytes": 4434,
+    "sha256": "dfb26092f4f7821fba56c80acb56d82e294436c9b00d03eebf803771c48e1208"
+  },
+  {
+    "path": "evidence/disposable-cleanup.txt",
+    "bytes": 86,
+    "sha256": "0928e1f1748e54294154597844fb512661d565e350a252bd28319de2eff17543"
+  },
+  {
+    "path": "evidence/gateway-regression.tap",
+    "bytes": 9219,
+    "sha256": "1d93e40617ac177e2f9b1e25d7377e79b8cbd4d1e642860741c5a315c938486e"
+  },
+  {
+    "path": "evidence/postgres-startup.log",
+    "bytes": 5515,
+    "sha256": "87561994c169e6961f5a00f75b8f673704dceb542658971abe2061d2fb5f121a"
+  },
+  {
+    "path": "evidence/postgres.tap",
+    "bytes": 5775,
+    "sha256": "696fc2ff870223d166988eb48490c57d3a0071e7d290a660a604c2444cfb2d17"
+  },
+  {
+    "path": "evidence/preservation-after.json",
+    "bytes": 8045,
+    "sha256": "073131568718d266491aa9ae178f0cbbfafed272980be067241b50ddeee80088"
+  },
+  {
+    "path": "evidence/preservation-before.json",
+    "bytes": 8045,
+    "sha256": "073131568718d266491aa9ae178f0cbbfafed272980be067241b50ddeee80088"
+  },
+  {
+    "path": "evidence/protected-regression.tap",
+    "bytes": 26718,
+    "sha256": "48eca59809fc40a14ae02576ba86687633f6dbd399b0ceeeca57ca95ff43514c"
+  },
+  {
+    "path": "evidence/server.tap",
+    "bytes": 2843,
+    "sha256": "090069656bfce771b24755299ed1ba9bf42414285eb57e0d563fc6417bbe0231"
+  },
+  {
+    "path": "evidence/source-copies.json",
+    "bytes": 46805,
+    "sha256": "cd88e62e986bd7c024eb9ef60530b73e4911a0a2ac6ed88636e5eb3f98d1b6d6"
+  },
+  {
+    "path": "gateway/consumer-runtime.mjs",
+    "bytes": 968,
+    "sha256": "9f7500e248b41423cbebca0ac66afb258aaa24dddc7b64cd796ecc5dce299ca0"
+  },
+  {
+    "path": "gateway/deno.lock",
+    "bytes": 743,
+    "sha256": "4af5aab539d8230f2dde20f1f57dffefcdf899420e311a642c386c322571b40c"
+  },
+  {
+    "path": "gateway/edge.mjs",
+    "bytes": 8690,
+    "sha256": "dbb1505b1377124414e2ef331cdab8cbf7e1412e0261c619274e313f6057c270"
+  },
+  {
+    "path": "gateway/foundation/esri.mjs",
+    "bytes": 8489,
+    "sha256": "2c527dad7e6c36692a69454ebdfb03e12ca7ab4c5ccbbb59e2e4868edf9dcc69"
+  },
+  {
+    "path": "gateway/foundation/gateway.mjs",
+    "bytes": 7839,
+    "sha256": "22ed0455d38010488e0631e050bad47a1fc85e59a64b4dba3eb643ba3645fbde"
+  },
+  {
+    "path": "gateway/foundation/png.mjs",
+    "bytes": 5815,
+    "sha256": "21ca773271bec4d648b12b3223cfc35d6b1c03fd0c11c84f04609a205f3f7d18"
+  },
+  {
+    "path": "gateway/foundation/protocol.mjs",
+    "bytes": 2897,
+    "sha256": "143efe6a6d3985fd60092c8901befd63dd161b948da2bdc6c4ce1232d9f89d3a"
+  },
+  {
+    "path": "gateway/foundation/state.mjs",
+    "bytes": 4755,
+    "sha256": "8c8f31947a6f52b3d69291008e2872c44054dbc103ff151c5f2d6b8d275d1422"
+  },
+  {
+    "path": "gateway/index.ts",
+    "bytes": 161,
+    "sha256": "a4442191516ce2144c493d34c3288d413ce075009ca2831b5d688326c9a0dc58"
+  },
+  {
+    "path": "gateway/runtime.mjs",
+    "bytes": 4317,
+    "sha256": "163006e00e7ca942c5e3ced46d186645b556e76e9fd7086a548a00b9dc06d441"
+  },
+  {
+    "path": "gateway/tile-wire.mjs",
+    "bytes": 792,
+    "sha256": "6e7a88a752c9b1a5b00cfa688cbc9092b6aefb4800752944d665ca7d09883e26"
+  },
+  {
+    "path": "gateway/web-gateway.mjs",
+    "bytes": 7991,
+    "sha256": "ddf27778104fadcf12e80a31956bbd5b6c3593d3c909dc5a43e05d5c93368274"
+  },
+  {
+    "path": "gateway/web-proof.mjs",
+    "bytes": 1280,
+    "sha256": "0aab4a1b8d9cc7f1c26824eb09bb1eac153b8e243608d510cd18a67ebc523815"
+  },
+  {
+    "path": "native/FixedPathTile.swift",
+    "bytes": 3114,
+    "sha256": "6cb572f2b6b5556cdcefaa8943a0e172dd59266769048b765197ac83f3bd903f"
+  },
+  {
+    "path": "native/GridlyAppAttestPlugin.swift",
+    "bytes": 6969,
+    "sha256": "28a6e516e65cfaedc01f3088bf5c4a0c1ea71e1e3da1282b8240e881570559be"
+  },
+  {
+    "path": "native/GridlyLabelsAuthorizationAdapter.swift",
+    "bytes": 4929,
+    "sha256": "fd782ac9d77f348612e6a08507f7baac46b9631b2017c4ef0d2b26e06d89889b"
+  },
+  {
+    "path": "native/GridlyStoreKitPlugin.swift",
+    "bytes": 10791,
+    "sha256": "846cffa40f8508ebc6c81fd6749bb561e770a07448feba8eb5a84c87403f4833"
+  },
+  {
+    "path": "native/HTTPSLabelTransport.swift",
+    "bytes": 10340,
+    "sha256": "8697c81277ac0fe5066db36b9d235944ebdedbd939463bb5ce225642faadf67f"
+  },
+  {
+    "path": "native/LabelsSchemeHandler.swift",
+    "bytes": 3638,
+    "sha256": "2a40163d656e373c330fcffc5a6ac0fbdc5080369de32e1941eebb5dea65bcf0"
+  },
+  {
+    "path": "native/LabelTileCore.swift",
+    "bytes": 9167,
+    "sha256": "d30861bc2193a5b197a880e29e938df8e1ec8f6b8b272d8a39946e2263d9eeb0"
+  },
+  {
+    "path": "native/Tests/AuthorizationAdapterTests.swift",
+    "bytes": 4372,
+    "sha256": "9388542d0ead418cb980a256ab4b22e9d4abf132802767322e6bf43c945ae81c"
+  },
+  {
+    "path": "README.md",
+    "bytes": 6572,
+    "sha256": "612da1666b0bd8f91d2edf9cd3afaddb1c270142eb09ca9b646a009414e9742b"
+  },
+  {
+    "path": "reference/build18/ios/App/App/AppDelegate.swift",
+    "bytes": 3031,
+    "sha256": "5963d47ceba89e0d5694376ebf0bca630284db3de794bdf8666ea3093fe38a2f"
+  },
+  {
+    "path": "reference/build18/ios/App/App/GridlyAppAttestPlugin.swift",
+    "bytes": 6019,
+    "sha256": "3478b0828b5c8fac94b31abb03b92ccef9be38875b1742c4e260b0857c87a492"
+  },
+  {
+    "path": "reference/build18/ios/App/App/GridlyBridgeViewController.swift",
+    "bytes": 17307,
+    "sha256": "9c707994f0b5ac7ce84dbf8161bff4f9848b401e92a8f64216d73d68cf38c60e"
+  },
+  {
+    "path": "reference/build18/ios/App/App/GridlyContinuityPlugin.swift",
+    "bytes": 7654,
+    "sha256": "99271c0b60f3ef96430b1962447585bcbd9b20bf6f5e5be747bb138d6ba09ba7"
+  },
+  {
+    "path": "reference/build18/ios/App/App/GridlyStoreKitPlugin.swift",
+    "bytes": 10382,
+    "sha256": "82444a5e1c2cd1a192c7cde9c8d2c14b2ba40fe55b5c2f62fba853306f1f2d86"
+  },
+  {
+    "path": "reference/build18/js/gridly-apple-storekit.mjs",
+    "bytes": 7745,
+    "sha256": "0287c4a8d7732b8571c88e002e1780f3c333345e416373ad3c011d0f1f68e9ae"
+  },
+  {
+    "path": "reference/build18/js/gridly-continuity.mjs",
+    "bytes": 2570,
+    "sha256": "717a1aca18f1b03fdd49c172cb051a0fa0f771930cb1dff1070df706499aefd9"
+  },
+  {
+    "path": "reference/build18/js/gridly-entitlement-public-key.mjs",
+    "bytes": 944,
+    "sha256": "8920141092b7625432cafb6547035534e634656ac42b2241676570aa6976bed5"
+  },
+  {
+    "path": "reference/build18/js/gridly-entitlement.mjs",
+    "bytes": 13550,
+    "sha256": "25e214bf02bf0701d9cf16b9f77167e0b4d3143d701a0d5cfe664022e9e30449"
+  },
+  {
+    "path": "reference/build18/js/gridly-google-play-billing.mjs",
+    "bytes": 6619,
+    "sha256": "a3937b596990b776f6946caea6d45f5e1bda2e4235d4ed5f22b589574db2153c"
+  },
+  {
+    "path": "reference/build18/js/gridly-google-review-access.mjs",
+    "bytes": 5319,
+    "sha256": "adaaf9f4468a9f8bbd7c2a9cd709fe704e7687918aaf7231db74c73d9e8100e2"
+  },
+  {
+    "path": "reference/build18/js/gridly-google-review-proof.mjs",
+    "bytes": 2793,
+    "sha256": "10315b63831d7ce4404ae8b9eae7dfa4e8e6a79eedf169edfa690a1034a05783"
+  },
+  {
+    "path": "reference/build18/js/gridly-native-attested-invoke.mjs",
+    "bytes": 3119,
+    "sha256": "cb3405afcd51593f0d7b3b9bf7e52438ac0d79473cf934cfb4231b46f0c94c7b"
+  },
+  {
+    "path": "reference/build18/js/gridly-native-edge-transport.mjs",
+    "bytes": 3220,
+    "sha256": "df0c78b267cf9ae536cd03724cdd2386ed29383b379246fd5bf24887a06b7f68"
+  },
+  {
+    "path": "reference/build18/js/gridly-native-verification-binding.mjs",
+    "bytes": 1732,
+    "sha256": "2c47083036a1df08ab69a7c67e70a52bb4c81c4974e5956e506f0ee405a2feb8"
+  },
+  {
+    "path": "reference/build18/js/gridly-paid-access.mjs",
+    "bytes": 12100,
+    "sha256": "847485b4cd00ad5ec7bffbce97bb114c75d42128eb101fe4c4d81da380c8d9ba"
+  },
+  {
+    "path": "reference/build18/js/gridly-paid-config.mjs",
+    "bytes": 3208,
+    "sha256": "337a6c4c09f40c4a4351e19f89d901c953ec9ea2ae489905082a4578c86b0082"
+  },
+  {
+    "path": "reference/build18/js/gridly-paid-onboarding.mjs",
+    "bytes": 40703,
+    "sha256": "d4915531b1b6458737f71b96589a18ca1f93dbe7ca05ac89bb741736100ac932"
+  },
+  {
+    "path": "reference/build18/js/gridly-paid-startup.mjs",
+    "bytes": 2771,
+    "sha256": "bed9442ba46630d22bd4a9a89337475574f593274ce090a8a01a427327a5eef6"
+  },
+  {
+    "path": "reference/build18/js/gridly-paid-ui.mjs",
+    "bytes": 12825,
+    "sha256": "a0d9cba7c9b777305a2aeec3221a3aec6171cebcea170ad0b26bfd9a196ef86f"
+  },
+  {
+    "path": "reference/build18/js/gridly-sandbox-entitlement-public-key.mjs",
+    "bytes": 866,
+    "sha256": "f32df45b92a02fe4d9507edddcf2fd43f371954b69cfaca0cfd0418bb99ffaef"
+  },
+  {
+    "path": "reference/build18/js/gridly-store-verification.mjs",
+    "bytes": 2876,
+    "sha256": "3b001abae55c7801fa0566fb80bb999bd360370cc137641d4019996edf7fc795"
+  },
+  {
+    "path": "reference/build18/supabase/functions/_shared/entitlement/ack-health.mjs",
+    "bytes": 2558,
+    "sha256": "8212f962e022268ca55d33e0c2779a53bd33653a6e0855921f00045856589b09"
+  },
+  {
+    "path": "reference/build18/supabase/functions/_shared/entitlement/acknowledgment.mjs",
+    "bytes": 6818,
+    "sha256": "8f39bd93fbf01f24affe2eabc0479842f468bf7971daf1d03087a7ab740ebc69"
+  },
+  {
+    "path": "reference/build18/supabase/functions/_shared/entitlement/apple-app-attest.mjs",
+    "bytes": 15327,
+    "sha256": "9154df9e801f892b4f1e89835613d37e8cdaadc3f7259c33820274b07c1afd13"
+  },
+  {
+    "path": "reference/build18/supabase/functions/_shared/entitlement/apple-node-provider.mjs",
+    "bytes": 4035,
+    "sha256": "3114e5013053a2170aa07d43e5e1e15ca6bcfd2bcc18dfa296dd4ddade64fa41"
+  },
+  {
+    "path": "reference/build18/supabase/functions/_shared/entitlement/challenge-gateway.mjs",
+    "bytes": 803,
+    "sha256": "9a68c13557bd6c3b75357cd7dc54b31eb7b2b86a360f43515b27132213314821"
+  },
+  {
+    "path": "reference/build18/supabase/functions/_shared/entitlement/composition.mjs",
+    "bytes": 2961,
+    "sha256": "927622082e5484f4c8ed4773db942bccab1df0b1b8f5ae1652e7645ead7a5ece"
+  },
+  {
+    "path": "reference/build18/supabase/functions/_shared/entitlement/core.mjs",
+    "bytes": 9896,
+    "sha256": "859d4279690587f40f0608c95e80607216f523b8aa428f51d89a4d47882142ea"
+  },
+  {
+    "path": "reference/build18/supabase/functions/_shared/entitlement/edge-runtime.ts",
+    "bytes": 2945,
+    "sha256": "547dc2dfccf83b28b24efe60cef8c64efed2576f6b98877122a4375cf64e1754"
+  },
+  {
+    "path": "reference/build18/supabase/functions/_shared/entitlement/google-integrity.mjs",
+    "bytes": 4491,
+    "sha256": "1ecde1c0b1803737f6aeb48ec2bf3d9c8acf6d743601a563ee905c823c044e8c"
+  },
+  {
+    "path": "reference/build18/supabase/functions/_shared/entitlement/google-license-test-policy.mjs",
+    "bytes": 399,
+    "sha256": "2c6662c443255bd523643b5599f64dd34778f9cd2d61b52d61532d9f34175083"
+  },
+  {
+    "path": "reference/build18/supabase/functions/_shared/entitlement/google-oauth.mjs",
+    "bytes": 2972,
+    "sha256": "0a1021dbec5f5575617bd5b1204bc8c5096189ff7a9a1a9aeb63e51dab824880"
+  },
+  {
+    "path": "reference/build18/supabase/functions/_shared/entitlement/handler.mjs",
+    "bytes": 4321,
+    "sha256": "d12db7c667cc3421e05a302a579bfbd0df738a56188beb74a57268f49576ad50"
+  },
+  {
+    "path": "reference/build18/supabase/functions/_shared/entitlement/native-authorization.mjs",
+    "bytes": 4505,
+    "sha256": "d4670944b9f1681d01d01a746aee9d5970646770681eaac286940093fab446a7"
+  },
+  {
+    "path": "reference/build18/supabase/functions/_shared/entitlement/native-rpc-ports.mjs",
+    "bytes": 1577,
+    "sha256": "577a0dd625f4b23a51529c31671618c99c639bae4c8ea39607b00b903c0720d5"
+  },
+  {
+    "path": "reference/build18/supabase/functions/_shared/entitlement/operations.mjs",
+    "bytes": 3479,
+    "sha256": "ccd97fc0f69137b00b141567e4e70673259a884b2910b62dc2fdd865975ef33a"
+  },
+  {
+    "path": "reference/build18/supabase/functions/_shared/entitlement/providers.mjs",
+    "bytes": 5475,
+    "sha256": "5f546ec1bee16a60f06e219afea4a1bb8cb06d93c64a5750f6bb729e27d4278e"
+  },
+  {
+    "path": "reference/build18/supabase/functions/_shared/entitlement/rpc-ports.mjs",
+    "bytes": 1881,
+    "sha256": "a43124dfca550c3da1fe16e5d178f268cbd7223209b558892e091ad28d037055"
+  },
+  {
+    "path": "reference/build18/supabase/functions/_shared/entitlement/rtdn-auth.mjs",
+    "bytes": 3210,
+    "sha256": "ef50369803e18a6bf098ca945027adaf210098ca523b614f97cec044eb9fe914"
+  },
+  {
+    "path": "reference/build18/supabase/functions/_shared/entitlement/rtdn-ports.mjs",
+    "bytes": 1126,
+    "sha256": "24f8472883c4935c0fa0b337765eef16c4563208eb84675a3aff6e80ca30945e"
+  },
+  {
+    "path": "reference/build18/supabase/functions/_shared/entitlement/rtdn-setup.mjs",
+    "bytes": 4349,
+    "sha256": "ecab182ca2e5472b44d122809f8dfd14e0c044abe34a55aa840f0d96a3710022"
+  },
+  {
+    "path": "reference/build18/supabase/functions/_shared/entitlement/rtdn.mjs",
+    "bytes": 9965,
+    "sha256": "67a13c1e1c8bb2d23f91664eb83c5f01ae0fe26cea304d0a4250dcea0de6a8e4"
+  },
+  {
+    "path": "reference/build18/supabase/functions/_shared/entitlement/sandbox-google-edge-runtime.ts",
+    "bytes": 2781,
+    "sha256": "87a6b6e0cfacb966463b669dc63ffbadaa4152e604baa9b379d4d490ddff9c88"
+  },
+  {
+    "path": "reference/build18/supabase/functions/_shared/entitlement/server-setup.mjs",
+    "bytes": 5656,
+    "sha256": "1b3af9ec63be159157f7277d0b55ee9d8196ef47c2cfdee21f55bc356507c949"
+  },
+  {
+    "path": "reference/build18/supabase/functions/_shared/paid-report.mjs",
+    "bytes": 4324,
+    "sha256": "bef0f8986dd9036ce8adceddcfa74669a49eb4f812a76d9adb3e033a4b28d60d"
+  },
+  {
+    "path": "reference/build18/supabase/migrations/20260926205345_lp24462_store_entitlement_cache.sql",
+    "bytes": 7651,
+    "sha256": "4ed076fe114e6d69b8104ea1e6de10c71031f7310d6a2bbbb2cd784158f24e6a"
+  },
+  {
+    "path": "reference/build18/supabase/migrations/20260928030000_lp24466_native_authorization.sql",
+    "bytes": 6708,
+    "sha256": "48c5432eae8f89c5809b74afe499ec83cc6bd0f15f566c3e67de3088fe2976d8"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-gateway/contract.md",
+    "bytes": 5854,
+    "sha256": "c4dab7a11e2ce4f29369afac168b3408f2bd8c8d89fd70673283b576a31dbab1"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-gateway/gateway.bench.mjs",
+    "bytes": 4567,
+    "sha256": "4230e7b5050663ad8ac8fdfeeb51d0113529eae877922fec22fe5fed213af318"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-gateway/gateway.mjs",
+    "bytes": 12793,
+    "sha256": "c024624eb9622eca5fbf164e49293f6199e345565d1a398983e6dbc173dbc179"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-gateway/gateway.test.mjs",
+    "bytes": 18252,
+    "sha256": "8ac60bcf965bde4c754aaf700255fd7a878828c81183d75469d0c4229ebc69f6"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-gateway/mock-tile.png",
+    "bytes": 1096,
+    "sha256": "074065f07e35265d9695cced0f42844dbb02e5766c4ed185d0a372b2d033b093"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-gateway/png.mjs",
+    "bytes": 1862,
+    "sha256": "507e0f8913dda30439b583c9c8e18f40d961096a56cb90aa95864cd8988aad11"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-gateway/README.md",
+    "bytes": 1204,
+    "sha256": "311d06cf45d216ddc7d13d58e66753adfbf9902b0e7a3632c674639bc58d67f7"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-gateway/synthetic.mjs",
+    "bytes": 2122,
+    "sha256": "e1f0933f9e3f0ddd9daf4c8a2a66802c06ffb12f93f59973277cad79b4faa36f"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-gateway-deploy/.env.example",
+    "bytes": 638,
+    "sha256": "937e77de0094c5af22c7ef164c8d831119c1cf0f99ddc7702a8a0a20f60299c6"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-gateway-deploy/certification-workflow.yml.in",
+    "bytes": 10368,
+    "sha256": "2240af11b5e401eed66b2d5b61b3e5c8f77ef69dee3a8768e68cc9b0df13eea1"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-gateway-deploy/certification.sha256",
+    "bytes": 4780,
+    "sha256": "264e4022755926a8c122b4e54fe73f29a1439f81bcab4e817246f35764f81891"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-gateway-deploy/edge.test.mjs",
+    "bytes": 20111,
+    "sha256": "3ea28115b62571ae2959d55c6f257b45ac2a17d9fd7eaa984242424418c989fd"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-gateway-deploy/FIXED-PATH-PRIVACY.md",
+    "bytes": 5463,
+    "sha256": "9279f0dcd3a297092f21e68e06cb6414a39c6e66fe8e0632ca842d64c4f9dd5a"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-gateway-deploy/foundation.sha256",
+    "bytes": 1015,
+    "sha256": "fc8ef1f440b09791bcfd93919295dcbcbacb0ef06453646dd7603e7ef1067022"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-gateway-deploy/HOSTING-READINESS.md",
+    "bytes": 12375,
+    "sha256": "39d902f63689789de730f43be64f199808ffe52e5236e1463e253c779c59b80a"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-gateway-deploy/ingress.nginx.conf.example",
+    "bytes": 2960,
+    "sha256": "72493a683041de5def00fa80284ac579635834f48fbe0ed9fd82a01f1d8abe87"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-gateway-deploy/native-fixed-path/Package.swift",
+    "bytes": 375,
+    "sha256": "be438517018363f80f438d3fec8b07d2e00791a4f92c7550df2307c8b99e6211"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-gateway-deploy/native-fixed-path/prepare-harness.mjs",
+    "bytes": 4110,
+    "sha256": "4de06f15c4f93b74d6425281d02b8dc2c0cafaf56ae26ec72c6018f5c400905c"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-gateway-deploy/native-fixed-path/Sources/GridlyFixedPathTile/FixedPathTile.swift",
+    "bytes": 3114,
+    "sha256": "6cb572f2b6b5556cdcefaa8943a0e172dd59266769048b765197ac83f3bd903f"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-gateway-deploy/native-fixed-path/Tests/GridlyFixedPathTileTests/FixedPathTileTests.swift",
+    "bytes": 3195,
+    "sha256": "7b95867bd633353c6a1ed48b2e23d2bf548613010a4ca4cbc561bab299f077b8"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-gateway-deploy/native-fixed-path/Tests/GridlyFixedPathTileTests/tile-proof.json",
+    "bytes": 778,
+    "sha256": "2d16ffdad0cd4f10331faa086d0bc6d06ee30d632bbea4ed19fbe30c30533ac8"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-gateway-deploy/native-fixed-path/verify-swift-vector.mjs",
+    "bytes": 3830,
+    "sha256": "fb76f6602581cf2a3c2a0c9485c9e7c3d2438388ba82e439b120be1be1a76a78"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-gateway-deploy/postgres.test.mjs",
+    "bytes": 11507,
+    "sha256": "d9285d74cbcfc74d937d09d0d66562d1ebf1d0f50bd298a65196dde056e9063f"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-gateway-deploy/README.md",
+    "bytes": 12816,
+    "sha256": "655cac2213febd2bdec017c7485df3c99e98dcf29a9faa86398c0e5c42b86536"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-gateway-deploy/STAGE-3F-HOSTED-PRIVACY-PLAN.md",
+    "bytes": 27551,
+    "sha256": "a9bb2595b80bbed9d0fe3c77d2d2cee2b46a4a06afbf473a2d445a899fa654ab"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-gateway-deploy/supabase/config.toml",
+    "bytes": 81,
+    "sha256": "47b606b4f64637ce66095d0e782613ccf5a4e10fe313434ec6c6bb9362082fad"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-gateway-deploy/supabase/functions/gridly-labels/deno.lock",
+    "bytes": 743,
+    "sha256": "4af5aab539d8230f2dde20f1f57dffefcdf899420e311a642c386c322571b40c"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-gateway-deploy/supabase/functions/gridly-labels/edge.mjs",
+    "bytes": 8152,
+    "sha256": "1827b967554c56a37ed8b1438ee3610367be0953720a7bfa4ef52bbc6771ca7f"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-gateway-deploy/supabase/functions/gridly-labels/foundation/esri.mjs",
+    "bytes": 8489,
+    "sha256": "2c527dad7e6c36692a69454ebdfb03e12ca7ab4c5ccbbb59e2e4868edf9dcc69"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-gateway-deploy/supabase/functions/gridly-labels/foundation/gateway.mjs",
+    "bytes": 7839,
+    "sha256": "22ed0455d38010488e0631e050bad47a1fc85e59a64b4dba3eb643ba3645fbde"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-gateway-deploy/supabase/functions/gridly-labels/foundation/png.mjs",
+    "bytes": 5815,
+    "sha256": "21ca773271bec4d648b12b3223cfc35d6b1c03fd0c11c84f04609a205f3f7d18"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-gateway-deploy/supabase/functions/gridly-labels/foundation/protocol.mjs",
+    "bytes": 2897,
+    "sha256": "143efe6a6d3985fd60092c8901befd63dd161b948da2bdc6c4ce1232d9f89d3a"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-gateway-deploy/supabase/functions/gridly-labels/foundation/state.mjs",
+    "bytes": 4755,
+    "sha256": "8c8f31947a6f52b3d69291008e2872c44054dbc103ff151c5f2d6b8d275d1422"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-gateway-deploy/supabase/functions/gridly-labels/index.ts",
+    "bytes": 961,
+    "sha256": "8485e5a68cd5ca75f16350116d6778822788225d0fc48e33b443d57e86a5ec12"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-gateway-deploy/supabase/functions/gridly-labels/runtime.mjs",
+    "bytes": 4317,
+    "sha256": "163006e00e7ca942c5e3ced46d186645b556e76e9fd7086a548a00b9dc06d441"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-gateway-deploy/supabase/functions/gridly-labels/tile-wire.mjs",
+    "bytes": 792,
+    "sha256": "6e7a88a752c9b1a5b00cfa688cbc9092b6aefb4800752944d665ca7d09883e26"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-gateway-deploy/supabase/functions/gridly-labels/web-gateway.mjs",
+    "bytes": 7991,
+    "sha256": "ddf27778104fadcf12e80a31956bbd5b6c3593d3c909dc5a43e05d5c93368274"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-gateway-deploy/supabase/functions/gridly-labels/web-proof.mjs",
+    "bytes": 1280,
+    "sha256": "0aab4a1b8d9cc7f1c26824eb09bb1eac153b8e243608d510cd18a67ebc523815"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-gateway-deploy/supabase/migrations/20261113000100_labels_foundation.sql",
+    "bytes": 7920,
+    "sha256": "0b727113b23f5a125a76c47012e54d4dbc6bb03d35bb2be0491dd95860f079eb"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-gateway-deploy/supabase/migrations/20261113000200_labels_edge_state.sql",
+    "bytes": 11391,
+    "sha256": "5dc26fd0eedf8ec9921a5d60bb10a5ea35f915699ef393ebc62ad7e005e6ab97"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-gateway-deploy/test-disposable-postgres.ps1",
+    "bytes": 3317,
+    "sha256": "e88ab2e70b7742c51a89842a762a344a636d74eb33bcdb6c0694d7c909bd116a"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-gateway-deploy/verify-sources.mjs",
+    "bytes": 2261,
+    "sha256": "b63cf1dc46272f119458631fbc221a530c5a36d657c97c0c95794de790477722"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-integration/App/GatewayLabelTransport.swift",
+    "bytes": 3881,
+    "sha256": "e526bfe392602823859ffc7e53bdb8568f7ae96aa7663e6c7361953bb190aca5"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-integration/App/GridlyLabelTileSchemeHandler.swift",
+    "bytes": 4728,
+    "sha256": "591815db1a51ea89603e2cb5a3ac76078945a272a2f11967342246a71ce5631e"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-integration/App/LabelTileHarness.swift",
+    "bytes": 2358,
+    "sha256": "a1e76a1dfc60747fee356200de94da382cc5ce78d1d63409706338d6d9f29650"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-integration/integration.bench.mjs",
+    "bytes": 4020,
+    "sha256": "a4727d25f368f88470c9cd0cb8d752eddbb5c20f36c8b11714c6a8a270cb6e45"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-integration/integration.test.mjs",
+    "bytes": 9714,
+    "sha256": "4cbdfb51003e1970ed4edbef6394ba24949a4f57fb2a4cd26417e99b101d25a4"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-integration/LabelTileHarness.xcodeproj/project.pbxproj",
+    "bytes": 5931,
+    "sha256": "673b0aab3c2e49a077226c41112c2d40f9a95aec5df29f6cfbae3b4158940c31"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-integration/LabelTileHarness.xcodeproj/xcshareddata/xcschemes/LabelTileHarness.xcscheme",
+    "bytes": 1351,
+    "sha256": "88c4f8ff3cde89deb25a71c7e2a5424e563dd611d89936ffe44c6e93beb5e3ad"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-integration/local-integration.mjs",
+    "bytes": 1624,
+    "sha256": "9602ab306d36bda67614c410357a77d3752db1e73a095f3f7224cdcd37565950"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-integration/map-fixture.mjs",
+    "bytes": 2958,
+    "sha256": "e677fa6c75cbcc2b36c448fb353c44ff101c08c997773d293f63a82349763c74"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-integration/Package.swift",
+    "bytes": 346,
+    "sha256": "ef1a72b89e01de844829c4c58440a406f40d042b298fa1a69edd328338f97371"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-integration/README.md",
+    "bytes": 4659,
+    "sha256": "8e8881c80f042ee1a930bfc7b3dba7c7d1ad8530d2de880ba0322750b1365d71"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-integration/source-copies.sha256",
+    "bytes": 2281,
+    "sha256": "bd470ca6e9cfdd201667295dd7c0ca6eb0494576dd3e2b3f3ec391f96b1515d2"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-integration/Sources/TileCore/LabelTileCore.swift",
+    "bytes": 9355,
+    "sha256": "f3f09d3eef861288ed4cb36568a595a1ac4653fe566db29b6073aeda71d3e79c"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-integration/Sources/TileCore/MockGateway.swift",
+    "bytes": 9075,
+    "sha256": "1e7c848c91d040f5514d997f0a372967bee59e06e0e67e9beb424def69ef325f"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-integration/Tests/TileCoreTests/Fixtures/valid.png",
+    "bytes": 1096,
+    "sha256": "074065f07e35265d9695cced0f42844dbb02e5766c4ed185d0a372b2d033b093"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-integration/Tests/TileCoreTests/Fixtures/wire-proof.json",
+    "bytes": 707,
+    "sha256": "852144bff24fa645e376dc3c02d480e20d298cb232cb6081ea616ac87b8635bb"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-integration/Tests/TileCoreTests/LabelTileSchemeHandlerTests.swift",
+    "bytes": 9117,
+    "sha256": "edd19b086426b6cb1c33b6e0e9bc3f7f9f8f70f2c1af499a8cb78e7a84d13321"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-integration/Tests/TileCoreTests/MockGatewayTests.swift",
+    "bytes": 7327,
+    "sha256": "749dc742cb655cb6d73e3b714f7b4737dc6c3f9852eda59f0fed84fa7cf47de5"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-integration/verify-source.mjs",
+    "bytes": 2214,
+    "sha256": "532ecfa4a0125baa84221d092373538d674ef3af39fff9327cf22936256c6091"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-integration/Web/imagery.svg",
+    "bytes": 1183,
+    "sha256": "746ec7b5a9e3faeba9fa874096e214f25b33671f0d77ca2831969b8a470d4f90"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-integration/Web/map.html",
+    "bytes": 1106,
+    "sha256": "261cc07a00f072a54642ab25100e65f48b9d5a1e83c6cc49a75f4c44374a99d9"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-integration/Web/map.js",
+    "bytes": 1616,
+    "sha256": "bc8bfa03ac0341a604069852d8c0305b0f6a6323f5c691325ec85d7aea19bdec"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-integration/Web/vendor/leaflet.css",
+    "bytes": 14806,
+    "sha256": "a7837102824184820dfa198d1ebcd109ff6d0ff9a2672a074b9a1b4d147d04c6"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-integration/Web/vendor/leaflet.js",
+    "bytes": 147552,
+    "sha256": "db49d009c841f5ca34a888c96511ae936fd9f5533e90d8b2c4d57596f4e5641a"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-integration/Web/vendor/LICENSE",
+    "bytes": 1395,
+    "sha256": "53e8dc25862014e4324741ca18fbe3611e11d42ef69f59f86ea8c5389647d4cb"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-live-candidate/benchmark.mjs",
+    "bytes": 4934,
+    "sha256": "f64790481b29a3e6ccf704d05b070d4dddb7332327b29ab70c79ceb7c0b4e7f1"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-live-candidate/certification.sha256",
+    "bytes": 9826,
+    "sha256": "d3ece1e25b60cb912d3f5fa78cbb2a3237a7eee6af4343f76499cfc61afa7421"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-live-candidate/esri.mjs",
+    "bytes": 8489,
+    "sha256": "2c527dad7e6c36692a69454ebdfb03e12ca7ab4c5ccbbb59e2e4868edf9dcc69"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-live-candidate/foundation.test.mjs",
+    "bytes": 26264,
+    "sha256": "9f41e6bdfb8229696074e509731ca832c5d15d7e22f0288b4769abdd9b60dd9f"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-live-candidate/gateway.mjs",
+    "bytes": 7839,
+    "sha256": "22ed0455d38010488e0631e050bad47a1fc85e59a64b4dba3eb643ba3645fbde"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-live-candidate/hosted-certification.yml.in",
+    "bytes": 8009,
+    "sha256": "9ae6b7eff7c6fc12e8d25ae7a416e350e50124c5af39984c6d21b1a730837d27"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-live-candidate/http.mjs",
+    "bytes": 2620,
+    "sha256": "f8a4d10a24cba2634482480fcf42596a90f7b964b6b6f25ee6c5934cc13980da"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-live-candidate/ios/Harness/Harness.swift",
+    "bytes": 9218,
+    "sha256": "3b6e65336cb4cd779fdd183a134c6eaeb06aea41754f643d56918d3a2146f52d"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-live-candidate/ios/Harness/HarnessRenderer.swift",
+    "bytes": 2290,
+    "sha256": "5f3730276dece511d8ba3476eeab9e30274ec29cf1825779aa870283a9e5eaac"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-live-candidate/ios/Harness/prepare-assets.mjs",
+    "bytes": 2875,
+    "sha256": "f68f20c8c8ce6c277427c435841a54d45739a4db5c8be576fe6640af85396675"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-live-candidate/ios/Package.swift",
+    "bytes": 395,
+    "sha256": "4fbd0eec5bb5339ade74ac4714496c29f956467245ff06d5a5b3b4d8892c8234"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-live-candidate/ios/PilotHarness.xcodeproj/project.pbxproj",
+    "bytes": 5914,
+    "sha256": "383c990b675ae1f102f160a826e7e340d22cd70c2310ccd39d1d7e8fa3aa2a74"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-live-candidate/ios/PilotHarness.xcodeproj/xcshareddata/xcschemes/PilotHarness.xcscheme",
+    "bytes": 1327,
+    "sha256": "a47b901fab448a71e51c8c0c50c78ca315cfc82f16f56a2963fd01f8f97d3989"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-live-candidate/ios/Sources/GridlyLabelsPilot/HTTPSLabelTransport.swift",
+    "bytes": 11218,
+    "sha256": "9de983392f0af17fde5206b33b386147c9fea11eb8f5bb0ea9976901aff4f760"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-live-candidate/ios/Sources/GridlyLabelsPilot/LabelsSchemeHandler.swift",
+    "bytes": 3638,
+    "sha256": "2a40163d656e373c330fcffc5a6ac0fbdc5080369de32e1941eebb5dea65bcf0"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-live-candidate/ios/Sources/GridlyLabelsPilot/LabelTileCore.swift",
+    "bytes": 9167,
+    "sha256": "d30861bc2193a5b197a880e29e938df8e1ec8f6b8b272d8a39946e2263d9eeb0"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-live-candidate/ios/Tests/GridlyLabelsPilotTests/TransportTests.swift",
+    "bytes": 5146,
+    "sha256": "4b51f669f05c444f1f6ea7bee79736acf6846492275a90584f6b820e613a35c2"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-live-candidate/leaflet-overlay.mjs",
+    "bytes": 1811,
+    "sha256": "47ce2c2487b634bd4f6a0e44c899ab906da97f746cb7b18cdf0577806b00b7b7"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-live-candidate/pilot-state.sql",
+    "bytes": 7920,
+    "sha256": "0b727113b23f5a125a76c47012e54d4dbc6bb03d35bb2be0491dd95860f079eb"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-live-candidate/pilot.mjs",
+    "bytes": 808,
+    "sha256": "432bea33f59013b04a0d4b3782c186f8f95a720460c7d5886c541b06a6207ba4"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-live-candidate/png.mjs",
+    "bytes": 5815,
+    "sha256": "21ca773271bec4d648b12b3223cfc35d6b1c03fd0c11c84f04609a205f3f7d18"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-live-candidate/postgres.test.mjs",
+    "bytes": 5097,
+    "sha256": "a1591a042aee4dbdb65cc4636d1eab6941540641434cdef78b9cd102b2d0af2a"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-live-candidate/protocol.mjs",
+    "bytes": 2897,
+    "sha256": "143efe6a6d3985fd60092c8901befd63dd161b948da2bdc6c4ce1232d9f89d3a"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-live-candidate/README.md",
+    "bytes": 9526,
+    "sha256": "29b8d946c0cb1ad5d082ab9adfa3f6c5782e81c64c558786b4ba636cf977db30"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-live-candidate/state.mjs",
+    "bytes": 4755,
+    "sha256": "8c8f31947a6f52b3d69291008e2872c44054dbc103ff151c5f2d6b8d275d1422"
+  },
+  {
+    "path": "reference/prototypes/ios-arcgis-labels-live-candidate/test-disposable-postgres.ps1",
+    "bytes": 3321,
+    "sha256": "837a2bdc59bfaefbca7014e0ff5cd2104cf75f6cc2f36c8bc7fe6ed7a7ee28ad"
+  },
+  {
+    "path": "REPORT.md",
+    "bytes": 20574,
+    "sha256": "b0bde1d1b0a08c7d2aa01655396798c5cfb4e4c0028abc77c2d61702c57e2540"
+  },
+  {
+    "path": "server/labels-attest-adapter.mjs",
+    "bytes": 2554,
+    "sha256": "2a426e06997fbbfcbeb3782ab9911fc611ed88160595e827fc89c1c33f8327d7"
+  },
+  {
+    "path": "server/labels-challenge-adapter.mjs",
+    "bytes": 845,
+    "sha256": "f5406d0e7def8245329edefcc57c43d204905b988bccc3be822a56d57b671d93"
+  },
+  {
+    "path": "server/labels-paid-adapter.mjs",
+    "bytes": 1630,
+    "sha256": "0d1196af260e17e97b2f213d1ff7428e8dd175e2ddc73ac4d95c29890cc339ec"
+  },
+  {
+    "path": "server/labels-rpc-ports.mjs",
+    "bytes": 1963,
+    "sha256": "300feb1f8e6a36b1c9a9bb7d7ff17d04cefb12829763bc59844c3bcc2dfb3df1"
+  },
+  {
+    "path": "server/policy.mjs",
+    "bytes": 543,
+    "sha256": "83fa42e15998cd690caee48694808652668ddc1f3bc7e2f9cb3e9e7c0035c7c7"
+  },
+  {
+    "path": "sql/labels-auth.sql",
+    "bytes": 7395,
+    "sha256": "0155ca9009c0e64dc5e75ebab5723041ffb6bedce0bdf127587a7d10c3daccea"
+  },
+  {
+    "path": "test-disposable-postgres.ps1",
+    "bytes": 3593,
+    "sha256": "721c990fdd2d70127e02b4d25fb22b3a94ca573249a960211503ce1c44b59556"
+  },
+  {
+    "path": "tests/fixtures.mjs",
+    "bytes": 2519,
+    "sha256": "4e1a0438a9f0f5503b9419d808bba05d70f14b45c8a07e126444a516dc830cb7"
+  },
+  {
+    "path": "tests/postgres.test.mjs",
+    "bytes": 15930,
+    "sha256": "f261666a52628fee062e7ed6a2125c82502594169b410c1b71b3825fb0da9126"
+  },
+  {
+    "path": "tests/preservation-and-reporting.test.mjs",
+    "bytes": 3935,
+    "sha256": "71c61e096c156e9583c228af5dc411482ecb13cf78e64966eb59b0a78c177e1b"
+  },
+  {
+    "path": "tests/server.test.mjs",
+    "bytes": 13860,
+    "sha256": "82914ea548ce1f6fb0ea89dc5c4e6a74685e13892c6defad6d3b5211c1190f81"
+  },
+  {
+    "path": "tools/assemble.mjs",
+    "bytes": 6047,
+    "sha256": "960eb7c0bd2c5d3079e2933a4e37f4c751e0323ae503e4744ae2cbe4b729028d"
+  },
+  {
+    "path": "tools/prepare.mjs",
+    "bytes": 2945,
+    "sha256": "2e1de48cfeec251df7f7b08f6bbf5f77069d85e632d401fff4fba807cfa26cae"
+  },
+  {
+    "path": "tools/verify.mjs",
+    "bytes": 3067,
+    "sha256": "3d2fc3dc1b791bfa2c6923903fe875f87984a1255345f9eb673832775f5286f4"
+  }
+]

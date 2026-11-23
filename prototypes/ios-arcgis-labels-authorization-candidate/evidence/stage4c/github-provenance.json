@@ -1,0 +1,1214 @@
+{
+  "commit": {
+    "sha": "891a8b14f262434995b96ed7380b1107ce296ab1",
+    "node_id": "C_kwDOSJ4WndoAKDg5MWE4YjE0ZjI2MjQzNDk5NWI5NmVkNzM4MGIxMTA3Y2UyOTZhYjE",
+    "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/commits/891a8b14f262434995b96ed7380b1107ce296ab1",
+    "html_url": "https://github.com/DBMaps/liberty-county-map/commit/891a8b14f262434995b96ed7380b1107ce296ab1",
+    "author": {
+      "name": "DBMaps",
+      "email": "dburns.mgmt@gmail.com",
+      "date": "2026-11-13T17:01:27Z"
+    },
+    "committer": {
+      "name": "DBMaps",
+      "email": "dburns.mgmt@gmail.com",
+      "date": "2026-11-13T17:01:27Z"
+    },
+    "tree": {
+      "sha": "c172cb3b819839977c1516d6277bddced50b73ea",
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/trees/c172cb3b819839977c1516d6277bddced50b73ea"
+    },
+    "message": "Include root package metadata in iOS labels certification",
+    "parents": [
+      {
+        "sha": "62005bc8b0bb683e7b8820bcc33fb77cb67ffc40",
+        "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/commits/62005bc8b0bb683e7b8820bcc33fb77cb67ffc40",
+        "html_url": "https://github.com/DBMaps/liberty-county-map/commit/62005bc8b0bb683e7b8820bcc33fb77cb67ffc40"
+      }
+    ],
+    "verification": {
+      "verified": false,
+      "reason": "unsigned",
+      "signature": null,
+      "payload": null,
+      "verified_at": null
+    }
+  },
+  "run": {
+    "id": 43468734712,
+    "sha": "891a8b14f262434995b96ed7380b1107ce296ab1",
+    "conclusion": "success",
+    "attempt": 1
+  },
+  "jobs": [
+    {
+      "id": 132034715764,
+      "name": "certify",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 43468734712,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Verify dispatch SHA",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Checkout reviewed prototype sources",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Verify source identity and inventories",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "Run 89 Node tests",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Run gateway tests in Node and Deno",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Verify CryptoKit and both gateway runtimes",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7
+        },
+        {
+          "name": "Build unsigned simulator-only harness",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8
+        },
+        {
+          "name": "Verify signed native tile delivery and WebKit rendering",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9
+        },
+        {
+          "name": "Retain synthetic screenshot only",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10
+        },
+        {
+          "name": "Confirm source checkout remains clean",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        },
+        {
+          "name": "Post Checkout reviewed prototype sources",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 22
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 23
+        }
+      ]
+    }
+  ],
+  "latestRepositoryRuns": [
+    {
+      "id": 43468734712,
+      "name": "Gridly iOS Fixed Path Labels Certification",
+      "sha": "891a8b14f262434995b96ed7380b1107ce296ab1",
+      "branch": "codex/gridly-ios-label-integration-certification",
+      "conclusion": "success",
+      "created": "2026-11-13T17:02:19Z"
+    },
+    {
+      "id": 43464621940,
+      "name": "Gridly iOS Fixed Path Labels Certification",
+      "sha": "62005bc8b0bb683e7b8820bcc33fb77cb67ffc40",
+      "branch": "codex/gridly-ios-label-integration-certification",
+      "conclusion": "failure",
+      "created": "2026-11-13T16:37:43Z"
+    },
+    {
+      "id": 43446641110,
+      "name": "Gridly iOS Native Labels Foundation Certification",
+      "sha": "86ecf2b9e2257ea733177a391397a084c7706a08",
+      "branch": "codex/gridly-ios-label-integration-certification",
+      "conclusion": "success",
+      "created": "2026-11-13T14:50:48Z"
+    },
+    {
+      "id": 43288857874,
+      "name": "Gridly iOS Label Integration Certification",
+      "sha": "2d3a36a029a706178e0bb858d8410b354b72f36c",
+      "branch": "codex/gridly-ios-label-integration-certification",
+      "conclusion": "success",
+      "created": "2026-11-12T19:18:48Z"
+    },
+    {
+      "id": 43285841164,
+      "name": "Gridly iOS Label Integration Certification",
+      "sha": "aac2f01dbe76b538d2a704ae39ce6c6208ae566b",
+      "branch": "codex/gridly-ios-label-integration-certification",
+      "conclusion": "failure",
+      "created": "2026-11-12T19:01:21Z"
+    },
+    {
+      "id": 43282112647,
+      "name": "Gridly iOS Label Integration Certification",
+      "sha": "aac2f01dbe76b538d2a704ae39ce6c6208ae566b",
+      "branch": "codex/gridly-ios-label-integration-certification",
+      "conclusion": "failure",
+      "created": "2026-11-12T18:39:28Z"
+    },
+    {
+      "id": 43269762375,
+      "name": "Gridly iOS Label Prototype Certification",
+      "sha": "ad80ba80631f04971faa1d3282b11e7389dbf572",
+      "branch": "codex/gridly-ios-label-prototype-certification",
+      "conclusion": "success",
+      "created": "2026-11-12T17:28:16Z"
+    },
+    {
+      "id": 43268026934,
+      "name": "Gridly iOS Label Prototype Certification",
+      "sha": "673ac44ded89a977a319887bc8faa89193129712",
+      "branch": "codex/gridly-ios-label-prototype-certification",
+      "conclusion": "failure",
+      "created": "2026-11-12T17:18:29Z"
+    },
+    {
+      "id": 43061753243,
+      "name": "Gridly Apple 1.0.2 Build 18 authorized certification and Apple upload",
+      "sha": "06d8b93ea68aa6ef43e80e9111f32cf445408b89",
+      "branch": "gridly-apple-delivery-18-06d8b93ea68aa6ef43e80e9111f32cf445408b89",
+      "conclusion": "success",
+      "created": "2026-11-11T16:47:21Z"
+    },
+    {
+      "id": 43060162440,
+      "name": "Gridly Build 18 tracked lockfile verification",
+      "sha": "9aa91478c4102281a42294147dcf85969f1ff8a2",
+      "branch": "codex/gridly-build18-lockfile-verification",
+      "conclusion": "success",
+      "created": "2026-11-11T16:37:27Z"
+    },
+    {
+      "id": 43056384971,
+      "name": "Gridly Build 18 Xcode lockfile retrieval",
+      "sha": "645031ec3abf8d8ac3cf18d4585c128e0b441931",
+      "branch": "codex/gridly-build18-resolver-replay",
+      "conclusion": "success",
+      "created": "2026-11-11T16:14:45Z"
+    },
+    {
+      "id": 43054863835,
+      "name": "Gridly Build 18 macOS resolver replay",
+      "sha": "e64c7b3a349cf3d54bf718e4b803a6aa0300242a",
+      "branch": "codex/gridly-build18-resolver-replay",
+      "conclusion": "success",
+      "created": "2026-11-11T16:05:44Z"
+    },
+    {
+      "id": 43051159231,
+      "name": "Gridly Apple 1.0.2 Build 18 authorized certification and Apple upload",
+      "sha": "19fbfa3cb183a04bf339817f2390a225aa41c6a3",
+      "branch": "gridly-apple-delivery-18-19fbfa3cb183a04bf339817f2390a225aa41c6a3",
+      "conclusion": "failure",
+      "created": "2026-11-11T15:43:15Z"
+    },
+    {
+      "id": 42903003276,
+      "name": "Gridly Apple 1.0.2 Build 18 authorized certification and Apple upload",
+      "sha": "3442ba52ae28a58b353f524055c0bd5091aa6dc9",
+      "branch": "gridly-apple-delivery-18-3442ba52ae28a58b353f524055c0bd5091aa6dc9",
+      "conclusion": "failure",
+      "created": "2026-11-10T21:13:57Z"
+    },
+    {
+      "id": 42893848476,
+      "name": "Gridly Apple 1.0.2 Build 18 authorized certification and Apple upload",
+      "sha": "39b67845a42db3f0cd4fd4472f71aa46a2460ce3",
+      "branch": "gridly-apple-delivery-18-39b67845a42db3f0cd4fd4472f71aa46a2460ce3",
+      "conclusion": "failure",
+      "created": "2026-11-10T20:17:38Z"
+    },
+    {
+      "id": 42889770711,
+      "name": "Gridly Apple 1.0.2 Build 18 authorized certification and Apple upload",
+      "sha": "b3be00716b9f08f2b15261cb1fbbfe795a64968d",
+      "branch": "gridly-apple-delivery-18-b3be00716b9f08f2b15261cb1fbbfe795a64968d",
+      "conclusion": "failure",
+      "created": "2026-11-10T19:53:27Z"
+    },
+    {
+      "id": 42886092225,
+      "name": "Gridly Apple 1.0.2 Build 18 authorized certification and Apple upload",
+      "sha": "95496ada50de90bf55ee538e8e7ff6a8e6162370",
+      "branch": "gridly-apple-delivery-18-95496ada50de90bf55ee538e8e7ff6a8e6162370",
+      "conclusion": "failure",
+      "created": "2026-11-10T19:31:20Z"
+    },
+    {
+      "id": 42876899166,
+      "name": "Gridly Apple 1.0.2 Build 18 authorized certification and Apple upload",
+      "sha": "b91cd712a27c31977339c2623d60110fece09999",
+      "branch": "gridly-apple-delivery-18-b91cd712a27c31977339c2623d60110fece09999",
+      "conclusion": "failure",
+      "created": "2026-11-10T18:36:24Z"
+    },
+    {
+      "id": 42872635239,
+      "name": "Gridly Apple 1.0.2 Build 18 authorized certification and Apple upload",
+      "sha": "dfd318106f12342fe2423beba6320b5b132f65a3",
+      "branch": "gridly-apple-delivery-18-dfd318106f12342fe2423beba6320b5b132f65a3",
+      "conclusion": "failure",
+      "created": "2026-11-10T18:11:26Z"
+    },
+    {
+      "id": 42869028542,
+      "name": "Gridly Apple 1.0.2 Build 18 authorized certification and Apple upload",
+      "sha": "f0a1d0496bd736d0d3ee821ee6e8fcbe36fdd27e",
+      "branch": "gridly-apple-delivery-18-f0a1d0496bd736d0d3ee821ee6e8fcbe36fdd27e",
+      "conclusion": "failure",
+      "created": "2026-11-10T17:50:24Z"
+    }
+  ],
+  "certificationBranchRuns": [
+    {
+      "id": 43468734712,
+      "name": "Gridly iOS Fixed Path Labels Certification",
+      "sha": "891a8b14f262434995b96ed7380b1107ce296ab1",
+      "conclusion": "success",
+      "created": "2026-11-13T17:02:19Z"
+    },
+    {
+      "id": 43464621940,
+      "name": "Gridly iOS Fixed Path Labels Certification",
+      "sha": "62005bc8b0bb683e7b8820bcc33fb77cb67ffc40",
+      "conclusion": "failure",
+      "created": "2026-11-13T16:37:43Z"
+    },
+    {
+      "id": 43446641110,
+      "name": "Gridly iOS Native Labels Foundation Certification",
+      "sha": "86ecf2b9e2257ea733177a391397a084c7706a08",
+      "conclusion": "success",
+      "created": "2026-11-13T14:50:48Z"
+    },
+    {
+      "id": 43288857874,
+      "name": "Gridly iOS Label Integration Certification",
+      "sha": "2d3a36a029a706178e0bb858d8410b354b72f36c",
+      "conclusion": "success",
+      "created": "2026-11-12T19:18:48Z"
+    },
+    {
+      "id": 43285841164,
+      "name": "Gridly iOS Label Integration Certification",
+      "sha": "aac2f01dbe76b538d2a704ae39ce6c6208ae566b",
+      "conclusion": "failure",
+      "created": "2026-11-12T19:01:21Z"
+    },
+    {
+      "id": 43282112647,
+      "name": "Gridly iOS Label Integration Certification",
+      "sha": "aac2f01dbe76b538d2a704ae39ce6c6208ae566b",
+      "conclusion": "failure",
+      "created": "2026-11-12T18:39:28Z"
+    }
+  ],
+  "artifacts": [],
+  "treeBlobs": [
+    {
+      "path": "prototypes/ios-arcgis-labels-gateway-deploy/.env.example",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3198aae39b50199bdcfaf01762f8674aa8970b76",
+      "size": 638,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/3198aae39b50199bdcfaf01762f8674aa8970b76"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-gateway-deploy/FIXED-PATH-PRIVACY.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "efeb7fa2098a3da891b91011cf96aa46b2cf8055",
+      "size": 5463,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/efeb7fa2098a3da891b91011cf96aa46b2cf8055"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-gateway-deploy/HOSTING-READINESS.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d1c997040bc78d93f269984f15f413ba1eab283b",
+      "size": 12375,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/d1c997040bc78d93f269984f15f413ba1eab283b"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-gateway-deploy/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "febae5ce53110c689673f47f32de215e3dbfe12b",
+      "size": 12816,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/febae5ce53110c689673f47f32de215e3dbfe12b"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-gateway-deploy/certification-workflow.yml.in",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "553e2402cd5c0f22963a7c0f4803817b68063ddc",
+      "size": 10394,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/553e2402cd5c0f22963a7c0f4803817b68063ddc"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-gateway-deploy/certification.sha256",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6507c19769975e540b7cb5c46ecfe594573e42c3",
+      "size": 4780,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/6507c19769975e540b7cb5c46ecfe594573e42c3"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-gateway-deploy/edge.test.mjs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a1da320a2322f7da7cfd537d3102e0db2ceb3587",
+      "size": 20111,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/a1da320a2322f7da7cfd537d3102e0db2ceb3587"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-gateway-deploy/foundation.sha256",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a7dd0252e5c52f664d0fe8fa109a8d71b078fa7e",
+      "size": 1015,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/a7dd0252e5c52f664d0fe8fa109a8d71b078fa7e"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-gateway-deploy/ingress.nginx.conf.example",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5f4600afd87f0770da80cf25d46b84458bebec83",
+      "size": 2960,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/5f4600afd87f0770da80cf25d46b84458bebec83"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-gateway-deploy/native-fixed-path/Package.swift",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8f5383443191efbb8be5a8a53d24dcfa7af05858",
+      "size": 375,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/8f5383443191efbb8be5a8a53d24dcfa7af05858"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-gateway-deploy/native-fixed-path/Sources/GridlyFixedPathTile/FixedPathTile.swift",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ec3252de56d765ad444fe7ac8908a249a3886afd",
+      "size": 3114,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/ec3252de56d765ad444fe7ac8908a249a3886afd"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-gateway-deploy/native-fixed-path/Tests/GridlyFixedPathTileTests/FixedPathTileTests.swift",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "71469c408c268a9c829363ad463cbeade2bb9d18",
+      "size": 3195,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/71469c408c268a9c829363ad463cbeade2bb9d18"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-gateway-deploy/native-fixed-path/Tests/GridlyFixedPathTileTests/tile-proof.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3e6132eb95f91a04de74276d3db747881b456f85",
+      "size": 778,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/3e6132eb95f91a04de74276d3db747881b456f85"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-gateway-deploy/native-fixed-path/prepare-harness.mjs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c748ab9a89ffac98ddb8ce1171a317763d0c48f0",
+      "size": 4110,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/c748ab9a89ffac98ddb8ce1171a317763d0c48f0"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-gateway-deploy/native-fixed-path/verify-swift-vector.mjs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a77f5a1b05b387c5501b886abde630fea9044942",
+      "size": 3830,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/a77f5a1b05b387c5501b886abde630fea9044942"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-gateway-deploy/postgres.test.mjs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c75546e8a9cb2e3a672946fc359fcea6ca5fcf8f",
+      "size": 11507,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/c75546e8a9cb2e3a672946fc359fcea6ca5fcf8f"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-gateway-deploy/supabase/config.toml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5eb07fc4eff94318a2e67c6d1a4f3a759077ca1f",
+      "size": 81,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/5eb07fc4eff94318a2e67c6d1a4f3a759077ca1f"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-gateway-deploy/supabase/functions/gridly-labels/deno.lock",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5865c4d3ef2ee7fb91b14e21c71a3703bdd6b865",
+      "size": 743,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/5865c4d3ef2ee7fb91b14e21c71a3703bdd6b865"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-gateway-deploy/supabase/functions/gridly-labels/edge.mjs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a7e799c1c1a62596aec41f58e59160c689dcbee5",
+      "size": 8152,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/a7e799c1c1a62596aec41f58e59160c689dcbee5"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-gateway-deploy/supabase/functions/gridly-labels/foundation/esri.mjs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d8d484756713f65c2b206277826311edc276beae",
+      "size": 8489,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/d8d484756713f65c2b206277826311edc276beae"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-gateway-deploy/supabase/functions/gridly-labels/foundation/gateway.mjs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "77a3edcedcee3b4c7f1e607720ebc0aa89084c12",
+      "size": 7839,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/77a3edcedcee3b4c7f1e607720ebc0aa89084c12"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-gateway-deploy/supabase/functions/gridly-labels/foundation/png.mjs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "913d020192b683860ef3d7e8a84ebcb1d5f19954",
+      "size": 5815,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/913d020192b683860ef3d7e8a84ebcb1d5f19954"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-gateway-deploy/supabase/functions/gridly-labels/foundation/protocol.mjs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "03518330bb8b50c441db960bcd632cddd949bafe",
+      "size": 2897,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/03518330bb8b50c441db960bcd632cddd949bafe"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-gateway-deploy/supabase/functions/gridly-labels/foundation/state.mjs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3eaa44e4fc20c43e960d407eeadcd47b1474ba47",
+      "size": 4755,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/3eaa44e4fc20c43e960d407eeadcd47b1474ba47"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-gateway-deploy/supabase/functions/gridly-labels/index.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "960c6654ffcb92952e896c5bf7d3b2d4c726403a",
+      "size": 961,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/960c6654ffcb92952e896c5bf7d3b2d4c726403a"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-gateway-deploy/supabase/functions/gridly-labels/runtime.mjs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "072044705cb6d7e37be081dc5af09d021cb2ace2",
+      "size": 4317,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/072044705cb6d7e37be081dc5af09d021cb2ace2"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-gateway-deploy/supabase/functions/gridly-labels/tile-wire.mjs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c4f8d34f2a6abc4f1499858e750d0de46192f7b3",
+      "size": 792,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/c4f8d34f2a6abc4f1499858e750d0de46192f7b3"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-gateway-deploy/supabase/functions/gridly-labels/web-gateway.mjs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "737712f3ee3a32605488afa6e32fd9d540c9189a",
+      "size": 7991,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/737712f3ee3a32605488afa6e32fd9d540c9189a"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-gateway-deploy/supabase/functions/gridly-labels/web-proof.mjs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4c665a82b3b5f262542f50ad5627085ceff9172f",
+      "size": 1280,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/4c665a82b3b5f262542f50ad5627085ceff9172f"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-gateway-deploy/supabase/migrations/20261113000100_labels_foundation.sql",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6745c656e1ec8173698e5429c9dc377b97c61b9a",
+      "size": 7920,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/6745c656e1ec8173698e5429c9dc377b97c61b9a"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-gateway-deploy/supabase/migrations/20261113000200_labels_edge_state.sql",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "225eda9a65d3e0e694815b494074d3c9a199fe60",
+      "size": 11391,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/225eda9a65d3e0e694815b494074d3c9a199fe60"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-gateway-deploy/test-disposable-postgres.ps1",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "86783d5c64a8c670d2b0f19e61b5f9748621d4c8",
+      "size": 3317,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/86783d5c64a8c670d2b0f19e61b5f9748621d4c8"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-gateway-deploy/verify-sources.mjs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "80a0909c9b5aacd86900090ac2752bdc8cd5aa59",
+      "size": 2261,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/80a0909c9b5aacd86900090ac2752bdc8cd5aa59"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-gateway/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "037f7379740919d4d6fd4d6886a9cd90c5775681",
+      "size": 1204,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/037f7379740919d4d6fd4d6886a9cd90c5775681"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-gateway/contract.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fb18fc72a4930fe2b6bb2a8c43093b4a32f11719",
+      "size": 5854,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/fb18fc72a4930fe2b6bb2a8c43093b4a32f11719"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-gateway/gateway.bench.mjs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ddb00a1c145ec9d62a17c2ff42e53c2bb9032a56",
+      "size": 4567,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/ddb00a1c145ec9d62a17c2ff42e53c2bb9032a56"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-gateway/gateway.mjs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "165c61943e004ffea87e3c3bbfa7d60830bf73bc",
+      "size": 12793,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/165c61943e004ffea87e3c3bbfa7d60830bf73bc"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-gateway/gateway.test.mjs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a88e1a863271375b8d4a4010c4ecf9c6b2c6e43e",
+      "size": 18252,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/a88e1a863271375b8d4a4010c4ecf9c6b2c6e43e"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-gateway/mock-tile.png",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8571f28dd2b17aafddf23e36536263e2a60cd732",
+      "size": 1096,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/8571f28dd2b17aafddf23e36536263e2a60cd732"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-gateway/png.mjs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f5dba02d03801204d9f6c2fde147b5be94e390f4",
+      "size": 1862,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/f5dba02d03801204d9f6c2fde147b5be94e390f4"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-gateway/synthetic.mjs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "75a55aee8d6749d367f4ed5c6ad3a29610d20888",
+      "size": 2122,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/75a55aee8d6749d367f4ed5c6ad3a29610d20888"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-integration/App/GatewayLabelTransport.swift",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b10ed379cbd8b823d14139bc4be13add07e57aad",
+      "size": 3881,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/b10ed379cbd8b823d14139bc4be13add07e57aad"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-integration/App/GridlyLabelTileSchemeHandler.swift",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a526586f970fa58f333d86ea274fd23621fe8be4",
+      "size": 4728,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/a526586f970fa58f333d86ea274fd23621fe8be4"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-integration/App/LabelTileHarness.swift",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "22969f65404719e4ed0dc2c2d32af8ed8b2dd4c6",
+      "size": 2358,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/22969f65404719e4ed0dc2c2d32af8ed8b2dd4c6"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-integration/LabelTileHarness.xcodeproj/project.pbxproj",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "03f784b92b3498c4e5206abadf12cfce1896800e",
+      "size": 5931,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/03f784b92b3498c4e5206abadf12cfce1896800e"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-integration/LabelTileHarness.xcodeproj/xcshareddata/xcschemes/LabelTileHarness.xcscheme",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "934b1866793af91c6e740c9065de894f9810065a",
+      "size": 1351,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/934b1866793af91c6e740c9065de894f9810065a"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-integration/Package.swift",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f796851867afa93d0b6cc58a752a70f1bb228335",
+      "size": 346,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/f796851867afa93d0b6cc58a752a70f1bb228335"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-integration/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c6f2b3b489535e0c9ebd17b340c6ca1831d44e21",
+      "size": 4659,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/c6f2b3b489535e0c9ebd17b340c6ca1831d44e21"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-integration/Sources/TileCore/LabelTileCore.swift",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d1a1eff222cf4a5d410e700799d1908475fd2de8",
+      "size": 9355,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/d1a1eff222cf4a5d410e700799d1908475fd2de8"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-integration/Sources/TileCore/MockGateway.swift",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e9f62bd1d7e99420d5e85e5ee8401a1137cc4395",
+      "size": 9075,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/e9f62bd1d7e99420d5e85e5ee8401a1137cc4395"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-integration/Tests/TileCoreTests/Fixtures/valid.png",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8571f28dd2b17aafddf23e36536263e2a60cd732",
+      "size": 1096,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/8571f28dd2b17aafddf23e36536263e2a60cd732"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-integration/Tests/TileCoreTests/Fixtures/wire-proof.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fe35d29f54170a05017723f40ba47a3133f0b9e9",
+      "size": 707,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/fe35d29f54170a05017723f40ba47a3133f0b9e9"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-integration/Tests/TileCoreTests/LabelTileSchemeHandlerTests.swift",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6e3c5652fa6a7df400cfdcb7a61ed5b60e283ed3",
+      "size": 9117,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/6e3c5652fa6a7df400cfdcb7a61ed5b60e283ed3"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-integration/Tests/TileCoreTests/MockGatewayTests.swift",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "34ab7e5fa6fda43b0f1fb9037d2ebadea4d2fe09",
+      "size": 7327,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/34ab7e5fa6fda43b0f1fb9037d2ebadea4d2fe09"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-integration/Web/imagery.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e3d0cc00644ac7c2e89664ae05f390f1d31352d0",
+      "size": 1183,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/e3d0cc00644ac7c2e89664ae05f390f1d31352d0"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-integration/Web/map.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "daa1b3a703a550bc542cc5daf17e6188608d6261",
+      "size": 1106,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/daa1b3a703a550bc542cc5daf17e6188608d6261"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-integration/Web/map.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c4fec5da4412d0ab8be787b1fa07130442bc002d",
+      "size": 1616,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/c4fec5da4412d0ab8be787b1fa07130442bc002d"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-integration/Web/vendor/LICENSE",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bcb3ba1aca095155857556d96e3193a50fe1bd11",
+      "size": 1395,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/bcb3ba1aca095155857556d96e3193a50fe1bd11"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-integration/Web/vendor/leaflet.css",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2961b7618a57617d1015d31d2094c425c3d86ce9",
+      "size": 14806,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/2961b7618a57617d1015d31d2094c425c3d86ce9"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-integration/Web/vendor/leaflet.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a3bf693d0fcaff885cc5f21b3a699aaa567b3533",
+      "size": 147552,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/a3bf693d0fcaff885cc5f21b3a699aaa567b3533"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-integration/integration.bench.mjs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5320a180bfe830dc5dce2e37d1c4fce2334c531e",
+      "size": 4020,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/5320a180bfe830dc5dce2e37d1c4fce2334c531e"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-integration/integration.test.mjs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fbc5178b108dbcecbd311f511d81a91ff64a315a",
+      "size": 9714,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/fbc5178b108dbcecbd311f511d81a91ff64a315a"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-integration/local-integration.mjs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c3d1a8451c72c717f450641080b59280568b99b6",
+      "size": 1624,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/c3d1a8451c72c717f450641080b59280568b99b6"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-integration/map-fixture.mjs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e7df95efc9cdf3972a23de34a2081eb4b9fd7ff8",
+      "size": 2958,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/e7df95efc9cdf3972a23de34a2081eb4b9fd7ff8"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-integration/source-copies.sha256",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "604b21bc0ab542c8134650569a6ded2319b09db4",
+      "size": 2281,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/604b21bc0ab542c8134650569a6ded2319b09db4"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-integration/verify-source.mjs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "23cb67ca5f35f53ae3326a12945ef5f4aa4adc40",
+      "size": 2214,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/23cb67ca5f35f53ae3326a12945ef5f4aa4adc40"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-live-candidate/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7df7f6b8f83c9beba03cb3535ee1e8d484446fa5",
+      "size": 9526,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/7df7f6b8f83c9beba03cb3535ee1e8d484446fa5"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-live-candidate/benchmark.mjs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "36fff8878e430bd1f82fbe7aaab086cb9dd85d46",
+      "size": 4934,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/36fff8878e430bd1f82fbe7aaab086cb9dd85d46"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-live-candidate/certification.sha256",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5b082f4e33aa9c231ed5dfd0dcc8a2765924252a",
+      "size": 9826,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/5b082f4e33aa9c231ed5dfd0dcc8a2765924252a"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-live-candidate/esri.mjs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d8d484756713f65c2b206277826311edc276beae",
+      "size": 8489,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/d8d484756713f65c2b206277826311edc276beae"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-live-candidate/foundation.test.mjs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d32dd275f1756c8f062c2fda00cb0eb6b28d8c02",
+      "size": 26264,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/d32dd275f1756c8f062c2fda00cb0eb6b28d8c02"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-live-candidate/gateway.mjs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "77a3edcedcee3b4c7f1e607720ebc0aa89084c12",
+      "size": 7839,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/77a3edcedcee3b4c7f1e607720ebc0aa89084c12"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-live-candidate/hosted-certification.yml.in",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9e16839a6016f15acd4eb103031eee8691eabb66",
+      "size": 8009,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/9e16839a6016f15acd4eb103031eee8691eabb66"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-live-candidate/http.mjs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9511eb09fd6d8b483c79a805a81da7a8b0e435b8",
+      "size": 2620,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/9511eb09fd6d8b483c79a805a81da7a8b0e435b8"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-live-candidate/ios/Harness/Harness.swift",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "593495323536f7ea2e2885c1e94ee5f7aceea6dd",
+      "size": 9218,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/593495323536f7ea2e2885c1e94ee5f7aceea6dd"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-live-candidate/ios/Harness/HarnessRenderer.swift",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "dac95e06fc2ab2754cee3b5d18fa189cc8d856bb",
+      "size": 2290,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/dac95e06fc2ab2754cee3b5d18fa189cc8d856bb"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-live-candidate/ios/Harness/prepare-assets.mjs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "35595ec30778d67540c0b31b4956b6405989c316",
+      "size": 2875,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/35595ec30778d67540c0b31b4956b6405989c316"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-live-candidate/ios/Package.swift",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d33dde24365ffb7cccd5bc3b375a6f0285603fca",
+      "size": 395,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/d33dde24365ffb7cccd5bc3b375a6f0285603fca"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-live-candidate/ios/PilotHarness.xcodeproj/project.pbxproj",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ab5486b40ce6f65d1eb8224325b200475435e46c",
+      "size": 5914,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/ab5486b40ce6f65d1eb8224325b200475435e46c"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-live-candidate/ios/PilotHarness.xcodeproj/xcshareddata/xcschemes/PilotHarness.xcscheme",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5ad39e95513c3e08048825671e55619b92bc6c98",
+      "size": 1327,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/5ad39e95513c3e08048825671e55619b92bc6c98"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-live-candidate/ios/Sources/GridlyLabelsPilot/HTTPSLabelTransport.swift",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3802deed34d444a772c8f0fd27c6d674a7eef49e",
+      "size": 11218,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/3802deed34d444a772c8f0fd27c6d674a7eef49e"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-live-candidate/ios/Sources/GridlyLabelsPilot/LabelTileCore.swift",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "714d5392e5cbbd1e6e4490dd41c7ecc1324a76cb",
+      "size": 9167,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/714d5392e5cbbd1e6e4490dd41c7ecc1324a76cb"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-live-candidate/ios/Sources/GridlyLabelsPilot/LabelsSchemeHandler.swift",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4030b7912cbdb10fe7d2fa62fca9af482c6955a5",
+      "size": 3638,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/4030b7912cbdb10fe7d2fa62fca9af482c6955a5"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-live-candidate/ios/Tests/GridlyLabelsPilotTests/TransportTests.swift",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ca49cf8091b11d9851736d0fb53c594aa28fcb7b",
+      "size": 5146,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/ca49cf8091b11d9851736d0fb53c594aa28fcb7b"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-live-candidate/leaflet-overlay.mjs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "87412cf675ad5cbe4f1f71908bd37fe2846284d2",
+      "size": 1811,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/87412cf675ad5cbe4f1f71908bd37fe2846284d2"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-live-candidate/pilot-state.sql",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6745c656e1ec8173698e5429c9dc377b97c61b9a",
+      "size": 7920,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/6745c656e1ec8173698e5429c9dc377b97c61b9a"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-live-candidate/pilot.mjs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d909825a62730c8fe34bc28ebc1b40d195f274ef",
+      "size": 808,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/d909825a62730c8fe34bc28ebc1b40d195f274ef"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-live-candidate/png.mjs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "913d020192b683860ef3d7e8a84ebcb1d5f19954",
+      "size": 5815,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/913d020192b683860ef3d7e8a84ebcb1d5f19954"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-live-candidate/postgres.test.mjs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "063ff72cb9cc2b1e01cf07ccd3a2e25d1d07bb9d",
+      "size": 5097,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/063ff72cb9cc2b1e01cf07ccd3a2e25d1d07bb9d"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-live-candidate/protocol.mjs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "03518330bb8b50c441db960bcd632cddd949bafe",
+      "size": 2897,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/03518330bb8b50c441db960bcd632cddd949bafe"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-live-candidate/state.mjs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3eaa44e4fc20c43e960d407eeadcd47b1474ba47",
+      "size": 4755,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/3eaa44e4fc20c43e960d407eeadcd47b1474ba47"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels-live-candidate/test-disposable-postgres.ps1",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2986b663233e24e68f701602af54da7fed2d9759",
+      "size": 3321,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/2986b663233e24e68f701602af54da7fed2d9759"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels/.gitignore",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a9372d18dec101c38cad12b6eecee5ae1ce50925",
+      "size": 49,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/a9372d18dec101c38cad12b6eecee5ae1ce50925"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels/App/GridlyLabelTileSchemeHandler.swift",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a526586f970fa58f333d86ea274fd23621fe8be4",
+      "size": 4728,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/a526586f970fa58f333d86ea274fd23621fe8be4"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels/App/LabelTileHarness.swift",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3982dd71849d1273f04a5b4299125b7d304f77e8",
+      "size": 2360,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/3982dd71849d1273f04a5b4299125b7d304f77e8"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels/LabelTileHarness.xcodeproj/project.pbxproj",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2fdd8b8cd98377c26dce9e104fd24e460d0ed6d4",
+      "size": 4885,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/2fdd8b8cd98377c26dce9e104fd24e460d0ed6d4"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels/LabelTileHarness.xcodeproj/xcshareddata/xcschemes/LabelTileHarness.xcscheme",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "934b1866793af91c6e740c9065de894f9810065a",
+      "size": 1351,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/934b1866793af91c6e740c9065de894f9810065a"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels/Package.swift",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cc2f0b0e83868c35078120bc7be5f3f5d9d0ddca",
+      "size": 332,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/cc2f0b0e83868c35078120bc7be5f3f5d9d0ddca"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3538aff66d1427738a0decd6b09cde984cd002df",
+      "size": 3467,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/3538aff66d1427738a0decd6b09cde984cd002df"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels/Sources/TileCore/LabelTileCore.swift",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d1a1eff222cf4a5d410e700799d1908475fd2de8",
+      "size": 9355,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/d1a1eff222cf4a5d410e700799d1908475fd2de8"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels/Tests/TileCoreTests/Fixtures/valid.png",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8571f28dd2b17aafddf23e36536263e2a60cd732",
+      "size": 1096,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/8571f28dd2b17aafddf23e36536263e2a60cd732"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels/Tests/TileCoreTests/LabelTileSchemeHandlerTests.swift",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6e3c5652fa6a7df400cfdcb7a61ed5b60e283ed3",
+      "size": 9117,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/6e3c5652fa6a7df400cfdcb7a61ed5b60e283ed3"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels/Tests/map.test.mjs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7a8a5e156eca8b5f98fcebc215d0a851c698d16e",
+      "size": 5773,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/7a8a5e156eca8b5f98fcebc215d0a851c698d16e"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels/Web/imagery.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e3d0cc00644ac7c2e89664ae05f390f1d31352d0",
+      "size": 1183,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/e3d0cc00644ac7c2e89664ae05f390f1d31352d0"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels/Web/map.html",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "daa1b3a703a550bc542cc5daf17e6188608d6261",
+      "size": 1106,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/daa1b3a703a550bc542cc5daf17e6188608d6261"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels/Web/map.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c4fec5da4412d0ab8be787b1fa07130442bc002d",
+      "size": 1616,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/c4fec5da4412d0ab8be787b1fa07130442bc002d"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels/Web/vendor/LICENSE",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bcb3ba1aca095155857556d96e3193a50fe1bd11",
+      "size": 1395,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/bcb3ba1aca095155857556d96e3193a50fe1bd11"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels/Web/vendor/leaflet.css",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2961b7618a57617d1015d31d2094c425c3d86ce9",
+      "size": 14806,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/2961b7618a57617d1015d31d2094c425c3d86ce9"
+    },
+    {
+      "path": "prototypes/ios-arcgis-labels/Web/vendor/leaflet.js",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a3bf693d0fcaff885cc5f21b3a699aaa567b3533",
+      "size": 147552,
+      "url": "https://api.github.com/repos/DBMaps/liberty-county-map/git/blobs/a3bf693d0fcaff885cc5f21b3a699aaa567b3533"
+    }
+  ]
+}

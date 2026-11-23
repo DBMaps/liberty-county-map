@@ -1,0 +1,10 @@
+{
+  "origin": "https://labels-pilot.invalid",
+  "leaseId": "00000000-0000-4000-8000-000000000001",
+  "timestamp": 1794484800000,
+  "requestId": "00000000-0000-4000-8000-000000000002",
+  "body": "{\"level\":12,\"row\":1689,\"column\":968}",
+  "canonical": "[\"gridly-labels-pilot-v1\",\"gridly-labels-tile-body-v1\",\"POST\",\"https://labels-pilot.invalid/v1/imagery-labels/tile\",\"J9Gb2p35YnSZB2PhOLRRtYNzCZx0skJ3U9vEI1_mSLM\",\"00000000-0000-4000-8000-000000000001\",1794484800000,\"00000000-0000-4000-8000-000000000002\"]",
+  "publicKey": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAECx1x5Ql7WMqeNn70GIoebkmQWWPu2yfMo/30ZBiuWh+sKGhmxpQDM7+utYHvfaGkBKIL4MSvs8Vx2Gd0LM/CLA==",
+  "signature": "zzovi0V7pBlH8hBqbToxwZeykMOXryVeQSrJnuDMhHmGdseceFDs4sLtRz4l5l0tgdP9twpxa+hnFJymqeJGRQ=="
+}
