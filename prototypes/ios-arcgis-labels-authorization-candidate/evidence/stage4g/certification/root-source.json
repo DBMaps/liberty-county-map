@@ -777,6 +777,12 @@
       "bytes": 8365
     },
     {
+      "path": "service-worker.js",
+      "gitBlob": "205f04b4457431e19fe35eb2c29814f2fe76ec66",
+      "sha256": "da512da936cfd1d853dfd56fe653378d1fc243813310cc81f9780c1c8ba49a49",
+      "bytes": 4451
+    },
+    {
       "path": "supabase/functions/_shared/entitlement/acknowledgment.mjs",
       "gitBlob": "4662a5f7638dca58d5181dea643f56f4830a06a0",
       "sha256": "4b8b537012c9510a494cac25210c5b35cddc79ecb2c3467083a17677dab3f3f4",
@@ -877,6 +883,36 @@
       "gitBlob": "4140a6a6115edb90bd4d13f31dab3a55437648a9",
       "sha256": "05fed84aa66e3f6afa07e10ed8b3b04e4e59ef155e921fdfd38cbc6541c06b99",
       "bytes": 151
+    },
+    {
+      "path": "supabase/migrations/202609080001_community_report_retention.sql",
+      "gitBlob": "ae7a31808aa4dd365480d9eda24655b22c9cae38",
+      "sha256": "ebb7664d2b3b8555b7977efbddb75410c6e1f01391ecbafb6cbd3820db8d2db0",
+      "bytes": 286
+    },
+    {
+      "path": "supabase/migrations/202609080002_community_submission_protocol.sql",
+      "gitBlob": "ae7a31808aa4dd365480d9eda24655b22c9cae38",
+      "sha256": "ebb7664d2b3b8555b7977efbddb75410c6e1f01391ecbafb6cbd3820db8d2db0",
+      "bytes": 286
+    },
+    {
+      "path": "supabase/migrations/20260908200554_lp24422a_prelaunch_reset_and_atomic_report_transition.sql",
+      "gitBlob": "12aeb99f38d6368e9a32f3cea565e3340d283b59",
+      "sha256": "b2d0b75d0796033428160cae582db0c943459c3141e02a2566bf0978baff8dd8",
+      "bytes": 31583
+    },
+    {
+      "path": "supabase/migrations/202609160001_lp24429a_reporting_availability_contract.sql",
+      "gitBlob": "27b9989e8ed7eb0acc72ff9b36dc7d1deca758bc",
+      "sha256": "846fdf9f019e680135b8fe45d444271ca46ded1e867d3e93895af103ef848063",
+      "bytes": 1057
+    },
+    {
+      "path": "supabase/migrations/20260916183911_google_play_compliance_closure.sql",
+      "gitBlob": "f8e5cbf57519996b6f28e05e373a640eaaed9492",
+      "sha256": "dcea12bbbe2c51df822a5b49970499c1d74d0f66e796b25c40dbdd15fcb756bf",
+      "bytes": 19327
     },
     {
       "path": "tests/lp24461-subscription-entitlement.test.mjs",

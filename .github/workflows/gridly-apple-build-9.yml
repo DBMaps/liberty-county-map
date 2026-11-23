@@ -171,6 +171,7 @@ jobs:
             /js/lp24110-poi-search-certification.js
             /package.json
             /public-site/index.html
+            /service-worker.js
             /supabase/functions/_shared/entitlement/acknowledgment.mjs
             /supabase/functions/_shared/entitlement/apple-app-attest.mjs
             /supabase/functions/_shared/entitlement/apple-node-provider.mjs
@@ -188,6 +189,11 @@ jobs:
             /supabase/functions/_shared/entitlement/server-setup.mjs
             /supabase/functions/gridly-verify-apple-subscription/index.ts
             /supabase/functions/gridly-verify-google-subscription/index.ts
+            /supabase/migrations/202609080001_community_report_retention.sql
+            /supabase/migrations/202609080002_community_submission_protocol.sql
+            /supabase/migrations/20260908200554_lp24422a_prelaunch_reset_and_atomic_report_transition.sql
+            /supabase/migrations/202609160001_lp24429a_reporting_availability_contract.sql
+            /supabase/migrations/20260916183911_google_play_compliance_closure.sql
             /tests/lp24461-subscription-entitlement.test.mjs
             /tests/lp24462-server-verification.test.mjs
             /tests/lp24463-apple-storekit.test.mjs
